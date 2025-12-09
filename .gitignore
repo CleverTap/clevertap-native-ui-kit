@@ -1,0 +1,135 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Android
+*.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+bin/
+gen/
+out/
+release/
+
+# Gradle
+.gradle/
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# Kotlin
+*.kotlin_module
+
+# iOS
+*.xcuserstate
+*.xcworkspace
+!default.xcworkspace
+xcuserdata/
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+timeline.xctimeline
+playground.xcworkspace
+.build/
+Pods/
+Carthage/
+.swiftpm/
+
+# Swift Package Manager
+.swiftpm/
+.build/
+*.xcodeproj
+Package.resolved
+
+# CocoaPods
+Pods/
+*.xcworkspace
+Podfile.lock
+
+# Xcode
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+# Backend (Java/Maven)
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# Testing
+test-results/
+coverage/
+
+# Version control
+*.orig
+
+# OS specific
+Thumbs.db
+
+# Build Directories
+**/build/
+**/target/
+**/out/
+**/.gradle/
+**/.idea/
+**/.vscode/
+
+# iOS
+**/Pods/
+**/*.xcworkspace
+**/xcuserdata/
+**/*.xcuserstate
+
+# IDEs
+.project
+.classpath
+.settings/
+*.sublime-*
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
