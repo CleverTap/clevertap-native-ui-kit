@@ -1,14 +1,31 @@
 package com.clevertap.android.nativedisplay.renderer
 
+import android.graphics.RenderNode
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -16,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight as ComposeFontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -25,6 +43,8 @@ import coil.compose.rememberAsyncImagePainter
 import com.clevertap.android.nativedisplay.evaluator.VariableEvaluator
 import com.clevertap.android.nativedisplay.models.*
 import com.clevertap.android.nativedisplay.style.StyleResolver
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Main entry point for rendering native display UI.
@@ -156,6 +176,399 @@ private fun RenderContainer(
                 }
             }
         }
+        
+        ContainerType.GALLERY -> {
+            RenderGallery(
+                container = container,
+                styleResolver = styleResolver,
+                evaluator = evaluator,
+                resolvedStyle = resolvedStyle,
+                modifier = containerModifier
+            )
+        }
+    }
+}
+
+/**
+ * Render a gallery/carousel container.
+ */
+@Composable
+private fun RenderGallery(
+    container: NativeDisplayContainer,
+    styleResolver: StyleResolver,
+    evaluator: VariableEvaluator,
+    resolvedStyle: Style,
+    modifier: Modifier = Modifier
+) {
+    val config = container.galleryConfig ?: GalleryConfig()
+    
+    // Use different implementations based on snap behavior
+    if (config.snapBehavior == SnapBehavior.NONE) {
+        RenderFreeFlowGallery(
+            container = container,
+            config = config,
+            styleResolver = styleResolver,
+            evaluator = evaluator,
+            resolvedStyle = resolvedStyle,
+            modifier = modifier
+        )
+    } else {
+        RenderSnappingGallery(
+            container = container,
+            config = config,
+            styleResolver = styleResolver,
+            evaluator = evaluator,
+            resolvedStyle = resolvedStyle,
+            modifier = modifier
+        )
+    }
+}
+
+/**
+ * Render free-flowing gallery (no snap).
+ */
+@Composable
+private fun RenderFreeFlowGallery(
+    container: NativeDisplayContainer,
+    config: GalleryConfig,
+    styleResolver: StyleResolver,
+    evaluator: VariableEvaluator,
+    resolvedStyle: Style,
+    modifier: Modifier = Modifier
+) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    
+    // Calculate item width based on peek percentage
+    val peekFraction = config.peekPercentage / 100f
+    val itemWidth = screenWidth * (1f - peekFraction)
+    val startPadding = (screenWidth * peekFraction / 2)
+    
+    Box(modifier = modifier) {
+        if (config.orientation == Orientation.HORIZONTAL) {
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = startPadding),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(container.children.size) { index ->
+                    Box(modifier = Modifier.width(itemWidth)) {
+                        container.children.getOrNull(index)?.let { child ->
+                            RenderNode(
+                                node = child,
+                                styleResolver = styleResolver,
+                                evaluator = evaluator,
+                                parentStyle = resolvedStyle,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                }
+            }
+        } else {
+            val screenHeight = configuration.screenHeightDp.dp
+            val itemHeight = screenHeight * (1f - peekFraction)
+            
+            LazyColumn(
+                modifier = Modifier.fillMaxHeight(),
+                contentPadding = PaddingValues(vertical = startPadding),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(container.children.size) { index ->
+                    Box(modifier = Modifier.height(itemHeight)) {
+                        container.children.getOrNull(index)?.let { child ->
+                            RenderNode(
+                                node = child,
+                                styleResolver = styleResolver,
+                                evaluator = evaluator,
+                                parentStyle = resolvedStyle,
+                                modifier = Modifier.fillMaxHeight()
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Render snapping gallery (center, start, or end snap).
+ */
+@Composable
+private fun RenderSnappingGallery(
+    container: NativeDisplayContainer,
+    config: GalleryConfig,
+    styleResolver: StyleResolver,
+    evaluator: VariableEvaluator,
+    resolvedStyle: Style,
+    modifier: Modifier = Modifier
+) {
+    val pagerState = rememberPagerState(
+        initialPage = config.initialPage.coerceIn(0, maxOf(0, container.children.size - 1)),
+        pageCount = { container.children.size }
+    )
+    val scope = rememberCoroutineScope()
+    
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    
+    // Calculate content padding for peek effect
+    val peekFraction = config.peekPercentage / 100f
+    val contentPadding = screenWidth * peekFraction / 2
+    
+    // Auto-scroll effect
+    if (config.autoScrollInterval > 0) {
+        LaunchedEffect(pagerState.currentPage) {
+            delay(config.autoScrollInterval)
+            val nextPage = if (config.infiniteScroll) {
+                (pagerState.currentPage + 1) % container.children.size
+            } else {
+                (pagerState.currentPage + 1).coerceAtMost(container.children.size - 1)
+            }
+            if (nextPage != pagerState.currentPage) {
+                pagerState.animateScrollToPage(nextPage)
+            }
+        }
+    }
+    
+    Box(modifier = modifier) {
+        // Pager
+        if (config.orientation == Orientation.HORIZONTAL) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = contentPadding),
+                pageSpacing = 8.dp
+            ) { page ->
+                container.children.getOrNull(page)?.let { child ->
+                    RenderNode(
+                        node = child,
+                        styleResolver = styleResolver,
+                        evaluator = evaluator,
+                        parentStyle = resolvedStyle,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        } else {
+            val screenHeight = configuration.screenHeightDp.dp
+            val verticalPadding = screenHeight * peekFraction / 2
+            
+            VerticalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxHeight(),
+                contentPadding = PaddingValues(vertical = verticalPadding),
+                pageSpacing = 8.dp
+            ) { page ->
+                container.children.getOrNull(page)?.let { child ->
+                    RenderNode(
+                        node = child,
+                        styleResolver = styleResolver,
+                        evaluator = evaluator,
+                        parentStyle = resolvedStyle,
+                        modifier = Modifier.fillMaxHeight()
+                    )
+                }
+            }
+        }
+        
+        // Navigation arrows
+        if (config.showArrows && container.children.size > 1) {
+            RenderGalleryArrows(
+                pagerState = pagerState,
+                config = config,
+                onPrevious = {
+                    scope.launch {
+                        val prevPage = if (config.infiniteScroll && pagerState.currentPage == 0) {
+                            container.children.size - 1
+                        } else {
+                            (pagerState.currentPage - 1).coerceAtLeast(0)
+                        }
+                        pagerState.animateScrollToPage(prevPage)
+                    }
+                },
+                onNext = {
+                    scope.launch {
+                        val nextPage = if (config.infiniteScroll && pagerState.currentPage == container.children.size - 1) {
+                            0
+                        } else {
+                            (pagerState.currentPage + 1).coerceAtMost(container.children.size - 1)
+                        }
+                        pagerState.animateScrollToPage(nextPage)
+                    }
+                },
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+        
+        // Page indicators
+        if (config.showIndicators && container.children.size > 1) {
+            RenderGalleryIndicators(
+                pagerState = pagerState,
+                config = config,
+                pageCount = container.children.size,
+                modifier = Modifier.align(
+                    when (config.indicatorStyle?.position) {
+                        "top" -> Alignment.TopCenter
+                        "left" -> Alignment.CenterStart
+                        "right" -> Alignment.CenterEnd
+                        else -> Alignment.BottomCenter
+                    }
+                )
+            )
+        }
+    }
+}
+
+/**
+ * Render gallery navigation arrows.
+ */
+@Composable
+private fun RenderGalleryArrows(
+    pagerState: androidx.compose.foundation.pager.PagerState,
+    config: GalleryConfig,
+    onPrevious: () -> Unit,
+    onNext: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val arrowStyle = config.arrowStyle ?: ArrowStyle()
+    val arrowColor = parseColor(arrowStyle.color) ?: Color.Black
+    val arrowBgColor = arrowStyle.backgroundColor?.let { parseColor(it) }
+    
+    val arrowModifier = Modifier
+        .size((arrowStyle.size + arrowStyle.padding * 2).dp)
+        .then(
+            if (arrowBgColor != null) {
+                Modifier
+                    .background(arrowBgColor, CircleShape)
+                    .padding(arrowStyle.padding.dp)
+            } else {
+                Modifier
+            }
+        )
+    
+    if (config.orientation == Orientation.HORIZONTAL) {
+        Row(
+            modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Previous arrow
+            IconButton(
+                onClick = onPrevious,
+                modifier = arrowModifier,
+                enabled = config.infiniteScroll || pagerState.currentPage > 0
+            ) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowLeft,
+                    contentDescription = "Previous",
+                    tint = arrowColor,
+                    modifier = Modifier.size(arrowStyle.size.dp)
+                )
+            }
+            
+            // Next arrow
+            IconButton(
+                onClick = onNext,
+                modifier = arrowModifier,
+                enabled = config.infiniteScroll || pagerState.currentPage < pagerState.pageCount - 1
+            ) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowRight,
+                    contentDescription = "Next",
+                    tint = arrowColor,
+                    modifier = Modifier.size(arrowStyle.size.dp)
+                )
+            }
+        }
+    } else {
+        Column(
+            modifier = modifier.fillMaxHeight().padding(vertical = 16.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Previous arrow
+            IconButton(
+                onClick = onPrevious,
+                modifier = arrowModifier,
+                enabled = config.infiniteScroll || pagerState.currentPage > 0
+            ) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowUp,
+                    contentDescription = "Previous",
+                    tint = arrowColor,
+                    modifier = Modifier.size(arrowStyle.size.dp)
+                )
+            }
+            
+            // Next arrow
+            IconButton(
+                onClick = onNext,
+                modifier = arrowModifier,
+                enabled = config.infiniteScroll || pagerState.currentPage < pagerState.pageCount - 1
+            ) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = "Next",
+                    tint = arrowColor,
+                    modifier = Modifier.size(arrowStyle.size.dp)
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Render gallery page indicators.
+ */
+@Composable
+private fun RenderGalleryIndicators(
+    pagerState: androidx.compose.foundation.pager.PagerState,
+    config: GalleryConfig,
+    pageCount: Int,
+    modifier: Modifier = Modifier
+) {
+    val indicatorStyle = config.indicatorStyle ?: IndicatorStyle()
+    val activeColor = parseColor(indicatorStyle.activeColor) ?: Color.Blue
+    val inactiveColor = parseColor(indicatorStyle.inactiveColor) ?: Color.LightGray
+    
+    val arrangement = if (config.orientation == Orientation.HORIZONTAL) {
+        Arrangement.spacedBy(indicatorStyle.spacing.dp)
+    } else {
+        Arrangement.spacedBy(indicatorStyle.spacing.dp)
+    }
+    
+    if (config.orientation == Orientation.HORIZONTAL) {
+        Row(
+            modifier = modifier.padding(16.dp),
+            horizontalArrangement = arrangement
+        ) {
+            repeat(pageCount) { index ->
+                Box(
+                    modifier = Modifier
+                        .size(indicatorStyle.size.dp)
+                        .background(
+                            color = if (pagerState.currentPage == index) activeColor else inactiveColor,
+                            shape = if (indicatorStyle.shape == "circle") CircleShape else RoundedCornerShape(2.dp)
+                        )
+                )
+            }
+        }
+    } else {
+        Column(
+            modifier = modifier.padding(16.dp),
+            verticalArrangement = arrangement
+        ) {
+            repeat(pageCount) { index ->
+                Box(
+                    modifier = Modifier
+                        .size(indicatorStyle.size.dp)
+                        .background(
+                            color = if (pagerState.currentPage == index) activeColor else inactiveColor,
+                            shape = if (indicatorStyle.shape == "circle") CircleShape else RoundedCornerShape(2.dp)
+                        )
+                )
+            }
+        }
     }
 }
 
@@ -251,6 +664,26 @@ private fun RenderElement(
 
         ElementType.SPACER -> {
             Spacer(modifier = elementModifier)
+        }
+        
+        ElementType.DIVIDER -> {
+            val dividerConfig = element.dividerConfig ?: DividerConfig()
+            val dividerColor = parseColor(dividerConfig.color) ?: Color.LightGray
+            
+            when (dividerConfig.orientation) {
+                Orientation.HORIZONTAL -> {
+                    Divider(
+                        modifier = elementModifier.height(dividerConfig.thickness.dp),
+                        color = dividerColor
+                    )
+                }
+                Orientation.VERTICAL -> {
+                    Divider(
+                        modifier = elementModifier.width(dividerConfig.thickness.dp).fillMaxHeight(),
+                        color = dividerColor
+                    )
+                }
+            }
         }
     }
 }

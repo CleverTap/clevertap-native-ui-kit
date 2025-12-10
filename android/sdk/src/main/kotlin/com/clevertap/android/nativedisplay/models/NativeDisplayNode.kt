@@ -40,7 +40,14 @@ data class NativeDisplayContainer(
     override val styleClass: String? = null,
     override val visible: String? = null,
     override val actions: Map<String, Action>? = null,
-    override val animation: Animation? = null
+    override val animation: Animation? = null,
+    
+    /**
+     * Gallery-specific configuration.
+     * Only applicable when containerType is GALLERY.
+     */
+    @SerialName("gallery_config")
+    val galleryConfig: GalleryConfig? = null
 ) : NativeDisplayNode()
 
 /**
@@ -57,8 +64,39 @@ data class NativeDisplayElement(
     override val styleClass: String? = null,
     override val visible: String? = null,
     override val actions: Map<String, Action>? = null,
-    override val animation: Animation? = null
+    override val animation: Animation? = null,
+    
+    /**
+     * Divider-specific configuration.
+     * Only applicable when elementType is DIVIDER.
+     */
+    @SerialName("divider_config")
+    val dividerConfig: DividerConfig? = null
 ) : NativeDisplayNode()
+
+/**
+ * Divider configuration.
+ */
+@Serializable
+data class DividerConfig(
+    /**
+     * Orientation of the divider.
+     */
+    @SerialName("orientation")
+    val orientation: Orientation = Orientation.HORIZONTAL,
+    
+    /**
+     * Thickness of the divider in dp.
+     */
+    @SerialName("thickness")
+    val thickness: Float = 1f,
+    
+    /**
+     * Color of the divider (hex).
+     */
+    @SerialName("color")
+    val color: String = "#DDDDDD"
+)
 
 /**
  * Action that can be triggered by user interaction (Phase 3+).

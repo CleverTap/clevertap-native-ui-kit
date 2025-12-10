@@ -19,7 +19,10 @@ enum class ContainerType {
     BOX,
     
     @SerialName("stack")
-    STACK
+    STACK,
+    
+    @SerialName("gallery")
+    GALLERY
 }
 
 /**
@@ -41,7 +44,10 @@ enum class ElementType {
     VIDEO,
     
     @SerialName("spacer")
-    SPACER
+    SPACER,
+    
+    @SerialName("divider")
+    DIVIDER
 }
 
 /**
@@ -105,4 +111,34 @@ enum class TextDecoration {
     
     @SerialName("strikethrough")
     STRIKETHROUGH
+}
+
+/**
+ * Orientation for divider and gallery.
+ */
+@Serializable
+enum class Orientation {
+    @SerialName("horizontal")
+    HORIZONTAL,
+    
+    @SerialName("vertical")
+    VERTICAL
+}
+
+/**
+ * Snap behavior for gallery/carousel.
+ */
+@Serializable
+enum class SnapBehavior {
+    @SerialName("none")
+    NONE,           // Free scrolling
+    
+    @SerialName("start")
+    START,          // Snap to start
+    
+    @SerialName("center")
+    CENTER,         // Snap to center (one item centered)
+    
+    @SerialName("end")
+    END             // Snap to end
 }

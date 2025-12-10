@@ -32,8 +32,13 @@ fun NativeUIKitSampleApp() {
         val tabs = listOf(
             "Simple Card",
             "Product Card",
-            "Nested Containers",
-            "All Elements"
+            "Nested",
+            "All Elements",
+            "Dividers",
+            "Simple Gallery",
+            "Full Gallery",
+            "Free Gallery",
+            "Combined"
         )
         
         Scaffold(
@@ -41,7 +46,7 @@ fun NativeUIKitSampleApp() {
                 TopAppBar(
                     title = { 
                         Text(
-                            "Native Display Kit Samples",
+                            "Native Display Kit",
                             style = MaterialTheme.typography.titleLarge
                         ) 
                     },
@@ -61,7 +66,7 @@ fun NativeUIKitSampleApp() {
                 ScrollableTabRow(
                     selectedTabIndex = selectedTabIndex,
                     modifier = Modifier.fillMaxWidth(),
-                    edgePadding = 0.dp
+                    edgePadding = 8.dp
                 ) {
                     tabs.forEachIndexed { index, title ->
                         Tab(
@@ -85,6 +90,11 @@ fun NativeUIKitSampleApp() {
                         1 -> ProductCardSample()
                         2 -> NestedContainersSample()
                         3 -> AllElementsSample()
+                        4 -> DividerDemoSample()
+                        5 -> SimpleGallerySample()
+                        6 -> FullFeaturedGallerySample()
+                        7 -> FreeFlowGallerySample()
+                        8 -> CombinedDemoSample()
                     }
                 }
             }
