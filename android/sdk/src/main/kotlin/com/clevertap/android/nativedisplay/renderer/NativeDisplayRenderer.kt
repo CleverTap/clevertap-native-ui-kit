@@ -6,11 +6,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.clevertap.android.nativedisplay.evaluator.VariableEvaluator
 import com.clevertap.android.nativedisplay.models.*
 import com.clevertap.android.nativedisplay.style.StyleResolver
+import androidx.core.graphics.toColorInt
 
 /**
  * Main entry point for rendering native display UI.
@@ -49,7 +49,7 @@ private fun RenderNode(
 ) {
     // Check visibility condition
     if (node.visible != null) {
-        val isVisible = evaluator.evaluateBoolean(node.visible)
+        val isVisible = evaluator.evaluateBoolean(node.visible!!)
         if (!isVisible) return
     }
 
@@ -172,9 +172,6 @@ private fun RenderElement(
         ElementType.BUTTON -> {
             // Placeholder for button rendering
             Box(modifier = elementModifier)
-            Button(
-                
-            )
         }
 
         ElementType.VIDEO -> {
@@ -210,8 +207,8 @@ private fun parseColor(colorString: String?): Color {
     return try {
         val hex = colorString.removePrefix("#")
         when (hex.length) {
-            6 -> Color(android.graphics.Color.parseColor("#$hex"))
-            8 -> Color(android.graphics.Color.parseColor("#$hex"))
+            6 -> Color("#$hex".toColorInt())
+            8 -> Color("#$hex".toColorInt())
             else -> Color.Unspecified
         }
     } catch (e: Exception) {
