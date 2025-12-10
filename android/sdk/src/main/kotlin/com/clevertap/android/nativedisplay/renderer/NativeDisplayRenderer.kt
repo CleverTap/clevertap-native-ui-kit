@@ -28,9 +28,6 @@ import com.clevertap.android.nativedisplay.style.StyleResolver
 
 /**
  * Main entry point for rendering native display UI.
- *
- * @param config The display configuration (monolithic or with references)
- * @param modifier Optional modifier for the root composable
  */
 @Composable
 fun NativeDisplayView(
@@ -40,7 +37,6 @@ fun NativeDisplayView(
     val styleResolver = StyleResolver(config.theme, config.styleClasses)
     val evaluator = VariableEvaluator(config.variables)
 
-    // Render the root node
     RenderNode(
         node = config.root,
         styleResolver = styleResolver,
@@ -70,10 +66,11 @@ private fun RenderNode(
     // Resolve style with inheritance
     val resolvedStyle = styleResolver.resolveWithColors(node, parentStyle)
 
-    // Apply layout and style to modifier
-    val styledModifier = modifier
-        .applyLayout(node.layout)
-        .applyStyle(resolvedStyle, node.layout)
+    // Apply modifiers in correct order
+    var finalModifier = modifier
+    finalModifier = finalModifier.applySizing(node.layout)
+    finalModifier = finalModifier.applyMargin(node.layout)
+    finalModifier = finalModifier.applyDecorations(resolvedStyle)
 
     // Render based on node type
     when (node) {
@@ -82,14 +79,16 @@ private fun RenderNode(
             styleResolver = styleResolver,
             evaluator = evaluator,
             resolvedStyle = resolvedStyle,
-            modifier = styledModifier
+            layout = node.layout,
+            modifier = finalModifier
         )
 
         is NativeDisplayElement -> RenderElement(
             element = node,
             evaluator = evaluator,
             resolvedStyle = resolvedStyle,
-            modifier = styledModifier
+            layout = node.layout,
+            modifier = finalModifier
         )
     }
 }
@@ -103,14 +102,16 @@ private fun RenderContainer(
     styleResolver: StyleResolver,
     evaluator: VariableEvaluator,
     resolvedStyle: Style,
+    layout: Layout?,
     modifier: Modifier = Modifier
 ) {
     val spacing = container.layout?.spacing?.dp ?: 0.dp
+    val containerModifier = modifier.applyPadding(layout)
 
     when (container.containerType) {
         ContainerType.VERTICAL -> {
             Column(
-                modifier = modifier,
+                modifier = containerModifier,
                 verticalArrangement = Arrangement.spacedBy(spacing)
             ) {
                 container.children.forEach { child ->
@@ -118,7 +119,7 @@ private fun RenderContainer(
                         node = child,
                         styleResolver = styleResolver,
                         evaluator = evaluator,
-                        parentStyle = resolvedStyle,  // Pass style for inheritance
+                        parentStyle = resolvedStyle,
                         modifier = Modifier
                     )
                 }
@@ -127,7 +128,7 @@ private fun RenderContainer(
 
         ContainerType.HORIZONTAL -> {
             Row(
-                modifier = modifier,
+                modifier = containerModifier,
                 horizontalArrangement = Arrangement.spacedBy(spacing)
             ) {
                 container.children.forEach { child ->
@@ -143,7 +144,7 @@ private fun RenderContainer(
         }
 
         ContainerType.BOX, ContainerType.STACK -> {
-            Box(modifier = modifier) {
+            Box(modifier = containerModifier) {
                 container.children.forEach { child ->
                     RenderNode(
                         node = child,
@@ -166,8 +167,11 @@ private fun RenderElement(
     element: NativeDisplayElement,
     evaluator: VariableEvaluator,
     resolvedStyle: Style,
+    layout: Layout?,
     modifier: Modifier = Modifier
 ) {
+    val elementModifier = modifier.applyPadding(layout)
+    
     when (element.elementType) {
         ElementType.TEXT -> {
             val text = element.bindings["text"]?.let {
@@ -176,7 +180,7 @@ private fun RenderElement(
 
             Text(
                 text = text,
-                modifier = modifier,
+                modifier = elementModifier,
                 color = parseColor(resolvedStyle.textColor) ?: Color.Black,
                 fontSize = (resolvedStyle.fontSize ?: 14f).sp,
                 fontWeight = resolveFontWeight(resolvedStyle.fontWeight),
@@ -197,13 +201,12 @@ private fun RenderElement(
                     contentDescription = element.bindings["contentDescription"]?.let {
                         evaluator.evaluateString(it)
                     },
-                    modifier = modifier,
+                    modifier = elementModifier,
                     contentScale = ContentScale.Crop
                 )
             } else {
-                // Placeholder for missing image
                 Box(
-                    modifier = modifier.background(Color.LightGray),
+                    modifier = elementModifier.background(Color.LightGray),
                     contentAlignment = Alignment.Center
                 ) {
                     Text("No Image", color = Color.Gray, fontSize = 12.sp)
@@ -218,7 +221,7 @@ private fun RenderElement(
 
             Button(
                 onClick = { /* TODO: Handle actions */ },
-                modifier = modifier,
+                modifier = elementModifier,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = parseColor(resolvedStyle.backgroundColor) ?: Color(0xFF007AFF),
                     contentColor = parseColor(resolvedStyle.textColor) ?: Color.White
@@ -234,11 +237,8 @@ private fun RenderElement(
         }
 
         ElementType.VIDEO -> {
-            // Placeholder for video player
-            // In a real implementation, you'd use ExoPlayer or similar
             Box(
-                modifier = modifier
-                    .background(Color.Black),
+                modifier = elementModifier.background(Color.Black),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -250,20 +250,18 @@ private fun RenderElement(
         }
 
         ElementType.SPACER -> {
-            Spacer(modifier = modifier)
+            Spacer(modifier = elementModifier)
         }
     }
 }
 
 /**
- * Apply layout properties to a modifier.
+ * Apply width and height from layout.
  */
-private fun Modifier.applyLayout(layout: Layout?): Modifier {
+private fun Modifier.applySizing(layout: Layout?): Modifier {
     if (layout == null) return this
-
     var modifier = this
 
-    // Width
     layout.width?.let { width ->
         modifier = when {
             width.special == SpecialDimension.MATCH_PARENT -> modifier.fillMaxWidth()
@@ -276,7 +274,6 @@ private fun Modifier.applyLayout(layout: Layout?): Modifier {
         }
     }
 
-    // Height
     layout.height?.let { height ->
         modifier = when {
             height.special == SpecialDimension.MATCH_PARENT -> modifier.fillMaxHeight()
@@ -289,42 +286,47 @@ private fun Modifier.applyLayout(layout: Layout?): Modifier {
         }
     }
 
-    // Margin
-    layout.margin?.let { margin ->
-        modifier = modifier.padding(
-            start = margin.resolveLeft().dp,
-            top = margin.resolveTop().dp,
-            end = margin.resolveRight().dp,
-            bottom = margin.resolveBottom().dp
-        )
-    }
-
     return modifier
 }
 
 /**
- * Apply style properties to a modifier.
+ * Apply margin (outside spacing).
  */
-private fun Modifier.applyStyle(style: Style, layout: Layout?): Modifier {
+private fun Modifier.applyMargin(layout: Layout?): Modifier {
+    if (layout?.margin == null) return this
+    
+    val margin = layout.margin
+    return this.padding(
+        start = margin.resolveLeft().dp,
+        top = margin.resolveTop().dp,
+        end = margin.resolveRight().dp,
+        bottom = margin.resolveBottom().dp
+    )
+}
+
+/**
+ * Apply padding (inside spacing).
+ */
+private fun Modifier.applyPadding(layout: Layout?): Modifier {
+    if (layout?.padding == null) return this
+    
+    val padding = layout.padding
+    return this.padding(
+        start = padding.resolveLeft().dp,
+        top = padding.resolveTop().dp,
+        end = padding.resolveRight().dp,
+        bottom = padding.resolveBottom().dp
+    )
+}
+
+/**
+ * Apply visual decorations (shadow, background, border).
+ */
+private fun Modifier.applyDecorations(style: Style): Modifier {
     var modifier = this
-
-    // Padding
-    layout?.padding?.let { padding ->
-        modifier = modifier.padding(
-            start = padding.resolveLeft().dp,
-            top = padding.resolveTop().dp,
-            end = padding.resolveRight().dp,
-            bottom = padding.resolveBottom().dp
-        )
-    }
-
-    // Border radius (must come before background)
+    
     val shape = RoundedCornerShape((style.borderRadius ?: 0f).dp)
-    if (style.borderRadius != null && style.borderRadius > 0f) {
-        modifier = modifier.clip(shape)
-    }
-
-    // Shadow
+    
     if (style.shadowRadius != null && style.shadowRadius > 0f) {
         modifier = modifier.shadow(
             elevation = style.shadowRadius.dp,
@@ -332,16 +334,18 @@ private fun Modifier.applyStyle(style: Style, layout: Layout?): Modifier {
             spotColor = parseColor(style.shadowColor) ?: Color.Black.copy(alpha = 0.25f)
         )
     }
-
-    // Background color
+    
+    if (style.borderRadius != null && style.borderRadius > 0f) {
+        modifier = modifier.clip(shape)
+    }
+    
     style.backgroundColor?.let { color ->
         modifier = modifier.background(
             color = parseColor(color) ?: Color.Transparent,
             shape = shape
         )
     }
-
-    // Border
+    
     if (style.borderWidth != null && style.borderWidth > 0f) {
         modifier = modifier.border(
             width = style.borderWidth.dp,
@@ -349,19 +353,17 @@ private fun Modifier.applyStyle(style: Style, layout: Layout?): Modifier {
             shape = shape
         )
     }
-
-    // Opacity
+    
     style.opacity?.let { opacity ->
         modifier = modifier.alpha(opacity.coerceIn(0f, 1f))
     }
-
+    
     return modifier
 }
 
 /**
  * Parse hex color string to Compose Color.
  */
-// todo check this later
 private fun parseColor(colorString: String?): Color? {
     if (colorString == null) return null
 
@@ -413,10 +415,9 @@ typealias ndtd = com.clevertap.android.nativedisplay.models.TextDecoration
  */
 private fun resolveTextDecoration(decoration: ndtd?): TextDecoration {
     return when (decoration) {
-        ndtd.NONE -> TextDecoration.None
         ndtd.UNDERLINE -> TextDecoration.Underline
         ndtd.STRIKETHROUGH -> TextDecoration.LineThrough
-        null -> TextDecoration.None
+        ndtd.NONE, null -> TextDecoration.None
     }
 }
 

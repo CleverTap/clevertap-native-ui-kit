@@ -11,6 +11,7 @@ import kotlinx.serialization.json.JsonPrimitive
 
 /**
  * Sample configurations for testing the renderer.
+ * Using direct JPG URLs from picsum
  */
 object SampleConfigs {
     
@@ -67,7 +68,7 @@ object SampleConfigs {
     }
     
     /**
-     * Product card with image, prices, and button.
+     * Product card with direct image URL
      */
     fun productCard(): ResolvedConfig {
         return ResolvedConfig(
@@ -112,7 +113,7 @@ object SampleConfigs {
             ),
             variables = mapOf(
                 "productName" to JsonPrimitive("Wireless Headphones Pro"),
-                "productImage" to JsonPrimitive("https://via.placeholder.com/300x200"),
+                "productImage" to JsonPrimitive("https://fastly.picsum.photos/id/29/4000/2670.jpg?hmac=rCbRAl24FzrSzwlR5tL-Aqzyu5tX_PA95VJtnUXegGU"),
                 "priceOld" to JsonPrimitive("$299.99"),
                 "priceNew" to JsonPrimitive("$224.99"),
                 "hasDiscount" to JsonPrimitive(true),
@@ -128,7 +129,7 @@ object SampleConfigs {
                     padding = Spacing.all(20f)
                 ),
                 children = listOf(
-                    // Product Image
+                    // Product Image - REAL IMAGE
                     NativeDisplayElement(
                         id = "product-image",
                         elementType = ElementType.IMAGE,
@@ -266,10 +267,9 @@ object SampleConfigs {
                 ),
                 style = Style(
                     backgroundColor = "#F5F5F5",
-                    fontSize = 18f  // This will be inherited by children
+                    fontSize = 18f
                 ),
                 children = listOf(
-                    // First Level Container
                     NativeDisplayContainer(
                         id = "level-1",
                         containerType = ContainerType.VERTICAL,
@@ -290,12 +290,10 @@ object SampleConfigs {
                                 bindings = mapOf("text" to "{{title}}"),
                                 style = Style(
                                     fontWeight = FontWeight.BOLD
-                                    // fontSize inherited (18f)
                                 ),
                                 layout = Layout(margin = Spacing(bottom = 8f))
                             ),
                             
-                            // Second Level Container
                             NativeDisplayContainer(
                                 id = "level-2",
                                 containerType = ContainerType.VERTICAL,
@@ -312,12 +310,10 @@ object SampleConfigs {
                                         elementType = ElementType.TEXT,
                                         bindings = mapOf("text" to "{{subtitle}}"),
                                         style = Style(
-                                            // fontSize still inherited (18f)
                                             textColor = "#007AFF"
                                         )
                                     ),
                                     
-                                    // Third Level Container
                                     NativeDisplayContainer(
                                         id = "level-3",
                                         containerType = ContainerType.HORIZONTAL,
@@ -335,7 +331,7 @@ object SampleConfigs {
                                                 elementType = ElementType.TEXT,
                                                 bindings = mapOf("text" to "Level 3"),
                                                 style = Style(
-                                                    fontSize = 12f  // Override inherited fontSize
+                                                    fontSize = 12f
                                                 )
                                             ),
                                             Spacer(layout = Layout(width = Dimension.dp(8f))),
@@ -360,7 +356,7 @@ object SampleConfigs {
     }
     
     /**
-     * All element types showcase.
+     * All element types with direct image URL
      */
     fun allElementsDemo(): ResolvedConfig {
         return ResolvedConfig(
@@ -368,7 +364,7 @@ object SampleConfigs {
             styleClasses = emptyList(),
             variables = mapOf(
                 "userName" to JsonPrimitive("Test User"),
-                "imageUrl" to JsonPrimitive("https://via.placeholder.com/150")
+                "imageUrl" to JsonPrimitive("https://fastly.picsum.photos/id/29/4000/2670.jpg?hmac=rCbRAl24FzrSzwlR5tL-Aqzyu5tX_PA95VJtnUXegGU")
             ),
             root = NativeDisplayContainer(
                 id = "root",
@@ -388,7 +384,7 @@ object SampleConfigs {
                         layout = Layout(margin = Spacing(bottom = 16f))
                     ),
                     
-                    // IMAGE
+                    // IMAGE - REAL IMAGE
                     NativeDisplayElement(
                         id = "image-demo",
                         elementType = ElementType.IMAGE,
@@ -399,7 +395,7 @@ object SampleConfigs {
                             margin = Spacing(bottom = 16f)
                         ),
                         style = Style(
-                            borderRadius = 75f,  // Circular
+                            borderRadius = 75f,
                             backgroundColor = "#F0F0F0"
                         )
                     ),
@@ -443,7 +439,6 @@ object SampleConfigs {
         )
     }
     
-    // Helper to create spacer
     private fun Spacer(layout: Layout? = null): NativeDisplayElement {
         return NativeDisplayElement(
             id = "spacer-${System.currentTimeMillis()}",
@@ -453,9 +448,6 @@ object SampleConfigs {
     }
 }
 
-/**
- * Sample composables for testing.
- */
 @Composable
 fun SimpleGreetingCardSample() {
     NativeDisplayView(
