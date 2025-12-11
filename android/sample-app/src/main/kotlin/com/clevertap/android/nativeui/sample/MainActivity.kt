@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
 import com.clevertap.android.nativedisplay.samples.*
@@ -44,7 +45,10 @@ fun NativeUIKitSampleApp() {
             "Radial/Sweep",
             "Animated",
             "Patterns",
-            "Layered"
+            "Layered",
+            "🛍️ E-commerce",
+            "👤 Social",
+            "📊 Dashboard"
         )
         
         Scaffold(
@@ -106,6 +110,9 @@ fun NativeUIKitSampleApp() {
                         11 -> AnimatedBackgroundsScreen()
                         12 -> PatternBackgroundsScreen()
                         13 -> LayeredBackgroundsScreen()
+                        14 -> EcommerceShowcaseScreen()
+                        15 -> SocialProfileShowcaseScreen()
+                        16 -> DashboardShowcaseScreen()
                     }
                 }
             }
@@ -171,4 +178,116 @@ fun LayeredBackgroundsScreen() {
         config = config,
         modifier = Modifier.fillMaxWidth()
     )
+}
+
+/**
+ * Tab 14: JSON Test (Simple)
+ * Minimal JSON example to verify structure works
+ */
+@Composable
+fun JsonTestScreen() {
+    val context = LocalContext.current
+    val config = remember {
+        JsonLoader.loadFromAssets(context, "test_simple.json")
+    }
+    
+    Column(modifier = Modifier.fillMaxWidth()) {
+        if (config != null) {
+            Text(
+                "✅ JSON loaded successfully!",
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color(0xFF4CAF50),
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            NativeDisplayView(
+                config = config,
+                modifier = Modifier.fillMaxWidth()
+            )
+        } else {
+            ErrorMessage("Failed to load test_simple.json")
+        }
+    }
+}
+
+/**
+ * Tab 15: E-commerce Product Showcase (JSON)
+ * Demonstrates: Layered backgrounds, multiple text styles, buttons, badges, animations
+ */
+@Composable
+fun EcommerceShowcaseScreen() {
+    val context = LocalContext.current
+    val config = remember {
+        JsonLoader.loadFromAssets(context, "showcase_ecommerce_product.json")
+    }
+    
+    if (config != null) {
+        NativeDisplayView(
+            config = config,
+            modifier = Modifier.fillMaxWidth()
+        )
+    } else {
+        ErrorMessage("Failed to load E-commerce showcase")
+    }
+}
+
+/**
+ * Tab 16: Social Profile Showcase (JSON)
+ * Demonstrates: Hero section, badges, avatar, stats, buttons, tags
+ */
+@Composable
+fun SocialProfileShowcaseScreen() {
+    val context = LocalContext.current
+    val config = remember {
+        JsonLoader.loadFromAssets(context, "showcase_social_profile.json")
+    }
+    
+    if (config != null) {
+        NativeDisplayView(
+            config = config,
+            modifier = Modifier.fillMaxWidth()
+        )
+    } else {
+        ErrorMessage("Failed to load Social Profile showcase")
+    }
+}
+
+/**
+ * Tab 17: Dashboard Showcase (JSON)
+ * Demonstrates: Header card, metrics, activity feed, quick actions
+ */
+@Composable
+fun DashboardShowcaseScreen() {
+    val context = LocalContext.current
+    val config = remember {
+        JsonLoader.loadFromAssets(context, "showcase_dashboard.json")
+    }
+    
+    if (config != null) {
+        NativeDisplayView(
+            config = config,
+            modifier = Modifier.fillMaxWidth()
+        )
+    } else {
+        ErrorMessage("Failed to load Dashboard showcase")
+    }
+}
+
+/**
+ * Error message composable
+ */
+@Composable
+fun ErrorMessage(message: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(32.dp)
+            .background(Color(0xFFFFEBEE), shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp))
+            .padding(24.dp)
+    ) {
+        Text(
+            text = message,
+            color = Color(0xFFC62828),
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
 }

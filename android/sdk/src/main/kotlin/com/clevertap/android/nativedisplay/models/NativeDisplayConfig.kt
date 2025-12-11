@@ -76,6 +76,7 @@ data class DataReference(
  * Resolved configuration after loading all resources.
  * Used internally after fetching templates, styles, and data.
  */
+@Serializable
 data class ResolvedConfig(
     val theme: Theme,
     val styleClasses: List<StyleClass>,
