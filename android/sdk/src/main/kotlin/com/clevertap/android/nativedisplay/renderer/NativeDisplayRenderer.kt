@@ -89,7 +89,7 @@ private fun RenderNode(
     // Apply modifiers in correct order
     var finalModifier = modifier
     finalModifier = finalModifier.applySizing(node.layout)
-    finalModifier = finalModifier.applyMargin(node.layout)
+    finalModifier = finalModifier.applyOffset(node.layout)  // Use offset instead of margin
     finalModifier = finalModifier.applyDecorations(resolvedStyle)
 
     // Render based on node type
@@ -723,18 +723,25 @@ private fun Modifier.applySizing(layout: Layout?): Modifier {
 }
 
 /**
- * Apply margin (outside spacing).
+ * Apply absolute offset positioning (replaces margin).
+ * This properly positions elements within their container bounds using x/y coordinates.
+ * 
+ * Note: Offset moves the element after layout, so it works correctly for absolute positioning
+ * within Box/Stack containers. For Column/Row, the spacing is handled by Arrangement.spacedBy.
  */
-private fun Modifier.applyMargin(layout: Layout?): Modifier {
+private fun Modifier.applyOffset(layout: Layout?): Modifier {
     if (layout?.margin == null) return this
     
     val margin = layout.margin
-    return this.padding(
-        start = margin.resolveLeft().dp,
-        top = margin.resolveTop().dp,
-        end = margin.resolveRight().dp,
-        bottom = margin.resolveBottom().dp
+    
+    // Use offset for absolute positioning (x, y within container bounds)
+    // Negative margins are supported (negative offset values)
+    return this.offset(
+        x = margin.resolveLeft().dp,
+        y = margin.resolveTop().dp
     )
+    // Note: right and bottom margins don't affect offset directly,
+    // they would need to be handled by the parent container's layout calculations
 }
 
 /**

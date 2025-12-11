@@ -27,7 +27,7 @@ object NewElementsSamples {
                 containerType = ContainerType.VERTICAL,
                 layout = Layout(
                     width = Dimension.MATCH_PARENT,
-                    padding = Spacing.all(20f)
+                    padding = Spacing.all(4f)
                 ),
                 style = Style(
                     backgroundColor = "#FFFFFF"
@@ -38,16 +38,13 @@ object NewElementsSamples {
                         id = "text1",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Section 1"),
-                        style = Style(fontSize = 18f, fontWeight = FontWeight.BOLD)
+                        style = Style(fontSize = 30f, fontWeight = FontWeight.BOLD)
                     ),
                     
                     // Horizontal divider (default)
                     NativeDisplayElement(
                         id = "divider1",
                         elementType = ElementType.DIVIDER,
-                        layout = Layout(
-                            margin = Spacing(top = 12f, bottom = 12f)
-                        ),
                         dividerConfig = DividerConfig(
                             orientation = Orientation.HORIZONTAL,
                             thickness = 1f,
@@ -60,16 +57,13 @@ object NewElementsSamples {
                         id = "text2",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Section 2"),
-                        style = Style(fontSize = 18f, fontWeight = FontWeight.BOLD)
+                        style = Style(fontSize = 30f, fontWeight = FontWeight.BOLD)
                     ),
                     
                     // Thick colored divider
                     NativeDisplayElement(
                         id = "divider2",
                         elementType = ElementType.DIVIDER,
-                        layout = Layout(
-                            margin = Spacing(top = 12f, bottom = 12f)
-                        ),
                         dividerConfig = DividerConfig(
                             orientation = Orientation.HORIZONTAL,
                             thickness = 4f,
@@ -82,7 +76,17 @@ object NewElementsSamples {
                         id = "text3",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Section 3"),
-                        style = Style(fontSize = 18f, fontWeight = FontWeight.BOLD)
+                        style = Style(fontSize = 30f, fontWeight = FontWeight.BOLD)
+                    ),
+
+                    NativeDisplayElement(
+                        id = "divider2",
+                        elementType = ElementType.DIVIDER,
+                        dividerConfig = DividerConfig(
+                            orientation = Orientation.HORIZONTAL,
+                            thickness = 4f,
+                            color = "#88FFAAFF"
+                        )
                     ),
                     
                     // Horizontal container with vertical dividers
@@ -109,14 +113,9 @@ object NewElementsSamples {
                             NativeDisplayElement(
                                 id = "v-divider",
                                 elementType = ElementType.DIVIDER,
-                                layout = Layout(
-                                    width = Dimension.dp(1f),
-                                    height = Dimension.dp(40f),
-                                    margin = Spacing(left = 12f, right = 12f)
-                                ),
                                 dividerConfig = DividerConfig(
                                     orientation = Orientation.VERTICAL,
-                                    thickness = 1f,
+                                    thickness = 8f,
                                     color = "#999999"
                                 )
                             ),
@@ -125,7 +124,10 @@ object NewElementsSamples {
                                 id = "col2",
                                 elementType = ElementType.TEXT,
                                 bindings = mapOf("text" to "Column 2"),
-                                layout = Layout(width = Dimension.dp(80f))
+                                layout = Layout(
+                                    width = Dimension.dp(80f),
+                                    padding = Spacing(all = 4f)
+                                )
                             )
                         )
                     )
