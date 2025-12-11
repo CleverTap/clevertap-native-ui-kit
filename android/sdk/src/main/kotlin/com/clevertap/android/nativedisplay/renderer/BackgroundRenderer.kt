@@ -1,20 +1,13 @@
 package com.clevertap.android.nativedisplay.renderer
 
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
 import com.clevertap.android.nativedisplay.models.*
 import kotlin.math.cos
 import kotlin.math.sin
@@ -22,46 +15,55 @@ import kotlin.random.Random
 
 /**
  * Apply background to a modifier based on the Background configuration.
+ * 
+ * This is @Composable because animated backgrounds (Shimmer, AnimatedGradient, Pulse, 
+ * Particles) require Compose animation APIs. Static backgrounds (Solid, LinearGradient, etc.) 
+ * are delegated to non-composable implementations for optimal performance.
+ * 
+ * @param background The background configuration to apply
+ * @return Modified Modifier with background applied
  */
 @Composable
 fun Modifier.applyBackground(background: Background?): Modifier {
     if (background == null) return this
     
-    return this.then(
-        when (background) {
-            is Background.Solid -> applySolidBackground(background)
-            is Background.LinearGradient -> applyLinearGradient(background)
-            is Background.RadialGradient -> applyRadialGradient(background)
-            is Background.SweepGradient -> applySweepGradient(background)
-            is Background.Image -> applyImageBackground(background)
-            is Background.Shimmer -> applyShimmerBackground(background)
-            is Background.AnimatedGradient -> applyAnimatedGradient(background)
-            is Background.Pulse -> applyPulseBackground(background)
-            is Background.Pattern -> applyPatternBackground(background)
-            is Background.Particles -> applyParticlesBackground(background)
-            is Background.Layered -> applyLayeredBackground(background)
-        }
-    )
+    return when (background) {
+        // Static backgrounds - use non-composable implementations
+        is Background.Solid -> this.applyStaticSolid(background)
+        is Background.LinearGradient -> this.applyStaticLinearGradient(background)
+        is Background.RadialGradient -> this.applyStaticRadialGradient(background)
+        is Background.SweepGradient -> this.applyStaticSweepGradient(background)
+        is Background.Pattern -> this.applyStaticPattern(background)
+        is Background.Image -> this.applyStaticImage(background)
+        
+        // Animated backgrounds - require @Composable
+        is Background.Shimmer -> this.applyAnimatedShimmer(background)
+        is Background.AnimatedGradient -> this.applyAnimatedGradient(background)
+        is Background.Pulse -> this.applyAnimatedPulse(background)
+        is Background.Particles -> this.applyAnimatedParticles(background)
+        is Background.Layered -> this.applyLayeredBackground(background)
+    }
 }
 
+// ============================================================================
+// STATIC BACKGROUNDS (Non-Composable)
+// ============================================================================
+
 /**
- * Solid color background.
+ * Apply solid color background (non-composable).
  */
-@Composable
-private fun applySolidBackground(bg: Background.Solid): Modifier {
+private fun Modifier.applyStaticSolid(bg: Background.Solid): Modifier {
     val color = parseColor(bg.color) ?: Color.Transparent
-    return Modifier.background(color)
+    return this.background(color)
 }
 
 /**
- * Linear gradient background.
+ * Apply linear gradient background (non-composable).
  */
-@Composable
-private fun applyLinearGradient(bg: Background.LinearGradient): Modifier {
+private fun Modifier.applyStaticLinearGradient(bg: Background.LinearGradient): Modifier {
     val colors = bg.colors.mapNotNull { parseColor(it) }
-    if (colors.isEmpty()) return Modifier
+    if (colors.isEmpty()) return this
     
-    // Create color stops if provided
     val brush = if (bg.stops != null && bg.stops.isNotEmpty()) {
         val colorStops = colors.mapIndexed { index, color ->
             val stop = bg.stops.getOrNull(index) ?: (index.toFloat() / (colors.size - 1))
@@ -80,18 +82,17 @@ private fun applyLinearGradient(bg: Background.LinearGradient): Modifier {
         )
     }
     
-    return Modifier.background(brush)
+    return this.background(brush)
 }
 
 /**
- * Radial gradient background.
+ * Apply radial gradient background (non-composable).
  */
-@Composable
-private fun applyRadialGradient(bg: Background.RadialGradient): Modifier {
+private fun Modifier.applyStaticRadialGradient(bg: Background.RadialGradient): Modifier {
     val colors = bg.colors.mapNotNull { parseColor(it) }
-    if (colors.isEmpty()) return Modifier
+    if (colors.isEmpty()) return this
     
-    return Modifier.drawWithContent {
+    return this.drawWithContent {
         val brush = if (bg.stops != null && bg.stops.isNotEmpty()) {
             val colorStops = colors.mapIndexed { index, color ->
                 val stop = bg.stops.getOrNull(index) ?: (index.toFloat() / (colors.size - 1))
@@ -115,14 +116,13 @@ private fun applyRadialGradient(bg: Background.RadialGradient): Modifier {
 }
 
 /**
- * Sweep/Conic gradient background.
+ * Apply sweep/conic gradient background (non-composable).
  */
-@Composable
-private fun applySweepGradient(bg: Background.SweepGradient): Modifier {
+private fun Modifier.applyStaticSweepGradient(bg: Background.SweepGradient): Modifier {
     val colors = bg.colors.mapNotNull { parseColor(it) }
-    if (colors.isEmpty()) return Modifier
+    if (colors.isEmpty()) return this
     
-    return Modifier.drawWithContent {
+    return this.drawWithContent {
         val brush = if (bg.stops != null && bg.stops.isNotEmpty()) {
             val colorStops = colors.mapIndexed { index, color ->
                 val stop = bg.stops.getOrNull(index) ?: (index.toFloat() / (colors.size - 1))
@@ -144,23 +144,50 @@ private fun applySweepGradient(bg: Background.SweepGradient): Modifier {
 }
 
 /**
- * Image background.
+ * Apply pattern background (non-composable).
  */
-@Composable
-private fun applyImageBackground(bg: Background.Image): Modifier {
-    return Modifier.drawWithContent {
-        drawContent()
+private fun Modifier.applyStaticPattern(bg: Background.Pattern): Modifier {
+    val primaryColor = parseColor(bg.primaryColor) ?: Color.Gray
+    val secondaryColor = parseColor(bg.secondaryColor) ?: Color.LightGray
+    
+    return this.drawWithContent {
+        // Draw base color
+        drawRect(primaryColor)
         
-        // Note: Image rendering needs to be done in a Box overlay
-        // This is a simplified version
-    }.background(Color.Transparent)
+        // Draw pattern
+        when (bg.patternType) {
+            PatternType.DOTS -> drawDotsPattern(secondaryColor, bg.size, bg.spacing)
+            PatternType.STRIPES_HORIZONTAL -> drawHorizontalStripes(secondaryColor, bg.size, bg.spacing)
+            PatternType.STRIPES_VERTICAL -> drawVerticalStripes(secondaryColor, bg.size, bg.spacing)
+            PatternType.STRIPES_DIAGONAL -> drawDiagonalStripes(secondaryColor, bg.size, bg.spacing)
+            PatternType.GRID -> drawGridPattern(secondaryColor, bg.size, bg.spacing)
+            PatternType.CHECKERBOARD -> drawCheckerboard(secondaryColor, bg.size)
+            PatternType.POLKA_DOTS -> drawPolkaDotsPattern(secondaryColor, bg.size, bg.spacing)
+        }
+        
+        drawContent()
+    }
 }
 
 /**
- * Shimmer effect background.
+ * Apply image background (non-composable).
+ * Note: This is a simplified implementation. Full image rendering would require 
+ * additional handling for loading, caching, and effects.
+ */
+private fun Modifier.applyStaticImage(bg: Background.Image): Modifier {
+    // Placeholder implementation - images typically need async loading
+    return this.background(Color.Transparent)
+}
+
+// ============================================================================
+// ANIMATED BACKGROUNDS (Composable)
+// ============================================================================
+
+/**
+ * Apply shimmer effect background (animated, requires @Composable).
  */
 @Composable
-private fun applyShimmerBackground(bg: Background.Shimmer): Modifier {
+private fun Modifier.applyAnimatedShimmer(bg: Background.Shimmer): Modifier {
     val infiniteTransition = rememberInfiniteTransition(label = "shimmer")
     val offset by infiniteTransition.animateFloat(
         initialValue = -1f,
@@ -175,7 +202,7 @@ private fun applyShimmerBackground(bg: Background.Shimmer): Modifier {
     val baseColor = parseColor(bg.baseColor) ?: Color.LightGray
     val highlightColor = parseColor(bg.highlightColor) ?: Color.White
     
-    return Modifier.drawWithContent {
+    return this.drawWithContent {
         val brush = Brush.linearGradient(
             colors = listOf(
                 baseColor,
@@ -191,10 +218,10 @@ private fun applyShimmerBackground(bg: Background.Shimmer): Modifier {
 }
 
 /**
- * Animated gradient background.
+ * Apply animated gradient background (animated, requires @Composable).
  */
 @Composable
-private fun applyAnimatedGradient(bg: Background.AnimatedGradient): Modifier {
+private fun Modifier.applyAnimatedGradient(bg: Background.AnimatedGradient): Modifier {
     val infiniteTransition = rememberInfiniteTransition(label = "animated_gradient")
     val animatedValue by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -207,10 +234,10 @@ private fun applyAnimatedGradient(bg: Background.AnimatedGradient): Modifier {
     )
     
     val colors = bg.colors.mapNotNull { parseColor(it) }
-    if (colors.isEmpty()) return Modifier
+    if (colors.isEmpty()) return this
     
-    return Modifier.drawWithContent {
-        // Rotate colors based on animation
+    return this.drawWithContent {
+        // Rotate colors based on animation style
         val rotatedColors = when (bg.animationStyle) {
             AnimationStyle.SMOOTH -> colors  // Colors stay in place, just animate
             AnimationStyle.SHIFT -> {
@@ -244,10 +271,10 @@ private fun applyAnimatedGradient(bg: Background.AnimatedGradient): Modifier {
 }
 
 /**
- * Pulse/breathing effect background.
+ * Apply pulse/breathing effect background (animated, requires @Composable).
  */
 @Composable
-private fun applyPulseBackground(bg: Background.Pulse): Modifier {
+private fun Modifier.applyAnimatedPulse(bg: Background.Pulse): Modifier {
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val alpha by infiniteTransition.animateFloat(
         initialValue = bg.minOpacity,
@@ -260,41 +287,14 @@ private fun applyPulseBackground(bg: Background.Pulse): Modifier {
     )
     
     val color = parseColor(bg.color)?.copy(alpha = alpha) ?: Color.Transparent
-    return Modifier.background(color)
+    return this.background(color)
 }
 
 /**
- * Pattern background.
+ * Apply particles effect background (animated, requires @Composable).
  */
 @Composable
-private fun applyPatternBackground(bg: Background.Pattern): Modifier {
-    val primaryColor = parseColor(bg.primaryColor) ?: Color.Gray
-    val secondaryColor = parseColor(bg.secondaryColor) ?: Color.LightGray
-    
-    return Modifier.drawWithContent {
-        // Draw base color
-        drawRect(primaryColor)
-        
-        // Draw pattern
-        when (bg.patternType) {
-            PatternType.DOTS -> drawDotsPattern(secondaryColor, bg.size, bg.spacing)
-            PatternType.STRIPES_HORIZONTAL -> drawHorizontalStripes(secondaryColor, bg.size, bg.spacing)
-            PatternType.STRIPES_VERTICAL -> drawVerticalStripes(secondaryColor, bg.size, bg.spacing)
-            PatternType.STRIPES_DIAGONAL -> drawDiagonalStripes(secondaryColor, bg.size, bg.spacing)
-            PatternType.GRID -> drawGridPattern(secondaryColor, bg.size, bg.spacing)
-            PatternType.CHECKERBOARD -> drawCheckerboard(secondaryColor, bg.size)
-            PatternType.POLKA_DOTS -> drawPolkaDotsPattern(secondaryColor, bg.size, bg.spacing)
-        }
-        
-        drawContent()
-    }
-}
-
-/**
- * Particles effect background.
- */
-@Composable
-private fun applyParticlesBackground(bg: Background.Particles): Modifier {
+private fun Modifier.applyAnimatedParticles(bg: Background.Particles): Modifier {
     val particles = remember {
         List(bg.particleCount) {
             Particle(
@@ -325,7 +325,7 @@ private fun applyParticlesBackground(bg: Background.Particles): Modifier {
     
     val particleColor = parseColor(bg.particleColor)?.copy(alpha = bg.opacity) ?: Color.White
     
-    return Modifier.drawWithContent {
+    return this.drawWithContent {
         drawContent()
         
         particles.forEach { particle ->
@@ -342,21 +342,24 @@ private fun applyParticlesBackground(bg: Background.Particles): Modifier {
 }
 
 /**
- * Layered background (multiple backgrounds stacked).
+ * Apply layered background (requires @Composable due to recursive calls).
  */
 @Composable
-private fun applyLayeredBackground(bg: Background.Layered): Modifier {
-    var modifier = Modifier as Modifier
+private fun Modifier.applyLayeredBackground(bg: Background.Layered): Modifier {
+    var modifier = this as Modifier
     bg.layers.forEach { layer ->
         modifier = modifier.applyBackground(layer)
     }
     return modifier
 }
 
-// Helper functions
+// ============================================================================
+// HELPER FUNCTIONS (Non-Composable)
+// ============================================================================
 
 /**
  * Calculate gradient start offset based on angle.
+ * Pure function - no composition needed.
  */
 private fun calculateGradientStart(angleDegrees: Float, offset: Float = 0f): Offset {
     val angleRadians = Math.toRadians(angleDegrees.toDouble())
@@ -369,6 +372,7 @@ private fun calculateGradientStart(angleDegrees: Float, offset: Float = 0f): Off
 
 /**
  * Calculate gradient end offset based on angle.
+ * Pure function - no composition needed.
  */
 private fun calculateGradientEnd(angleDegrees: Float, offset: Float = 0f): Offset {
     val angleRadians = Math.toRadians(angleDegrees.toDouble())
@@ -381,6 +385,7 @@ private fun calculateGradientEnd(angleDegrees: Float, offset: Float = 0f): Offse
 
 /**
  * Draw dots pattern.
+ * Pure drawing function - no composition needed.
  */
 private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawDotsPattern(
     color: Color,
@@ -403,6 +408,7 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawDotsPattern(
 
 /**
  * Draw horizontal stripes.
+ * Pure drawing function - no composition needed.
  */
 private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawHorizontalStripes(
     color: Color,
@@ -422,6 +428,7 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawHorizontalStrip
 
 /**
  * Draw vertical stripes.
+ * Pure drawing function - no composition needed.
  */
 private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawVerticalStripes(
     color: Color,
@@ -441,13 +448,13 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawVerticalStripes
 
 /**
  * Draw diagonal stripes.
+ * Pure drawing function - no composition needed.
  */
 private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawDiagonalStripes(
     color: Color,
     stripeWidth: Float,
     spacing: Float
 ) {
-    // Simplified diagonal stripes implementation
     val count = ((size.width + size.height) / (stripeWidth + spacing)).toInt() + 1
     for (i in 0..count) {
         val offset = i * (stripeWidth + spacing)
@@ -462,6 +469,7 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawDiagonalStripes
 
 /**
  * Draw grid pattern.
+ * Pure drawing function - no composition needed.
  */
 private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawGridPattern(
     color: Color,
@@ -474,6 +482,7 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawGridPattern(
 
 /**
  * Draw checkerboard pattern.
+ * Pure drawing function - no composition needed.
  */
 private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawCheckerboard(
     color: Color,
@@ -497,6 +506,7 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawCheckerboard(
 
 /**
  * Draw polka dots pattern (larger dots with more spacing).
+ * Pure drawing function - no composition needed.
  */
 private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawPolkaDotsPattern(
     color: Color,
@@ -508,6 +518,7 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawPolkaDotsPatter
 
 /**
  * Particle data class.
+ * Pure data structure - no composition needed.
  */
 private data class Particle(
     val x: Float,
