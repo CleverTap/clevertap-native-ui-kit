@@ -230,9 +230,7 @@ object NewElementsSamples {
                                 size = 32f,
                                 color = "#77FFFFFF",
                                 backgroundColor = "#77007AFF",
-                                borderRadius = 20f,
                                 padding = 8f,
-                                position = "inside"
                             ),
                             indicatorStyle = IndicatorStyle(
                                 size = 10f,
@@ -367,7 +365,6 @@ object NewElementsSamples {
                                 size = 28f,
                                 color = "#FF6B6B",
                                 backgroundColor = "#FFFFFF",
-                                borderRadius = 16f
                             )
                         ),
                         children = createProductCards()

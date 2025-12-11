@@ -190,10 +190,10 @@ private fun RenderContainer(
 }
 
 /**
- * Render a gallery/carousel container.
+ * Main gallery renderer that routes to the appropriate implementation based on mode.
  */
 @Composable
-private fun RenderGallery(
+fun RenderGallery(
     container: NativeDisplayContainer,
     styleResolver: StyleResolver,
     evaluator: VariableEvaluator,
@@ -201,31 +201,190 @@ private fun RenderGallery(
     modifier: Modifier = Modifier
 ) {
     val config = container.galleryConfig ?: GalleryConfig()
-    
-    // Use different implementations based on snap behavior
-    if (config.snapBehavior == SnapBehavior.NONE) {
-        RenderFreeFlowGallery(
-            container = container,
-            config = config,
-            styleResolver = styleResolver,
-            evaluator = evaluator,
-            resolvedStyle = resolvedStyle,
-            modifier = modifier
-        )
-    } else {
-        RenderSnappingGallery(
-            container = container,
-            config = config,
-            styleResolver = styleResolver,
-            evaluator = evaluator,
-            resolvedStyle = resolvedStyle,
-            modifier = modifier
-        )
+
+    when (config.mode) {
+        GalleryMode.SNAPPING -> {
+            RenderSnappingGallery(
+                container = container,
+                config = config,
+                styleResolver = styleResolver,
+                evaluator = evaluator,
+                resolvedStyle = resolvedStyle,
+                modifier = modifier
+            )
+        }
+
+        GalleryMode.FREE_FLOW -> {
+            RenderFreeFlowGallery(
+                container = container,
+                config = config,
+                styleResolver = styleResolver,
+                evaluator = evaluator,
+                resolvedStyle = resolvedStyle,
+                modifier = modifier
+            )
+        }
+
+        GalleryMode.FREE_FLOW_GRID -> {
+            RenderFreeFlowGridGallery(
+                container = container,
+                config = config,
+                styleResolver = styleResolver,
+                evaluator = evaluator,
+                resolvedStyle = resolvedStyle,
+                modifier = modifier
+            )
+        }
     }
 }
 
 /**
- * Render free-flowing gallery (no snap).
+ * Mode 1: Snapping Gallery
+ * - Full-size items with snap behavior
+ * - Peek shows partial adjacent items via contentPadding
+ * - Supports auto-scroll, indicators, arrows
+ */
+@Composable
+private fun RenderSnappingGallery(
+    container: NativeDisplayContainer,
+    config: GalleryConfig,
+    styleResolver: StyleResolver,
+    evaluator: VariableEvaluator,
+    resolvedStyle: Style,
+    modifier: Modifier = Modifier
+) {
+    if (container.children.isEmpty()) return
+
+    val pagerState = rememberPagerState(
+        initialPage = config.initialPage.coerceIn(0, maxOf(0, container.children.size - 1)),
+        pageCount = { container.children.size }
+    )
+    val scope = rememberCoroutineScope()
+
+    BoxWithConstraints(modifier = modifier) {
+        val containerWidth = this.maxWidth
+        val containerHeight = this.maxHeight
+
+        // Calculate peek padding
+        val peekFraction = config.peekPercentage / 100f
+        val horizontalPadding = if (container.children.size > 1 && peekFraction > 0f) {
+            containerWidth * peekFraction / 2f
+        } else {
+            0.dp
+        }
+        val verticalPadding = if (container.children.size > 1 && peekFraction > 0f) {
+            containerHeight * peekFraction / 2f
+        } else {
+            0.dp
+        }
+
+        // Auto-scroll
+        if (config.autoScrollInterval > 0 && container.children.size > 1) {
+            LaunchedEffect(pagerState.currentPage) {
+                delay(config.autoScrollInterval)
+                val nextPage = if (config.infiniteScroll) {
+                    (pagerState.currentPage + 1) % container.children.size
+                } else {
+                    (pagerState.currentPage + 1).coerceAtMost(container.children.size - 1)
+                }
+                if (nextPage != pagerState.currentPage) {
+                    pagerState.animateScrollToPage(nextPage)
+                }
+            }
+        }
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Pager
+            if (config.orientation == Orientation.HORIZONTAL) {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(horizontal = horizontalPadding),
+                    pageSpacing = config.spacing.dp
+                ) { page ->
+                    container.children.getOrNull(page)?.let { child ->
+                        RenderNode(
+                            node = child,
+                            styleResolver = styleResolver,
+                            evaluator = evaluator,
+                            parentStyle = resolvedStyle,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            } else {
+                VerticalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxHeight(),
+                    contentPadding = PaddingValues(vertical = verticalPadding),
+                    pageSpacing = config.spacing.dp
+                ) { page ->
+                    container.children.getOrNull(page)?.let { child ->
+                        RenderNode(
+                            node = child,
+                            styleResolver = styleResolver,
+                            evaluator = evaluator,
+                            parentStyle = resolvedStyle,
+                            modifier = Modifier.fillMaxHeight()
+                        )
+                    }
+                }
+            }
+
+            // Navigation arrows
+            if (config.showArrows && container.children.size > 1) {
+                RenderGalleryArrows(
+                    pagerState = pagerState,
+                    config = config,
+                    onPrevious = {
+                        scope.launch {
+                            val prevPage = if (config.infiniteScroll && pagerState.currentPage == 0) {
+                                container.children.size - 1
+                            } else {
+                                (pagerState.currentPage - 1).coerceAtLeast(0)
+                            }
+                            pagerState.animateScrollToPage(prevPage)
+                        }
+                    },
+                    onNext = {
+                        scope.launch {
+                            val nextPage = if (config.infiniteScroll && pagerState.currentPage == container.children.size - 1) {
+                                0
+                            } else {
+                                (pagerState.currentPage + 1).coerceAtMost(container.children.size - 1)
+                            }
+                            pagerState.animateScrollToPage(nextPage)
+                        }
+                    },
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
+            // Page indicators
+            if (config.showIndicators && container.children.size > 1) {
+                RenderGalleryIndicators(
+                    pagerState = pagerState,
+                    config = config,
+                    pageCount = container.children.size,
+                    modifier = Modifier.align(
+                        when (config.indicatorStyle?.position) {
+                            "top" -> Alignment.TopCenter
+                            "left" -> Alignment.CenterStart
+                            "right" -> Alignment.CenterEnd
+                            else -> Alignment.BottomCenter
+                        }
+                    )
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Mode 2: Free Flow - Independent Sizing
+ * - Items define their own size via Layout properties
+ * - Natural scrolling, no snap, no peek
+ * - Use case: Tag lists, chips, varying-width items
  */
 @Composable
 private fun RenderFreeFlowGallery(
@@ -236,20 +395,88 @@ private fun RenderFreeFlowGallery(
     resolvedStyle: Style,
     modifier: Modifier = Modifier
 ) {
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    
-    // Calculate item width based on peek percentage
-    val peekFraction = config.peekPercentage / 100f
-    val itemWidth = screenWidth * (1f - peekFraction)
-    val startPadding = (screenWidth * peekFraction / 2)
-    
-    Box(modifier = modifier) {
+    if (container.children.isEmpty()) return
+
+    if (config.orientation == Orientation.HORIZONTAL) {
+        LazyRow(
+            modifier = modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(config.spacing.dp)
+        ) {
+            items(container.children.size) { index ->
+                container.children.getOrNull(index)?.let { child ->
+                    // Child sizes itself via its own Layout properties
+                    RenderNode(
+                        node = child,
+                        styleResolver = styleResolver,
+                        evaluator = evaluator,
+                        parentStyle = resolvedStyle,
+                        modifier = Modifier
+                    )
+                }
+            }
+        }
+    } else {
+        LazyColumn(
+            modifier = modifier.fillMaxHeight(),
+            verticalArrangement = Arrangement.spacedBy(config.spacing.dp)
+        ) {
+            items(container.children.size) { index ->
+                container.children.getOrNull(index)?.let { child ->
+                    // Child sizes itself via its own Layout properties
+                    RenderNode(
+                        node = child,
+                        styleResolver = styleResolver,
+                        evaluator = evaluator,
+                        parentStyle = resolvedStyle,
+                        modifier = Modifier
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Mode 3: Free Flow - Grid with Peek
+ * - Fixed number of items per view (e.g., 2.5 items)
+ * - Equal-sized items, natural scrolling
+ * - Peek via itemsPerView (2.5 = 2 full + 0.5 peek on each side)
+ * - Use case: Product grids, movie posters
+ */
+@Composable
+private fun RenderFreeFlowGridGallery(
+    container: NativeDisplayContainer,
+    config: GalleryConfig,
+    styleResolver: StyleResolver,
+    evaluator: VariableEvaluator,
+    resolvedStyle: Style,
+    modifier: Modifier = Modifier
+) {
+    if (container.children.isEmpty()) return
+
+    BoxWithConstraints(modifier = modifier) {
+        val containerWidth = this.maxWidth
+        val containerHeight = this.maxHeight
+
         if (config.orientation == Orientation.HORIZONTAL) {
+            // Calculate item width based on itemsPerView
+            val itemsPerView = config.itemsPerView.coerceAtLeast(0.1f)
+            val totalSpacing = config.spacing.dp * (itemsPerView - 1)
+            val itemWidth = (containerWidth - totalSpacing) / itemsPerView
+
+            // Calculate peek offset for centering
+            val fullItems = itemsPerView.toInt()
+            val partialItem = itemsPerView - fullItems
+            val peekOffset = if (partialItem > 0) {
+                itemWidth * partialItem / 2f
+            } else {
+                0.dp
+            }
+
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = startPadding),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                contentPadding = PaddingValues(horizontal = peekOffset),
+                horizontalArrangement = Arrangement.spacedBy(config.spacing.dp)
             ) {
                 items(container.children.size) { index ->
                     Box(modifier = Modifier.width(itemWidth)) {
@@ -266,13 +493,24 @@ private fun RenderFreeFlowGallery(
                 }
             }
         } else {
-            val screenHeight = configuration.screenHeightDp.dp
-            val itemHeight = screenHeight * (1f - peekFraction)
-            
+            // Calculate item height based on itemsPerView
+            val itemsPerView = config.itemsPerView.coerceAtLeast(0.1f)
+            val totalSpacing = config.spacing.dp * (itemsPerView - 1)
+            val itemHeight = (containerHeight - totalSpacing) / itemsPerView
+
+            // Calculate peek offset for centering
+            val fullItems = itemsPerView.toInt()
+            val partialItem = itemsPerView - fullItems
+            val peekOffset = if (partialItem > 0) {
+                itemHeight * partialItem / 2f
+            } else {
+                0.dp
+            }
+
             LazyColumn(
                 modifier = Modifier.fillMaxHeight(),
-                contentPadding = PaddingValues(vertical = startPadding),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                contentPadding = PaddingValues(vertical = peekOffset),
+                verticalArrangement = Arrangement.spacedBy(config.spacing.dp)
             ) {
                 items(container.children.size) { index ->
                     Box(modifier = Modifier.height(itemHeight)) {
@@ -288,135 +526,6 @@ private fun RenderFreeFlowGallery(
                     }
                 }
             }
-        }
-    }
-}
-
-/**
- * Render snapping gallery (center, start, or end snap).
- */
-@Composable
-private fun RenderSnappingGallery(
-    container: NativeDisplayContainer,
-    config: GalleryConfig,
-    styleResolver: StyleResolver,
-    evaluator: VariableEvaluator,
-    resolvedStyle: Style,
-    modifier: Modifier = Modifier
-) {
-    val pagerState = rememberPagerState(
-        initialPage = config.initialPage.coerceIn(0, maxOf(0, container.children.size - 1)),
-        pageCount = { container.children.size }
-    )
-    val scope = rememberCoroutineScope()
-    
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    
-    // Calculate content padding for peek effect
-    val peekFraction = config.peekPercentage / 100f
-    val contentPadding = screenWidth * peekFraction / 2
-    
-    // Auto-scroll effect
-    if (config.autoScrollInterval > 0) {
-        LaunchedEffect(pagerState.currentPage) {
-            delay(config.autoScrollInterval)
-            val nextPage = if (config.infiniteScroll) {
-                (pagerState.currentPage + 1) % container.children.size
-            } else {
-                (pagerState.currentPage + 1).coerceAtMost(container.children.size - 1)
-            }
-            if (nextPage != pagerState.currentPage) {
-                pagerState.animateScrollToPage(nextPage)
-            }
-        }
-    }
-    
-    Box(modifier = modifier) {
-        // Pager
-        if (config.orientation == Orientation.HORIZONTAL) {
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = contentPadding),
-                pageSpacing = 8.dp
-            ) { page ->
-                container.children.getOrNull(page)?.let { child ->
-                    RenderNode(
-                        node = child,
-                        styleResolver = styleResolver,
-                        evaluator = evaluator,
-                        parentStyle = resolvedStyle,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
-        } else {
-            val screenHeight = configuration.screenHeightDp.dp
-            val verticalPadding = screenHeight * peekFraction / 2
-            
-            VerticalPager(
-                state = pagerState,
-                modifier = Modifier.fillMaxHeight(),
-                contentPadding = PaddingValues(vertical = verticalPadding),
-                pageSpacing = 8.dp
-            ) { page ->
-                container.children.getOrNull(page)?.let { child ->
-                    RenderNode(
-                        node = child,
-                        styleResolver = styleResolver,
-                        evaluator = evaluator,
-                        parentStyle = resolvedStyle,
-                        modifier = Modifier.fillMaxHeight()
-                    )
-                }
-            }
-        }
-        
-        // Navigation arrows
-        if (config.showArrows && container.children.size > 1) {
-            RenderGalleryArrows(
-                pagerState = pagerState,
-                config = config,
-                onPrevious = {
-                    scope.launch {
-                        val prevPage = if (config.infiniteScroll && pagerState.currentPage == 0) {
-                            container.children.size - 1
-                        } else {
-                            (pagerState.currentPage - 1).coerceAtLeast(0)
-                        }
-                        pagerState.animateScrollToPage(prevPage)
-                    }
-                },
-                onNext = {
-                    scope.launch {
-                        val nextPage = if (config.infiniteScroll && pagerState.currentPage == container.children.size - 1) {
-                            0
-                        } else {
-                            (pagerState.currentPage + 1).coerceAtMost(container.children.size - 1)
-                        }
-                        pagerState.animateScrollToPage(nextPage)
-                    }
-                },
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-        
-        // Page indicators
-        if (config.showIndicators && container.children.size > 1) {
-            RenderGalleryIndicators(
-                pagerState = pagerState,
-                config = config,
-                pageCount = container.children.size,
-                modifier = Modifier.align(
-                    when (config.indicatorStyle?.position) {
-                        "top" -> Alignment.TopCenter
-                        "left" -> Alignment.CenterStart
-                        "right" -> Alignment.CenterEnd
-                        else -> Alignment.BottomCenter
-                    }
-                )
-            )
         }
     }
 }

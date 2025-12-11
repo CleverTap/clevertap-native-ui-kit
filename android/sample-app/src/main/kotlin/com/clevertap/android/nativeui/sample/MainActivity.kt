@@ -48,7 +48,8 @@ fun NativeUIKitSampleApp() {
             "Layered",
             "🛍️ E-commerce",
             "👤 Social",
-            "📊 Dashboard"
+            "📊 Dashboard",
+            "Gallery"
         )
         
         Scaffold(
@@ -113,6 +114,7 @@ fun NativeUIKitSampleApp() {
                         14 -> EcommerceShowcaseScreen()
                         15 -> SocialProfileShowcaseScreen()
                         16 -> DashboardShowcaseScreen()
+                        17 -> GalleryShowcaseScreen()
                     }
                 }
             }
@@ -269,6 +271,27 @@ fun DashboardShowcaseScreen() {
         )
     } else {
         ErrorMessage("Failed to load Dashboard showcase")
+    }
+}
+
+/**
+ * Tab 17: Gallery Showcase (JSON)
+ * Demonstrates: Galleries
+ */
+@Composable
+fun GalleryShowcaseScreen() {
+    val context = LocalContext.current
+    val config = remember {
+        JsonLoader.loadFromAssets(context, "gallery_three_modes.json")
+    }
+
+    if (config != null) {
+        NativeDisplayView(
+            config = config,
+            modifier = Modifier.fillMaxWidth()
+        )
+    } else {
+        ErrorMessage("Failed to load gallery showcase")
     }
 }
 
