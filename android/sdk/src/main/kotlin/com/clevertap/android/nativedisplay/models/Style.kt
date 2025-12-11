@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  * - textColor, fontSize, fontFamily, fontWeight, lineHeight
  * 
  * Non-cascading properties (container-only):
- * - backgroundColor, borderRadius, shadowRadius, etc.
+ * - background, backgroundColor, borderRadius, shadowRadius, etc.
  */
 @Serializable
 data class Style(
@@ -22,8 +22,11 @@ data class Style(
     val textDecoration: TextDecoration? = null,
     val textAlign: String? = null,  // "left", "center", "right"
     
-    // Background and border (non-cascading)
-    val backgroundColor: String? = null,
+    // Background (non-cascading)
+    val background: Background? = null,  // New: Rich background support
+    val backgroundColor: String? = null,  // Legacy: Simple color (backward compatible)
+    
+    // Border (non-cascading)
     val borderRadius: Float? = null,
     val borderWidth: Float? = null,
     val borderColor: String? = null,
@@ -53,6 +56,7 @@ data class Style(
             textDecoration = textDecoration ?: other.textDecoration,
             textAlign = textAlign ?: other.textAlign,
             
+            background = background ?: other.background,
             backgroundColor = backgroundColor ?: other.backgroundColor,
             borderRadius = borderRadius ?: other.borderRadius,
             borderWidth = borderWidth ?: other.borderWidth,

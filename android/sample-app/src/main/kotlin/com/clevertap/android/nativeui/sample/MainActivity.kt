@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
 import com.clevertap.android.nativedisplay.samples.*
 
 class MainActivity : ComponentActivity() {
@@ -38,7 +39,12 @@ fun NativeUIKitSampleApp() {
             "Simple Gallery",
             "Full Gallery",
             "Free Gallery",
-            "Combined"
+            "Combined",
+            "Linear Grad",
+            "Radial/Sweep",
+            "Animated",
+            "Patterns",
+            "Layered"
         )
         
         Scaffold(
@@ -95,9 +101,74 @@ fun NativeUIKitSampleApp() {
                         6 -> FullFeaturedGallerySample()
                         7 -> FreeFlowGallerySample()
                         8 -> CombinedDemoSample()
+                        9 -> LinearGradientsScreen()
+                        10 -> RadialSweepGradientsScreen()
+                        11 -> AnimatedBackgroundsScreen()
+                        12 -> PatternBackgroundsScreen()
+                        13 -> LayeredBackgroundsScreen()
                     }
                 }
             }
         }
     }
+}
+
+/**
+ * Tab 9: Linear Gradients Demo
+ */
+@Composable
+fun LinearGradientsScreen() {
+    val config = BackgroundSamples.linearGradientsSample()
+    NativeDisplayView(
+        config = config,
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+/**
+ * Tab 10: Radial & Sweep Gradients Demo
+ */
+@Composable
+fun RadialSweepGradientsScreen() {
+    val config = BackgroundSamples.radialAndSweepGradientsSample()
+    NativeDisplayView(
+        config = config,
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+/**
+ * Tab 11: Animated Backgrounds Demo
+ */
+@Composable
+fun AnimatedBackgroundsScreen() {
+    val config = BackgroundSamples.animatedBackgroundsSample()
+    NativeDisplayView(
+        config = config,
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+/**
+ * Tab 12: Pattern Backgrounds Demo
+ */
+@Composable
+fun PatternBackgroundsScreen() {
+    val config = BackgroundSamples.patternBackgroundsSample()
+    NativeDisplayView(
+        config = config,
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+/**
+ * Tab 13: Layered & Complex Backgrounds Demo
+ */
+@Composable
+fun LayeredBackgroundsScreen() {
+    val config = BackgroundSamples.layeredBackgroundsSample()
+    NativeDisplayView(
+        config = config,
+        modifier = Modifier.fillMaxWidth()
+    )
 }

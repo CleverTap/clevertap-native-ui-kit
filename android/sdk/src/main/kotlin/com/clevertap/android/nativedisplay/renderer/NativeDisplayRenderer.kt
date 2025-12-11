@@ -755,6 +755,7 @@ private fun Modifier.applyPadding(layout: Layout?): Modifier {
 /**
  * Apply visual decorations (shadow, background, border).
  */
+@Composable
 private fun Modifier.applyDecorations(style: Style): Modifier {
     var modifier = this
     
@@ -772,9 +773,12 @@ private fun Modifier.applyDecorations(style: Style): Modifier {
         modifier = modifier.clip(shape)
     }
     
-    style.backgroundColor?.let { color ->
+    // Apply background (new system takes precedence over old backgroundColor)
+    if (style.background != null) {
+        modifier = modifier.applyBackground(style.background)
+    } else if (style.backgroundColor != null) {
         modifier = modifier.background(
-            color = parseColor(color) ?: Color.Transparent,
+            color = parseColor(style.backgroundColor) ?: Color.Transparent,
             shape = shape
         )
     }
@@ -797,7 +801,7 @@ private fun Modifier.applyDecorations(style: Style): Modifier {
 /**
  * Parse hex color string to Compose Color.
  */
-private fun parseColor(colorString: String?): Color? {
+fun parseColor(colorString: String?): Color? {
     if (colorString == null) return null
 
     return try {
