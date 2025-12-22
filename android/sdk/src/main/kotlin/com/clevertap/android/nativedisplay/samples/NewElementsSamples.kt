@@ -27,7 +27,9 @@ object NewElementsSamples {
                 containerType = ContainerType.VERTICAL,
                 layout = Layout(
                     width = Dimension.MATCH_PARENT,
-                    padding = Spacing.all(4f)
+                    height = Dimension.WRAP_CONTENT,
+                    padding = Spacing.all(16f),
+                    spacing = 16f
                 ),
                 style = Style(
                     backgroundColor = "#FFFFFF"
@@ -38,13 +40,21 @@ object NewElementsSamples {
                         id = "text1",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Section 1"),
-                        style = Style(fontSize = 30f, fontWeight = FontWeight.BOLD)
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.WRAP_CONTENT
+                        ),
+                        style = Style(fontSize = 24f, fontWeight = FontWeight.BOLD)
                     ),
                     
                     // Horizontal divider (default)
                     NativeDisplayElement(
                         id = "divider1",
                         elementType = ElementType.DIVIDER,
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.dp(1f)
+                        ),
                         dividerConfig = DividerConfig(
                             orientation = Orientation.HORIZONTAL,
                             thickness = 1f,
@@ -57,13 +67,21 @@ object NewElementsSamples {
                         id = "text2",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Section 2"),
-                        style = Style(fontSize = 30f, fontWeight = FontWeight.BOLD)
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.WRAP_CONTENT
+                        ),
+                        style = Style(fontSize = 24f, fontWeight = FontWeight.BOLD)
                     ),
                     
                     // Thick colored divider
                     NativeDisplayElement(
                         id = "divider2",
                         elementType = ElementType.DIVIDER,
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.dp(4f)
+                        ),
                         dividerConfig = DividerConfig(
                             orientation = Orientation.HORIZONTAL,
                             thickness = 4f,
@@ -76,12 +94,21 @@ object NewElementsSamples {
                         id = "text3",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Section 3"),
-                        style = Style(fontSize = 30f, fontWeight = FontWeight.BOLD)
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.WRAP_CONTENT
+                        ),
+                        style = Style(fontSize = 24f, fontWeight = FontWeight.BOLD)
                     ),
 
+                    // Purple divider with alpha
                     NativeDisplayElement(
-                        id = "divider2",
+                        id = "divider3",
                         elementType = ElementType.DIVIDER,
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.dp(4f)
+                        ),
                         dividerConfig = DividerConfig(
                             orientation = Orientation.HORIZONTAL,
                             thickness = 4f,
@@ -94,8 +121,10 @@ object NewElementsSamples {
                         id = "h-container",
                         containerType = ContainerType.HORIZONTAL,
                         layout = Layout(
-                            margin = Spacing(top = 20f),
-                            padding = Spacing.all(16f)
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.dp(60f),
+                            padding = Spacing.all(8f),
+                            spacing = 16f
                         ),
                         style = Style(
                             backgroundColor = "#F5F5F5",
@@ -106,16 +135,24 @@ object NewElementsSamples {
                                 id = "col1",
                                 elementType = ElementType.TEXT,
                                 bindings = mapOf("text" to "Column 1"),
-                                layout = Layout(width = Dimension.dp(80f))
+                                layout = Layout(
+                                    width = Dimension.WRAP_CONTENT,
+                                    height = Dimension.WRAP_CONTENT
+                                ),
+                                style = Style(fontSize = 16f)
                             ),
                             
                             // Vertical divider
                             NativeDisplayElement(
                                 id = "v-divider",
                                 elementType = ElementType.DIVIDER,
+                                layout = Layout(
+                                    width = Dimension.dp(2f),
+                                    height = Dimension.MATCH_PARENT
+                                ),
                                 dividerConfig = DividerConfig(
                                     orientation = Orientation.VERTICAL,
-                                    thickness = 8f,
+                                    thickness = 2f,
                                     color = "#999999"
                                 )
                             ),
@@ -125,9 +162,10 @@ object NewElementsSamples {
                                 elementType = ElementType.TEXT,
                                 bindings = mapOf("text" to "Column 2"),
                                 layout = Layout(
-                                    width = Dimension.dp(80f),
-                                    padding = Spacing(all = 4f)
-                                )
+                                    width = Dimension.WRAP_CONTENT,
+                                    height = Dimension.WRAP_CONTENT
+                                ),
+                                style = Style(fontSize = 16f)
                             )
                         )
                     )
@@ -149,15 +187,20 @@ object NewElementsSamples {
                 containerType = ContainerType.VERTICAL,
                 layout = Layout(
                     width = Dimension.MATCH_PARENT,
-                    padding = Spacing.all(16f)
+                    height = Dimension.WRAP_CONTENT,
+                    padding = Spacing.all(16f),
+                    spacing = 16f
                 ),
                 children = listOf(
                     NativeDisplayElement(
                         id = "title",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Simple Gallery"),
-                        style = Style(fontSize = 24f, fontWeight = FontWeight.BOLD),
-                        layout = Layout(margin = Spacing(bottom = 16f))
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.WRAP_CONTENT
+                        ),
+                        style = Style(fontSize = 24f, fontWeight = FontWeight.BOLD)
                     ),
                     
                     NativeDisplayContainer(
@@ -168,10 +211,12 @@ object NewElementsSamples {
                             height = Dimension.dp(200f)
                         ),
                         galleryConfig = GalleryConfig(
+                            mode = GalleryMode.SNAPPING,
                             snapBehavior = SnapBehavior.CENTER,
                             showIndicators = true,
                             showArrows = false,
-                            peekPercentage = 15f
+                            peekPercentage = 15f,
+                            spacing = 12f
                         ),
                         children = createGalleryItems(5)
                     )
@@ -193,23 +238,32 @@ object NewElementsSamples {
                 containerType = ContainerType.VERTICAL,
                 layout = Layout(
                     width = Dimension.MATCH_PARENT,
-                    padding = Spacing.all(16f)
+                    height = Dimension.WRAP_CONTENT,
+                    padding = Spacing.all(16f),
+                    spacing = 8f
                 ),
                 children = listOf(
                     NativeDisplayElement(
                         id = "title",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Full-Featured Gallery"),
-                        style = Style(fontSize = 24f, fontWeight = FontWeight.BOLD),
-                        layout = Layout(margin = Spacing(bottom = 8f))
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.WRAP_CONTENT
+                        ),
+                        style = Style(fontSize = 24f, fontWeight = FontWeight.BOLD)
                     ),
                     
                     NativeDisplayElement(
                         id = "subtitle",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Auto-scroll • Infinite • Arrows • Indicators"),
-                        style = Style(fontSize = 12f, textColor = "#666666"),
-                        layout = Layout(margin = Spacing(bottom = 16f))
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.WRAP_CONTENT,
+                            margin = Spacing(bottom = 8f)
+                        ),
+                        style = Style(fontSize = 12f, textColor = "#666666")
                     ),
                     
                     NativeDisplayContainer(
@@ -220,17 +274,19 @@ object NewElementsSamples {
                             height = Dimension.dp(250f)
                         ),
                         galleryConfig = GalleryConfig(
+                            mode = GalleryMode.SNAPPING,
                             snapBehavior = SnapBehavior.CENTER,
                             showIndicators = true,
                             showArrows = true,
                             peekPercentage = 20f,
+                            spacing = 12f,
                             autoScrollInterval = 3000,
                             infiniteScroll = true,
                             arrowStyle = ArrowStyle(
                                 size = 32f,
-                                color = "#77FFFFFF",
+                                color = "#FFFFFF",
                                 backgroundColor = "#77007AFF",
-                                padding = 8f,
+                                padding = 8f
                             ),
                             indicatorStyle = IndicatorStyle(
                                 size = 10f,
@@ -261,23 +317,32 @@ object NewElementsSamples {
                 containerType = ContainerType.VERTICAL,
                 layout = Layout(
                     width = Dimension.MATCH_PARENT,
-                    padding = Spacing.all(16f)
+                    height = Dimension.WRAP_CONTENT,
+                    padding = Spacing.all(16f),
+                    spacing = 8f
                 ),
                 children = listOf(
                     NativeDisplayElement(
                         id = "title",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Free-Flow Gallery"),
-                        style = Style(fontSize = 24f, fontWeight = FontWeight.BOLD),
-                        layout = Layout(margin = Spacing(bottom = 8f))
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.WRAP_CONTENT
+                        ),
+                        style = Style(fontSize = 24f, fontWeight = FontWeight.BOLD)
                     ),
                     
                     NativeDisplayElement(
                         id = "subtitle",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "No snapping • Scroll freely"),
-                        style = Style(fontSize = 12f, textColor = "#666666"),
-                        layout = Layout(margin = Spacing(bottom = 16f))
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.WRAP_CONTENT,
+                            margin = Spacing(bottom = 8f)
+                        ),
+                        style = Style(fontSize = 12f, textColor = "#666666")
                     ),
                     
                     NativeDisplayContainer(
@@ -288,11 +353,13 @@ object NewElementsSamples {
                             height = Dimension.dp(180f)
                         ),
                         galleryConfig = GalleryConfig(
+                            mode = GalleryMode.FREE_FLOW,
                             snapBehavior = SnapBehavior.NONE,
                             showIndicators = false,
-                            showArrows = false
+                            showArrows = false,
+                            spacing = 12f
                         ),
-                        children = createGalleryItems(10)
+                        children = createFreeFlowItems(10)
                     )
                 )
             )
@@ -312,7 +379,9 @@ object NewElementsSamples {
                 containerType = ContainerType.VERTICAL,
                 layout = Layout(
                     width = Dimension.MATCH_PARENT,
-                    padding = Spacing.all(16f)
+                    height = Dimension.WRAP_CONTENT,
+                    padding = Spacing.all(16f),
+                    spacing = 4f
                 ),
                 children = listOf(
                     // Title
@@ -320,6 +389,10 @@ object NewElementsSamples {
                         id = "title",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Featured Products"),
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.WRAP_CONTENT
+                        ),
                         style = Style(fontSize = 28f, fontWeight = FontWeight.BOLD)
                     ),
                     
@@ -328,16 +401,25 @@ object NewElementsSamples {
                         id = "subtitle",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Swipe to explore our collection"),
-                        style = Style(fontSize = 14f, textColor = "#666666"),
-                        layout = Layout(margin = Spacing(top = 4f, bottom = 16f))
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.WRAP_CONTENT,
+                            margin = Spacing(bottom = 12f)
+                        ),
+                        style = Style(fontSize = 14f, textColor = "#666666")
                     ),
                     
                     // Divider
                     NativeDisplayElement(
                         id = "divider1",
                         elementType = ElementType.DIVIDER,
-                        layout = Layout(margin = Spacing(bottom = 20f)),
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.dp(2f),
+                            margin = Spacing(bottom = 16f)
+                        ),
                         dividerConfig = DividerConfig(
+                            orientation = Orientation.HORIZONTAL,
                             thickness = 2f,
                             color = "#E0E0E0"
                         )
@@ -349,22 +431,28 @@ object NewElementsSamples {
                         containerType = ContainerType.GALLERY,
                         layout = Layout(
                             width = Dimension.MATCH_PARENT,
-                            height = Dimension.dp(220f)
+                            height = Dimension.dp(280f)
                         ),
                         galleryConfig = GalleryConfig(
+                            mode = GalleryMode.SNAPPING,
                             snapBehavior = SnapBehavior.CENTER,
                             showIndicators = true,
                             showArrows = true,
                             peekPercentage = 10f,
+                            spacing = 12f,
                             indicatorStyle = IndicatorStyle(
                                 size = 8f,
                                 activeColor = "#FF6B6B",
-                                inactiveColor = "#DDDDDD"
+                                inactiveColor = "#DDDDDD",
+                                spacing = 6f,
+                                position = "bottom",
+                                shape = "circle"
                             ),
                             arrowStyle = ArrowStyle(
                                 size = 28f,
                                 color = "#FF6B6B",
                                 backgroundColor = "#FFFFFF",
+                                padding = 8f
                             )
                         ),
                         children = createProductCards()
@@ -374,8 +462,13 @@ object NewElementsSamples {
                     NativeDisplayElement(
                         id = "divider2",
                         elementType = ElementType.DIVIDER,
-                        layout = Layout(margin = Spacing(top = 20f, bottom = 20f)),
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.dp(2f),
+                            margin = Spacing(top = 16f, bottom = 16f)
+                        ),
                         dividerConfig = DividerConfig(
+                            orientation = Orientation.HORIZONTAL,
                             thickness = 2f,
                             color = "#E0E0E0"
                         )
@@ -386,6 +479,10 @@ object NewElementsSamples {
                         id = "footer",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "More products coming soon!"),
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.WRAP_CONTENT
+                        ),
                         style = Style(
                             fontSize = 16f,
                             textColor = "#999999",
@@ -407,7 +504,9 @@ object NewElementsSamples {
                 containerType = ContainerType.VERTICAL,
                 layout = Layout(
                     width = Dimension.MATCH_PARENT,
-                    padding = Spacing.all(20f)
+                    height = Dimension.MATCH_PARENT,
+                    padding = Spacing.all(20f),
+                    spacing = 8f
                 ),
                 style = Style(
                     backgroundColor = colors[index % colors.size],
@@ -418,6 +517,10 @@ object NewElementsSamples {
                         id = "item-title-$index",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Item ${index + 1}"),
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.WRAP_CONTENT
+                        ),
                         style = Style(
                             fontSize = 24f,
                             fontWeight = FontWeight.BOLD,
@@ -429,12 +532,51 @@ object NewElementsSamples {
                         id = "item-desc-$index",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Swipe to see more"),
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.WRAP_CONTENT
+                        ),
                         style = Style(
                             fontSize = 14f,
                             textColor = "#FFFFFF",
                             textAlign = "center"
+                        )
+                    )
+                )
+            )
+        }
+    }
+    
+    private fun createFreeFlowItems(count: Int): List<NativeDisplayNode> {
+        val colors = listOf("#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A", "#98D8C8", "#F7DC6F", "#BB8FCE")
+        val labels = listOf("New", "Popular", "Sale", "Trending", "Featured", "Hot", "Limited", "Best", "Top", "Exclusive")
+        return (0 until count).map { index ->
+            NativeDisplayContainer(
+                id = "chip-$index",
+                containerType = ContainerType.BOX,
+                layout = Layout(
+                    width = Dimension.WRAP_CONTENT,
+                    height = Dimension.dp(40f),
+                    padding = Spacing(horizontal = 16f, vertical = 8f)
+                ),
+                style = Style(
+                    backgroundColor = colors[index % colors.size],
+                    borderRadius = 20f
+                ),
+                children = listOf(
+                    NativeDisplayElement(
+                        id = "chip-text-$index",
+                        elementType = ElementType.TEXT,
+                        bindings = mapOf("text" to labels[index % labels.size]),
+                        layout = Layout(
+                            width = Dimension.WRAP_CONTENT,
+                            height = Dimension.WRAP_CONTENT
                         ),
-                        layout = Layout(margin = Spacing(top = 8f))
+                        style = Style(
+                            fontSize = 14f,
+                            fontWeight = FontWeight.BOLD,
+                            textColor = "#FFFFFF"
+                        )
                     )
                 )
             )
@@ -443,20 +585,22 @@ object NewElementsSamples {
     
     private fun createProductCards(): List<NativeDisplayNode> {
         val products = listOf(
-            "Wireless Headphones" to "#4A90E2",
-            "Smart Watch" to "#E24A4A",
-            "Laptop Stand" to "#4AE290",
-            "USB-C Cable" to "#E2904A",
-            "Phone Case" to "#904AE2"
+            Triple("Wireless Headphones", "$129.99", "#4A90E2"),
+            Triple("Smart Watch", "$249.99", "#E24A4A"),
+            Triple("Laptop Stand", "$79.99", "#4AE290"),
+            Triple("USB-C Cable", "$19.99", "#E2904A"),
+            Triple("Phone Case", "$39.99", "#904AE2")
         )
         
-        return products.map { (name, color) ->
+        return products.mapIndexed { index, (name, price, color) ->
             NativeDisplayContainer(
-                id = "product-${name.replace(" ", "-").lowercase()}",
+                id = "product-$index",
                 containerType = ContainerType.VERTICAL,
                 layout = Layout(
                     width = Dimension.MATCH_PARENT,
-                    padding = Spacing.all(16f)
+                    height = Dimension.MATCH_PARENT,
+                    padding = Spacing.all(16f),
+                    spacing = 0f
                 ),
                 style = Style(
                     backgroundColor = "#FFFFFF",
@@ -467,7 +611,7 @@ object NewElementsSamples {
                 children = listOf(
                     // Product color box (placeholder for image)
                     NativeDisplayElement(
-                        id = "product-image",
+                        id = "product-image-$index",
                         elementType = ElementType.SPACER,
                         layout = Layout(
                             width = Dimension.MATCH_PARENT,
@@ -482,21 +626,30 @@ object NewElementsSamples {
                     
                     // Product name
                     NativeDisplayElement(
-                        id = "product-name",
+                        id = "product-name-$index",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to name),
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.WRAP_CONTENT,
+                            margin = Spacing(bottom = 4f)
+                        ),
                         style = Style(
                             fontSize = 18f,
-                            fontWeight = FontWeight.BOLD
-                        ),
-                        layout = Layout(margin = Spacing(bottom = 4f))
+                            fontWeight = FontWeight.BOLD,
+                            textColor = "#1A1A1A"
+                        )
                     ),
                     
                     // Price
                     NativeDisplayElement(
-                        id = "product-price",
+                        id = "product-price-$index",
                         elementType = ElementType.TEXT,
-                        bindings = mapOf("text" to "$${(50..150).random()}.99"),
+                        bindings = mapOf("text" to price),
+                        layout = Layout(
+                            width = Dimension.MATCH_PARENT,
+                            height = Dimension.WRAP_CONTENT
+                        ),
                         style = Style(
                             fontSize = 20f,
                             fontWeight = FontWeight.BOLD,
