@@ -21,7 +21,8 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -33,7 +34,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight as ComposeFontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -781,14 +781,16 @@ private fun RenderElement(
             
             when (dividerConfig.orientation) {
                 Orientation.HORIZONTAL -> {
-                    Divider(
-                        modifier = elementModifier.height(dividerConfig.thickness.dp),
+                    HorizontalDivider(
+                        modifier = elementModifier,
+                        thickness = dividerConfig.thickness.dp,
                         color = dividerColor
                     )
                 }
                 Orientation.VERTICAL -> {
-                    Divider(
-                        modifier = elementModifier.width(dividerConfig.thickness.dp).fillMaxHeight(),
+                    VerticalDivider(
+                        modifier = elementModifier,
+                        thickness = dividerConfig.thickness.dp,
                         color = dividerColor
                     )
                 }
