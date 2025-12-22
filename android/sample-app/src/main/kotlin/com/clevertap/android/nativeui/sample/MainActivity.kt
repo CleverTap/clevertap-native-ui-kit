@@ -17,6 +17,8 @@ import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
 import com.clevertap.android.nativedisplay.samples.*
 
 class MainActivity : ComponentActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -32,6 +34,7 @@ fun NativeUIKitSampleApp() {
         var selectedTabIndex by remember { mutableStateOf(0) }
         
         val tabs = listOf(
+            "🏠 Home",           // NEW - First position
             "Simple Card",
             "Product Card",
             "Nested",
@@ -94,27 +97,31 @@ fun NativeUIKitSampleApp() {
                         .fillMaxSize()
                         .background(Color(0xFFF5F5F5))
                         .verticalScroll(rememberScrollState())
-                        .padding(16.dp)
+                        .padding(
+                            // No padding for Home screen to allow edge-to-edge design
+                            if (selectedTabIndex == 0) 0.dp else 16.dp
+                        )
                 ) {
                     when (selectedTabIndex) {
-                        0 -> SimpleGreetingCardSample()
-                        1 -> ProductCardSample()
-                        2 -> NestedContainersSample()
-                        3 -> AllElementsSample()
-                        4 -> DividerDemoSample()
-                        5 -> SimpleGallerySample()
-                        6 -> FullFeaturedGallerySample()
-                        7 -> FreeFlowGallerySample()
-                        8 -> CombinedDemoSample()
-                        9 -> LinearGradientsScreen()
-                        10 -> RadialSweepGradientsScreen()
-                        11 -> AnimatedBackgroundsScreen()
-                        12 -> PatternBackgroundsScreen()
-                        13 -> LayeredBackgroundsScreen()
-                        14 -> EcommerceShowcaseScreen()
-                        15 -> SocialProfileShowcaseScreen()
-                        16 -> DashboardShowcaseScreen()
-                        17 -> GalleryShowcaseScreen()
+                        0 -> HomeScreen()              // NEW
+                        1 -> SimpleGreetingCardSample()
+                        2 -> ProductCardSample()
+                        3 -> NestedContainersSample()
+                        4 -> AllElementsSample()
+                        5 -> DividerDemoSample()
+                        6 -> SimpleGallerySample()
+                        7 -> FullFeaturedGallerySample()
+                        8 -> FreeFlowGallerySample()
+                        9 -> CombinedDemoSample()
+                        10 -> LinearGradientsScreen()
+                        11 -> RadialSweepGradientsScreen()
+                        12 -> AnimatedBackgroundsScreen()
+                        13 -> PatternBackgroundsScreen()
+                        14 -> LayeredBackgroundsScreen()
+                        15 -> EcommerceShowcaseScreen()
+                        16 -> SocialProfileShowcaseScreen()
+                        17 -> DashboardShowcaseScreen()
+                        18 -> GalleryShowcaseScreen()
                     }
                 }
             }
@@ -123,7 +130,33 @@ fun NativeUIKitSampleApp() {
 }
 
 /**
- * Tab 9: Linear Gradients Demo
+ * Tab 0: Home Screen (NEW)
+ * Modern e-commerce home page with:
+ * - Auto-scrolling banner carousel
+ * - Full-screen promotional banner
+ * - Product grid with cards
+ * - Category tags
+ * - Quick actions
+ */
+@Composable
+fun HomeScreen() {
+    val context = LocalContext.current
+    val config = remember {
+        JsonLoader.loadFromAssets(context, "home_screen.json")
+    }
+    
+    if (config != null) {
+        NativeDisplayView(
+            config = config,
+            modifier = Modifier.fillMaxWidth()
+        )
+    } else {
+        ErrorMessage("Failed to load Home Screen")
+    }
+}
+
+/**
+ * Tab 10: Linear Gradients Demo
  */
 @Composable
 fun LinearGradientsScreen() {
@@ -135,7 +168,7 @@ fun LinearGradientsScreen() {
 }
 
 /**
- * Tab 10: Radial & Sweep Gradients Demo
+ * Tab 11: Radial & Sweep Gradients Demo
  */
 @Composable
 fun RadialSweepGradientsScreen() {
@@ -147,7 +180,7 @@ fun RadialSweepGradientsScreen() {
 }
 
 /**
- * Tab 11: Animated Backgrounds Demo
+ * Tab 12: Animated Backgrounds Demo
  */
 @Composable
 fun AnimatedBackgroundsScreen() {
@@ -159,7 +192,7 @@ fun AnimatedBackgroundsScreen() {
 }
 
 /**
- * Tab 12: Pattern Backgrounds Demo
+ * Tab 13: Pattern Backgrounds Demo
  */
 @Composable
 fun PatternBackgroundsScreen() {
@@ -171,7 +204,7 @@ fun PatternBackgroundsScreen() {
 }
 
 /**
- * Tab 13: Layered & Complex Backgrounds Demo
+ * Tab 14: Layered & Complex Backgrounds Demo
  */
 @Composable
 fun LayeredBackgroundsScreen() {
@@ -183,7 +216,7 @@ fun LayeredBackgroundsScreen() {
 }
 
 /**
- * Tab 14: JSON Test (Simple)
+ * Tab 15: JSON Test (Simple)
  * Minimal JSON example to verify structure works
  */
 @Composable
@@ -212,7 +245,7 @@ fun JsonTestScreen() {
 }
 
 /**
- * Tab 15: E-commerce Product Showcase (JSON)
+ * Tab 16: E-commerce Product Showcase (JSON)
  * Demonstrates: Layered backgrounds, multiple text styles, buttons, badges, animations
  */
 @Composable
@@ -233,7 +266,7 @@ fun EcommerceShowcaseScreen() {
 }
 
 /**
- * Tab 16: Social Profile Showcase (JSON)
+ * Tab 17: Social Profile Showcase (JSON)
  * Demonstrates: Hero section, badges, avatar, stats, buttons, tags
  */
 @Composable
@@ -254,7 +287,7 @@ fun SocialProfileShowcaseScreen() {
 }
 
 /**
- * Tab 17: Dashboard Showcase (JSON)
+ * Tab 18: Dashboard Showcase (JSON)
  * Demonstrates: Header card, metrics, activity feed, quick actions
  */
 @Composable
@@ -275,7 +308,7 @@ fun DashboardShowcaseScreen() {
 }
 
 /**
- * Tab 17: Gallery Showcase (JSON)
+ * Tab 19: Gallery Showcase (JSON)
  * Demonstrates: Galleries
  */
 @Composable

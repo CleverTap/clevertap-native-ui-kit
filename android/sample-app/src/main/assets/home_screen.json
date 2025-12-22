@@ -1,0 +1,1485 @@
+{
+  "theme": {
+    "id": "modern_home",
+    "defaultStyle": {
+      "textColor": "#1A1A2E",
+      "fontSize": 14
+    },
+    "colors": {}
+  },
+  "styleClasses": [],
+  "variables": {
+    "userName": "John",
+    "cartCount": 3,
+    "notificationCount": 5
+  },
+  "root": {
+    "type": "container",
+    "id": "home_root",
+    "containerType": "vertical",
+    "layout": {
+      "spacing": 0,
+      "width": {"value": 100, "unit": "percent"}
+    },
+    "style": {
+      "backgroundColor": "#F8F9FE"
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "header_section",
+        "containerType": "vertical",
+        "layout": {
+          "width": {"value": 100, "unit": "percent"},
+          "padding": {"horizontal": 20, "vertical": 20},
+          "spacing": 4
+        },
+        "style": {
+          "background": {
+            "type": "linear_gradient",
+            "angle": 135,
+            "colors": ["#6C63FF", "#8B7CF7"]
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "greeting",
+            "elementType": "text",
+            "bindings": {"text": "Hello, {{userName}} 👋"},
+            "style": {
+              "textColor": "#FFFFFF",
+              "fontSize": 24,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "type": "element",
+            "id": "subtitle",
+            "elementType": "text",
+            "bindings": {"text": "Find your favorite products"},
+            "style": {
+              "textColor": "#E8E8FF",
+              "fontSize": 15
+            }
+          }
+        ]
+      },
+
+      {
+        "type": "element",
+        "id": "spacer_1",
+        "elementType": "spacer",
+        "layout": {"height": {"value": 20, "unit": "dp"}}
+      },
+
+      {
+        "type": "container",
+        "id": "banner_section",
+        "containerType": "vertical",
+        "layout": {
+          "padding": {"horizontal": 16},
+          "spacing": 12
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "banners_title",
+            "elementType": "text",
+            "bindings": {"text": "🔥 Hot Deals"},
+            "style": {
+              "textColor": "#1A1A2E",
+              "fontSize": 20,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "type": "container",
+            "id": "auto_scroll_banner",
+            "containerType": "gallery",
+            "layout": {
+              "height": {"value": 180, "unit": "dp"},
+              "width": {"value": 100, "unit": "percent"}
+            },
+            "galleryConfig": {
+              "mode": "snapping",
+              "orientation": "horizontal",
+              "peekPercentage": 5,
+              "snapBehavior": "center",
+              "spacing": 12,
+              "showIndicators": true,
+              "indicatorStyle": {
+                "activeColor": "#6C63FF",
+                "inactiveColor": "#D1D5DB",
+                "size": 8,
+                "spacing": 6,
+                "shape": "circle",
+                "position": "bottom"
+              },
+              "autoScrollInterval": 4000,
+              "infiniteScroll": true
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "banner_1",
+                "containerType": "vertical",
+                "layout": {
+                  "height": {"value": 160, "unit": "dp"},
+                  "width": {"value": 100, "unit": "percent"},
+                  "padding": {"all": 20},
+                  "spacing": 6
+                },
+                "style": {
+                  "background": {
+                    "type": "linear_gradient",
+                    "angle": 135,
+                    "colors": ["#667eea", "#764ba2"]
+                  },
+                  "borderRadius": 16
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "banner_1_label",
+                    "elementType": "text",
+                    "bindings": {"text": "SUMMER SALE"},
+                    "style": {
+                      "textColor": "#FFD700",
+                      "fontSize": 12,
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "type": "element",
+                    "id": "banner_1_title",
+                    "elementType": "text",
+                    "bindings": {"text": "Up to 50% Off"},
+                    "style": {
+                      "textColor": "#FFFFFF",
+                      "fontSize": 26,
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "type": "element",
+                    "id": "banner_1_subtitle",
+                    "elementType": "text",
+                    "bindings": {"text": "On all fragrances & beauty"},
+                    "style": {
+                      "textColor": "#E8E8FF",
+                      "fontSize": 14
+                    }
+                  },
+                  {
+                    "type": "container",
+                    "id": "banner_1_btn",
+                    "containerType": "box",
+                    "layout": {
+                      "width": {"value": 100, "unit": "dp"},
+                      "padding": {"vertical": 8, "horizontal": 16},
+                      "margin": {"top": 8}
+                    },
+                    "style": {
+                      "backgroundColor": "#FFFFFF",
+                      "borderRadius": 20
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "banner_1_btn_text",
+                        "elementType": "text",
+                        "bindings": {"text": "Shop Now"},
+                        "style": {
+                          "textColor": "#667eea",
+                          "fontSize": 13,
+                          "fontWeight": "bold",
+                          "textAlign": "center"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "banner_2",
+                "containerType": "vertical",
+                "layout": {
+                  "height": {"value": 160, "unit": "dp"},
+                  "width": {"value": 100, "unit": "percent"},
+                  "padding": {"all": 20},
+                  "spacing": 6
+                },
+                "style": {
+                  "background": {
+                    "type": "linear_gradient",
+                    "angle": 135,
+                    "colors": ["#f093fb", "#f5576c"]
+                  },
+                  "borderRadius": 16
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "banner_2_label",
+                    "elementType": "text",
+                    "bindings": {"text": "NEW ARRIVALS"},
+                    "style": {
+                      "textColor": "#FFFFFF",
+                      "fontSize": 12,
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "type": "element",
+                    "id": "banner_2_title",
+                    "elementType": "text",
+                    "bindings": {"text": "Fashion Week"},
+                    "style": {
+                      "textColor": "#FFFFFF",
+                      "fontSize": 26,
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "type": "element",
+                    "id": "banner_2_subtitle",
+                    "elementType": "text",
+                    "bindings": {"text": "Trending styles 2024"},
+                    "style": {
+                      "textColor": "#FFE4E1",
+                      "fontSize": 14
+                    }
+                  },
+                  {
+                    "type": "container",
+                    "id": "banner_2_btn",
+                    "containerType": "box",
+                    "layout": {
+                      "width": {"value": 100, "unit": "dp"},
+                      "padding": {"vertical": 8, "horizontal": 16},
+                      "margin": {"top": 8}
+                    },
+                    "style": {
+                      "backgroundColor": "#FFFFFF",
+                      "borderRadius": 20
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "banner_2_btn_text",
+                        "elementType": "text",
+                        "bindings": {"text": "Explore"},
+                        "style": {
+                          "textColor": "#f5576c",
+                          "fontSize": 13,
+                          "fontWeight": "bold",
+                          "textAlign": "center"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "banner_3",
+                "containerType": "vertical",
+                "layout": {
+                  "height": {"value": 160, "unit": "dp"},
+                  "width": {"value": 100, "unit": "percent"},
+                  "padding": {"all": 20},
+                  "spacing": 6
+                },
+                "style": {
+                  "background": {
+                    "type": "linear_gradient",
+                    "angle": 135,
+                    "colors": ["#11998e", "#38ef7d"]
+                  },
+                  "borderRadius": 16
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "banner_3_label",
+                    "elementType": "text",
+                    "bindings": {"text": "ORGANIC"},
+                    "style": {
+                      "textColor": "#FFFFFF",
+                      "fontSize": 12,
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "type": "element",
+                    "id": "banner_3_title",
+                    "elementType": "text",
+                    "bindings": {"text": "Fresh Groceries"},
+                    "style": {
+                      "textColor": "#FFFFFF",
+                      "fontSize": 26,
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "type": "element",
+                    "id": "banner_3_subtitle",
+                    "elementType": "text",
+                    "bindings": {"text": "Farm to table products"},
+                    "style": {
+                      "textColor": "#E8FFE8",
+                      "fontSize": 14
+                    }
+                  },
+                  {
+                    "type": "container",
+                    "id": "banner_3_btn",
+                    "containerType": "box",
+                    "layout": {
+                      "width": {"value": 100, "unit": "dp"},
+                      "padding": {"vertical": 8, "horizontal": 16},
+                      "margin": {"top": 8}
+                    },
+                    "style": {
+                      "backgroundColor": "#FFFFFF",
+                      "borderRadius": 20
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "banner_3_btn_text",
+                        "elementType": "text",
+                        "bindings": {"text": "Order Now"},
+                        "style": {
+                          "textColor": "#11998e",
+                          "fontSize": 13,
+                          "fontWeight": "bold",
+                          "textAlign": "center"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "type": "element",
+        "id": "spacer_2",
+        "elementType": "spacer",
+        "layout": {"height": {"value": 24, "unit": "dp"}}
+      },
+
+      {
+        "type": "container",
+        "id": "categories_section",
+        "containerType": "vertical",
+        "layout": {
+          "padding": {"horizontal": 16},
+          "spacing": 12
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "categories_title",
+            "elementType": "text",
+            "bindings": {"text": "🏷️ Categories"},
+            "style": {
+              "textColor": "#1A1A2E",
+              "fontSize": 20,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "type": "container",
+            "id": "categories_gallery",
+            "containerType": "gallery",
+            "galleryConfig": {
+              "mode": "free_flow",
+              "orientation": "horizontal",
+              "spacing": 10
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "cat_beauty",
+                "containerType": "horizontal",
+                "layout": {"padding": {"vertical": 12, "horizontal": 18}, "spacing": 8},
+                "style": {
+                  "backgroundColor": "#FCE7F3",
+                  "borderRadius": 25
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "cat_beauty_icon",
+                    "elementType": "text",
+                    "bindings": {"text": "💄"},
+                    "style": {"fontSize": 16}
+                  },
+                  {
+                    "type": "element",
+                    "id": "cat_beauty_text",
+                    "elementType": "text",
+                    "bindings": {"text": "Beauty"},
+                    "style": {"textColor": "#BE185D", "fontSize": 14, "fontWeight": "bold"}
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "cat_fragrances",
+                "containerType": "horizontal",
+                "layout": {"padding": {"vertical": 12, "horizontal": 18}, "spacing": 8},
+                "style": {
+                  "backgroundColor": "#EDE9FE",
+                  "borderRadius": 25
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "cat_fragrances_icon",
+                    "elementType": "text",
+                    "bindings": {"text": "🌸"},
+                    "style": {"fontSize": 16}
+                  },
+                  {
+                    "type": "element",
+                    "id": "cat_fragrances_text",
+                    "elementType": "text",
+                    "bindings": {"text": "Fragrances"},
+                    "style": {"textColor": "#7C3AED", "fontSize": 14, "fontWeight": "bold"}
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "cat_furniture",
+                "containerType": "horizontal",
+                "layout": {"padding": {"vertical": 12, "horizontal": 18}, "spacing": 8},
+                "style": {
+                  "backgroundColor": "#FEF3C7",
+                  "borderRadius": 25
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "cat_furniture_icon",
+                    "elementType": "text",
+                    "bindings": {"text": "🛋️"},
+                    "style": {"fontSize": 16}
+                  },
+                  {
+                    "type": "element",
+                    "id": "cat_furniture_text",
+                    "elementType": "text",
+                    "bindings": {"text": "Furniture"},
+                    "style": {"textColor": "#B45309", "fontSize": 14, "fontWeight": "bold"}
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "cat_groceries",
+                "containerType": "horizontal",
+                "layout": {"padding": {"vertical": 12, "horizontal": 18}, "spacing": 8},
+                "style": {
+                  "backgroundColor": "#D1FAE5",
+                  "borderRadius": 25
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "cat_groceries_icon",
+                    "elementType": "text",
+                    "bindings": {"text": "🥗"},
+                    "style": {"fontSize": 16}
+                  },
+                  {
+                    "type": "element",
+                    "id": "cat_groceries_text",
+                    "elementType": "text",
+                    "bindings": {"text": "Groceries"},
+                    "style": {"textColor": "#047857", "fontSize": 14, "fontWeight": "bold"}
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "type": "element",
+        "id": "spacer_3",
+        "elementType": "spacer",
+        "layout": {"height": {"value": 24, "unit": "dp"}}
+      },
+
+      {
+        "type": "container",
+        "id": "full_banner_section",
+        "containerType": "vertical",
+        "layout": {
+          "padding": {"horizontal": 16}
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "full_banner",
+            "containerType": "vertical",
+            "layout": {
+              "width": {"value": 100, "unit": "percent"},
+              "padding": {"all": 24},
+              "spacing": 10
+            },
+            "style": {
+              "background": {
+                "type": "linear_gradient",
+                "angle": 135,
+                "colors": ["#1a1a2e", "#16213e", "#0f3460"]
+              },
+              "borderRadius": 20
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "full_banner_badge",
+                "containerType": "box",
+                "layout": {
+                  "width": {"value": 110, "unit": "dp"},
+                  "padding": {"vertical": 6, "horizontal": 12}
+                },
+                "style": {
+                  "backgroundColor": "#FFD700",
+                  "borderRadius": 12
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "full_banner_badge_text",
+                    "elementType": "text",
+                    "bindings": {"text": "⭐ EXCLUSIVE"},
+                    "style": {
+                      "textColor": "#1A1A2E",
+                      "fontSize": 11,
+                      "fontWeight": "bold",
+                      "textAlign": "center"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "full_banner_title",
+                "elementType": "text",
+                "bindings": {"text": "Premium Membership 👑"},
+                "style": {
+                  "textColor": "#FFFFFF",
+                  "fontSize": 24,
+                  "fontWeight": "bold"
+                }
+              },
+              {
+                "type": "element",
+                "id": "full_banner_desc",
+                "elementType": "text",
+                "bindings": {"text": "Get unlimited free delivery, exclusive deals, and early access to sales!"},
+                "style": {
+                  "textColor": "#B8B8D1",
+                  "fontSize": 14,
+                  "lineHeight": 20
+                }
+              },
+              {
+                "type": "container",
+                "id": "full_banner_cta",
+                "containerType": "box",
+                "layout": {
+                  "width": {"value": 130, "unit": "dp"},
+                  "padding": {"vertical": 12, "horizontal": 20},
+                  "margin": {"top": 8}
+                },
+                "style": {
+                  "background": {
+                    "type": "linear_gradient",
+                    "angle": 90,
+                    "colors": ["#6C63FF", "#8B7CF7"]
+                  },
+                  "borderRadius": 25
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "full_banner_cta_text",
+                    "elementType": "text",
+                    "bindings": {"text": "Join Now →"},
+                    "style": {
+                      "textColor": "#FFFFFF",
+                      "fontSize": 14,
+                      "fontWeight": "bold",
+                      "textAlign": "center"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "type": "element",
+        "id": "spacer_4",
+        "elementType": "spacer",
+        "layout": {"height": {"value": 24, "unit": "dp"}}
+      },
+
+      {
+        "type": "element",
+        "id": "divider_1",
+        "elementType": "divider",
+        "layout": {
+          "padding": {"horizontal": 16}
+        },
+        "dividerConfig": {
+          "orientation": "horizontal",
+          "thickness": 1,
+          "color": "#E5E7EB"
+        }
+      },
+
+      {
+        "type": "element",
+        "id": "spacer_5",
+        "elementType": "spacer",
+        "layout": {"height": {"value": 24, "unit": "dp"}}
+      },
+
+      {
+        "type": "container",
+        "id": "products_section",
+        "containerType": "vertical",
+        "layout": {
+          "padding": {"horizontal": 16},
+          "spacing": 16
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "products_header",
+            "containerType": "horizontal",
+            "children": [
+              {
+                "type": "element",
+                "id": "products_title",
+                "elementType": "text",
+                "bindings": {"text": "🛍️ Featured Products"},
+                "style": {
+                  "textColor": "#1A1A2E",
+                  "fontSize": 20,
+                  "fontWeight": "bold"
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "products_grid",
+            "containerType": "gallery",
+            "layout": {
+              "height": {"value": 320, "unit": "dp"}
+            },
+            "galleryConfig": {
+              "mode": "free_flow_grid",
+              "orientation": "horizontal",
+              "itemsPerView": 2.15,
+              "spacing": 12
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "product_card_1",
+                "containerType": "vertical",
+                "layout": {
+                  "spacing": 0
+                },
+                "style": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 16,
+                  "shadowRadius": 6,
+                  "shadowColor": "#00000015"
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "product_1_image_container",
+                    "containerType": "box",
+                    "layout": {
+                      "height": {"value": 140, "unit": "dp"},
+                      "width": {"value": 100, "unit": "percent"}
+                    },
+                    "style": {
+                      "backgroundColor": "#FDF2F8",
+                      "borderRadius": 16
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "product_1_image",
+                        "elementType": "image",
+                        "bindings": {
+                          "url": "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/1.webp",
+                          "contentDescription": "Essence Mascara"
+                        },
+                        "layout": {
+                          "width": {"value": 100, "unit": "percent"},
+                          "height": {"value": 140, "unit": "dp"}
+                        },
+                        "style": {
+                          "borderRadius": 16
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "product_1_badge_row",
+                    "containerType": "horizontal",
+                    "layout": {
+                      "padding": {"horizontal": 12, "top": 10},
+                      "spacing": 6
+                    },
+                    "children": [
+                      {
+                        "type": "container",
+                        "id": "product_1_discount_badge",
+                        "containerType": "box",
+                        "layout": {
+                          "padding": {"vertical": 4, "horizontal": 8}
+                        },
+                        "style": {
+                          "backgroundColor": "#EF4444",
+                          "borderRadius": 8
+                        },
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "product_1_discount_text",
+                            "elementType": "text",
+                            "bindings": {"text": "-10%"},
+                            "style": {
+                              "textColor": "#FFFFFF",
+                              "fontSize": 11,
+                              "fontWeight": "bold"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "product_1_info",
+                    "containerType": "vertical",
+                    "layout": {
+                      "padding": {"horizontal": 12, "bottom": 12, "top": 6},
+                      "spacing": 4
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "product_1_name",
+                        "elementType": "text",
+                        "bindings": {"text": "Essence Mascara"},
+                        "style": {
+                          "textColor": "#1A1A2E",
+                          "fontSize": 14,
+                          "fontWeight": "bold"
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "product_1_desc",
+                        "elementType": "text",
+                        "bindings": {"text": "Lash Princess"},
+                        "style": {
+                          "textColor": "#6B7280",
+                          "fontSize": 12
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "product_1_rating",
+                        "elementType": "text",
+                        "bindings": {"text": "⭐ 2.6 (99 in stock)"},
+                        "style": {
+                          "textColor": "#F59E0B",
+                          "fontSize": 12,
+                          "fontWeight": "bold"
+                        }
+                      },
+                      {
+                        "type": "container",
+                        "id": "product_1_price_row",
+                        "containerType": "horizontal",
+                        "layout": {"spacing": 8, "margin": {"top": 4}},
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "product_1_price",
+                            "elementType": "text",
+                            "bindings": {"text": "$9.99"},
+                            "style": {
+                              "textColor": "#1A1A2E",
+                              "fontSize": 18,
+                              "fontWeight": "bold"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "product_card_2",
+                "containerType": "vertical",
+                "layout": {
+                  "spacing": 0
+                },
+                "style": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 16,
+                  "shadowRadius": 6,
+                  "shadowColor": "#00000015"
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "product_2_image_container",
+                    "containerType": "box",
+                    "layout": {
+                      "height": {"value": 140, "unit": "dp"},
+                      "width": {"value": 100, "unit": "percent"}
+                    },
+                    "style": {
+                      "backgroundColor": "#F5F3FF",
+                      "borderRadius": 16
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "product_2_image",
+                        "elementType": "image",
+                        "bindings": {
+                          "url": "https://cdn.dummyjson.com/product-images/fragrances/chanel-coco-noir-eau-de/1.webp",
+                          "contentDescription": "Chanel Coco Noir"
+                        },
+                        "layout": {
+                          "width": {"value": 100, "unit": "percent"},
+                          "height": {"value": 140, "unit": "dp"}
+                        },
+                        "style": {
+                          "borderRadius": 16
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "product_2_badge_row",
+                    "containerType": "horizontal",
+                    "layout": {
+                      "padding": {"horizontal": 12, "top": 10},
+                      "spacing": 6
+                    },
+                    "children": [
+                      {
+                        "type": "container",
+                        "id": "product_2_new_badge",
+                        "containerType": "box",
+                        "layout": {
+                          "padding": {"vertical": 4, "horizontal": 8}
+                        },
+                        "style": {
+                          "backgroundColor": "#10B981",
+                          "borderRadius": 8
+                        },
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "product_2_new_text",
+                            "elementType": "text",
+                            "bindings": {"text": "NEW"},
+                            "style": {
+                              "textColor": "#FFFFFF",
+                              "fontSize": 11,
+                              "fontWeight": "bold"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "product_2_info",
+                    "containerType": "vertical",
+                    "layout": {
+                      "padding": {"horizontal": 12, "bottom": 12, "top": 6},
+                      "spacing": 4
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "product_2_name",
+                        "elementType": "text",
+                        "bindings": {"text": "Chanel Coco Noir"},
+                        "style": {
+                          "textColor": "#1A1A2E",
+                          "fontSize": 14,
+                          "fontWeight": "bold"
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "product_2_desc",
+                        "elementType": "text",
+                        "bindings": {"text": "Eau De Parfum"},
+                        "style": {
+                          "textColor": "#6B7280",
+                          "fontSize": 12
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "product_2_rating",
+                        "elementType": "text",
+                        "bindings": {"text": "⭐ 4.3 (58 in stock)"},
+                        "style": {
+                          "textColor": "#F59E0B",
+                          "fontSize": 12,
+                          "fontWeight": "bold"
+                        }
+                      },
+                      {
+                        "type": "container",
+                        "id": "product_2_price_row",
+                        "containerType": "horizontal",
+                        "layout": {"spacing": 8, "margin": {"top": 4}},
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "product_2_price",
+                            "elementType": "text",
+                            "bindings": {"text": "$129.99"},
+                            "style": {
+                              "textColor": "#1A1A2E",
+                              "fontSize": 18,
+                              "fontWeight": "bold"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "product_card_3",
+                "containerType": "vertical",
+                "layout": {
+                  "spacing": 0
+                },
+                "style": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 16,
+                  "shadowRadius": 6,
+                  "shadowColor": "#00000015"
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "product_3_image_container",
+                    "containerType": "box",
+                    "layout": {
+                      "height": {"value": 140, "unit": "dp"},
+                      "width": {"value": 100, "unit": "percent"}
+                    },
+                    "style": {
+                      "backgroundColor": "#FEF3C7",
+                      "borderRadius": 16
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "product_3_image",
+                        "elementType": "image",
+                        "bindings": {
+                          "url": "https://cdn.dummyjson.com/product-images/furniture/annibale-colombo-sofa/1.webp",
+                          "contentDescription": "Annibale Colombo Sofa"
+                        },
+                        "layout": {
+                          "width": {"value": 100, "unit": "percent"},
+                          "height": {"value": 140, "unit": "dp"}
+                        },
+                        "style": {
+                          "borderRadius": 16
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "product_3_badge_row",
+                    "containerType": "horizontal",
+                    "layout": {
+                      "padding": {"horizontal": 12, "top": 10},
+                      "spacing": 6
+                    },
+                    "children": [
+                      {
+                        "type": "container",
+                        "id": "product_3_discount_badge",
+                        "containerType": "box",
+                        "layout": {
+                          "padding": {"vertical": 4, "horizontal": 8}
+                        },
+                        "style": {
+                          "backgroundColor": "#EF4444",
+                          "borderRadius": 8
+                        },
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "product_3_discount_text",
+                            "elementType": "text",
+                            "bindings": {"text": "-14%"},
+                            "style": {
+                              "textColor": "#FFFFFF",
+                              "fontSize": 11,
+                              "fontWeight": "bold"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "product_3_info",
+                    "containerType": "vertical",
+                    "layout": {
+                      "padding": {"horizontal": 12, "bottom": 12, "top": 6},
+                      "spacing": 4
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "product_3_name",
+                        "elementType": "text",
+                        "bindings": {"text": "Colombo Sofa"},
+                        "style": {
+                          "textColor": "#1A1A2E",
+                          "fontSize": 14,
+                          "fontWeight": "bold"
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "product_3_desc",
+                        "elementType": "text",
+                        "bindings": {"text": "Premium furniture"},
+                        "style": {
+                          "textColor": "#6B7280",
+                          "fontSize": 12
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "product_3_rating",
+                        "elementType": "text",
+                        "bindings": {"text": "⭐ 3.9 (60 in stock)"},
+                        "style": {
+                          "textColor": "#F59E0B",
+                          "fontSize": 12,
+                          "fontWeight": "bold"
+                        }
+                      },
+                      {
+                        "type": "container",
+                        "id": "product_3_price_row",
+                        "containerType": "horizontal",
+                        "layout": {"spacing": 8, "margin": {"top": 4}},
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "product_3_price",
+                            "elementType": "text",
+                            "bindings": {"text": "$2,499"},
+                            "style": {
+                              "textColor": "#1A1A2E",
+                              "fontSize": 18,
+                              "fontWeight": "bold"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "product_card_4",
+                "containerType": "vertical",
+                "layout": {
+                  "spacing": 0
+                },
+                "style": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 16,
+                  "shadowRadius": 6,
+                  "shadowColor": "#00000015"
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "product_4_image_container",
+                    "containerType": "box",
+                    "layout": {
+                      "height": {"value": 140, "unit": "dp"},
+                      "width": {"value": 100, "unit": "percent"}
+                    },
+                    "style": {
+                      "backgroundColor": "#DCFCE7",
+                      "borderRadius": 16
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "product_4_image",
+                        "elementType": "image",
+                        "bindings": {
+                          "url": "https://cdn.dummyjson.com/product-images/groceries/apple/1.webp",
+                          "contentDescription": "Fresh Apple"
+                        },
+                        "layout": {
+                          "width": {"value": 100, "unit": "percent"},
+                          "height": {"value": 140, "unit": "dp"}
+                        },
+                        "style": {
+                          "borderRadius": 16
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "product_4_badge_row",
+                    "containerType": "horizontal",
+                    "layout": {
+                      "padding": {"horizontal": 12, "top": 10},
+                      "spacing": 6
+                    },
+                    "children": [
+                      {
+                        "type": "container",
+                        "id": "product_4_hot_badge",
+                        "containerType": "box",
+                        "layout": {
+                          "padding": {"vertical": 4, "horizontal": 8}
+                        },
+                        "style": {
+                          "backgroundColor": "#F97316",
+                          "borderRadius": 8
+                        },
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "product_4_hot_text",
+                            "elementType": "text",
+                            "bindings": {"text": "FRESH"},
+                            "style": {
+                              "textColor": "#FFFFFF",
+                              "fontSize": 11,
+                              "fontWeight": "bold"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "product_4_info",
+                    "containerType": "vertical",
+                    "layout": {
+                      "padding": {"horizontal": 12, "bottom": 12, "top": 6},
+                      "spacing": 4
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "product_4_name",
+                        "elementType": "text",
+                        "bindings": {"text": "Fresh Apples"},
+                        "style": {
+                          "textColor": "#1A1A2E",
+                          "fontSize": 14,
+                          "fontWeight": "bold"
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "product_4_desc",
+                        "elementType": "text",
+                        "bindings": {"text": "Organic fruits"},
+                        "style": {
+                          "textColor": "#6B7280",
+                          "fontSize": 12
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "product_4_rating",
+                        "elementType": "text",
+                        "bindings": {"text": "⭐ 4.2 (8 in stock)"},
+                        "style": {
+                          "textColor": "#F59E0B",
+                          "fontSize": 12,
+                          "fontWeight": "bold"
+                        }
+                      },
+                      {
+                        "type": "container",
+                        "id": "product_4_price_row",
+                        "containerType": "horizontal",
+                        "layout": {"spacing": 8, "margin": {"top": 4}},
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "product_4_price",
+                            "elementType": "text",
+                            "bindings": {"text": "$1.99"},
+                            "style": {
+                              "textColor": "#1A1A2E",
+                              "fontSize": 18,
+                              "fontWeight": "bold"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "type": "element",
+        "id": "spacer_6",
+        "elementType": "spacer",
+        "layout": {"height": {"value": 24, "unit": "dp"}}
+      },
+
+      {
+        "type": "container",
+        "id": "quick_actions_section",
+        "containerType": "vertical",
+        "layout": {
+          "padding": {"horizontal": 16},
+          "spacing": 16
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "quick_actions_title",
+            "elementType": "text",
+            "bindings": {"text": "⚡ Quick Actions"},
+            "style": {
+              "textColor": "#1A1A2E",
+              "fontSize": 20,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "type": "container",
+            "id": "quick_actions_grid",
+            "containerType": "gallery",
+            "galleryConfig": {
+              "mode": "free_flow_grid",
+              "orientation": "horizontal",
+              "itemsPerView": 4,
+              "spacing": 12
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "action_orders",
+                "containerType": "vertical",
+                "layout": {
+                  "padding": {"vertical": 16, "horizontal": 8},
+                  "spacing": 8
+                },
+                "style": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 16,
+                  "shadowRadius": 4,
+                  "shadowColor": "#00000010"
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "action_orders_icon",
+                    "elementType": "text",
+                    "bindings": {"text": "📦"},
+                    "style": {"fontSize": 28, "textAlign": "center"}
+                  },
+                  {
+                    "type": "element",
+                    "id": "action_orders_label",
+                    "elementType": "text",
+                    "bindings": {"text": "Orders"},
+                    "style": {
+                      "textColor": "#1A1A2E",
+                      "fontSize": 11,
+                      "fontWeight": "bold",
+                      "textAlign": "center"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "action_wishlist",
+                "containerType": "vertical",
+                "layout": {
+                  "padding": {"vertical": 16, "horizontal": 8},
+                  "spacing": 8
+                },
+                "style": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 16,
+                  "shadowRadius": 4,
+                  "shadowColor": "#00000010"
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "action_wishlist_icon",
+                    "elementType": "text",
+                    "bindings": {"text": "❤️"},
+                    "style": {"fontSize": 28, "textAlign": "center"}
+                  },
+                  {
+                    "type": "element",
+                    "id": "action_wishlist_label",
+                    "elementType": "text",
+                    "bindings": {"text": "Saved"},
+                    "style": {
+                      "textColor": "#1A1A2E",
+                      "fontSize": 11,
+                      "fontWeight": "bold",
+                      "textAlign": "center"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "action_wallet",
+                "containerType": "vertical",
+                "layout": {
+                  "padding": {"vertical": 16, "horizontal": 8},
+                  "spacing": 8
+                },
+                "style": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 16,
+                  "shadowRadius": 4,
+                  "shadowColor": "#00000010"
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "action_wallet_icon",
+                    "elementType": "text",
+                    "bindings": {"text": "💳"},
+                    "style": {"fontSize": 28, "textAlign": "center"}
+                  },
+                  {
+                    "type": "element",
+                    "id": "action_wallet_label",
+                    "elementType": "text",
+                    "bindings": {"text": "Wallet"},
+                    "style": {
+                      "textColor": "#1A1A2E",
+                      "fontSize": 11,
+                      "fontWeight": "bold",
+                      "textAlign": "center"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "action_support",
+                "containerType": "vertical",
+                "layout": {
+                  "padding": {"vertical": 16, "horizontal": 8},
+                  "spacing": 8
+                },
+                "style": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 16,
+                  "shadowRadius": 4,
+                  "shadowColor": "#00000010"
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "action_support_icon",
+                    "elementType": "text",
+                    "bindings": {"text": "💬"},
+                    "style": {"fontSize": 28, "textAlign": "center"}
+                  },
+                  {
+                    "type": "element",
+                    "id": "action_support_label",
+                    "elementType": "text",
+                    "bindings": {"text": "Help"},
+                    "style": {
+                      "textColor": "#1A1A2E",
+                      "fontSize": 11,
+                      "fontWeight": "bold",
+                      "textAlign": "center"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "type": "element",
+        "id": "spacer_7",
+        "elementType": "spacer",
+        "layout": {"height": {"value": 32, "unit": "dp"}}
+      }
+    ]
+  }
+}
