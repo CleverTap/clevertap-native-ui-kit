@@ -115,3 +115,42 @@ public enum ParticleDirection: String, Codable, CaseIterable {
     case right
     case random
 }
+
+/// Arrangement strategies for positioning children in VStack/HStack containers.
+/// Maps to SwiftUI spacing and alignment options.
+public enum ArrangementStrategy: String, Codable, CaseIterable {
+    /// Fixed spacing between children.
+    /// Uses the spacing value from ChildArrangement.
+    /// Maps to: VStack/HStack spacing parameter
+    case spaced
+    
+    /// Space between children, no space at edges.
+    /// Example: [child1]---[child2]---[child3]
+    /// Maps to: Spacer() between children
+    case spaceBetween = "space_between"
+    
+    /// Equal space between children AND at edges.
+    /// Example: ---[child1]---[child2]---[child3]---
+    /// Maps to: Spacer() between and around children
+    case spaceEvenly = "space_evenly"
+    
+    /// Equal space around each child (half space at edges).
+    /// Example: -[child1]--[child2]--[child3]-
+    /// Maps to: Spacer() with flexible spacing
+    case spaceAround = "space_around"
+    
+    /// Align children to start, no extra spacing.
+    /// Example: [child1][child2][child3]          
+    /// Maps to: .leading/.top alignment
+    case start
+    
+    /// Center children, no extra spacing.
+    /// Example:     [child1][child2][child3]     
+    /// Maps to: .center alignment
+    case center
+    
+    /// Align children to end, no extra spacing.
+    /// Example:          [child1][child2][child3]
+    /// Maps to: .trailing/.bottom alignment
+    case end
+}

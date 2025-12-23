@@ -125,14 +125,13 @@ private fun RenderContainer(
     layout: Layout?,
     modifier: Modifier = Modifier
 ) {
-    val spacing = container.layout?.spacing?.dp ?: 0.dp
     val containerModifier = modifier.applyPadding(layout)
 
     when (container.containerType) {
         ContainerType.VERTICAL -> {
             Column(
                 modifier = containerModifier,
-                verticalArrangement = Arrangement.spacedBy(spacing)
+                verticalArrangement = resolveVerticalArrangement(container.layout?.arrangement)
             ) {
                 container.children.forEach { child ->
                     RenderNode(
@@ -149,7 +148,7 @@ private fun RenderContainer(
         ContainerType.HORIZONTAL -> {
             Row(
                 modifier = containerModifier,
-                horizontalArrangement = Arrangement.spacedBy(spacing)
+                horizontalArrangement = resolveHorizontalArrangement(container.layout?.arrangement)
             ) {
                 container.children.forEach { child ->
                     RenderNode(
@@ -834,25 +833,42 @@ private fun Modifier.applySizing(layout: Layout?): Modifier {
 }
 
 /**
- * Apply absolute offset positioning (replaces margin).
- * This properly positions elements within their container bounds using x/y coordinates.
+ * Apply absolute offset positioning.
+ * This positions elements at specific x/y coordinates within their container.
  * 
- * Note: Offset moves the element after layout, so it works correctly for absolute positioning
- * within Box/Stack containers. For Column/Row, the spacing is handled by Arrangement.spacedBy.
+ * Offset moves the element after layout, making it perfect for:
+ * - Absolute positioning within Box/Stack containers
+ * - Negative values for positioning outside normal flow
+ * - Fine-tuned positioning adjustments
+ * 
+ * Note: For Column/Row containers, spacing between children is handled by
+ * the arrangement strategy (SpaceBetween, SpaceEvenly, etc.).
  */
 private fun Modifier.applyOffset(layout: Layout?): Modifier {
-    if (layout?.margin == null) return this
+    if (layout?.offset == null) return this
     
-    val margin = layout.margin
+    val offset = layout.offset
     
-    // Use offset for absolute positioning (x, y within container bounds)
-    // Negative margins are supported (negative offset values)
-    return this.offset(
-        x = margin.resolveLeft().dp,
-        y = margin.resolveTop().dp
-    )
-    // Note: right and bottom margins don't affect offset directly,
-    // they would need to be handled by the parent container's layout calculations
+    // Apply x/y offset based on unit type
+    return when (offset.unit) {
+        DimensionUnit.DP -> this.offset(
+            x = offset.x.dp,
+            y = offset.y.dp
+        )
+        DimensionUnit.PERCENT -> {
+            // For percentage-based offset, we need to use BoxWithConstraints
+            // to get parent dimensions. For now, treat as DP.
+            // TODO: Implement percentage-based offset using BoxWithConstraints
+            this.offset(
+                x = offset.x.dp,
+                y = offset.y.dp
+            )
+        }
+        else -> this.offset(
+            x = offset.x.dp,
+            y = offset.y.dp
+        )
+    }
 }
 
 /**
@@ -986,5 +1002,57 @@ private fun resolveTextAlign(align: String?): TextAlign {
         "right" -> TextAlign.Right
         "justify" -> TextAlign.Justify
         else -> TextAlign.Start
+    }
+}
+
+/**
+ * Resolve horizontal arrangement strategy for Row containers.
+ * Maps ArrangementStrategy enum to Compose Arrangement.Horizontal.
+ */
+private fun resolveHorizontalArrangement(arrangement: ChildArrangement?): Arrangement.Horizontal {
+    if (arrangement == null) {
+        return Arrangement.spacedBy(0.dp)
+    }
+    
+    return when (arrangement.strategy) {
+        ArrangementStrategy.SPACED -> {
+            val spacing = arrangement.spacing ?: 0f
+            when (arrangement.spacingUnit) {
+                DimensionUnit.DP -> Arrangement.spacedBy(spacing.dp)
+                else -> Arrangement.spacedBy(spacing.dp) // Default to DP for other units
+            }
+        }
+        ArrangementStrategy.SPACE_BETWEEN -> Arrangement.SpaceBetween
+        ArrangementStrategy.SPACE_EVENLY -> Arrangement.SpaceEvenly
+        ArrangementStrategy.SPACE_AROUND -> Arrangement.SpaceAround
+        ArrangementStrategy.START -> Arrangement.Start
+        ArrangementStrategy.CENTER -> Arrangement.Center
+        ArrangementStrategy.END -> Arrangement.End
+    }
+}
+
+/**
+ * Resolve vertical arrangement strategy for Column containers.
+ * Maps ArrangementStrategy enum to Compose Arrangement.Vertical.
+ */
+private fun resolveVerticalArrangement(arrangement: ChildArrangement?): Arrangement.Vertical {
+    if (arrangement == null) {
+        return Arrangement.spacedBy(0.dp)
+    }
+    
+    return when (arrangement.strategy) {
+        ArrangementStrategy.SPACED -> {
+            val spacing = arrangement.spacing ?: 0f
+            when (arrangement.spacingUnit) {
+                DimensionUnit.DP -> Arrangement.spacedBy(spacing.dp)
+                else -> Arrangement.spacedBy(spacing.dp) // Default to DP for other units
+            }
+        }
+        ArrangementStrategy.SPACE_BETWEEN -> Arrangement.SpaceBetween
+        ArrangementStrategy.SPACE_EVENLY -> Arrangement.SpaceEvenly
+        ArrangementStrategy.SPACE_AROUND -> Arrangement.SpaceAround
+        ArrangementStrategy.START -> Arrangement.Top
+        ArrangementStrategy.CENTER -> Arrangement.Center
+        ArrangementStrategy.END -> Arrangement.Bottom
     }
 }

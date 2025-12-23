@@ -142,3 +142,66 @@ enum class SnapBehavior {
     @SerialName("end")
     END             // Snap to end
 }
+
+/**
+ * Arrangement strategies for positioning children in Column/Row containers.
+ * Maps to Jetpack Compose Arrangement options.
+ */
+@Serializable
+enum class ArrangementStrategy {
+    /**
+     * Fixed spacing between children.
+     * Uses the spacing value from ChildArrangement.
+     * Maps to: Arrangement.spacedBy(spacing.dp)
+     */
+    @SerialName("spaced")
+    SPACED,
+    
+    /**
+     * Space between children, no space at edges.
+     * Example: [child1]---[child2]---[child3]
+     * Maps to: Arrangement.SpaceBetween
+     */
+    @SerialName("space_between")
+    SPACE_BETWEEN,
+    
+    /**
+     * Equal space between children AND at edges.
+     * Example: ---[child1]---[child2]---[child3]---
+     * Maps to: Arrangement.SpaceEvenly
+     */
+    @SerialName("space_evenly")
+    SPACE_EVENLY,
+    
+    /**
+     * Equal space around each child (half space at edges).
+     * Example: -[child1]--[child2]--[child3]-
+     * Maps to: Arrangement.SpaceAround
+     */
+    @SerialName("space_around")
+    SPACE_AROUND,
+    
+    /**
+     * Align children to start, no extra spacing.
+     * Example: [child1][child2][child3]          
+     * Maps to: Arrangement.Start (horizontal) / Arrangement.Top (vertical)
+     */
+    @SerialName("start")
+    START,
+    
+    /**
+     * Center children, no extra spacing.
+     * Example:     [child1][child2][child3]     
+     * Maps to: Arrangement.Center
+     */
+    @SerialName("center")
+    CENTER,
+    
+    /**
+     * Align children to end, no extra spacing.
+     * Example:          [child1][child2][child3]
+     * Maps to: Arrangement.End (horizontal) / Arrangement.Bottom (vertical)
+     */
+    @SerialName("end")
+    END
+}

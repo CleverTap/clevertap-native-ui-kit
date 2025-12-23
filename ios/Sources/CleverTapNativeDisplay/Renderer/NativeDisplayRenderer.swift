@@ -90,7 +90,6 @@ struct RenderContainer: View {
     let parentSize: CGSize
     
     var body: some View {
-        let spacing = container.layout?.spacing ?? 0
         let padding = container.layout?.padding
         let paddingInsets = EdgeInsets(
             top: padding?.resolveTop() ?? 0,
@@ -108,31 +107,10 @@ struct RenderContainer: View {
         Group {
             switch container.containerType {
             case .vertical:
-                VStack(alignment: .leading, spacing: spacing) {
-                    ForEach(container.children.indices, id: \.self) { index in
-                        RenderNode(
-                            node: container.children[index],
-                            styleResolver: styleResolver,
-                            evaluator: evaluator,
-                            parentStyle: resolvedStyle,
-                            parentSize: availableSize
-                        )
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                renderVerticalContainer(availableSize: availableSize)
                 
             case .horizontal:
-                HStack(alignment: .center, spacing: spacing) {
-                    ForEach(container.children.indices, id: \.self) { index in
-                        RenderNode(
-                            node: container.children[index],
-                            styleResolver: styleResolver,
-                            evaluator: evaluator,
-                            parentStyle: resolvedStyle,
-                            parentSize: availableSize
-                        )
-                    }
-                }
+                renderHorizontalContainer(availableSize: availableSize)
                 
             case .box:
                 ZStack(alignment: .topLeading) {
@@ -171,6 +149,243 @@ struct RenderContainer: View {
             }
         }
         .padding(paddingInsets)
+    }
+    
+    @ViewBuilder
+    private func renderVerticalContainer(availableSize: CGSize) -> some View {
+        let arrangement = container.layout?.arrangement ?? .default
+        
+        switch arrangement.strategy {
+        case .spaced:
+            VStack(alignment: .leading, spacing: arrangement.spacing ?? 0) {
+                ForEach(container.children.indices, id: \.self) { index in
+                    RenderNode(
+                        node: container.children[index],
+                        styleResolver: styleResolver,
+                        evaluator: evaluator,
+                        parentStyle: resolvedStyle,
+                        parentSize: availableSize
+                    )
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+        case .spaceBetween:
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(container.children.indices, id: \.self) { index in
+                    RenderNode(
+                        node: container.children[index],
+                        styleResolver: styleResolver,
+                        evaluator: evaluator,
+                        parentStyle: resolvedStyle,
+                        parentSize: availableSize
+                    )
+                    
+                    if index < container.children.count - 1 {
+                        Spacer()
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+        case .spaceEvenly:
+            VStack(alignment: .leading, spacing: 0) {
+                Spacer()
+                ForEach(container.children.indices, id: \.self) { index in
+                    RenderNode(
+                        node: container.children[index],
+                        styleResolver: styleResolver,
+                        evaluator: evaluator,
+                        parentStyle: resolvedStyle,
+                        parentSize: availableSize
+                    )
+                    Spacer()
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+        case .spaceAround:
+            VStack(alignment: .leading, spacing: 0) {
+                Spacer(minLength: 0)
+                ForEach(container.children.indices, id: \.self) { index in
+                    RenderNode(
+                        node: container.children[index],
+                        styleResolver: styleResolver,
+                        evaluator: evaluator,
+                        parentStyle: resolvedStyle,
+                        parentSize: availableSize
+                    )
+                    
+                    if index < container.children.count - 1 {
+                        Spacer()
+                        Spacer()
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+        case .start:
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(container.children.indices, id: \.self) { index in
+                    RenderNode(
+                        node: container.children[index],
+                        styleResolver: styleResolver,
+                        evaluator: evaluator,
+                        parentStyle: resolvedStyle,
+                        parentSize: availableSize
+                    )
+                }
+                Spacer(minLength: 0)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+        case .center:
+            VStack(alignment: .center, spacing: 0) {
+                Spacer()
+                ForEach(container.children.indices, id: \.self) { index in
+                    RenderNode(
+                        node: container.children[index],
+                        styleResolver: styleResolver,
+                        evaluator: evaluator,
+                        parentStyle: resolvedStyle,
+                        parentSize: availableSize
+                    )
+                }
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, alignment: .center)
+            
+        case .end:
+            VStack(alignment: .trailing, spacing: 0) {
+                Spacer(minLength: 0)
+                ForEach(container.children.indices, id: \.self) { index in
+                    RenderNode(
+                        node: container.children[index],
+                        styleResolver: styleResolver,
+                        evaluator: evaluator,
+                        parentStyle: resolvedStyle,
+                        parentSize: availableSize
+                    )
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .trailing)
+        }
+    }
+    
+    @ViewBuilder
+    private func renderHorizontalContainer(availableSize: CGSize) -> some View {
+        let arrangement = container.layout?.arrangement ?? .default
+        
+        switch arrangement.strategy {
+        case .spaced:
+            HStack(alignment: .center, spacing: arrangement.spacing ?? 0) {
+                ForEach(container.children.indices, id: \.self) { index in
+                    RenderNode(
+                        node: container.children[index],
+                        styleResolver: styleResolver,
+                        evaluator: evaluator,
+                        parentStyle: resolvedStyle,
+                        parentSize: availableSize
+                    )
+                }
+            }
+            
+        case .spaceBetween:
+            HStack(alignment: .center, spacing: 0) {
+                ForEach(container.children.indices, id: \.self) { index in
+                    RenderNode(
+                        node: container.children[index],
+                        styleResolver: styleResolver,
+                        evaluator: evaluator,
+                        parentStyle: resolvedStyle,
+                        parentSize: availableSize
+                    )
+                    
+                    if index < container.children.count - 1 {
+                        Spacer()
+                    }
+                }
+            }
+            
+        case .spaceEvenly:
+            HStack(alignment: .center, spacing: 0) {
+                Spacer()
+                ForEach(container.children.indices, id: \.self) { index in
+                    RenderNode(
+                        node: container.children[index],
+                        styleResolver: styleResolver,
+                        evaluator: evaluator,
+                        parentStyle: resolvedStyle,
+                        parentSize: availableSize
+                    )
+                    Spacer()
+                }
+            }
+            
+        case .spaceAround:
+            HStack(alignment: .center, spacing: 0) {
+                Spacer(minLength: 0)
+                ForEach(container.children.indices, id: \.self) { index in
+                    RenderNode(
+                        node: container.children[index],
+                        styleResolver: styleResolver,
+                        evaluator: evaluator,
+                        parentStyle: resolvedStyle,
+                        parentSize: availableSize
+                    )
+                    
+                    if index < container.children.count - 1 {
+                        Spacer()
+                        Spacer()
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+            
+        case .start:
+            HStack(alignment: .center, spacing: 0) {
+                ForEach(container.children.indices, id: \.self) { index in
+                    RenderNode(
+                        node: container.children[index],
+                        styleResolver: styleResolver,
+                        evaluator: evaluator,
+                        parentStyle: resolvedStyle,
+                        parentSize: availableSize
+                    )
+                }
+                Spacer(minLength: 0)
+            }
+            
+        case .center:
+            HStack(alignment: .center, spacing: 0) {
+                Spacer()
+                ForEach(container.children.indices, id: \.self) { index in
+                    RenderNode(
+                        node: container.children[index],
+                        styleResolver: styleResolver,
+                        evaluator: evaluator,
+                        parentStyle: resolvedStyle,
+                        parentSize: availableSize
+                    )
+                }
+                Spacer()
+            }
+            
+        case .end:
+            HStack(alignment: .center, spacing: 0) {
+                Spacer(minLength: 0)
+                ForEach(container.children.indices, id: \.self) { index in
+                    RenderNode(
+                        node: container.children[index],
+                        styleResolver: styleResolver,
+                        evaluator: evaluator,
+                        parentStyle: resolvedStyle,
+                        parentSize: availableSize
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -340,10 +555,12 @@ struct LayoutModifier: ViewModifier {
         let height = calculateHeight()
         let maxWidth = calculateMaxWidth()
         let maxHeight = calculateMaxHeight()
+        let offset = calculateOffset()
         
         content
             .frame(width: width, height: height)
             .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: .topLeading)
+            .offset(x: offset.x, y: offset.y)
     }
     
     private func calculateWidth() -> CGFloat? {
@@ -418,6 +635,24 @@ struct LayoutModifier: ViewModifier {
         }
         
         return nil
+    }
+    
+    /// Calculate offset for absolute positioning.
+    /// Supports DP and percentage-based offsets.
+    private func calculateOffset() -> CGSize {
+        guard let offset = layout?.offset else {
+            return .zero
+        }
+        
+        switch offset.unit {
+        case .dp, .px, .sp:
+            return CGSize(width: offset.x, height: offset.y)
+        case .percent:
+            return CGSize(
+                width: parentSize.width * offset.x / 100,
+                height: parentSize.height * offset.y / 100
+            )
+        }
     }
 }
 
