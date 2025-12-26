@@ -29,7 +29,6 @@ object NewElementsSamples {
                     width = Dimension.MATCH_PARENT,
                     height = Dimension.WRAP_CONTENT,
                     padding = Spacing.all(16f),
-                    spacing = 16f
                 ),
                 style = Style(
                     backgroundColor = "#FFFFFF"
@@ -124,7 +123,6 @@ object NewElementsSamples {
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.dp(60f),
                             padding = Spacing.all(8f),
-                            spacing = 16f
                         ),
                         style = Style(
                             backgroundColor = "#F5F5F5",
@@ -189,7 +187,6 @@ object NewElementsSamples {
                     width = Dimension.MATCH_PARENT,
                     height = Dimension.WRAP_CONTENT,
                     padding = Spacing.all(16f),
-                    spacing = 16f
                 ),
                 children = listOf(
                     NativeDisplayElement(
@@ -240,7 +237,6 @@ object NewElementsSamples {
                     width = Dimension.MATCH_PARENT,
                     height = Dimension.WRAP_CONTENT,
                     padding = Spacing.all(16f),
-                    spacing = 8f
                 ),
                 children = listOf(
                     NativeDisplayElement(
@@ -261,7 +257,6 @@ object NewElementsSamples {
                         layout = Layout(
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.WRAP_CONTENT,
-                            margin = Spacing(bottom = 8f)
                         ),
                         style = Style(fontSize = 12f, textColor = "#666666")
                     ),
@@ -292,7 +287,6 @@ object NewElementsSamples {
                                 size = 10f,
                                 activeColor = "#007AFF",
                                 inactiveColor = "#CCCCCC",
-                                spacing = 8f,
                                 position = "bottom",
                                 shape = "circle"
                             )
@@ -319,7 +313,6 @@ object NewElementsSamples {
                     width = Dimension.MATCH_PARENT,
                     height = Dimension.WRAP_CONTENT,
                     padding = Spacing.all(16f),
-                    spacing = 8f
                 ),
                 children = listOf(
                     NativeDisplayElement(
@@ -340,7 +333,6 @@ object NewElementsSamples {
                         layout = Layout(
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.WRAP_CONTENT,
-                            margin = Spacing(bottom = 8f)
                         ),
                         style = Style(fontSize = 12f, textColor = "#666666")
                     ),
@@ -381,7 +373,7 @@ object NewElementsSamples {
                     width = Dimension.MATCH_PARENT,
                     height = Dimension.WRAP_CONTENT,
                     padding = Spacing.all(16f),
-                    spacing = 4f
+                    arrangement = ChildArrangement.spaceBetween()
                 ),
                 children = listOf(
                     // Title
@@ -404,7 +396,6 @@ object NewElementsSamples {
                         layout = Layout(
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.WRAP_CONTENT,
-                            margin = Spacing(bottom = 12f)
                         ),
                         style = Style(fontSize = 14f, textColor = "#666666")
                     ),
@@ -416,7 +407,6 @@ object NewElementsSamples {
                         layout = Layout(
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.dp(2f),
-                            margin = Spacing(bottom = 16f)
                         ),
                         dividerConfig = DividerConfig(
                             orientation = Orientation.HORIZONTAL,
@@ -465,7 +455,6 @@ object NewElementsSamples {
                         layout = Layout(
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.dp(2f),
-                            margin = Spacing(top = 16f, bottom = 16f)
                         ),
                         dividerConfig = DividerConfig(
                             orientation = Orientation.HORIZONTAL,
@@ -506,7 +495,6 @@ object NewElementsSamples {
                     width = Dimension.MATCH_PARENT,
                     height = Dimension.MATCH_PARENT,
                     padding = Spacing.all(20f),
-                    spacing = 8f
                 ),
                 style = Style(
                     backgroundColor = colors[index % colors.size],
@@ -600,7 +588,6 @@ object NewElementsSamples {
                     width = Dimension.MATCH_PARENT,
                     height = Dimension.MATCH_PARENT,
                     padding = Spacing.all(16f),
-                    spacing = 0f
                 ),
                 style = Style(
                     backgroundColor = "#FFFFFF",
@@ -616,7 +603,6 @@ object NewElementsSamples {
                         layout = Layout(
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.dp(120f),
-                            margin = Spacing(bottom = 12f)
                         ),
                         style = Style(
                             backgroundColor = color,
@@ -632,7 +618,6 @@ object NewElementsSamples {
                         layout = Layout(
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.WRAP_CONTENT,
-                            margin = Spacing(bottom = 4f)
                         ),
                         style = Style(
                             fontSize = 18f,

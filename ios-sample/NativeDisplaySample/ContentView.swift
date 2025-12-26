@@ -2,46 +2,96 @@ import SwiftUI
 import CleverTapNativeDisplay
 
 struct ContentView: View {
+    @State private var selectedTab = 0
+    
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            // Tab 0: Arrangement Demo
+            ArrangementDemoView()
+                .tabItem {
+                    Label("📏 Arrangements", systemImage: "rectangle.3.group")
+                }
+                .tag(0)
+            
+            // Tab 1: Home Screen (Original)
+            HomeScreenView()
+                .tabItem {
+                    Label("🏠 Home", systemImage: "house.fill")
+                }
+                .tag(1)
+        }
+    }
+}
+
+/// Tab 0: Arrangement Demo Screen
+/// Demonstrates all 7 arrangement strategies with interactive buttons
+struct ArrangementDemoView: View {
     @State private var config: ResolvedConfig?
     @State private var errorMessage: String?
     @State private var isLoading = true
+    @State private var selectedStrategy: ArrangementStrategyOption = .spaced
+    
+    // Define available strategies
+    let strategies: [(String, ArrangementStrategyOption)] = [
+        ("SPACED", .spaced),
+        ("BETWEEN", .spaceBetween),
+        ("EVENLY", .spaceEvenly),
+        ("AROUND", .spaceAround),
+        ("START", .start),
+        ("CENTER", .center),
+        ("END", .end)
+    ]
     
     var body: some View {
-        Group {
-            if isLoading {
-                VStack {
-                    ProgressView()
-                    Text("Loading...")
-                        .foregroundColor(.gray)
-                }
-            } else if let error = errorMessage {
-                VStack(spacing: 16) {
-                    Image(systemName: "exclamationmark.triangle")
-                        .font(.system(size: 48))
-                        .foregroundColor(.orange)
-                    Text("Error Loading Config")
-                        .font(.headline)
-                    Text(error)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 24)
-                    
-                    Button("Retry") {
-                        loadConfig()
+        NavigationView {
+            VStack(spacing: 0) {
+                // Strategy Picker at the top
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(strategies, id: \.0) { name, strategy in
+                            StrategyButton(
+                                title: name,
+                                isSelected: selectedStrategy == strategy,
+                                action: {
+                                    selectedStrategy = strategy
+                                    updateArrangementStrategy(strategy)
+                                }
+                            )
+                        }
                     }
-                    .padding(.top)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
                 }
-            } else if let config = config {
-                ScrollView {
-                    NativeDisplayView(config: config)
+                .background(Color(.systemBackground))
+                .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 2)
+                
+                // Main content
+                Group {
+                    if isLoading {
+                        VStack {
+                            ProgressView()
+                            Text("Loading...")
+                                .foregroundColor(.gray)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else if let error = errorMessage {
+                        ErrorView(message: error) {
+                            loadConfig()
+                        }
+                    } else if let config = config {
+                        ScrollView {
+                            NativeDisplayView(config: config)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .background(Color(hex: "#F5F5F5"))
+                    }
                 }
-                .background(Color(hex: "#F8F9FE"))
-                .ignoresSafeArea(edges: .bottom)
             }
-        }
-        .onAppear {
-            loadConfig()
+            .navigationTitle("📏 Arrangements")
+            .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                loadConfig()
+            }
         }
     }
     
@@ -49,9 +99,163 @@ struct ContentView: View {
         isLoading = true
         errorMessage = nil
         
-        // Load JSON from bundle
+        guard let url = Bundle.main.url(forResource: "arrangement_demo", withExtension: "json") else {
+            errorMessage = "Could not find arrangement_demo.json in bundle"
+            isLoading = false
+            return
+        }
+        
+        do {
+            let data = try Data(contentsOf: url)
+            let decoder = JSONDecoder()
+            config = try decoder.decode(ResolvedConfig.self, from: data)
+            errorMessage = nil
+            print("✅ Loaded arrangement demo config: \(String(describing: config?.root))")
+        } catch {
+            errorMessage = "Failed to decode JSON:\n\n\(error.localizedDescription)"
+            print("❌ Decode error: \(error)")
+        }
+        
+        isLoading = false
+    }
+    
+    private func updateArrangementStrategy(_ strategy: ArrangementStrategyOption) {
+        guard let currentConfig = config else { return }
+        
+        // Create new arrangement based on strategy
+        let newArrangement = strategy.toChildArrangement()
+        
+        // Update the root container's arrangement
+        if case .container(let container) = currentConfig.root {
+            // Create new layout with updated arrangement
+            let updatedLayout = Layout(
+                width: container.layout?.width,
+                height: container.layout?.height,
+                offset: container.layout?.offset,
+                padding: container.layout?.padding,
+                arrangement: newArrangement  // Use new arrangement
+            )
+            
+            // Create new container with updated layout
+            let updatedContainer = NativeDisplayContainer(
+                id: container.id,
+                containerType: container.containerType,
+                children: container.children,
+                layout: updatedLayout,  // New layout
+                style: container.style,
+                styleClass: container.styleClass,
+                visible: container.visible,
+                actions: container.actions,
+                animation: container.animation,
+                galleryConfig: container.galleryConfig,
+                dividerConfig: container.dividerConfig
+            )
+            
+            // Create new config with updated root
+            config = ResolvedConfig(
+                theme: currentConfig.theme,
+                styleClasses: currentConfig.styleClasses,
+                variables: currentConfig.variables,
+                root: .container(updatedContainer)
+            )
+            
+            print("✅ Updated arrangement to: \(strategy)")
+        }
+    }
+}
+
+/// Custom button for strategy selection
+struct StrategyButton: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 14, weight: .medium))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(isSelected ? Color.blue : Color(.systemGray5))
+                )
+                .foregroundColor(isSelected ? .white : .primary)
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+/// Enum to represent arrangement strategies
+enum ArrangementStrategyOption: Equatable {
+    case spaced
+    case spaceBetween
+    case spaceEvenly
+    case spaceAround
+    case start
+    case center
+    case end
+    
+    func toChildArrangement() -> ChildArrangement {
+        switch self {
+        case .spaced:
+            return ChildArrangement(spacing: 16, spacingUnit: .dp, strategy: .spaced)
+        case .spaceBetween:
+            return ChildArrangement(spacing: nil, spacingUnit: .dp, strategy: .spaceBetween)
+        case .spaceEvenly:
+            return ChildArrangement(spacing: nil, spacingUnit: .dp, strategy: .spaceEvenly)
+        case .spaceAround:
+            return ChildArrangement(spacing: nil, spacingUnit: .dp, strategy: .spaceAround)
+        case .start:
+            return ChildArrangement(spacing: nil, spacingUnit: .dp, strategy: .start)
+        case .center:
+            return ChildArrangement(spacing: nil, spacingUnit: .dp, strategy: .center)
+        case .end:
+            return ChildArrangement(spacing: nil, spacingUnit: .dp, strategy: .end)
+        }
+    }
+}
+
+/// Tab 1: Home Screen (Original)
+struct HomeScreenView: View {
+    @State private var config: ResolvedConfig?
+    @State private var errorMessage: String?
+    @State private var isLoading = true
+    
+    var body: some View {
+        NavigationView {
+            Group {
+                if isLoading {
+                    VStack {
+                        ProgressView()
+                        Text("Loading...")
+                            .foregroundColor(.gray)
+                    }
+                } else if let error = errorMessage {
+                    ErrorView(message: error) {
+                        loadConfig()
+                    }
+                } else if let config = config {
+                    ScrollView {
+                        NativeDisplayView(config: config)
+                    }
+                    .background(Color(hex: "#F8F9FE"))
+                }
+            }
+            .navigationTitle("🏠 Home")
+            .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                loadConfig()
+            }
+        }
+    }
+    
+    private func loadConfig() {
+        isLoading = true
+        errorMessage = nil
+        
         guard let url = Bundle.main.url(forResource: "home_screen", withExtension: "json") else {
-            errorMessage = "Could not find home_screen.json in bundle.\n\nMake sure the file is added to the target."
+            errorMessage = "Could not find home_screen.json in bundle"
             isLoading = false
             return
         }
@@ -67,13 +271,7 @@ struct ContentView: View {
             if let config = config {
                 print("✅ Decoded config successfully")
                 print("   - Theme: \(config.theme.id)")
-                print("   - Style classes: \(config.styleClasses.count)")
-                print("   - Variables: \(config.variables.count)")
-                print("   - Root type: \(type(of: config.root))")
-                
-                // Count nodes
-                let nodeCount = countNodes(config.root)
-                print("   - Total nodes: \(nodeCount)")
+                print("   - Total nodes: \(countNodes(config.root))")
             }
         } catch {
             errorMessage = "Failed to decode JSON:\n\n\(error.localizedDescription)"
@@ -90,6 +288,31 @@ struct ContentView: View {
         case .element:
             return 1
         }
+    }
+}
+
+/// Reusable error view
+struct ErrorView: View {
+    let message: String
+    let onRetry: () -> Void
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.system(size: 48))
+                .foregroundColor(.orange)
+            Text("Error Loading Config")
+                .font(.headline)
+            Text(message)
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+            
+            Button("Retry", action: onRetry)
+                .padding(.top)
+        }
+        .padding()
     }
 }
 

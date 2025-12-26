@@ -560,7 +560,7 @@ struct LayoutModifier: ViewModifier {
         content
             .frame(width: width, height: height)
             .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: .topLeading)
-            .offset(x: offset.x, y: offset.y)
+            .offset(x: offset.width, y: offset.height)
     }
     
     private func calculateWidth() -> CGFloat? {

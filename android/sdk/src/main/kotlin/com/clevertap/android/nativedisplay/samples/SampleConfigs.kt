@@ -48,9 +48,6 @@ object SampleConfigs {
                             fontSize = 24f,
                             fontWeight = FontWeight.BOLD,
                             textColor = "#000000"
-                        ),
-                        layout = Layout(
-                            margin = Spacing(bottom = 8f)
                         )
                     ),
                     NativeDisplayElement(
@@ -137,7 +134,6 @@ object SampleConfigs {
                         layout = Layout(
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.dp(200f),
-                            margin = Spacing(bottom = 16f)
                         ),
                         style = Style(
                             backgroundColor = "#F0F0F0",
@@ -155,7 +151,6 @@ object SampleConfigs {
                             fontWeight = FontWeight.BOLD
                         ),
                         layout = Layout(
-                            margin = Spacing(bottom = 8f)
                         )
                     ),
                     
@@ -171,7 +166,6 @@ object SampleConfigs {
                         ),
                         visible = "{{hasDiscount}}",
                         layout = Layout(
-                            margin = Spacing(bottom = 8f)
                         )
                     ),
                     
@@ -180,7 +174,6 @@ object SampleConfigs {
                         id = "price-container",
                         containerType = ContainerType.HORIZONTAL,
                         layout = Layout(
-                            margin = Spacing(bottom = 12f)
                         ),
                         children = listOf(
                             NativeDisplayElement(
@@ -190,7 +183,6 @@ object SampleConfigs {
                                 styleClass = "price-old",
                                 visible = "{{hasDiscount}}",
                                 layout = Layout(
-                                    margin = Spacing(right = 12f)
                                 )
                             ),
                             NativeDisplayElement(
@@ -214,7 +206,6 @@ object SampleConfigs {
                         ),
                         visible = "{{stockLevel > 0}}",
                         layout = Layout(
-                            margin = Spacing(bottom = 16f)
                         )
                     ),
                     
@@ -276,7 +267,6 @@ object SampleConfigs {
                         layout = Layout(
                             width = Dimension.MATCH_PARENT,
                             padding = Spacing.all(16f),
-                            margin = Spacing(bottom = 16f)
                         ),
                         style = Style(
                             backgroundColor = "#FFFFFF",
@@ -291,7 +281,6 @@ object SampleConfigs {
                                 style = Style(
                                     fontWeight = FontWeight.BOLD
                                 ),
-                                layout = Layout(margin = Spacing(bottom = 8f))
                             ),
                             
                             NativeDisplayContainer(
@@ -318,7 +307,6 @@ object SampleConfigs {
                                         id = "level-3",
                                         containerType = ContainerType.HORIZONTAL,
                                         layout = Layout(
-                                            margin = Spacing(top = 8f),
                                             padding = Spacing.all(8f)
                                         ),
                                         style = Style(
@@ -381,7 +369,6 @@ object SampleConfigs {
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Text Element: {{userName}}"),
                         style = Style(fontSize = 20f, fontWeight = FontWeight.BOLD),
-                        layout = Layout(margin = Spacing(bottom = 16f))
                     ),
                     
                     // IMAGE - REAL IMAGE
@@ -392,7 +379,6 @@ object SampleConfigs {
                         layout = Layout(
                             width = Dimension.dp(150f),
                             height = Dimension.dp(150f),
-                            margin = Spacing(bottom = 16f)
                         ),
                         style = Style(
                             borderRadius = 75f,
@@ -407,7 +393,6 @@ object SampleConfigs {
                         bindings = mapOf("text" to "Button Element"),
                         layout = Layout(
                             width = Dimension.MATCH_PARENT,
-                            margin = Spacing(bottom = 16f)
                         ),
                         style = Style(
                             backgroundColor = "#34C759",

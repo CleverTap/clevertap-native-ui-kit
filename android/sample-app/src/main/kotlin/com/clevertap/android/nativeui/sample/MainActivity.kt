@@ -5,14 +5,23 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.clevertap.android.nativedisplay.models.ArrangementStrategy
+import com.clevertap.android.nativedisplay.models.ChildArrangement
+import com.clevertap.android.nativedisplay.models.NativeDisplayContainer
+import com.clevertap.android.nativedisplay.models.ResolvedConfig
 import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
 import com.clevertap.android.nativedisplay.samples.*
 
@@ -35,6 +44,7 @@ fun NativeUIKitSampleApp() {
         
         val tabs = listOf(
             "🏠 Home",           // NEW - First position
+            "📏 Arrangements",    // NEW - Arrangement strategies demo
             "Simple Card",
             "Product Card",
             "Nested",
@@ -104,24 +114,25 @@ fun NativeUIKitSampleApp() {
                 ) {
                     when (selectedTabIndex) {
                         0 -> HomeScreen()              // NEW
-                        1 -> SimpleGreetingCardSample()
-                        2 -> ProductCardSample()
-                        3 -> NestedContainersSample()
-                        4 -> AllElementsSample()
-                        5 -> DividerDemoSample()
-                        6 -> SimpleGallerySample()
-                        7 -> FullFeaturedGallerySample()
-                        8 -> FreeFlowGallerySample()
-                        9 -> CombinedDemoSample()
-                        10 -> LinearGradientsScreen()
-                        11 -> RadialSweepGradientsScreen()
-                        12 -> AnimatedBackgroundsScreen()
-                        13 -> PatternBackgroundsScreen()
-                        14 -> LayeredBackgroundsScreen()
-                        15 -> EcommerceShowcaseScreen()
-                        16 -> SocialProfileShowcaseScreen()
-                        17 -> DashboardShowcaseScreen()
-                        18 -> GalleryShowcaseScreen()
+                        1 -> ArrangementDemoScreen()   // NEW - Arrangement strategies
+                        2 -> SimpleGreetingCardSample()
+                        3 -> ProductCardSample()
+                        4 -> NestedContainersSample()
+                        5 -> AllElementsSample()
+                        6 -> DividerDemoSample()
+                        7 -> SimpleGallerySample()
+                        8 -> FullFeaturedGallerySample()
+                        9 -> FreeFlowGallerySample()
+                        10 -> CombinedDemoSample()
+                        11 -> LinearGradientsScreen()
+                        12 -> RadialSweepGradientsScreen()
+                        13 -> AnimatedBackgroundsScreen()
+                        14 -> PatternBackgroundsScreen()
+                        15 -> LayeredBackgroundsScreen()
+                        16 -> EcommerceShowcaseScreen()
+                        17 -> SocialProfileShowcaseScreen()
+                        18 -> DashboardShowcaseScreen()
+                        19 -> GalleryShowcaseScreen()
                     }
                 }
             }
@@ -153,6 +164,89 @@ fun HomeScreen() {
     } else {
         ErrorMessage("Failed to load Home Screen")
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ArrangementDemoScreen() {
+    val context = LocalContext.current
+
+    // 1. Initial configuration state loaded from JSON
+    val initialConfig = remember {
+        JsonLoader.loadFromAssets(context, "arrangement_demo.json")
+    }
+
+    // 2. State for the current configuration to allow dynamic updates
+    var currentConfig: ResolvedConfig? by remember(initialConfig) { mutableStateOf(initialConfig) }
+
+    // 3. Define the available strategies based on your ChildArrangement model
+    val strategies = remember {
+        listOf(
+            "SPACED" to ChildArrangement(spacing = 16f, strategy = ArrangementStrategy.SPACED),
+            "BETWEEN" to ChildArrangement(strategy = ArrangementStrategy.SPACE_BETWEEN),
+            "EVENLY" to ChildArrangement(strategy = ArrangementStrategy.SPACE_EVENLY),
+            "AROUND" to ChildArrangement(strategy = ArrangementStrategy.SPACE_AROUND),
+            "START" to ChildArrangement(strategy = ArrangementStrategy.START),
+            "CENTER" to ChildArrangement(strategy = ArrangementStrategy.CENTER),
+            "END" to ChildArrangement(strategy = ArrangementStrategy.END)
+        )
+    }
+
+    var selectedStrategyName by remember { mutableStateOf("SPACED") }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        // 4. Horizontal Picker
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(strategies) { (name, arrangement) ->
+                FilterChip(
+                    selected = selectedStrategyName == name,
+                    onClick = {
+                        selectedStrategyName = name
+                        // 5. Logic to update the configuration deep inside the root
+                        currentConfig = currentConfig?.let { config ->
+                            updateRootArrangement(config, arrangement)
+                        }
+                    },
+                    label = { Text(name) }
+                )
+            }
+        }
+
+        // 6. Display View
+        if (currentConfig != null) {
+            NativeDisplayView(
+                config = currentConfig!!,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        } else {
+            ErrorMessage("Loading Arrangement Demo...")
+        }
+    }
+}
+
+/**
+ * Helper to update the arrangement strategy in your root container.
+ * This assumes your root is a NativeDisplayContainer.
+ */
+private fun updateRootArrangement(
+    config: ResolvedConfig,
+    newArrangement: ChildArrangement
+): ResolvedConfig {
+    val root = config.root
+    if (root is NativeDisplayContainer) {
+        val updatedRoot = root.copy(
+            layout = root.layout?.copy(arrangement = newArrangement)
+        )
+        return config.copy(root = updatedRoot)
+    }
+    return config
 }
 
 /**
@@ -337,7 +431,10 @@ fun ErrorMessage(message: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(32.dp)
-            .background(Color(0xFFFFEBEE), shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp))
+            .background(
+                Color(0xFFFFEBEE),
+                shape = RoundedCornerShape(12.dp)
+            )
             .padding(24.dp)
     ) {
         Text(

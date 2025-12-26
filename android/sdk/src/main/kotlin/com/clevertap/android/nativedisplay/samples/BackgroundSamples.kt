@@ -14,7 +14,10 @@ object BackgroundSamples {
         root = NativeDisplayContainer(
             id = "bg_linear_root",
             containerType = ContainerType.VERTICAL,
-            layout = Layout(spacing = 16f, padding = Spacing(all = 16f)),
+            layout = Layout(
+                arrangement = ChildArrangement.spaced(16f),
+                padding = Spacing(all = 16f)
+            ),
             children = listOf(
                 // Diagonal gradient
                 NativeDisplayContainer(
@@ -119,7 +122,10 @@ object BackgroundSamples {
         root = NativeDisplayContainer(
             id = "bg_radial_root",
             containerType = ContainerType.VERTICAL,
-            layout = Layout(spacing = 16f, padding = Spacing(all = 16f)),
+            layout = Layout(
+                arrangement = ChildArrangement.spaced(16f),
+                padding = Spacing(all = 16f)
+            ),
             children = listOf(
                 // Radial gradient (centered)
                 NativeDisplayContainer(
@@ -197,7 +203,10 @@ object BackgroundSamples {
         root = NativeDisplayContainer(
             id = "bg_animated_root",
             containerType = ContainerType.VERTICAL,
-            layout = Layout(spacing = 16f, padding = Spacing(all = 16f)),
+            layout = Layout(
+                arrangement = ChildArrangement.spaced(16f),
+                padding = Spacing(all = 16f)
+            ),
             children = listOf(
                 // Shimmer effect
                 NativeDisplayContainer(
@@ -345,7 +354,10 @@ object BackgroundSamples {
         root = NativeDisplayContainer(
             id = "bg_pattern_root",
             containerType = ContainerType.VERTICAL,
-            layout = Layout(spacing = 16f, padding = Spacing(all = 16f)),
+            layout = Layout(
+                arrangement = ChildArrangement.spaced(16f),
+                padding = Spacing(all = 16f)
+            ),
             children = listOf(
                 // Dots pattern
                 NativeDisplayContainer(
@@ -492,7 +504,10 @@ object BackgroundSamples {
         root = NativeDisplayContainer(
             id = "bg_layered_root",
             containerType = ContainerType.VERTICAL,
-            layout = Layout(spacing = 16f, padding = Spacing(all = 16f)),
+            layout = Layout(
+                arrangement = ChildArrangement.spaced(16f),
+                padding = Spacing(all = 16f)
+            ),
             children = listOf(
                 // Gradient + Pattern
                 NativeDisplayContainer(
