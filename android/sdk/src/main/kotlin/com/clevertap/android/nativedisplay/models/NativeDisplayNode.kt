@@ -2,7 +2,6 @@ package com.clevertap.android.nativedisplay.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
 
 /**
  * Base sealed class for all display nodes (containers and elements).
@@ -77,15 +76,6 @@ data class DividerConfig(
     val orientation: Orientation = Orientation.HORIZONTAL,
     val thickness: Float = 1f,  // in dp
     val color: String = "#E0E0E0"
-)
-
-/**
- * Action that can be triggered by user interaction (Phase 3+).
- */
-@Serializable
-data class Action(
-    val type: String,  // "updateVariable", "openUrl", "close", etc.
-    val data: Map<String, JsonElement> = emptyMap()
 )
 
 /**

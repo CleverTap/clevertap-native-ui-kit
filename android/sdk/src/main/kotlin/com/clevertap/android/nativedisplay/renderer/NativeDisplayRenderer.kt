@@ -1,14 +1,13 @@
 package com.clevertap.android.nativedisplay.renderer
 
-import android.graphics.RenderNode
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -34,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight as ComposeFontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -41,6 +41,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.clevertap.android.nativedisplay.evaluator.VariableEvaluator
+import com.clevertap.android.nativedisplay.handler.ActionHandler
+import com.clevertap.android.nativedisplay.listener.InteractionType
+import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
+import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener
 import com.clevertap.android.nativedisplay.models.*
 import com.clevertap.android.nativedisplay.style.StyleResolver
 import kotlinx.coroutines.delay
@@ -52,17 +56,37 @@ import kotlinx.coroutines.launch
 @Composable
 fun NativeDisplayView(
     config: ResolvedConfig,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    actionListener: NativeDisplayActionListener? = null,
+    componentListener: NativeDisplayComponentListener? = null,
 ) {
-    val styleResolver = StyleResolver(config.theme, config.styleClasses)
-    val evaluator = VariableEvaluator(config.variables)
+    val context = LocalContext.current
+
+    val actionHandler = remember(actionListener) {
+        ActionHandler(
+            context = context,
+            listener = actionListener,
+            componentListener = componentListener
+        )
+    }
+
+    DisposableEffect(actionHandler) {
+        onDispose {
+            actionHandler.cleanup()
+        }
+    }
+
+    val styleResolver = StyleResolver(theme = config.theme, styleClasses = config.styleClasses)
+    val evaluator = VariableEvaluator(variables = config.variables)
 
     RenderNode(
         node = config.root,
         styleResolver = styleResolver,
         evaluator = evaluator,
         parentStyle = null,
-        modifier = modifier
+        modifier = modifier,
+        actionHandler = actionHandler,
+        componentListener = componentListener,
     )
 }
 
@@ -75,7 +99,9 @@ private fun RenderNode(
     styleResolver: StyleResolver,
     evaluator: VariableEvaluator,
     parentStyle: Style?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    actionHandler: ActionHandler? = null,
+    componentListener: NativeDisplayComponentListener? = null,
 ) {
     // Check visibility condition
     if (node.visible != null) {
@@ -86,10 +112,28 @@ private fun RenderNode(
     // Resolve style with inheritance
     val resolvedStyle = styleResolver.resolveWithColors(node, parentStyle)
 
+    // Check if this component needs clickable modifier
+    val hasServerActions = node.actions?.isNotEmpty() == true
+    val isClientInterested = componentListener?.getInterestedNodeIds()?.contains(node.id) ?: (componentListener != null)  // If getInterestedNodeIds returns null, listen to all
+
+    val shouldApplyClickable = hasServerActions || isClientInterested
+    val isButton = (node as? NativeDisplayElement)?.elementType == ElementType.BUTTON
+
     // Apply modifiers in correct order
     var finalModifier = modifier
     finalModifier = finalModifier.applySizing(node.layout)
-    finalModifier = finalModifier.applyOffset(node.layout)  // Use offset instead of margin
+    finalModifier = finalModifier.applyOffset(node.layout)
+
+    // Apply clickable only when needed (server actions exist OR client is interested)
+    if (actionHandler != null && !isButton && shouldApplyClickable) {
+        finalModifier = finalModifier.applyClickable(
+            nodeId = node.id,
+            actions = node.actions,
+            actionHandler = actionHandler,
+            componentListener = componentListener  // ← ADD THIS PARAMETER
+        )
+    }
+
     finalModifier = finalModifier.applyDecorations(resolvedStyle)
 
     // Render based on node type
@@ -100,7 +144,9 @@ private fun RenderNode(
             evaluator = evaluator,
             resolvedStyle = resolvedStyle,
             layout = node.layout,
-            modifier = finalModifier
+            modifier = finalModifier,
+            actionHandler = actionHandler,
+            componentListener = componentListener,
         )
 
         is NativeDisplayElement -> RenderElement(
@@ -108,7 +154,8 @@ private fun RenderNode(
             evaluator = evaluator,
             resolvedStyle = resolvedStyle,
             layout = node.layout,
-            modifier = finalModifier
+            modifier = finalModifier,
+            actionHandler = actionHandler,
         )
     }
 }
@@ -123,7 +170,9 @@ private fun RenderContainer(
     evaluator: VariableEvaluator,
     resolvedStyle: Style,
     layout: Layout?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    actionHandler: ActionHandler? = null,
+    componentListener: NativeDisplayComponentListener? = null,
 ) {
     val containerModifier = modifier.applyPadding(layout)
 
@@ -139,7 +188,9 @@ private fun RenderContainer(
                         styleResolver = styleResolver,
                         evaluator = evaluator,
                         parentStyle = resolvedStyle,
-                        modifier = Modifier
+                        modifier = Modifier,
+                        actionHandler = actionHandler,
+                        componentListener = componentListener
                     )
                 }
             }
@@ -156,7 +207,9 @@ private fun RenderContainer(
                         styleResolver = styleResolver,
                         evaluator = evaluator,
                         parentStyle = resolvedStyle,
-                        modifier = Modifier
+                        modifier = Modifier,
+                        actionHandler = actionHandler,
+                        componentListener = componentListener
                     )
                 }
             }
@@ -170,7 +223,9 @@ private fun RenderContainer(
                         styleResolver = styleResolver,
                         evaluator = evaluator,
                         parentStyle = resolvedStyle,
-                        modifier = Modifier
+                        modifier = Modifier,
+                        actionHandler = actionHandler,
+                        componentListener = componentListener
                     )
                 }
             }
@@ -182,7 +237,9 @@ private fun RenderContainer(
                 styleResolver = styleResolver,
                 evaluator = evaluator,
                 resolvedStyle = resolvedStyle,
-                modifier = containerModifier
+                modifier = containerModifier,
+                actionHandler = actionHandler,
+                componentListener = componentListener
             )
         }
     }
@@ -197,7 +254,9 @@ fun RenderGallery(
     styleResolver: StyleResolver,
     evaluator: VariableEvaluator,
     resolvedStyle: Style,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    actionHandler: ActionHandler? = null,
+    componentListener: NativeDisplayComponentListener? = null,
 ) {
     val config = container.galleryConfig ?: GalleryConfig()
 
@@ -209,7 +268,9 @@ fun RenderGallery(
                 styleResolver = styleResolver,
                 evaluator = evaluator,
                 resolvedStyle = resolvedStyle,
-                modifier = modifier
+                modifier = modifier,
+                actionHandler = actionHandler,
+                componentListener = componentListener,
             )
         }
 
@@ -220,7 +281,9 @@ fun RenderGallery(
                 styleResolver = styleResolver,
                 evaluator = evaluator,
                 resolvedStyle = resolvedStyle,
-                modifier = modifier
+                modifier = modifier,
+                actionHandler = actionHandler,
+                componentListener = componentListener,
             )
         }
 
@@ -231,7 +294,9 @@ fun RenderGallery(
                 styleResolver = styleResolver,
                 evaluator = evaluator,
                 resolvedStyle = resolvedStyle,
-                modifier = modifier
+                modifier = modifier,
+                actionHandler = actionHandler,
+                componentListener = componentListener,
             )
         }
     }
@@ -250,7 +315,9 @@ private fun RenderSnappingGallery(
     styleResolver: StyleResolver,
     evaluator: VariableEvaluator,
     resolvedStyle: Style,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    actionHandler: ActionHandler? = null,
+    componentListener: NativeDisplayComponentListener? = null,
 ) {
     if (container.children.isEmpty()) return
 
@@ -392,7 +459,9 @@ private fun RenderFreeFlowGallery(
     styleResolver: StyleResolver,
     evaluator: VariableEvaluator,
     resolvedStyle: Style,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    actionHandler: ActionHandler? = null,
+    componentListener: NativeDisplayComponentListener? = null,
 ) {
     if (container.children.isEmpty()) return
 
@@ -449,7 +518,9 @@ private fun RenderFreeFlowGridGallery(
     styleResolver: StyleResolver,
     evaluator: VariableEvaluator,
     resolvedStyle: Style,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    actionHandler: ActionHandler? = null,
+    componentListener: NativeDisplayComponentListener? = null,
 ) {
     if (container.children.isEmpty()) return
 
@@ -485,7 +556,9 @@ private fun RenderFreeFlowGridGallery(
                                 styleResolver = styleResolver,
                                 evaluator = evaluator,
                                 parentStyle = resolvedStyle,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
+                                actionHandler = actionHandler,
+                                componentListener = componentListener,
                             )
                         }
                     }
@@ -558,7 +631,9 @@ private fun RenderGalleryArrows(
     
     if (config.orientation == Orientation.HORIZONTAL) {
         Row(
-            modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             // Previous arrow
@@ -591,7 +666,9 @@ private fun RenderGalleryArrows(
         }
     } else {
         Column(
-            modifier = modifier.fillMaxHeight().padding(vertical = 16.dp),
+            modifier = modifier
+                .fillMaxHeight()
+                .padding(vertical = 16.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             // Previous arrow
@@ -656,7 +733,9 @@ private fun RenderGalleryIndicators(
                         .size(indicatorStyle.size.dp)
                         .background(
                             color = if (pagerState.currentPage == index) activeColor else inactiveColor,
-                            shape = if (indicatorStyle.shape == "circle") CircleShape else RoundedCornerShape(2.dp)
+                            shape = if (indicatorStyle.shape == "circle") CircleShape else RoundedCornerShape(
+                                2.dp
+                            )
                         )
                 )
             }
@@ -672,7 +751,9 @@ private fun RenderGalleryIndicators(
                         .size(indicatorStyle.size.dp)
                         .background(
                             color = if (pagerState.currentPage == index) activeColor else inactiveColor,
-                            shape = if (indicatorStyle.shape == "circle") CircleShape else RoundedCornerShape(2.dp)
+                            shape = if (indicatorStyle.shape == "circle") CircleShape else RoundedCornerShape(
+                                2.dp
+                            )
                         )
                 )
             }
@@ -689,7 +770,8 @@ private fun RenderElement(
     evaluator: VariableEvaluator,
     resolvedStyle: Style,
     layout: Layout?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    actionHandler: ActionHandler? = null
 ) {
     val elementModifier = modifier.applyPadding(layout)
     
@@ -741,7 +823,9 @@ private fun RenderElement(
             } ?: "Button"
 
             Button(
-                onClick = { /* TODO: Handle actions */ },
+                onClick = { element.actions?.get(ActionTriggers.ON_CLICK)?.let { action ->
+                    actionHandler?.handleAction(action = action, nodeId = element.id)
+                } },
                 modifier = elementModifier,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = parseColor(resolvedStyle.backgroundColor) ?: Color(0xFF007AFF),
@@ -796,6 +880,46 @@ private fun RenderElement(
             }
         }
     }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun Modifier.applyClickable(
+    nodeId: String,
+    actions: Map<String, Action>?,
+    actionHandler: ActionHandler,
+    componentListener: NativeDisplayComponentListener? = null
+): Modifier {
+    // Early exit if no interactions are enabled from server or client.
+    if (actions.isNullOrEmpty() && componentListener == null) return this
+
+    val onClickAction = actions?.get(ActionTriggers.ON_CLICK)
+    val onLongPressAction = actions?.get(ActionTriggers.ON_LONG_PRESS)
+    val onDoubleTapAction = actions?.get(ActionTriggers.ON_DOUBLE_TAP)
+
+    // Resolve callbacks: prioritize specific actions, fallback to component listener notification
+    val onClick = {
+        onClickAction?.let { actionHandler.handleAction(it, nodeId, InteractionType.CLICK) }
+            ?: actionHandler.handleInteractionWithoutAction(nodeId, InteractionType.CLICK)
+    }
+
+    val onLongClick = onLongPressAction?.let {
+        { actionHandler.handleAction(it, nodeId, InteractionType.LONG_PRESS) }
+    } ?: if (componentListener != null) {
+        { actionHandler.handleInteractionWithoutAction(nodeId, InteractionType.LONG_PRESS) }
+    } else null
+
+    val onDoubleClick = onDoubleTapAction?.let {
+        { actionHandler.handleAction(it, nodeId, InteractionType.DOUBLE_TAP) }
+    } ?: if (componentListener != null) {
+        { actionHandler.handleInteractionWithoutAction(nodeId, InteractionType.DOUBLE_TAP) }
+    } else null
+
+    return combinedClickable(
+        onClick = onClick,
+        onLongClick = onLongClick,
+        onDoubleClick = onDoubleClick
+    )
 }
 
 /**
