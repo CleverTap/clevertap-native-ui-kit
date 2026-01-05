@@ -374,7 +374,9 @@ private fun RenderSnappingGallery(
                             styleResolver = styleResolver,
                             evaluator = evaluator,
                             parentStyle = resolvedStyle,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            actionHandler = actionHandler,
+                            componentListener = componentListener,
                         )
                     }
                 }
@@ -391,7 +393,9 @@ private fun RenderSnappingGallery(
                             styleResolver = styleResolver,
                             evaluator = evaluator,
                             parentStyle = resolvedStyle,
-                            modifier = Modifier.fillMaxHeight()
+                            modifier = Modifier.fillMaxHeight(),
+                            actionHandler = actionHandler,
+                            componentListener = componentListener,
                         )
                     }
                 }
@@ -478,7 +482,9 @@ private fun RenderFreeFlowGallery(
                         styleResolver = styleResolver,
                         evaluator = evaluator,
                         parentStyle = resolvedStyle,
-                        modifier = Modifier
+                        modifier = Modifier,
+                        actionHandler = actionHandler,
+                        componentListener = componentListener,
                     )
                 }
             }
@@ -496,7 +502,9 @@ private fun RenderFreeFlowGallery(
                         styleResolver = styleResolver,
                         evaluator = evaluator,
                         parentStyle = resolvedStyle,
-                        modifier = Modifier
+                        modifier = Modifier,
+                        actionHandler = actionHandler,
+                        componentListener = componentListener,
                     )
                 }
             }
@@ -592,7 +600,9 @@ private fun RenderFreeFlowGridGallery(
                                 styleResolver = styleResolver,
                                 evaluator = evaluator,
                                 parentStyle = resolvedStyle,
-                                modifier = Modifier.fillMaxHeight()
+                                modifier = Modifier.fillMaxHeight(),
+                                actionHandler = actionHandler,
+                                componentListener = componentListener,
                             )
                         }
                     }

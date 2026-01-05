@@ -13,13 +13,8 @@ sealed class NativeDisplayNode {
     abstract val layout: Layout?
     abstract val style: Style?
     abstract val styleClass: String?
-    
-    // Phase 1: Conditional rendering
-    abstract val visible: String?  // "{{expression}}"
-    
-    // Phase 3+: User interactions (future)
+    abstract val visible: String?
     abstract val actions: Map<String, Action>?
-    
     // Phase 4+: Animations (future)
     abstract val animation: Animation?
 }
@@ -40,7 +35,7 @@ data class NativeDisplayContainer(
     override val visible: String? = null,
     override val actions: Map<String, Action>? = null,
     override val animation: Animation? = null,
-    
+
     // Gallery configuration (only used when containerType = GALLERY)
     val galleryConfig: GalleryConfig? = null,
     

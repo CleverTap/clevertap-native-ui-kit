@@ -1,6 +1,7 @@
 package com.clevertap.android.nativeui.sample
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -159,7 +160,26 @@ fun HomeScreen() {
     if (config != null) {
         NativeDisplayView(
             config = config,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            componentListener = object : com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener {
+                // Listen to ALL components by returning null
+                override fun getInterestedNodeIds(): Set<String>? = null
+                
+                override fun onComponentInteraction(
+                    nodeId: String,
+                    interactionType: com.clevertap.android.nativedisplay.listener.InteractionType,
+                    hasServerAction: Boolean
+                ): Boolean {
+                    // Log every interaction
+                    Log.d(
+                        "HomeScreen_Click",
+                        "Component: $nodeId | Type: $interactionType | HasServerAction: $hasServerAction"
+                    )
+                    
+                    // Don't consume, let server actions proceed
+                    return false
+                }
+            }
         )
     } else {
         ErrorMessage("Failed to load Home Screen")

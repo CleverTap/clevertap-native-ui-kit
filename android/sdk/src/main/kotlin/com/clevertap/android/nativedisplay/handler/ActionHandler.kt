@@ -2,7 +2,6 @@ package com.clevertap.android.nativedisplay.handler
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.util.Log
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.models.Action
@@ -67,7 +66,7 @@ class ActionHandler(
     fun handleAction(
         action: Action,
         nodeId: String,
-        interactionType: InteractionType = InteractionType.CLICK  // ← ADD THIS PARAMETER
+        interactionType: InteractionType = InteractionType.CLICK
     ) {
         coroutineScope.launch {
             try {
@@ -204,7 +203,7 @@ class ActionHandler(
      */
     private fun executeDefaultOpenUrl(action: Action.OpenUrl) {
         try {
-            val uri = Uri.parse(action.url)
+            val uri = action.url.toUri()
             
             // Validate URL scheme (prevent javascript: etc.)
             if (!isValidUrlScheme(uri.scheme)) {
