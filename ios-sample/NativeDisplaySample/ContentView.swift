@@ -216,7 +216,7 @@ enum ArrangementStrategyOption: Equatable {
     }
 }
 
-/// Tab 1: Home Screen (Original)
+/// Tab 1: Home Screen (WITH COMPONENT LISTENER)
 struct HomeScreenView: View {
     @State private var config: ResolvedConfig?
     @State private var errorMessage: String?
@@ -237,7 +237,10 @@ struct HomeScreenView: View {
                     }
                 } else if let config = config {
                     ScrollView {
-                        NativeDisplayView(config: config)
+                        NativeDisplayView(
+                            config: config,
+                            componentListener: HomeScreenComponentListener()
+                        )
                     }
                     .background(Color(hex: "#F8F9FE"))
                 }
@@ -288,6 +291,34 @@ struct HomeScreenView: View {
         case .element:
             return 1
         }
+    }
+}
+
+/// Component Listener for Home Screen
+/// Logs all component interactions
+class HomeScreenComponentListener: NativeDisplayComponentListener {
+    
+    init() {
+        print("Init HomeScreenComponentListener")
+    }
+    
+    /// Listen to ALL components by returning nil
+    func getInterestedNodeIds() -> Set<String>? {
+        print("HomeScreenComponentListener - getInterestedNodeIds()")
+        return nil
+    }
+    
+    /// Log every interaction
+    func onComponentInteraction(
+        nodeId: String,
+        interactionType: InteractionType,
+        hasServerAction: Bool
+    ) -> Bool {
+        // Log to console
+        print("📱 HomeScreen_Click: Component: \(nodeId) | Type: \(interactionType) | HasServerAction: \(hasServerAction)")
+        
+        // Don't consume, let server actions proceed
+        return false
     }
 }
 

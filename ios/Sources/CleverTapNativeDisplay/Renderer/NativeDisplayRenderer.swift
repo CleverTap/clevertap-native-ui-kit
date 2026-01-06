@@ -8,11 +8,23 @@ public struct NativeDisplayView: View {
     private let config: ResolvedConfig
     private let styleResolver: StyleResolver
     private let evaluator: VariableEvaluator
+    private let actionHandler: ActionHandler?
+    private let componentListener: NativeDisplayComponentListener?
     
-    public init(config: ResolvedConfig) {
+    public init(
+        config: ResolvedConfig,
+        actionListener: NativeDisplayActionListener? = nil,
+        componentListener: NativeDisplayComponentListener? = nil
+    ) {
         self.config = config
         self.styleResolver = StyleResolver(theme: config.theme, styleClasses: config.styleClasses)
         self.evaluator = VariableEvaluator(variables: config.variables)
+        
+        self.actionHandler = ActionHandler(
+                    actionListener: actionListener,
+                    componentListener: componentListener
+                )
+        self.componentListener = componentListener
     }
     
     public var body: some View {
@@ -22,7 +34,9 @@ public struct NativeDisplayView: View {
                 styleResolver: styleResolver,
                 evaluator: evaluator,
                 parentStyle: nil,
-                parentSize: geometry.size
+                parentSize: geometry.size,
+                actionHandler: actionHandler,
+                componentListener: componentListener
             )
             .frame(width: geometry.size.width, alignment: .top)
         }
@@ -36,6 +50,8 @@ struct RenderNode: View {
     let evaluator: VariableEvaluator
     let parentStyle: Style?
     let parentSize: CGSize
+    let actionHandler: ActionHandler?
+    let componentListener: NativeDisplayComponentListener?
     
     var body: some View {
         // Check visibility condition
@@ -56,6 +72,11 @@ struct RenderNode: View {
         // Resolve style with inheritance
         let resolvedStyle = styleResolver.resolveWithColors(node: node, parentStyle: parentStyle)
         
+        let hasServerActions = node.actions != nil && !node.actions!.isEmpty
+        let isClientInterested = componentListener?.getInterestedNodeIds()?.contains(node.id) ?? (componentListener != nil)
+        let shouldApplyTappable = hasServerActions || isClientInterested
+        let isButton = node.elementType == .button
+        
         switch node {
         case .container(let container):
             RenderContainer(
@@ -63,20 +84,35 @@ struct RenderNode: View {
                 styleResolver: styleResolver,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
-                parentSize: parentSize
+                parentSize: parentSize,
+                actionHandler: actionHandler,
+                componentListener: componentListener
             )
             .modifier(LayoutModifier(layout: node.layout, parentSize: parentSize))
             .modifier(DecorationModifier(style: resolvedStyle))
+            .applyTappable(
+                            nodeId: node.id,
+                            actions: shouldApplyTappable ? node.actions : nil,
+                            actionHandler: actionHandler,
+                            componentListener: componentListener
+                        )
             
         case .element(let element):
             RenderElement(
                 element: element,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
-                parentSize: parentSize
+                parentSize: parentSize,
+                actionHandler: actionHandler
             )
             .modifier(LayoutModifier(layout: node.layout, parentSize: parentSize))
             .modifier(DecorationModifier(style: resolvedStyle))
+            .applyTappable(
+                            nodeId: node.id,
+                            actions: !isButton && shouldApplyTappable ? node.actions : nil,
+                            actionHandler: actionHandler,
+                            componentListener: !isButton ? componentListener : nil
+                        )
         }
     }
 }
@@ -88,6 +124,8 @@ struct RenderContainer: View {
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
     let parentSize: CGSize
+    let actionHandler: ActionHandler?
+    let componentListener: NativeDisplayComponentListener?
     
     var body: some View {
         let padding = container.layout?.padding
@@ -120,7 +158,9 @@ struct RenderContainer: View {
                             styleResolver: styleResolver,
                             evaluator: evaluator,
                             parentStyle: resolvedStyle,
-                            parentSize: availableSize
+                            parentSize: availableSize,
+                            actionHandler: actionHandler,
+                            componentListener: componentListener
                         )
                     }
                 }
@@ -133,7 +173,9 @@ struct RenderContainer: View {
                             styleResolver: styleResolver,
                             evaluator: evaluator,
                             parentStyle: resolvedStyle,
-                            parentSize: availableSize
+                            parentSize: availableSize,
+                            actionHandler: actionHandler,
+                            componentListener: componentListener
                         )
                     }
                 }
@@ -144,7 +186,9 @@ struct RenderContainer: View {
                     styleResolver: styleResolver,
                     evaluator: evaluator,
                     resolvedStyle: resolvedStyle,
-                    parentSize: availableSize
+                    parentSize: availableSize,
+                    actionHandler: actionHandler,
+                    componentListener: componentListener
                 )
             }
         }
@@ -164,7 +208,9 @@ struct RenderContainer: View {
                         styleResolver: styleResolver,
                         evaluator: evaluator,
                         parentStyle: resolvedStyle,
-                        parentSize: availableSize
+                        parentSize: availableSize,
+                        actionHandler: actionHandler,
+                        componentListener: componentListener
                     )
                 }
             }
@@ -178,7 +224,9 @@ struct RenderContainer: View {
                         styleResolver: styleResolver,
                         evaluator: evaluator,
                         parentStyle: resolvedStyle,
-                        parentSize: availableSize
+                        parentSize: availableSize,
+                        actionHandler: actionHandler,
+                        componentListener: componentListener
                     )
                     
                     if index < container.children.count - 1 {
@@ -197,7 +245,9 @@ struct RenderContainer: View {
                         styleResolver: styleResolver,
                         evaluator: evaluator,
                         parentStyle: resolvedStyle,
-                        parentSize: availableSize
+                        parentSize: availableSize,
+                        actionHandler: actionHandler,
+                        componentListener: componentListener
                     )
                     Spacer()
                 }
@@ -213,7 +263,9 @@ struct RenderContainer: View {
                         styleResolver: styleResolver,
                         evaluator: evaluator,
                         parentStyle: resolvedStyle,
-                        parentSize: availableSize
+                        parentSize: availableSize,
+                        actionHandler: actionHandler,
+                        componentListener: componentListener
                     )
                     
                     if index < container.children.count - 1 {
@@ -233,7 +285,9 @@ struct RenderContainer: View {
                         styleResolver: styleResolver,
                         evaluator: evaluator,
                         parentStyle: resolvedStyle,
-                        parentSize: availableSize
+                        parentSize: availableSize,
+                        actionHandler: actionHandler,
+                        componentListener: componentListener
                     )
                 }
                 Spacer(minLength: 0)
@@ -249,7 +303,9 @@ struct RenderContainer: View {
                         styleResolver: styleResolver,
                         evaluator: evaluator,
                         parentStyle: resolvedStyle,
-                        parentSize: availableSize
+                        parentSize: availableSize,
+                        actionHandler: actionHandler,
+                        componentListener: componentListener
                     )
                 }
                 Spacer()
@@ -265,7 +321,9 @@ struct RenderContainer: View {
                         styleResolver: styleResolver,
                         evaluator: evaluator,
                         parentStyle: resolvedStyle,
-                        parentSize: availableSize
+                        parentSize: availableSize,
+                        actionHandler: actionHandler,
+                        componentListener: componentListener
                     )
                 }
             }
@@ -286,7 +344,9 @@ struct RenderContainer: View {
                         styleResolver: styleResolver,
                         evaluator: evaluator,
                         parentStyle: resolvedStyle,
-                        parentSize: availableSize
+                        parentSize: availableSize,
+                        actionHandler: actionHandler,
+                        componentListener: componentListener
                     )
                 }
             }
@@ -299,7 +359,9 @@ struct RenderContainer: View {
                         styleResolver: styleResolver,
                         evaluator: evaluator,
                         parentStyle: resolvedStyle,
-                        parentSize: availableSize
+                        parentSize: availableSize,
+                        actionHandler: actionHandler,
+                        componentListener: componentListener
                     )
                     
                     if index < container.children.count - 1 {
@@ -317,7 +379,9 @@ struct RenderContainer: View {
                         styleResolver: styleResolver,
                         evaluator: evaluator,
                         parentStyle: resolvedStyle,
-                        parentSize: availableSize
+                        parentSize: availableSize,
+                        actionHandler: actionHandler,
+                        componentListener: componentListener
                     )
                     Spacer()
                 }
@@ -332,7 +396,9 @@ struct RenderContainer: View {
                         styleResolver: styleResolver,
                         evaluator: evaluator,
                         parentStyle: resolvedStyle,
-                        parentSize: availableSize
+                        parentSize: availableSize,
+                        actionHandler: actionHandler,
+                        componentListener: componentListener
                     )
                     
                     if index < container.children.count - 1 {
@@ -351,7 +417,9 @@ struct RenderContainer: View {
                         styleResolver: styleResolver,
                         evaluator: evaluator,
                         parentStyle: resolvedStyle,
-                        parentSize: availableSize
+                        parentSize: availableSize,
+                        actionHandler: actionHandler,
+                        componentListener: componentListener
                     )
                 }
                 Spacer(minLength: 0)
@@ -366,7 +434,9 @@ struct RenderContainer: View {
                         styleResolver: styleResolver,
                         evaluator: evaluator,
                         parentStyle: resolvedStyle,
-                        parentSize: availableSize
+                        parentSize: availableSize,
+                        actionHandler: actionHandler,
+                        componentListener: componentListener
                     )
                 }
                 Spacer()
@@ -381,7 +451,9 @@ struct RenderContainer: View {
                         styleResolver: styleResolver,
                         evaluator: evaluator,
                         parentStyle: resolvedStyle,
-                        parentSize: availableSize
+                        parentSize: availableSize,
+                        actionHandler: actionHandler,
+                        componentListener: componentListener
                     )
                 }
             }
@@ -395,6 +467,7 @@ struct RenderElement: View {
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
     let parentSize: CGSize
+    let actionHandler: ActionHandler?
     
     var body: some View {
         let padding = element.layout?.padding
@@ -481,7 +554,9 @@ struct RenderElement: View {
         let buttonText = element.bindings["text"].map { evaluator.evaluateString($0) } ?? "Button"
         
         Button(action: {
-            // TODO: Handle actions
+            if let onClick = element.actions?[ActionTriggers.onClick] {
+                actionHandler?.handleAction(onClick, nodeId: element.id, interactionType: .click)
+            }
         }) {
             Text(buttonText)
                 .foregroundColor(ColorParser.parse(resolvedStyle.textColor) ?? .white)
@@ -731,6 +806,17 @@ public struct ColorParser {
                 blue: Double((rgbValue & 0x0000FF00) >> 8) / 255.0,
                 opacity: Double(rgbValue & 0x000000FF) / 255.0
             )
+        }
+    }
+}
+
+extension NativeDisplayNode {
+    var elementType: ElementType? {
+        switch self {
+        case .element(let element):
+            return element.elementType
+        case .container:
+            return nil
         }
     }
 }

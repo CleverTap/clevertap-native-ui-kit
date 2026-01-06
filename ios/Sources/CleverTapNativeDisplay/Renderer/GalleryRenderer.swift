@@ -10,6 +10,8 @@ struct RenderGallery: View {
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
     let parentSize: CGSize
+    let actionHandler: ActionHandler?
+    let componentListener: NativeDisplayComponentListener?
     
     var body: some View {
         let config = container.galleryConfig ?? GalleryConfig()
@@ -22,7 +24,9 @@ struct RenderGallery: View {
                 styleResolver: styleResolver,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
-                parentSize: parentSize
+                parentSize: parentSize,
+                actionHandler: actionHandler,
+                componentListener: componentListener
             )
             
         case .freeFlow:
@@ -32,7 +36,9 @@ struct RenderGallery: View {
                 styleResolver: styleResolver,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
-                parentSize: parentSize
+                parentSize: parentSize,
+                actionHandler: actionHandler,
+                componentListener: componentListener
             )
             
         case .freeFlowGrid:
@@ -42,7 +48,9 @@ struct RenderGallery: View {
                 styleResolver: styleResolver,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
-                parentSize: parentSize
+                parentSize: parentSize,
+                actionHandler: actionHandler,
+                componentListener: componentListener
             )
         }
     }
@@ -61,6 +69,8 @@ struct SnappingGalleryView: View {
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
     let parentSize: CGSize
+    let actionHandler: ActionHandler?
+    let componentListener: NativeDisplayComponentListener?
     
     @State private var currentPage: Int = 0
     @State private var timer: Timer?
@@ -80,7 +90,9 @@ struct SnappingGalleryView: View {
                                 styleResolver: styleResolver,
                                 evaluator: evaluator,
                                 parentStyle: resolvedStyle,
-                                parentSize: containerSize
+                                parentSize: containerSize,
+                                actionHandler: actionHandler,
+                                componentListener: componentListener
                             )
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .tag(index)
@@ -98,7 +110,9 @@ struct SnappingGalleryView: View {
                                 styleResolver: styleResolver,
                                 evaluator: evaluator,
                                 parentStyle: resolvedStyle,
-                                parentSize: containerSize
+                                parentSize: containerSize,
+                                actionHandler: actionHandler,
+                                componentListener: componentListener
                             )
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .tag(index)
@@ -166,6 +180,8 @@ struct FreeFlowGalleryView: View {
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
     let parentSize: CGSize
+    let actionHandler: ActionHandler?
+    let componentListener: NativeDisplayComponentListener?
     
     var body: some View {
         GeometryReader { geometry in
@@ -180,7 +196,9 @@ struct FreeFlowGalleryView: View {
                                 styleResolver: styleResolver,
                                 evaluator: evaluator,
                                 parentStyle: resolvedStyle,
-                                parentSize: containerSize
+                                parentSize: containerSize,
+                                actionHandler: actionHandler,
+                                componentListener: componentListener
                             )
                         }
                     }
@@ -194,7 +212,9 @@ struct FreeFlowGalleryView: View {
                                 styleResolver: styleResolver,
                                 evaluator: evaluator,
                                 parentStyle: resolvedStyle,
-                                parentSize: containerSize
+                                parentSize: containerSize,
+                                actionHandler: actionHandler,
+                                componentListener: componentListener
                             )
                         }
                     }
@@ -218,6 +238,8 @@ struct FreeFlowGridGalleryView: View {
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
     let parentSize: CGSize
+    let actionHandler: ActionHandler?
+    let componentListener: NativeDisplayComponentListener?
     
     var body: some View {
         GeometryReader { geometry in
@@ -241,7 +263,9 @@ struct FreeFlowGridGalleryView: View {
                                 styleResolver: styleResolver,
                                 evaluator: evaluator,
                                 parentStyle: resolvedStyle,
-                                parentSize: CGSize(width: itemWidth, height: containerSize.height)
+                                parentSize: CGSize(width: itemWidth, height: containerSize.height),
+                                actionHandler: actionHandler,
+                                componentListener: componentListener
                             )
                             .frame(width: itemWidth)
                         }
@@ -265,7 +289,9 @@ struct FreeFlowGridGalleryView: View {
                                 styleResolver: styleResolver,
                                 evaluator: evaluator,
                                 parentStyle: resolvedStyle,
-                                parentSize: CGSize(width: containerSize.width, height: itemHeight)
+                                parentSize: CGSize(width: containerSize.width, height: itemHeight),
+                                actionHandler: actionHandler,
+                                componentListener: componentListener
                             )
                             .frame(height: itemHeight)
                         }

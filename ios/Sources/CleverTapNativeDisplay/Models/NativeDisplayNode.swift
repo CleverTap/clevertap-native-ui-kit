@@ -309,28 +309,6 @@ public struct DividerConfig: Codable, Equatable {
     }
 }
 
-/// Action that can be triggered by user interaction (Phase 3+).
-public struct Action: Codable, Equatable {
-    public let type: String  // "updateVariable", "openUrl", "close", etc.
-    public let data: [String: AnyCodable]
-    
-    public init(type: String, data: [String: AnyCodable] = [:]) {
-        self.type = type
-        self.data = data
-    }
-    
-    // Custom decoder to handle defaults
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.type = try container.decode(String.self, forKey: .type)
-        self.data = try container.decodeIfPresent([String: AnyCodable].self, forKey: .data) ?? [:]
-    }
-    
-    private enum CodingKeys: String, CodingKey {
-        case type, data
-    }
-}
-
 /// Animation configuration (Phase 4+).
 public struct Animation: Codable, Equatable {
     public let type: String  // "fadeIn", "slideIn", etc.
