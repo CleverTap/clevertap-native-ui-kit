@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		41969A622EFE48010050EB83 /* arrangement_demo.json in Resources */ = {isa = PBXBuildFile; fileRef = 41969A612EFE48010050EB83 /* arrangement_demo.json */; };
+		41969A752F0E6A4B0050EB83 /* animation_container_and_children.json in Resources */ = {isa = PBXBuildFile; fileRef = 41969A722F0E6A4B0050EB83 /* animation_container_and_children.json */; };
+		41969A762F0E6A4B0050EB83 /* animation_container_fade.json in Resources */ = {isa = PBXBuildFile; fileRef = 41969A732F0E6A4B0050EB83 /* animation_container_fade.json */; };
+		41969A772F0E6A4B0050EB83 /* animation_staggered_children.json in Resources */ = {isa = PBXBuildFile; fileRef = 41969A742F0E6A4B0050EB83 /* animation_staggered_children.json */; };
 		B001 /* NativeDisplaySampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F001 /* NativeDisplaySampleApp.swift */; };
 		B002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F002 /* ContentView.swift */; };
 		B003 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F003 /* Assets.xcassets */; };
@@ -17,6 +20,9 @@
 
 /* Begin PBXFileReference section */
 		41969A612EFE48010050EB83 /* arrangement_demo.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = arrangement_demo.json; sourceTree = "<group>"; };
+		41969A722F0E6A4B0050EB83 /* animation_container_and_children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = animation_container_and_children.json; sourceTree = "<group>"; };
+		41969A732F0E6A4B0050EB83 /* animation_container_fade.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = animation_container_fade.json; sourceTree = "<group>"; };
+		41969A742F0E6A4B0050EB83 /* animation_staggered_children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = animation_staggered_children.json; sourceTree = "<group>"; };
 		F001 /* NativeDisplaySampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplaySampleApp.swift; sourceTree = "<group>"; };
 		F002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		F003 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -58,6 +64,9 @@
 		GRP_RES /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				41969A722F0E6A4B0050EB83 /* animation_container_and_children.json */,
+				41969A732F0E6A4B0050EB83 /* animation_container_fade.json */,
+				41969A742F0E6A4B0050EB83 /* animation_staggered_children.json */,
 				41969A612EFE48010050EB83 /* arrangement_demo.json */,
 				F004 /* home_screen.json */,
 			);
@@ -137,6 +146,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B003 /* Assets.xcassets in Resources */,
+				41969A752F0E6A4B0050EB83 /* animation_container_and_children.json in Resources */,
+				41969A762F0E6A4B0050EB83 /* animation_container_fade.json in Resources */,
+				41969A772F0E6A4B0050EB83 /* animation_staggered_children.json in Resources */,
 				41969A622EFE48010050EB83 /* arrangement_demo.json in Resources */,
 				B005 /* home_screen.json in Resources */,
 			);

@@ -90,12 +90,14 @@ struct RenderNode: View {
             )
             .modifier(LayoutModifier(layout: node.layout, parentSize: parentSize))
             .modifier(DecorationModifier(style: resolvedStyle))
+            .applyEntranceAnimation(node.animation)
             .applyTappable(
                             nodeId: node.id,
                             actions: shouldApplyTappable ? node.actions : nil,
                             actionHandler: actionHandler,
                             componentListener: componentListener
                         )
+            .id(node.id)
             
         case .element(let element):
             RenderElement(
@@ -107,6 +109,7 @@ struct RenderNode: View {
             )
             .modifier(LayoutModifier(layout: node.layout, parentSize: parentSize))
             .modifier(DecorationModifier(style: resolvedStyle))
+            .applyEntranceAnimation(node.animation)
             .applyTappable(
                             nodeId: node.id,
                             actions: !isButton && shouldApplyTappable ? node.actions : nil,

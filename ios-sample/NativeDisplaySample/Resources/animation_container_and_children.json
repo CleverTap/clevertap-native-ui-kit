@@ -1,0 +1,333 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    },
+    "colors": {}
+  },
+  "styleClasses": [],
+  "variables": {},
+  "root": {
+    "type": "container",
+    "id": "combined_container",
+    "containerType": "vertical",
+    "layout": {
+      "padding": {
+        "all": 24
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 24
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFFFFF",
+      "borderRadius": 16,
+      "shadowRadius": 8,
+      "shadowColor": "#00000040"
+    },
+    "animation": {
+      "type": "fade_in",
+      "duration": 400,
+      "delay": 0,
+      "easing": "ease_out"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "combined_title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Container + Children Animations"
+        },
+        "style": {
+          "textColor": "#1A237E",
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "combined_subtitle",
+        "elementType": "text",
+        "bindings": {
+          "text": "Container fades in first, then children appear sequentially"
+        },
+        "style": {
+          "textColor": "#757575",
+          "fontSize": 14,
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "hero_image",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://dummyjson.com/image/400x200/008080/000000?text=Hello+LP"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12,
+          "backgroundColor" : "#77007700"
+        },
+        "animation": {
+          "type": "scale_in",
+          "duration": 500,
+          "delay": 400,
+          "easing": "ease_out_back"
+        }
+      },
+      {
+        "type": "element",
+        "id": "hero_title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Premium Experience"
+        },
+        "style": {
+          "textColor": "#1976D2",
+          "fontSize": 28,
+          "fontWeight": "bold",
+          "textAlign": "center"
+        },
+        "animation": {
+          "type": "fade_slide_in",
+          "duration": 400,
+          "delay": 600,
+          "easing": "ease_out"
+        }
+      },
+      {
+        "type": "element",
+        "id": "hero_description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Discover amazing features with smooth animations that bring your content to life."
+        },
+        "style": {
+          "textColor": "#424242",
+          "fontSize": 16,
+          "lineHeight": 24,
+          "textAlign": "center"
+        },
+        "animation": {
+          "type": "fade_slide_in",
+          "duration": 400,
+          "delay": 800,
+          "easing": "ease_out"
+        }
+      },
+      {
+        "type": "container",
+        "id": "features_container",
+        "containerType": "horizontal",
+        "layout": {
+          "arrangement": {
+            "strategy": "space_evenly"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "feature_1",
+            "containerType": "vertical",
+            "layout": {
+              "padding": {
+                "all": 16
+              }
+            },
+            "style": {
+              "backgroundColor": "#E3F2FD",
+              "borderRadius": 12
+            },
+            "animation": {
+              "type": "fade_scale_in",
+              "duration": 400,
+              "delay": 1000,
+              "easing": "ease_out"
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "feature_1_icon",
+                "elementType": "text",
+                "bindings": {
+                  "text": "✨"
+                },
+                "style": {
+                  "fontSize": 40,
+                  "textAlign": "center"
+                },
+                "layout": {
+                  "padding": {
+                    "bottom": 8
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "feature_1_text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Beautiful"
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "bold",
+                  "textColor": "#1565C0",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "feature_2",
+            "containerType": "vertical",
+            "layout": {
+              "padding": {
+                "all": 16
+              }
+            },
+            "style": {
+              "backgroundColor": "#F3E5F5",
+              "borderRadius": 12
+            },
+            "animation": {
+              "type": "fade_scale_in",
+              "duration": 400,
+              "delay": 1100,
+              "easing": "ease_out"
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "feature_2_icon",
+                "elementType": "text",
+                "bindings": {
+                  "text": "⚡"
+                },
+                "style": {
+                  "fontSize": 40,
+                  "textAlign": "center"
+                },
+                "layout": {
+                  "padding": {
+                    "bottom": 8
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "feature_2_text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Fast"
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "bold",
+                  "textColor": "#7B1FA2",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "feature_3",
+            "containerType": "vertical",
+            "layout": {
+              "padding": {
+                "all": 16
+              }
+            },
+            "style": {
+              "backgroundColor": "#E8F5E9",
+              "borderRadius": 12
+            },
+            "animation": {
+              "type": "fade_scale_in",
+              "duration": 400,
+              "delay": 1200,
+              "easing": "ease_out"
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "feature_3_icon",
+                "elementType": "text",
+                "bindings": {
+                  "text": "🎯"
+                },
+                "style": {
+                  "fontSize": 40,
+                  "textAlign": "center"
+                },
+                "layout": {
+                  "padding": {
+                    "bottom": 8
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "feature_3_text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Precise"
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "bold",
+                  "textColor": "#2E7D32",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "element",
+        "id": "cta_button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Get Started Now"
+        },
+        "style": {
+          "backgroundColor": "#1976D2",
+          "textColor": "#FFFFFF",
+          "fontSize": 16,
+          "fontWeight": "bold",
+          "borderRadius": 8
+        },
+        "layout": {
+          "padding": {
+            "vertical": 14,
+            "horizontal": 48
+          }
+        },
+        "animation": {
+          "type": "fade_scale_in",
+          "duration": 500,
+          "delay": 1400,
+          "easing": "spring"
+        }
+      }
+    ]
+  }
+}

@@ -309,28 +309,37 @@ public struct DividerConfig: Codable, Equatable {
     }
 }
 
-/// Animation configuration (Phase 4+).
+/// Animation configuration for component entrance effects.
+/// Each component animates independently when it first appears.
 public struct Animation: Codable, Equatable {
-    public let type: String  // "fadeIn", "slideIn", etc.
+    public let type: AnimationType
     public let duration: Int
     public let delay: Int
+    public let easing: Easing
     
-    public init(type: String, duration: Int = 300, delay: Int = 0) {
+    public init(
+        type: AnimationType = .none,
+        duration: Int = 300,
+        delay: Int = 0,
+        easing: Easing = .easeOut
+    ) {
         self.type = type
         self.duration = duration
         self.delay = delay
+        self.easing = easing
     }
     
     // Custom decoder to handle defaults
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.type = try container.decode(String.self, forKey: .type)
+        self.type = try container.decodeIfPresent(AnimationType.self, forKey: .type) ?? .none
         self.duration = try container.decodeIfPresent(Int.self, forKey: .duration) ?? 300
         self.delay = try container.decodeIfPresent(Int.self, forKey: .delay) ?? 0
+        self.easing = try container.decodeIfPresent(Easing.self, forKey: .easing) ?? .easeOut
     }
     
     private enum CodingKeys: String, CodingKey {
-        case type, duration, delay
+        case type, duration, delay, easing
     }
 }
 

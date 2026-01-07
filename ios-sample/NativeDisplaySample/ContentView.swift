@@ -13,12 +13,19 @@ struct ContentView: View {
                 }
                 .tag(0)
             
-            // Tab 1: Home Screen (Original)
+            // Tab 1: Animations Demo (NEW)
+            AnimationDemoView()
+                .tabItem {
+                    Label("🎬 Animations", systemImage: "wand.and.stars")
+                }
+                .tag(1)
+            
+            // Tab 2: Home Screen (Original)
             HomeScreenView()
                 .tabItem {
                     Label("🏠 Home", systemImage: "house.fill")
                 }
-                .tag(1)
+                .tag(2)
         }
     }
 }
@@ -319,6 +326,154 @@ class HomeScreenComponentListener: NativeDisplayComponentListener {
         
         // Don't consume, let server actions proceed
         return false
+    }
+}
+
+/// Tab 1: Animation Demo Screen (NEW)
+/// Demonstrates three animation patterns with interactive selection
+struct AnimationDemoView: View {
+    @State private var config: ResolvedConfig?
+    @State private var errorMessage: String?
+    @State private var isLoading = true
+    @State private var selectedDemo = 0
+    
+    // Define available demos
+    let demos: [(String, String)] = [
+        ("Container Fade", "animation_container_fade"),
+        ("Staggered Children", "animation_staggered_children"),
+        ("Container + Children", "animation_container_and_children")
+    ]
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 0) {
+                // Demo Selector at the top
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(demos.indices, id: \.self) { index in
+                            DemoButton(
+                                title: demos[index].0,
+                                isSelected: selectedDemo == index,
+                                action: {
+                                    selectedDemo = index
+                                    loadConfig()
+                                }
+                            )
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                }
+                .background(Color(.systemBackground))
+                .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 2)
+                
+                // Info Card
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Image(systemName: "lightbulb.fill")
+                            .foregroundColor(Color(hex: "#E65100"))
+                        Text(infoText)
+                            .font(.system(size: 14))
+                            .foregroundColor(Color(hex: "#E65100"))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                .padding(16)
+                .background(Color(hex: "#FFF3E0"))
+                .cornerRadius(8)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                
+                // Main content
+                Group {
+                    if isLoading {
+                        VStack {
+                            ProgressView()
+                            Text("Loading...")
+                                .foregroundColor(.gray)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else if let error = errorMessage {
+                        ErrorView(message: error) {
+                            loadConfig()
+                        }
+                    } else if let config = config {
+                        ScrollView {
+                            NativeDisplayView(config: config)
+                                .frame(maxWidth: .infinity)
+                                .padding(16)
+                        }
+                        .background(Color(hex: "#F5F5F5"))
+                    }
+                }
+            }
+            .navigationTitle("🎬 Animations")
+            .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                loadConfig()
+            }
+        }
+    }
+    
+    private var infoText: String {
+        switch selectedDemo {
+        case 0:
+            return "💡 Entire container fades in (500ms). All children appear together."
+        case 1:
+            return "💡 Each child slides in from left with 100ms stagger delay (0ms, 100ms, 200ms, 300ms, 400ms)."
+        case 2:
+            return "💡 Container fades in first (0ms), then image scales (400ms delay), text slides (600ms, 800ms delay), features fade-scale (1000-1200ms delay), button springs (1400ms)."
+        default:
+            return ""
+        }
+    }
+    
+    private func loadConfig() {
+        isLoading = true
+        errorMessage = nil
+        
+        let jsonFileName = demos[selectedDemo].1
+        
+        guard let url = Bundle.main.url(forResource: jsonFileName, withExtension: "json") else {
+            errorMessage = "Could not find \(jsonFileName).json in bundle"
+            isLoading = false
+            return
+        }
+        
+        do {
+            let data = try Data(contentsOf: url)
+            let decoder = JSONDecoder()
+            config = try decoder.decode(ResolvedConfig.self, from: data)
+            errorMessage = nil
+            print("✅ Loaded animation demo: \(jsonFileName)")
+        } catch {
+            errorMessage = "Failed to decode JSON:\n\n\(error.localizedDescription)"
+            print("❌ Decode error: \(error)")
+        }
+        
+        isLoading = false
+    }
+}
+
+/// Custom button for demo selection
+struct DemoButton: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 14, weight: .medium))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(isSelected ? Color.blue : Color(.systemGray5))
+                )
+                .foregroundColor(isSelected ? .white : .primary)
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 

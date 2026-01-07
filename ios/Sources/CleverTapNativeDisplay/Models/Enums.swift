@@ -154,3 +154,29 @@ public enum ArrangementStrategy: String, Codable, CaseIterable {
     /// Maps to: .trailing/.bottom alignment
     case end
 }
+
+/// Animation types for component entrance effects.
+/// Each component animates independently when it first appears.
+public enum AnimationType: String, Codable, CaseIterable {
+    case none
+    case fadeIn = "fade_in"
+    case slideInLeft = "slide_in_left"
+    case slideInRight = "slide_in_right"
+    case slideInTop = "slide_in_top"
+    case slideInBottom = "slide_in_bottom"
+    case scaleIn = "scale_in"
+    case fadeScaleIn = "fade_scale_in"
+    case fadeSlideIn = "fade_slide_in"
+}
+
+/// Easing functions for animations.
+/// Maps to SwiftUI's built-in Animation curves.
+public enum Easing: String, Codable, CaseIterable {
+    case linear
+    case easeIn = "ease_in"
+    case easeOut = "ease_out"
+    case easeInOut = "ease_in_out"
+    case easeInBack = "ease_in_back"
+    case easeOutBack = "ease_out_back"
+    case spring
+}
