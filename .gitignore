@@ -54,12 +54,10 @@ Carthage/
 # Swift Package Manager
 .swiftpm/
 .build/
-*.xcodeproj
 Package.resolved
 
 # CocoaPods
 Pods/
-*.xcworkspace
 Podfile.lock
 
 # Xcode
