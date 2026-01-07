@@ -15,7 +15,6 @@ sealed class NativeDisplayNode {
     abstract val styleClass: String?
     abstract val visible: String?
     abstract val actions: Map<String, Action>?
-    // Phase 4+: Animations (future)
     abstract val animation: Animation?
 }
 
