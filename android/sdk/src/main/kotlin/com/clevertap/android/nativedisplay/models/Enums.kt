@@ -205,3 +205,69 @@ enum class ArrangementStrategy {
     @SerialName("end")
     END
 }
+
+/**
+ * Animation types for component entrance effects.
+ * Each component animates independently on first appearance.
+ */
+@Serializable
+enum class AnimationType {
+    @SerialName("none")
+    NONE,
+
+    // === FADE ANIMATIONS ===
+    @SerialName("fade_in")
+    FADE_IN,
+
+    // === SLIDE ANIMATIONS ===
+    @SerialName("slide_in_left")
+    SLIDE_IN_LEFT,
+
+    @SerialName("slide_in_right")
+    SLIDE_IN_RIGHT,
+
+    @SerialName("slide_in_top")
+    SLIDE_IN_TOP,
+
+    @SerialName("slide_in_bottom")
+    SLIDE_IN_BOTTOM,
+
+    // === SCALE ANIMATIONS ===
+    @SerialName("scale_in")
+    SCALE_IN,
+
+    // === COMBINED ANIMATIONS ===
+    @SerialName("fade_scale_in")
+    FADE_SCALE_IN,
+
+    @SerialName("fade_slide_in")
+    FADE_SLIDE_IN
+}
+
+/**
+ * Easing functions for animations.
+ * Maps to Compose's built-in easing functions.
+ */
+@Serializable
+enum class Easing {
+    @SerialName("linear")
+    LINEAR,
+
+    @SerialName("ease_in")
+    EASE_IN,
+
+    @SerialName("ease_out")
+    EASE_OUT,
+
+    @SerialName("ease_in_out")
+    EASE_IN_OUT,
+
+    @SerialName("ease_in_back")
+    EASE_IN_BACK,
+
+    @SerialName("ease_out_back")
+    EASE_OUT_BACK,
+
+    @SerialName("spring")
+    SPRING
+}

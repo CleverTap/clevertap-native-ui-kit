@@ -1,5 +1,13 @@
 package com.clevertap.android.nativedisplay.renderer
 
+import androidx.compose.animation.core.EaseInBack
+import androidx.compose.animation.core.EaseOutBack
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,6 +40,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight as ComposeFontWeight
@@ -122,6 +131,7 @@ private fun RenderNode(
     // Apply modifiers in correct order
     var finalModifier = modifier
     finalModifier = finalModifier.applySizing(node.layout)
+    finalModifier = finalModifier.applyEntranceAnimation(node.animation)
     finalModifier = finalModifier.applyOffset(node.layout)
 
     // Apply clickable only when needed (server actions exist OR client is interested)
@@ -1002,6 +1012,104 @@ private fun Modifier.applyOffset(layout: Layout?): Modifier {
             x = offset.x.dp,
             y = offset.y.dp
         )
+    }
+}
+
+/**
+ * Apply entrance animation to a component.
+ * Animation plays once when the component first appears.
+ *
+ * Pattern follows BackgroundRenderer.kt - composable when needed for animations.
+ */
+@Composable
+fun Modifier.applyEntranceAnimation(animation: Animation?): Modifier {
+    // No animation configured
+    if (animation == null || animation.type == AnimationType.NONE) {
+        return this
+    }
+
+    // Track if animation has played
+    var hasAnimated by remember { mutableStateOf(false) }
+
+    // Animate from 0 to 1
+    val animatedValue by animateFloatAsState(
+        targetValue = if (hasAnimated) 1f else 0f,
+        animationSpec = tween(
+            durationMillis = animation.duration.toInt(),
+            delayMillis = animation.delay.toInt(),
+            easing = resolveEasing(animation.easing)
+        ),
+        label = "entrance_animation"
+    )
+
+    // Start animation on first composition
+    LaunchedEffect(Unit) {
+        hasAnimated = true
+    }
+
+    // Apply animation transform based on type
+    return this.graphicsLayer {
+        when (animation.type) {
+            AnimationType.FADE_IN -> {
+                alpha = animatedValue
+            }
+
+            AnimationType.SLIDE_IN_LEFT -> {
+                translationX = -(1f - animatedValue) * 300f
+                alpha = animatedValue  // Subtle fade for polish
+            }
+
+            AnimationType.SLIDE_IN_RIGHT -> {
+                translationX = (1f - animatedValue) * 300f
+                alpha = animatedValue
+            }
+
+            AnimationType.SLIDE_IN_TOP -> {
+                translationY = -(1f - animatedValue) * 300f
+                alpha = animatedValue
+            }
+
+            AnimationType.SLIDE_IN_BOTTOM -> {
+                translationY = (1f - animatedValue) * 300f
+                alpha = animatedValue
+            }
+
+            AnimationType.SCALE_IN -> {
+                scaleX = 0.8f + (animatedValue * 0.2f)  // Scale from 80% to 100%
+                scaleY = 0.8f + (animatedValue * 0.2f)
+                alpha = animatedValue
+            }
+
+            AnimationType.FADE_SCALE_IN -> {
+                scaleX = 0.9f + (animatedValue * 0.1f)  // Subtle scale
+                scaleY = 0.9f + (animatedValue * 0.1f)
+                alpha = animatedValue
+            }
+
+            AnimationType.FADE_SLIDE_IN -> {
+                translationY = (1f - animatedValue) * 30f  // Subtle slide
+                alpha = animatedValue
+            }
+
+            AnimationType.NONE -> {
+                // No transformation
+            }
+        }
+    }
+}
+
+/**
+ * Resolve easing enum to Compose easing function.
+ */
+private fun resolveEasing(easing: Easing): androidx.compose.animation.core.Easing {
+    return when (easing) {
+        Easing.LINEAR -> LinearEasing
+        Easing.EASE_IN -> FastOutLinearInEasing
+        Easing.EASE_OUT -> LinearOutSlowInEasing
+        Easing.EASE_IN_OUT -> FastOutSlowInEasing
+        Easing.EASE_IN_BACK -> EaseInBack
+        Easing.EASE_OUT_BACK -> EaseOutBack
+        Easing.SPRING -> LinearEasing  // Spring handled differently
     }
 }
 

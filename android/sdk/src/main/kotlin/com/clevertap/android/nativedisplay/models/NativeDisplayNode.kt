@@ -78,7 +78,8 @@ data class DividerConfig(
  */
 @Serializable
 data class Animation(
-    val type: String,  // "fadeIn", "slideIn", etc.
+    val type: AnimationType = AnimationType.NONE,
     val duration: Long = 300,
-    val delay: Long = 0
+    val delay: Long = 0,
+    val easing: Easing = Easing.EASE_OUT
 )

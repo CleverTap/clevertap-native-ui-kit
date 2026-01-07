@@ -46,6 +46,7 @@ fun NativeUIKitSampleApp() {
         val tabs = listOf(
             "🏠 Home",           // NEW - First position
             "📏 Arrangements",    // NEW - Arrangement strategies demo
+            "🎬 Animations",      // NEW - Animation demos
             "Simple Card",
             "Product Card",
             "Nested",
@@ -114,26 +115,27 @@ fun NativeUIKitSampleApp() {
                         )
                 ) {
                     when (selectedTabIndex) {
-                        0 -> HomeScreen()              // NEW
-                        1 -> ArrangementDemoScreen()   // NEW - Arrangement strategies
-                        2 -> SimpleGreetingCardSample()
-                        3 -> ProductCardSample()
-                        4 -> NestedContainersSample()
-                        5 -> AllElementsSample()
-                        6 -> DividerDemoSample()
-                        7 -> SimpleGallerySample()
-                        8 -> FullFeaturedGallerySample()
-                        9 -> FreeFlowGallerySample()
-                        10 -> CombinedDemoSample()
-                        11 -> LinearGradientsScreen()
-                        12 -> RadialSweepGradientsScreen()
-                        13 -> AnimatedBackgroundsScreen()
-                        14 -> PatternBackgroundsScreen()
-                        15 -> LayeredBackgroundsScreen()
-                        16 -> EcommerceShowcaseScreen()
-                        17 -> SocialProfileShowcaseScreen()
-                        18 -> DashboardShowcaseScreen()
-                        19 -> GalleryShowcaseScreen()
+                        0 -> HomeScreen()
+                        1 -> ArrangementDemoScreen()
+                        2 -> AnimationDemoScreen()
+                        3 -> SimpleGreetingCardSample()
+                        4 -> ProductCardSample()
+                        5 -> NestedContainersSample()
+                        6 -> AllElementsSample()
+                        7 -> DividerDemoSample()
+                        8 -> SimpleGallerySample()
+                        9 -> FullFeaturedGallerySample()
+                        10 -> FreeFlowGallerySample()
+                        11 -> CombinedDemoSample()
+                        12 -> LinearGradientsScreen()
+                        13 -> RadialSweepGradientsScreen()
+                        14 -> AnimatedBackgroundsScreen()
+                        15 -> PatternBackgroundsScreen()
+                        16 -> LayeredBackgroundsScreen()
+                        17 -> EcommerceShowcaseScreen()
+                        18 -> SocialProfileShowcaseScreen()
+                        19 -> DashboardShowcaseScreen()
+                        20 -> GalleryShowcaseScreen()
                     }
                 }
             }
@@ -267,6 +269,86 @@ private fun updateRootArrangement(
         return config.copy(root = updatedRoot)
     }
     return config
+}
+
+/**
+ * Tab 2: Animation Demos (NEW)
+ * Shows three animation examples:
+ * 1. Container with fade animation
+ * 2. Staggered children animations (manual delays)
+ * 3. Container + children combined animations
+ */
+@Composable
+fun AnimationDemoScreen() {
+    val context = LocalContext.current
+    
+    // Three demo configurations
+    val demos = remember {
+        listOf(
+            "Container Fade" to "animation_container_fade.json",
+            "Staggered Children" to "animation_staggered_children.json",
+            "Container + Children" to "animation_container_and_children.json"
+        )
+    }
+    
+    var selectedDemo by remember { mutableStateOf(0) }
+    val currentConfig = remember(selectedDemo) {
+        JsonLoader.loadFromAssets(context, demos[selectedDemo].second)
+    }
+    
+    Column(modifier = Modifier.fillMaxSize()) {
+        // Demo Selector
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(demos.size) { index ->
+                FilterChip(
+                    selected = selectedDemo == index,
+                    onClick = { selectedDemo = index },
+                    label = { Text(demos[index].first) }
+                )
+            }
+        }
+        
+        // Info Card
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFFFFF3E0)
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = when (selectedDemo) {
+                        0 -> "💡 Entire container fades in (500ms). All children appear together."
+                        1 -> "💡 Each child slides in from left with 100ms stagger delay (0ms, 100ms, 200ms, 300ms, 400ms)."
+                        2 -> "💡 Container fades in first (0ms), then image scales (400ms delay), text slides (600ms, 800ms delay), features fade-scale (1000-1200ms delay), button springs (1400ms)."
+                        else -> ""
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color(0xFFE65100)
+                )
+            }
+        }
+        
+        // Animation Demo View
+        if (currentConfig != null) {
+            NativeDisplayView(
+                config = currentConfig,
+                modifier = Modifier.fillMaxWidth()
+            )
+        } else {
+            ErrorMessage("Failed to load ${demos[selectedDemo].second}")
+        }
+    }
 }
 
 /**
