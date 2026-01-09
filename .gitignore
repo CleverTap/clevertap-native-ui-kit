@@ -131,3 +131,12 @@ yarn-error.log
 *.tmp
 *.bak
 *.cache
+
+# Additional Android/Kotlin ignores
+.kotlin/
+**/.kotlin/
+**/local.properties
+*.jks
+*.keystore
+signing.properties
+keystore.properties

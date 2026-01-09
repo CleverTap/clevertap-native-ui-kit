@@ -53,7 +53,7 @@ android {
 
 dependencies {
     // Local SDK
-    implementation(project(":sdk"))
+    implementation("com.clevertap.android:native-display-sdk")
     
     // AndroidX
     implementation(libs.androidx.core.ktx)

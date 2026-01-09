@@ -14,6 +14,12 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "clevertap-native-ui-kit"
+rootProject.name = "NativeDisplayComposeSample"
+include(":app")
 
-include(":sdk")
+// Include the SDK from parent android project
+includeBuild("../android") {
+    dependencySubstitution {
+        substitute(module("com.clevertap.android:native-display-sdk")).using(project(":sdk"))
+    }
+}
