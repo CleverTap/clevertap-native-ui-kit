@@ -93,6 +93,9 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // RecyclerView (for NativeDisplayViewGroup)
+    api("androidx.recyclerview:recyclerview:1.3.2")
 }
 
 // Read version from root VERSION file
