@@ -12,6 +12,10 @@
 		41969A6C2F0BCA390050EB83 /* ActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A6B2F0BCA390050EB83 /* ActionHandler.swift */; };
 		41969A6F2F0BDB420050EB83 /* TappableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A6E2F0BDB420050EB83 /* TappableModifier.swift */; };
 		41969A712F0BE6410050EB83 /* ActionTriggers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A702F0BE6410050EB83 /* ActionTriggers.swift */; };
+		41F1ACEA2F18E9DA0018C5EA /* NativeDisplayUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1ACE82F18E9DA0018C5EA /* NativeDisplayUIView.swift */; };
+		41F1ACEB2F18E9DA0018C5EA /* NativeDisplayTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1ACE72F18E9DA0018C5EA /* NativeDisplayTableViewCell.swift */; };
+		41F1ACEC2F18E9DA0018C5EA /* NativeDisplayCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1ACE62F18E9DA0018C5EA /* NativeDisplayCollectionViewCell.swift */; };
+		41F1ACED2F18E9DA0018C5EA /* NativeDisplayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1ACE92F18E9DA0018C5EA /* NativeDisplayViewController.swift */; };
 		B001 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = F001 /* Enums.swift */; };
 		B002 /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F002 /* Layout.swift */; };
 		B003 /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = F003 /* Style.swift */; };
@@ -45,6 +49,10 @@
 		41969A6B2F0BCA390050EB83 /* ActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionHandler.swift; sourceTree = "<group>"; };
 		41969A6E2F0BDB420050EB83 /* TappableModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TappableModifier.swift; sourceTree = "<group>"; };
 		41969A702F0BE6410050EB83 /* ActionTriggers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTriggers.swift; sourceTree = "<group>"; };
+		41F1ACE62F18E9DA0018C5EA /* NativeDisplayCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayCollectionViewCell.swift; sourceTree = "<group>"; };
+		41F1ACE72F18E9DA0018C5EA /* NativeDisplayTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayTableViewCell.swift; sourceTree = "<group>"; };
+		41F1ACE82F18E9DA0018C5EA /* NativeDisplayUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayUIView.swift; sourceTree = "<group>"; };
+		41F1ACE92F18E9DA0018C5EA /* NativeDisplayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayViewController.swift; sourceTree = "<group>"; };
 		F001 /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		F002 /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
 		F003 /* Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
@@ -107,6 +115,17 @@
 			path = Modifiers;
 			sourceTree = "<group>";
 		};
+		41F1ACE52F18E9C20018C5EA /* UiKit */ = {
+			isa = PBXGroup;
+			children = (
+				41F1ACE62F18E9DA0018C5EA /* NativeDisplayCollectionViewCell.swift */,
+				41F1ACE72F18E9DA0018C5EA /* NativeDisplayTableViewCell.swift */,
+				41F1ACE82F18E9DA0018C5EA /* NativeDisplayUIView.swift */,
+				41F1ACE92F18E9DA0018C5EA /* NativeDisplayViewController.swift */,
+			);
+			path = UiKit;
+			sourceTree = "<group>";
+		};
 		GRP000 = {
 			isa = PBXGroup;
 			children = (
@@ -161,6 +180,7 @@
 		GRP_SDK /* CleverTapNativeDisplay */ = {
 			isa = PBXGroup;
 			children = (
+				41F1ACE52F18E9C20018C5EA /* UiKit */,
 				41969A6D2F0BDB380050EB83 /* Modifiers */,
 				41969A6A2F0BCA2A0050EB83 /* Handlers */,
 				41969A652F0BC86B0050EB83 /* Listeners */,
@@ -318,6 +338,10 @@
 				B001 /* Enums.swift in Sources */,
 				B002 /* Layout.swift in Sources */,
 				41969A692F0BC8EC0050EB83 /* InteractionType.swift in Sources */,
+				41F1ACEA2F18E9DA0018C5EA /* NativeDisplayUIView.swift in Sources */,
+				41F1ACEB2F18E9DA0018C5EA /* NativeDisplayTableViewCell.swift in Sources */,
+				41F1ACEC2F18E9DA0018C5EA /* NativeDisplayCollectionViewCell.swift in Sources */,
+				41F1ACED2F18E9DA0018C5EA /* NativeDisplayViewController.swift in Sources */,
 				B003 /* Style.swift in Sources */,
 				B004 /* Background.swift in Sources */,
 				B005 /* GalleryConfig.swift in Sources */,
