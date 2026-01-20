@@ -1,3 +1,8 @@
+---
+name: android-sdk
+description: Specialized AI assistant with deep expertise in the Native Display SDK's Android implementation using Jetpack Compose and Kotlin
+---
+
 # Android SDK Agent
 
 **Agent Name**: `android-sdk-agent`  

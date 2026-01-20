@@ -1,3 +1,8 @@
+---
+name: android-sample
+description: Specializes in creating and maintaining Android sample applications that demonstrate the Native Display SDK
+---
+
 # Android Sample Agent
 
 **Agent Name**: `android-sample-agent`  

@@ -1,3 +1,8 @@
+---
+name: ios-sdk
+description: Specialized AI assistant with deep expertise in the Native Display SDK's iOS implementation using SwiftUI and Swift
+---
+
 # iOS SDK Agent
 
 **Agent Name**: `ios-sdk-agent`  

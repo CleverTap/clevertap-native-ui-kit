@@ -1,3 +1,8 @@
+---
+name: ios-sample
+description: Specializes in creating and maintaining the iOS sample application that demonstrates the Native Display SDK
+---
+
 # iOS Sample Agent
 
 **Agent Name**: `ios-sample-agent`  
