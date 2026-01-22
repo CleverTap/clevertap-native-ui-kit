@@ -1,0 +1,358 @@
+{
+  "theme": {
+    "id": "combined-styles-theme",
+    "defaultStyle": {
+      "fontSize": 16,
+      "textColor": "#333333",
+      "fontWeight": "normal"
+    }
+  },
+  "root": {
+    "id": "combined-styles-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 20 },
+      "arrangement": { "strategy": "SPACED", "value": 20 }
+    },
+    "style": {
+      "backgroundColor": "#FAFAFA"
+    },
+    "children": [
+      {
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Combined Visual Styles"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 28,
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "textColor": "#1976D2"
+        }
+      },
+      {
+        "id": "card-1",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 20 },
+          "arrangement": { "strategy": "SPACED", "value": 12 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 16,
+          "borderWidth": 2,
+          "borderColor": "#2196F3",
+          "shadowColor": "#2196F3",
+          "shadowOpacity": 0.3,
+          "shadowRadius": 12,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 6
+        },
+        "children": [
+          {
+            "id": "card-1-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Card with Border + Shadow"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "textColor": "#2196F3"
+            }
+          },
+          {
+            "id": "card-1-body",
+            "elementType": "text",
+            "bindings": {
+              "text": "This card combines border (2dp, blue), rounded corners (16dp), and a colored shadow for a lifted, emphasized appearance."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 14,
+              "lineHeight": 1.5,
+              "textColor": "#666666"
+            }
+          }
+        ]
+      },
+      {
+        "id": "card-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 20 },
+          "arrangement": { "strategy": "SPACED", "value": 12 }
+        },
+        "style": {
+          "backgroundColor": "#4CAF50",
+          "borderRadius": 24,
+          "opacity": 0.95,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.25,
+          "shadowRadius": 10,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4
+        },
+        "children": [
+          {
+            "id": "card-2-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Background + Opacity + Shadow"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF"
+            }
+          },
+          {
+            "id": "card-2-body",
+            "elementType": "text",
+            "bindings": {
+              "text": "Green background with 95% opacity and medium shadow creates depth while maintaining slight transparency."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 14,
+              "lineHeight": 1.5,
+              "textColor": "#FFFFFF"
+            }
+          }
+        ]
+      },
+      {
+        "id": "card-3",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 0 },
+          "arrangement": { "strategy": "START" }
+        },
+        "style": {
+          "backgroundColor": "#FFF3E0",
+          "borderRadius": 20,
+          "borderWidth": 4,
+          "borderColor": "#FF6F00",
+          "shadowColor": "#FF6F00",
+          "shadowOpacity": 0.4,
+          "shadowRadius": 16,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 8
+        },
+        "children": [
+          {
+            "id": "card-3-header",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 60, "unit": "dp" },
+              "padding": { "all": 16 }
+            },
+            "style": {
+              "backgroundColor": "#FF6F00",
+              "borderRadius": 16
+            },
+            "children": [
+              {
+                "id": "card-3-header-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Complex Styling"
+                },
+                "layout": {
+                  "width": { "value": "wrap_content", "unit": "dp" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 22,
+                  "fontWeight": "bold",
+                  "textColor": "#FFFFFF"
+                }
+              }
+            ]
+          },
+          {
+            "id": "card-3-body",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" },
+              "padding": { "all": 20 },
+              "arrangement": { "strategy": "SPACED", "value": 8 }
+            },
+            "children": [
+              {
+                "id": "card-3-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "This card showcases multiple visual properties working together: thick colored border, light background, heavy shadow, and nested rounded corners."
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "lineHeight": 1.5,
+                  "textColor": "#333333"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "button-group",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 56, "unit": "dp" },
+          "arrangement": { "strategy": "SPACE_EVENLY" }
+        },
+        "children": [
+          {
+            "id": "button-1",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 100, "unit": "dp" },
+              "height": { "value": 48, "unit": "dp" },
+              "padding": { "all": 12 }
+            },
+            "style": {
+              "backgroundColor": "#E91E63",
+              "borderRadius": 24,
+              "borderWidth": 2,
+              "borderColor": "#FFFFFF",
+              "shadowColor": "#000000",
+              "shadowOpacity": 0.2,
+              "shadowRadius": 6,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 3
+            },
+            "children": [
+              {
+                "id": "button-1-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Button 1"
+                },
+                "layout": {
+                  "width": { "value": "wrap_content", "unit": "dp" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "bold",
+                  "textColor": "#FFFFFF"
+                }
+              }
+            ]
+          },
+          {
+            "id": "button-2",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 100, "unit": "dp" },
+              "height": { "value": 48, "unit": "dp" },
+              "padding": { "all": 12 }
+            },
+            "style": {
+              "backgroundColor": "#9C27B0",
+              "borderRadius": 24,
+              "borderWidth": 2,
+              "borderColor": "#FFFFFF",
+              "shadowColor": "#000000",
+              "shadowOpacity": 0.2,
+              "shadowRadius": 6,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 3
+            },
+            "children": [
+              {
+                "id": "button-2-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Button 2"
+                },
+                "layout": {
+                  "width": { "value": "wrap_content", "unit": "dp" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "bold",
+                  "textColor": "#FFFFFF"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "badge",
+        "containerType": "box",
+        "layout": {
+          "width": { "value": 80, "unit": "dp" },
+          "height": { "value": 80, "unit": "dp" }
+        },
+        "style": {
+          "backgroundColor": "#FF5722",
+          "borderRadius": 40,
+          "borderWidth": 4,
+          "borderColor": "#FFFFFF",
+          "opacity": 0.95,
+          "shadowColor": "#FF5722",
+          "shadowOpacity": 0.5,
+          "shadowRadius": 12,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 6
+        },
+        "children": [
+          {
+            "id": "badge-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "99+"
+            },
+            "layout": {
+              "width": { "value": "wrap_content", "unit": "dp" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 24,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

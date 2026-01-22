@@ -1,0 +1,435 @@
+{
+  "theme": {
+    "id": "product-theme",
+    "defaultStyle": {
+      "fontSize": 14,
+      "textColor": "#333333",
+      "fontWeight": "normal"
+    }
+  },
+  "styleClasses": [
+    {
+      "id": "price-old",
+      "style": {
+        "fontSize": 16,
+        "textColor": "#999999",
+        "textDecoration": "line-through"
+      }
+    },
+    {
+      "id": "price-new",
+      "style": {
+        "fontSize": 28,
+        "textColor": "#F44336",
+        "fontWeight": "bold"
+      }
+    },
+    {
+      "id": "badge",
+      "style": {
+        "backgroundColor": "#FF5722",
+        "textColor": "#FFFFFF",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "borderRadius": 4
+      }
+    }
+  ],
+  "root": {
+    "id": "product-card-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 20 },
+      "arrangement": { "strategy": "CENTER" }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "id": "product-card",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 0 },
+          "arrangement": { "strategy": "START" }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 16,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.2,
+          "shadowRadius": 12,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 6
+        },
+        "children": [
+          {
+            "id": "image-container",
+            "containerType": "stack",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 200, "unit": "dp" }
+            },
+            "children": [
+              {
+                "id": "product-image",
+                "elementType": "image",
+                "bindings": {
+                  "src": "https://picsum.photos/400/400"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": 200, "unit": "dp" }
+                },
+                "style": {
+                  "borderRadius": 16
+                }
+              },
+              {
+                "id": "sale-badge",
+                "containerType": "box",
+                "layout": {
+                  "width": { "value": "wrap_content", "unit": "dp" },
+                  "height": { "value": "wrap_content", "unit": "dp" },
+                  "padding": { "horizontal": 12, "vertical": 6 },
+                  "offset": { "x": 16, "y": 16 }
+                },
+                "styleClass": "badge",
+                "style": {
+                  "shadowColor": "#FF5722",
+                  "shadowOpacity": 0.5,
+                  "shadowRadius": 8,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 4
+                },
+                "children": [
+                  {
+                    "id": "badge-text",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "50% OFF"
+                    },
+                    "layout": {
+                      "width": { "value": "wrap_content", "unit": "dp" },
+                      "height": { "value": "wrap_content", "unit": "dp" }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "favorite-button",
+                "containerType": "box",
+                "layout": {
+                  "width": { "value": 40, "unit": "dp" },
+                  "height": { "value": 40, "unit": "dp" },
+                  "offset": { "x": -56, "y": 16 }
+                },
+                "style": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 20,
+                  "shadowColor": "#000000",
+                  "shadowOpacity": 0.15,
+                  "shadowRadius": 6,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 2
+                },
+                "children": [
+                  {
+                    "id": "heart-icon",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "♥"
+                    },
+                    "layout": {
+                      "width": { "value": "wrap_content", "unit": "dp" },
+                      "height": { "value": "wrap_content", "unit": "dp" }
+                    },
+                    "style": {
+                      "fontSize": 20,
+                      "textColor": "#E91E63"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "content",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" },
+              "padding": { "all": 20 },
+              "arrangement": { "strategy": "SPACED", "value": 12 }
+            },
+            "children": [
+              {
+                "id": "category",
+                "elementType": "text",
+                "bindings": {
+                  "text": "ELECTRONICS"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 12,
+                  "fontWeight": "bold",
+                  "textColor": "#2196F3",
+                  "textAlign": "start"
+                }
+              },
+              {
+                "id": "title",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Premium Wireless Headphones"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 22,
+                  "fontWeight": "bold",
+                  "textColor": "#000000",
+                  "lineHeight": 1.3
+                }
+              },
+              {
+                "id": "description",
+                "elementType": "text",
+                "bindings": {
+                  "text": "High-quality sound with active noise cancellation. Up to 30 hours of battery life."
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "textColor": "#666666",
+                  "lineHeight": 1.5
+                }
+              },
+              {
+                "id": "rating-container",
+                "containerType": "horizontal",
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": "wrap_content", "unit": "dp" },
+                  "arrangement": { "strategy": "START", "value": 8 }
+                },
+                "children": [
+                  {
+                    "id": "stars",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "★★★★★"
+                    },
+                    "layout": {
+                      "width": { "value": "wrap_content", "unit": "dp" },
+                      "height": { "value": "wrap_content", "unit": "dp" }
+                    },
+                    "style": {
+                      "fontSize": 16,
+                      "textColor": "#FFC107"
+                    }
+                  },
+                  {
+                    "id": "rating-count",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "(4.8 - 2,847 reviews)"
+                    },
+                    "layout": {
+                      "width": { "value": "wrap_content", "unit": "dp" },
+                      "height": { "value": "wrap_content", "unit": "dp" }
+                    },
+                    "style": {
+                      "fontSize": 14,
+                      "textColor": "#999999"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "price-row",
+                "containerType": "horizontal",
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": "wrap_content", "unit": "dp" },
+                  "arrangement": { "strategy": "SPACE_BETWEEN" }
+                },
+                "children": [
+                  {
+                    "id": "prices",
+                    "containerType": "horizontal",
+                    "layout": {
+                      "width": { "value": "wrap_content", "unit": "dp" },
+                      "height": { "value": "wrap_content", "unit": "dp" },
+                      "arrangement": { "strategy": "START", "value": 12 }
+                    },
+                    "children": [
+                      {
+                        "id": "price-new",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "$149.99"
+                        },
+                        "layout": {
+                          "width": { "value": "wrap_content", "unit": "dp" },
+                          "height": { "value": "wrap_content", "unit": "dp" }
+                        },
+                        "styleClass": "price-new"
+                      },
+                      {
+                        "id": "price-old",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "$299.99"
+                        },
+                        "layout": {
+                          "width": { "value": "wrap_content", "unit": "dp" },
+                          "height": { "value": "wrap_content", "unit": "dp" }
+                        },
+                        "styleClass": "price-old"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "stock-badge",
+                    "containerType": "box",
+                    "layout": {
+                      "width": { "value": "wrap_content", "unit": "dp" },
+                      "height": { "value": "wrap_content", "unit": "dp" },
+                      "padding": { "horizontal": 10, "vertical": 4 }
+                    },
+                    "style": {
+                      "backgroundColor": "#4CAF50",
+                      "borderRadius": 12
+                    },
+                    "children": [
+                      {
+                        "id": "stock-text",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "In Stock"
+                        },
+                        "layout": {
+                          "width": { "value": "wrap_content", "unit": "dp" },
+                          "height": { "value": "wrap_content", "unit": "dp" }
+                        },
+                        "style": {
+                          "fontSize": 12,
+                          "fontWeight": "bold",
+                          "textColor": "#FFFFFF"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "divider",
+                "elementType": "divider",
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": 1, "unit": "dp" }
+                },
+                "style": {
+                  "backgroundColor": "#E0E0E0"
+                }
+              },
+              {
+                "id": "actions",
+                "containerType": "horizontal",
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": 56, "unit": "dp" },
+                  "arrangement": { "strategy": "SPACED", "value": 12 }
+                },
+                "children": [
+                  {
+                    "id": "add-cart-button",
+                    "containerType": "box",
+                    "layout": {
+                      "width": { "value": 0, "unit": "percent", "weight": 1 },
+                      "height": { "value": 56, "unit": "dp" },
+                      "padding": { "all": 16 }
+                    },
+                    "style": {
+                      "backgroundColor": "#2196F3",
+                      "borderRadius": 28,
+                      "shadowColor": "#2196F3",
+                      "shadowOpacity": 0.3,
+                      "shadowRadius": 8,
+                      "shadowOffsetX": 0,
+                      "shadowOffsetY": 4
+                    },
+                    "children": [
+                      {
+                        "id": "cart-button-text",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Add to Cart"
+                        },
+                        "layout": {
+                          "width": { "value": "wrap_content", "unit": "dp" },
+                          "height": { "value": "wrap_content", "unit": "dp" }
+                        },
+                        "style": {
+                          "fontSize": 16,
+                          "fontWeight": "bold",
+                          "textColor": "#FFFFFF"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "id": "buy-now-button",
+                    "containerType": "box",
+                    "layout": {
+                      "width": { "value": 0, "unit": "percent", "weight": 1 },
+                      "height": { "value": 56, "unit": "dp" },
+                      "padding": { "all": 16 }
+                    },
+                    "style": {
+                      "backgroundColor": "#FFFFFF",
+                      "borderRadius": 28,
+                      "borderWidth": 2,
+                      "borderColor": "#2196F3"
+                    },
+                    "children": [
+                      {
+                        "id": "buy-button-text",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Buy Now"
+                        },
+                        "layout": {
+                          "width": { "value": "wrap_content", "unit": "dp" },
+                          "height": { "value": "wrap_content", "unit": "dp" }
+                        },
+                        "style": {
+                          "fontSize": 16,
+                          "fontWeight": "bold",
+                          "textColor": "#2196F3"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

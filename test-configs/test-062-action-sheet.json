@@ -1,0 +1,150 @@
+{
+  "theme": {
+    "id": "action-sheet",
+    "defaultStyle": {
+      "textColor": "#1F2937",
+      "fontSize": 16
+    }
+  },
+  "root": {
+    "id": "action-sheet-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 0 },
+      "arrangement": {
+        "type": "end",
+        "spacing": 0
+      }
+    },
+    "style": {
+      "backgroundColor": "#00000080"
+    },
+    "children": [
+      {
+        "id": "action-sheet",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": -2, "unit": "dp" },
+          "padding": { "all": 0 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 20
+        },
+        "children": [
+          {
+            "id": "header",
+            "elementType": "text",
+            "bindings": {
+              "text": "Choose an Action"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": -2, "unit": "dp" },
+              "padding": { "all": 20 }
+            },
+            "style": {
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "textAlign": "center"
+            }
+          },
+          {
+            "id": "divider-1",
+            "elementType": "divider",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 1, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#E5E7EB"
+            }
+          },
+          {
+            "id": "action-1",
+            "elementType": "button",
+            "bindings": {
+              "text": "Share"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 56, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#00000000",
+              "textColor": "#3B82F6",
+              "fontSize": 17,
+              "fontWeight": "medium"
+            }
+          },
+          {
+            "id": "action-2",
+            "elementType": "button",
+            "bindings": {
+              "text": "Edit"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 56, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#00000000",
+              "textColor": "#3B82F6",
+              "fontSize": 17,
+              "fontWeight": "medium"
+            }
+          },
+          {
+            "id": "action-3",
+            "elementType": "button",
+            "bindings": {
+              "text": "Duplicate"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 56, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#00000000",
+              "textColor": "#3B82F6",
+              "fontSize": 17,
+              "fontWeight": "medium"
+            }
+          },
+          {
+            "id": "divider-2",
+            "elementType": "divider",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 8, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#F3F4F6"
+            }
+          },
+          {
+            "id": "cancel-button",
+            "elementType": "button",
+            "bindings": {
+              "text": "Cancel"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 56, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#00000000",
+              "textColor": "#EF4444",
+              "fontSize": 17,
+              "fontWeight": "bold"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "theme": {
+    "id": "font-weights-theme",
+    "defaultStyle": {
+      "fontSize": 18,
+      "textColor": "#222222"
+    }
+  },
+  "root": {
+    "id": "font-weights-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 20 },
+      "arrangement": { "strategy": "SPACED", "value": 20 }
+    },
+    "style": {
+      "backgroundColor": "#F8F8F8"
+    },
+    "children": [
+      {
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Font Weight Variations"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 28,
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "textColor": "#000000"
+        }
+      },
+      {
+        "id": "weight-normal",
+        "elementType": "text",
+        "bindings": {
+          "text": "Normal weight - Regular readable text for body content"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontWeight": "normal"
+        }
+      },
+      {
+        "id": "weight-medium",
+        "elementType": "text",
+        "bindings": {
+          "text": "Medium weight - Slightly emphasized text for labels"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontWeight": "medium"
+        }
+      },
+      {
+        "id": "weight-semibold",
+        "elementType": "text",
+        "bindings": {
+          "text": "Semibold weight - Strong emphasis for subheadings"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontWeight": "semibold"
+        }
+      },
+      {
+        "id": "weight-bold",
+        "elementType": "text",
+        "bindings": {
+          "text": "Bold weight - Maximum emphasis for headings"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontWeight": "bold"
+        }
+      },
+      {
+        "id": "comparison-container",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "arrangement": { "strategy": "SPACE_BETWEEN" }
+        },
+        "children": [
+          {
+            "id": "comp-normal",
+            "elementType": "text",
+            "bindings": {
+              "text": "Normal"
+            },
+            "layout": {
+              "width": { "value": "wrap_content", "unit": "dp" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontWeight": "normal",
+              "fontSize": 16
+            }
+          },
+          {
+            "id": "comp-medium",
+            "elementType": "text",
+            "bindings": {
+              "text": "Medium"
+            },
+            "layout": {
+              "width": { "value": "wrap_content", "unit": "dp" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontWeight": "medium",
+              "fontSize": 16
+            }
+          },
+          {
+            "id": "comp-semibold",
+            "elementType": "text",
+            "bindings": {
+              "text": "Semibold"
+            },
+            "layout": {
+              "width": { "value": "wrap_content", "unit": "dp" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontWeight": "semibold",
+              "fontSize": 16
+            }
+          },
+          {
+            "id": "comp-bold",
+            "elementType": "text",
+            "bindings": {
+              "text": "Bold"
+            },
+            "layout": {
+              "width": { "value": "wrap_content", "unit": "dp" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontWeight": "bold",
+              "fontSize": 16
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

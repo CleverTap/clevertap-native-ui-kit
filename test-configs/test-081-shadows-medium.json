@@ -1,0 +1,286 @@
+{
+  "theme": {
+    "id": "shadows-medium-theme",
+    "defaultStyle": {
+      "fontSize": 16,
+      "textColor": "#333333",
+      "fontWeight": "normal"
+    }
+  },
+  "root": {
+    "id": "shadows-medium-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 24 },
+      "arrangement": { "strategy": "SPACED", "value": 20 }
+    },
+    "style": {
+      "backgroundColor": "#ECEFF1"
+    },
+    "children": [
+      {
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Medium Shadow Examples"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 28,
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "textColor": "#000000"
+        }
+      },
+      {
+        "id": "shadow-4",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 110, "unit": "dp" },
+          "padding": { "all": 20 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.25,
+          "shadowRadius": 8,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4
+        },
+        "children": [
+          {
+            "id": "shadow-4-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Medium Elevation"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "id": "shadow-4-desc",
+            "elementType": "text",
+            "bindings": {
+              "text": "Shadow: opacity 0.25, radius 8, offset (0, 4)"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#757575"
+            }
+          }
+        ]
+      },
+      {
+        "id": "shadow-6",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 110, "unit": "dp" },
+          "padding": { "all": 20 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.3,
+          "shadowRadius": 12,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 6
+        },
+        "children": [
+          {
+            "id": "shadow-6-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Raised Elevation"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "id": "shadow-6-desc",
+            "elementType": "text",
+            "bindings": {
+              "text": "Shadow: opacity 0.3, radius 12, offset (0, 6)"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#757575"
+            }
+          }
+        ]
+      },
+      {
+        "id": "shadow-8",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 110, "unit": "dp" },
+          "padding": { "all": 20 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.35,
+          "shadowRadius": 16,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 8
+        },
+        "children": [
+          {
+            "id": "shadow-8-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "High Elevation"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "id": "shadow-8-desc",
+            "elementType": "text",
+            "bindings": {
+              "text": "Shadow: opacity 0.35, radius 16, offset (0, 8)"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#757575"
+            }
+          }
+        ]
+      },
+      {
+        "id": "product-card",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 0 },
+          "arrangement": { "strategy": "START" }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 16,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.28,
+          "shadowRadius": 12,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 6
+        },
+        "children": [
+          {
+            "id": "product-image",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/400/200"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 150, "unit": "dp" }
+            },
+            "style": {
+              "borderRadius": 16
+            }
+          },
+          {
+            "id": "product-info",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" },
+              "padding": { "all": 16 },
+              "arrangement": { "strategy": "SPACED", "value": 8 }
+            },
+            "children": [
+              {
+                "id": "product-title",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Premium Product"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 18,
+                  "fontWeight": "bold",
+                  "textColor": "#000000"
+                }
+              },
+              {
+                "id": "product-desc",
+                "elementType": "text",
+                "bindings": {
+                  "text": "This card demonstrates medium shadows perfect for product displays and important content."
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "textColor": "#666666"
+                }
+              },
+              {
+                "id": "product-price",
+                "elementType": "text",
+                "bindings": {
+                  "text": "$99.99"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 24,
+                  "fontWeight": "bold",
+                  "textColor": "#2196F3"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

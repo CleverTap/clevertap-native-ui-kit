@@ -1,0 +1,393 @@
+{
+  "theme": {
+    "id": "style-class-theme",
+    "defaultStyle": {
+      "fontSize": 14,
+      "textColor": "#333333",
+      "fontWeight": "normal"
+    }
+  },
+  "styleClasses": [
+    {
+      "id": "primary-button",
+      "style": {
+        "backgroundColor": "#2196F3",
+        "textColor": "#FFFFFF",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "borderRadius": 24,
+        "shadowColor": "#2196F3",
+        "shadowOpacity": 0.3,
+        "shadowRadius": 8,
+        "shadowOffsetX": 0,
+        "shadowOffsetY": 4
+      }
+    },
+    {
+      "id": "secondary-button",
+      "style": {
+        "backgroundColor": "#FFFFFF",
+        "textColor": "#2196F3",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "borderRadius": 24,
+        "borderWidth": 2,
+        "borderColor": "#2196F3"
+      }
+    },
+    {
+      "id": "card-style",
+      "style": {
+        "backgroundColor": "#FFFFFF",
+        "borderRadius": 12,
+        "shadowColor": "#000000",
+        "shadowOpacity": 0.15,
+        "shadowRadius": 8,
+        "shadowOffsetX": 0,
+        "shadowOffsetY": 2
+      }
+    },
+    {
+      "id": "heading-text",
+      "style": {
+        "fontSize": 24,
+        "fontWeight": "bold",
+        "textColor": "#000000"
+      }
+    },
+    {
+      "id": "body-text",
+      "style": {
+        "fontSize": 14,
+        "lineHeight": 1.5,
+        "textColor": "#666666"
+      }
+    },
+    {
+      "id": "success-badge",
+      "style": {
+        "backgroundColor": "#4CAF50",
+        "textColor": "#FFFFFF",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "borderRadius": 12
+      }
+    },
+    {
+      "id": "error-badge",
+      "style": {
+        "backgroundColor": "#F44336",
+        "textColor": "#FFFFFF",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "borderRadius": 12
+      }
+    }
+  ],
+  "root": {
+    "id": "style-class-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 20 },
+      "arrangement": { "strategy": "SPACED", "value": 20 }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Style Class Usage Demo"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "styleClass": "heading-text"
+      },
+      {
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "This example demonstrates how styleClasses enable reusable styling across multiple components."
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "styleClass": "body-text"
+      },
+      {
+        "id": "button-demo",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "arrangement": { "strategy": "SPACED", "value": 12 }
+        },
+        "children": [
+          {
+            "id": "primary-btn-1",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 48, "unit": "dp" },
+              "padding": { "all": 12 }
+            },
+            "styleClass": "primary-button",
+            "children": [
+              {
+                "id": "primary-btn-1-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Primary Button 1"
+                },
+                "layout": {
+                  "width": { "value": "wrap_content", "unit": "dp" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                }
+              }
+            ]
+          },
+          {
+            "id": "primary-btn-2",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 48, "unit": "dp" },
+              "padding": { "all": 12 }
+            },
+            "styleClass": "primary-button",
+            "children": [
+              {
+                "id": "primary-btn-2-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Primary Button 2"
+                },
+                "layout": {
+                  "width": { "value": "wrap_content", "unit": "dp" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                }
+              }
+            ]
+          },
+          {
+            "id": "secondary-btn",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 48, "unit": "dp" },
+              "padding": { "all": 12 }
+            },
+            "styleClass": "secondary-button",
+            "children": [
+              {
+                "id": "secondary-btn-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Secondary Button"
+                },
+                "layout": {
+                  "width": { "value": "wrap_content", "unit": "dp" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "card-1",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 16 },
+          "arrangement": { "strategy": "SPACED", "value": 8 }
+        },
+        "styleClass": "card-style",
+        "children": [
+          {
+            "id": "card-1-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Card Using Style Class"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "styleClass": "heading-text",
+            "style": {
+              "fontSize": 18
+            }
+          },
+          {
+            "id": "card-1-body",
+            "elementType": "text",
+            "bindings": {
+              "text": "This card uses the 'card-style' class for consistent appearance across the app."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "styleClass": "body-text"
+          }
+        ]
+      },
+      {
+        "id": "card-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 16 },
+          "arrangement": { "strategy": "SPACED", "value": 8 }
+        },
+        "styleClass": "card-style",
+        "children": [
+          {
+            "id": "card-2-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Another Card"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "styleClass": "heading-text",
+            "style": {
+              "fontSize": 18
+            }
+          },
+          {
+            "id": "card-2-body",
+            "elementType": "text",
+            "bindings": {
+              "text": "Same styling, different content. Style classes make this easy!"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "styleClass": "body-text"
+          }
+        ]
+      },
+      {
+        "id": "badges",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "arrangement": { "strategy": "SPACE_EVENLY" }
+        },
+        "children": [
+          {
+            "id": "success-1",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": "wrap_content", "unit": "dp" },
+              "height": { "value": "wrap_content", "unit": "dp" },
+              "padding": { "horizontal": 12, "vertical": 6 }
+            },
+            "styleClass": "success-badge",
+            "children": [
+              {
+                "id": "success-1-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "ACTIVE"
+                },
+                "layout": {
+                  "width": { "value": "wrap_content", "unit": "dp" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                }
+              }
+            ]
+          },
+          {
+            "id": "error-1",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": "wrap_content", "unit": "dp" },
+              "height": { "value": "wrap_content", "unit": "dp" },
+              "padding": { "horizontal": 12, "vertical": 6 }
+            },
+            "styleClass": "error-badge",
+            "children": [
+              {
+                "id": "error-1-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "ERROR"
+                },
+                "layout": {
+                  "width": { "value": "wrap_content", "unit": "dp" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                }
+              }
+            ]
+          },
+          {
+            "id": "success-2",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": "wrap_content", "unit": "dp" },
+              "height": { "value": "wrap_content", "unit": "dp" },
+              "padding": { "horizontal": 12, "vertical": 6 }
+            },
+            "styleClass": "success-badge",
+            "children": [
+              {
+                "id": "success-2-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "VERIFIED"
+                },
+                "layout": {
+                  "width": { "value": "wrap_content", "unit": "dp" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "override-example",
+        "containerType": "box",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 48, "unit": "dp" },
+          "padding": { "all": 12 }
+        },
+        "styleClass": "primary-button",
+        "style": {
+          "backgroundColor": "#9C27B0",
+          "shadowColor": "#9C27B0"
+        },
+        "children": [
+          {
+            "id": "override-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "Primary Style + Purple Override"
+            },
+            "layout": {
+              "width": { "value": "wrap_content", "unit": "dp" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#FFFFFF",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "id": "stack-3-children",
+    "containerType": "stack",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 400,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "backgroundColor": "#263238"
+    },
+    "children": [
+      {
+        "id": "layer-1",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/800/400"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": {
+              "value": 0,
+              "unit": "dp",
+              "alignment": "start"
+            },
+            "y": {
+              "value": 0,
+              "unit": "dp",
+              "alignment": "start"
+            }
+          }
+        },
+        "style": {
+          "opacity": 0.5
+        }
+      },
+      {
+        "id": "layer-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 24
+          },
+          "offset": {
+            "x": {
+              "value": 0,
+              "unit": "dp",
+              "alignment": "start"
+            },
+            "y": {
+              "value": 0,
+              "unit": "dp",
+              "alignment": "start"
+            }
+          },
+          "arrangement": {
+            "strategy": "center",
+            "spacing": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#00000066"
+        },
+        "children": [
+          {
+            "id": "overlay-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Layered Design"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": "wrap_content",
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 32,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "textAlign": "center"
+            }
+          },
+          {
+            "id": "overlay-subtitle",
+            "elementType": "text",
+            "bindings": {
+              "text": "Multiple layers stacked together"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": "wrap_content",
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 18,
+              "textColor": "#E0E0E0",
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "id": "layer-3",
+        "elementType": "text",
+        "bindings": {
+          "text": "Top Layer Badge"
+        },
+        "layout": {
+          "width": {
+            "value": "wrap_content",
+            "unit": "dp"
+          },
+          "height": {
+            "value": "wrap_content",
+            "unit": "dp"
+          },
+          "padding": {
+            "top": 8,
+            "bottom": 8,
+            "left": 16,
+            "right": 16
+          },
+          "offset": {
+            "x": {
+              "value": 16,
+              "unit": "dp",
+              "alignment": "end"
+            },
+            "y": {
+              "value": 16,
+              "unit": "dp",
+              "alignment": "start"
+            }
+          }
+        },
+        "style": {
+          "backgroundColor": "#FF6F00",
+          "textColor": "#FFFFFF",
+          "fontSize": 14,
+          "fontWeight": "bold",
+          "borderRadius": 20
+        }
+      }
+    ]
+  }
+}

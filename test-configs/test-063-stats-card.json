@@ -1,0 +1,207 @@
+{
+  "theme": {
+    "id": "stats-card",
+    "defaultStyle": {
+      "textColor": "#1F2937",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "id": "stats-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 20 }
+    },
+    "style": {
+      "backgroundColor": "#F9FAFB"
+    },
+    "children": [
+      {
+        "id": "stats-card",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": -2, "unit": "dp" },
+          "padding": { "all": 24 },
+          "arrangement": {
+            "type": "space_between",
+            "spacing": 0
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 16,
+          "shadowRadius": 12,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.08,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4
+        },
+        "children": [
+          {
+            "id": "stat-1",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": -2, "unit": "dp" },
+              "height": { "value": -2, "unit": "dp" },
+              "arrangement": {
+                "type": "spaced",
+                "spacing": 8
+              }
+            },
+            "children": [
+              {
+                "id": "stat-1-label",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Revenue"
+                },
+                "layout": {
+                  "width": { "value": -2, "unit": "dp" },
+                  "height": { "value": -2, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 12,
+                  "fontWeight": "medium",
+                  "textColor": "#6B7280"
+                }
+              },
+              {
+                "id": "stat-1-value",
+                "elementType": "text",
+                "bindings": {
+                  "text": "$45.2K"
+                },
+                "layout": {
+                  "width": { "value": -2, "unit": "dp" },
+                  "height": { "value": -2, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 28,
+                  "fontWeight": "bold",
+                  "textColor": "#111827"
+                }
+              }
+            ]
+          },
+          {
+            "id": "spacer-1",
+            "elementType": "spacer",
+            "layout": {
+              "width": { "value": 1, "unit": "dp" },
+              "height": { "value": 60, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#E5E7EB"
+            }
+          },
+          {
+            "id": "stat-2",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": -2, "unit": "dp" },
+              "height": { "value": -2, "unit": "dp" },
+              "arrangement": {
+                "type": "spaced",
+                "spacing": 8
+              }
+            },
+            "children": [
+              {
+                "id": "stat-2-label",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Orders"
+                },
+                "layout": {
+                  "width": { "value": -2, "unit": "dp" },
+                  "height": { "value": -2, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 12,
+                  "fontWeight": "medium",
+                  "textColor": "#6B7280"
+                }
+              },
+              {
+                "id": "stat-2-value",
+                "elementType": "text",
+                "bindings": {
+                  "text": "1,248"
+                },
+                "layout": {
+                  "width": { "value": -2, "unit": "dp" },
+                  "height": { "value": -2, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 28,
+                  "fontWeight": "bold",
+                  "textColor": "#10B981"
+                }
+              }
+            ]
+          },
+          {
+            "id": "spacer-2",
+            "elementType": "spacer",
+            "layout": {
+              "width": { "value": 1, "unit": "dp" },
+              "height": { "value": 60, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#E5E7EB"
+            }
+          },
+          {
+            "id": "stat-3",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": -2, "unit": "dp" },
+              "height": { "value": -2, "unit": "dp" },
+              "arrangement": {
+                "type": "spaced",
+                "spacing": 8
+              }
+            },
+            "children": [
+              {
+                "id": "stat-3-label",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Users"
+                },
+                "layout": {
+                  "width": { "value": -2, "unit": "dp" },
+                  "height": { "value": -2, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 12,
+                  "fontWeight": "medium",
+                  "textColor": "#6B7280"
+                }
+              },
+              {
+                "id": "stat-3-value",
+                "elementType": "text",
+                "bindings": {
+                  "text": "8,429"
+                },
+                "layout": {
+                  "width": { "value": -2, "unit": "dp" },
+                  "height": { "value": -2, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 28,
+                  "fontWeight": "bold",
+                  "textColor": "#3B82F6"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

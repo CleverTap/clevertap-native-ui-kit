@@ -1,0 +1,130 @@
+{
+  "theme": {
+    "id": "gallery-item",
+    "defaultStyle": {
+      "textColor": "#1F2937",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "id": "gallery-item-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 16 }
+    },
+    "style": {
+      "backgroundColor": "#F3F4F6"
+    },
+    "children": [
+      {
+        "id": "gallery-card",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": -2, "unit": "dp" },
+          "padding": { "all": 0 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 16,
+          "shadowRadius": 10,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.1,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4
+        },
+        "children": [
+          {
+            "id": "gallery-image",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/600/400?random=40"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 200, "unit": "dp" }
+            },
+            "style": {
+              "borderRadius": 16
+            }
+          },
+          {
+            "id": "content-container",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": -2, "unit": "dp" },
+              "padding": { "all": 16 },
+              "arrangement": {
+                "type": "spaced",
+                "spacing": 12
+              }
+            },
+            "children": [
+              {
+                "id": "spacer",
+                "elementType": "spacer",
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": 4, "unit": "dp" }
+                }
+              },
+              {
+                "id": "title",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Mountain Landscape Photography"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": -2, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 18,
+                  "fontWeight": "bold",
+                  "textColor": "#111827"
+                }
+              },
+              {
+                "id": "description",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Breathtaking views captured at sunrise"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": -2, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "normal",
+                  "textColor": "#6B7280"
+                }
+              },
+              {
+                "id": "view-button",
+                "elementType": "button",
+                "bindings": {
+                  "text": "View Gallery"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": 48, "unit": "dp" }
+                },
+                "style": {
+                  "backgroundColor": "#3B82F6",
+                  "borderRadius": 10,
+                  "textColor": "#FFFFFF",
+                  "fontSize": 16,
+                  "fontWeight": "bold"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

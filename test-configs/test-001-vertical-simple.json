@@ -1,0 +1,61 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {
+      "textColor": "#212121",
+      "fontSize": 14,
+      "fontFamily": "system"
+    }
+  },
+  "root": {
+    "id": "vertical-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 0, "unit": "wrap_content" },
+      "padding": { "all": 16 },
+      "arrangement": {
+        "spacing": 12,
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "background": {
+        "type": "solid",
+        "color": "#E3F2FD"
+      }
+    },
+    "children": [
+      {
+        "id": "text-element",
+        "elementType": "text",
+        "bindings": {
+          "text": "VERTICAL Container Test"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 0, "unit": "wrap_content" }
+        },
+        "style": {
+          "fontSize": 20,
+          "fontWeight": "bold",
+          "textColor": "#000000"
+        }
+      },
+      {
+        "id": "image-element",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/200/200"
+        },
+        "layout": {
+          "width": { "value": 200, "unit": "dp" },
+          "height": { "value": 200, "unit": "dp" }
+        },
+        "style": {
+          "borderRadius": 8
+        }
+      }
+    ]
+  }
+}

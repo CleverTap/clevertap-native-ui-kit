@@ -1,0 +1,215 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#01579B",
+      "fontSize": 12
+    }
+  },
+  "root": {
+    "id": "box-5-children",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 600,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "backgroundColor": "#E1F5FE"
+    },
+    "children": [
+      {
+        "id": "background-image",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/800/600"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": {
+              "value": 0,
+              "unit": "dp",
+              "alignment": "start"
+            },
+            "y": {
+              "value": 0,
+              "unit": "dp",
+              "alignment": "start"
+            }
+          }
+        }
+      },
+      {
+        "id": "top-badge",
+        "elementType": "text",
+        "bindings": {
+          "text": "NEW"
+        },
+        "layout": {
+          "width": {
+            "value": "wrap_content",
+            "unit": "dp"
+          },
+          "height": {
+            "value": "wrap_content",
+            "unit": "dp"
+          },
+          "padding": {
+            "top": 6,
+            "bottom": 6,
+            "left": 12,
+            "right": 12
+          },
+          "offset": {
+            "x": {
+              "value": 16,
+              "unit": "dp",
+              "alignment": "start"
+            },
+            "y": {
+              "value": 16,
+              "unit": "dp",
+              "alignment": "start"
+            }
+          }
+        },
+        "style": {
+          "backgroundColor": "#FF5722",
+          "textColor": "#FFFFFF",
+          "fontSize": 14,
+          "fontWeight": "bold",
+          "borderRadius": 4
+        }
+      },
+      {
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Overlay Title"
+        },
+        "layout": {
+          "width": {
+            "value": "wrap_content",
+            "unit": "dp"
+          },
+          "height": {
+            "value": "wrap_content",
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 16
+          },
+          "offset": {
+            "x": {
+              "value": 50,
+              "unit": "percent",
+              "alignment": "center"
+            },
+            "y": {
+              "value": 30,
+              "unit": "percent",
+              "alignment": "center"
+            }
+          }
+        },
+        "style": {
+          "backgroundColor": "#000000AA",
+          "textColor": "#FFFFFF",
+          "fontSize": 28,
+          "fontWeight": "bold",
+          "borderRadius": 8
+        }
+      },
+      {
+        "id": "subtitle",
+        "elementType": "text",
+        "bindings": {
+          "text": "Additional Information"
+        },
+        "layout": {
+          "width": {
+            "value": "wrap_content",
+            "unit": "dp"
+          },
+          "height": {
+            "value": "wrap_content",
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 12
+          },
+          "offset": {
+            "x": {
+              "value": 50,
+              "unit": "percent",
+              "alignment": "center"
+            },
+            "y": {
+              "value": 50,
+              "unit": "percent",
+              "alignment": "center"
+            }
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "textColor": "#01579B",
+          "fontSize": 16,
+          "borderRadius": 6
+        }
+      },
+      {
+        "id": "bottom-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Learn More"
+        },
+        "layout": {
+          "width": {
+            "value": 200,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 50,
+            "unit": "dp"
+          },
+          "offset": {
+            "x": {
+              "value": 50,
+              "unit": "percent",
+              "alignment": "center"
+            },
+            "y": {
+              "value": 32,
+              "unit": "dp",
+              "alignment": "end"
+            }
+          }
+        },
+        "style": {
+          "backgroundColor": "#0288D1",
+          "textColor": "#FFFFFF",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "borderRadius": 25
+        }
+      }
+    ]
+  }
+}

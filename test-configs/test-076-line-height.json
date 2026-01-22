@@ -1,0 +1,230 @@
+{
+  "theme": {
+    "id": "line-height-theme",
+    "defaultStyle": {
+      "fontSize": 16,
+      "textColor": "#222222",
+      "fontWeight": "normal"
+    }
+  },
+  "root": {
+    "id": "line-height-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 16 },
+      "arrangement": { "strategy": "SPACED", "value": 16 }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Line Height Variations"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "textColor": "#000000"
+        }
+      },
+      {
+        "id": "lh-1-0-container",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 12 },
+          "arrangement": { "strategy": "SPACED", "value": 4 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "id": "lh-1-0-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "Line Height 1.0 (tight):"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#666666"
+            }
+          },
+          {
+            "id": "lh-1-0-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "This paragraph demonstrates tight line spacing with lineHeight 1.0. Lines are very close together with minimal vertical space between them. This can make longer text harder to read but is useful for compact designs."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "lineHeight": 1.0,
+              "fontSize": 14
+            }
+          }
+        ]
+      },
+      {
+        "id": "lh-1-2-container",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 12 },
+          "arrangement": { "strategy": "SPACED", "value": 4 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "id": "lh-1-2-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "Line Height 1.2 (compact):"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#666666"
+            }
+          },
+          {
+            "id": "lh-1-2-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "This paragraph uses lineHeight 1.2 for a compact but readable spacing. It provides slightly more breathing room than 1.0 while still maintaining a dense layout. Good for captions and secondary text."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "lineHeight": 1.2,
+              "fontSize": 14
+            }
+          }
+        ]
+      },
+      {
+        "id": "lh-1-5-container",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 12 },
+          "arrangement": { "strategy": "SPACED", "value": 4 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "id": "lh-1-5-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "Line Height 1.5 (comfortable - recommended):"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#666666"
+            }
+          },
+          {
+            "id": "lh-1-5-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "This paragraph demonstrates the most readable line spacing with lineHeight 1.5. This is the recommended value for body text as it provides excellent readability with comfortable spacing between lines. Perfect for longer content."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "lineHeight": 1.5,
+              "fontSize": 14
+            }
+          }
+        ]
+      },
+      {
+        "id": "lh-2-0-container",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 12 },
+          "arrangement": { "strategy": "SPACED", "value": 4 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "id": "lh-2-0-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "Line Height 2.0 (loose):"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#666666"
+            }
+          },
+          {
+            "id": "lh-2-0-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "This paragraph has very loose line spacing with lineHeight 2.0. There is significant vertical space between each line. This can be useful for emphasis or artistic layouts but may feel too spacious for normal reading."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "lineHeight": 2.0,
+              "fontSize": 14
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,468 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#37474F",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "id": "gallery-spacing-variations",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 900,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 16
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 20
+      }
+    },
+    "style": {
+      "backgroundColor": "#ECEFF1"
+    },
+    "children": [
+      {
+        "id": "header",
+        "elementType": "text",
+        "bindings": {
+          "text": "Gallery Spacing Variations"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": "wrap_content",
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "fontSize": 26,
+          "fontWeight": "bold",
+          "textColor": "#263238"
+        }
+      },
+      {
+        "id": "gallery-tight",
+        "containerType": "gallery",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 180,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 0
+          }
+        },
+        "style": {
+          "backgroundColor": "#CFD8DC"
+        },
+        "galleryConfig": {
+          "mode": "snapping",
+          "orientation": "horizontal",
+          "peek": {
+            "before": 8,
+            "after": 8
+          },
+          "spacing": 4
+        },
+        "children": [
+          {
+            "id": "tight-1",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/200/160"
+            },
+            "layout": {
+              "width": {
+                "value": 200,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 160,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "id": "tight-2",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/200/161"
+            },
+            "layout": {
+              "width": {
+                "value": 200,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 160,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "id": "tight-3",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/200/162"
+            },
+            "layout": {
+              "width": {
+                "value": 200,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 160,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "id": "tight-4",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/200/163"
+            },
+            "layout": {
+              "width": {
+                "value": 200,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 160,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          }
+        ]
+      },
+      {
+        "id": "tight-label",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tight Spacing: 4dp spacing, 8dp peek"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": "wrap_content",
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "fontSize": 14,
+          "textColor": "#546E7A",
+          "textAlign": "center"
+        }
+      },
+      {
+        "id": "gallery-comfortable",
+        "containerType": "gallery",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 180,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 0
+          }
+        },
+        "style": {
+          "backgroundColor": "#B0BEC5"
+        },
+        "galleryConfig": {
+          "mode": "snapping",
+          "orientation": "horizontal",
+          "peek": {
+            "before": 24,
+            "after": 24
+          },
+          "spacing": 16
+        },
+        "children": [
+          {
+            "id": "comfort-1",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/240/160"
+            },
+            "layout": {
+              "width": {
+                "value": 240,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 160,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 12
+            }
+          },
+          {
+            "id": "comfort-2",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/240/161"
+            },
+            "layout": {
+              "width": {
+                "value": 240,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 160,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 12
+            }
+          },
+          {
+            "id": "comfort-3",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/240/162"
+            },
+            "layout": {
+              "width": {
+                "value": 240,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 160,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 12
+            }
+          },
+          {
+            "id": "comfort-4",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/240/163"
+            },
+            "layout": {
+              "width": {
+                "value": 240,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 160,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 12
+            }
+          }
+        ]
+      },
+      {
+        "id": "comfort-label",
+        "elementType": "text",
+        "bindings": {
+          "text": "Comfortable: 16dp spacing, 24dp peek"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": "wrap_content",
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "fontSize": 14,
+          "textColor": "#546E7A",
+          "textAlign": "center"
+        }
+      },
+      {
+        "id": "gallery-spacious",
+        "containerType": "gallery",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 180,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 0
+          }
+        },
+        "style": {
+          "backgroundColor": "#90A4AE"
+        },
+        "galleryConfig": {
+          "mode": "snapping",
+          "orientation": "horizontal",
+          "peek": {
+            "before": 40,
+            "after": 40
+          },
+          "spacing": 24
+        },
+        "children": [
+          {
+            "id": "spacious-1",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/280/160"
+            },
+            "layout": {
+              "width": {
+                "value": 280,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 160,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 16,
+              "shadowRadius": 8,
+              "shadowOffsetY": 4,
+              "shadowColor": "#00000033"
+            }
+          },
+          {
+            "id": "spacious-2",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/280/161"
+            },
+            "layout": {
+              "width": {
+                "value": 280,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 160,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 16,
+              "shadowRadius": 8,
+              "shadowOffsetY": 4,
+              "shadowColor": "#00000033"
+            }
+          },
+          {
+            "id": "spacious-3",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/280/162"
+            },
+            "layout": {
+              "width": {
+                "value": 280,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 160,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 16,
+              "shadowRadius": 8,
+              "shadowOffsetY": 4,
+              "shadowColor": "#00000033"
+            }
+          },
+          {
+            "id": "spacious-4",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/280/163"
+            },
+            "layout": {
+              "width": {
+                "value": 280,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 160,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 16,
+              "shadowRadius": 8,
+              "shadowOffsetY": 4,
+              "shadowColor": "#00000033"
+            }
+          }
+        ]
+      },
+      {
+        "id": "spacious-label",
+        "elementType": "text",
+        "bindings": {
+          "text": "Spacious: 24dp spacing, 40dp peek - Premium feel"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": "wrap_content",
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "fontSize": 14,
+          "textColor": "#546E7A",
+          "textAlign": "center"
+        }
+      }
+    ]
+  }
+}

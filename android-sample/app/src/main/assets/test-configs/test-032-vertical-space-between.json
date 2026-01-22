@@ -1,0 +1,142 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#2E7D32",
+      "fontSize": 16
+    }
+  },
+  "root": {
+    "id": "vertical-space-between",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 600,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 20
+      },
+      "arrangement": {
+        "strategy": "space_between",
+        "spacing": 0
+      }
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "angle": 180,
+        "colors": ["#C8E6C9", "#A5D6A7"]
+      }
+    },
+    "children": [
+      {
+        "id": "header",
+        "elementType": "text",
+        "bindings": {
+          "text": "SPACE_BETWEEN Arrangement"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": "wrap_content",
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "textColor": "#1B5E20"
+        }
+      },
+      {
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Equal space between items, no space at edges"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": "wrap_content",
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "fontSize": 16,
+          "textColor": "#2E7D32"
+        }
+      },
+      {
+        "id": "item-1",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/400/120"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 120,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      },
+      {
+        "id": "item-2",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/400/121"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 120,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      },
+      {
+        "id": "item-3",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/400/122"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 120,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      }
+    ]
+  }
+}

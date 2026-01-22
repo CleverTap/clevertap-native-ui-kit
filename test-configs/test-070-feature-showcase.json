@@ -1,0 +1,113 @@
+{
+  "theme": {
+    "id": "feature-showcase",
+    "defaultStyle": {
+      "textColor": "#1F2937",
+      "fontSize": 16
+    }
+  },
+  "root": {
+    "id": "feature-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 24 }
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "colors": ["#FAFAFA", "#F3F4F6"],
+        "angle": 180
+      }
+    },
+    "children": [
+      {
+        "id": "feature-card",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": -2, "unit": "dp" },
+          "padding": { "all": 20 },
+          "arrangement": {
+            "type": "spaced",
+            "spacing": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 16,
+          "shadowRadius": 12,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.1,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4
+        },
+        "children": [
+          {
+            "id": "feature-icon",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/120/120?random=80"
+            },
+            "layout": {
+              "width": { "value": 80, "unit": "dp" },
+              "height": { "value": 80, "unit": "dp" }
+            },
+            "style": {
+              "borderRadius": 16
+            }
+          },
+          {
+            "id": "feature-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Advanced Analytics"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": -2, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 28,
+              "fontWeight": "bold",
+              "textColor": "#111827"
+            }
+          },
+          {
+            "id": "feature-description",
+            "elementType": "text",
+            "bindings": {
+              "text": "Get deep insights into your data with our powerful analytics engine. Track metrics, visualize trends, and make informed decisions with real-time reporting."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": -2, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 16,
+              "fontWeight": "normal",
+              "textColor": "#6B7280",
+              "lineHeight": 24
+            }
+          },
+          {
+            "id": "divider",
+            "elementType": "divider",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 2, "unit": "dp" }
+            },
+            "style": {
+              "background": {
+                "type": "linear_gradient",
+                "colors": ["#3B82F6", "#8B5CF6"],
+                "angle": 90
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

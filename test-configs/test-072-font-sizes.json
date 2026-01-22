@@ -1,0 +1,122 @@
+{
+  "theme": {
+    "id": "font-sizes-theme",
+    "defaultStyle": {
+      "textColor": "#333333",
+      "fontWeight": "normal"
+    }
+  },
+  "root": {
+    "id": "font-sizes-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 20 },
+      "arrangement": { "strategy": "SPACED", "value": 16 }
+    },
+    "style": {
+      "backgroundColor": "#FFFFFF"
+    },
+    "children": [
+      {
+        "id": "size-12",
+        "elementType": "text",
+        "bindings": {
+          "text": "Font size 12sp - Small caption text"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 12
+        }
+      },
+      {
+        "id": "size-14",
+        "elementType": "text",
+        "bindings": {
+          "text": "Font size 14sp - Body text small"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 14
+        }
+      },
+      {
+        "id": "size-16",
+        "elementType": "text",
+        "bindings": {
+          "text": "Font size 16sp - Body text default"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 16
+        }
+      },
+      {
+        "id": "size-20",
+        "elementType": "text",
+        "bindings": {
+          "text": "Font size 20sp - Subheading"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 20
+        }
+      },
+      {
+        "id": "size-24",
+        "elementType": "text",
+        "bindings": {
+          "text": "Font size 24sp - Heading"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 24
+        }
+      },
+      {
+        "id": "size-32",
+        "elementType": "text",
+        "bindings": {
+          "text": "Font size 32sp - Large Title"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 32
+        }
+      },
+      {
+        "id": "size-48",
+        "elementType": "text",
+        "bindings": {
+          "text": "Font size 48sp - Display"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 48
+        }
+      }
+    ]
+  }
+}

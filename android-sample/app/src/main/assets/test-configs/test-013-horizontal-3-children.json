@@ -1,0 +1,96 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#4E342E",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "id": "horizontal-3-children",
+    "containerType": "horizontal",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 200,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 16
+      },
+      "arrangement": {
+        "strategy": "space_evenly",
+        "spacing": 0
+      }
+    },
+    "style": {
+      "backgroundColor": "#EFEBE9",
+      "borderRadius": 12
+    },
+    "children": [
+      {
+        "id": "card-1",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/150/150"
+        },
+        "layout": {
+          "width": {
+            "value": 150,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 150,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 8
+        }
+      },
+      {
+        "id": "card-2",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/150/151"
+        },
+        "layout": {
+          "width": {
+            "value": 150,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 150,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 8
+        }
+      },
+      {
+        "id": "card-3",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/150/152"
+        },
+        "layout": {
+          "width": {
+            "value": 150,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 150,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 8
+        }
+      }
+    ]
+  }
+}

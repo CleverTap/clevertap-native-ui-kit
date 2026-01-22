@@ -1,0 +1,116 @@
+{
+  "theme": {
+    "id": "hero-banner",
+    "defaultStyle": {
+      "textColor": "#FFFFFF",
+      "fontSize": 16
+    }
+  },
+  "root": {
+    "id": "hero-container",
+    "containerType": "stack",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 0 }
+    },
+    "children": [
+      {
+        "id": "background-image",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/1200/800?random=60"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 100, "unit": "percent" }
+        },
+        "style": {
+          "opacity": 0.7
+        }
+      },
+      {
+        "id": "overlay",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 100, "unit": "percent" },
+          "padding": { "all": 32 },
+          "arrangement": {
+            "type": "center",
+            "spacing": 0
+          }
+        },
+        "style": {
+          "backgroundColor": "#00000060"
+        },
+        "children": [
+          {
+            "id": "headline",
+            "elementType": "text",
+            "bindings": {
+              "text": "Experience Innovation"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": -2, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 40,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "lineHeight": 48
+            }
+          },
+          {
+            "id": "subheadline",
+            "elementType": "text",
+            "bindings": {
+              "text": "Discover the future of mobile technology with our cutting-edge solutions"
+            },
+            "layout": {
+              "width": { "value": 90, "unit": "percent" },
+              "height": { "value": -2, "unit": "dp" },
+              "padding": { "top": 16, "bottom": 32 }
+            },
+            "style": {
+              "fontSize": 18,
+              "fontWeight": "normal",
+              "textColor": "#E5E7EB",
+              "textAlign": "center",
+              "lineHeight": 28
+            }
+          },
+          {
+            "id": "cta-button",
+            "elementType": "button",
+            "bindings": {
+              "text": "Get Started"
+            },
+            "layout": {
+              "width": { "value": 80, "unit": "percent" },
+              "height": { "value": 60, "unit": "dp" }
+            },
+            "style": {
+              "background": {
+                "type": "linear_gradient",
+                "colors": ["#F59E0B", "#EF4444"],
+                "angle": 135
+              },
+              "borderRadius": 30,
+              "textColor": "#FFFFFF",
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "shadowRadius": 16,
+              "shadowColor": "#F59E0B",
+              "shadowOpacity": 0.5,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 8
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

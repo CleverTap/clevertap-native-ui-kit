@@ -1,0 +1,211 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#558B2F",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "id": "horizontal-padding-asymmetric",
+    "containerType": "horizontal",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 400,
+        "unit": "dp"
+      },
+      "padding": {
+        "top": 24,
+        "right": 8,
+        "bottom": 8,
+        "left": 24
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 12
+      }
+    },
+    "style": {
+      "backgroundColor": "#DCEDC8",
+      "borderWidth": 4,
+      "borderColor": "#558B2F"
+    },
+    "children": [
+      {
+        "id": "item-1",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 150,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "space_between",
+            "spacing": 0
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12
+        },
+        "children": [
+          {
+            "id": "title-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "Asymmetric"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": "wrap_content",
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "textColor": "#33691E"
+            }
+          },
+          {
+            "id": "desc-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "Top: 24dp\nRight: 8dp\nBottom: 8dp\nLeft: 24dp"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": "wrap_content",
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#558B2F",
+              "lineHeight": 20
+            }
+          }
+        ]
+      },
+      {
+        "id": "item-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 150,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "center",
+            "spacing": 8
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12
+        },
+        "children": [
+          {
+            "id": "label-2",
+            "elementType": "text",
+            "bindings": {
+              "text": "Creates unique visual effects"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": "wrap_content",
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#558B2F",
+              "textAlign": "center",
+              "lineHeight": 20
+            }
+          }
+        ]
+      },
+      {
+        "id": "item-3",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 150,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "center",
+            "spacing": 8
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12
+        },
+        "children": [
+          {
+            "id": "label-3",
+            "elementType": "text",
+            "bindings": {
+              "text": "Useful for special layouts"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": "wrap_content",
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#558B2F",
+              "textAlign": "center",
+              "lineHeight": 20
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

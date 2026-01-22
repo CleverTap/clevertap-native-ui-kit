@@ -1,0 +1,58 @@
+{
+  "theme": {
+    "id": "video-showcase",
+    "defaultStyle": {
+      "textColor": "#FFFFFF",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "id": "video-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 16 },
+      "arrangement": {
+        "type": "spaced",
+        "spacing": 16
+      }
+    },
+    "style": {
+      "backgroundColor": "#1A1A1A"
+    },
+    "children": [
+      {
+        "id": "main-video",
+        "elementType": "video",
+        "bindings": {
+          "src": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 240, "unit": "dp" }
+        },
+        "style": {
+          "borderRadius": 12,
+          "backgroundColor": "#000000"
+        }
+      },
+      {
+        "id": "preview-video",
+        "elementType": "video",
+        "bindings": {
+          "src": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 180, "unit": "dp" }
+        },
+        "style": {
+          "borderRadius": 12,
+          "backgroundColor": "#000000",
+          "opacity": 0.8
+        }
+      }
+    ]
+  }
+}

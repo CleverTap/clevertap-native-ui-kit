@@ -32,7 +32,15 @@ I am the **Testing Agent**, specializing in automated test generation, screensho
 I manage the entire testing pipeline:
 
 ```
-testing/
+test-configs/               # Test JSON configurations (project root)
+├── test-001-vertical-simple.json
+├── test-002-horizontal-simple.json
+├── test-003-box-simple.json
+├── test-004-stack-simple.json
+├── test-005-gallery-simple.json
+└── README.md               # Documentation
+
+.claude/agents/testing/     # Testing automation tools
 ├── templates/              # JSON test templates
 │   ├── containers.json     # Container variations
 │   ├── elements.json       # Element variations
@@ -43,8 +51,7 @@ testing/
 │   ├── capture-android.sh  # Android screenshots
 │   ├── capture-ios.sh      # iOS screenshots
 │   └── compare.sh          # Visual comparison
-└── output/                 # Generated files
-    ├── json/               # Test JSON files
+└── output/                 # Generated test outputs
     ├── screenshots/        # Captured images
     │   ├── android/
     │   └── ios/

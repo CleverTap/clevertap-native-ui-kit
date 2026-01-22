@@ -1,0 +1,165 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#388E3C",
+      "fontSize": 16
+    }
+  },
+  "root": {
+    "id": "vertical-spacing-16",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 650,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 16
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 16
+      }
+    },
+    "style": {
+      "backgroundColor": "#E8F5E9"
+    },
+    "children": [
+      {
+        "id": "header",
+        "elementType": "text",
+        "bindings": {
+          "text": "Medium Spacing (16dp)"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": "wrap_content",
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "textColor": "#1B5E20"
+        }
+      },
+      {
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Standard comfortable spacing - most common"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": "wrap_content",
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "fontSize": 16,
+          "textColor": "#388E3C"
+        }
+      },
+      {
+        "id": "section-1",
+        "elementType": "text",
+        "bindings": {
+          "text": "Section 1 - Well-balanced visual breathing room"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "fontSize": 16,
+          "textColor": "#2E7D32",
+          "shadowRadius": 4,
+          "shadowOffsetY": 2,
+          "shadowColor": "#00000022"
+        }
+      },
+      {
+        "id": "section-2",
+        "elementType": "text",
+        "bindings": {
+          "text": "Section 2 - Clear separation between elements"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "fontSize": 16,
+          "textColor": "#2E7D32",
+          "shadowRadius": 4,
+          "shadowOffsetY": 2,
+          "shadowColor": "#00000022"
+        }
+      },
+      {
+        "id": "section-3",
+        "elementType": "text",
+        "bindings": {
+          "text": "Section 3 - Easy to scan and read"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "fontSize": 16,
+          "textColor": "#2E7D32",
+          "shadowRadius": 4,
+          "shadowOffsetY": 2,
+          "shadowColor": "#00000022"
+        }
+      }
+    ]
+  }
+}

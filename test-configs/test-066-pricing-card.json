@@ -1,0 +1,158 @@
+{
+  "theme": {
+    "id": "pricing-card",
+    "defaultStyle": {
+      "textColor": "#1F2937",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "id": "pricing-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 20 }
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "colors": ["#EFF6FF", "#DBEAFE"],
+        "angle": 135
+      }
+    },
+    "children": [
+      {
+        "id": "pricing-card",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": -2, "unit": "dp" },
+          "padding": { "all": 24 },
+          "arrangement": {
+            "type": "spaced",
+            "spacing": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 20,
+          "borderWidth": 2,
+          "borderColor": "#3B82F6",
+          "shadowRadius": 16,
+          "shadowColor": "#3B82F6",
+          "shadowOpacity": 0.2,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 8
+        },
+        "children": [
+          {
+            "id": "plan-name",
+            "elementType": "text",
+            "bindings": {
+              "text": "Premium Plan"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": -2, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 24,
+              "fontWeight": "bold",
+              "textColor": "#3B82F6",
+              "textAlign": "center"
+            }
+          },
+          {
+            "id": "divider",
+            "elementType": "divider",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 2, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#E5E7EB"
+            }
+          },
+          {
+            "id": "price",
+            "elementType": "text",
+            "bindings": {
+              "text": "$49"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": -2, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 48,
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "textAlign": "center"
+            }
+          },
+          {
+            "id": "billing-period",
+            "elementType": "text",
+            "bindings": {
+              "text": "per month"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": -2, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 16,
+              "fontWeight": "normal",
+              "textColor": "#6B7280",
+              "textAlign": "center"
+            }
+          },
+          {
+            "id": "features",
+            "elementType": "text",
+            "bindings": {
+              "text": "✓ Unlimited Projects\n✓ Priority Support\n✓ Advanced Analytics\n✓ Custom Integrations"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": -2, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 15,
+              "fontWeight": "normal",
+              "textColor": "#374151",
+              "lineHeight": 28
+            }
+          },
+          {
+            "id": "spacer",
+            "elementType": "spacer",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 12, "unit": "dp" }
+            }
+          },
+          {
+            "id": "subscribe-button",
+            "elementType": "button",
+            "bindings": {
+              "text": "Subscribe Now"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 56, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#3B82F6",
+              "borderRadius": 12,
+              "textColor": "#FFFFFF",
+              "fontSize": 18,
+              "fontWeight": "bold"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

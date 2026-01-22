@@ -1,0 +1,240 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#880E4F",
+      "fontSize": 12
+    }
+  },
+  "root": {
+    "id": "gallery-10-snapping",
+    "containerType": "gallery",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 200,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 8
+      }
+    },
+    "style": {
+      "backgroundColor": "#FCE4EC"
+    },
+    "galleryConfig": {
+      "mode": "snapping",
+      "orientation": "horizontal",
+      "peek": {
+        "before": 20,
+        "after": 20
+      },
+      "spacing": 8
+    },
+    "children": [
+      {
+        "id": "item-1",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/160/160"
+        },
+        "layout": {
+          "width": {
+            "value": 160,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 160,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      },
+      {
+        "id": "item-2",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/160/161"
+        },
+        "layout": {
+          "width": {
+            "value": 160,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 160,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      },
+      {
+        "id": "item-3",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/160/162"
+        },
+        "layout": {
+          "width": {
+            "value": 160,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 160,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      },
+      {
+        "id": "item-4",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/160/163"
+        },
+        "layout": {
+          "width": {
+            "value": 160,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 160,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      },
+      {
+        "id": "item-5",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/160/164"
+        },
+        "layout": {
+          "width": {
+            "value": 160,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 160,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      },
+      {
+        "id": "item-6",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/160/165"
+        },
+        "layout": {
+          "width": {
+            "value": 160,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 160,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      },
+      {
+        "id": "item-7",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/160/166"
+        },
+        "layout": {
+          "width": {
+            "value": 160,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 160,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      },
+      {
+        "id": "item-8",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/160/167"
+        },
+        "layout": {
+          "width": {
+            "value": 160,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 160,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      },
+      {
+        "id": "item-9",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/160/168"
+        },
+        "layout": {
+          "width": {
+            "value": 160,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 160,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      },
+      {
+        "id": "item-10",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/160/169"
+        },
+        "layout": {
+          "width": {
+            "value": 160,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 160,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      }
+    ]
+  }
+}

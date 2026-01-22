@@ -1,0 +1,117 @@
+{
+  "theme": {
+    "id": "text-showcase",
+    "defaultStyle": {
+      "textColor": "#1A1A1A",
+      "fontSize": 14,
+      "fontWeight": "normal"
+    }
+  },
+  "root": {
+    "id": "all-text-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 24 },
+      "arrangement": {
+        "type": "spaced",
+        "spacing": 16
+      }
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "colors": ["#F8F9FA", "#FFFFFF"],
+        "angle": 180
+      }
+    },
+    "children": [
+      {
+        "id": "heading",
+        "elementType": "text",
+        "bindings": {
+          "text": "Typography Showcase"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": -2, "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 32,
+          "fontWeight": "bold",
+          "textColor": "#000000",
+          "textAlign": "center"
+        }
+      },
+      {
+        "id": "subheading",
+        "elementType": "text",
+        "bindings": {
+          "text": "Different text styles and weights"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": -2, "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "medium",
+          "textColor": "#666666",
+          "textAlign": "center"
+        }
+      },
+      {
+        "id": "body-text",
+        "elementType": "text",
+        "bindings": {
+          "text": "This is a regular body text paragraph that demonstrates normal font weight and standard sizing. It provides readable content for longer text blocks."
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": -2, "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 16,
+          "fontWeight": "normal",
+          "textColor": "#333333",
+          "lineHeight": 24
+        }
+      },
+      {
+        "id": "caption-text",
+        "elementType": "text",
+        "bindings": {
+          "text": "Caption text - smaller size for secondary information"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": -2, "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 12,
+          "fontWeight": "normal",
+          "textColor": "#999999"
+        }
+      },
+      {
+        "id": "emphasized-text",
+        "elementType": "text",
+        "bindings": {
+          "text": "EMPHASIZED TEXT IN BOLD"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": -2, "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 14,
+          "fontWeight": "bold",
+          "textColor": "#2563EB",
+          "textAlign": "center",
+          "textDecoration": "underline"
+        }
+      }
+    ]
+  }
+}

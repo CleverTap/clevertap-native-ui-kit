@@ -1,0 +1,219 @@
+{
+  "theme": {
+    "id": "settings-row",
+    "defaultStyle": {
+      "textColor": "#1F2937",
+      "fontSize": 16
+    }
+  },
+  "root": {
+    "id": "settings-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 0 }
+    },
+    "style": {
+      "backgroundColor": "#F9FAFB"
+    },
+    "children": [
+      {
+        "id": "settings-row-1",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 60, "unit": "dp" },
+          "padding": { "left": 20, "right": 20 },
+          "arrangement": {
+            "type": "space_between",
+            "spacing": 0
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF"
+        },
+        "children": [
+          {
+            "id": "setting-label-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "Notifications"
+            },
+            "layout": {
+              "width": { "value": -2, "unit": "dp" },
+              "height": { "value": -2, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 17,
+              "fontWeight": "normal",
+              "textColor": "#111827"
+            }
+          },
+          {
+            "id": "setting-spacer-1",
+            "elementType": "spacer",
+            "layout": {
+              "width": { "value": -1, "unit": "dp" },
+              "height": { "value": 1, "unit": "dp" }
+            }
+          },
+          {
+            "id": "setting-divider-arrow-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "›"
+            },
+            "layout": {
+              "width": { "value": -2, "unit": "dp" },
+              "height": { "value": -2, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 24,
+              "fontWeight": "normal",
+              "textColor": "#9CA3AF"
+            }
+          }
+        ]
+      },
+      {
+        "id": "divider-1",
+        "elementType": "divider",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 1, "unit": "dp" }
+        },
+        "style": {
+          "backgroundColor": "#E5E7EB"
+        }
+      },
+      {
+        "id": "settings-row-2",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 60, "unit": "dp" },
+          "padding": { "left": 20, "right": 20 },
+          "arrangement": {
+            "type": "space_between",
+            "spacing": 0
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF"
+        },
+        "children": [
+          {
+            "id": "setting-label-2",
+            "elementType": "text",
+            "bindings": {
+              "text": "Privacy"
+            },
+            "layout": {
+              "width": { "value": -2, "unit": "dp" },
+              "height": { "value": -2, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 17,
+              "fontWeight": "normal",
+              "textColor": "#111827"
+            }
+          },
+          {
+            "id": "setting-spacer-2",
+            "elementType": "spacer",
+            "layout": {
+              "width": { "value": -1, "unit": "dp" },
+              "height": { "value": 1, "unit": "dp" }
+            }
+          },
+          {
+            "id": "setting-divider-arrow-2",
+            "elementType": "text",
+            "bindings": {
+              "text": "›"
+            },
+            "layout": {
+              "width": { "value": -2, "unit": "dp" },
+              "height": { "value": -2, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 24,
+              "fontWeight": "normal",
+              "textColor": "#9CA3AF"
+            }
+          }
+        ]
+      },
+      {
+        "id": "divider-2",
+        "elementType": "divider",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 1, "unit": "dp" }
+        },
+        "style": {
+          "backgroundColor": "#E5E7EB"
+        }
+      },
+      {
+        "id": "settings-row-3",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 60, "unit": "dp" },
+          "padding": { "left": 20, "right": 20 },
+          "arrangement": {
+            "type": "space_between",
+            "spacing": 0
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF"
+        },
+        "children": [
+          {
+            "id": "setting-label-3",
+            "elementType": "text",
+            "bindings": {
+              "text": "Account"
+            },
+            "layout": {
+              "width": { "value": -2, "unit": "dp" },
+              "height": { "value": -2, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 17,
+              "fontWeight": "normal",
+              "textColor": "#111827"
+            }
+          },
+          {
+            "id": "setting-spacer-3",
+            "elementType": "spacer",
+            "layout": {
+              "width": { "value": -1, "unit": "dp" },
+              "height": { "value": 1, "unit": "dp" }
+            }
+          },
+          {
+            "id": "setting-divider-arrow-3",
+            "elementType": "text",
+            "bindings": {
+              "text": "›"
+            },
+            "layout": {
+              "width": { "value": -2, "unit": "dp" },
+              "height": { "value": -2, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 24,
+              "fontWeight": "normal",
+              "textColor": "#9CA3AF"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

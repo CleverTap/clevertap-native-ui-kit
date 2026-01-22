@@ -1,0 +1,194 @@
+{
+  "theme": {
+    "id": "social-post",
+    "defaultStyle": {
+      "textColor": "#1F2937",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "id": "social-post-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 16 }
+    },
+    "style": {
+      "backgroundColor": "#F9FAFB"
+    },
+    "children": [
+      {
+        "id": "post-card",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": -2, "unit": "dp" },
+          "padding": { "all": 16 },
+          "arrangement": {
+            "type": "spaced",
+            "spacing": 12
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowRadius": 8,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.08,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 2
+        },
+        "children": [
+          {
+            "id": "header",
+            "containerType": "horizontal",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": -2, "unit": "dp" },
+              "arrangement": {
+                "type": "spaced",
+                "spacing": 12
+              }
+            },
+            "children": [
+              {
+                "id": "avatar",
+                "elementType": "image",
+                "bindings": {
+                  "src": "https://picsum.photos/100/100?random=70"
+                },
+                "layout": {
+                  "width": { "value": 48, "unit": "dp" },
+                  "height": { "value": 48, "unit": "dp" }
+                },
+                "style": {
+                  "borderRadius": 24
+                }
+              },
+              {
+                "id": "user-info",
+                "containerType": "vertical",
+                "layout": {
+                  "width": { "value": -1, "unit": "dp" },
+                  "height": { "value": -2, "unit": "dp" },
+                  "arrangement": {
+                    "type": "spaced",
+                    "spacing": 4
+                  }
+                },
+                "children": [
+                  {
+                    "id": "username",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "Alex Thompson"
+                    },
+                    "layout": {
+                      "width": { "value": 100, "unit": "percent" },
+                      "height": { "value": -2, "unit": "dp" }
+                    },
+                    "style": {
+                      "fontSize": 16,
+                      "fontWeight": "bold",
+                      "textColor": "#111827"
+                    }
+                  },
+                  {
+                    "id": "timestamp",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "2 hours ago"
+                    },
+                    "layout": {
+                      "width": { "value": 100, "unit": "percent" },
+                      "height": { "value": -2, "unit": "dp" }
+                    },
+                    "style": {
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "textColor": "#9CA3AF"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "post-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "Just finished an amazing hike! The views from the summit were absolutely breathtaking. Nature never fails to inspire. 🏔️"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": -2, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 15,
+              "fontWeight": "normal",
+              "textColor": "#374151",
+              "lineHeight": 22
+            }
+          },
+          {
+            "id": "post-image",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/800/600?random=71"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 240, "unit": "dp" }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "id": "engagement",
+            "elementType": "text",
+            "bindings": {
+              "text": "❤️ 342 likes  💬 28 comments"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": -2, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "medium",
+              "textColor": "#6B7280"
+            }
+          },
+          {
+            "id": "spacer",
+            "elementType": "spacer",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 8, "unit": "dp" }
+            }
+          },
+          {
+            "id": "comment-button",
+            "elementType": "button",
+            "bindings": {
+              "text": "Add Comment"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 44, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#3B82F6",
+              "borderRadius": 8,
+              "textColor": "#FFFFFF",
+              "fontSize": 15,
+              "fontWeight": "medium"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

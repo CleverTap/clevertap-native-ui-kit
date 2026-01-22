@@ -1,0 +1,141 @@
+{
+  "theme": {
+    "id": "media-player",
+    "defaultStyle": {
+      "textColor": "#FFFFFF",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "id": "media-player-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 0 }
+    },
+    "style": {
+      "backgroundColor": "#000000"
+    },
+    "children": [
+      {
+        "id": "video-player",
+        "elementType": "video",
+        "bindings": {
+          "src": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 280, "unit": "dp" }
+        },
+        "style": {
+          "backgroundColor": "#000000"
+        }
+      },
+      {
+        "id": "controls-container",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": -2, "unit": "dp" },
+          "padding": { "all": 20 },
+          "arrangement": {
+            "type": "spaced",
+            "spacing": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#1A1A1A"
+        },
+        "children": [
+          {
+            "id": "spacer-top",
+            "elementType": "spacer",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 12, "unit": "dp" }
+            }
+          },
+          {
+            "id": "video-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Nature Documentary: Wildlife Adventure"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": -2, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF"
+            }
+          },
+          {
+            "id": "button-row",
+            "containerType": "horizontal",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 56, "unit": "dp" },
+              "arrangement": {
+                "type": "space_evenly",
+                "spacing": 0
+              }
+            },
+            "children": [
+              {
+                "id": "rewind-button",
+                "elementType": "button",
+                "bindings": {
+                  "text": "⏪"
+                },
+                "layout": {
+                  "width": { "value": 64, "unit": "dp" },
+                  "height": { "value": 56, "unit": "dp" }
+                },
+                "style": {
+                  "backgroundColor": "#333333",
+                  "borderRadius": 28,
+                  "fontSize": 24
+                }
+              },
+              {
+                "id": "play-button",
+                "elementType": "button",
+                "bindings": {
+                  "text": "▶️"
+                },
+                "layout": {
+                  "width": { "value": 64, "unit": "dp" },
+                  "height": { "value": 56, "unit": "dp" }
+                },
+                "style": {
+                  "backgroundColor": "#EF4444",
+                  "borderRadius": 28,
+                  "fontSize": 24
+                }
+              },
+              {
+                "id": "forward-button",
+                "elementType": "button",
+                "bindings": {
+                  "text": "⏩"
+                },
+                "layout": {
+                  "width": { "value": 64, "unit": "dp" },
+                  "height": { "value": 56, "unit": "dp" }
+                },
+                "style": {
+                  "backgroundColor": "#333333",
+                  "borderRadius": 28,
+                  "fontSize": 24
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

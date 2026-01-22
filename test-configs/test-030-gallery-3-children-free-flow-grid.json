@@ -1,0 +1,253 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#33691E",
+      "fontSize": 12
+    }
+  },
+  "root": {
+    "id": "gallery-3-free-flow-grid",
+    "containerType": "gallery",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 500,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 16
+      }
+    },
+    "style": {
+      "backgroundColor": "#F1F8E9"
+    },
+    "galleryConfig": {
+      "mode": "free_flow_grid",
+      "orientation": "vertical",
+      "spacing": 12,
+      "columns": 2
+    },
+    "children": [
+      {
+        "id": "grid-item-1",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": "wrap_content",
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 12
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowRadius": 4,
+          "shadowOffsetY": 2,
+          "shadowColor": "#00000018"
+        },
+        "children": [
+          {
+            "id": "grid-img-1",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/200/150"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 150,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "id": "grid-text-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "Grid Item 1"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": "wrap_content",
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#33691E"
+            }
+          }
+        ]
+      },
+      {
+        "id": "grid-item-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": "wrap_content",
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 12
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowRadius": 4,
+          "shadowOffsetY": 2,
+          "shadowColor": "#00000018"
+        },
+        "children": [
+          {
+            "id": "grid-img-2",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/200/180"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 180,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "id": "grid-text-2",
+            "elementType": "text",
+            "bindings": {
+              "text": "Grid Item 2"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": "wrap_content",
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#33691E"
+            }
+          }
+        ]
+      },
+      {
+        "id": "grid-item-3",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": "wrap_content",
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 12
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowRadius": 4,
+          "shadowOffsetY": 2,
+          "shadowColor": "#00000018"
+        },
+        "children": [
+          {
+            "id": "grid-img-3",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/200/160"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 160,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "id": "grid-text-3",
+            "elementType": "text",
+            "bindings": {
+              "text": "Grid Item 3"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": "wrap_content",
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#33691E"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,249 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#E65100",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "id": "gallery-3-free-flow",
+    "containerType": "gallery",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 350,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 16
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFF3E0"
+    },
+    "galleryConfig": {
+      "mode": "free_flow",
+      "orientation": "horizontal",
+      "spacing": 12
+    },
+    "children": [
+      {
+        "id": "item-1",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 250,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowRadius": 6,
+          "shadowOffsetY": 3,
+          "shadowColor": "#00000022"
+        },
+        "children": [
+          {
+            "id": "img-1",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/230/180"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 180,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "id": "text-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "Free-flowing gallery allows natural scrolling"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": "wrap_content",
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#E65100"
+            }
+          }
+        ]
+      },
+      {
+        "id": "item-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 250,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowRadius": 6,
+          "shadowOffsetY": 3,
+          "shadowColor": "#00000022"
+        },
+        "children": [
+          {
+            "id": "img-2",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/230/181"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 180,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "id": "text-2",
+            "elementType": "text",
+            "bindings": {
+              "text": "Smooth scrolling without snapping behavior"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": "wrap_content",
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#E65100"
+            }
+          }
+        ]
+      },
+      {
+        "id": "item-3",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 250,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowRadius": 6,
+          "shadowOffsetY": 3,
+          "shadowColor": "#00000022"
+        },
+        "children": [
+          {
+            "id": "img-3",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/230/182"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 180,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "id": "text-3",
+            "elementType": "text",
+            "bindings": {
+              "text": "User controls the scroll position precisely"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": "wrap_content",
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#E65100"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

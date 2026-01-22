@@ -1,0 +1,381 @@
+{
+  "theme": {
+    "id": "override-theme",
+    "defaultStyle": {
+      "fontSize": 14,
+      "textColor": "#999999",
+      "fontWeight": "normal"
+    }
+  },
+  "styleClasses": [
+    {
+      "id": "base-container",
+      "style": {
+        "backgroundColor": "#E3F2FD",
+        "borderRadius": 12,
+        "textColor": "#1976D2",
+        "fontSize": 16
+      }
+    }
+  ],
+  "root": {
+    "id": "override-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 20 },
+      "arrangement": { "strategy": "SPACED", "value": 20 }
+    },
+    "style": {
+      "backgroundColor": "#FAFAFA"
+    },
+    "children": [
+      {
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Inline Styles Override Inheritance"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 26,
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "textColor": "#000000"
+        }
+      },
+      {
+        "id": "explanation",
+        "elementType": "text",
+        "bindings": {
+          "text": "Style Resolution Order: 1. Theme Default → 2. Style Class → 3. Inline Style → 4. Parent Inherited"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 14,
+          "textAlign": "center",
+          "textColor": "#666666",
+          "lineHeight": 1.5
+        }
+      },
+      {
+        "id": "example-1",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 16 },
+          "arrangement": { "strategy": "SPACED", "value": 12 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "borderWidth": 1,
+          "borderColor": "#E0E0E0",
+          "textColor": "#2196F3",
+          "fontSize": 18
+        },
+        "children": [
+          {
+            "id": "ex1-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "Example 1: Theme → Inherited → Inline"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontWeight": "bold",
+              "textColor": "#000000"
+            }
+          },
+          {
+            "id": "ex1-inherited",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text is blue (18sp) from parent container."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            }
+          },
+          {
+            "id": "ex1-override-color",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text overrides color to red (inline), keeps 18sp."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "textColor": "#F44336"
+            }
+          },
+          {
+            "id": "ex1-override-both",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text overrides both: green, 14sp."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "textColor": "#4CAF50",
+              "fontSize": 14
+            }
+          }
+        ]
+      },
+      {
+        "id": "example-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 16 },
+          "arrangement": { "strategy": "SPACED", "value": 12 }
+        },
+        "styleClass": "base-container",
+        "children": [
+          {
+            "id": "ex2-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "Example 2: Style Class + Override"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontWeight": "bold",
+              "textColor": "#000000"
+            }
+          },
+          {
+            "id": "ex2-class",
+            "elementType": "text",
+            "bindings": {
+              "text": "Inherits from styleClass: blue text, 16sp."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            }
+          },
+          {
+            "id": "ex2-override",
+            "elementType": "text",
+            "bindings": {
+              "text": "Inline style overrides: purple text, bold, 20sp."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "textColor": "#9C27B0",
+              "fontSize": 20,
+              "fontWeight": "bold"
+            }
+          }
+        ]
+      },
+      {
+        "id": "example-3",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 16 },
+          "arrangement": { "strategy": "SPACED", "value": 12 }
+        },
+        "styleClass": "base-container",
+        "style": {
+          "backgroundColor": "#FFF3E0",
+          "textColor": "#E65100",
+          "fontSize": 14
+        },
+        "children": [
+          {
+            "id": "ex3-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "Example 3: Style Class + Container Inline + Child Override"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontWeight": "bold",
+              "textColor": "#000000"
+            }
+          },
+          {
+            "id": "ex3-inherited",
+            "elementType": "text",
+            "bindings": {
+              "text": "Container overrides styleClass: orange text, 14sp (not blue 16sp)."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            }
+          },
+          {
+            "id": "ex3-child-override",
+            "elementType": "text",
+            "bindings": {
+              "text": "Child further overrides: cyan, 18sp."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "textColor": "#00BCD4",
+              "fontSize": 18
+            }
+          }
+        ]
+      },
+      {
+        "id": "nested-demo",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 16 },
+          "arrangement": { "strategy": "SPACED", "value": 8 }
+        },
+        "style": {
+          "backgroundColor": "#E8F5E9",
+          "borderRadius": 12,
+          "textColor": "#2E7D32",
+          "fontSize": 16,
+          "fontWeight": "medium"
+        },
+        "children": [
+          {
+            "id": "nested-level-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "Level 1: Green, 16sp, medium (from container)"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            }
+          },
+          {
+            "id": "nested-container-2",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" },
+              "padding": { "all": 12 },
+              "arrangement": { "strategy": "SPACED", "value": 4 }
+            },
+            "style": {
+              "backgroundColor": "#C8E6C9",
+              "borderRadius": 8,
+              "fontSize": 14
+            },
+            "children": [
+              {
+                "id": "nested-level-2",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Level 2: Still green & medium, but 14sp (size overridden)"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                }
+              },
+              {
+                "id": "nested-level-2-override",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Level 2 with inline: Dark green, bold, 12sp"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": "wrap_content", "unit": "dp" }
+                },
+                "style": {
+                  "textColor": "#1B5E20",
+                  "fontWeight": "bold",
+                  "fontSize": 12
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "summary",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 16 },
+          "arrangement": { "strategy": "SPACED", "value": 8 }
+        },
+        "style": {
+          "backgroundColor": "#FFF9C4",
+          "borderRadius": 12
+        },
+        "children": [
+          {
+            "id": "summary-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Key Takeaway:"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "textColor": "#F57F17"
+            }
+          },
+          {
+            "id": "summary-body",
+            "elementType": "text",
+            "bindings": {
+              "text": "Inline styles always win! They override inherited styles from parents and styleClasses. Use inline styles sparingly for specific overrides."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 14,
+              "lineHeight": 1.5,
+              "textColor": "#333333"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

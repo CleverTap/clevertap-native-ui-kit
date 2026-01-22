@@ -1,0 +1,252 @@
+{
+  "theme": {
+    "id": "text-decoration-theme",
+    "defaultStyle": {
+      "fontSize": 18,
+      "textColor": "#333333",
+      "fontWeight": "normal"
+    }
+  },
+  "root": {
+    "id": "text-decoration-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 20 },
+      "arrangement": { "strategy": "SPACED", "value": 20 }
+    },
+    "style": {
+      "backgroundColor": "#FAFAFA"
+    },
+    "children": [
+      {
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Text Decoration Examples"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 26,
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "textColor": "#1976D2"
+        }
+      },
+      {
+        "id": "none-container",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 16 },
+          "arrangement": { "strategy": "SPACED", "value": 8 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "borderWidth": 1,
+          "borderColor": "#E0E0E0"
+        },
+        "children": [
+          {
+            "id": "none-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "None (default):"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "medium",
+              "textColor": "#757575"
+            }
+          },
+          {
+            "id": "none-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "This is regular text without any decoration"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "textDecoration": "none"
+            }
+          }
+        ]
+      },
+      {
+        "id": "underline-container",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 16 },
+          "arrangement": { "strategy": "SPACED", "value": 8 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "borderWidth": 1,
+          "borderColor": "#E0E0E0"
+        },
+        "children": [
+          {
+            "id": "underline-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "Underline:"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "medium",
+              "textColor": "#757575"
+            }
+          },
+          {
+            "id": "underline-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text has an underline decoration"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "textDecoration": "underline",
+              "textColor": "#2196F3"
+            }
+          }
+        ]
+      },
+      {
+        "id": "line-through-container",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 16 },
+          "arrangement": { "strategy": "SPACED", "value": 8 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "borderWidth": 1,
+          "borderColor": "#E0E0E0"
+        },
+        "children": [
+          {
+            "id": "line-through-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "Line-through (strikethrough):"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "medium",
+              "textColor": "#757575"
+            }
+          },
+          {
+            "id": "line-through-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text has line-through decoration"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "textDecoration": "line-through",
+              "textColor": "#F44336"
+            }
+          }
+        ]
+      },
+      {
+        "id": "practical-examples",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 16 },
+          "arrangement": { "strategy": "SPACE_BETWEEN" }
+        },
+        "style": {
+          "backgroundColor": "#FFF9C4",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "id": "price-old",
+            "elementType": "text",
+            "bindings": {
+              "text": "$99.99"
+            },
+            "layout": {
+              "width": { "value": "wrap_content", "unit": "dp" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "textDecoration": "line-through",
+              "textColor": "#999999",
+              "fontSize": 16
+            }
+          },
+          {
+            "id": "price-new",
+            "elementType": "text",
+            "bindings": {
+              "text": "$49.99"
+            },
+            "layout": {
+              "width": { "value": "wrap_content", "unit": "dp" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "textColor": "#D32F2F",
+              "fontSize": 24,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "id": "link-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "View Details"
+            },
+            "layout": {
+              "width": { "value": "wrap_content", "unit": "dp" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "textDecoration": "underline",
+              "textColor": "#1976D2",
+              "fontSize": 14
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

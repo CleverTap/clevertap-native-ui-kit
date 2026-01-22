@@ -1,0 +1,104 @@
+{
+  "theme": {
+    "id": "article-layout",
+    "defaultStyle": {
+      "textColor": "#374151",
+      "fontSize": 16,
+      "lineHeight": 24
+    }
+  },
+  "root": {
+    "id": "article-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 24 },
+      "arrangement": {
+        "type": "spaced",
+        "spacing": 20
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFFFFF"
+    },
+    "children": [
+      {
+        "id": "article-title",
+        "elementType": "text",
+        "bindings": {
+          "text": "The Future of Mobile Design"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": -2, "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 32,
+          "fontWeight": "bold",
+          "textColor": "#111827",
+          "lineHeight": 40
+        }
+      },
+      {
+        "id": "hero-image",
+        "elementType": "image",
+        "bindings": {
+          "src": "https://picsum.photos/800/400?random=30"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 200, "unit": "dp" }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      },
+      {
+        "id": "article-intro",
+        "elementType": "text",
+        "bindings": {
+          "text": "In the rapidly evolving world of mobile technology, design principles are constantly being redefined. This article explores the latest trends and innovations shaping the future of mobile user interfaces."
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": -2, "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "normal",
+          "textColor": "#4B5563",
+          "lineHeight": 28
+        }
+      },
+      {
+        "id": "divider",
+        "elementType": "divider",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 2, "unit": "dp" }
+        },
+        "style": {
+          "backgroundColor": "#E5E7EB"
+        }
+      },
+      {
+        "id": "article-body",
+        "elementType": "text",
+        "bindings": {
+          "text": "Mobile design has come a long way from simple static screens. Today's interfaces are dynamic, responsive, and increasingly intelligent. They adapt to user behavior, context, and preferences in ways that were unimaginable just a few years ago. As we look to the future, we see exciting possibilities emerging in areas such as augmented reality, voice interfaces, and personalized experiences."
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": -2, "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 16,
+          "fontWeight": "normal",
+          "textColor": "#374151",
+          "lineHeight": 26
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,344 @@
+{
+  "theme": {
+    "id": "app-theme",
+    "defaultStyle": {
+      "fontSize": 16,
+      "textColor": "#37474F",
+      "fontWeight": "normal",
+      "lineHeight": 1.5,
+      "fontFamily": "system"
+    }
+  },
+  "root": {
+    "id": "theme-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 20 },
+      "arrangement": { "strategy": "SPACED", "value": 20 }
+    },
+    "style": {
+      "backgroundColor": "#ECEFF1"
+    },
+    "children": [
+      {
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Theme Default Styles Demo"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 28,
+          "fontWeight": "bold",
+          "textColor": "#000000",
+          "textAlign": "center"
+        }
+      },
+      {
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "The theme's defaultStyle provides base styling for all text elements. Unless overridden, all text inherits: 16sp, dark gray color, 1.5 line height, and system font."
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" }
+        }
+      },
+      {
+        "id": "section-1",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 16 },
+          "arrangement": { "strategy": "SPACED", "value": 12 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.1,
+          "shadowRadius": 6,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 2
+        },
+        "children": [
+          {
+            "id": "section-1-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Section 1: Using Theme Defaults"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "id": "paragraph-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "This paragraph uses the theme defaults entirely. No inline styles or styleClasses applied. It shows 16sp text in dark gray with 1.5 line height for comfortable reading."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            }
+          },
+          {
+            "id": "paragraph-2",
+            "elementType": "text",
+            "bindings": {
+              "text": "Another paragraph with theme defaults. Notice the consistent typography throughout the application."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 16 },
+          "arrangement": { "strategy": "SPACED", "value": 12 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.1,
+          "shadowRadius": 6,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 2
+        },
+        "children": [
+          {
+            "id": "section-2-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Section 2: Selective Overrides"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "id": "small-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text overrides only fontSize to 12sp. Color, weight, lineHeight, and font stay from theme."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 12
+            }
+          },
+          {
+            "id": "large-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text overrides fontSize to 20sp."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 20
+            }
+          },
+          {
+            "id": "colored-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text overrides only color to blue. Size and other properties come from theme."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "textColor": "#2196F3"
+            }
+          },
+          {
+            "id": "bold-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text overrides only weight to bold."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontWeight": "bold"
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 16 },
+          "arrangement": { "strategy": "SPACED", "value": 12 }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.1,
+          "shadowRadius": 6,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 2,
+          "textColor": "#D32F2F",
+          "fontSize": 18
+        },
+        "children": [
+          {
+            "id": "section-3-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Section 3: Container Override"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "id": "inherited-red",
+            "elementType": "text",
+            "bindings": {
+              "text": "This container overrides theme defaults with red color and 18sp. All children inherit these instead of theme defaults."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            }
+          },
+          {
+            "id": "child-override",
+            "elementType": "text",
+            "bindings": {
+              "text": "But this child can still override: back to theme gray color."
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "textColor": "#37474F"
+            }
+          }
+        ]
+      },
+      {
+        "id": "benefits",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": "wrap_content", "unit": "dp" },
+          "padding": { "all": 16 },
+          "arrangement": { "strategy": "SPACED", "value": 12 }
+        },
+        "style": {
+          "backgroundColor": "#E8F5E9",
+          "borderRadius": 12
+        },
+        "children": [
+          {
+            "id": "benefits-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Benefits of Theme Default Styles:"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "textColor": "#2E7D32"
+            }
+          },
+          {
+            "id": "benefit-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "• Consistency: All text starts with the same baseline styling"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            }
+          },
+          {
+            "id": "benefit-2",
+            "elementType": "text",
+            "bindings": {
+              "text": "• Efficiency: Less code - only override what's different"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            }
+          },
+          {
+            "id": "benefit-3",
+            "elementType": "text",
+            "bindings": {
+              "text": "• Maintainability: Change theme defaults to update entire app"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            }
+          },
+          {
+            "id": "benefit-4",
+            "elementType": "text",
+            "bindings": {
+              "text": "• Readability: Cleaner JSON with fewer style properties"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": "wrap_content", "unit": "dp" }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
