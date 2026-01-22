@@ -140,3 +140,5 @@ yarn-error.log
 *.keystore
 signing.properties
 keystore.properties
+
+android-sample/app/configs

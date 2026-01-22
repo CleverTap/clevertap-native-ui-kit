@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "gallery-spacing-variations",
     "containerType": "vertical",
     "layout": {
@@ -23,7 +24,8 @@
       },
       "arrangement": {
         "strategy": "spaced",
-        "spacing": 20
+        "spacing": 20,
+        "spacingUnit": "dp"
       }
     },
     "style": {
@@ -31,6 +33,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "header",
         "elementType": "text",
         "bindings": {
@@ -42,8 +45,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -53,6 +57,7 @@
         }
       },
       {
+        "type": "container",
         "id": "gallery-tight",
         "containerType": "gallery",
         "layout": {
@@ -82,6 +87,7 @@
         },
         "children": [
           {
+            "type": "element",
             "id": "tight-1",
             "elementType": "image",
             "bindings": {
@@ -102,6 +108,7 @@
             }
           },
           {
+            "type": "element",
             "id": "tight-2",
             "elementType": "image",
             "bindings": {
@@ -122,6 +129,7 @@
             }
           },
           {
+            "type": "element",
             "id": "tight-3",
             "elementType": "image",
             "bindings": {
@@ -142,6 +150,7 @@
             }
           },
           {
+            "type": "element",
             "id": "tight-4",
             "elementType": "image",
             "bindings": {
@@ -164,6 +173,7 @@
         ]
       },
       {
+        "type": "element",
         "id": "tight-label",
         "elementType": "text",
         "bindings": {
@@ -175,8 +185,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -186,6 +197,7 @@
         }
       },
       {
+        "type": "container",
         "id": "gallery-comfortable",
         "containerType": "gallery",
         "layout": {
@@ -215,6 +227,7 @@
         },
         "children": [
           {
+            "type": "element",
             "id": "comfort-1",
             "elementType": "image",
             "bindings": {
@@ -235,6 +248,7 @@
             }
           },
           {
+            "type": "element",
             "id": "comfort-2",
             "elementType": "image",
             "bindings": {
@@ -255,6 +269,7 @@
             }
           },
           {
+            "type": "element",
             "id": "comfort-3",
             "elementType": "image",
             "bindings": {
@@ -275,6 +290,7 @@
             }
           },
           {
+            "type": "element",
             "id": "comfort-4",
             "elementType": "image",
             "bindings": {
@@ -297,6 +313,7 @@
         ]
       },
       {
+        "type": "element",
         "id": "comfort-label",
         "elementType": "text",
         "bindings": {
@@ -308,8 +325,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -319,6 +337,7 @@
         }
       },
       {
+        "type": "container",
         "id": "gallery-spacious",
         "containerType": "gallery",
         "layout": {
@@ -348,6 +367,7 @@
         },
         "children": [
           {
+            "type": "element",
             "id": "spacious-1",
             "elementType": "image",
             "bindings": {
@@ -371,6 +391,7 @@
             }
           },
           {
+            "type": "element",
             "id": "spacious-2",
             "elementType": "image",
             "bindings": {
@@ -394,6 +415,7 @@
             }
           },
           {
+            "type": "element",
             "id": "spacious-3",
             "elementType": "image",
             "bindings": {
@@ -417,6 +439,7 @@
             }
           },
           {
+            "type": "element",
             "id": "spacious-4",
             "elementType": "image",
             "bindings": {
@@ -442,6 +465,7 @@
         ]
       },
       {
+        "type": "element",
         "id": "spacious-label",
         "elementType": "text",
         "bindings": {
@@ -453,8 +477,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -464,5 +489,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

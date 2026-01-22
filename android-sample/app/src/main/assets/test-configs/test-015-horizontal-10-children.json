@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "horizontal-10-children",
     "containerType": "horizontal",
     "layout": {
@@ -23,7 +24,8 @@
       },
       "arrangement": {
         "strategy": "spaced",
-        "spacing": 4
+        "spacing": 4,
+        "spacingUnit": "dp"
       }
     },
     "style": {
@@ -31,6 +33,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "icon-1",
         "elementType": "image",
         "bindings": {
@@ -51,6 +54,7 @@
         }
       },
       {
+        "type": "element",
         "id": "icon-2",
         "elementType": "image",
         "bindings": {
@@ -71,6 +75,7 @@
         }
       },
       {
+        "type": "element",
         "id": "icon-3",
         "elementType": "image",
         "bindings": {
@@ -91,6 +96,7 @@
         }
       },
       {
+        "type": "element",
         "id": "icon-4",
         "elementType": "image",
         "bindings": {
@@ -111,6 +117,7 @@
         }
       },
       {
+        "type": "element",
         "id": "icon-5",
         "elementType": "image",
         "bindings": {
@@ -131,6 +138,7 @@
         }
       },
       {
+        "type": "element",
         "id": "icon-6",
         "elementType": "image",
         "bindings": {
@@ -151,6 +159,7 @@
         }
       },
       {
+        "type": "element",
         "id": "icon-7",
         "elementType": "image",
         "bindings": {
@@ -171,6 +180,7 @@
         }
       },
       {
+        "type": "element",
         "id": "icon-8",
         "elementType": "image",
         "bindings": {
@@ -191,6 +201,7 @@
         }
       },
       {
+        "type": "element",
         "id": "icon-9",
         "elementType": "image",
         "bindings": {
@@ -211,6 +222,7 @@
         }
       },
       {
+        "type": "element",
         "id": "icon-10",
         "elementType": "image",
         "bindings": {
@@ -231,5 +243,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

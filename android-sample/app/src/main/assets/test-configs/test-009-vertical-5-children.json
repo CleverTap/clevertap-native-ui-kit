@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "vertical-5-children",
     "containerType": "vertical",
     "layout": {
@@ -26,13 +27,17 @@
       },
       "arrangement": {
         "strategy": "spaced",
-        "spacing": 12
+        "spacing": 12,
+        "spacingUnit": "dp"
       }
     },
     "style": {
       "background": {
         "type": "radial_gradient",
-        "colors": ["#C5E1A5", "#7CB342"],
+        "colors": [
+          "#C5E1A5",
+          "#7CB342"
+        ],
         "centerX": 0.5,
         "centerY": 0.5,
         "radius": 1.0
@@ -40,6 +45,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "title",
         "elementType": "text",
         "bindings": {
@@ -51,8 +57,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -62,6 +69,7 @@
         }
       },
       {
+        "type": "element",
         "id": "feature-1",
         "elementType": "text",
         "bindings": {
@@ -73,8 +81,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -83,6 +92,7 @@
         }
       },
       {
+        "type": "element",
         "id": "image",
         "elementType": "image",
         "bindings": {
@@ -103,6 +113,7 @@
         }
       },
       {
+        "type": "element",
         "id": "feature-2",
         "elementType": "text",
         "bindings": {
@@ -114,8 +125,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -124,6 +136,7 @@
         }
       },
       {
+        "type": "element",
         "id": "cta",
         "elementType": "button",
         "bindings": {
@@ -148,5 +161,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

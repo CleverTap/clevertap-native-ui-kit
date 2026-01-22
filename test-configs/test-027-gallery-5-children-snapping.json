@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "gallery-5-snapping",
     "containerType": "gallery",
     "layout": {
@@ -36,6 +37,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "product-1",
         "elementType": "image",
         "bindings": {
@@ -58,6 +60,7 @@
         }
       },
       {
+        "type": "element",
         "id": "product-2",
         "elementType": "image",
         "bindings": {
@@ -80,6 +83,7 @@
         }
       },
       {
+        "type": "element",
         "id": "product-3",
         "elementType": "image",
         "bindings": {
@@ -102,6 +106,7 @@
         }
       },
       {
+        "type": "element",
         "id": "product-4",
         "elementType": "image",
         "bindings": {
@@ -124,6 +129,7 @@
         }
       },
       {
+        "type": "element",
         "id": "product-5",
         "elementType": "image",
         "bindings": {
@@ -146,5 +152,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

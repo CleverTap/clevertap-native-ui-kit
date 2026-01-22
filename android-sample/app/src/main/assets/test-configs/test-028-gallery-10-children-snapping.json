@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "gallery-10-snapping",
     "containerType": "gallery",
     "layout": {
@@ -36,6 +37,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "item-1",
         "elementType": "image",
         "bindings": {
@@ -56,6 +58,7 @@
         }
       },
       {
+        "type": "element",
         "id": "item-2",
         "elementType": "image",
         "bindings": {
@@ -76,6 +79,7 @@
         }
       },
       {
+        "type": "element",
         "id": "item-3",
         "elementType": "image",
         "bindings": {
@@ -96,6 +100,7 @@
         }
       },
       {
+        "type": "element",
         "id": "item-4",
         "elementType": "image",
         "bindings": {
@@ -116,6 +121,7 @@
         }
       },
       {
+        "type": "element",
         "id": "item-5",
         "elementType": "image",
         "bindings": {
@@ -136,6 +142,7 @@
         }
       },
       {
+        "type": "element",
         "id": "item-6",
         "elementType": "image",
         "bindings": {
@@ -156,6 +163,7 @@
         }
       },
       {
+        "type": "element",
         "id": "item-7",
         "elementType": "image",
         "bindings": {
@@ -176,6 +184,7 @@
         }
       },
       {
+        "type": "element",
         "id": "item-8",
         "elementType": "image",
         "bindings": {
@@ -196,6 +205,7 @@
         }
       },
       {
+        "type": "element",
         "id": "item-9",
         "elementType": "image",
         "bindings": {
@@ -216,6 +226,7 @@
         }
       },
       {
+        "type": "element",
         "id": "item-10",
         "elementType": "image",
         "bindings": {
@@ -236,5 +247,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

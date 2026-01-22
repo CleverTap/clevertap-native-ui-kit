@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "vertical-space-around",
     "containerType": "vertical",
     "layout": {
@@ -22,14 +23,16 @@
         "all": 20
       },
       "arrangement": {
-        "strategy": "space_around",
-        "spacing": 0
+        "strategy": "space_around"
       }
     },
     "style": {
       "background": {
         "type": "radial_gradient",
-        "colors": ["#E1BEE7", "#BA68C8"],
+        "colors": [
+          "#E1BEE7",
+          "#BA68C8"
+        ],
         "centerX": 0.5,
         "centerY": 0.5,
         "radius": 1.0
@@ -37,6 +40,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "header",
         "elementType": "text",
         "bindings": {
@@ -48,8 +52,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -59,6 +64,7 @@
         }
       },
       {
+        "type": "element",
         "id": "description",
         "elementType": "text",
         "bindings": {
@@ -70,8 +76,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -80,6 +87,7 @@
         }
       },
       {
+        "type": "element",
         "id": "circle-1",
         "elementType": "image",
         "bindings": {
@@ -102,6 +110,7 @@
         }
       },
       {
+        "type": "element",
         "id": "circle-2",
         "elementType": "image",
         "bindings": {
@@ -124,6 +133,7 @@
         }
       },
       {
+        "type": "element",
         "id": "circle-3",
         "elementType": "image",
         "bindings": {
@@ -146,5 +156,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

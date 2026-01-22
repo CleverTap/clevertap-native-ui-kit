@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "vertical-spacing-8",
     "containerType": "vertical",
     "layout": {
@@ -23,7 +24,8 @@
       },
       "arrangement": {
         "strategy": "spaced",
-        "spacing": 8
+        "spacing": 8,
+        "spacingUnit": "dp"
       }
     },
     "style": {
@@ -31,6 +33,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "header",
         "elementType": "text",
         "bindings": {
@@ -42,8 +45,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -53,6 +57,7 @@
         }
       },
       {
+        "type": "element",
         "id": "description",
         "elementType": "text",
         "bindings": {
@@ -64,8 +69,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -74,6 +80,7 @@
         }
       },
       {
+        "type": "element",
         "id": "card-1",
         "elementType": "image",
         "bindings": {
@@ -94,6 +101,7 @@
         }
       },
       {
+        "type": "element",
         "id": "card-2",
         "elementType": "image",
         "bindings": {
@@ -114,6 +122,7 @@
         }
       },
       {
+        "type": "element",
         "id": "card-3",
         "elementType": "image",
         "bindings": {
@@ -134,5 +143,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

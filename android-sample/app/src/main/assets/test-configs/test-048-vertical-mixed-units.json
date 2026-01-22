@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "vertical-mixed-units",
     "containerType": "vertical",
     "layout": {
@@ -23,7 +24,8 @@
       },
       "arrangement": {
         "strategy": "spaced",
-        "spacing": 12
+        "spacing": 12,
+        "spacingUnit": "dp"
       }
     },
     "style": {
@@ -31,6 +33,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "header",
         "elementType": "text",
         "bindings": {
@@ -42,8 +45,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -53,6 +57,7 @@
         }
       },
       {
+        "type": "element",
         "id": "description",
         "elementType": "text",
         "bindings": {
@@ -64,8 +69,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -74,6 +80,7 @@
         }
       },
       {
+        "type": "element",
         "id": "fixed-height",
         "elementType": "text",
         "bindings": {
@@ -100,6 +107,7 @@
         }
       },
       {
+        "type": "element",
         "id": "wrap-content-height",
         "elementType": "text",
         "bindings": {
@@ -111,8 +119,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           },
           "padding": {
             "all": 16
@@ -127,6 +136,7 @@
         }
       },
       {
+        "type": "container",
         "id": "percent-width-container",
         "containerType": "horizontal",
         "layout": {
@@ -143,11 +153,13 @@
           },
           "arrangement": {
             "strategy": "spaced",
-            "spacing": 8
+            "spacing": 8,
+            "spacingUnit": "dp"
           }
         },
         "children": [
           {
+            "type": "element",
             "id": "box-1",
             "elementType": "text",
             "bindings": {
@@ -176,6 +188,7 @@
             }
           },
           {
+            "type": "element",
             "id": "box-2",
             "elementType": "text",
             "bindings": {
@@ -206,6 +219,7 @@
         ]
       },
       {
+        "type": "element",
         "id": "footer",
         "elementType": "text",
         "bindings": {
@@ -217,8 +231,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           },
           "padding": {
             "all": 12
@@ -233,5 +248,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

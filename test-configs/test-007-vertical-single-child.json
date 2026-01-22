@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "vertical-single",
     "containerType": "vertical",
     "layout": {
@@ -22,19 +23,22 @@
         "all": 20
       },
       "arrangement": {
-        "strategy": "center",
-        "spacing": 0
+        "strategy": "center"
       }
     },
     "style": {
       "background": {
         "type": "linear_gradient",
         "angle": 135,
-        "colors": ["#667EEA", "#764BA2"]
+        "colors": [
+          "#667EEA",
+          "#764BA2"
+        ]
       }
     },
     "children": [
       {
+        "type": "element",
         "id": "title",
         "elementType": "text",
         "bindings": {
@@ -46,8 +50,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -58,5 +63,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

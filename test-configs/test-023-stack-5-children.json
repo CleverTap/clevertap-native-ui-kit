@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "stack-5-children",
     "containerType": "stack",
     "layout": {
@@ -27,6 +28,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "layer-1-background",
         "elementType": "image",
         "bindings": {
@@ -42,16 +44,9 @@
             "unit": "percent"
           },
           "offset": {
-            "x": {
-              "value": 0,
-              "unit": "dp",
-              "alignment": "start"
-            },
-            "y": {
-              "value": 0,
-              "unit": "dp",
-              "alignment": "start"
-            }
+            "x": 0,
+            "y": 0,
+            "unit": "dp"
           }
         },
         "style": {
@@ -59,6 +54,7 @@
         }
       },
       {
+        "type": "container",
         "id": "layer-2-gradient",
         "containerType": "box",
         "layout": {
@@ -71,28 +67,25 @@
             "unit": "percent"
           },
           "offset": {
-            "x": {
-              "value": 0,
-              "unit": "dp",
-              "alignment": "start"
-            },
-            "y": {
-              "value": 0,
-              "unit": "dp",
-              "alignment": "start"
-            }
+            "x": 0,
+            "y": 0,
+            "unit": "dp"
           }
         },
         "style": {
           "background": {
             "type": "linear_gradient",
             "angle": 180,
-            "colors": ["#00000000", "#000000AA"]
+            "colors": [
+              "#00000000",
+              "#000000AA"
+            ]
           }
         },
         "children": []
       },
       {
+        "type": "element",
         "id": "layer-3-top-badge",
         "elementType": "text",
         "bindings": {
@@ -100,12 +93,14 @@
         },
         "layout": {
           "width": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           },
           "padding": {
             "top": 6,
@@ -114,16 +109,9 @@
             "right": 12
           },
           "offset": {
-            "x": {
-              "value": 16,
-              "unit": "dp",
-              "alignment": "start"
-            },
-            "y": {
-              "value": 16,
-              "unit": "dp",
-              "alignment": "start"
-            }
+            "x": 16,
+            "y": 16,
+            "unit": "dp"
           }
         },
         "style": {
@@ -135,6 +123,7 @@
         }
       },
       {
+        "type": "container",
         "id": "layer-4-content",
         "containerType": "vertical",
         "layout": {
@@ -143,31 +132,27 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           },
           "padding": {
             "all": 24
           },
           "offset": {
-            "x": {
-              "value": 0,
-              "unit": "dp",
-              "alignment": "start"
-            },
-            "y": {
-              "value": 24,
-              "unit": "dp",
-              "alignment": "end"
-            }
+            "x": 0,
+            "y": 24,
+            "unit": "dp"
           },
           "arrangement": {
             "strategy": "spaced",
-            "spacing": 12
+            "spacing": 12,
+            "spacingUnit": "dp"
           }
         },
         "children": [
           {
+            "type": "element",
             "id": "content-title",
             "elementType": "text",
             "bindings": {
@@ -179,8 +164,9 @@
                 "unit": "percent"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -190,6 +176,7 @@
             }
           },
           {
+            "type": "element",
             "id": "content-description",
             "elementType": "text",
             "bindings": {
@@ -201,8 +188,9 @@
                 "unit": "percent"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -213,6 +201,7 @@
         ]
       },
       {
+        "type": "element",
         "id": "layer-5-action-button",
         "elementType": "button",
         "bindings": {
@@ -228,16 +217,9 @@
             "unit": "dp"
           },
           "offset": {
-            "x": {
-              "value": 50,
-              "unit": "percent",
-              "alignment": "center"
-            },
-            "y": {
-              "value": 40,
-              "unit": "dp",
-              "alignment": "end"
-            }
+            "x": 50,
+            "y": 40,
+            "unit": "percent"
           }
         },
         "style": {
@@ -249,5 +231,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

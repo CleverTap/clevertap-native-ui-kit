@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "vertical-empty",
     "containerType": "vertical",
     "layout": {
@@ -29,5 +30,7 @@
       "borderColor": "#1976D2"
     },
     "children": []
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

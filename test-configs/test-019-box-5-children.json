@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "box-5-children",
     "containerType": "box",
     "layout": {
@@ -27,6 +28,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "background-image",
         "elementType": "image",
         "bindings": {
@@ -42,20 +44,14 @@
             "unit": "percent"
           },
           "offset": {
-            "x": {
-              "value": 0,
-              "unit": "dp",
-              "alignment": "start"
-            },
-            "y": {
-              "value": 0,
-              "unit": "dp",
-              "alignment": "start"
-            }
+            "x": 0,
+            "y": 0,
+            "unit": "dp"
           }
         }
       },
       {
+        "type": "element",
         "id": "top-badge",
         "elementType": "text",
         "bindings": {
@@ -63,12 +59,14 @@
         },
         "layout": {
           "width": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           },
           "padding": {
             "top": 6,
@@ -77,16 +75,9 @@
             "right": 12
           },
           "offset": {
-            "x": {
-              "value": 16,
-              "unit": "dp",
-              "alignment": "start"
-            },
-            "y": {
-              "value": 16,
-              "unit": "dp",
-              "alignment": "start"
-            }
+            "x": 16,
+            "y": 16,
+            "unit": "dp"
           }
         },
         "style": {
@@ -98,6 +89,7 @@
         }
       },
       {
+        "type": "element",
         "id": "title",
         "elementType": "text",
         "bindings": {
@@ -105,27 +97,22 @@
         },
         "layout": {
           "width": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           },
           "padding": {
             "all": 16
           },
           "offset": {
-            "x": {
-              "value": 50,
-              "unit": "percent",
-              "alignment": "center"
-            },
-            "y": {
-              "value": 30,
-              "unit": "percent",
-              "alignment": "center"
-            }
+            "x": 50,
+            "y": 30,
+            "unit": "percent"
           }
         },
         "style": {
@@ -137,6 +124,7 @@
         }
       },
       {
+        "type": "element",
         "id": "subtitle",
         "elementType": "text",
         "bindings": {
@@ -144,27 +132,22 @@
         },
         "layout": {
           "width": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           },
           "padding": {
             "all": 12
           },
           "offset": {
-            "x": {
-              "value": 50,
-              "unit": "percent",
-              "alignment": "center"
-            },
-            "y": {
-              "value": 50,
-              "unit": "percent",
-              "alignment": "center"
-            }
+            "x": 50,
+            "y": 50,
+            "unit": "percent"
           }
         },
         "style": {
@@ -175,6 +158,7 @@
         }
       },
       {
+        "type": "element",
         "id": "bottom-button",
         "elementType": "button",
         "bindings": {
@@ -190,16 +174,9 @@
             "unit": "dp"
           },
           "offset": {
-            "x": {
-              "value": 50,
-              "unit": "percent",
-              "alignment": "center"
-            },
-            "y": {
-              "value": 32,
-              "unit": "dp",
-              "alignment": "end"
-            }
+            "x": 50,
+            "y": 32,
+            "unit": "percent"
           }
         },
         "style": {
@@ -211,5 +188,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

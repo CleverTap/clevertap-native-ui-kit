@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "vertical-spaced",
     "containerType": "vertical",
     "layout": {
@@ -23,18 +24,23 @@
       },
       "arrangement": {
         "strategy": "spaced",
-        "spacing": 12
+        "spacing": 12,
+        "spacingUnit": "dp"
       }
     },
     "style": {
       "background": {
         "type": "linear_gradient",
         "angle": 135,
-        "colors": ["#E8EAF6", "#C5CAE9"]
+        "colors": [
+          "#E8EAF6",
+          "#C5CAE9"
+        ]
       }
     },
     "children": [
       {
+        "type": "element",
         "id": "header",
         "elementType": "text",
         "bindings": {
@@ -46,8 +52,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -57,6 +64,7 @@
         }
       },
       {
+        "type": "element",
         "id": "description",
         "elementType": "text",
         "bindings": {
@@ -68,8 +76,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -78,6 +87,7 @@
         }
       },
       {
+        "type": "element",
         "id": "card-1",
         "elementType": "text",
         "bindings": {
@@ -104,6 +114,7 @@
         }
       },
       {
+        "type": "element",
         "id": "card-2",
         "elementType": "text",
         "bindings": {
@@ -130,6 +141,7 @@
         }
       },
       {
+        "type": "element",
         "id": "card-3",
         "elementType": "text",
         "bindings": {
@@ -156,5 +168,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

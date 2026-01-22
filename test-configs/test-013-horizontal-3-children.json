@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "horizontal-3-children",
     "containerType": "horizontal",
     "layout": {
@@ -22,8 +23,7 @@
         "all": 16
       },
       "arrangement": {
-        "strategy": "space_evenly",
-        "spacing": 0
+        "strategy": "space_evenly"
       }
     },
     "style": {
@@ -32,6 +32,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "card-1",
         "elementType": "image",
         "bindings": {
@@ -52,6 +53,7 @@
         }
       },
       {
+        "type": "element",
         "id": "card-2",
         "elementType": "image",
         "bindings": {
@@ -72,6 +74,7 @@
         }
       },
       {
+        "type": "element",
         "id": "card-3",
         "elementType": "image",
         "bindings": {
@@ -92,5 +95,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

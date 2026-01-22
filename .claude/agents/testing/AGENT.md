@@ -96,6 +96,361 @@ test-configs/               # Test JSON configurations (project root)
 
 ---
 
+## ⚠️ CRITICAL: JSON Structure Requirements
+
+**MANDATORY READING**: All JSON generation MUST follow the specification in:
+📘 **`NativeDisplayUiKit/JSON_STRUCTURE_REFERENCE.md`**
+
+### Required Fields for All Nodes
+
+**Every node MUST have a `"type"` field** due to kotlinx.serialization discriminator requirements:
+
+```json
+// Container nodes
+{
+  "type": "container",        // ← REQUIRED (must be first field)
+  "id": "unique-id",
+  "containerType": "vertical",
+  "children": [...]
+}
+
+// Element nodes
+{
+  "type": "element",          // ← REQUIRED (must be first field)
+  "id": "unique-id",
+  "elementType": "text",
+  "bindings": {...}
+}
+```
+
+### Why This Is Critical
+
+The Kotlin SDK uses sealed classes with `@SerialName` annotations:
+- `NativeDisplayContainer` has `@SerialName("container")`
+- `NativeDisplayElement` has `@SerialName("element")`
+
+Without the `"type"` discriminator field, kotlinx.serialization **cannot deserialize** the JSON.
+
+### Critical JSON Rules
+
+#### 1. Type Discriminator
+- ✅ **MUST**: Add `"type": "container"` to all container nodes
+- ✅ **MUST**: Add `"type": "element"` to all element nodes
+- ❌ **NEVER**: Omit the `"type"` field
+
+#### 2. Dimension Format
+```json
+// ✅ CORRECT: wrap_content in special field
+{
+  "value": 0,
+  "unit": "dp",
+  "special": "wrap_content"
+}
+
+// ❌ WRONG: wrap_content in unit field
+{
+  "value": 0,
+  "unit": "wrap_content"
+}
+
+// ❌ WRONG: wrap_content in value field
+{
+  "value": "wrap_content",
+  "unit": "dp"
+}
+```
+
+#### 3. Offset Format
+```json
+// ✅ CORRECT: Flat structure
+{
+  "x": 16,
+  "y": 20,
+  "unit": "dp"
+}
+
+// ❌ WRONG: Nested structure
+{
+  "x": {"value": 16, "unit": "dp"},
+  "y": {"value": 20, "unit": "dp"}
+}
+```
+
+#### 4. Arrangement Format
+
+**CRITICAL**: Strategy names MUST be lowercase, and only "spaced" has spacing field.
+
+```json
+// ✅ CORRECT: "spaced" strategy has spacing (lowercase!)
+{
+  "spacing": 12,              // ← field name is "spacing" NOT "value"
+  "spacingUnit": "dp",
+  "strategy": "spaced"        // ← lowercase!
+}
+
+// ✅ CORRECT: Other strategies have NO spacing (lowercase!)
+{
+  "strategy": "space_between" // ← lowercase with underscore
+}
+
+// Valid strategies (ALL LOWERCASE):
+// - "spaced" (only this one has spacing/spacingUnit)
+// - "space_between"
+// - "space_evenly"
+// - "space_around"
+// - "start"
+// - "center"
+// - "end"
+
+// ❌ WRONG: Uppercase strategy names
+{
+  "spacing": 12,
+  "strategy": "SPACED"        // ← WRONG! Must be lowercase "spaced"
+}
+
+// ❌ WRONG: Using "value" instead of "spacing"
+{
+  "value": 12,                // ← WRONG! Field must be named "spacing"
+  "strategy": "spaced"
+}
+
+// ❌ WRONG: Non-spaced strategy with spacing
+{
+  "spacing": 12,
+  "strategy": "space_between" // ← spacing not allowed here
+}
+
+// ❌ WRONG: Uppercase with underscores
+{
+  "strategy": "SPACE_BETWEEN" // ← WRONG! Must be lowercase "space_between"
+}
+```
+
+#### 5. Required Top-Level Fields
+```json
+{
+  "theme": { "id": "default" },     // REQUIRED
+  "styleClasses": [],                // REQUIRED (can be empty)
+  "variables": {},                   // REQUIRED (can be empty)
+  "root": { ... }                    // REQUIRED
+}
+```
+
+### JSON Generation Checklist
+
+**BEFORE generating ANY JSON, verify:**
+- [ ] Read `NativeDisplayUiKit/JSON_STRUCTURE_REFERENCE.md`
+- [ ] Root node has `"type": "container"`
+- [ ] Every child node has `"type"` field
+- [ ] Containers have `"type": "container"`
+- [ ] Elements have `"type": "element"`
+- [ ] Dimensions use `special` field for wrap_content/match_parent
+- [ ] Offset is flat structure (not nested)
+- [ ] **ALL strategy names are lowercase** (never "SPACED", use "spaced")
+- [ ] Arrangement uses `"spacing"` field (never `"value"`)
+- [ ] Only "spaced" strategy has spacing/spacingUnit
+- [ ] Other strategies have NO spacing fields at all
+- [ ] Top-level has theme, styleClasses, variables, root
+
+### Common Mistakes to Avoid
+
+❌ **Wrong:** Forgetting `"type"` field
+```json
+{
+  "id": "container",
+  "containerType": "vertical"
+}
+```
+
+✅ **Correct:** Including `"type"` field
+```json
+{
+  "type": "container",
+  "id": "container",
+  "containerType": "vertical"
+}
+```
+
+❌ **Wrong:** Confusing `"type"` with `"containerType"`
+```json
+{
+  "id": "container",
+  "type": "vertical"  // ← Wrong! This should be "container"
+}
+```
+
+✅ **Correct:** Both fields present
+```json
+{
+  "type": "container",      // ← Discriminator for sealed class
+  "id": "container",
+  "containerType": "vertical"  // ← Specific container type
+}
+```
+
+❌ **Wrong:** Uppercase strategy names
+```json
+{
+  "strategy": "SPACED",      // ← WRONG! Must be lowercase
+  "value": 16                // ← WRONG! Should be "spacing"
+}
+```
+
+✅ **Correct:** Lowercase strategy with correct field name
+```json
+{
+  "strategy": "spaced",      // ← Lowercase
+  "spacing": 16,             // ← Correct field name
+  "spacingUnit": "dp"
+}
+```
+
+❌ **Wrong:** Uppercase enum values
+```json
+{
+  "strategy": "SPACE_BETWEEN"  // ← WRONG! Must be lowercase
+}
+```
+
+✅ **Correct:** Lowercase enum values
+```json
+{
+  "strategy": "space_between"  // ← Correct lowercase with underscore
+}
+```
+
+### Validation Commands
+
+After generating JSON, validate with:
+```bash
+# Run fix script to check for issues
+python3 fix-json-types.py
+
+# Copy to android-sample for testing
+cp test-configs/test-*.json android-sample/app/src/main/assets/test-configs/
+
+# Run tests to verify
+cd android-sample
+./gradlew :app:testDebugUnitTest --tests "*NativeDisplayScreenshotTest*"
+```
+
+---
+
+## 🎬 Screenshot Testing with Roborazzi
+
+The testing agent can generate Roborazzi screenshot tests for automated visual regression testing.
+
+### Capabilities
+
+1. **Test Generation**
+   - Generate parametrized Roborazzi tests for all test configs
+   - Create test classes that cycle through test-XXX.json files
+   - Support multi-device and multi-theme variations
+
+2. **Test Execution**
+   - Run tests on JVM (no emulator required)
+   - Capture screenshots for all 70 test configurations
+   - Dump screenshots to output directory for manual verification
+   - **Future**: Automated baseline comparison
+
+3. **Screenshot Output**
+   - PNG files saved to `build/outputs/roborazzi/configs/`
+   - One screenshot per test configuration
+   - Filenames match test config names for easy reference
+   - **Future**: HTML diff reports and automated comparison
+
+4. **Integration**
+   - Works with android-sample agent for setup
+   - Uses existing TestBrowserScreen test config list
+   - Stores baselines in git for version control
+
+### Commands
+
+**Generate Roborazzi Tests**:
+```
+@testing generate roborazzi tests for [module]
+@testing create screenshot tests for all configs
+```
+
+**Setup Dependencies**:
+```
+@testing setup roborazzi in android-sample
+@testing add screenshot testing dependencies
+```
+
+**Run Tests**:
+```
+@testing capture screenshots for all configs
+@testing run roborazzi tests
+```
+
+**Future Enhancement Commands**:
+```
+@testing verify visual regression
+@testing compare against baseline
+@testing update baselines
+```
+
+### Agent Interactions
+
+**With android-sample agent**:
+- Testing agent → android-sample: "add roborazzi dependencies"
+- Testing agent → android-sample: "create test directory structure"
+- Testing agent → android-sample: "generate test class with config list"
+
+**Workflow**:
+1. Testing agent requests android-sample to setup Roborazzi
+2. Testing agent generates test class file content
+3. Android-sample agent creates test file and updates gradle
+4. Testing agent provides instructions for running tests
+5. Testing agent can interpret test results and generate reports
+
+### Roborazzi Workflow
+
+**Initial Setup (One-Time)**:
+
+1. Request setup:
+   ```
+   @testing setup roborazzi in android-sample
+   ```
+
+2. Run screenshot tests:
+   ```bash
+   cd android-sample
+   ./gradlew :app:testDebugUnitTest --tests NativeDisplayScreenshotTest
+   ```
+   This creates screenshots in `app/build/outputs/roborazzi/configs/`
+
+3. Manual verification:
+   ```bash
+   open app/build/outputs/roborazzi/configs/
+   ```
+   Inspect generated PNG files visually to verify correct rendering
+
+**Regular Testing Workflow**:
+
+1. Make SDK changes
+
+2. Run screenshot tests:
+   ```bash
+   ./gradlew :app:testDebugUnitTest --tests NativeDisplayScreenshotTest
+   ```
+
+3. Manually review screenshots:
+   - Navigate to `app/build/outputs/roborazzi/configs/`
+   - Open PNG files to verify visual correctness
+   - Compare before/after if needed
+
+**Future: Automated Baseline Comparison**:
+
+Once baselining is implemented:
+1. Store approved screenshots as baselines in git
+2. Run comparison tests: `./gradlew :app:verifyRoborazziDebug`
+3. View diff reports: `./gradlew :app:compareRoborazziDebug`
+4. Update baselines when changes are intentional
+
+---
+
 ## 📚 Knowledge Sources
 
 ### Shared Knowledge

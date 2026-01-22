@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "gallery-3-free-flow",
     "containerType": "gallery",
     "layout": {
@@ -32,6 +33,7 @@
     },
     "children": [
       {
+        "type": "container",
         "id": "item-1",
         "containerType": "vertical",
         "layout": {
@@ -48,7 +50,8 @@
           },
           "arrangement": {
             "strategy": "spaced",
-            "spacing": 8
+            "spacing": 8,
+            "spacingUnit": "dp"
           }
         },
         "style": {
@@ -60,6 +63,7 @@
         },
         "children": [
           {
+            "type": "element",
             "id": "img-1",
             "elementType": "image",
             "bindings": {
@@ -80,6 +84,7 @@
             }
           },
           {
+            "type": "element",
             "id": "text-1",
             "elementType": "text",
             "bindings": {
@@ -91,8 +96,9 @@
                 "unit": "percent"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -103,6 +109,7 @@
         ]
       },
       {
+        "type": "container",
         "id": "item-2",
         "containerType": "vertical",
         "layout": {
@@ -119,7 +126,8 @@
           },
           "arrangement": {
             "strategy": "spaced",
-            "spacing": 8
+            "spacing": 8,
+            "spacingUnit": "dp"
           }
         },
         "style": {
@@ -131,6 +139,7 @@
         },
         "children": [
           {
+            "type": "element",
             "id": "img-2",
             "elementType": "image",
             "bindings": {
@@ -151,6 +160,7 @@
             }
           },
           {
+            "type": "element",
             "id": "text-2",
             "elementType": "text",
             "bindings": {
@@ -162,8 +172,9 @@
                 "unit": "percent"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -174,6 +185,7 @@
         ]
       },
       {
+        "type": "container",
         "id": "item-3",
         "containerType": "vertical",
         "layout": {
@@ -190,7 +202,8 @@
           },
           "arrangement": {
             "strategy": "spaced",
-            "spacing": 8
+            "spacing": 8,
+            "spacingUnit": "dp"
           }
         },
         "style": {
@@ -202,6 +215,7 @@
         },
         "children": [
           {
+            "type": "element",
             "id": "img-3",
             "elementType": "image",
             "bindings": {
@@ -222,6 +236,7 @@
             }
           },
           {
+            "type": "element",
             "id": "text-3",
             "elementType": "text",
             "bindings": {
@@ -233,8 +248,9 @@
                 "unit": "percent"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -245,5 +261,7 @@
         ]
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

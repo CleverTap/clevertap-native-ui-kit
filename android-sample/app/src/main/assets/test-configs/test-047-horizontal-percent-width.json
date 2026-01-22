@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "horizontal-percent-width",
     "containerType": "horizontal",
     "layout": {
@@ -23,7 +24,8 @@
       },
       "arrangement": {
         "strategy": "spaced",
-        "spacing": 8
+        "spacing": 8,
+        "spacingUnit": "dp"
       }
     },
     "style": {
@@ -31,6 +33,7 @@
     },
     "children": [
       {
+        "type": "container",
         "id": "col-1",
         "containerType": "vertical",
         "layout": {
@@ -46,8 +49,7 @@
             "all": 12
           },
           "arrangement": {
-            "strategy": "center",
-            "spacing": 8
+            "strategy": "center"
           }
         },
         "style": {
@@ -56,6 +58,7 @@
         },
         "children": [
           {
+            "type": "element",
             "id": "label-1",
             "elementType": "text",
             "bindings": {
@@ -63,12 +66,14 @@
             },
             "layout": {
               "width": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -78,6 +83,7 @@
             }
           },
           {
+            "type": "element",
             "id": "desc-1",
             "elementType": "text",
             "bindings": {
@@ -85,12 +91,14 @@
             },
             "layout": {
               "width": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -101,6 +109,7 @@
         ]
       },
       {
+        "type": "container",
         "id": "col-2",
         "containerType": "vertical",
         "layout": {
@@ -116,8 +125,7 @@
             "all": 12
           },
           "arrangement": {
-            "strategy": "center",
-            "spacing": 8
+            "strategy": "center"
           }
         },
         "style": {
@@ -126,6 +134,7 @@
         },
         "children": [
           {
+            "type": "element",
             "id": "label-2",
             "elementType": "text",
             "bindings": {
@@ -133,12 +142,14 @@
             },
             "layout": {
               "width": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -148,6 +159,7 @@
             }
           },
           {
+            "type": "element",
             "id": "desc-2",
             "elementType": "text",
             "bindings": {
@@ -155,12 +167,14 @@
             },
             "layout": {
               "width": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -172,6 +186,7 @@
         ]
       },
       {
+        "type": "container",
         "id": "col-3",
         "containerType": "vertical",
         "layout": {
@@ -187,8 +202,7 @@
             "all": 12
           },
           "arrangement": {
-            "strategy": "center",
-            "spacing": 8
+            "strategy": "center"
           }
         },
         "style": {
@@ -197,6 +211,7 @@
         },
         "children": [
           {
+            "type": "element",
             "id": "label-3",
             "elementType": "text",
             "bindings": {
@@ -204,12 +219,14 @@
             },
             "layout": {
               "width": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -219,6 +236,7 @@
             }
           },
           {
+            "type": "element",
             "id": "desc-3",
             "elementType": "text",
             "bindings": {
@@ -226,12 +244,14 @@
             },
             "layout": {
               "width": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -242,5 +262,7 @@
         ]
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

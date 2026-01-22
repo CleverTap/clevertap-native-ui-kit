@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "stack-3-children",
     "containerType": "stack",
     "layout": {
@@ -27,6 +28,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "layer-1",
         "elementType": "image",
         "bindings": {
@@ -42,16 +44,9 @@
             "unit": "percent"
           },
           "offset": {
-            "x": {
-              "value": 0,
-              "unit": "dp",
-              "alignment": "start"
-            },
-            "y": {
-              "value": 0,
-              "unit": "dp",
-              "alignment": "start"
-            }
+            "x": 0,
+            "y": 0,
+            "unit": "dp"
           }
         },
         "style": {
@@ -59,6 +54,7 @@
         }
       },
       {
+        "type": "container",
         "id": "layer-2",
         "containerType": "vertical",
         "layout": {
@@ -74,20 +70,12 @@
             "all": 24
           },
           "offset": {
-            "x": {
-              "value": 0,
-              "unit": "dp",
-              "alignment": "start"
-            },
-            "y": {
-              "value": 0,
-              "unit": "dp",
-              "alignment": "start"
-            }
+            "x": 0,
+            "y": 0,
+            "unit": "dp"
           },
           "arrangement": {
-            "strategy": "center",
-            "spacing": 16
+            "strategy": "center"
           }
         },
         "style": {
@@ -95,6 +83,7 @@
         },
         "children": [
           {
+            "type": "element",
             "id": "overlay-title",
             "elementType": "text",
             "bindings": {
@@ -106,8 +95,9 @@
                 "unit": "percent"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -118,6 +108,7 @@
             }
           },
           {
+            "type": "element",
             "id": "overlay-subtitle",
             "elementType": "text",
             "bindings": {
@@ -129,8 +120,9 @@
                 "unit": "percent"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -142,6 +134,7 @@
         ]
       },
       {
+        "type": "element",
         "id": "layer-3",
         "elementType": "text",
         "bindings": {
@@ -149,12 +142,14 @@
         },
         "layout": {
           "width": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           },
           "padding": {
             "top": 8,
@@ -163,16 +158,9 @@
             "right": 16
           },
           "offset": {
-            "x": {
-              "value": 16,
-              "unit": "dp",
-              "alignment": "end"
-            },
-            "y": {
-              "value": 16,
-              "unit": "dp",
-              "alignment": "start"
-            }
+            "x": 16,
+            "y": 16,
+            "unit": "dp"
           }
         },
         "style": {
@@ -184,5 +172,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

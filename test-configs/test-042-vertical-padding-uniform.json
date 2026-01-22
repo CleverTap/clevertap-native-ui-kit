@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "vertical-padding-uniform",
     "containerType": "vertical",
     "layout": {
@@ -23,7 +24,8 @@
       },
       "arrangement": {
         "strategy": "spaced",
-        "spacing": 12
+        "spacing": 12,
+        "spacingUnit": "dp"
       }
     },
     "style": {
@@ -33,6 +35,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "header",
         "elementType": "text",
         "bindings": {
@@ -44,8 +47,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -55,6 +59,7 @@
         }
       },
       {
+        "type": "element",
         "id": "description",
         "elementType": "text",
         "bindings": {
@@ -66,8 +71,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -77,6 +83,7 @@
         }
       },
       {
+        "type": "element",
         "id": "content-1",
         "elementType": "text",
         "bindings": {
@@ -103,6 +110,7 @@
         }
       },
       {
+        "type": "element",
         "id": "content-2",
         "elementType": "text",
         "bindings": {
@@ -129,6 +137,7 @@
         }
       },
       {
+        "type": "element",
         "id": "content-3",
         "elementType": "text",
         "bindings": {
@@ -155,5 +164,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

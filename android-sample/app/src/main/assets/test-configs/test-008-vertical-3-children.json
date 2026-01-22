@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "vertical-3-children",
     "containerType": "vertical",
     "layout": {
@@ -22,8 +23,7 @@
         "all": 16
       },
       "arrangement": {
-        "strategy": "space_between",
-        "spacing": 0
+        "strategy": "space_between"
       }
     },
     "style": {
@@ -32,6 +32,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "header",
         "elementType": "text",
         "bindings": {
@@ -43,8 +44,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -54,6 +56,7 @@
         }
       },
       {
+        "type": "element",
         "id": "product-image",
         "elementType": "image",
         "bindings": {
@@ -74,6 +77,7 @@
         }
       },
       {
+        "type": "element",
         "id": "description",
         "elementType": "text",
         "bindings": {
@@ -85,8 +89,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -96,5 +101,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

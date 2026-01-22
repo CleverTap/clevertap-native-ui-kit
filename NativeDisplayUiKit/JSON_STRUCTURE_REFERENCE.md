@@ -428,6 +428,7 @@ For `vertical` and `horizontal` containers:
 - `"start"` - Align to start
 - `"center"` - Center children
 - `"end"` - Align to end
+- `"spacing"` is needed only for `"spaced"` type of arrangement strategy, all others do not need any value for unit
 
 ---
 

@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "horizontal-single",
     "containerType": "horizontal",
     "layout": {
@@ -22,8 +23,7 @@
         "all": 20
       },
       "arrangement": {
-        "strategy": "center",
-        "spacing": 0
+        "strategy": "center"
       }
     },
     "style": {
@@ -31,6 +31,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "icon-button",
         "elementType": "button",
         "bindings": {
@@ -55,5 +56,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

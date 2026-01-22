@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "gallery-empty",
     "containerType": "gallery",
     "layout": {
@@ -35,5 +36,7 @@
       }
     },
     "children": []
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

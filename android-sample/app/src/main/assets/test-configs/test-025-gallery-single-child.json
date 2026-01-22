@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "gallery-single",
     "containerType": "gallery",
     "layout": {
@@ -35,6 +36,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "single-item",
         "elementType": "image",
         "bindings": {
@@ -55,5 +57,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

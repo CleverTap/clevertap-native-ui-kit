@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "box-single",
     "containerType": "box",
     "layout": {
@@ -27,6 +28,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "centered-text",
         "elementType": "text",
         "bindings": {
@@ -34,24 +36,19 @@
         },
         "layout": {
           "width": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           },
           "offset": {
-            "x": {
-              "value": 50,
-              "unit": "percent",
-              "alignment": "center"
-            },
-            "y": {
-              "value": 50,
-              "unit": "percent",
-              "alignment": "center"
-            }
+            "x": 50,
+            "y": 50,
+            "unit": "percent"
           }
         },
         "style": {
@@ -61,5 +58,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

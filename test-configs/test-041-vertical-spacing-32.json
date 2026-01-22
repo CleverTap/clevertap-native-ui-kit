@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "vertical-spacing-32",
     "containerType": "vertical",
     "layout": {
@@ -23,7 +24,8 @@
       },
       "arrangement": {
         "strategy": "spaced",
-        "spacing": 32
+        "spacing": 32,
+        "spacingUnit": "dp"
       }
     },
     "style": {
@@ -31,6 +33,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "header",
         "elementType": "text",
         "bindings": {
@@ -42,8 +45,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -53,6 +57,7 @@
         }
       },
       {
+        "type": "element",
         "id": "description",
         "elementType": "text",
         "bindings": {
@@ -64,8 +69,9 @@
             "unit": "percent"
           },
           "height": {
-            "value": "wrap_content",
-            "unit": "dp"
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
           }
         },
         "style": {
@@ -74,6 +80,7 @@
         }
       },
       {
+        "type": "container",
         "id": "feature-1",
         "containerType": "vertical",
         "layout": {
@@ -89,8 +96,7 @@
             "all": 20
           },
           "arrangement": {
-            "strategy": "center",
-            "spacing": 8
+            "strategy": "center"
           }
         },
         "style": {
@@ -102,6 +108,7 @@
         },
         "children": [
           {
+            "type": "element",
             "id": "feature-1-title",
             "elementType": "text",
             "bindings": {
@@ -113,8 +120,9 @@
                 "unit": "percent"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -124,6 +132,7 @@
             }
           },
           {
+            "type": "element",
             "id": "feature-1-desc",
             "elementType": "text",
             "bindings": {
@@ -135,8 +144,9 @@
                 "unit": "percent"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -147,6 +157,7 @@
         ]
       },
       {
+        "type": "container",
         "id": "feature-2",
         "containerType": "vertical",
         "layout": {
@@ -162,8 +173,7 @@
             "all": 20
           },
           "arrangement": {
-            "strategy": "center",
-            "spacing": 8
+            "strategy": "center"
           }
         },
         "style": {
@@ -175,6 +185,7 @@
         },
         "children": [
           {
+            "type": "element",
             "id": "feature-2-title",
             "elementType": "text",
             "bindings": {
@@ -186,8 +197,9 @@
                 "unit": "percent"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -197,6 +209,7 @@
             }
           },
           {
+            "type": "element",
             "id": "feature-2-desc",
             "elementType": "text",
             "bindings": {
@@ -208,8 +221,9 @@
                 "unit": "percent"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -220,6 +234,7 @@
         ]
       },
       {
+        "type": "container",
         "id": "feature-3",
         "containerType": "vertical",
         "layout": {
@@ -235,8 +250,7 @@
             "all": 20
           },
           "arrangement": {
-            "strategy": "center",
-            "spacing": 8
+            "strategy": "center"
           }
         },
         "style": {
@@ -248,6 +262,7 @@
         },
         "children": [
           {
+            "type": "element",
             "id": "feature-3-title",
             "elementType": "text",
             "bindings": {
@@ -259,8 +274,9 @@
                 "unit": "percent"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -270,6 +286,7 @@
             }
           },
           {
+            "type": "element",
             "id": "feature-3-desc",
             "elementType": "text",
             "bindings": {
@@ -281,8 +298,9 @@
                 "unit": "percent"
               },
               "height": {
-                "value": "wrap_content",
-                "unit": "dp"
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
               }
             },
             "style": {
@@ -293,5 +311,7 @@
         ]
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

@@ -2,6 +2,71 @@
 
 This folder contains JSON test configurations for the Native Display SDK testing framework.
 
+---
+
+## ⚠️ CRITICAL: JSON Structure Requirements
+
+**ALL JSON files MUST follow the specification in:**
+📘 **`../NativeDisplayUiKit/JSON_STRUCTURE_REFERENCE.md`**
+
+### Essential Requirements
+
+Every JSON file in this directory MUST include:
+
+1. **Type Discriminator**: Every node needs `"type"` field
+   ```json
+   {"type": "container", ...}  // for containers
+   {"type": "element", ...}    // for elements
+   ```
+
+2. **Correct Dimension Format**: Use `special` field for wrap_content/match_parent
+   ```json
+   // ✅ CORRECT
+   {"value": 0, "unit": "dp", "special": "wrap_content"}
+
+   // ❌ WRONG
+   {"value": 0, "unit": "wrap_content"}
+   ```
+
+3. **Flat Offset Structure**:
+   ```json
+   // ✅ CORRECT
+   {"x": 16, "y": 20, "unit": "dp"}
+
+   // ❌ WRONG
+   {"x": {"value": 16, "unit": "dp"}, ...}
+   ```
+
+4. **Arrangement Rules**: Only `"spaced"` strategy has spacing/spacingUnit
+   ```json
+   // ✅ CORRECT for spaced
+   {"spacing": 12, "spacingUnit": "dp", "strategy": "spaced"}
+
+   // ✅ CORRECT for others
+   {"strategy": "space_between"}  // NO spacing field
+   ```
+
+5. **Required Top-Level Fields**:
+   ```json
+   {
+     "theme": {...},
+     "styleClasses": [],
+     "variables": {},
+     "root": {...}
+   }
+   ```
+
+### Validation
+
+After modifying any JSON file, run:
+```bash
+python3 fix-json-types.py  # From project root
+```
+
+**Without these requirements, the SDK cannot deserialize the JSON and all tests will fail.**
+
+---
+
 ## Purpose
 
 These test files are used to verify the SDK's rendering capabilities across different container types, element types, and layout scenarios. They serve as both:
@@ -190,6 +255,24 @@ Each test file must include:
 2. Render using `NativeDisplayView`
 
 ### For Automated Testing
+
+**Roborazzi Screenshot Testing (Android)**
+
+Automated screenshot capture for all test configurations using Roborazzi:
+
+```bash
+cd android-sample
+./gradlew :app:testDebugUnitTest --tests NativeDisplayScreenshotTest
+```
+
+- **Screenshots saved to**: `app/build/outputs/roborazzi/configs/`
+- **No emulator required**: Tests run on JVM using Robolectric
+- **Fast execution**: ~2-3 minutes for all 90 tests
+- **Test file**: `app/src/test/kotlin/.../screenshot/NativeDisplayScreenshotTest.kt`
+
+**Future**: Automated baseline comparison and visual regression detection
+
+**Manual Testing**
 1. Use screenshot capture scripts in `.claude/agents/testing/scripts/`
 2. Generate visual comparison reports
 3. Track cross-platform parity

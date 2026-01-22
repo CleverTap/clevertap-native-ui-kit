@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "stack-empty",
     "containerType": "stack",
     "layout": {
@@ -26,10 +27,16 @@
       "background": {
         "type": "linear_gradient",
         "angle": 45,
-        "colors": ["#F8BBD0", "#F06292", "#E91E63"]
+        "colors": [
+          "#F8BBD0",
+          "#F06292",
+          "#E91E63"
+        ]
       },
       "borderRadius": 16
     },
     "children": []
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

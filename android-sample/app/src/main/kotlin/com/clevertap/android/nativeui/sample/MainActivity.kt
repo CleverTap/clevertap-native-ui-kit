@@ -47,6 +47,7 @@ fun NativeUIKitSampleApp() {
             "🏠 Home",           // NEW - First position
             "📏 Arrangements",    // NEW - Arrangement strategies demo
             "🎬 Animations",      // NEW - Animation demos
+            "🧪 Test Browser",    // NEW - Test automation browser
             "Simple Card",
             "Product Card",
             "Nested",
@@ -108,34 +109,42 @@ fun NativeUIKitSampleApp() {
                     modifier = Modifier
                         .fillMaxSize()
                         .background(Color(0xFFF5F5F5))
-                        .verticalScroll(rememberScrollState())
+                        .then(
+                            // No vertical scroll for Home screen and Test Browser
+                            if (selectedTabIndex == 0 || selectedTabIndex == 3) {
+                                Modifier
+                            } else {
+                                Modifier.verticalScroll(rememberScrollState())
+                            }
+                        )
                         .padding(
-                            // No padding for Home screen to allow edge-to-edge design
-                            if (selectedTabIndex == 0) 0.dp else 16.dp
+                            // No padding for Home screen and Test Browser to allow edge-to-edge design
+                            if (selectedTabIndex == 0 || selectedTabIndex == 3) 0.dp else 16.dp
                         )
                 ) {
                     when (selectedTabIndex) {
                         0 -> HomeScreen()
                         1 -> ArrangementDemoScreen()
                         2 -> AnimationDemoScreen()
-                        3 -> SimpleGreetingCardSample()
-                        4 -> ProductCardSample()
-                        5 -> NestedContainersSample()
-                        6 -> AllElementsSample()
-                        7 -> DividerDemoSample()
-                        8 -> SimpleGallerySample()
-                        9 -> FullFeaturedGallerySample()
-                        10 -> FreeFlowGallerySample()
-                        11 -> CombinedDemoSample()
-                        12 -> LinearGradientsScreen()
-                        13 -> RadialSweepGradientsScreen()
-                        14 -> AnimatedBackgroundsScreen()
-                        15 -> PatternBackgroundsScreen()
-                        16 -> LayeredBackgroundsScreen()
-                        17 -> EcommerceShowcaseScreen()
-                        18 -> SocialProfileShowcaseScreen()
-                        19 -> DashboardShowcaseScreen()
-                        20 -> GalleryShowcaseScreen()
+                        3 -> TestBrowserScreen()
+                        4 -> SimpleGreetingCardSample()
+                        5 -> ProductCardSample()
+                        6 -> NestedContainersSample()
+                        7 -> AllElementsSample()
+                        8 -> DividerDemoSample()
+                        9 -> SimpleGallerySample()
+                        10 -> FullFeaturedGallerySample()
+                        11 -> FreeFlowGallerySample()
+                        12 -> CombinedDemoSample()
+                        13 -> LinearGradientsScreen()
+                        14 -> RadialSweepGradientsScreen()
+                        15 -> AnimatedBackgroundsScreen()
+                        16 -> PatternBackgroundsScreen()
+                        17 -> LayeredBackgroundsScreen()
+                        18 -> EcommerceShowcaseScreen()
+                        19 -> SocialProfileShowcaseScreen()
+                        20 -> DashboardShowcaseScreen()
+                        21 -> GalleryShowcaseScreen()
                     }
                 }
             }

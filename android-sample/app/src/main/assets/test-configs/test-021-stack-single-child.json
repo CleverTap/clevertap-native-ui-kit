@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "stack-single",
     "containerType": "stack",
     "layout": {
@@ -27,6 +28,7 @@
     },
     "children": [
       {
+        "type": "element",
         "id": "base-layer",
         "elementType": "image",
         "bindings": {
@@ -42,16 +44,9 @@
             "unit": "percent"
           },
           "offset": {
-            "x": {
-              "value": 0,
-              "unit": "dp",
-              "alignment": "start"
-            },
-            "y": {
-              "value": 0,
-              "unit": "dp",
-              "alignment": "start"
-            }
+            "x": 0,
+            "y": 0,
+            "unit": "dp"
           }
         },
         "style": {
@@ -59,5 +54,7 @@
         }
       }
     ]
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }

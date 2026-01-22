@@ -7,6 +7,7 @@
     }
   },
   "root": {
+    "type": "container",
     "id": "box-empty",
     "containerType": "box",
     "layout": {
@@ -25,7 +26,10 @@
     "style": {
       "background": {
         "type": "radial_gradient",
-        "colors": ["#D1C4E9", "#9575CD"],
+        "colors": [
+          "#D1C4E9",
+          "#9575CD"
+        ],
         "centerX": 0.5,
         "centerY": 0.5,
         "radius": 0.8
@@ -35,5 +39,7 @@
       "borderColor": "#4A148C"
     },
     "children": []
-  }
+  },
+  "styleClasses": [],
+  "variables": {}
 }
