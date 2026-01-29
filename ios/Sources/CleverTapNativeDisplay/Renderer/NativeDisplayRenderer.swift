@@ -629,26 +629,29 @@ struct LayoutModifier: ViewModifier {
     let parentSize: CGSize
 
     func body(content: Content) -> some View {
-        let width = calculateWidth()
-        let height = calculateHeight()
-        let maxWidth = calculateMaxWidth()
-        let maxHeight = calculateMaxHeight()
-        let offset = calculateOffset()
-        let aspectRatio = calculateAspectRatio()
+            let width = calculateWidth()
+            let height = calculateHeight()
+            let maxWidth = calculateMaxWidth()
+            let maxHeight = calculateMaxHeight()
+            let offset = calculateOffset()
+            let aspectRatio = calculateAspectRatio()
 
-        var modifiedContent = content
-            .frame(width: width, height: height)
-
-        // Apply aspect ratio AFTER initial sizing but BEFORE max constraints
-        if let ratio = aspectRatio {
-            modifiedContent = modifiedContent
-                .aspectRatio(ratio, contentMode: .fit)
+            frameContent(content: content, width: width, height: height, aspectRatio: aspectRatio)
+                .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: .topLeading)
+                .offset(x: offset.width, y: offset.height)
         }
-
-        return modifiedContent
-            .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: .topLeading)
-            .offset(x: offset.width, y: offset.height)
-    }
+        
+        @ViewBuilder
+        private func frameContent(content: Content, width: CGFloat?, height: CGFloat?, aspectRatio: CGFloat?) -> some View {
+            if let ratio = aspectRatio {
+                content
+                    .frame(width: width, height: height)
+                    .aspectRatio(ratio, contentMode: .fit)
+            } else {
+                content
+                    .frame(width: width, height: height)
+            }
+        }
     
     private func calculateWidth() -> CGFloat? {
         guard let width = layout?.width else { return nil }
