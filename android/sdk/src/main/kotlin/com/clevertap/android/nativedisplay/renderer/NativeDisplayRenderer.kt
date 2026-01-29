@@ -42,6 +42,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight as ComposeFontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -103,7 +104,7 @@ fun NativeDisplayView(
  * Recursively render a display node (container or element).
  */
 @Composable
-private fun RenderNode(
+fun RenderNode(
     node: NativeDisplayNode,
     styleResolver: StyleResolver,
     evaluator: VariableEvaluator,
@@ -129,10 +130,12 @@ private fun RenderNode(
     val isButton = (node as? NativeDisplayElement)?.elementType == ElementType.BUTTON
 
     // Apply modifiers in correct order
+    // IMPORTANT: Offset must be applied BEFORE sizing so percentage calculations
+    // use the parent's constraints, not the element's constrained size
     var finalModifier = modifier
-    finalModifier = finalModifier.applySizing(node.layout)
+    finalModifier = finalModifier.applyOffset(node.layout)  // First: sees parent size
+    finalModifier = finalModifier.applySizing(node.layout)  // Second: constrains size
     finalModifier = finalModifier.applyEntranceAnimation(node.animation)
-    finalModifier = finalModifier.applyOffset(node.layout)
 
     // Apply clickable only when needed (server actions exist OR client is interested)
     if (actionHandler != null && !isButton && shouldApplyClickable) {
@@ -944,11 +947,34 @@ fun Modifier.applyClickable(
 
 /**
  * Apply width and height from layout.
+ * Aspect ratio is applied when one or both dimensions are flexible.
  */
 private fun Modifier.applySizing(layout: Layout?): Modifier {
     if (layout == null) return this
     var modifier = this
 
+    // Determine if dimensions are fixed (DP/SP/PX, not special)
+    val hasFixedWidth = layout.width?.let {
+        it.special == null && it.unit in listOf(DimensionUnit.DP, DimensionUnit.PX)
+    } ?: false
+
+    val hasFixedHeight = layout.height?.let {
+        it.special == null && it.unit in listOf(DimensionUnit.DP, DimensionUnit.PX)
+    } ?: false
+
+    // Apply aspect ratio BEFORE sizing if appropriate
+    // Skip if both dimensions are fixed (explicit sizes take precedence)
+    // Skip if aspect ratio is invalid (≤ 0)
+    if (layout.aspectRatio != null &&
+        layout.aspectRatio > 0 &&
+        !(hasFixedWidth && hasFixedHeight)) {
+        modifier = modifier.aspectRatio(
+            layout.aspectRatio,
+            matchHeightConstraintsFirst = hasFixedHeight
+        )
+    }
+
+    // Apply width
     layout.width?.let { width ->
         modifier = when {
             width.special == SpecialDimension.MATCH_PARENT -> modifier.fillMaxWidth()
@@ -956,11 +982,13 @@ private fun Modifier.applySizing(layout: Layout?): Modifier {
             else -> when (width.unit) {
                 DimensionUnit.DP -> modifier.width(width.value.dp)
                 DimensionUnit.PERCENT -> modifier.fillMaxWidth(width.value / 100f)
+                DimensionUnit.PX -> modifier.width(width.value.dp) // todo check pixel assignment
                 else -> modifier.width(width.value.dp)
             }
         }
     }
 
+    // Apply height
     layout.height?.let { height ->
         modifier = when {
             height.special == SpecialDimension.MATCH_PARENT -> modifier.fillMaxHeight()
@@ -968,6 +996,7 @@ private fun Modifier.applySizing(layout: Layout?): Modifier {
             else -> when (height.unit) {
                 DimensionUnit.DP -> modifier.height(height.value.dp)
                 DimensionUnit.PERCENT -> modifier.fillMaxHeight(height.value / 100f)
+                DimensionUnit.PX -> modifier.height(height.value.dp)
                 else -> modifier.height(height.value.dp)
             }
         }
@@ -979,39 +1008,58 @@ private fun Modifier.applySizing(layout: Layout?): Modifier {
 /**
  * Apply absolute offset positioning.
  * This positions elements at specific x/y coordinates within their container.
- * 
+ * For percentage-based offsets, calculates relative to parent dimensions.
+ *
  * Offset moves the element after layout, making it perfect for:
  * - Absolute positioning within Box/Stack containers
  * - Negative values for positioning outside normal flow
  * - Fine-tuned positioning adjustments
- * 
+ *
  * Note: For Column/Row containers, spacing between children is handled by
  * the arrangement strategy (SpaceBetween, SpaceEvenly, etc.).
  */
 private fun Modifier.applyOffset(layout: Layout?): Modifier {
     if (layout?.offset == null) return this
-    
+
     val offset = layout.offset
-    
+
     // Apply x/y offset based on unit type
     return when (offset.unit) {
         DimensionUnit.DP -> this.offset(
             x = offset.x.dp,
             y = offset.y.dp
         )
-        DimensionUnit.PERCENT -> {
-            // For percentage-based offset, we need to use BoxWithConstraints
-            // to get parent dimensions. For now, treat as DP.
-            // TODO: Implement percentage-based offset using BoxWithConstraints
-            this.offset(
-                x = offset.x.dp,
-                y = offset.y.dp
-            )
-        }
+        DimensionUnit.PERCENT -> this.percentageOffset(offset.x, offset.y)
         else -> this.offset(
             x = offset.x.dp,
             y = offset.y.dp
         )
+    }
+}
+
+/**
+ * Apply percentage-based offset using custom layout modifier.
+ * Calculates offset relative to parent container dimensions.
+ *
+ * IMPORTANT: This modifier must be applied BEFORE any sizing modifiers
+ * (applySizing) to ensure constraints.maxWidth/maxHeight represent the
+ * parent's actual dimensions, not the element's constrained size.
+ *
+ * For example, with a 300dp parent and 10% offset:
+ * - Correct: offset applied first → sees parent's 300dp → calculates 30dp offset
+ * - Wrong: sizing (50dp) applied first → offset sees 50dp → calculates 5dp offset
+ */
+private fun Modifier.percentageOffset(xPercent: Float, yPercent: Float): Modifier {
+    return this.layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+        // constraints.maxWidth/maxHeight represent parent dimensions when this
+        // modifier is applied before sizing modifiers
+        val offsetXPx = (xPercent / 100f * constraints.maxWidth).toInt()
+        val offsetYPx = (yPercent / 100f * constraints.maxHeight).toInt()
+
+        layout(placeable.width, placeable.height) {
+            placeable.placeRelative(offsetXPx, offsetYPx)
+        }
     }
 }
 

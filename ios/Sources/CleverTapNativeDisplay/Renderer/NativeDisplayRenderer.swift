@@ -627,16 +627,25 @@ struct RenderElement: View {
 struct LayoutModifier: ViewModifier {
     let layout: Layout?
     let parentSize: CGSize
-    
+
     func body(content: Content) -> some View {
         let width = calculateWidth()
         let height = calculateHeight()
         let maxWidth = calculateMaxWidth()
         let maxHeight = calculateMaxHeight()
         let offset = calculateOffset()
-        
-        content
+        let aspectRatio = calculateAspectRatio()
+
+        var modifiedContent = content
             .frame(width: width, height: height)
+
+        // Apply aspect ratio AFTER initial sizing but BEFORE max constraints
+        if let ratio = aspectRatio {
+            modifiedContent = modifiedContent
+                .aspectRatio(ratio, contentMode: .fit)
+        }
+
+        return modifiedContent
             .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: .topLeading)
             .offset(x: offset.width, y: offset.height)
     }
@@ -721,7 +730,7 @@ struct LayoutModifier: ViewModifier {
         guard let offset = layout?.offset else {
             return .zero
         }
-        
+
         switch offset.unit {
         case .dp, .px, .sp:
             return CGSize(width: offset.x, height: offset.y)
@@ -731,6 +740,31 @@ struct LayoutModifier: ViewModifier {
                 height: parentSize.height * offset.y / 100
             )
         }
+    }
+
+    /// Calculate aspect ratio if specified and valid.
+    /// Returns nil if aspectRatio is not set, ≤ 0, or if both width AND height are explicitly set.
+    private func calculateAspectRatio() -> CGFloat? {
+        guard let aspectRatio = layout?.aspectRatio, aspectRatio > 0 else {
+            return nil
+        }
+
+        // If both width and height are explicitly set (not WRAP_CONTENT or MATCH_PARENT),
+        // aspect ratio is ignored to honor explicit dimensions
+        let hasExplicitWidth = hasExplicitDimension(layout?.width)
+        let hasExplicitHeight = hasExplicitDimension(layout?.height)
+
+        if hasExplicitWidth && hasExplicitHeight {
+            return nil  // Both dimensions explicit, ignore aspect ratio
+        }
+
+        return aspectRatio
+    }
+
+    /// Check if a dimension is explicitly set (not WRAP_CONTENT or MATCH_PARENT).
+    private func hasExplicitDimension(_ dimension: Dimension?) -> Bool {
+        guard let dimension = dimension else { return false }
+        return dimension.special == nil  // Has value, not special dimension
     }
 }
 

@@ -260,38 +260,42 @@ public struct ChildArrangement: Codable, Equatable {
 public struct Layout: Codable, Equatable {
     public let width: Dimension?
     public let height: Dimension?
+    public let aspectRatio: CGFloat?  // Maintain fixed width:height ratio (e.g., 1.777 for 16:9)
     public let offset: Offset?  // Changed from margin
     public let padding: Spacing?
     public let arrangement: ChildArrangement?  // Changed from spacing/spacingUnit
-    
+
     public init(
         width: Dimension? = nil,
         height: Dimension? = nil,
+        aspectRatio: CGFloat? = nil,
         offset: Offset? = nil,
         padding: Spacing? = nil,
         arrangement: ChildArrangement? = nil
     ) {
         self.width = width
         self.height = height
+        self.aspectRatio = aspectRatio
         self.offset = offset
         self.padding = padding
         self.arrangement = arrangement
     }
-    
+
     // Custom decoder to handle defaults
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.width = try container.decodeIfPresent(Dimension.self, forKey: .width)
         self.height = try container.decodeIfPresent(Dimension.self, forKey: .height)
+        self.aspectRatio = try container.decodeIfPresent(CGFloat.self, forKey: .aspectRatio)
         self.offset = try container.decodeIfPresent(Offset.self, forKey: .offset)
         self.padding = try container.decodeIfPresent(Spacing.self, forKey: .padding)
         self.arrangement = try container.decodeIfPresent(ChildArrangement.self, forKey: .arrangement)
     }
-    
+
     private enum CodingKeys: String, CodingKey {
-        case width, height, offset, padding, arrangement
+        case width, height, aspectRatio, offset, padding, arrangement
     }
-    
+
     public static let `default` = Layout(
         width: .wrapContent,
         height: .wrapContent

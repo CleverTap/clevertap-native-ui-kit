@@ -230,8 +230,6 @@ Without the `"type"` discriminator field, kotlinx.serialization **cannot deseria
 ```json
 {
   "theme": { "id": "default" },     // REQUIRED
-  "styleClasses": [],                // REQUIRED (can be empty)
-  "variables": {},                   // REQUIRED (can be empty)
   "root": { ... }                    // REQUIRED
 }
 ```

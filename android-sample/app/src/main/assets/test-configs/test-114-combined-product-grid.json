@@ -1,0 +1,347 @@
+{
+  "theme": {
+    "id": "test-114",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    }
+  },
+  "variables": {
+    "testName": "Combined - E-Commerce Product Grid"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 16, "unit": "dp" },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333"
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests realistic e-commerce product grid using aspect ratios for product images and percentage positioning for badges."
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666"
+        }
+      },
+      {
+        "type": "container",
+        "id": "product-row-1",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "arrangement": {
+            "spacing": 12,
+            "spacingUnit": "dp",
+            "strategy": "space_between"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "product-card-1",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": 48, "unit": "percent" },
+              "arrangement": {
+                "spacing": 8,
+                "spacingUnit": "dp",
+                "strategy": "spaced"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 8,
+              "shadowColor": "#00000020",
+              "shadowRadius": 6,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 2
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "product-1-image-container",
+                "containerType": "box",
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "aspectRatio": 1.0
+                },
+                "style": {
+                  "backgroundColor": "#E0E0E0",
+                  "borderRadius": 8
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "product-1-image",
+                    "elementType": "image",
+                    "bindings": {
+                      "src": "https://picsum.photos/200/200"
+                    },
+                    "layout": {
+                      "width": { "value": 100, "unit": "percent" },
+                      "height": { "value": 100, "unit": "percent" }
+                    }
+                  },
+                  {
+                    "type": "container",
+                    "id": "badge-1",
+                    "containerType": "box",
+                    "layout": {
+                      "width": { "value": 60, "unit": "dp" },
+                      "height": { "value": 24, "unit": "dp" },
+                      "offset": { "x": 5, "y": 5, "unit": "percent" },
+                      "padding": { "horizontal": 8, "vertical": 4, "unit": "dp" }
+                    },
+                    "style": {
+                      "backgroundColor": "#F44336",
+                      "borderRadius": 4
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "badge-1-text",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Sale"
+                        },
+                        "layout": {
+                          "width": { "value": 100, "unit": "percent" }
+                        },
+                        "style": {
+                          "fontSize": 10,
+                          "fontWeight": "bold",
+                          "textColor": "#FFFFFF",
+                          "textAlign": "center"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "product-1-name",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Product Name"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "padding": { "horizontal": 12, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "bold",
+                  "textColor": "#333333"
+                }
+              },
+              {
+                "type": "element",
+                "id": "product-1-price",
+                "elementType": "text",
+                "bindings": {
+                  "text": "$99.99"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "padding": { "horizontal": 12, "bottom": 12, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 16,
+                  "fontWeight": "bold",
+                  "textColor": "#2196F3"
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "product-card-2",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": 48, "unit": "percent" },
+              "arrangement": {
+                "spacing": 8,
+                "spacingUnit": "dp",
+                "strategy": "spaced"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 8,
+              "shadowColor": "#00000020",
+              "shadowRadius": 6,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 2
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "product-2-image-container",
+                "containerType": "box",
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "aspectRatio": 1.0
+                },
+                "style": {
+                  "backgroundColor": "#E0E0E0",
+                  "borderRadius": 8
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "product-2-image",
+                    "elementType": "image",
+                    "bindings": {
+                      "src": "https://picsum.photos/200/201"
+                    },
+                    "layout": {
+                      "width": { "value": 100, "unit": "percent" },
+                      "height": { "value": 100, "unit": "percent" }
+                    }
+                  },
+                  {
+                    "type": "container",
+                    "id": "badge-2",
+                    "containerType": "box",
+                    "layout": {
+                      "width": { "value": 60, "unit": "dp" },
+                      "height": { "value": 24, "unit": "dp" },
+                      "offset": { "x": 5, "y": 5, "unit": "percent" },
+                      "padding": { "horizontal": 8, "vertical": 4, "unit": "dp" }
+                    },
+                    "style": {
+                      "backgroundColor": "#4CAF50",
+                      "borderRadius": 4
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "badge-2-text",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "New"
+                        },
+                        "layout": {
+                          "width": { "value": 100, "unit": "percent" }
+                        },
+                        "style": {
+                          "fontSize": 10,
+                          "fontWeight": "bold",
+                          "textColor": "#FFFFFF",
+                          "textAlign": "center"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "product-2-name",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Another Product"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "padding": { "horizontal": 12, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "bold",
+                  "textColor": "#333333"
+                }
+              },
+              {
+                "type": "element",
+                "id": "product-2-price",
+                "elementType": "text",
+                "bindings": {
+                  "text": "$149.99"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "padding": { "horizontal": 12, "bottom": 12, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 16,
+                  "fontWeight": "bold",
+                  "textColor": "#2196F3"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "banner-with-aspect",
+        "containerType": "box",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "aspectRatio": 3.5,
+          "padding": { "all": 16, "unit": "dp" }
+        },
+        "style": {
+          "backgroundColor": "#FF9800",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "banner-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "Special Offer: 50% OFF"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" }
+            },
+            "style": {
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "textAlign": "center"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

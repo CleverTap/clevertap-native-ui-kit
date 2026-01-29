@@ -1,0 +1,189 @@
+{
+  "theme": {
+    "id": "test-101",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    }
+  },
+  "variables": {
+    "testName": "Aspect Ratio - Square (1:1) with Fixed Width"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333"
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests square aspect ratio (1:1). Three boxes with different fixed widths should all render as perfect squares."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666"
+        }
+      },
+      {
+        "type": "container",
+        "id": "examples-row",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "arrangement": {
+            "spacing": 16,
+            "spacingUnit": "dp",
+            "strategy": "spaced"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "square-100",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "dp"
+              },
+              "aspectRatio": 1.0
+            },
+            "style": {
+              "backgroundColor": "#2196F3",
+              "borderRadius": 8
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "square-150",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 150,
+                "unit": "dp"
+              },
+              "aspectRatio": 1.0
+            },
+            "style": {
+              "backgroundColor": "#4CAF50",
+              "borderRadius": 8
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "square-200",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 200,
+                "unit": "dp"
+              },
+              "aspectRatio": 1.0
+            },
+            "style": {
+              "backgroundColor": "#FF9800",
+              "borderRadius": 8
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "with-content",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 250,
+            "unit": "dp"
+          },
+          "aspectRatio": 1.0,
+          "padding": {
+            "all": 16,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#9C27B0",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "content-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "This is a perfect square box with 1:1 aspect ratio and some content inside."
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#FFFFFF",
+              "textAlign": "center"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": []
+}

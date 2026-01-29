@@ -1,0 +1,159 @@
+{
+  "theme": {
+    "id": "test-107",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    }
+  },
+  "variables": {
+    "testName": "Aspect Ratio - MATCH_PARENT Edge Case"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 16, "unit": "dp" },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333"
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests aspect ratio with MATCH_PARENT dimensions. Should fill parent while maintaining aspect ratio where applicable."
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666"
+        }
+      },
+      {
+        "type": "container",
+        "id": "fixed-container",
+        "containerType": "box",
+        "layout": {
+          "width": { "value": 300, "unit": "dp" },
+          "height": { "value": 200, "unit": "dp" }
+        },
+        "style": {
+          "backgroundColor": "#E3F2FD",
+          "borderWidth": 2,
+          "borderColor": "#2196F3"
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "match-width-with-ratio",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 0, "unit": "dp","special": "match_parent" },
+              "aspectRatio": 1.5
+            },
+            "style": {
+              "backgroundColor": "#2196F3",
+              "borderRadius": 8
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "match-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "MATCH_PARENT width\n1.5:1 aspect ratio"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "padding": { "all": 16, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "tall-container",
+        "containerType": "box",
+        "layout": {
+          "width": { "value": 200, "unit": "dp" },
+          "height": { "value": 300, "unit": "dp" }
+        },
+        "style": {
+          "backgroundColor": "#E8F5E9",
+          "borderWidth": 2,
+          "borderColor": "#4CAF50"
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "match-height-with-ratio",
+            "containerType": "box",
+            "layout": {
+              "height": { "value": 0, "unit": "dp", "special": "match_parent" },
+              "aspectRatio": 0.75
+            },
+            "style": {
+              "backgroundColor": "#4CAF50",
+              "borderRadius": 8
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "match-text-2",
+                "elementType": "text",
+                "bindings": {
+                  "text": "MATCH_PARENT height\n3:4 portrait ratio"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "padding": { "all": 16, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

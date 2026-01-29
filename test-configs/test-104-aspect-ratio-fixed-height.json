@@ -1,0 +1,246 @@
+{
+  "theme": {
+    "id": "test-104",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    }
+  },
+  "variables": {
+    "testName": "Aspect Ratio - Fixed Height, Calculated Width"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333"
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests aspect ratio with fixed height. Width is calculated based on aspect ratio. 16:9 at 180dp height = 320dp width."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666"
+        }
+      },
+      {
+        "type": "container",
+        "id": "fixed-height-16-9",
+        "containerType": "box",
+        "layout": {
+          "height": {
+            "value": 180,
+            "unit": "dp"
+          },
+          "aspectRatio": 1.777
+        },
+        "style": {
+          "backgroundColor": "#2196F3",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "fixed-height-content-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "16:9\n180dp height → 320dp width"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "padding": {
+                "all": 16,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "fixed-height-4-3",
+        "containerType": "box",
+        "layout": {
+          "height": {
+            "value": 200,
+            "unit": "dp"
+          },
+          "aspectRatio": 1.333
+        },
+        "style": {
+          "backgroundColor": "#4CAF50",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "fixed-height-content-2",
+            "elementType": "text",
+            "bindings": {
+              "text": "4:3\n200dp height → 267dp width"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "padding": {
+                "all": 16,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "fixed-height-square",
+        "containerType": "box",
+        "layout": {
+          "height": {
+            "value": 150,
+            "unit": "dp"
+          },
+          "aspectRatio": 1.0
+        },
+        "style": {
+          "backgroundColor": "#FF9800",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "fixed-height-content-3",
+            "elementType": "text",
+            "bindings": {
+              "text": "1:1\n150dp height → 150dp width"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "padding": {
+                "all": 16,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "fixed-height-portrait",
+        "containerType": "box",
+        "layout": {
+          "height": {
+            "value": 250,
+            "unit": "dp"
+          },
+          "aspectRatio": 0.75
+        },
+        "style": {
+          "backgroundColor": "#9C27B0",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "fixed-height-content-4",
+            "elementType": "text",
+            "bindings": {
+              "text": "3:4 Portrait\n250dp height → 188dp width"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "padding": {
+                "all": 16,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "textAlign": "center"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

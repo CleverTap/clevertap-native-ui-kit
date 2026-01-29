@@ -154,6 +154,7 @@ data class ChildArrangement(
 data class Layout(
     val width: Dimension? = null,
     val height: Dimension? = null,
+    val aspectRatio: Float? = null,  // Maintain fixed width:height ratio (e.g., 1.777 for 16:9)
     val offset: Offset? = null,  // Changed from margin: Spacing to offset: Offset
     val padding: Spacing? = null,
     val arrangement: ChildArrangement? = null  // Changed from spacing/spacingUnit to arrangement

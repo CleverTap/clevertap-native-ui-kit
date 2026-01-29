@@ -1,0 +1,256 @@
+{
+  "theme": {
+    "id": "test-103",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    }
+  },
+  "variables": {
+    "testName": "Aspect Ratio - Photo (4:3) with Fixed Width"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333"
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests 4:3 aspect ratio (1.333). Classic photo format. 240dp width = 180dp height."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666"
+        }
+      },
+      {
+        "type": "container",
+        "id": "photo-gallery",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "arrangement": {
+            "spacing": 12,
+            "spacingUnit": "dp",
+            "strategy": "spaced"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "photo-1",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 160,
+                "unit": "dp"
+              },
+              "aspectRatio": 1.333
+            },
+            "style": {
+              "backgroundColor": "#2196F3",
+              "borderRadius": 8,
+              "shadowColor": "#00000030",
+              "shadowRadius": 6,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 2
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "photo-1-image",
+                "elementType": "image",
+                "bindings": {
+                  "src": "https://picsum.photos/160/120"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "photo-2",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 160,
+                "unit": "dp"
+              },
+              "aspectRatio": 1.333
+            },
+            "style": {
+              "backgroundColor": "#4CAF50",
+              "borderRadius": 8,
+              "shadowColor": "#00000030",
+              "shadowRadius": 6,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 2
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "photo-2-image",
+                "elementType": "image",
+                "bindings": {
+                  "src": "https://picsum.photos/160/121"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "photo-3",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 160,
+                "unit": "dp"
+              },
+              "aspectRatio": 1.333
+            },
+            "style": {
+              "backgroundColor": "#FF9800",
+              "borderRadius": 8,
+              "shadowColor": "#00000030",
+              "shadowRadius": 6,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 2
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "photo-3-image",
+                "elementType": "image",
+                "bindings": {
+                  "src": "https://picsum.photos/160/122"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "large-photo",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 300,
+            "unit": "dp"
+          },
+          "aspectRatio": 1.333
+        },
+        "style": {
+          "backgroundColor": "#9C27B0",
+          "borderRadius": 12,
+          "shadowColor": "#00000040",
+          "shadowRadius": 12,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "large-photo-image",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/300/225"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

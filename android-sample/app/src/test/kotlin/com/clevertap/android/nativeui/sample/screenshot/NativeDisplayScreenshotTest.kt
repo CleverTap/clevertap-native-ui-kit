@@ -8,8 +8,8 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.clevertap.android.nativeui.sample.JsonLoader
 import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
+import com.clevertap.android.nativeui.sample.JsonLoader
 import com.github.takahirom.roborazzi.captureRoboImage
 import org.junit.Rule
 import org.junit.Test
@@ -34,6 +34,7 @@ import org.robolectric.annotation.LooperMode
 @RunWith(AndroidJUnit4::class)
 @Config(
     sdk = [33],
+    qualifiers = "w400dp-h700dp"
 )
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @LooperMode(LooperMode.Mode.PAUSED)
@@ -192,4 +193,60 @@ class NativeDisplayScreenshotTest {
 
     @Test fun test089StyledProductCard() = captureConfig("test-089-styled-product-card.json")
     @Test fun test090StyledProfileCard() = captureConfig("test-090-styled-profile-card.json")
+
+    // ============================================================================
+    // Phase 6: Percentage Offset Tests (10 tests)
+    // ============================================================================
+
+    @Test fun test091OffsetPercentBoxBasic() = captureConfig("test-091-offset-percent-box-basic.json")
+    @Test fun test092OffsetPercentStackLayers() = captureConfig("test-092-offset-percent-stack-layers.json")
+    @Test fun test093OffsetPercentNegative() = captureConfig("test-093-offset-percent-negative.json")
+    @Test fun test094OffsetPercentOverflow() = captureConfig("test-094-offset-percent-overflow.json")
+    @Test fun test095OffsetPercentZero() = captureConfig("test-095-offset-percent-zero.json")
+    @Test fun test096OffsetPercentResponsive() = captureConfig("test-096-offset-percent-responsive.json")
+    @Test fun test097OffsetMixedUnits() = captureConfig("test-097-offset-mixed-units.json")
+    @Test fun test098OffsetPercentNested() = captureConfig("test-098-offset-percent-nested.json")
+    @Test fun test099OffsetPercentWithPadding() = captureConfig("test-099-offset-percent-with-padding.json")
+    @Test fun test100OffsetPercentGalleryPeek() = captureConfig("test-100-offset-percent-gallery-peek.json")
+
+    // ============================================================================
+    // Phase 7: Aspect Ratio Tests (10 tests)
+    // ============================================================================
+
+    @Test fun test101AspectRatioSquareFixedWidth() = captureConfig("test-101-aspect-ratio-square-fixed-width.json")
+    @Test fun test102AspectRatio16_9FixedWidth() = captureConfig("test-102-aspect-ratio-16-9-fixed-width.json")
+    @Test fun test103AspectRatio4_3FixedWidth() = captureConfig("test-103-aspect-ratio-4-3-fixed-width.json")
+    @Test fun test104AspectRatioFixedHeight() = captureConfig("test-104-aspect-ratio-fixed-height.json")
+    @Test fun test105AspectRatioPercentWidth() = captureConfig("test-105-aspect-ratio-percent-width.json")
+    @Test fun test106AspectRatioWrapContent() = captureConfig("test-106-aspect-ratio-wrap-content.json")
+    @Test fun test107AspectRatioMatchParent() = captureConfig("test-107-aspect-ratio-match-parent.json")
+    @Test fun test108AspectRatioExtremeWide() = captureConfig("test-108-aspect-ratio-extreme-wide.json")
+    @Test fun test109AspectRatioExtremeTall() = captureConfig("test-109-aspect-ratio-extreme-tall.json")
+    @Test fun test110AspectRatioMixedContainer() = captureConfig("test-110-aspect-ratio-mixed-container.json")
+
+    // ============================================================================
+    // Phase 8: Combined Scenarios (5 tests)
+    // ============================================================================
+
+    @Test fun test111CombinedAspectOffsetBox() = captureConfig("test-111-combined-aspect-offset-box.json")
+    @Test fun test112CombinedNestedComplex() = captureConfig("test-112-combined-nested-complex.json")
+    @Test fun test113CombinedGalleryAspectPeek() = captureConfig("test-113-combined-gallery-aspect-peek.json")
+    @Test fun test114CombinedProductGrid() = captureConfig("test-114-combined-product-grid.json")
+    @Test fun test115CombinedShowcaseAll() = captureConfig("test-115-combined-showcase-all.json")
+
+    // ============================================================================
+    // Phase 9: Special Dimensions Tests (5 tests)
+    // ============================================================================
+
+    @Test fun test116MatchParentComprehensive() = captureConfig("test-116-match-parent-comprehensive.json")
+    @Test fun test117WrapContentComprehensive() = captureConfig("test-117-wrap-content-comprehensive.json")
+    @Test fun test118MixedSpecialDimensions() = captureConfig("test-118-mixed-special-dimensions.json")
+    @Test fun test119MatchParentStackBox() = captureConfig("test-119-match-parent-stack-box.json")
+    @Test fun test120WrapContentConstraints() = captureConfig("test-120-wrap-content-constraints.json")
+
+    // ============================================================================
+    // Verification Test
+    // ============================================================================
+
+    @Test fun testVerifyPercentageOffsetFix() = captureConfig("test-VERIFY-percentage-offset-fix.json")
 }

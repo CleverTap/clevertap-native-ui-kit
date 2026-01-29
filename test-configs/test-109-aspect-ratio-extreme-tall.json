@@ -1,0 +1,301 @@
+{
+  "theme": {
+    "id": "test-109",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    }
+  },
+  "variables": {
+    "testName": "Aspect Ratio - Extreme Tall (1:10, 1:20)"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 16, "unit": "dp" },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333"
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests extremely tall aspect ratios. Useful for vertical progress bars, sidebars, and narrow columns."
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666"
+        }
+      },
+      {
+        "type": "container",
+        "id": "tall-bars-container",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "arrangement": {
+            "spacing": 16,
+            "spacingUnit": "dp",
+            "strategy": "center"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "ratio-1-5",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 60, "unit": "dp" },
+              "aspectRatio": 0.2,
+              "padding": { "vertical": 16, "horizontal": 8, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#2196F3",
+              "borderRadius": 4
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "text-1-5",
+                "elementType": "text",
+                "bindings": {
+                  "text": "1:5"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" }
+                },
+                "style": {
+                  "fontSize": 10,
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "ratio-1-8",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 50, "unit": "dp" },
+              "aspectRatio": 0.125,
+              "padding": { "vertical": 16, "horizontal": 6, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#4CAF50",
+              "borderRadius": 4
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "text-1-8",
+                "elementType": "text",
+                "bindings": {
+                  "text": "1:8"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" }
+                },
+                "style": {
+                  "fontSize": 9,
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "ratio-1-10",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 40, "unit": "dp" },
+              "aspectRatio": 0.1,
+              "padding": { "vertical": 16, "horizontal": 4, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#FF9800",
+              "borderRadius": 4
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "text-1-10",
+                "elementType": "text",
+                "bindings": {
+                  "text": "1:10"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" }
+                },
+                "style": {
+                  "fontSize": 8,
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "ratio-1-15",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 30, "unit": "dp" },
+              "aspectRatio": 0.0667,
+              "padding": { "vertical": 16, "horizontal": 3, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#F44336",
+              "borderRadius": 4
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "text-1-15",
+                "elementType": "text",
+                "bindings": {
+                  "text": "1:15"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" }
+                },
+                "style": {
+                  "fontSize": 7,
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "ratio-1-20",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 20, "unit": "dp" },
+              "aspectRatio": 0.05,
+              "padding": { "vertical": 16, "horizontal": 2, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#9C27B0",
+              "borderRadius": 2
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "text-1-20",
+                "elementType": "text",
+                "bindings": {
+                  "text": "1:20"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" }
+                },
+                "style": {
+                  "fontSize": 6,
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "sidebar-example",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 280, "unit": "dp" },
+          "arrangement": {
+            "spacing": 12,
+            "spacingUnit": "dp",
+            "strategy": "start"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "sidebar",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 50, "unit": "dp" },
+              "aspectRatio": 0.15
+            },
+            "style": {
+              "backgroundColor": "#607D8B",
+              "borderRadius": 4
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "content-area",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 250, "unit": "dp" },
+              "height": { "special": "match_parent" },
+              "padding": { "all": 16, "unit": "dp" }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 8,
+              "borderWidth": 1,
+              "borderColor": "#E0E0E0"
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "content-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Main content area with tall sidebar (1:6.7 aspect ratio)"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "textColor": "#333333"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

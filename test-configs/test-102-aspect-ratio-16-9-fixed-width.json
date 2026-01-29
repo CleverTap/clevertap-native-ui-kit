@@ -1,0 +1,193 @@
+{
+  "theme": {
+    "id": "test-102",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    }
+  },
+  "variables": {
+    "testName": "Aspect Ratio - Widescreen (16:9) with Fixed Width"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333"
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests widescreen 16:9 aspect ratio (1.777). Common for media content. 320dp width = 180dp height."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666"
+        }
+      },
+      {
+        "type": "container",
+        "id": "image-frame-1",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 320,
+            "unit": "dp"
+          },
+          "aspectRatio": 1.777
+        },
+        "style": {
+          "backgroundColor": "#2196F3",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "image-1",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/320/180"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "image-frame-2",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 280,
+            "unit": "dp"
+          },
+          "aspectRatio": 1.777
+        },
+        "style": {
+          "backgroundColor": "#4CAF50",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "image-2",
+            "elementType": "image",
+            "bindings": {
+              "src": "https://picsum.photos/280/157"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "placeholder-frame",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 240,
+            "unit": "dp"
+          },
+          "aspectRatio": 1.777,
+          "padding": {
+            "all": 16,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#263238",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "placeholder-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "16:9 Widescreen Format"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 16,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "textAlign": "center"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": []
+}
