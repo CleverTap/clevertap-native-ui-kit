@@ -13,20 +13,62 @@ struct ContentView: View {
                 }
                 .tag(0)
             
-            // Tab 1: Animations Demo (NEW)
+            // Tab 1: Animations Demo
             AnimationDemoView()
                 .tabItem {
                     Label("🎬 Animations", systemImage: "wand.and.stars")
                 }
                 .tag(1)
+
+            // Tab 2: Test Configs (NEW)
+            TestConfigBrowserView()
+                .tabItem {
+                    Label("🧪 Test Configs", systemImage: "testtube.2")
+                }
+                .tag(2)
             
-            // Tab 2: Home Screen (Original)
+            MyView()
+                .tabItem {
+                    Label("Box percentage", systemImage: "testtube.2")
+                }
+                .tag(3)
+
+            // Tab 3: Home Screen
             HomeScreenView()
                 .tabItem {
                     Label("🏠 Home", systemImage: "house.fill")
                 }
-                .tag(2)
+                .tag(4)
         }
+    }
+}
+
+struct MyView: View {
+    var body: some View {
+        ZStack() {
+            //Text("I am legend!")
+            ZStack {
+                Text("I am legend!")
+            }
+                .frame(width: 40, height: 16)
+                .background(Color.red)
+                .offset(x: 20, y: 20)
+            //Text("I am legend 2!")
+            ZStack {
+                Text("I am legend 2!")
+            }
+                .frame(width: 40, height: 16)
+                .background(Color.blue)
+                .offset(x: 40, y: 40)
+            
+            ZStack {
+                Image(systemName: "star.fill")
+            }
+                .frame(width: 50, height: 50)
+                .background(Color.gray)
+                .offset(x: 250, y: 250)
+        }.frame(width: 300, height: 300, alignment: .topLeading)
+            .background(Color.green.opacity(0.3))
     }
 }
 

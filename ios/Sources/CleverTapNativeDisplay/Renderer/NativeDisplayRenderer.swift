@@ -28,18 +28,19 @@ public struct NativeDisplayView: View {
     }
     
     public var body: some View {
-        GeometryReader { geometry in
-            RenderNode(
-                node: config.root,
-                styleResolver: styleResolver,
-                evaluator: evaluator,
-                parentStyle: nil,
-                parentSize: geometry.size,
-                actionHandler: actionHandler,
-                componentListener: componentListener
-            )
-            .frame(width: geometry.size.width, alignment: .top)
-        }
+        // Get screen size directly instead of using GeometryReader
+        // GeometryReader inside ScrollView reports incorrect dimensions (10px height)
+        let screenSize = UIScreen.main.bounds.size
+
+        RenderNode(
+            node: config.root,
+            styleResolver: styleResolver,
+            evaluator: evaluator,
+            parentStyle: nil,
+            parentSize: screenSize,
+            actionHandler: actionHandler,
+            componentListener: componentListener
+        )
     }
 }
 
@@ -79,6 +80,9 @@ struct RenderNode: View {
         
         switch node {
         case .container(let container):
+            let layoutModifier = LayoutModifier(layout: node.layout, parentSize: parentSize, nodeId: node.id)
+            let offset = layoutModifier.calculateOffset()
+
             RenderContainer(
                 container: container,
                 styleResolver: styleResolver,
@@ -88,8 +92,9 @@ struct RenderNode: View {
                 actionHandler: actionHandler,
                 componentListener: componentListener
             )
-            .modifier(LayoutModifier(layout: node.layout, parentSize: parentSize))
+            .modifier(layoutModifier)
             .modifier(DecorationModifier(style: resolvedStyle))
+            .offset(x: offset.width, y: offset.height)
             .applyEntranceAnimation(node.animation)
             .applyTappable(
                             nodeId: node.id,
@@ -98,8 +103,11 @@ struct RenderNode: View {
                             componentListener: componentListener
                         )
             .id(node.id)
-            
+
         case .element(let element):
+            let layoutModifier = LayoutModifier(layout: node.layout, parentSize: parentSize, nodeId: node.id)
+            let offset = layoutModifier.calculateOffset()
+
             RenderElement(
                 element: element,
                 evaluator: evaluator,
@@ -107,8 +115,9 @@ struct RenderNode: View {
                 parentSize: parentSize,
                 actionHandler: actionHandler
             )
-            .modifier(LayoutModifier(layout: node.layout, parentSize: parentSize))
+            .modifier(layoutModifier)
             .modifier(DecorationModifier(style: resolvedStyle))
+            .offset(x: offset.width, y: offset.height)
             .applyEntranceAnimation(node.animation)
             .applyTappable(
                             nodeId: node.id,
@@ -129,7 +138,7 @@ struct RenderContainer: View {
     let parentSize: CGSize
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
-    
+
     var body: some View {
         let padding = container.layout?.padding
         let paddingInsets = EdgeInsets(
@@ -138,66 +147,134 @@ struct RenderContainer: View {
             bottom: padding?.resolveBottom() ?? 0,
             trailing: padding?.resolveRight() ?? 0
         )
-        
-        // Calculate available size after padding
-        let availableSize = CGSize(
-            width: max(0, parentSize.width - paddingInsets.leading - paddingInsets.trailing),
-            height: max(0, parentSize.height - paddingInsets.top - paddingInsets.bottom)
-        )
-        
-        Group {
-            switch container.containerType {
-            case .vertical:
-                renderVerticalContainer(availableSize: availableSize)
-                
-            case .horizontal:
-                renderHorizontalContainer(availableSize: availableSize)
-                
-            case .box:
-                ZStack(alignment: .topLeading) {
-                    ForEach(container.children.indices, id: \.self) { index in
-                        RenderNode(
-                            node: container.children[index],
-                            styleResolver: styleResolver,
-                            evaluator: evaluator,
-                            parentStyle: resolvedStyle,
-                            parentSize: availableSize,
-                            actionHandler: actionHandler,
-                            componentListener: componentListener
-                        )
-                    }
-                }
-                
-            case .stack:
-                ZStack {
-                    ForEach(container.children.indices, id: \.self) { index in
-                        RenderNode(
-                            node: container.children[index],
-                            styleResolver: styleResolver,
-                            evaluator: evaluator,
-                            parentStyle: resolvedStyle,
-                            parentSize: availableSize,
-                            actionHandler: actionHandler,
-                            componentListener: componentListener
-                        )
-                    }
-                }
-                
-            case .gallery:
-                RenderGallery(
-                    container: container,
-                    styleResolver: styleResolver,
-                    evaluator: evaluator,
-                    resolvedStyle: resolvedStyle,
-                    parentSize: availableSize,
-                    actionHandler: actionHandler,
-                    componentListener: componentListener
-                )
+
+        // Calculate the container's actual dimensions (considering explicit layout dimensions)
+        let containerSize = calculateContainerSize(parentSize: parentSize, padding: paddingInsets)
+
+        // Available size for children is the container size (after accounting for padding)
+        // This ensures children get correct space even before LayoutModifier applies
+        let availableSize = containerSize
+
+        switch container.containerType {
+        case .vertical:
+            renderVerticalContainer(availableSize: availableSize)
+                .padding(paddingInsets)
+
+        case .horizontal:
+            renderHorizontalContainer(availableSize: availableSize)
+                .padding(paddingInsets)
+
+        case .box:
+            // For BOX containers, use ZStack with topLeading alignment
+            // Children use .offset() (applied in LayoutModifier) to move from their natural position
+
+            // DEBUG: Remove after fixing percentage offset issue
+            let _ = print("🔷 BOX CONTAINER: id=\(container.id), containerSize=\(containerSize), children.count=\(container.children.count)")
+            let _ = container.children.enumerated().forEach { index, child in
+                print("  🔹 BOX CHILD [\(index)]: id=\(child.id), type=\(child), hasOffset=\(child.layout?.offset != nil)")
             }
+            ZStack(alignment: .topLeading) {
+                ForEach(container.children.indices, id: \.self) { index in
+                    RenderNode(
+                        node: container.children[index],
+                        styleResolver: styleResolver,
+                        evaluator: evaluator,
+                        parentStyle: resolvedStyle,
+                        parentSize: containerSize,
+                        actionHandler: actionHandler,
+                        componentListener: componentListener
+                    )
+                }
+            }
+            .frame(width: containerSize.width, height: containerSize.height, alignment: .topLeading)
+            .padding(paddingInsets)
+
+        case .stack:
+            // For STACK containers, use ZStack with center alignment (default for STACK)
+            // Children use .offset() (applied in LayoutModifier) to move from their natural position
+            ZStack(alignment: .center) {
+                ForEach(container.children.indices, id: \.self) { index in
+                    RenderNode(
+                        node: container.children[index],
+                        styleResolver: styleResolver,
+                        evaluator: evaluator,
+                        parentStyle: resolvedStyle,
+                        parentSize: containerSize,
+                        actionHandler: actionHandler,
+                        componentListener: componentListener
+                    )
+                }
+            }
+            .frame(width: containerSize.width, height: containerSize.height, alignment: .center)
+            .padding(paddingInsets)
+
+        case .gallery:
+            RenderGallery(
+                container: container,
+                styleResolver: styleResolver,
+                evaluator: evaluator,
+                resolvedStyle: resolvedStyle,
+                parentSize: availableSize,
+                actionHandler: actionHandler,
+                componentListener: componentListener
+            )
+            .padding(paddingInsets)
         }
-        .padding(paddingInsets)
+    }
+
+    /// Calculate the final container size.
+    /// Uses explicit layout dimensions if specified, otherwise uses parentSize.
+    /// This is used as availableSize for children and for percentage-based offset calculations.
+    private func calculateContainerSize(parentSize: CGSize, padding: EdgeInsets) -> CGSize {
+        let layout = container.layout
+
+        // Calculate width
+        let width: CGFloat
+        if let w = layout?.width {
+            if let special = w.special {
+                width = special == .matchParent ? parentSize.width : 0
+            } else {
+                switch w.unit {
+                case .dp, .px, .sp:
+                    width = w.value
+                case .percent:
+                    width = parentSize.width * w.value / 100
+                }
+            }
+        } else {
+            width = parentSize.width
+        }
+
+        // Calculate height
+        let height: CGFloat
+        if let h = layout?.height {
+            if let special = h.special {
+                height = special == .matchParent ? parentSize.height : 0
+            } else {
+                switch h.unit {
+                case .dp, .px, .sp:
+                    height = h.value
+                case .percent:
+                    height = parentSize.height * h.value / 100
+                }
+            }
+        } else {
+            height = parentSize.height
+        }
+
+        // Return size after accounting for padding
+        let finalSize = CGSize(
+            width: max(0, width - padding.leading - padding.trailing),
+            height: max(0, height - padding.top - padding.bottom)
+        )
+
+        // DEBUG: Remove after fixing percentage offset issue
+        print("🔵 CONTAINER SIZE: container.id=\(container.id), type=\(container.containerType), parentSize=\(parentSize), calculatedSize=\(finalSize)")
+
+        return finalSize
     }
     
+
     @ViewBuilder
     private func renderVerticalContainer(availableSize: CGSize) -> some View {
         let arrangement = container.layout?.arrangement ?? .default
@@ -480,29 +557,32 @@ struct RenderElement: View {
             bottom: padding?.resolveBottom() ?? 0,
             trailing: padding?.resolveRight() ?? 0
         )
-        
-        Group {
-            switch element.elementType {
-            case .text:
-                renderText()
-                
-            case .image:
-                renderImage()
-                
-            case .button:
-                renderButton()
-                
-            case .video:
-                renderVideo()
-                
-            case .spacer:
-                Color.clear
-                
-            case .divider:
-                renderDivider()
-            }
+
+        switch element.elementType {
+        case .text:
+            renderText()
+                .padding(paddingInsets)
+
+        case .image:
+            renderImage()
+                .padding(paddingInsets)
+
+        case .button:
+            renderButton()
+                .padding(paddingInsets)
+
+        case .video:
+            renderVideo()
+                .padding(paddingInsets)
+
+        case .spacer:
+            Color.clear
+                .padding(paddingInsets)
+
+        case .divider:
+            renderDivider()
+                .padding(paddingInsets)
         }
-        .padding(paddingInsets)
     }
     
     @ViewBuilder
@@ -627,35 +707,42 @@ struct RenderElement: View {
 struct LayoutModifier: ViewModifier {
     let layout: Layout?
     let parentSize: CGSize
+    let nodeId: String?  // For debug logging
+
+    init(layout: Layout?, parentSize: CGSize, nodeId: String? = nil) {
+        self.layout = layout
+        self.parentSize = parentSize
+        self.nodeId = nodeId
+    }
 
     func body(content: Content) -> some View {
-            let width = calculateWidth()
-            let height = calculateHeight()
-            let maxWidth = calculateMaxWidth()
-            let maxHeight = calculateMaxHeight()
-            let offset = calculateOffset()
-            let aspectRatio = calculateAspectRatio()
+        let width = calculateWidth()
+        let height = calculateHeight()
+        let maxWidth = calculateMaxWidth()
+        let maxHeight = calculateMaxHeight()
+        let aspectRatio = calculateAspectRatio()
 
-            frameContent(content: content, width: width, height: height, aspectRatio: aspectRatio)
+        // DEBUG: Remove after fixing percentage offset issue
+        let _ = nodeId.map { nodeId in
+            print("📐 LAYOUT: nodeId=\(nodeId), width=\(width?.description ?? "nil"), height=\(height?.description ?? "nil")")
+        }
+
+        // Apply sizing only - offset will be applied after decorations
+        if let ratio = aspectRatio {
+            content
+                .frame(width: width, height: height)
+                .aspectRatio(ratio, contentMode: .fit)
                 .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: .topLeading)
-                .offset(x: offset.width, y: offset.height)
+        } else {
+            content
+                .frame(width: width, height: height)
+                .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: .topLeading)
         }
-        
-        @ViewBuilder
-        private func frameContent(content: Content, width: CGFloat?, height: CGFloat?, aspectRatio: CGFloat?) -> some View {
-            if let ratio = aspectRatio {
-                content
-                    .frame(width: width, height: height)
-                    .aspectRatio(ratio, contentMode: .fit)
-            } else {
-                content
-                    .frame(width: width, height: height)
-            }
-        }
-    
+    }
+
     private func calculateWidth() -> CGFloat? {
         guard let width = layout?.width else { return nil }
-        
+
         if let special = width.special {
             switch special {
             case .wrapContent:
@@ -664,7 +751,7 @@ struct LayoutModifier: ViewModifier {
                 return nil // Use maxWidth instead
             }
         }
-        
+
         switch width.unit {
         case .dp, .px, .sp:
             return width.value > 0 ? width.value : nil
@@ -672,10 +759,10 @@ struct LayoutModifier: ViewModifier {
             return parentSize.width * width.value / 100
         }
     }
-    
+
     private func calculateHeight() -> CGFloat? {
         guard let height = layout?.height else { return nil }
-        
+
         if let special = height.special {
             switch special {
             case .wrapContent:
@@ -684,7 +771,7 @@ struct LayoutModifier: ViewModifier {
                 return nil // Use maxHeight instead
             }
         }
-        
+
         switch height.unit {
         case .dp, .px, .sp:
             return height.value > 0 ? height.value : nil
@@ -692,10 +779,10 @@ struct LayoutModifier: ViewModifier {
             return parentSize.height * height.value / 100
         }
     }
-    
+
     private func calculateMaxWidth() -> CGFloat? {
         guard let width = layout?.width else { return nil }
-        
+
         if let special = width.special {
             switch special {
             case .matchParent:
@@ -704,17 +791,17 @@ struct LayoutModifier: ViewModifier {
                 return nil
             }
         }
-        
+
         if width.unit == .percent && width.value >= 100 {
             return .infinity
         }
-        
+
         return nil
     }
-    
+
     private func calculateMaxHeight() -> CGFloat? {
         guard let height = layout?.height else { return nil }
-        
+
         if let special = height.special {
             switch special {
             case .matchParent:
@@ -723,26 +810,40 @@ struct LayoutModifier: ViewModifier {
                 return nil
             }
         }
-        
+
         return nil
     }
-    
+
     /// Calculate offset for absolute positioning.
-    /// Supports DP and percentage-based offsets.
-    private func calculateOffset() -> CGSize {
+    /// Supports both DP and percentage-based offsets.
+    /// All calculations are done upfront based on parentSize.
+    func calculateOffset() -> CGSize {
         guard let offset = layout?.offset else {
             return .zero
         }
 
+        // DEBUG: Remove after fixing percentage offset issue
+        if let nodeId = nodeId {
+            print("🟢 OFFSET: nodeId=\(nodeId), unit=\(offset.unit), x=\(offset.x), y=\(offset.y), parentSize=\(parentSize)")
+        }
+
+        let result: CGSize
         switch offset.unit {
         case .dp, .px, .sp:
-            return CGSize(width: offset.x, height: offset.y)
+            result = CGSize(width: offset.x, height: offset.y)
         case .percent:
-            return CGSize(
-                width: parentSize.width * offset.x / 100,
-                height: parentSize.height * offset.y / 100
-            )
+            // Calculate percentage offset based on parent container size
+            let offsetX = parentSize.width * offset.x / 100
+            let offsetY = parentSize.height * offset.y / 100
+            result = CGSize(width: offsetX, height: offsetY)
         }
+
+        // DEBUG: Remove after fixing percentage offset issue
+        if let nodeId = nodeId {
+            print("🟢 OFFSET: nodeId=\(nodeId), CALCULATED: x=\(result.width), y=\(result.height)")
+        }
+
+        return result
     }
 
     /// Calculate aspect ratio if specified and valid.
@@ -860,3 +961,4 @@ extension NativeDisplayNode {
         }
     }
 }
+
