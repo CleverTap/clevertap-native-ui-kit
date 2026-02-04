@@ -3,14 +3,33 @@
 
 import SwiftUI
 
+// MARK: - Environment Key for Parent Size
+
+/// Environment key for explicitly setting parent size (overrides GeometryReader)
+private struct ParentSizeEnvironmentKey: EnvironmentKey {
+    static let defaultValue: CGSize? = nil
+}
+
+extension EnvironmentValues {
+    /// Explicit parent size for NativeDisplayView layout calculations.
+    var nativeDisplayParentSize: CGSize? {
+        get { self[ParentSizeEnvironmentKey.self] }
+        set { self[ParentSizeEnvironmentKey.self] = newValue }
+    }
+}
+
+// MARK: - Native Display View
+
 /// Main entry point for rendering native display UI.
 public struct NativeDisplayView: View {
+    @Environment(\.nativeDisplayParentSize) private var environmentParentSize
+
     private let config: ResolvedConfig
     private let styleResolver: StyleResolver
     private let evaluator: VariableEvaluator
     private let actionHandler: ActionHandler?
     private let componentListener: NativeDisplayComponentListener?
-    
+
     public init(
         config: ResolvedConfig,
         actionListener: NativeDisplayActionListener? = nil,
@@ -19,25 +38,65 @@ public struct NativeDisplayView: View {
         self.config = config
         self.styleResolver = StyleResolver(theme: config.theme, styleClasses: config.styleClasses)
         self.evaluator = VariableEvaluator(variables: config.variables)
-        
+
         self.actionHandler = ActionHandler(
                     actionListener: actionListener,
                     componentListener: componentListener
                 )
         self.componentListener = componentListener
     }
-    
-    public var body: some View {
-        // Get screen size directly instead of using GeometryReader
-        // GeometryReader inside ScrollView reports incorrect dimensions (10px height)
-        let screenSize = UIScreen.main.bounds.size
 
+    public var body: some View {
+        renderWithSizeResolution()
+    }
+
+    @ViewBuilder
+    private func renderWithSizeResolution() -> some View {
+        // ═══════════════════════════════════════════════════════════════
+        // PRIORITY 1: Environment Override (ABSOLUTE PRIORITY)
+        // ═══════════════════════════════════════════════════════════════
+        // If integrator sets environment value, use it ALWAYS
+        // - Bypasses ALL other logic (no config scanning, no GeometryReader)
+        // - Works even if config has percentages, dynamic root, etc.
+        // - This is the ONLY way to avoid GeometryReader when needed
+        if let explicitSize = environmentParentSize {
+            renderContent(parentSize: explicitSize)
+        }
+        // ═══════════════════════════════════════════════════════════════
+        // Below logic only runs if NO environment override
+        // ═══════════════════════════════════════════════════════════════
+        else if let rootSize = config.rootExplicitSize() {
+            // Priority 2: Root container has explicit fixed dimensions
+            // Example: root is { width: 300dp, height: 400dp }
+            // Even if children have percentages, they calculate from this fixed base
+            // → Skip GeometryReader (performance win)
+            renderContent(parentSize: rootSize)
+        } else if !config.usesPercentageDimensions() {
+            // Priority 3: No percentages anywhere → use screen size
+            // Config uses only DP/SP/PX dimensions throughout entire tree
+            // → Skip GeometryReader (performance win)
+            let screenSize = UIScreen.main.bounds.size
+            renderContent(parentSize: screenSize)
+        } else {
+            // Priority 4: GeometryReader (ONLY when truly needed)
+            // Conditions to reach here:
+            // - NO environment override AND
+            // - Root uses percentages/match_parent/wrap_content AND
+            // - Config contains percentages somewhere
+            // → MUST use GeometryReader to measure parent constraints
+            GeometryReader { geometry in
+                renderContent(parentSize: geometry.size)
+            }
+        }
+    }
+
+    private func renderContent(parentSize: CGSize) -> some View {
         RenderNode(
             node: config.root,
             styleResolver: styleResolver,
             evaluator: evaluator,
             parentStyle: nil,
-            parentSize: screenSize,
+            parentSize: parentSize,
             actionHandler: actionHandler,
             componentListener: componentListener
         )

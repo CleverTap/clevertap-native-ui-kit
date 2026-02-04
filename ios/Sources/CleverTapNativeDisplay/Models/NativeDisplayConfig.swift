@@ -199,3 +199,66 @@ public extension NativeDisplayConfig {
         )
     }
 }
+
+// MARK: - Layout Analysis Extensions
+
+public extension ResolvedConfig {
+    /// Returns the root container's explicit size if both dimensions are fixed (DP/SP/PX).
+    /// Returns nil if root uses percentages, match_parent, or wrap_content.
+    ///
+    /// This optimization allows skipping GeometryReader when the root has a known fixed size,
+    /// even if children use percentage-based dimensions (they calculate from root's fixed size).
+    func rootExplicitSize() -> CGSize? {
+        guard case .container(let container) = root,
+              let layout = container.layout else {
+            return nil
+        }
+
+        // Check width
+        guard let width = layout.width,
+              width.special == nil,
+              width.unit != .percent else {
+            return nil
+        }
+
+        // Check height
+        guard let height = layout.height,
+              height.special == nil,
+              height.unit != .percent else {
+            return nil
+        }
+
+        // Both dimensions are explicit fixed values
+        return CGSize(width: width.value, height: height.value)
+    }
+
+    /// Scans entire config tree to detect if any percentage-based dimensions are used.
+    /// - Returns: true if any width, height, or offset uses .percent unit
+    /// - Performance: O(n) where n is total nodes, typically fast for real configs
+    func usesPercentageDimensions() -> Bool {
+        return scanNodeForPercentages(root)
+    }
+
+    /// Recursively scans a node and its children for percentage-based dimensions.
+    private func scanNodeForPercentages(_ node: NativeDisplayNode) -> Bool {
+        // Check current node's layout for percentage units
+        if let layout = node.layout {
+            // Check width
+            if layout.width?.unit == .percent { return true }
+            // Check height
+            if layout.height?.unit == .percent { return true }
+            // Check offset
+            if layout.offset?.unit == .percent { return true }
+        }
+
+        // Recursively check children (only containers have children)
+        switch node {
+        case .container(let container):
+            return container.children.contains { child in
+                scanNodeForPercentages(child)
+            }
+        case .element:
+            return false // Elements have no children
+        }
+    }
+}
