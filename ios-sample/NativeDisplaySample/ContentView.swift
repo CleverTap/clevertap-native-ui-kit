@@ -26,24 +26,19 @@ struct ContentView: View {
                     Label("🧪 Test Configs", systemImage: "testtube.2")
                 }
                 .tag(2)
-            
-            MyView()
-                .tabItem {
-                    Label("Box percentage", systemImage: "testtube.2")
-                }
-                .tag(3)
 
             // Tab 3: Home Screen
             HomeScreenView()
                 .tabItem {
                     Label("🏠 Home", systemImage: "house.fill")
                 }
-                .tag(4)
+                .tag(3)
         }
     }
 }
 
 struct MyView: View {
+    // just for testing
     var body: some View {
         ZStack() {
             //Text("I am legend!")
