@@ -75,7 +75,11 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    
+
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+    api(libs.coil.compose)
+
     // Kotlin Serialization
     implementation(libs.kotlinx.serialization.json)
     

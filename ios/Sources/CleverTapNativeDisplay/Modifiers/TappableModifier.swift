@@ -154,16 +154,16 @@ struct TappableModifier: ViewModifier {
             interactionType: interactionType,
             hasServerAction: action != nil
         )
-        
+
         guard shouldProceed else {
             return
         }
-        
+
         if let action = action {
             actionHandler?.handleAction(action, nodeId: nodeId, interactionType: interactionType)
         }
     }
-    
+
     /// Notify component listener about an interaction
     /// - Returns: true if should proceed with server action, false if consumed by listener
     private func notifyComponentListener(
@@ -173,20 +173,20 @@ struct TappableModifier: ViewModifier {
         guard let listener = componentListener else {
             return true
         }
-        
+
         let interestedNodeIds = listener.getInterestedNodeIds()
         let isInterested = interestedNodeIds == nil || interestedNodeIds?.contains(nodeId) == true
-        
+
         guard isInterested else {
             return true
         }
-        
+
         let consumed = listener.onComponentInteraction(
             nodeId: nodeId,
             interactionType: interactionType,
             hasServerAction: hasServerAction
         )
-        
+
         return !consumed
     }
 }

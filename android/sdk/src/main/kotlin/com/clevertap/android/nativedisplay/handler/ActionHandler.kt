@@ -32,14 +32,14 @@ import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListen
 
 /**
  * Handles execution of actions triggered by Native Display components.
- * 
+ *
  * This class is responsible for:
  * - Routing actions to appropriate handlers
  * - Converting JSON data to usable Kotlin types
  * - Notifying the client listener
  * - Providing default implementations for certain actions (like opening URLs)
  * - Managing coroutine lifecycle for async operations
- * 
+ *
  * @param context Android context for starting intents, opening URLs, etc.
  * @param listener Client's callback interface for handling actions
  */
@@ -48,9 +48,9 @@ class ActionHandler(
     private val listener: NativeDisplayActionListener?,
     private val componentListener: NativeDisplayComponentListener? = null
 ) {
-    
+
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-    
+
     companion object {
         private const val TAG = "ActionHandler"
     }
@@ -159,10 +159,10 @@ class ActionHandler(
             return@withContext true  // Proceed with server action
         }
     }
-    
+
     /**
      * Execute multiple actions for a given trigger (e.g., "onClick").
-     * 
+     *
      * @param actions Map of trigger names to actions
      * @param trigger The trigger name (e.g., "onClick", "onLongPress")
      * @param nodeId The ID of the node that triggered this action
@@ -175,7 +175,7 @@ class ActionHandler(
         val action = actions?.get(trigger) ?: return
         handleAction(action, nodeId)
     }
-    
+
     /**
      * Handle OPEN_URL action.
      * First checks if client wants to handle it, then uses default behavior.
@@ -183,20 +183,20 @@ class ActionHandler(
     private suspend fun handleOpenUrl(action: Action.OpenUrl, nodeId: String) {
         withContext(Dispatchers.Main) {
             Log.d(TAG, "Opening URL: ${action.url} (openInBrowser: ${action.openInBrowser})")
-            
+
             // Ask listener if they want to handle it
             val handled = listener?.onOpenUrl(
                 action.url,
                 action.openInBrowser
             ) ?: false
-            
+
             // If listener didn't handle it, use default behavior
             if (!handled) {
                 executeDefaultOpenUrl(action)
             }
         }
     }
-    
+
     /**
      * Default implementation for opening URLs.
      * Tries Chrome Custom Tabs first, falls back to browser.
@@ -204,13 +204,13 @@ class ActionHandler(
     private fun executeDefaultOpenUrl(action: Action.OpenUrl) {
         try {
             val uri = action.url.toUri()
-            
+
             // Validate URL scheme (prevent javascript: etc.)
             if (!isValidUrlScheme(uri.scheme)) {
                 Log.w(TAG, "Invalid URL scheme: ${uri.scheme}")
                 return
             }
-            
+
             when {
                 // Open in external browser
                 action.openInBrowser -> {
@@ -230,7 +230,7 @@ class ActionHandler(
             listener?.onActionError(action, e)
         }
     }
-    
+
     /**
      * Open URL in external browser app.
      */
@@ -246,7 +246,7 @@ class ActionHandler(
             throw e
         }
     }
-    
+
     /**
      * Open URL in Chrome Custom Tab.
      * Provides in-app browser experience with better UX.
@@ -255,10 +255,10 @@ class ActionHandler(
         /*try {
             val builder = CustomTabsIntent.Builder()
             val customTabsIntent = builder.build()
-            
+
             // Use FLAG_ACTIVITY_NEW_TASK since we might not have activity context
             customTabsIntent.intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            
+
             customTabsIntent.launchUrl(context, Uri.parse(url))
             Log.d(TAG, "Opened URL in Chrome Custom Tab: $url")
         } catch (e: Exception) {
@@ -267,7 +267,7 @@ class ActionHandler(
             openInExternalBrowser(url)
         }*/
     }
-    
+
     /**
      * Validate URL scheme for security.
      * Only allow http, https, and other safe schemes.
@@ -278,7 +278,7 @@ class ActionHandler(
             else -> false
         }
     }
-    
+
     /**
      * Handle CUSTOM action.
      * Converts JSON value to Kotlin types and notifies listener.
@@ -286,9 +286,9 @@ class ActionHandler(
     private suspend fun handleCustomAction(action: Action.CustomAction, nodeId: String) {
         withContext(Dispatchers.Main) {
             Log.d(TAG, "Executing custom action: ${action.key}")
-            
+
             val parsedValue = parseJsonValue(action.value)
-            
+
             listener?.onCustomAction(
                 key = action.key,
                 value = parsedValue,
@@ -296,7 +296,7 @@ class ActionHandler(
             )
         }
     }
-    
+
     /**
      * Handle NAVIGATE action.
      * Notifies listener to perform navigation.
@@ -304,14 +304,14 @@ class ActionHandler(
     private suspend fun handleNavigate(action: Action.Navigate, nodeId: String) {
         withContext(Dispatchers.Main) {
             Log.d(TAG, "Navigating to: ${action.destination}")
-            
+
             listener?.onNavigate(
                 destination = action.destination,
                 params = action.params
             )
         }
     }
-    
+
     /**
      * Handle TRACK_EVENT action.
      * Converts JSON properties to Kotlin types and notifies listener.
@@ -319,25 +319,25 @@ class ActionHandler(
     private suspend fun handleTrackEvent(action: Action.TrackEvent, nodeId: String) {
         withContext(Dispatchers.Main) {
             Log.d(TAG, "Tracking event: ${action.eventName}")
-            
+
             val parsedProperties = action.properties?.mapValues { (_, value) ->
                 parseJsonValue(value)
             }
-            
+
             listener?.onTrackEvent(
                 eventName = action.eventName,
                 properties = parsedProperties
             )
         }
     }
-    
+
     /**
      * Handle COMPOSITE action.
      * Executes multiple actions either sequentially or in parallel.
      */
     private suspend fun handleCompositeAction(action: Action.CompositeAction, nodeId: String) {
         Log.d(TAG, "Executing composite action with ${action.actions.size} sub-actions (${action.executionMode})")
-        
+
         when (action.executionMode) {
             ExecutionMode.SEQUENTIAL -> {
                 // Execute one after another
@@ -355,17 +355,17 @@ class ActionHandler(
             }
         }
     }
-    
+
     /**
      * Convert JsonElement to usable Kotlin types.
-     * 
+     *
      * Conversions:
      * - JsonPrimitive (string) → String
      * - JsonPrimitive (number) → Int/Long/Double
      * - JsonPrimitive (boolean) → Boolean
      * - JsonObject → Map<String, Any?>
      * - JsonArray → List<Any?>
-     * 
+     *
      * @param element The JSON element to parse
      * @return Parsed Kotlin value (String, Number, Boolean, Map, List, or null)
      */
@@ -386,7 +386,7 @@ class ActionHandler(
             else -> null
         }
     }
-    
+
     /**
      * Convert JsonObject to Map<String, Any?>
      */
@@ -395,7 +395,7 @@ class ActionHandler(
             parseJsonValue(value)
         }
     }
-    
+
     /**
      * Convert JsonArray to List<Any?>
      */
@@ -404,7 +404,7 @@ class ActionHandler(
             parseJsonValue(element)
         }
     }
-    
+
     /**
      * Clean up resources when ActionHandler is no longer needed.
      * Call this when the composable is disposed.

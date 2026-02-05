@@ -6,6 +6,7 @@ composeBom = "2024.12.01"
 kotlinxSerialization = "1.7.3"
 coroutines = "1.9.0"
 lifecycle = "2.8.7"
+navigation = "2.8.5"
 coil = "2.7.0"
 junit = "4.13.2"
 androidxTest = "1.2.1"
@@ -36,6 +37,9 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 
 # Image Loading
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+
+# Navigation
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 
 # Testing
 junit = { group = "junit", name = "junit", version.ref = "junit" }

@@ -11,6 +11,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
@@ -19,6 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.clevertap.android.nativedisplay.models.ArrangementStrategy
 import com.clevertap.android.nativedisplay.models.ChildArrangement
 import com.clevertap.android.nativedisplay.models.NativeDisplayContainer
@@ -27,8 +35,6 @@ import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
 import com.clevertap.android.nativedisplay.samples.*
 
 class MainActivity : ComponentActivity() {
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -41,112 +47,274 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun NativeUIKitSampleApp() {
     MaterialTheme {
-        var selectedTabIndex by remember { mutableStateOf(0) }
-        
-        val tabs = listOf(
-            "🏠 Home",           // NEW - First position
-            "📏 Arrangements",    // NEW - Arrangement strategies demo
-            "🎬 Animations",      // NEW - Animation demos
-            "🧪 Test Browser",    // NEW - Test automation browser
-            "Simple Card",
-            "Product Card",
-            "Nested",
-            "All Elements",
-            "Dividers",
-            "Simple Gallery",
-            "Full Gallery",
-            "Free Gallery",
-            "Combined",
-            "Linear Grad",
-            "Radial/Sweep",
-            "Animated",
-            "Patterns",
-            "Layered",
-            "🛍️ E-commerce",
-            "👤 Social",
-            "📊 Dashboard",
-            "Gallery"
-        )
-        
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { 
-                        Text(
-                            "Native Display Kit",
-                            style = MaterialTheme.typography.titleLarge
-                        ) 
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        titleContentColor = MaterialTheme.colorScheme.onPrimary
-                    )
+        val navController = rememberNavController()
+        var showMenu by remember { mutableStateOf(false) }
+
+        NavHost(
+            navController = navController,
+            startDestination = "banner_showcase"
+        ) {
+            // Main Screen: Banner Showcase
+            composable("banner_showcase") {
+                Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            title = {
+                                Text(
+                                    "Native Display Kit",
+                                    style = MaterialTheme.typography.titleLarge
+                                )
+                            },
+                            actions = {
+                                // Menu Button (3 dots)
+                                IconButton(onClick = { showMenu = true }) {
+                                    Icon(
+                                        imageVector = Icons.Default.MoreVert,
+                                        contentDescription = "Menu",
+                                        tint = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
+
+                                // Dropdown Menu
+                                DropdownMenu(
+                                    expanded = showMenu,
+                                    onDismissRequest = { showMenu = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text("🏠 Home") },
+                                        onClick = {
+                                            showMenu = false
+                                            navController.navigate("demo_screen/home")
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("📏 Arrangements") },
+                                        onClick = {
+                                            showMenu = false
+                                            navController.navigate("demo_screen/arrangements")
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("🎬 Animations") },
+                                        onClick = {
+                                            showMenu = false
+                                            navController.navigate("demo_screen/animations")
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("🧪 Test Browser") },
+                                        onClick = {
+                                            showMenu = false
+                                            navController.navigate("demo_screen/test_browser")
+                                        }
+                                    )
+                                    HorizontalDivider()
+                                    DropdownMenuItem(
+                                        text = { Text("Other Demos") },
+                                        onClick = {
+                                            showMenu = false
+                                            navController.navigate("demo_screen/other")
+                                        }
+                                    )
+                                }
+                            },
+                            colors = TopAppBarDefaults.topAppBarColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                titleContentColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        )
+                    }
+                ) { paddingValues ->
+                    Box(modifier = Modifier.padding(paddingValues)) {
+                        BannerShowcaseScreen(navController = navController)
+                    }
+                }
+            }
+
+            // Banner Detail Screen
+            composable(
+                route = "banner_detail/{bannerId}?filename={filename}",
+                arguments = listOf(
+                    navArgument("bannerId") { type = NavType.StringType },
+                    navArgument("filename") {
+                        type = NavType.StringType
+                        nullable = true
+                    }
+                )
+            ) { backStackEntry ->
+                val bannerId = backStackEntry.arguments?.getString("bannerId") ?: ""
+                val filename = backStackEntry.arguments?.getString("filename")
+                BannerDetailScreen(
+                    navController = navController,
+                    bannerId = bannerId,
+                    filename = filename
                 )
             }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                // Tabs
-                ScrollableTabRow(
-                    selectedTabIndex = selectedTabIndex,
-                    modifier = Modifier.fillMaxWidth(),
-                    edgePadding = 8.dp
-                ) {
-                    tabs.forEachIndexed { index, title ->
-                        Tab(
-                            selected = selectedTabIndex == index,
-                            onClick = { selectedTabIndex = index },
-                            text = { Text(title) }
+
+            // JSON Viewer Screen
+            composable(route = "json_viewer") {
+                // Use remember to prevent the value from being cleared on recomposition
+                val jsonString = remember {
+                    JSONViewerStorage.getJsonString()
+                }
+                JSONViewerScreen(
+                    navController = navController,
+                    jsonString = jsonString
+                )
+            }
+
+            // Demo Screens (accessed via menu)
+            composable(
+                route = "demo_screen/{demoType}",
+                arguments = listOf(navArgument("demoType") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val demoType = backStackEntry.arguments?.getString("demoType") ?: "home"
+                DemoScreenContainer(
+                    navController = navController,
+                    demoType = demoType
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Container for demo screens accessed via menu
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DemoScreenContainer(navController: androidx.navigation.NavController, demoType: String) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = when (demoType) {
+                            "home" -> "🏠 Home"
+                            "arrangements" -> "📏 Arrangements"
+                            "animations" -> "🎬 Animations"
+                            "test_browser" -> "🧪 Test Browser"
+                            "other" -> "Other Demos"
+                            else -> "Demo"
+                        },
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
-                }
-                
-                // Content
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color(0xFFF5F5F5))
-                        .then(
-                            // No vertical scroll for Home screen and Test Browser
-                            if (selectedTabIndex == 0 || selectedTabIndex == 3) {
-                                Modifier
-                            } else {
-                                Modifier.verticalScroll(rememberScrollState())
-                            }
-                        )
-                        .padding(
-                            // No padding for Home screen and Test Browser to allow edge-to-edge design
-                            if (selectedTabIndex == 0 || selectedTabIndex == 3) 0.dp else 16.dp
-                        )
-                ) {
-                    when (selectedTabIndex) {
-                        0 -> HomeScreen()
-                        1 -> ArrangementDemoScreen()
-                        2 -> AnimationDemoScreen()
-                        3 -> TestBrowserScreen()
-                        4 -> SimpleGreetingCardSample()
-                        5 -> ProductCardSample()
-                        6 -> NestedContainersSample()
-                        7 -> AllElementsSample()
-                        8 -> DividerDemoSample()
-                        9 -> SimpleGallerySample()
-                        10 -> FullFeaturedGallerySample()
-                        11 -> FreeFlowGallerySample()
-                        12 -> CombinedDemoSample()
-                        13 -> LinearGradientsScreen()
-                        14 -> RadialSweepGradientsScreen()
-                        15 -> AnimatedBackgroundsScreen()
-                        16 -> PatternBackgroundsScreen()
-                        17 -> LayeredBackgroundsScreen()
-                        18 -> EcommerceShowcaseScreen()
-                        19 -> SocialProfileShowcaseScreen()
-                        20 -> DashboardShowcaseScreen()
-                        21 -> GalleryShowcaseScreen()
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .background(Color(0xFFF5F5F5))
+                .then(
+                    // No vertical scroll for Home screen and Test Browser
+                    if (demoType == "home" || demoType == "test_browser") {
+                        Modifier
+                    } else {
+                        Modifier.verticalScroll(rememberScrollState())
                     }
-                }
+                )
+                .padding(
+                    // No padding for Home screen and Test Browser to allow edge-to-edge design
+                    if (demoType == "home" || demoType == "test_browser") 0.dp else 16.dp
+                )
+        ) {
+            when (demoType) {
+                "home" -> HomeScreen()
+                "arrangements" -> ArrangementDemoScreen()
+                "animations" -> AnimationDemoScreen()
+                "test_browser" -> TestBrowserScreen()
+                "other" -> OtherDemosScreen()
+            }
+        }
+    }
+}
+
+/**
+ * Screen displaying all other demos
+ */
+@Composable
+fun OtherDemosScreen() {
+    var selectedTabIndex by remember { mutableStateOf(0) }
+
+    val tabs = listOf(
+        "Simple Card",
+        "Product Card",
+        "Nested",
+        "All Elements",
+        "Dividers",
+        "Simple Gallery",
+        "Full Gallery",
+        "Free Gallery",
+        "Combined",
+        "Linear Grad",
+        "Radial/Sweep",
+        "Animated",
+        "Patterns",
+        "Layered",
+        "🛍️ E-commerce",
+        "👤 Social",
+        "📊 Dashboard",
+        "Gallery"
+    )
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        // Tabs
+        ScrollableTabRow(
+            selectedTabIndex = selectedTabIndex,
+            modifier = Modifier.fillMaxWidth(),
+            edgePadding = 8.dp
+        ) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTabIndex == index,
+                    onClick = { selectedTabIndex = index },
+                    text = { Text(title) }
+                )
+            }
+        }
+
+        // Content
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
+        ) {
+            when (selectedTabIndex) {
+                0 -> SimpleGreetingCardSample()
+                1 -> ProductCardSample()
+                2 -> NestedContainersSample()
+                3 -> AllElementsSample()
+                4 -> DividerDemoSample()
+                5 -> SimpleGallerySample()
+                6 -> FullFeaturedGallerySample()
+                7 -> FreeFlowGallerySample()
+                8 -> CombinedDemoSample()
+                9 -> LinearGradientsScreen()
+                10 -> RadialSweepGradientsScreen()
+                11 -> AnimatedBackgroundsScreen()
+                12 -> PatternBackgroundsScreen()
+                13 -> LayeredBackgroundsScreen()
+                14 -> EcommerceShowcaseScreen()
+                15 -> SocialProfileShowcaseScreen()
+                16 -> DashboardShowcaseScreen()
+                17 -> GalleryShowcaseScreen()
             }
         }
     }

@@ -2,38 +2,116 @@ import SwiftUI
 import CleverTapNativeDisplay
 
 struct ContentView: View {
-    @State private var selectedTab = 0
-    
+    @State private var showingDemoMenu = false
+
     var body: some View {
-        TabView(selection: $selectedTab) {
-            // Tab 0: Arrangement Demo
-            ArrangementDemoView()
-                .tabItem {
-                    Label("📏 Arrangements", systemImage: "rectangle.3.group")
+        NavigationView {
+            BannerShowcaseView()
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            showingDemoMenu = true
+                        }) {
+                            Image(systemName: "ellipsis.circle")
+                                .font(.system(size: 20))
+                        }
+                    }
                 }
-                .tag(0)
-            
-            // Tab 1: Animations Demo
-            AnimationDemoView()
-                .tabItem {
-                    Label("🎬 Animations", systemImage: "wand.and.stars")
+                .sheet(isPresented: $showingDemoMenu) {
+                    DemoMenuView()
                 }
-                .tag(1)
-
-            // Tab 2: Test Configs (NEW)
-            TestConfigBrowserView()
-                .tabItem {
-                    Label("🧪 Test Configs", systemImage: "testtube.2")
-                }
-                .tag(2)
-
-            // Tab 3: Home Screen
-            HomeScreenView()
-                .tabItem {
-                    Label("🏠 Home", systemImage: "house.fill")
-                }
-                .tag(3)
         }
+        .navigationViewStyle(StackNavigationViewStyle())
+    }
+}
+
+// MARK: - Demo Menu View
+
+/// Menu to access other demo screens
+struct DemoMenuView: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationView {
+            List {
+                Section(header: Text("Demo Screens")) {
+                    NavigationLink(destination: ArrangementDemoView()) {
+                        DemoMenuItem(
+                            icon: "rectangle.3.group",
+                            title: "Arrangements",
+                            description: "Explore all 7 arrangement strategies"
+                        )
+                    }
+
+                    NavigationLink(destination: AnimationDemoView()) {
+                        DemoMenuItem(
+                            icon: "wand.and.stars",
+                            title: "Animations",
+                            description: "Container and element animations"
+                        )
+                    }
+
+                    NavigationLink(destination: TestConfigBrowserView()) {
+                        DemoMenuItem(
+                            icon: "testtube.2",
+                            title: "Test Configs",
+                            description: "Browse and test configurations"
+                        )
+                    }
+
+                    NavigationLink(destination: HomeScreenView()) {
+                        DemoMenuItem(
+                            icon: "house.fill",
+                            title: "Home Screen",
+                            description: "Example home screen layout"
+                        )
+                    }
+                }
+            }
+            .navigationTitle("Other Demos")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Demo Menu Item
+
+/// Individual menu item for demo screens
+struct DemoMenuItem: View {
+    let icon: String
+    let title: String
+    let description: String
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .foregroundColor(.blue)
+                .font(.system(size: 24))
+                .frame(width: 40, height: 40)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.blue.opacity(0.1))
+                )
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.headline)
+
+                Text(description)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+        }
+        .padding(.vertical, 4)
     }
 }
 
@@ -341,6 +419,11 @@ struct HomeScreenView: View {
 /// Component Listener for Home Screen
 /// Logs all component interactions
 class HomeScreenComponentListener: NativeDisplayComponentListener {
+    
+    func onComponentInteraction(nodeId: String, interactionType: InteractionType, hasServerAction: Bool, action: Action?) -> Bool {
+        return false
+    }
+    
     
     init() {
         print("Init HomeScreenComponentListener")

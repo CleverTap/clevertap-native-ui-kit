@@ -969,7 +969,7 @@ private fun Modifier.applySizing(layout: Layout?): Modifier {
         layout.aspectRatio > 0 &&
         !(hasFixedWidth && hasFixedHeight)) {
         modifier = modifier.aspectRatio(
-            layout.aspectRatio,
+            1f / layout.aspectRatio,
             matchHeightConstraintsFirst = hasFixedHeight
         )
     }
