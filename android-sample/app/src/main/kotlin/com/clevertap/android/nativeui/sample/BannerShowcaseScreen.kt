@@ -153,6 +153,7 @@ fun BannerShowcaseScreen(navController: NavController) {
 
     // State for error messages
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     // File picker launcher for custom JSON upload
     val filePickerLauncher = rememberLauncherForActivityResult(
@@ -185,27 +186,21 @@ fun BannerShowcaseScreen(navController: NavController) {
         }
     }
 
-    Scaffold(
-        snackbarHost = {
-            // Show error snackbar
-            if (errorMessage != null) {
-                Snackbar(
-                    modifier = Modifier.padding(16.dp),
-                    action = {
-                        TextButton(onClick = { errorMessage = null }) {
-                            Text("Dismiss")
-                        }
-                    }
-                ) {
-                    Text(errorMessage ?: "")
-                }
-            }
+    // Show error snackbar when error occurs
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let { message ->
+            snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Short
+            )
+            errorMessage = null
         }
-    ) { paddingValues ->
+    }
+
+    Box {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
                 .background(Color(0xFFF5F5F5)),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -240,6 +235,14 @@ fun BannerShowcaseScreen(navController: NavController) {
                 )
             }
         }
+
+        // Snackbar at the bottom
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+        )
     }
 }
 
