@@ -89,7 +89,6 @@ struct SnappingGalleryView: View {
                                 node: container.children[index],
                                 styleResolver: styleResolver,
                                 evaluator: evaluator,
-                                parentStyle: resolvedStyle,
                                 parentSize: containerSize,
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
@@ -109,7 +108,6 @@ struct SnappingGalleryView: View {
                                 node: container.children[index],
                                 styleResolver: styleResolver,
                                 evaluator: evaluator,
-                                parentStyle: resolvedStyle,
                                 parentSize: containerSize,
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
@@ -195,7 +193,6 @@ struct FreeFlowGalleryView: View {
                                 node: container.children[index],
                                 styleResolver: styleResolver,
                                 evaluator: evaluator,
-                                parentStyle: resolvedStyle,
                                 parentSize: containerSize,
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
@@ -211,7 +208,6 @@ struct FreeFlowGalleryView: View {
                                 node: container.children[index],
                                 styleResolver: styleResolver,
                                 evaluator: evaluator,
-                                parentStyle: resolvedStyle,
                                 parentSize: containerSize,
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
@@ -262,7 +258,6 @@ struct FreeFlowGridGalleryView: View {
                                 node: container.children[index],
                                 styleResolver: styleResolver,
                                 evaluator: evaluator,
-                                parentStyle: resolvedStyle,
                                 parentSize: CGSize(width: itemWidth, height: containerSize.height),
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
@@ -288,7 +283,6 @@ struct FreeFlowGridGalleryView: View {
                                 node: container.children[index],
                                 styleResolver: styleResolver,
                                 evaluator: evaluator,
-                                parentStyle: resolvedStyle,
                                 parentSize: CGSize(width: containerSize.width, height: itemHeight),
                                 actionHandler: actionHandler,
                                 componentListener: componentListener

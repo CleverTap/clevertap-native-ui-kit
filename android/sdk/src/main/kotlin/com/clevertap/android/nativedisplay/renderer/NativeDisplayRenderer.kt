@@ -93,7 +93,6 @@ fun NativeDisplayView(
         node = config.root,
         styleResolver = styleResolver,
         evaluator = evaluator,
-        parentStyle = null,
         modifier = modifier,
         actionHandler = actionHandler,
         componentListener = componentListener,
@@ -108,7 +107,6 @@ fun RenderNode(
     node: NativeDisplayNode,
     styleResolver: StyleResolver,
     evaluator: VariableEvaluator,
-    parentStyle: Style?,
     modifier: Modifier = Modifier,
     actionHandler: ActionHandler? = null,
     componentListener: NativeDisplayComponentListener? = null,
@@ -119,8 +117,8 @@ fun RenderNode(
         if (!isVisible) return
     }
 
-    // Resolve style with inheritance
-    val resolvedStyle = styleResolver.resolveWithColors(node, parentStyle)
+    // Resolve style
+    val resolvedStyle = styleResolver.resolveWithColors(node)
 
     // Check if this component needs clickable modifier
     val hasServerActions = node.actions?.isNotEmpty() == true
@@ -200,7 +198,6 @@ private fun RenderContainer(
                         node = child,
                         styleResolver = styleResolver,
                         evaluator = evaluator,
-                        parentStyle = resolvedStyle,
                         modifier = Modifier,
                         actionHandler = actionHandler,
                         componentListener = componentListener
@@ -219,7 +216,6 @@ private fun RenderContainer(
                         node = child,
                         styleResolver = styleResolver,
                         evaluator = evaluator,
-                        parentStyle = resolvedStyle,
                         modifier = Modifier,
                         actionHandler = actionHandler,
                         componentListener = componentListener
@@ -235,7 +231,6 @@ private fun RenderContainer(
                         node = child,
                         styleResolver = styleResolver,
                         evaluator = evaluator,
-                        parentStyle = resolvedStyle,
                         modifier = Modifier,
                         actionHandler = actionHandler,
                         componentListener = componentListener
@@ -386,7 +381,6 @@ private fun RenderSnappingGallery(
                             node = child,
                             styleResolver = styleResolver,
                             evaluator = evaluator,
-                            parentStyle = resolvedStyle,
                             modifier = Modifier.fillMaxWidth(),
                             actionHandler = actionHandler,
                             componentListener = componentListener,
@@ -405,7 +399,6 @@ private fun RenderSnappingGallery(
                             node = child,
                             styleResolver = styleResolver,
                             evaluator = evaluator,
-                            parentStyle = resolvedStyle,
                             modifier = Modifier.fillMaxHeight(),
                             actionHandler = actionHandler,
                             componentListener = componentListener,
@@ -494,7 +487,6 @@ private fun RenderFreeFlowGallery(
                         node = child,
                         styleResolver = styleResolver,
                         evaluator = evaluator,
-                        parentStyle = resolvedStyle,
                         modifier = Modifier,
                         actionHandler = actionHandler,
                         componentListener = componentListener,
@@ -514,7 +506,6 @@ private fun RenderFreeFlowGallery(
                         node = child,
                         styleResolver = styleResolver,
                         evaluator = evaluator,
-                        parentStyle = resolvedStyle,
                         modifier = Modifier,
                         actionHandler = actionHandler,
                         componentListener = componentListener,
@@ -576,7 +567,6 @@ private fun RenderFreeFlowGridGallery(
                                 node = child,
                                 styleResolver = styleResolver,
                                 evaluator = evaluator,
-                                parentStyle = resolvedStyle,
                                 modifier = Modifier.fillMaxWidth(),
                                 actionHandler = actionHandler,
                                 componentListener = componentListener,
@@ -612,7 +602,6 @@ private fun RenderFreeFlowGridGallery(
                                 node = child,
                                 styleResolver = styleResolver,
                                 evaluator = evaluator,
-                                parentStyle = resolvedStyle,
                                 modifier = Modifier.fillMaxHeight(),
                                 actionHandler = actionHandler,
                                 componentListener = componentListener,

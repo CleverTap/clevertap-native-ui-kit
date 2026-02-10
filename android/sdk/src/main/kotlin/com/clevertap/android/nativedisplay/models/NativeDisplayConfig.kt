@@ -78,7 +78,7 @@ data class DataReference(
  */
 @Serializable
 data class ResolvedConfig(
-    val theme: Theme,
+    val theme: Theme = Theme.DEFAULT,
     val styleClasses: List<StyleClass> = emptyList(),
     val variables: Map<String, JsonElement> = emptyMap(),
     val root: NativeDisplayNode

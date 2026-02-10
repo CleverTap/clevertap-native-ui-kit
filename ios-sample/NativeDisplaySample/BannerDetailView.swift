@@ -4,9 +4,47 @@ import CleverTapNativeDisplay
 // MARK: - Data Models
 
 /// Source of banner configuration
+///
+/// This enum distinguishes between two different sources of banner JSON:
+/// - `.bundle(filename:)` - Pre-packaged JSON files in the app bundle
+///   Example: .bundle(filename: "banner-01-hero-summer-sale")
+///   The filename is resolved to a URL by searching multiple bundle paths
+///
+/// - `.file(url:)` - JSON files with known file system location
+///   Example: .file(url: selectedFileURL)
+///   Used when user uploads custom JSON via document picker
 enum ConfigSource {
     case bundle(filename: String)
     case file(url: URL)
+
+    /// Resolves the config source to a URL
+    func resolveURL() -> URL? {
+        switch self {
+        case .bundle(let filename):
+            return Self.findBundleURL(for: filename)
+        case .file(let url):
+            return url
+        }
+    }
+
+    /// Find a bundled resource by trying multiple possible paths
+    private static func findBundleURL(for filename: String) -> URL? {
+        let possiblePaths: [String?] = [
+            Bundle.main.path(forResource: filename, ofType: "json", inDirectory: "Banners"),
+            Bundle.main.path(forResource: filename, ofType: "json", inDirectory: "Resources/Banners"),
+            Bundle.main.path(forResource: filename, ofType: "json")
+        ]
+
+        for path in possiblePaths {
+            if let validPath = path {
+                print("✅ Found \(filename).json at: \(validPath)")
+                return URL(fileURLWithPath: validPath)
+            }
+        }
+
+        print("❌ Could not find \(filename).json in bundle")
+        return nil
+    }
 }
 
 /// Represents a logged interaction event
@@ -162,56 +200,41 @@ class BannerDetailViewModel: ObservableObject {
         config = nil
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            switch source {
-            case .bundle(let filename):
-                self.loadFromBundle(filename: filename)
-            case .file(let url):
-                self.loadFromFile(url: url)
+            // Resolve the source to a URL (works for both bundle and file)
+            guard let url = source.resolveURL() else {
+                self.config = nil
+                self.errorMessage = "Failed to locate configuration file"
+                self.isLoading = false
+                return
             }
+
+            // Load from the resolved URL
+            self.loadFromURL(url)
         }
     }
 
-    private func loadFromBundle(filename: String) {
-        // Load JSON string
-        if let url = Bundle.main.url(forResource: filename, withExtension: "json", subdirectory: "Banners"),
-           let data = try? Data(contentsOf: url),
-           let jsonString = String(data: data, encoding: .utf8) {
-            self.jsonString = jsonString
-        }
-
-        // Load config
-        if let loadedConfig = JsonLoader.loadConfig(filename: filename, fromDirectory: "Banners") {
-            self.config = loadedConfig
-            self.errorMessage = nil
-            print("✅ Loaded banner: \(filename)")
-        } else {
-            self.config = nil
-            self.errorMessage = "Failed to load banner: \(filename)"
-            print("❌ Failed to load banner: \(filename)")
-        }
-        self.isLoading = false
-    }
-
-    private func loadFromFile(url: URL) {
+    /// Unified method to load configuration from any URL
+    private func loadFromURL(_ url: URL) {
         do {
             let data = try Data(contentsOf: url)
 
-            // Store JSON string
+            // Store JSON string for viewer
             if let jsonString = String(data: data, encoding: .utf8) {
                 self.jsonString = jsonString
             }
 
-            // Decode config
+            // Decode configuration
             let decoder = JSONDecoder()
             let loadedConfig = try decoder.decode(ResolvedConfig.self, from: data)
             self.config = loadedConfig
             self.errorMessage = nil
-            print("✅ Loaded custom banner from file")
+            print("✅ Successfully loaded config from: \(url.lastPathComponent)")
         } catch {
             self.config = nil
-            self.errorMessage = "Failed to decode JSON:\n\n\(error.localizedDescription)"
-            print("❌ Failed to decode custom banner: \(error)")
+            self.errorMessage = "Failed to decode configuration:\n\n\(error.localizedDescription)"
+            print("❌ Failed to decode config from \(url.lastPathComponent): \(error)")
         }
+
         self.isLoading = false
     }
 

@@ -95,7 +95,6 @@ public struct NativeDisplayView: View {
             node: config.root,
             styleResolver: styleResolver,
             evaluator: evaluator,
-            parentStyle: nil,
             parentSize: parentSize,
             actionHandler: actionHandler,
             componentListener: componentListener
@@ -108,7 +107,6 @@ struct RenderNode: View {
     let node: NativeDisplayNode
     let styleResolver: StyleResolver
     let evaluator: VariableEvaluator
-    let parentStyle: Style?
     let parentSize: CGSize
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
@@ -129,8 +127,8 @@ struct RenderNode: View {
     
     @ViewBuilder
     private func renderContent() -> some View {
-        // Resolve style with inheritance
-        let resolvedStyle = styleResolver.resolveWithColors(node: node, parentStyle: parentStyle)
+        // Resolve style
+        let resolvedStyle = styleResolver.resolveWithColors(node: node)
         
         let hasServerActions = node.actions != nil && !node.actions!.isEmpty
         let isClientInterested = componentListener?.getInterestedNodeIds()?.contains(node.id) ?? (componentListener != nil)
@@ -238,7 +236,6 @@ struct RenderContainer: View {
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentStyle: resolvedStyle,
                         parentSize: containerSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
@@ -257,7 +254,6 @@ struct RenderContainer: View {
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentStyle: resolvedStyle,
                         parentSize: containerSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
@@ -346,7 +342,6 @@ struct RenderContainer: View {
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentStyle: resolvedStyle,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
@@ -362,7 +357,6 @@ struct RenderContainer: View {
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentStyle: resolvedStyle,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
@@ -383,7 +377,6 @@ struct RenderContainer: View {
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentStyle: resolvedStyle,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
@@ -401,7 +394,6 @@ struct RenderContainer: View {
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentStyle: resolvedStyle,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
@@ -423,7 +415,6 @@ struct RenderContainer: View {
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentStyle: resolvedStyle,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
@@ -441,7 +432,6 @@ struct RenderContainer: View {
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentStyle: resolvedStyle,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
@@ -459,7 +449,6 @@ struct RenderContainer: View {
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentStyle: resolvedStyle,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
@@ -482,7 +471,6 @@ struct RenderContainer: View {
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentStyle: resolvedStyle,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
@@ -497,7 +485,6 @@ struct RenderContainer: View {
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentStyle: resolvedStyle,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
@@ -517,7 +504,6 @@ struct RenderContainer: View {
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentStyle: resolvedStyle,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
@@ -534,7 +520,6 @@ struct RenderContainer: View {
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentStyle: resolvedStyle,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
@@ -555,7 +540,6 @@ struct RenderContainer: View {
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentStyle: resolvedStyle,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
@@ -572,7 +556,6 @@ struct RenderContainer: View {
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentStyle: resolvedStyle,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
@@ -589,7 +572,6 @@ struct RenderContainer: View {
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentStyle: resolvedStyle,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener

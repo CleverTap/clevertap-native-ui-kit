@@ -118,11 +118,8 @@ data class Theme(
     companion object {
         val DEFAULT = Theme(
             id = "default",
-            defaultStyle = Style(
-                textColor = "#000000",
-                fontSize = 14f,
-                fontWeight = FontWeight.NORMAL
-            )
+            defaultStyle = Style.EMPTY,
+            colors = emptyMap()
         )
     }
 }

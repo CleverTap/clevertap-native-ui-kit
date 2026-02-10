@@ -3,13 +3,12 @@ package com.clevertap.android.nativedisplay.style
 import com.clevertap.android.nativedisplay.models.*
 
 /**
- * Resolves styles with proper inheritance and priority.
- * 
+ * Resolves styles with proper cascading and priority.
+ *
  * Priority (highest to lowest):
  * 1. Inline style (node.style)
  * 2. Style class (node.styleClass)
- * 3. Inherited style (from parent - cascading properties only)
- * 4. Theme default style
+ * 3. Theme default style
  */
 class StyleResolver(
     private val theme: Theme,
@@ -18,37 +17,31 @@ class StyleResolver(
     private val styleClassMap = styleClasses.associateBy { it.name }
     
     /**
-     * Resolve the final style for a node, considering inheritance.
-     * 
+     * Resolve the final style for a node.
+     *
      * @param node The node to resolve style for
-     * @param parentStyle The parent's resolved style (for inheritance)
      * @return Fully resolved style
      */
     fun resolve(
-        node: NativeDisplayNode,
-        parentStyle: Style? = null
+        node: NativeDisplayNode
     ): Style {
         // Start with theme default
         var resolvedStyle = theme.defaultStyle
-        
-        // Apply inherited cascading properties from parent
-        if (parentStyle != null) {
-            resolvedStyle = resolvedStyle.mergeWith(parentStyle.cascadingOnly())
-        }
-        
-        // Apply style class if specified
+
+        // Apply style class if specified (overrides theme)
         if (node.styleClass != null) {
             val classStyle = styleClassMap[node.styleClass]?.style
             if (classStyle != null) {
-                resolvedStyle = resolvedStyle.mergeWith(classStyle)
+                resolvedStyle = classStyle.mergeWith(resolvedStyle)
             }
         }
-        
-        // Apply inline style (highest priority)
-        if (node.style != null) {
-            resolvedStyle = resolvedStyle.mergeWith(node.style)
+
+        // Apply inline style (highest priority, overrides everything)
+        val nodeStyle = node.style
+        if (nodeStyle != null) {
+            resolvedStyle = nodeStyle.mergeWith(resolvedStyle)
         }
-        
+
         return resolvedStyle
     }
     
@@ -57,10 +50,9 @@ class StyleResolver(
      * Replaces color names with actual color values from theme.
      */
     fun resolveWithColors(
-        node: NativeDisplayNode,
-        parentStyle: Style? = null
+        node: NativeDisplayNode
     ): Style {
-        val style = resolve(node, parentStyle)
+        val style = resolve(node)
         
         return style.copy(
             textColor = resolveColor(style.textColor),

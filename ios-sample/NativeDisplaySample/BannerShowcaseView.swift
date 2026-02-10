@@ -103,82 +103,102 @@ struct BannerShowcaseView: View {
 
     var body: some View {
         NavigationView {
-            List {
-                // Upload Custom JSON button at top
-                Section {
-                    Button(action: {
-                        showingFilePicker = true
-                    }) {
-                        HStack {
-                            Image(systemName: "arrow.up.doc.fill")
-                                .foregroundColor(.blue)
-                                .font(.system(size: 20))
-
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Upload Custom JSON")
-                                    .font(.headline)
-                                    .foregroundColor(.primary)
-
-                                Text("Load and test your own banner configuration")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-
-                            Spacer()
-
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.gray)
-                                .font(.system(size: 14))
-                        }
-                        .padding(.vertical, 8)
-                    }
-                }
-
-                // Pre-defined banners
-                Section(header: Text("Pre-defined Banners")) {
-                    ForEach(banners) { banner in
-                        NavigationLink(destination: BannerDetailView(
-                            bannerTitle: banner.displayTitle,
-                            configSource: .file(filename: banner.filename)
-                        )) {
-                            BannerRowView(banner: banner)
-                        }
-                    }
-                }
-            }
-            .navigationTitle("Banner Showcase")
-            .navigationBarTitleDisplayMode(.large)
-            .sheet(isPresented: $showingFilePicker) {
-                DocumentPicker(
-                    onDocumentPicked: { url in
-                        handleCustomJSON(url: url)
-                    },
-                    onError: { error in
-                        uploadError = error
-                        showingUploadError = true
-                    }
-                )
-            }
-            .alert("Upload Error", isPresented: $showingUploadError) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text(uploadError ?? "Unknown error")
-            }
-            .background(
-                NavigationLink(
-                    destination: customConfigURL.map { url in
-                        BannerDetailView(
-                            bannerTitle: "📄 Custom JSON",
-                            configSource: .file(url: url)
-                        )
-                    },
-                    isActive: $showingCustomBanner
-                ) {
-                    EmptyView()
-                }
-            )
+            mainList
         }
         .navigationViewStyle(StackNavigationViewStyle())
+    }
+
+    private var mainList: some View {
+        List {
+            uploadSection
+            bannersSection
+        }
+        .navigationTitle("Banner Showcase")
+        .navigationBarTitleDisplayMode(.large)
+        .sheet(isPresented: $showingFilePicker) {
+            documentPicker
+        }
+        .alert("Upload Error", isPresented: $showingUploadError) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(uploadError ?? "Unknown error")
+        }
+        .background(customBannerNavigationLink)
+    }
+
+    private var uploadSection: some View {
+        Section {
+            Button(action: {
+                showingFilePicker = true
+            }) {
+                uploadButtonContent
+            }
+        }
+    }
+
+    private var uploadButtonContent: some View {
+        HStack {
+            Image(systemName: "arrow.up.doc.fill")
+                .foregroundColor(.blue)
+                .font(.system(size: 20))
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Upload Custom JSON")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+
+                Text("Load and test your own banner configuration")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .foregroundColor(.gray)
+                .font(.system(size: 14))
+        }
+        .padding(.vertical, 8)
+    }
+
+    private var bannersSection: some View {
+        Section(header: Text("Pre-defined Banners")) {
+            ForEach(banners) { banner in
+                NavigationLink(destination: BannerDetailView(
+                    bannerTitle: banner.displayTitle,
+                    configSource: .bundle(filename: banner.filename)
+                )) {
+                    BannerRowView(banner: banner)
+                }
+            }
+        }
+    }
+
+    private var documentPicker: some View {
+        DocumentPicker(
+            onDocumentPicked: { url in
+                handleCustomJSON(url: url)
+            },
+            onError: { error in
+                uploadError = error
+                showingUploadError = true
+            }
+        )
+    }
+
+    @ViewBuilder
+    private var customBannerNavigationLink: some View {
+        if let url = customConfigURL {
+            NavigationLink(
+                destination: BannerDetailView(
+                    bannerTitle: "📄 Custom JSON",
+                    configSource: .file(url: url)
+                ),
+                isActive: $showingCustomBanner
+            ) {
+                EmptyView()
+            }
+        }
     }
 
     /// Handle custom JSON file selection
