@@ -108,10 +108,10 @@ struct BannerDetailView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Banner Display Area (70% of screen)
-            ZStack {
-                Color(.systemGroupedBackground)
+            GeometryReader { geometry in
+                ZStack {
+                    Color(.systemGroupedBackground)
 
-                Group {
                     if viewModel.isLoading {
                         LoadingIndicator()
                     } else if let error = viewModel.errorMessage {
@@ -125,6 +125,7 @@ struct BannerDetailView: View {
                                 actionListener: viewModel.actionListener,
                                 componentListener: viewModel.componentListener
                             )
+                            .environment(\.nativeDisplayParentSize, geometry.size)
                             .padding(16)
                         }
                     }
@@ -242,7 +243,7 @@ class BannerDetailViewModel: ObservableObject {
     func addLog(_ log: InteractionLog) {
         DispatchQueue.main.async {
             self.interactionLogs.insert(log, at: 0)
-            print("📱 Banner Interaction: \(log.nodeId) | \(log.interactionTypeString)")
+            print("📱 Banner Interaction: \(log.nodeId ?? "ERROR_ID") | \(log.interactionTypeString)")
         }
     }
 

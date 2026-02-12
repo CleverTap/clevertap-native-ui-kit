@@ -6,13 +6,14 @@ import SwiftUI
 // MARK: - Environment Key for Parent Size
 
 /// Environment key for explicitly setting parent size (overrides GeometryReader)
-private struct ParentSizeEnvironmentKey: EnvironmentKey {
-    static let defaultValue: CGSize? = nil
+public struct ParentSizeEnvironmentKey: EnvironmentKey {
+    public static let defaultValue: CGSize? = nil
 }
 
 extension EnvironmentValues {
     /// Explicit parent size for NativeDisplayView layout calculations.
-    var nativeDisplayParentSize: CGSize? {
+    /// Set this to provide a fixed parent size and avoid GeometryReader overhead.
+    public var nativeDisplayParentSize: CGSize? {
         get { self[ParentSizeEnvironmentKey.self] }
         set { self[ParentSizeEnvironmentKey.self] = newValue }
     }
