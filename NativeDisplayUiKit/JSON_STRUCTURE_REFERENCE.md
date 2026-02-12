@@ -468,12 +468,12 @@ Colors must be hex strings:
 
 ```json
 "#RRGGBB"      // RGB
-"#RRGGBBAA"    // RGBA (with alpha)
+"#AARRGGBB"    // ARGB (with alpha)
 ```
 
 Examples:
 - `"#FF5722"` - Orange
-- `"#FF572280"` - Orange with 50% opacity
+- `"#80FF5722"` - Orange with 50% opacity
 
 ---
 

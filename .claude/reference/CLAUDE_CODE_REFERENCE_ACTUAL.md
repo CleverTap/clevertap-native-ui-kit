@@ -401,7 +401,7 @@ bindings: Map<String, String> {
 - All nodes must have layout defined
 - Container can have zero or more children
 - Elements must have elementType
-- Colors must be hex format (#RRGGBB or #RRGGBBAA)
+- Colors must be hex format (#RRGGBB or #AARRGGBB - ARGB format)
 - Opacity must be 0.0 to 1.0
 - fontSize must be > 0
 - Dimensions must have value and unit

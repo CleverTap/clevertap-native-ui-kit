@@ -961,8 +961,11 @@ struct DecorationModifier: ViewModifier {
 // MARK: - Color Parser
 
 /// Utility to parse hex color strings to SwiftUI Color.
+/// Supports #RRGGBB (6 chars) and #AARRGGBB (8 chars, ARGB format).
 public struct ColorParser {
     /// Parse hex color string to SwiftUI Color.
+    /// - #RRGGBB: 6-character RGB (full opacity)
+    /// - #AARRGGBB: 8-character ARGB (alpha in first byte)
     public static func parse(_ colorString: String?) -> Color? {
         guard let colorString = colorString else { return nil }
         
@@ -983,11 +986,12 @@ public struct ColorParser {
                 blue: Double(rgbValue & 0x0000FF) / 255.0
             )
         } else {
+            // Format: #AARRGGBB (alpha in highest byte, ARGB standard)
             return Color(
-                red: Double((rgbValue & 0xFF000000) >> 24) / 255.0,
-                green: Double((rgbValue & 0x00FF0000) >> 16) / 255.0,
-                blue: Double((rgbValue & 0x0000FF00) >> 8) / 255.0,
-                opacity: Double(rgbValue & 0x000000FF) / 255.0
+                red: Double((rgbValue & 0x00FF0000) >> 16) / 255.0,      // RR byte
+                green: Double((rgbValue & 0x0000FF00) >> 8) / 255.0,     // GG byte
+                blue: Double((rgbValue & 0x000000FF)) / 255.0,           // BB byte
+                opacity: Double((rgbValue & 0xFF000000) >> 24) / 255.0   // AA byte
             )
         }
     }

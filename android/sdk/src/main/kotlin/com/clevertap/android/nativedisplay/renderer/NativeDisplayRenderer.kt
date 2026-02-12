@@ -954,11 +954,10 @@ private fun Modifier.applySizing(layout: Layout?): Modifier {
     // Apply aspect ratio BEFORE sizing if appropriate
     // Skip if both dimensions are fixed (explicit sizes take precedence)
     // Skip if aspect ratio is invalid (≤ 0)
-    if (layout.aspectRatio != null &&
-        layout.aspectRatio > 0 &&
-        !(hasFixedWidth && hasFixedHeight)) {
+    val doesNotHaveFixedWidth = !(hasFixedWidth && hasFixedHeight)
+    if (layout.aspectRatio != null && layout.aspectRatio > 0 && doesNotHaveFixedWidth) {
         modifier = modifier.aspectRatio(
-            1f / layout.aspectRatio,
+            layout.aspectRatio,
             matchHeightConstraintsFirst = hasFixedHeight
         )
     }
@@ -1230,13 +1229,8 @@ fun parseColor(colorString: String?): Color? {
                 )
             }
             8 -> {
-                val argb = hex.toLong(16)
-                Color(
-                    alpha = ((argb shr 24) and 0xFF) / 255f,
-                    red = ((argb shr 16) and 0xFF) / 255f,
-                    green = ((argb shr 8) and 0xFF) / 255f,
-                    blue = (argb and 0xFF) / 255f
-                )
+                // Compose Color(Long) expects 0xAARRGGBB format (ARGB)
+                Color(hex.toLong(16))
             }
             else -> null
         }

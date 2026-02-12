@@ -323,13 +323,13 @@ This applies to:
 **Format:** Hex with optional alpha
 ```
 #RRGGBB
-#RRGGBBAA
+#AARRGGBB
 ```
 
 **Parsing:**
 ```
 #FF5722 → RGB(255, 87, 34)
-#FF572280 → RGBA(255, 87, 34, 0.5)
+#FF572280 → ARGB(0.5, 255, 87, 34)
 ```
 
 ### 2. Dimensions

@@ -248,7 +248,7 @@ Reference: COMPONENTS_GUIDE.md
 
 ```
 #RRGGBB        // Hex RGB (e.g., #FF0000 = red)
-#RRGGBBAA      // Hex RGBA with alpha (e.g., #FF000080 = red 50% opacity)
+#AARRGGBB      // Hex ARGB with alpha (e.g., #80FF0000 = red 50% opacity)
 ```
 
 ---

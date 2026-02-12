@@ -393,7 +393,7 @@ object ColorUtils {
     
     /**
      * Parse hex color to ARGB
-     * Supports: #RGB, #RRGGBB, #RRGGBBAA
+     * Supports: #RGB, #RRGGBB, #AARRGGBB (ARGB format)
      */
     fun parseHexColor(hex: String): Int {
         val cleanHex = hex.removePrefix("#")
@@ -411,7 +411,7 @@ object ColorUtils {
                 0xFF000000.toInt() or cleanHex.toInt(16)
             }
             8 -> {
-                // RRGGBBAA format
+                // AARRGGBB format (ARGB - alpha first)
                 val rrggbb = cleanHex.substring(0, 6).toInt(16)
                 val aa = cleanHex.substring(6, 8).toInt(16)
                 ((aa shl 24) or rrggbb)
