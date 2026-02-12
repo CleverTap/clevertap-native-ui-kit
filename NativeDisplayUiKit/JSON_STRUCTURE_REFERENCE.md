@@ -13,11 +13,13 @@ This document provides a comprehensive guide to creating valid JSON configuratio
 3. [Container Types](#container-types)
 4. [Element Types](#element-types)
 5. [Layout System](#layout-system)
-6. [Style System](#style-system)
-7. [Background System](#background-system)
-8. [Actions System](#actions-system)
-9. [Complete Examples](#complete-examples)
-10. [Validation Checklist](#validation-checklist)
+6. [Aspect Ratios](#aspect-ratios)
+7. [Percentage-Based Layouts](#percentage-based-layouts)
+8. [Style System](#style-system)
+9. [Background System](#background-system)
+10. [Actions System](#actions-system)
+11. [Complete Examples](#complete-examples)
+12. [Validation Checklist](#validation-checklist)
 
 ---
 
@@ -392,6 +394,7 @@ Visual separator line.
 {
   "width": {"value": 200, "unit": "dp"},
   "height": {"value": 100, "unit": "dp"},
+  "aspectRatio": 1.5,            // Optional: width/height ratio
   "padding": {
     "all": 16,              // All sides
     // OR
@@ -429,6 +432,301 @@ For `vertical` and `horizontal` containers:
 - `"center"` - Center children
 - `"end"` - Align to end
 - `"spacing"` is needed only for `"spaced"` type of arrangement strategy, all others do not need any value for unit
+
+---
+
+## Aspect Ratios
+
+### Using Aspect Ratios
+
+Aspect ratios automatically calculate one dimension based on the other, maintaining a specific width-to-height proportion.
+
+```json
+{
+  "layout": {
+    "width": {"value": 100, "unit": "percent"},
+    "aspectRatio": 1.5
+  }
+}
+```
+
+**How it works:**
+- `aspectRatio` = width / height
+- If you specify `width` + `aspectRatio`, height is calculated automatically
+- If you specify `height` + `aspectRatio`, width is calculated automatically
+- Common ratios: `1.0` (square), `1.77` (16:9), `0.75` (3:4 portrait)
+
+### Aspect Ratio Examples
+
+#### Square Image (1:1)
+```json
+{
+  "type": "element",
+  "id": "avatar",
+  "elementType": "image",
+  "bindings": {"url": "https://example.com/avatar.jpg"},
+  "layout": {
+    "width": {"value": 100, "unit": "dp"},
+    "aspectRatio": 1.0
+  }
+}
+```
+
+#### 16:9 Video Container
+```json
+{
+  "type": "container",
+  "id": "videoContainer",
+  "containerType": "box",
+  "layout": {
+    "width": {"value": 100, "unit": "percent"},
+    "aspectRatio": 1.777
+  }
+}
+```
+
+#### Portrait Card (3:4)
+```json
+{
+  "type": "container",
+  "id": "card",
+  "containerType": "vertical",
+  "layout": {
+    "width": {"value": 300, "unit": "dp"},
+    "aspectRatio": 0.75
+  }
+}
+```
+
+### Aspect Ratio Priority Rules
+
+1. **Both dimensions specified**: `aspectRatio` is ignored
+2. **Width + aspectRatio**: Height is calculated as `width / aspectRatio`
+3. **Height + aspectRatio**: Width is calculated as `height * aspectRatio`
+4. **Only aspectRatio**: Depends on parent constraints
+
+---
+
+## Percentage-Based Layouts
+
+### How Percentages Work
+
+Percentage dimensions are calculated relative to the **parent container's available space**.
+
+```json
+{
+  "value": 50,
+  "unit": "percent"
+}
+```
+
+**Key Rules:**
+- Percentages are calculated **after** parent's padding is applied
+- For `width`, percentage is relative to parent's **content width**
+- For `height`, percentage is relative to parent's **content height**
+- Range: `0-100` (values outside this range may cause unexpected behavior)
+
+### Percentage Calculation Formula
+
+```
+Child Size = (Parent Content Size × Percentage) / 100
+
+Where Parent Content Size = Parent Size - Parent Padding
+```
+
+### Example: Percentage with Padding
+
+```json
+{
+  "type": "container",
+  "id": "parent",
+  "containerType": "vertical",
+  "layout": {
+    "width": {"value": 400, "unit": "dp"},
+    "padding": {"horizontal": 20}
+  },
+  "children": [
+    {
+      "type": "element",
+      "id": "child",
+      "elementType": "text",
+      "bindings": {"text": "I'm 50% width"},
+      "layout": {
+        "width": {"value": 50, "unit": "percent"}
+      }
+    }
+  ]
+}
+```
+
+**Calculation:**
+- Parent width: 400dp
+- Parent padding: 20dp (left) + 20dp (right) = 40dp
+- Parent content width: 400dp - 40dp = 360dp
+- Child width: 360dp × 50% = **180dp**
+
+### Full Width Pattern (100%)
+
+```json
+{
+  "layout": {
+    "width": {"value": 100, "unit": "percent"}
+  }
+}
+```
+
+This makes an element fill the entire width of its parent container (excluding parent padding).
+
+### Responsive Grid with Percentages
+
+```json
+{
+  "type": "container",
+  "id": "grid",
+  "containerType": "horizontal",
+  "layout": {
+    "width": {"value": 100, "unit": "percent"},
+    "padding": {"all": 8}
+  },
+  "children": [
+    {
+      "type": "element",
+      "id": "col1",
+      "elementType": "text",
+      "bindings": {"text": "Column 1"},
+      "layout": {
+        "width": {"value": 33.33, "unit": "percent"}
+      }
+    },
+    {
+      "type": "element",
+      "id": "col2",
+      "elementType": "text",
+      "bindings": {"text": "Column 2"},
+      "layout": {
+        "width": {"value": 33.33, "unit": "percent"}
+      }
+    },
+    {
+      "type": "element",
+      "id": "col3",
+      "elementType": "text",
+      "bindings": {"text": "Column 3"},
+      "layout": {
+        "width": {"value": 33.34, "unit": "percent"}
+      }
+    }
+  ]
+}
+```
+
+### Percentage + Aspect Ratio
+
+Combine percentages with aspect ratios for responsive, proportional layouts:
+
+```json
+{
+  "type": "element",
+  "id": "responsiveImage",
+  "elementType": "image",
+  "bindings": {"url": "https://example.com/image.jpg"},
+  "layout": {
+    "width": {"value": 100, "unit": "percent"},
+    "aspectRatio": 1.5
+  }
+}
+```
+
+**Result:**
+- Width adapts to parent (e.g., 300dp on small screen, 600dp on large screen)
+- Height automatically adjusts (e.g., 200dp and 400dp respectively)
+
+### Percentage Limitations
+
+**❌ Don't use percentages when:**
+- Parent has `wrap_content` dimension (unpredictable results)
+- Creating fixed-size elements that shouldn't scale
+- Circular dependencies exist (parent depends on child, child on parent)
+
+**✅ Do use percentages for:**
+- Responsive layouts that adapt to screen size
+- Proportional spacing and grids
+- Full-width/height elements
+- Elements that should scale with their container
+
+### Percentage in Different Container Types
+
+#### VERTICAL Container
+```json
+{
+  "type": "container",
+  "containerType": "vertical",
+  "layout": {
+    "width": {"value": 300, "unit": "dp"},
+    "height": {"value": 400, "unit": "dp"}
+  },
+  "children": [
+    {
+      "layout": {
+        "width": {"value": 80, "unit": "percent"},    // 80% of 300dp = 240dp
+        "height": {"value": 25, "unit": "percent"}    // 25% of 400dp = 100dp
+      }
+    }
+  ]
+}
+```
+
+#### HORIZONTAL Container
+```json
+{
+  "type": "container",
+  "containerType": "horizontal",
+  "layout": {
+    "width": {"value": 500, "unit": "dp"}
+  },
+  "children": [
+    {
+      "layout": {
+        "width": {"value": 40, "unit": "percent"}     // 40% of 500dp = 200dp
+      }
+    },
+    {
+      "layout": {
+        "width": {"value": 60, "unit": "percent"}     // 60% of 500dp = 300dp
+      }
+    }
+  ]
+}
+```
+
+#### BOX/STACK Container
+```json
+{
+  "type": "container",
+  "containerType": "box",
+  "layout": {
+    "width": {"value": 400, "unit": "dp"},
+    "height": {"value": 300, "unit": "dp"}
+  },
+  "children": [
+    {
+      "layout": {
+        "width": {"value": 100, "unit": "percent"},   // Fills entire box width
+        "height": {"value": 100, "unit": "percent"}   // Fills entire box height
+      }
+    }
+  ]
+}
+```
+
+### Best Practices
+
+1. **Use percentages for responsive layouts** that need to adapt to different screen sizes
+2. **Combine with aspectRatio** to maintain proportions while scaling
+3. **Avoid mixing** percentage children with `match_parent` in the same container
+4. **Be mindful of padding** - percentages calculate from content area, not total size
+5. **Test on multiple screen sizes** to ensure responsive behavior works as expected
+6. **Use fixed dimensions (dp)** for elements that should remain constant across devices
 
 ---
 
@@ -793,6 +1091,9 @@ Actions are defined in the `actions` object with trigger keys:
 - [ ] OR have `special` field only
 - [ ] Unit is one of: `dp`, `sp`, `px`, `percent`
 - [ ] Special is: `wrap_content` or `match_parent`
+- [ ] Percentage values are between 0-100
+- [ ] `aspectRatio` is a positive number (if used)
+- [ ] When using percentages, parent has fixed or `match_parent` dimensions
 
 ### ✅ Common Mistakes
 
@@ -838,6 +1139,45 @@ Actions are defined in the `actions` object with trigger keys:
   "layout": {
     "height": {"value": 16, "unit": "dp"}
   }
+}
+```
+
+### Common Pattern: Full Width with Aspect Ratio
+
+```json
+{
+  "type": "element",
+  "id": "responsiveImage",
+  "elementType": "image",
+  "bindings": {"url": "https://example.com/image.jpg"},
+  "layout": {
+    "width": {"value": 100, "unit": "percent"},
+    "aspectRatio": 1.5
+  }
+}
+```
+
+### Common Pattern: Responsive Grid (3 columns)
+
+```json
+{
+  "type": "container",
+  "id": "grid",
+  "containerType": "horizontal",
+  "children": [
+    {
+      "id": "col1",
+      "layout": {"width": {"value": 33.33, "unit": "percent"}}
+    },
+    {
+      "id": "col2",
+      "layout": {"width": {"value": 33.33, "unit": "percent"}}
+    },
+    {
+      "id": "col3",
+      "layout": {"width": {"value": 33.34, "unit": "percent"}}
+    }
+  ]
 }
 ```
 
