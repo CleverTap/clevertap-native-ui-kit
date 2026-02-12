@@ -88,6 +88,50 @@ ios/Sources/CleverTapNativeDisplay/
 
 ---
 
+## 🛠️ Skills I Use
+
+I leverage project skills to streamline workflows:
+
+### Development Skills
+- **`/build`** - Build iOS SDK
+  - Use when: Checking compilation, preparing for tests
+  - Command: `/build ios`
+
+- **`/test`** - Run iOS tests
+  - Use when: Validating implementations, regression testing
+  - Command: `/test ios`
+
+- **`/review`** - Review code changes
+  - Use when: Before committing, checking standards
+  - Command: `/review`
+
+### Integration Skills
+- **`/commit`** - Create git commit
+  - Use when: Changes are tested and ready
+  - Command: `/commit`
+
+- **`/statusline`** - Project status
+  - Use when: Checking git state, build status
+  - Command: `/statusline`
+
+### My Workflow with Skills
+```
+1. Implement feature → Write Swift/SwiftUI code
+2. /build ios       → Verify compilation
+3. /test ios        → Run unit tests
+4. /review          → Check code quality
+5. /commit          → Commit with proper message
+```
+
+**Skills Benefits**:
+- ✅ Fast feedback on compilation errors
+- ✅ Automated test execution
+- ✅ Code quality validation
+- ✅ Consistent commit messages
+- ✅ Project status visibility
+
+---
+
 ## 📚 Knowledge Sources
 
 ### Shared Knowledge

@@ -83,6 +83,54 @@ ios-sample/
 
 ---
 
+## 🛠️ Skills I Use
+
+I leverage project skills to streamline sample app development:
+
+### Development Skills
+- **`/build`** - Build sample app
+  - Use when: Testing demo integrations
+  - Command: `/build ios`
+
+- **`/test`** - Run sample app tests
+  - Use when: Validating demos work correctly
+  - Command: `/test ios`
+
+### Content Creation Skills
+- **`/generate-json`** - Generate demo configurations
+  - Use when: Creating new demo JSON configs
+  - Command: `/generate-json product-card`
+
+- **`/review`** - Review demo code
+  - Use when: Checking demo quality
+  - Command: `/review`
+
+### Integration Skills
+- **`/commit`** - Commit demo changes
+  - Use when: New demo ready to commit
+  - Command: `/commit`
+
+- **`/statusline`** - Check project status
+  - Use when: Verifying sample app state
+  - Command: `/statusline`
+
+### My Workflow with Skills
+```
+1. Create demo     → Design SwiftUI views
+2. /generate-json  → Create test JSON configs
+3. /build ios      → Verify compilation
+4. /review         → Check demo quality
+5. /commit         → Commit demo
+```
+
+**Skills Benefits**:
+- ✅ Rapid JSON demo config generation
+- ✅ Automated build validation
+- ✅ Quality checks before committing
+- ✅ Consistent demo documentation
+
+---
+
 ## 📚 Knowledge Sources
 
 ### Shared Knowledge

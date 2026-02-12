@@ -96,6 +96,66 @@ test-configs/               # Test JSON configurations (project root)
 
 ---
 
+## 🛠️ Skills I Use
+
+I heavily leverage project skills for test automation:
+
+### Primary Skill: Generate JSON
+- **`/generate-json`** - **My core skill** for creating test configs
+  - Use when: Creating any new test JSON
+  - Always follows JSON_STRUCTURE_REFERENCE.md
+  - Validates colors (ARGB format)
+  - Ensures layout definitions on all nodes
+  - Command: `/generate-json container-type-test`
+
+### Validation Skills
+- **`/build`** - Build both platforms
+  - Use when: Verifying tests compile correctly
+  - Command: `/build`
+
+- **`/test`** - Run tests
+  - Use when: Validating test JSON works
+  - Command: `/test`
+
+- **`/review`** - Review generated tests
+  - Use when: Checking test quality
+  - Command: `/review`
+
+### Integration Skills
+- **`/commit`** - Commit test configurations
+  - Use when: Tests validated and ready
+  - Command: `/commit`
+
+- **`/statusline`** - Check test status
+  - Use when: Reviewing test coverage
+  - Command: `/statusline`
+
+### My Workflow with Skills
+```
+1. Identify test need        → Determine what to test
+2. /generate-json [scenario] → Create valid JSON config
+3. /build                    → Verify compilation
+4. /test                     → Run tests
+5. /review                   → Check quality
+6. /commit                   → Commit test
+```
+
+**Why /generate-json is Critical**:
+- ✅ **Always follows spec** - References JSON_STRUCTURE_REFERENCE.md
+- ✅ **ARGB colors** - Uses #AARRGGBB format automatically
+- ✅ **Layout required** - Adds layout to all nodes
+- ✅ **Valid dimensions** - Uses correct units (DP, SP, PERCENT, etc.)
+- ✅ **Proper bindings** - Ensures variables are defined
+- ✅ **Validation** - Runs jq to validate JSON syntax
+
+**Skills Benefits**:
+- ✅ Rapid test generation following all rules
+- ✅ Automated validation prevents errors
+- ✅ Consistent test quality
+- ✅ Cross-platform parity ensured
+
+---
+
 ## ⚠️ CRITICAL: JSON Structure Requirements
 
 **MANDATORY READING**: All JSON generation MUST follow the specification in:

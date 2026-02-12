@@ -207,6 +207,96 @@ Reference: COMPONENTS_GUIDE.md
 
 ---
 
+## Workflows with Skills
+
+Skills are one-command workflows that streamline development. Invoke with `/skill-name`.
+
+### Available Skills
+
+| Skill | Command | Purpose |
+|-------|---------|---------|
+| `/commit` | `/commit` | Create git commit with proper message |
+| `/generate-json` | `/generate-json [type]` | Generate test JSON configs |
+| `/test` | `/test [platform]` | Run Android/iOS tests |
+| `/build` | `/build [platform]` | Build Android/iOS SDK |
+| `/review` | `/review` | Review code changes |
+| `/statusline` | `/statusline` | Show project status |
+
+### Workflow 1: Making Changes
+
+Standard development workflow:
+```
+1. Edit code
+2. /build android      → Verify compilation
+3. /test android       → Run tests
+4. /review             → Check standards
+5. /commit             → Commit with proper message
+```
+
+### Workflow 2: Generating Test Configurations
+
+Create valid test JSON configs:
+```
+1. /generate-json product-card
+   → Generates valid JSON following JSON_STRUCTURE_REFERENCE.md
+   → Uses ARGB color format (#AARRGGBB)
+   → Ensures layout definitions on all nodes
+   → Validates with jq
+
+2. Saved to: test-configs/generated/product-card-test.json
+
+3. /test               → Verify it works
+```
+
+### Workflow 3: Cross-Platform Development
+
+Maintain parity across platforms:
+```
+1. Implement Android feature
+2. /build android
+3. /test android
+4. Implement iOS equivalent
+5. /build ios
+6. /test ios
+7. /review             → Check parity
+8. /commit
+```
+
+### Workflow 4: Quick Status Check
+
+Check project state before starting work:
+```
+/statusline
+  → Git status (branch, changes)
+  → Build status (last build results)
+  → Test status (last test results)
+  → Phase progress (current development phase)
+```
+
+### Workflow 5: Creating Demos
+
+Sample app development:
+```
+1. Design demo UI
+2. /generate-json demo-scenario
+3. Integrate in sample app
+4. /build android
+5. /review
+6. /commit
+```
+
+### Skills Benefits
+
+- ✅ **Consistency** - Same workflow every time
+- ✅ **Validation** - Built-in checks (JSON validation, code review)
+- ✅ **Speed** - One command instead of multiple steps
+- ✅ **Discoverability** - Easy to remember `/skill-name` pattern
+- ✅ **Quality** - Automated standards enforcement
+
+**See**: `.claude/skills/` directory for detailed documentation on each skill
+
+---
+
 ## Key Features
 
 ### ✅ Supported

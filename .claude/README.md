@@ -12,6 +12,14 @@ This directory contains AI agent configurations and documentation for the Native
 ├── PROGRESS.md            # Development phase tracking
 ├── settings.json          # Project configuration
 │
+├── skills/                # 6 Project skills (NEW)
+│   ├── commit/            # Git commit automation
+│   ├── generate-json/     # Test JSON generation
+│   ├── test/              # Test execution
+│   ├── build/             # Build automation
+│   ├── review/            # Code review
+│   └── statusline/        # Project status
+│
 ├── agents/                # 5 Specialized AI agents
 │   ├── README.md          # Agents overview
 │   ├── QUICK_REFERENCE.md # Agent command cheat sheet
@@ -52,6 +60,62 @@ We have **5 specialized agents** to help with development:
 
 ---
 
+## 🛠️ Skills
+
+**Skills** are one-command workflows that automate common tasks. Invoke with `/skill-name`.
+
+### Available Skills
+
+| Skill | Command | Purpose | Example |
+|-------|---------|---------|---------|
+| **Commit** | `/commit` | Create git commit with proper message | `/commit` |
+| **Generate JSON** | `/generate-json` | Generate test JSON configs | `/generate-json product-card` |
+| **Test** | `/test` | Run Android/iOS tests | `/test android` |
+| **Build** | `/build` | Build Android/iOS SDK | `/build ios` |
+| **Review** | `/review` | Review code changes | `/review` |
+| **Statusline** | `/statusline` | Show project status | `/statusline` |
+
+### Skill Workflows
+
+#### Making Changes
+```
+1. Edit code
+2. /build        → Verify compilation
+3. /test         → Run tests
+4. /review       → Check standards
+5. /commit       → Commit changes
+```
+
+#### Generating Test Configs
+```
+1. /generate-json container-test
+   → Creates valid JSON following JSON_STRUCTURE_REFERENCE.md
+   → Validates colors (ARGB format)
+   → Ensures layout definitions
+   → Runs jq validation
+```
+
+#### Quick Status Check
+```
+/statusline
+   → Git status
+   → Build status
+   → Test results
+   → Phase progress
+```
+
+### Skills Benefits
+
+- ✅ **Fast workflows** - One command instead of multiple steps
+- ✅ **Consistency** - Same process every time
+- ✅ **Validation** - Built-in checks and standards
+- ✅ **Discoverability** - Easy to remember `/skill-name` pattern
+- ✅ **Integration** - Work seamlessly with agents
+
+**See**: Each skill's `SKILL.md` file in `skills/` directory for detailed documentation
+
+---
+
 ## 📚 Documentation
 
 ### For Existing Features (Phases 1-8)
@@ -82,6 +146,7 @@ We have **5 specialized agents** to help with development:
 
 ## 📋 What's What
 
+- **skills/**: One-command workflows for common tasks (NEW)
 - **agents/**: AI agent configurations and documentation
 - **reference/**: Documentation for implemented features
 - **specs/**: Specifications for new features

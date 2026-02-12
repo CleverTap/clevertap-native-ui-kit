@@ -1,0 +1,79 @@
+{
+  "_comment": "Template for testing container variations",
+  "_usage": "Duplicate and modify for each container type and arrangement strategy",
+
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#212121",
+      "fontSize": 14
+    }
+  },
+
+  "root": {
+    "id": "test-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "height": {"value": 300, "unit": "dp"},
+      "padding": {"all": 16}
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5",
+      "borderRadius": 8,
+      "borderWidth": 1,
+      "borderColor": "#E0E0E0"
+    },
+    "arrangement": {
+      "spacing": 12,
+      "strategy": "spaced"
+    },
+    "children": [
+      {
+        "id": "child-1",
+        "elementType": "text",
+        "bindings": {"text": "First Child"},
+        "layout": {
+          "width": {"value": 100, "unit": "percent"},
+          "height": {"value": 50, "unit": "dp"}
+        },
+        "style": {
+          "backgroundColor": "#E3F2FD",
+          "textAlign": "center"
+        }
+      },
+      {
+        "id": "child-2",
+        "elementType": "text",
+        "bindings": {"text": "Second Child"},
+        "layout": {
+          "width": {"value": 100, "unit": "percent"},
+          "height": {"value": 50, "unit": "dp"}
+        },
+        "style": {
+          "backgroundColor": "#FFEBEE",
+          "textAlign": "center"
+        }
+      },
+      {
+        "id": "child-3",
+        "elementType": "text",
+        "bindings": {"text": "Third Child"},
+        "layout": {
+          "width": {"value": 100, "unit": "percent"},
+          "height": {"value": 50, "unit": "dp"}
+        },
+        "style": {
+          "backgroundColor": "#E8F5E9",
+          "textAlign": "center"
+        }
+      }
+    ]
+  },
+
+  "_variations": {
+    "containerTypes": ["vertical", "horizontal", "box", "stack", "gallery"],
+    "strategies": ["spaced", "space_between", "space_evenly", "space_around", "start", "center", "end"],
+    "spacing_values": [0, 8, 16, 24]
+  }
+}

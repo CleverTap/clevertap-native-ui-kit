@@ -88,6 +88,50 @@ android/sdk/src/main/kotlin/com/clevertap/android/nativedisplay/
 
 ---
 
+## 🛠️ Skills I Use
+
+I leverage project skills to streamline workflows:
+
+### Development Skills
+- **`/build`** - Build Android SDK
+  - Use when: Checking compilation, preparing for tests
+  - Command: `/build android`
+
+- **`/test`** - Run Android tests
+  - Use when: Validating implementations, regression testing
+  - Command: `/test android`
+
+- **`/review`** - Review code changes
+  - Use when: Before committing, checking standards
+  - Command: `/review`
+
+### Integration Skills
+- **`/commit`** - Create git commit
+  - Use when: Changes are tested and ready
+  - Command: `/commit`
+
+- **`/statusline`** - Project status
+  - Use when: Checking git state, build status
+  - Command: `/statusline`
+
+### My Workflow with Skills
+```
+1. Implement feature → Write Kotlin/Compose code
+2. /build android   → Verify compilation
+3. /test android    → Run unit tests
+4. /review          → Check code quality
+5. /commit          → Commit with proper message
+```
+
+**Skills Benefits**:
+- ✅ Fast feedback on compilation errors
+- ✅ Automated test execution
+- ✅ Code quality validation
+- ✅ Consistent commit messages
+- ✅ Project status visibility
+
+---
+
 ## 📚 Knowledge Sources
 
 ### Shared Knowledge
