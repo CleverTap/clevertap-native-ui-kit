@@ -319,6 +319,21 @@ Sample app development:
 - **Arrangement**: 7 strategies (SPACED, SPACE_BETWEEN, SPACE_EVENLY, SPACE_AROUND, START, CENTER, END)
 - **Positioning**: Offset for absolute positioning in BOX/STACK
 
+### Default Values & Backward Compatibility
+
+**All layout types have sensible defaults to prevent JSON parsing failures:**
+
+- **Dimension**: `value=0`, `unit=DP`, `special=null`
+- **Offset**: `x=0`, `y=0`, `unit=DP`
+- **Spacing**: `unit=DP` (all spacing values optional)
+- **ChildArrangement**: `spacingUnit=DP`, `strategy=SPACED`
+
+This means backend JSON can omit these fields without breaking parsing on mobile clients. Both Android and iOS implementations ensure robust parsing through:
+- **Android**: Default parameter values in `@Serializable` data classes
+- **iOS**: Custom decoders with `decodeIfPresent` + `??` fallbacks
+
+**Example**: An empty dimension `{}` will successfully parse as `{value: 0, unit: "dp", special: null}`
+
 ---
 
 ## Style Resolution Order

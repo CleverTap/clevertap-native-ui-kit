@@ -4,6 +4,40 @@ Complete type definitions for Claude Code to understand the system structure.
 
 ---
 
+## 🛡️ Default Values for Backward Compatibility
+
+**IMPORTANT:** All layout-related types (`Dimension`, `Offset`, `Spacing`, `ChildArrangement`) have default values to ensure robust JSON parsing. This means backend can omit fields without causing parsing failures.
+
+### Default Values Summary
+
+| Type | Property | Default |
+|------|----------|---------|
+| **Dimension** | `value` | `0` |
+| | `unit` | `DP` |
+| | `special` | `null` |
+| **Offset** | `x` | `0` |
+| | `y` | `0` |
+| | `unit` | `DP` |
+| **Spacing** | `all/horizontal/vertical/top/bottom/left/right` | `null` |
+| | `unit` | `DP` |
+| **ChildArrangement** | `spacing` | `null` |
+| | `spacingUnit` | `DP` |
+| | `strategy` | `SPACED` |
+
+### Implementation Strategy
+
+**Android (Kotlin):**
+- Uses `@Serializable` data classes with default parameter values
+- Example: `val value: Float = 0f`
+
+**iOS (Swift):**
+- Uses custom `init(from decoder:)` with `decodeIfPresent` + `??` fallbacks
+- Example: `try container.decodeIfPresent(CGFloat.self, forKey: .value) ?? 0`
+
+Both approaches ensure that missing JSON fields don't break parsing, maintaining backward compatibility with backend configurations that may not include all optional fields.
+
+---
+
 ## Kotlin Data Models
 
 ```kotlin
@@ -117,34 +151,56 @@ data class Shadow(val color: String, val radius: Int, val offset: Offset)
 data class Layout(
     val width: Dimension? = null,
     val height: Dimension? = null,
-    val minWidth: Dimension? = null,
-    val maxWidth: Dimension? = null,
-    val minHeight: Dimension? = null,
-    val maxHeight: Dimension? = null,
+    val aspectRatio: Float? = null,
+    val offset: Offset? = null,
     val padding: Spacing? = null,
-    val margin: Spacing? = null,
-    val aspectRatio: Float? = null
+    val arrangement: ChildArrangement? = null
 )
 
+/**
+ * Dimension with default values for robust JSON parsing.
+ * Backend can omit any field and parsing will succeed with defaults.
+ */
 @Serializable
 data class Dimension(
-    val value: Float,
-    val unit: String  // dp, percent, px, wrap, fill
+    val value: Float = 0f,  // Default: 0
+    val unit: DimensionUnit = DimensionUnit.DP,  // Default: DP
+    val special: SpecialDimension? = null  // Default: null
 )
 
+/**
+ * Offset for absolute positioning with default values.
+ */
+@Serializable
+data class Offset(
+    val x: Float = 0f,  // Default: 0
+    val y: Float = 0f,  // Default: 0
+    val unit: DimensionUnit = DimensionUnit.DP  // Default: DP
+)
+
+/**
+ * Spacing with default unit for padding.
+ */
 @Serializable
 data class Spacing(
-    val value: Int? = null,
-    val unit: String? = null,
-    val all: Int? = null,
-    val horizontal: Int? = null,
-    val vertical: Int? = null,
-    val top: Int? = null,
-    val bottom: Int? = null,
-    val left: Int? = null,
-    val right: Int? = null,
-    val start: Int? = null,
-    val end: Int? = null
+    val all: Float? = null,
+    val horizontal: Float? = null,
+    val vertical: Float? = null,
+    val top: Float? = null,
+    val bottom: Float? = null,
+    val left: Float? = null,
+    val right: Float? = null,
+    val unit: DimensionUnit = DimensionUnit.DP  // Default: DP
+)
+
+/**
+ * Child arrangement with defaults for container spacing.
+ */
+@Serializable
+data class ChildArrangement(
+    val spacing: Float? = null,
+    val spacingUnit: DimensionUnit = DimensionUnit.DP,  // Default: DP
+    val strategy: ArrangementStrategy = ArrangementStrategy.SPACED  // Default: SPACED
 )
 
 // ============ DISPLAY NODES ============
@@ -332,19 +388,95 @@ struct Layout: Codable {
     let margin: Spacing?
 }
 
+/**
+ * Dimension with default values via custom decoder.
+ * iOS uses decodeIfPresent with ?? fallbacks for robust parsing.
+ */
 struct Dimension: Codable {
-    let value: Float
-    let unit: String
+    let value: CGFloat  // Default: 0
+    let unit: DimensionUnit  // Default: .dp
+    let special: SpecialDimension?  // Default: nil
+
+    init(value: CGFloat = 0, unit: DimensionUnit = .dp, special: SpecialDimension? = nil) {
+        self.value = value
+        self.unit = unit
+        self.special = special
+    }
+
+    // Custom decoder with defaults
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.value = try container.decodeIfPresent(CGFloat.self, forKey: .value) ?? 0
+        self.unit = try container.decodeIfPresent(DimensionUnit.self, forKey: .unit) ?? .dp
+        self.special = try container.decodeIfPresent(SpecialDimension.self, forKey: .special)
+    }
 }
 
+/**
+ * Offset with default values via custom decoder.
+ */
+struct Offset: Codable {
+    let x: CGFloat  // Default: 0
+    let y: CGFloat  // Default: 0
+    let unit: DimensionUnit  // Default: .dp
+
+    init(x: CGFloat = 0, y: CGFloat = 0, unit: DimensionUnit = .dp) {
+        self.x = x
+        self.y = y
+        self.unit = unit
+    }
+
+    // Custom decoder with defaults
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.x = try container.decodeIfPresent(CGFloat.self, forKey: .x) ?? 0
+        self.y = try container.decodeIfPresent(CGFloat.self, forKey: .y) ?? 0
+        self.unit = try container.decodeIfPresent(DimensionUnit.self, forKey: .unit) ?? .dp
+    }
+}
+
+/**
+ * Spacing with default unit via custom decoder.
+ */
 struct Spacing: Codable {
-    let all: Int?
-    let horizontal: Int?
-    let vertical: Int?
-    let top: Int?
-    let bottom: Int?
-    let left: Int?
-    let right: Int?
+    let all: CGFloat?
+    let horizontal: CGFloat?
+    let vertical: CGFloat?
+    let top: CGFloat?
+    let bottom: CGFloat?
+    let left: CGFloat?
+    let right: CGFloat?
+    let unit: DimensionUnit  // Default: .dp
+
+    // Custom decoder with default for unit
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.all = try container.decodeIfPresent(CGFloat.self, forKey: .all)
+        self.horizontal = try container.decodeIfPresent(CGFloat.self, forKey: .horizontal)
+        self.vertical = try container.decodeIfPresent(CGFloat.self, forKey: .vertical)
+        self.top = try container.decodeIfPresent(CGFloat.self, forKey: .top)
+        self.bottom = try container.decodeIfPresent(CGFloat.self, forKey: .bottom)
+        self.left = try container.decodeIfPresent(CGFloat.self, forKey: .left)
+        self.right = try container.decodeIfPresent(CGFloat.self, forKey: .right)
+        self.unit = try container.decodeIfPresent(DimensionUnit.self, forKey: .unit) ?? .dp
+    }
+}
+
+/**
+ * ChildArrangement with defaults via custom decoder.
+ */
+struct ChildArrangement: Codable {
+    let spacing: CGFloat?
+    let spacingUnit: DimensionUnit  // Default: .dp
+    let strategy: ArrangementStrategy  // Default: .spaced
+
+    // Custom decoder with defaults
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.spacing = try container.decodeIfPresent(CGFloat.self, forKey: .spacing)
+        self.spacingUnit = try container.decodeIfPresent(DimensionUnit.self, forKey: .spacingUnit) ?? .dp
+        self.strategy = try container.decodeIfPresent(ArrangementStrategy.self, forKey: .strategy) ?? .spaced
+    }
 }
 
 enum NativeDisplayNode: Codable {

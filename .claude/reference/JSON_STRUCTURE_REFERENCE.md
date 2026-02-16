@@ -345,11 +345,28 @@ Visual separator line.
 
 ```json
 {
-  "value": 100,           // Number
-  "unit": "dp",           // "dp" | "sp" | "px" | "percent"
-  "special": null         // null | "wrap_content" | "match_parent"
+  "value": 100,           // Number (default: 0)
+  "unit": "dp",           // "dp" | "sp" | "px" | "percent" (default: "dp")
+  "special": null         // null | "wrap_content" | "match_parent" (default: null)
 }
 ```
+
+**Default Values for Backward Compatibility:**
+
+All dimension properties have sensible defaults to ensure parsing doesn't fail if backend JSON omits certain fields:
+
+- `value`: defaults to `0`
+- `unit`: defaults to `"dp"`
+- `special`: defaults to `null`
+
+This means a minimal dimension can be:
+```json
+{}  // Valid! Will parse as {value: 0, unit: "dp", special: null}
+```
+
+**Implementation Notes:**
+- **Android**: Uses `@Serializable` data class with default parameter values
+- **iOS**: Uses custom `init(from decoder:)` with `decodeIfPresent` + `??` fallbacks for robust parsing
 
 ### Special Dimensions
 
@@ -375,26 +392,26 @@ Visual separator line.
   "height": {"value": 100, "unit": "dp"},
   "aspectRatio": 1.5,            // Optional: width/height ratio
   "padding": {
-    "all": 16,              // All sides
+    "all": 16,              // All sides (optional)
     // OR
-    "horizontal": 16,       // Left + Right
-    "vertical": 8,          // Top + Bottom
+    "horizontal": 16,       // Left + Right (optional)
+    "vertical": 8,          // Top + Bottom (optional)
     // OR
-    "top": 8,
-    "bottom": 8,
-    "left": 16,
-    "right": 16,
-    "unit": "dp"
+    "top": 8,               // (optional)
+    "bottom": 8,            // (optional)
+    "left": 16,             // (optional)
+    "right": 16,            // (optional)
+    "unit": "dp"            // default: "dp"
   },
   "offset": {
-    "x": 10,
-    "y": 20,
-    "unit": "dp"
+    "x": 10,                // default: 0
+    "y": 20,                // default: 0
+    "unit": "dp"            // default: "dp"
   },
   "arrangement": {
-    "spacing": 12,
-    "spacingUnit": "dp",
-    "strategy": "spaced"    // See Arrangement Strategies
+    "spacing": 12,          // optional (used with "spaced" strategy)
+    "spacingUnit": "dp",    // default: "dp"
+    "strategy": "spaced"    // default: "spaced". See Arrangement Strategies
   }
 }
 ```
