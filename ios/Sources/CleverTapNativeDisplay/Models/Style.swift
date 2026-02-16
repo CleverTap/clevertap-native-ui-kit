@@ -49,9 +49,15 @@ public struct Style: Codable, Equatable {
     public let fontSize: CGFloat?
     public let fontFamily: String?
     public let fontWeight: FontWeight?
+    public let fontStyle: FontStyle?
     public let lineHeight: CGFloat?
+    public let letterSpacing: CGFloat?
     public let textDecoration: TextDecoration?
     public let textAlign: String?  // "left", "center", "right", "justify"
+    public let maxLines: Int?
+    public let overflow: TextOverflow?
+    public let textShadow: TextShadow?
+    public let textGradient: TextGradient?
 
     // ==================== VISUAL PROPERTIES (Non-cascading) ====================
 
@@ -80,9 +86,15 @@ public struct Style: Codable, Equatable {
         fontSize: CGFloat? = nil,
         fontFamily: String? = nil,
         fontWeight: FontWeight? = nil,
+        fontStyle: FontStyle? = nil,
         lineHeight: CGFloat? = nil,
+        letterSpacing: CGFloat? = nil,
         textDecoration: TextDecoration? = nil,
         textAlign: String? = nil,
+        maxLines: Int? = nil,
+        overflow: TextOverflow? = nil,
+        textShadow: TextShadow? = nil,
+        textGradient: TextGradient? = nil,
         background: Background? = nil,
         backgroundColor: String? = nil,
         borderRadius: CGFloat? = nil,
@@ -98,9 +110,15 @@ public struct Style: Codable, Equatable {
         self.fontSize = fontSize
         self.fontFamily = fontFamily
         self.fontWeight = fontWeight
+        self.fontStyle = fontStyle
         self.lineHeight = lineHeight
+        self.letterSpacing = letterSpacing
         self.textDecoration = textDecoration
         self.textAlign = textAlign
+        self.maxLines = maxLines
+        self.overflow = overflow
+        self.textShadow = textShadow
+        self.textGradient = textGradient
         self.background = background
         self.backgroundColor = backgroundColor
         self.borderRadius = borderRadius
@@ -123,9 +141,15 @@ public struct Style: Codable, Equatable {
             fontSize: fontSize ?? other.fontSize,
             fontFamily: fontFamily ?? other.fontFamily,
             fontWeight: fontWeight ?? other.fontWeight,
+            fontStyle: fontStyle ?? other.fontStyle,
             lineHeight: lineHeight ?? other.lineHeight,
+            letterSpacing: letterSpacing ?? other.letterSpacing,
             textDecoration: textDecoration ?? other.textDecoration,
             textAlign: textAlign ?? other.textAlign,
+            maxLines: maxLines ?? other.maxLines,
+            overflow: overflow ?? other.overflow,
+            textShadow: textShadow ?? other.textShadow,
+            textGradient: textGradient ?? other.textGradient,
             background: background ?? other.background,
             backgroundColor: backgroundColor ?? other.backgroundColor,
             borderRadius: borderRadius ?? other.borderRadius,
@@ -146,9 +170,15 @@ public struct Style: Codable, Equatable {
             fontSize: fontSize,
             fontFamily: fontFamily,
             fontWeight: fontWeight,
+            fontStyle: fontStyle,
             lineHeight: lineHeight,
+            letterSpacing: letterSpacing,
             textDecoration: textDecoration,
             textAlign: textAlign,
+            maxLines: maxLines,
+            overflow: overflow,
+            textShadow: textShadow,
+            textGradient: textGradient,
             opacity: opacity
         )
     }
@@ -176,9 +206,15 @@ public struct Style: Codable, Equatable {
             size: fontSize,
             family: fontFamily,
             weight: fontWeight,
+            style: fontStyle,
             lineHeight: lineHeight,
+            letterSpacing: letterSpacing,
             decoration: textDecoration,
             align: textAlign,
+            maxLines: maxLines,
+            overflow: overflow,
+            textShadow: textShadow,
+            textGradient: textGradient,
             opacity: opacity
         )
     }
@@ -263,11 +299,236 @@ public struct Style: Codable, Equatable {
     public static let empty = Style()
 }
 
+// MARK: - Property Extraction Types
+
+/// Text styling properties extracted from Style.
+/// Used internally by renderer for text elements (TEXT, BUTTON).
+///
+/// Contains all text-related properties that cascade through the style hierarchy:
+/// - color: Text color in hex format
+/// - size: Font size in points
+/// - family: Font family name
+/// - weight: Font weight (NORMAL, BOLD, etc.)
+/// - style: Font style (NORMAL, ITALIC)
+/// - lineHeight: Line height in points
+/// - letterSpacing: Letter spacing in points
+/// - decoration: Text decoration (UNDERLINE, LINE_THROUGH, etc.)
+/// - align: Text alignment (LEFT, CENTER, RIGHT, JUSTIFY)
+/// - maxLines: Maximum number of lines before truncation
+/// - overflow: Text overflow behavior (CLIP, ELLIPSIS, VISIBLE)
+/// - textShadow: Drop shadow effect on text
+/// - textGradient: Gradient effect on text
+/// - opacity: Text opacity (0.0 to 1.0)
+public struct TextProperties {
+    public let color: String?
+    public let size: CGFloat?
+    public let family: String?
+    public let weight: FontWeight?
+    public let style: FontStyle?
+    public let lineHeight: CGFloat?
+    public let letterSpacing: CGFloat?
+    public let decoration: TextDecoration?
+    public let align: String?
+    public let maxLines: Int?
+    public let overflow: TextOverflow?
+    public let textShadow: TextShadow?
+    public let textGradient: TextGradient?
+    public let opacity: CGFloat?
+
+    public init(
+        color: String?,
+        size: CGFloat?,
+        family: String?,
+        weight: FontWeight?,
+        style: FontStyle?,
+        lineHeight: CGFloat?,
+        letterSpacing: CGFloat?,
+        decoration: TextDecoration?,
+        align: String?,
+        maxLines: Int?,
+        overflow: TextOverflow?,
+        textShadow: TextShadow?,
+        textGradient: TextGradient?,
+        opacity: CGFloat?
+    ) {
+        self.color = color
+        self.size = size
+        self.family = family
+        self.weight = weight
+        self.style = style
+        self.lineHeight = lineHeight
+        self.letterSpacing = letterSpacing
+        self.decoration = decoration
+        self.align = align
+        self.maxLines = maxLines
+        self.overflow = overflow
+        self.textShadow = textShadow
+        self.textGradient = textGradient
+        self.opacity = opacity
+    }
+
+    /// Default text properties with sensible defaults.
+    /// Used as fallback when properties are not specified.
+    public static let `default` = TextProperties(
+        color: nil,
+        size: 14,
+        family: nil,
+        weight: nil,
+        style: nil,
+        lineHeight: nil,
+        letterSpacing: nil,
+        decoration: nil,
+        align: nil,
+        maxLines: nil,
+        overflow: nil,
+        textShadow: nil,
+        textGradient: nil,
+        opacity: nil
+    )
+}
+
+/// Visual styling properties for containers and visual elements.
+/// Used internally by renderer for background and opacity.
+///
+/// Contains non-cascading visual properties:
+/// - background: Complex background (gradients, images, animations)
+/// - backgroundColor: Simple solid background color
+/// - opacity: Element opacity (0.0 to 1.0)
+public struct VisualProperties {
+    public let background: Background?
+    public let backgroundColor: String?
+    public let opacity: CGFloat?
+
+    public init(
+        background: Background?,
+        backgroundColor: String?,
+        opacity: CGFloat?
+    ) {
+        self.background = background
+        self.backgroundColor = backgroundColor
+        self.opacity = opacity
+    }
+
+    /// Empty visual properties (no background, no opacity).
+    public static let empty = VisualProperties(
+        background: nil,
+        backgroundColor: nil,
+        opacity: nil
+    )
+}
+
+/// Border styling properties.
+/// Used internally by decoration application for rendering borders.
+///
+/// Contains border-related properties:
+/// - radius: Border radius in points (rounded corners)
+/// - width: Border width in points (stroke thickness)
+/// - color: Border color in hex format
+public struct BorderProperties {
+    public let radius: CGFloat?
+    public let width: CGFloat?
+    public let color: String?
+
+    public init(
+        radius: CGFloat?,
+        width: CGFloat?,
+        color: String?
+    ) {
+        self.radius = radius
+        self.width = width
+        self.color = color
+    }
+
+    /// Empty border properties (no border).
+    public static let empty = BorderProperties(
+        radius: nil,
+        width: nil,
+        color: nil
+    )
+}
+
+/// Shadow styling properties.
+/// Used internally by decoration application for rendering shadows.
+///
+/// Contains shadow-related properties:
+/// - color: Shadow color in hex format
+/// - radius: Shadow blur radius in points
+/// - offsetX: Horizontal shadow offset in points
+/// - offsetY: Vertical shadow offset in points
+public struct ShadowProperties {
+    public let color: String?
+    public let radius: CGFloat?
+    public let offsetX: CGFloat?
+    public let offsetY: CGFloat?
+
+    public init(
+        color: String?,
+        radius: CGFloat?,
+        offsetX: CGFloat?,
+        offsetY: CGFloat?
+    ) {
+        self.color = color
+        self.radius = radius
+        self.offsetX = offsetX
+        self.offsetY = offsetY
+    }
+
+    /// Empty shadow properties (no shadow).
+    public static let empty = ShadowProperties(
+        color: nil,
+        radius: nil,
+        offsetX: nil,
+        offsetY: nil
+    )
+}
+
+/// Text shadow configuration for text elements.
+/// Provides drop shadow effect on text.
+public struct TextShadow: Codable, Equatable {
+    public let color: String              // Hex color (e.g., "#00000040" for semi-transparent black)
+    public let offsetX: CGFloat           // Horizontal offset in points
+    public let offsetY: CGFloat           // Vertical offset in points
+    public let blur: CGFloat              // Blur radius in points
+
+    public init(
+        color: String,
+        offsetX: CGFloat = 0,
+        offsetY: CGFloat = 0,
+        blur: CGFloat = 0
+    ) {
+        self.color = color
+        self.offsetX = offsetX
+        self.offsetY = offsetY
+        self.blur = blur
+    }
+}
+
+/// Text gradient configuration for gradient text effects.
+/// Supports linear gradients on text.
+public struct TextGradient: Codable, Equatable {
+    public let type: String               // "linear" (radial and sweep not supported on text)
+    public let colors: [String]           // Hex colors for gradient stops
+    public let angle: CGFloat             // Angle in degrees (0 = left to right)
+    public let stops: [CGFloat]?          // Optional gradient stops (0.0 to 1.0)
+
+    public init(
+        type: String = "linear",
+        colors: [String],
+        angle: CGFloat = 0,
+        stops: [CGFloat]? = nil
+    ) {
+        self.type = type
+        self.colors = colors
+        self.angle = angle
+        self.stops = stops
+    }
+}
+
 /// Named style class that can be referenced by elements.
 public struct StyleClass: Codable, Equatable {
     public let name: String
     public let style: Style
-    
+
     public init(name: String, style: Style) {
         self.name = name
         self.style = style
