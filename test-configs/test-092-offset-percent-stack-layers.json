@@ -76,7 +76,7 @@
       {
         "type": "container",
         "id": "test-stack",
-        "containerType": "stack",
+        "containerType": "box",
         "layout": {
           "width": {
             "value": 300,

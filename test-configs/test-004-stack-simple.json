@@ -10,7 +10,7 @@
   "root": {
     "type": "container",
     "id": "stack-container",
-    "containerType": "stack",
+    "containerType": "box",
     "layout": {
       "width": {
         "value": 100,

@@ -61,26 +61,7 @@
 
 ---
 
-### 4. STACK Container
-
-**Purpose**: Layered child arrangement with z-index
-
-**Example**:
-```json
-{
-  "id": "stacked-images",
-  "containerType": "stack",
-  "layout": {
-    "width": { "value": 100, "unit": "percent" },
-    "height": { "value": 200, "unit": "dp" }
-  },
-  "children": [...]
-}
-```
-
----
-
-### 5. GALLERY Container
+### 4. GALLERY Container
 
 **Purpose**: Scrollable carousel with multiple layout modes
 
@@ -242,5 +223,5 @@
 1. **Always define layout** for both containers and elements
 2. **Use arrangement strategies** for container spacing
 3. **Set explicit dimensions** when possible
-4. **Use offsets** for absolute positioning in BOX/STACK containers
+4. **Use offsets** for absolute positioning in BOX containers
 5. **Respect padding** for internal spacing

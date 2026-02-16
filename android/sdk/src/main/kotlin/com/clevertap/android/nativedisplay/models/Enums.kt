@@ -17,10 +17,7 @@ enum class ContainerType {
     
     @SerialName("box")
     BOX,
-    
-    @SerialName("stack")
-    STACK,
-    
+
     @SerialName("gallery")
     GALLERY
 }

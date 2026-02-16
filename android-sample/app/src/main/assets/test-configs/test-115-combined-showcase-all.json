@@ -120,7 +120,7 @@
       {
         "type": "container",
         "id": "complex-stack",
-        "containerType": "stack",
+        "containerType": "box",
         "layout": {
           "width": { "value": 100, "unit": "percent" },
           "height": { "value": 250, "unit": "dp" }

@@ -61,7 +61,7 @@
       {
         "type": "container",
         "id": "gallery-peek-1",
-        "containerType": "stack",
+        "containerType": "box",
         "layout": {
           "width": { "value": 100, "unit": "percent" },
           "height": { "value": 280, "unit": "dp" }
@@ -171,7 +171,7 @@
       {
         "type": "container",
         "id": "gallery-peek-2",
-        "containerType": "stack",
+        "containerType": "box",
         "layout": {
           "width": { "value": 100, "unit": "percent" },
           "height": { "value": 200, "unit": "dp" }

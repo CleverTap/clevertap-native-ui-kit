@@ -246,24 +246,6 @@ struct RenderContainer: View {
             .frame(width: containerSize.width, height: containerSize.height, alignment: .topLeading)
             .padding(paddingInsets)
 
-        case .stack:
-            // For STACK containers, use ZStack with center alignment (default for STACK)
-            // Children use .offset() (applied in LayoutModifier) to move from their natural position
-            ZStack(alignment: .center) {
-                ForEach(container.children.indices, id: \.self) { index in
-                    RenderNode(
-                        node: container.children[index],
-                        styleResolver: styleResolver,
-                        evaluator: evaluator,
-                        parentSize: containerSize,
-                        actionHandler: actionHandler,
-                        componentListener: componentListener
-                    )
-                }
-            }
-            .frame(width: containerSize.width, height: containerSize.height, alignment: .center)
-            .padding(paddingInsets)
-
         case .gallery:
             RenderGallery(
                 container: container,

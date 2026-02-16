@@ -26,7 +26,6 @@ NativeDisplayConfig {
 | VERTICAL | Stack vertically | Column |
 | HORIZONTAL | Stack horizontally | Row |
 | BOX | Single or multiple children | Overlay |
-| STACK | Layered children | Overlay with z-index |
 | GALLERY | Scrollable carousel | Scroll (3 modes) |
 
 ---

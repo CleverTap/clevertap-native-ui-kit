@@ -224,7 +224,7 @@ private fun RenderContainer(
             }
         }
 
-        ContainerType.BOX, ContainerType.STACK -> {
+        ContainerType.BOX -> {
             Box(modifier = containerModifier) {
                 container.children.forEach { child ->
                     RenderNode(
@@ -999,7 +999,7 @@ private fun Modifier.applySizing(layout: Layout?): Modifier {
  * For percentage-based offsets, calculates relative to parent dimensions.
  *
  * Offset moves the element after layout, making it perfect for:
- * - Absolute positioning within Box/Stack containers
+ * - Absolute positioning within Box containers
  * - Negative values for positioning outside normal flow
  * - Fine-tuned positioning adjustments
  *

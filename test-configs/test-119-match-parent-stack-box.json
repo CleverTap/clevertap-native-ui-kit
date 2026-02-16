@@ -187,7 +187,7 @@
       {
         "id": "stack-layered-content",
         "type": "container",
-        "containerType": "stack",
+        "containerType": "box",
         "layout": {
           "width": {
             "value": 100,

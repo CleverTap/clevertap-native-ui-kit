@@ -119,13 +119,12 @@ let view = try CleverTapNativeDisplay.createView(from: jsonString)
 ## Features
 
 ### Container Types
-| Type | Description |
-|------|-------------|
-| `vertical` | Stack children vertically (VStack) |
-| `horizontal` | Stack children horizontally (HStack) |
-| `box` | Single child, centered (ZStack) |
-| `stack` | Layered children with z-index |
-| `gallery` | Scrollable carousel/list |
+| Type | Description                              |
+|------|------------------------------------------|
+| `vertical` | Stack children vertically (VStack)       |
+| `horizontal` | Stack children horizontally (HStack)     |
+| `box` | Single child, top-start leading (ZStack) |
+| `gallery` | Scrollable carousel/list                 |
 
 ### Element Types
 | Type | Description |

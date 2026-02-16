@@ -24,7 +24,7 @@ data class Dimension(
 
 /**
  * Offset for absolute positioning within a container (x, y coordinates).
- * Used for positioning elements at specific locations within Box/Stack containers.
+ * Used for positioning elements at specific locations within Box containers.
  * Supports negative values for positioning outside the normal flow.
  */
 @Serializable

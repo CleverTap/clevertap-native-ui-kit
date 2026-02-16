@@ -76,7 +76,7 @@
       {
         "type": "container",
         "id": "gallery-stack",
-        "containerType": "stack",
+        "containerType": "box",
         "layout": {
           "width": {
             "value": 100,

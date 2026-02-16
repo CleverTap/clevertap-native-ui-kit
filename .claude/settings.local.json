@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(for f in test-*.json)",
+      "Bash(do jq:*)",
+      "Bash(grep:*)"
     ]
   }
 }

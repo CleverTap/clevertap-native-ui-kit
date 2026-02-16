@@ -411,7 +411,7 @@ type NativeDisplayNode = NativeDisplayContainer | NativeDisplayElement;
 
 interface NativeDisplayContainer {
   id: string;
-  containerType: 'vertical' | 'horizontal' | 'box' | 'stack' | 'gallery';
+  containerType: 'vertical' | 'horizontal' | 'box' | 'gallery';
   children?: NativeDisplayNode[];
   spacing?: Spacing;
   alignment?: string;

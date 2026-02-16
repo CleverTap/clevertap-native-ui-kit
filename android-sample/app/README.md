@@ -134,7 +134,7 @@ The app has 4 tabs with different samples:
 ### ✅ Container Types
 - VERTICAL - Column layout
 - HORIZONTAL - Row layout
-- BOX/STACK - Overlay layout
+- BOX - Overlay layout
 
 ---
 

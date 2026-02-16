@@ -9,7 +9,7 @@
   "root": {
     "type": "container",
     "id": "hero-container",
-    "containerType": "stack",
+    "containerType": "box",
     "layout": {
       "width": {
         "value": 100,

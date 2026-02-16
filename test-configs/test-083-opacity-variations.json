@@ -420,7 +420,7 @@
       {
         "type": "container",
         "id": "practical-overlay",
-        "containerType": "stack",
+        "containerType": "box",
         "layout": {
           "width": {
             "value": 100,

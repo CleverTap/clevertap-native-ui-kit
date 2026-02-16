@@ -93,7 +93,7 @@
           {
             "type": "container",
             "id": "image-container",
-            "containerType": "stack",
+            "containerType": "box",
             "layout": {
               "width": {
                 "value": 100,

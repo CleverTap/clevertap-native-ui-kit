@@ -29,7 +29,7 @@ This folder contains specialized knowledge for Claude Code to understand and imp
 - `CLAUDE_CODE_PATTERNS.md` - Parser, StyleResolver, VariableEvaluator, LayoutCalculator implementations
 
 ### Component Documentation
-- `COMPONENTS_GUIDE.md` - Container types (VERTICAL, HORIZONTAL, BOX, STACK, GALLERY) and Element types (TEXT, IMAGE, BUTTON, etc.)
+- `COMPONENTS_GUIDE.md` - Container types (VERTICAL, HORIZONTAL, BOX, GALLERY) and Element types (TEXT, IMAGE, BUTTON, etc.)
 
 ### Style System
 - `STYLE_THEMING_GUIDE.md` - Theme, StyleClasses, Style resolution, Colors, Backgrounds
@@ -52,7 +52,7 @@ This folder contains specialized knowledge for Claude Code to understand and imp
 ## Key Concepts
 
 ### Container Types
-- VERTICAL, HORIZONTAL, BOX, STACK, GALLERY
+- VERTICAL, HORIZONTAL, BOX, GALLERY
 
 ### Element Types  
 - TEXT, IMAGE, BUTTON, VIDEO, SPACER, DIVIDER

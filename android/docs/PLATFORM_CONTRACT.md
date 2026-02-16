@@ -53,12 +53,6 @@ This document defines what **MUST** be implemented for platform parity across An
   - [ ] Padding support
   - [ ] Style application
 
-- [ ] **STACK Container**
-  - [ ] Layered children (z-index)
-  - [ ] Absolute positioning via margin
-  - [ ] Overlapping support
-  - [ ] Style application
-
 ### Phase 3: Element Rendering
 
 - [ ] **TEXT Element**

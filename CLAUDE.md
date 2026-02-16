@@ -86,7 +86,7 @@ Every UI is defined by a `NativeDisplayConfig`:
 Two types of nodes:
 
 **Containers** - Hold and organize children:
-- VERTICAL, HORIZONTAL, BOX, STACK, GALLERY
+- VERTICAL, HORIZONTAL, BOX, GALLERY
 
 **Elements** - Display content (leaf nodes):
 - TEXT, IMAGE, BUTTON, VIDEO, SPACER, DIVIDER
@@ -126,7 +126,6 @@ Use `{{variableName}}` in bindings to reference variables:
 | VERTICAL | Stack children vertically | Card layouts, lists |
 | HORIZONTAL | Stack children horizontally | Button groups, tags |
 | BOX | Flexible overlay layout | Complex positioning |
-| STACK | Layered children with z-index | Badges, overlays |
 | GALLERY | Scrollable carousel (3 modes) | Image galleries, product lists |
 
 ---
@@ -301,7 +300,7 @@ Sample app development:
 
 ### ✅ Supported
 
-- **5 Container Types**: VERTICAL, HORIZONTAL, BOX, STACK, GALLERY
+- **4 Container Types**: VERTICAL, HORIZONTAL, BOX, GALLERY
 - **6 Element Types**: TEXT, IMAGE, BUTTON, VIDEO, SPACER, DIVIDER
 - **Rich Styling**: 15+ style properties with cascading
 - **Backgrounds**: 10+ background types (solid, gradients, patterns, animations)
@@ -371,7 +370,7 @@ When working on this project:
 
 ### Containers
 ```
-VERTICAL | HORIZONTAL | BOX | STACK | GALLERY
+VERTICAL | HORIZONTAL | BOX | GALLERY
 ```
 
 ### Elements

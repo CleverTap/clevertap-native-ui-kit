@@ -98,7 +98,7 @@
           {
             "type": "container",
             "id": "header-background",
-            "containerType": "stack",
+            "containerType": "box",
             "layout": {
               "width": {
                 "value": 100,

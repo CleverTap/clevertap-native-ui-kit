@@ -330,7 +330,7 @@
       {
         "id": "section-stack-match",
         "type": "container",
-        "containerType": "stack",
+        "containerType": "box",
         "layout": {
           "width": {
             "value": 100,

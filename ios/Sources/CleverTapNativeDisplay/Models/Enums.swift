@@ -9,7 +9,6 @@ public enum ContainerType: String, Codable, CaseIterable {
     case vertical
     case horizontal
     case box
-    case stack
     case gallery
 }
 

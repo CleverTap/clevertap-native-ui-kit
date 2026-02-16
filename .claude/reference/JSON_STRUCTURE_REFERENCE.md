@@ -167,28 +167,7 @@ Centers a single child (or multiple overlapping children).
 
 ---
 
-### 4. STACK (ZStack)
-
-Layers children on top of each other (z-index based on order).
-
-```json
-{
-  "type": "container",
-  "id": "myStack",
-  "containerType": "stack",
-  "children": [
-    { /* background layer */ },
-    { /* middle layer */ },
-    { /* foreground layer */ }
-  ]
-}
-```
-
-**Use cases**: Overlays, backgrounds with content, layered designs
-
----
-
-### 5. GALLERY
+### 4. GALLERY
 
 Scrollable collection with multiple modes.
 
@@ -699,7 +678,7 @@ Combine percentages with aspect ratios for responsive, proportional layouts:
 }
 ```
 
-#### BOX/STACK Container
+#### BOX Container
 ```json
 {
   "type": "container",
@@ -1073,7 +1052,7 @@ Actions are defined in the `actions` object with trigger keys:
 
 ### ✅ Type Values
 
-- [ ] `containerType` is one of: `vertical`, `horizontal`, `box`, `stack`, `gallery`
+- [ ] `containerType` is one of: `vertical`, `horizontal`, `box`, `gallery`
 - [ ] `elementType` is one of: `text`, `image`, `button`, `video`, `spacer`, `divider`
 - [ ] `fontWeight` (if used) is one of: `normal`, `medium`, `bold`, `light`
 
