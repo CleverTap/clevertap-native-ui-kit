@@ -45,11 +45,24 @@ public enum FontWeight: String, Codable, CaseIterable {
     case light
 }
 
+/// Font style values.
+public enum FontStyle: String, Codable, CaseIterable {
+    case normal
+    case italic
+}
+
 /// Text decoration values.
 public enum TextDecoration: String, Codable, CaseIterable {
     case none
     case underline
     case strikethrough
+}
+
+/// Text overflow behavior when text exceeds available space.
+public enum TextOverflow: String, Codable, CaseIterable {
+    case clip       // Cut off at container edge
+    case ellipsis   // Show ellipsis (...)
+    case visible    // Allow text to overflow container
 }
 
 /// Orientation for divider and gallery.

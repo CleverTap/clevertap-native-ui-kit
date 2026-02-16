@@ -120,9 +120,15 @@ textColor: String? (hex)
 fontSize: Float?
 fontFamily: String?
 fontWeight: FontWeight? (NORMAL, MEDIUM, BOLD, LIGHT)
+fontStyle: FontStyle? (NORMAL, ITALIC)
 lineHeight: Float?
+letterSpacing: Float?
 textDecoration: TextDecoration? (NONE, UNDERLINE, STRIKETHROUGH)
-textAlign: String? ("left", "center", "right")
+textAlign: String? ("left", "center", "right", "justify")
+maxLines: Int? (maximum lines before truncation)
+overflow: TextOverflow? (CLIP, ELLIPSIS, VISIBLE)
+textShadow: TextShadow? (drop shadow on text)
+textGradient: TextGradient? (gradient text effect)
 opacity: Float?
 ```
 
@@ -351,13 +357,66 @@ bindings: Map<String, String> {
 
 ---
 
+## Text Enhancement Objects
+
+### TextShadow
+```kotlin
+TextShadow {
+  color: String (hex with alpha, e.g., "#00000040")
+  offsetX: Float (horizontal offset in DP)
+  offsetY: Float (vertical offset in DP)
+  blur: Float (blur radius in DP)
+}
+```
+
+**Example:**
+```json
+{
+  "textShadow": {
+    "color": "#00000040",
+    "offsetX": 2,
+    "offsetY": 2,
+    "blur": 4
+  }
+}
+```
+
+### TextGradient
+```kotlin
+TextGradient {
+  type: String = "linear"
+  colors: List<String> (hex colors)
+  angle: Float (degrees, 0 = left to right)
+  stops: List<Float>? (optional, 0.0 to 1.0)
+}
+```
+
+**Example:**
+```json
+{
+  "textGradient": {
+    "type": "linear",
+    "colors": ["#FF0000", "#0000FF"],
+    "angle": 45
+  }
+}
+```
+
+---
+
 ## All Enumerations
 
 ### FontWeight
 `LIGHT, NORMAL, MEDIUM, BOLD`
 
+### FontStyle
+`NORMAL, ITALIC`
+
 ### TextDecoration
 `NONE, UNDERLINE, STRIKETHROUGH`
+
+### TextOverflow
+`CLIP, ELLIPSIS, VISIBLE`
 
 ### Orientation
 `HORIZONTAL, VERTICAL`

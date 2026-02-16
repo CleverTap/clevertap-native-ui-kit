@@ -9,9 +9,15 @@ package com.clevertap.android.nativedisplay.models
  * - size: Font size in SP
  * - family: Font family name
  * - weight: Font weight (NORMAL, BOLD, etc.)
+ * - style: Font style (NORMAL, ITALIC)
  * - lineHeight: Line height in SP
+ * - letterSpacing: Letter spacing in SP
  * - decoration: Text decoration (UNDERLINE, LINE_THROUGH, etc.)
  * - align: Text alignment (LEFT, CENTER, RIGHT, JUSTIFY)
+ * - maxLines: Maximum number of lines before truncation
+ * - overflow: Text overflow behavior (CLIP, ELLIPSIS, VISIBLE)
+ * - textShadow: Drop shadow effect on text
+ * - textGradient: Gradient effect on text
  * - opacity: Text opacity (0.0 to 1.0)
  */
 data class TextProperties(
@@ -19,9 +25,15 @@ data class TextProperties(
     val size: Float?,
     val family: String?,
     val weight: FontWeight?,
+    val style: FontStyle?,
     val lineHeight: Float?,
+    val letterSpacing: Float?,
     val decoration: TextDecoration?,
     val align: String?,
+    val maxLines: Int?,
+    val overflow: TextOverflow?,
+    val textShadow: TextShadow?,
+    val textGradient: TextGradient?,
     val opacity: Float?
 ) {
     companion object {
@@ -34,9 +46,15 @@ data class TextProperties(
             size = 14f,
             family = null,
             weight = null,
+            style = null,
             lineHeight = null,
+            letterSpacing = null,
             decoration = null,
             align = null,
+            maxLines = null,
+            overflow = null,
+            textShadow = null,
+            textGradient = null,
             opacity = null
         )
     }

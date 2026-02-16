@@ -388,7 +388,8 @@ Arrangement: SPACED, SPACE_BETWEEN, SPACE_EVENLY, SPACE_AROUND, START, CENTER, E
 
 ### Styles
 ```
-Text: textColor, fontSize, fontWeight, fontFamily, lineHeight, textDecoration, textAlign, opacity
+Text: textColor, fontSize, fontFamily, fontWeight, fontStyle, lineHeight, letterSpacing,
+      textDecoration, textAlign, maxLines, overflow, textShadow, textGradient, opacity
 Visual: backgroundColor, borderRadius, borderWidth, borderColor, shadow*, background
 ```
 

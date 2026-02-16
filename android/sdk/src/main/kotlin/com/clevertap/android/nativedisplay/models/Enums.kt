@@ -84,15 +84,27 @@ enum class SpecialDimension {
 enum class FontWeight {
     @SerialName("normal")
     NORMAL,
-    
+
     @SerialName("medium")
     MEDIUM,
-    
+
     @SerialName("bold")
     BOLD,
-    
+
     @SerialName("light")
     LIGHT
+}
+
+/**
+ * Font style values.
+ */
+@Serializable
+enum class FontStyle {
+    @SerialName("normal")
+    NORMAL,
+
+    @SerialName("italic")
+    ITALIC
 }
 
 /**
@@ -102,12 +114,27 @@ enum class FontWeight {
 enum class TextDecoration {
     @SerialName("none")
     NONE,
-    
+
     @SerialName("underline")
     UNDERLINE,
-    
+
     @SerialName("strikethrough")
     STRIKETHROUGH
+}
+
+/**
+ * Text overflow behavior when text exceeds available space.
+ */
+@Serializable
+enum class TextOverflow {
+    @SerialName("clip")
+    CLIP,           // Cut off at container edge
+
+    @SerialName("ellipsis")
+    ELLIPSIS,       // Show ellipsis (...)
+
+    @SerialName("visible")
+    VISIBLE         // Allow text to overflow container
 }
 
 /**

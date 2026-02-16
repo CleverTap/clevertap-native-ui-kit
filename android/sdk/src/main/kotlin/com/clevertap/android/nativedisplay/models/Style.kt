@@ -51,9 +51,15 @@ data class Style(
     val fontSize: Float? = null,
     val fontFamily: String? = null,
     val fontWeight: FontWeight? = null,
+    val fontStyle: FontStyle? = null,
     val lineHeight: Float? = null,
+    val letterSpacing: Float? = null,
     val textDecoration: TextDecoration? = null,
     val textAlign: String? = null,  // "left", "center", "right", "justify"
+    val maxLines: Int? = null,
+    val overflow: TextOverflow? = null,
+    val textShadow: TextShadow? = null,
+    val textGradient: TextGradient? = null,
 
     // ==================== VISUAL PROPERTIES (Non-cascading) ====================
 
@@ -89,21 +95,27 @@ data class Style(
             fontSize = fontSize ?: other.fontSize,
             fontFamily = fontFamily ?: other.fontFamily,
             fontWeight = fontWeight ?: other.fontWeight,
+            fontStyle = fontStyle ?: other.fontStyle,
             lineHeight = lineHeight ?: other.lineHeight,
+            letterSpacing = letterSpacing ?: other.letterSpacing,
             textDecoration = textDecoration ?: other.textDecoration,
             textAlign = textAlign ?: other.textAlign,
-            
+            maxLines = maxLines ?: other.maxLines,
+            overflow = overflow ?: other.overflow,
+            textShadow = textShadow ?: other.textShadow,
+            textGradient = textGradient ?: other.textGradient,
+
             background = background ?: other.background,
             backgroundColor = backgroundColor ?: other.backgroundColor,
             borderRadius = borderRadius ?: other.borderRadius,
             borderWidth = borderWidth ?: other.borderWidth,
             borderColor = borderColor ?: other.borderColor,
-            
+
             shadowColor = shadowColor ?: other.shadowColor,
             shadowRadius = shadowRadius ?: other.shadowRadius,
             shadowOffsetX = shadowOffsetX ?: other.shadowOffsetX,
             shadowOffsetY = shadowOffsetY ?: other.shadowOffsetY,
-            
+
             opacity = opacity ?: other.opacity
         )
     }
@@ -117,9 +129,15 @@ data class Style(
             fontSize = fontSize,
             fontFamily = fontFamily,
             fontWeight = fontWeight,
+            fontStyle = fontStyle,
             lineHeight = lineHeight,
+            letterSpacing = letterSpacing,
             textDecoration = textDecoration,
             textAlign = textAlign,
+            maxLines = maxLines,
+            overflow = overflow,
+            textShadow = textShadow,
+            textGradient = textGradient,
             opacity = opacity
         )
     }
@@ -150,9 +168,15 @@ data class Style(
             size = fontSize,
             family = fontFamily,
             weight = fontWeight,
+            style = fontStyle,
             lineHeight = lineHeight,
+            letterSpacing = letterSpacing,
             decoration = textDecoration,
             align = textAlign,
+            maxLines = maxLines,
+            overflow = overflow,
+            textShadow = textShadow,
+            textGradient = textGradient,
             opacity = opacity
         )
     }
@@ -245,6 +269,30 @@ data class Style(
         val EMPTY = Style()
     }
 }
+
+/**
+ * Text shadow configuration for text elements.
+ * Provides drop shadow effect on text.
+ */
+@Serializable
+data class TextShadow(
+    val color: String,              // Hex color (e.g., "#00000040" for semi-transparent black)
+    val offsetX: Float = 0f,        // Horizontal offset in DP
+    val offsetY: Float = 0f,        // Vertical offset in DP
+    val blur: Float = 0f            // Blur radius in DP
+)
+
+/**
+ * Text gradient configuration for gradient text effects.
+ * Supports linear gradients on text.
+ */
+@Serializable
+data class TextGradient(
+    val type: String = "linear",    // "linear" (radial and sweep not supported on text)
+    val colors: List<String>,       // Hex colors for gradient stops
+    val angle: Float = 0f,          // Angle in degrees (0 = left to right)
+    val stops: List<Float>? = null  // Optional gradient stops (0.0 to 1.0)
+)
 
 /**
  * Named style class that can be referenced by elements.

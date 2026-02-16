@@ -47,32 +47,52 @@ data class StyleClass(
 data class Style(
     // Text properties (inherit to children)
     val textColor: String? = null,
-    val fontSize: Int? = null,
-    val fontWeight: String? = null,
+    val fontSize: Float? = null,
+    val fontFamily: String? = null,
+    val fontWeight: FontWeight? = null,
+    val fontStyle: FontStyle? = null,
+    val lineHeight: Float? = null,
+    val letterSpacing: Float? = null,
+    val textDecoration: TextDecoration? = null,
     val textAlign: String? = null,
-    val lineHeight: Int? = null,
-    val letterSpacing: Int? = null,
-    val textDecoration: String? = null,
-    
+    val maxLines: Int? = null,
+    val overflow: TextOverflow? = null,
+    val textShadow: TextShadow? = null,
+    val textGradient: TextGradient? = null,
+
     // Background properties (do NOT inherit)
+    val background: Background? = null,
     val backgroundColor: String? = null,
-    val backgroundGradient: Gradient? = null,
-    
+
     // Border properties (do NOT inherit)
-    val borderRadius: Int? = null,
-    val borderWidth: Int? = null,
+    val borderRadius: Float? = null,
+    val borderWidth: Float? = null,
     val borderColor: String? = null,
-    
+
     // Shadow properties (do NOT inherit)
     val shadowColor: String? = null,
-    val shadowRadius: Int? = null,
-    val shadowOffset: Offset? = null,
-    
+    val shadowRadius: Float? = null,
+    val shadowOffsetX: Float? = null,
+    val shadowOffsetY: Float? = null,
+
     // Transform properties
-    val opacity: Float? = null,
-    val scaleX: Float? = null,
-    val scaleY: Float? = null,
-    val rotationZ: Int? = null
+    val opacity: Float? = null
+)
+
+@Serializable
+data class TextShadow(
+    val color: String,
+    val offsetX: Float = 0f,
+    val offsetY: Float = 0f,
+    val blur: Float = 0f
+)
+
+@Serializable
+data class TextGradient(
+    val type: String = "linear",
+    val colors: List<String>,
+    val angle: Float = 0f,
+    val stops: List<Float>? = null
 )
 
 @Serializable
@@ -267,16 +287,42 @@ struct StyleClass: Codable {
 
 struct Style: Codable {
     let textColor: String?
-    let fontSize: Int?
-    let fontWeight: String?
+    let fontSize: CGFloat?
+    let fontFamily: String?
+    let fontWeight: FontWeight?
+    let fontStyle: FontStyle?
+    let lineHeight: CGFloat?
+    let letterSpacing: CGFloat?
+    let textDecoration: TextDecoration?
     let textAlign: String?
+    let maxLines: Int?
+    let overflow: TextOverflow?
+    let textShadow: TextShadow?
+    let textGradient: TextGradient?
+    let background: Background?
     let backgroundColor: String?
-    let borderRadius: Int?
-    let borderWidth: Int?
+    let borderRadius: CGFloat?
+    let borderWidth: CGFloat?
     let borderColor: String?
     let shadowColor: String?
-    let shadowRadius: Int?
-    let opacity: Float?
+    let shadowRadius: CGFloat?
+    let shadowOffsetX: CGFloat?
+    let shadowOffsetY: CGFloat?
+    let opacity: CGFloat?
+}
+
+struct TextShadow: Codable {
+    let color: String
+    let offsetX: CGFloat
+    let offsetY: CGFloat
+    let blur: CGFloat
+}
+
+struct TextGradient: Codable {
+    let type: String
+    let colors: [String]
+    let angle: CGFloat
+    let stops: [CGFloat]?
 }
 
 struct Layout: Codable {
@@ -374,15 +420,41 @@ interface StyleClass {
 interface Style {
   textColor?: string;
   fontSize?: number;
-  fontWeight?: string;
-  textAlign?: string;
+  fontFamily?: string;
+  fontWeight?: 'normal' | 'medium' | 'bold' | 'light';
+  fontStyle?: 'normal' | 'italic';
+  lineHeight?: number;
+  letterSpacing?: number;
+  textDecoration?: 'none' | 'underline' | 'strikethrough';
+  textAlign?: 'left' | 'center' | 'right' | 'justify';
+  maxLines?: number;
+  overflow?: 'clip' | 'ellipsis' | 'visible';
+  textShadow?: TextShadow;
+  textGradient?: TextGradient;
+  background?: Background;
   backgroundColor?: string;
   borderRadius?: number;
   borderWidth?: number;
   borderColor?: string;
   shadowColor?: string;
   shadowRadius?: number;
+  shadowOffsetX?: number;
+  shadowOffsetY?: number;
   opacity?: number;
+}
+
+interface TextShadow {
+  color: string;
+  offsetX: number;
+  offsetY: number;
+  blur: number;
+}
+
+interface TextGradient {
+  type: 'linear';
+  colors: string[];
+  angle: number;
+  stops?: number[];
 }
 
 interface Layout {

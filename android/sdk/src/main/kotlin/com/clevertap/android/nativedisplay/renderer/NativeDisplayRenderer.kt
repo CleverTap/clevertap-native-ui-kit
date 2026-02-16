@@ -45,8 +45,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight as ComposeFontWeight
+import androidx.compose.ui.text.font.FontStyle as ComposeFontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow as ComposeTextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
@@ -800,9 +802,13 @@ private fun RenderElement(
                 color = parseColor(textProps.color) ?: Color.Black,
                 fontSize = (textProps.size ?: 14f).sp,
                 fontWeight = resolveFontWeight(textProps.weight),
+                fontStyle = resolveFontStyle(textProps.style),
+                letterSpacing = (textProps.letterSpacing ?: 0f).sp,
                 textDecoration = resolveTextDecoration(textProps.decoration),
                 textAlign = resolveTextAlign(textProps.align),
-                lineHeight = textProps.lineHeight?.sp ?: (textProps.size?.times(1.5f) ?: 21f).sp
+                lineHeight = textProps.lineHeight?.sp ?: (textProps.size?.times(1.5f) ?: 21f).sp,
+                maxLines = textProps.maxLines ?: Int.MAX_VALUE,
+                overflow = resolveTextOverflow(textProps.overflow)
             )
         }
 
@@ -1266,6 +1272,16 @@ private fun resolveFontWeight(fontWeight: FontWeight?): ComposeFontWeight {
     }
 }
 
+/**
+ * Resolve font style from model to Compose.
+ */
+private fun resolveFontStyle(fontStyle: com.clevertap.android.nativedisplay.models.FontStyle?): ComposeFontStyle {
+    return when (fontStyle) {
+        com.clevertap.android.nativedisplay.models.FontStyle.ITALIC -> ComposeFontStyle.Italic
+        com.clevertap.android.nativedisplay.models.FontStyle.NORMAL, null -> ComposeFontStyle.Normal
+    }
+}
+
 typealias ndtd = com.clevertap.android.nativedisplay.models.TextDecoration
 
 /**
@@ -1289,6 +1305,18 @@ private fun resolveTextAlign(align: String?): TextAlign {
         "right" -> TextAlign.Right
         "justify" -> TextAlign.Justify
         else -> TextAlign.Start
+    }
+}
+
+/**
+ * Resolve text overflow from model to Compose.
+ */
+private fun resolveTextOverflow(overflow: com.clevertap.android.nativedisplay.models.TextOverflow?): ComposeTextOverflow {
+    return when (overflow) {
+        com.clevertap.android.nativedisplay.models.TextOverflow.CLIP -> ComposeTextOverflow.Clip
+        com.clevertap.android.nativedisplay.models.TextOverflow.ELLIPSIS -> ComposeTextOverflow.Ellipsis
+        com.clevertap.android.nativedisplay.models.TextOverflow.VISIBLE -> ComposeTextOverflow.Visible
+        null -> ComposeTextOverflow.Clip
     }
 }
 

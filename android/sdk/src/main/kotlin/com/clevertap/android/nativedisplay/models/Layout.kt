@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class Dimension(
-    val value: Float,
+    val value: Float = 0f,
     val unit: DimensionUnit = DimensionUnit.DP,
     val special: SpecialDimension? = null
 ) {

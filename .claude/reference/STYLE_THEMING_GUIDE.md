@@ -23,10 +23,15 @@ textColor: String        // Hex color (#RRGGBB or #AARRGGBB)
 fontSize: Float          // Size in sp (scale-independent pixels)
 fontFamily: String       // Font family name
 fontWeight: FontWeight   // LIGHT, NORMAL, MEDIUM, BOLD
-lineHeight: Float        // Line height in dp
-letterSpacing: Float     // Letter spacing in dp
+fontStyle: FontStyle     // NORMAL, ITALIC
+lineHeight: Float        // Line height in sp
+letterSpacing: Float     // Letter spacing in sp
 textDecoration: TextDecoration  // NONE, UNDERLINE, STRIKETHROUGH
-textAlign: String        // "left", "center", "right"
+textAlign: String        // "left", "center", "right", "justify"
+maxLines: Int            // Maximum lines before truncation
+overflow: TextOverflow   // CLIP, ELLIPSIS, VISIBLE
+textShadow: TextShadow   // Drop shadow effect on text
+textGradient: TextGradient  // Gradient effect on text
 opacity: Float           // 0.0 to 1.0
 ```
 
@@ -37,8 +42,18 @@ opacity: Float           // 0.0 to 1.0
     "textColor": "#212121",
     "fontSize": 16,
     "fontWeight": "bold",
+    "fontStyle": "italic",
     "textAlign": "center",
-    "lineHeight": 24
+    "lineHeight": 24,
+    "letterSpacing": 1.5,
+    "maxLines": 2,
+    "overflow": "ellipsis",
+    "textShadow": {
+      "color": "#00000040",
+      "offsetX": 2,
+      "offsetY": 2,
+      "blur": 4
+    }
   }
 }
 ```
