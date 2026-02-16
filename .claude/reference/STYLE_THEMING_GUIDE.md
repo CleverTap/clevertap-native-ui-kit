@@ -76,6 +76,103 @@ shadowOffsetY: Float           // Shadow Y offset in dp
 
 ---
 
+## Property Grouping and Extraction (SDK Internal)
+
+### Overview
+
+For SDK developers working on the renderer, style properties are organized into logical groups for better code maintainability. While clients continue to use the flat JSON structure, SDK internal code uses property extraction methods to access grouped properties.
+
+### Property Groups
+
+**Text Properties** - Used by TEXT and BUTTON elements:
+- `textColor`, `fontSize`, `fontFamily`, `fontWeight`
+- `lineHeight`, `textDecoration`, `textAlign`
+- `opacity` (universal)
+
+**Visual Properties** - Used by all elements for backgrounds:
+- `background`, `backgroundColor`
+- `opacity` (universal)
+
+**Border Properties** - Used for visual decorations:
+- `borderRadius`, `borderWidth`, `borderColor`
+
+**Shadow Properties** - Used for visual decorations:
+- `shadowColor`, `shadowRadius`, `shadowOffsetX`, `shadowOffsetY`
+
+### Extraction Methods (SDK Internal)
+
+#### Android (Kotlin)
+
+```kotlin
+// In renderer code
+val textProps = resolvedStyle.extractTextProperties()
+Text(
+    text = text,
+    color = parseColor(textProps.color) ?: Color.Black,
+    fontSize = (textProps.size ?: 14f).sp,
+    fontWeight = resolveFontWeight(textProps.weight)
+)
+
+val visualProps = resolvedStyle.extractVisualProperties()
+if (visualProps.background != null) {
+    modifier = modifier.applyBackground(visualProps.background)
+}
+
+val borderProps = resolvedStyle.extractBorderProperties()
+val shape = RoundedCornerShape((borderProps.radius ?: 0f).dp)
+
+val shadowProps = resolvedStyle.extractShadowProperties()
+if (shadowProps.radius != null && shadowProps.radius > 0f) {
+    modifier = modifier.shadow(elevation = shadowProps.radius.dp, shape = shape)
+}
+```
+
+#### iOS (Swift)
+
+```swift
+// In renderer code
+let textProps = resolvedStyle.extractTextProperties()
+Text(text)
+    .foregroundColor(ColorParser.parse(textProps.color) ?? .primary)
+    .font(.system(size: textProps.size ?? 14))
+    .fontWeight(resolveFontWeight(textProps.weight))
+
+let visualProps = resolvedStyle.extractVisualProperties()
+if let background = visualProps.background {
+    view.applyBackground(background)
+}
+
+let borderProps = style.extractBorderProperties()
+let cornerRadius = borderProps.radius ?? 0
+
+let shadowProps = style.extractShadowProperties()
+if let radius = shadowProps.radius, radius > 0 {
+    view.shadow(color: parseColor(shadowProps.color), radius: radius)
+}
+```
+
+### Benefits for SDK Developers
+
+✅ **Clear Intent** - Property groups make it obvious which properties apply to which elements
+✅ **Better Organization** - Grouped property access instead of scattered individual accesses
+✅ **Easier Maintenance** - Adding new properties is clearer when organized by group
+✅ **No Breaking Changes** - JSON format unchanged, only internal SDK organization improved
+
+### When to Use Extraction Methods
+
+**Use property extraction when:**
+- Rendering TEXT or BUTTON elements (use `extractTextProperties()`)
+- Applying backgrounds (use `extractVisualProperties()`)
+- Applying borders or shadows (use `extractBorderProperties()`, `extractShadowProperties()`)
+- Writing new renderers or modifying existing ones
+
+**Direct property access is still fine for:**
+- Simple one-off property checks
+- Style resolution and merging logic
+- Cases where only 1-2 properties are needed
+
+---
+
 ## Theme System
 
 Define global default styles and color palette:

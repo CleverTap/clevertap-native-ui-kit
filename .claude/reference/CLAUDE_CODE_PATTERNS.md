@@ -323,6 +323,254 @@ object VariableEvaluator {
 }
 ```
 
+### Property Extraction Patterns
+
+#### Using Property Extraction in Renderer (Android)
+
+```kotlin
+/**
+ * Pattern: Rendering TEXT element with property extraction
+ * Use this when rendering text elements for better code organization
+ */
+@Composable
+fun RenderTextElement(
+    element: NativeDisplayElement,
+    resolvedStyle: Style,
+    evaluator: VariableEvaluator
+) {
+    // Extract text properties as a group
+    val textProps = resolvedStyle.extractTextProperties()
+
+    val text = element.bindings["text"]?.let {
+        evaluator.evaluateString(it)
+    } ?: ""
+
+    Text(
+        text = text,
+        color = parseColor(textProps.color) ?: Color.Black,
+        fontSize = (textProps.size ?: 14f).sp,
+        fontWeight = resolveFontWeight(textProps.weight),
+        textDecoration = resolveTextDecoration(textProps.decoration),
+        textAlign = resolveTextAlign(textProps.align),
+        lineHeight = textProps.lineHeight?.sp ?: (textProps.size?.times(1.5f) ?: 21f).sp
+    )
+}
+
+/**
+ * Pattern: Rendering BUTTON element with multiple property groups
+ * Use this when rendering buttons that need text, visual, and border properties
+ */
+@Composable
+fun RenderButtonElement(
+    element: NativeDisplayElement,
+    resolvedStyle: Style,
+    evaluator: VariableEvaluator
+) {
+    // Extract property groups
+    val textProps = resolvedStyle.extractTextProperties()
+    val visualProps = resolvedStyle.extractVisualProperties()
+    val borderProps = resolvedStyle.extractBorderProperties()
+
+    val buttonText = element.bindings["text"]?.let {
+        evaluator.evaluateString(it)
+    } ?: "Button"
+
+    Button(
+        onClick = { /* handle action */ },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = parseColor(visualProps.backgroundColor) ?: Color(0xFF007AFF),
+            contentColor = parseColor(textProps.color) ?: Color.White
+        ),
+        shape = RoundedCornerShape((borderProps.radius ?: 8f).dp)
+    ) {
+        Text(
+            text = buttonText,
+            fontSize = (textProps.size ?: 16f).sp,
+            fontWeight = resolveFontWeight(textProps.weight)
+        )
+    }
+}
+
+/**
+ * Pattern: Applying decorations with property extraction
+ * Use this for applying borders, shadows, backgrounds consistently
+ */
+@Composable
+private fun Modifier.applyDecorations(style: Style): Modifier {
+    var modifier = this
+
+    // Extract property groups for better organization
+    val borderProps = style.extractBorderProperties()
+    val shadowProps = style.extractShadowProperties()
+    val visualProps = style.extractVisualProperties()
+
+    val shape = RoundedCornerShape((borderProps.radius ?: 0f).dp)
+
+    // Apply shadow
+    if (shadowProps.radius != null && shadowProps.radius > 0f) {
+        modifier = modifier.shadow(
+            elevation = shadowProps.radius.dp,
+            shape = shape,
+            spotColor = parseColor(shadowProps.color) ?: Color.Black.copy(alpha = 0.25f)
+        )
+    }
+
+    // Apply clip
+    if (borderProps.radius != null && borderProps.radius > 0f) {
+        modifier = modifier.clip(shape)
+    }
+
+    // Apply background
+    if (visualProps.background != null) {
+        modifier = modifier.applyBackground(visualProps.background)
+    } else if (visualProps.backgroundColor != null) {
+        modifier = modifier.background(
+            color = parseColor(visualProps.backgroundColor) ?: Color.Transparent,
+            shape = shape
+        )
+    }
+
+    // Apply border
+    if (borderProps.width != null && borderProps.width > 0f) {
+        modifier = modifier.border(
+            width = borderProps.width.dp,
+            color = parseColor(borderProps.color) ?: Color.Gray,
+            shape = shape
+        )
+    }
+
+    // Apply opacity
+    visualProps.opacity?.let { opacity ->
+        modifier = modifier.alpha(opacity.coerceIn(0f, 1f))
+    }
+
+    return modifier
+}
+```
+
+#### Using Property Extraction in Renderer (iOS)
+
+```swift
+/**
+ * Pattern: Rendering TEXT element with property extraction
+ * Use this when rendering text elements in SwiftUI
+ */
+@ViewBuilder
+private func renderText() -> some View {
+    let text = element.bindings["text"].map { evaluator.evaluateString($0) } ?? ""
+    let textProps = resolvedStyle.extractTextProperties()
+
+    Text(text)
+        .foregroundColor(ColorParser.parse(textProps.color) ?? .primary)
+        .font(.system(size: textProps.size ?? 14))
+        .fontWeight(resolveFontWeight(textProps.weight))
+        .multilineTextAlignment(resolveTextAlign(textProps.align))
+        .lineSpacing(max(0, (textProps.lineHeight ?? 0) - (textProps.size ?? 14)))
+}
+
+/**
+ * Pattern: Rendering BUTTON element with multiple property groups
+ * Use this when rendering buttons in SwiftUI
+ */
+@ViewBuilder
+private func renderButton() -> some View {
+    let buttonText = element.bindings["text"].map { evaluator.evaluateString($0) } ?? "Button"
+
+    let textProps = resolvedStyle.extractTextProperties()
+    let visualProps = resolvedStyle.extractVisualProperties()
+    let borderProps = resolvedStyle.extractBorderProperties()
+
+    Button(action: {
+        // Handle action
+    }) {
+        Text(buttonText)
+            .foregroundColor(ColorParser.parse(textProps.color) ?? .white)
+            .font(.system(size: textProps.size ?? 16))
+            .fontWeight(resolveFontWeight(textProps.weight))
+    }
+    .padding(.horizontal, 16)
+    .padding(.vertical, 8)
+    .background(ColorParser.parse(visualProps.backgroundColor) ?? Color.blue)
+    .cornerRadius(borderProps.radius ?? 8)
+}
+
+/**
+ * Pattern: Applying decorations with property extraction
+ * Use this in ViewModifier for consistent decoration application
+ */
+struct DecorationModifier: ViewModifier {
+    let style: Style
+
+    func body(content: Content) -> some View {
+        // Extract property groups for better code organization
+        let borderProps = style.extractBorderProperties()
+        let shadowProps = style.extractShadowProperties()
+        let visualProps = style.extractVisualProperties()
+
+        let cornerRadius = borderProps.radius ?? 0
+
+        content
+            // Apply background
+            .background(
+                Group {
+                    if let background = visualProps.background {
+                        BackgroundView(background: background)
+                            .cornerRadius(cornerRadius)
+                    } else if let bgColor = visualProps.backgroundColor {
+                        ColorParser.parse(bgColor)
+                            .cornerRadius(cornerRadius)
+                    }
+                }
+            )
+            // Apply clip
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            // Apply border
+            .overlay(
+                Group {
+                    if let borderWidth = borderProps.width, borderWidth > 0 {
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .stroke(
+                                ColorParser.parse(borderProps.color) ?? .gray,
+                                lineWidth: borderWidth
+                            )
+                    }
+                }
+            )
+            // Apply shadow
+            .shadow(
+                color: shadowProps.radius ?? 0 > 0
+                    ? (ColorParser.parse(shadowProps.color)?.opacity(0.25) ?? Color.black.opacity(0.15))
+                    : .clear,
+                radius: shadowProps.radius ?? 0,
+                x: shadowProps.offsetX ?? 0,
+                y: shadowProps.offsetY ?? 2
+            )
+            // Apply opacity
+            .opacity(Double(visualProps.opacity ?? 1))
+    }
+}
+```
+
+#### When to Use Property Extraction
+
+**✅ Use extraction methods when:**
+- Rendering TEXT or BUTTON elements (multiple text properties needed)
+- Applying decorations (borders, shadows, backgrounds together)
+- Writing new element renderers
+- Refactoring existing renderer code
+
+**✅ Direct property access is fine for:**
+- Style resolution and merging
+- Checking a single property (e.g., `if style.opacity != nil`)
+- Cases where only 1-2 properties are accessed
+
+#### Benefits
+
+- **Clearer code**: Property groups make intent obvious
+- **Better organization**: Grouped access vs scattered individual accesses
+- **Easier maintenance**: Adding properties to a group is clearer
+- **No breaking changes**: JSON format unchanged, only internal improvement
+
 ---
 
 ## SECTION 2: UTILITY FUNCTIONS

@@ -5,37 +5,74 @@ import Foundation
 
 /// Style properties for visual appearance.
 ///
-/// Cascading properties (inherited by children):
-/// - textColor, fontSize, fontFamily, fontWeight, lineHeight
+/// ## Internal SDK Usage
 ///
-/// Non-cascading properties (container-only):
-/// - background, backgroundColor, borderRadius, shadowRadius, etc.
+/// For SDK developers rendering elements, use extraction methods instead of direct property access:
+/// - `extractTextProperties()` - Get text styling (color, size, weight, etc.) for TEXT/BUTTON elements
+/// - `extractVisualProperties()` - Get background and opacity for all elements
+/// - `extractBorderProperties()` - Get border styling for visual decorations
+/// - `extractShadowProperties()` - Get shadow styling for visual decorations
+///
+/// ## Property Grouping
+///
+/// **Text Properties (cascading):**
+/// - textColor, fontSize, fontFamily, fontWeight, lineHeight, textDecoration, textAlign
+/// - Used by: TEXT, BUTTON elements
+/// - Inherited by child elements in the hierarchy
+///
+/// **Visual Properties (non-cascading):**
+/// - background, backgroundColor
+/// - Used by: All elements and containers
+/// - Not inherited by children
+///
+/// **Border Properties (non-cascading):**
+/// - borderRadius, borderWidth, borderColor
+/// - Used by: Visual decorations on all elements
+/// - Not inherited by children
+///
+/// **Shadow Properties (non-cascading):**
+/// - shadowColor, shadowRadius, shadowOffsetX, shadowOffsetY
+/// - Used by: Visual decorations on all elements
+/// - Not inherited by children
+///
+/// **Universal:**
+/// - opacity (cascades to children)
+///
+/// ## JSON Compatibility
+///
+/// This struct maintains full backward compatibility with existing JSON configurations.
+/// All properties are optional.
 public struct Style: Codable, Equatable {
-    // Text properties (cascading)
+    // ==================== TEXT PROPERTIES (Cascading) ====================
+
     public let textColor: String?
     public let fontSize: CGFloat?
     public let fontFamily: String?
     public let fontWeight: FontWeight?
     public let lineHeight: CGFloat?
     public let textDecoration: TextDecoration?
-    public let textAlign: String?  // "left", "center", "right"
-    
-    // Background (non-cascading)
-    public let background: Background?  // Rich background support
-    public let backgroundColor: String?  // Legacy: Simple color (backward compatible)
-    
-    // Border (non-cascading)
+    public let textAlign: String?  // "left", "center", "right", "justify"
+
+    // ==================== VISUAL PROPERTIES (Non-cascading) ====================
+
+    public let background: Background?  // Rich background support (gradients, images, animations)
+    public let backgroundColor: String?  // Simple solid color (backward compatible)
+
+    // ==================== BORDER PROPERTIES (Non-cascading) ====================
+
     public let borderRadius: CGFloat?
     public let borderWidth: CGFloat?
     public let borderColor: String?
-    
-    // Shadow (non-cascading)
+
+    // ==================== SHADOW PROPERTIES (Non-cascading) ====================
+
     public let shadowColor: String?
     public let shadowRadius: CGFloat?
     public let shadowOffsetX: CGFloat?
     public let shadowOffsetY: CGFloat?
-    
-    // Opacity (cascading)
+
+    // ==================== UNIVERSAL PROPERTIES ====================
+
     public let opacity: CGFloat?
     
     public init(
@@ -115,7 +152,114 @@ public struct Style: Codable, Equatable {
             opacity: opacity
         )
     }
-    
+
+    // ==================== PROPERTY EXTRACTION METHODS ====================
+
+    /// Extract text properties for rendering text elements.
+    ///
+    /// Use this method in TEXT and BUTTON renderers to get all text-related styling
+    /// in a single grouped object, making the code clearer and more maintainable.
+    ///
+    /// Example:
+    /// ```swift
+    /// let textProps = resolvedStyle.extractTextProperties()
+    /// Text(text)
+    ///     .foregroundColor(parseColor(textProps.color) ?? .black)
+    ///     .font(.system(size: textProps.size ?? 14))
+    ///     .fontWeight(resolveFontWeight(textProps.weight))
+    /// ```
+    ///
+    /// - Returns: TextProperties containing all text styling values
+    public func extractTextProperties() -> TextProperties {
+        TextProperties(
+            color: textColor,
+            size: fontSize,
+            family: fontFamily,
+            weight: fontWeight,
+            lineHeight: lineHeight,
+            decoration: textDecoration,
+            align: textAlign,
+            opacity: opacity
+        )
+    }
+
+    /// Extract visual properties for rendering backgrounds.
+    ///
+    /// Use this method to get background and opacity properties for any element.
+    /// This is used by all elements and containers for background rendering.
+    ///
+    /// Example:
+    /// ```swift
+    /// let visualProps = resolvedStyle.extractVisualProperties()
+    /// if let background = visualProps.background {
+    ///     view.applyBackground(background)
+    /// } else if let backgroundColor = visualProps.backgroundColor {
+    ///     view.background(parseColor(backgroundColor))
+    /// }
+    /// ```
+    ///
+    /// - Returns: VisualProperties containing background and opacity values
+    public func extractVisualProperties() -> VisualProperties {
+        VisualProperties(
+            background: background,
+            backgroundColor: backgroundColor,
+            opacity: opacity
+        )
+    }
+
+    /// Extract border properties for rendering borders.
+    ///
+    /// Use this method in decoration application to get all border-related styling
+    /// in a single grouped object.
+    ///
+    /// Example:
+    /// ```swift
+    /// let borderProps = style.extractBorderProperties()
+    /// if let width = borderProps.width, width > 0 {
+    ///     view.overlay(
+    ///         RoundedRectangle(cornerRadius: borderProps.radius ?? 0)
+    ///             .stroke(parseColor(borderProps.color) ?? .gray, lineWidth: width)
+    ///     )
+    /// }
+    /// ```
+    ///
+    /// - Returns: BorderProperties containing border styling values
+    public func extractBorderProperties() -> BorderProperties {
+        BorderProperties(
+            radius: borderRadius,
+            width: borderWidth,
+            color: borderColor
+        )
+    }
+
+    /// Extract shadow properties for rendering shadows.
+    ///
+    /// Use this method in decoration application to get all shadow-related styling
+    /// in a single grouped object.
+    ///
+    /// Example:
+    /// ```swift
+    /// let shadowProps = style.extractShadowProperties()
+    /// if let radius = shadowProps.radius, radius > 0 {
+    ///     view.shadow(
+    ///         color: parseColor(shadowProps.color) ?? .black.opacity(0.25),
+    ///         radius: radius,
+    ///         x: shadowProps.offsetX ?? 0,
+    ///         y: shadowProps.offsetY ?? 0
+    ///     )
+    /// }
+    /// ```
+    ///
+    /// - Returns: ShadowProperties containing shadow styling values
+    public func extractShadowProperties() -> ShadowProperties {
+        ShadowProperties(
+            color: shadowColor,
+            radius: shadowRadius,
+            offsetX: shadowOffsetX,
+            offsetY: shadowOffsetY
+        )
+    }
+
     public static let empty = Style()
 }
 

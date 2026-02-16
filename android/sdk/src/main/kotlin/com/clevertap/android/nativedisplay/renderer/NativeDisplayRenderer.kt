@@ -141,7 +141,7 @@ fun RenderNode(
             nodeId = node.id,
             actions = node.actions,
             actionHandler = actionHandler,
-            componentListener = componentListener  // ← ADD THIS PARAMETER
+            componentListener = componentListener
         )
     }
 
@@ -793,15 +793,16 @@ private fun RenderElement(
                 evaluator.evaluateString(it)
             } ?: ""
 
+            val textProps = resolvedStyle.extractTextProperties()
             Text(
                 text = text,
                 modifier = elementModifier,
-                color = parseColor(resolvedStyle.textColor) ?: Color.Black,
-                fontSize = (resolvedStyle.fontSize ?: 14f).sp,
-                fontWeight = resolveFontWeight(resolvedStyle.fontWeight),
-                textDecoration = resolveTextDecoration(resolvedStyle.textDecoration),
-                textAlign = resolveTextAlign(resolvedStyle.textAlign),
-                lineHeight = resolvedStyle.lineHeight?.sp ?: (resolvedStyle.fontSize?.times(1.5f) ?: 21f).sp
+                color = parseColor(textProps.color) ?: Color.Black,
+                fontSize = (textProps.size ?: 14f).sp,
+                fontWeight = resolveFontWeight(textProps.weight),
+                textDecoration = resolveTextDecoration(textProps.decoration),
+                textAlign = resolveTextAlign(textProps.align),
+                lineHeight = textProps.lineHeight?.sp ?: (textProps.size?.times(1.5f) ?: 21f).sp
             )
         }
 
@@ -834,21 +835,25 @@ private fun RenderElement(
                 evaluator.evaluateString(it)
             } ?: "Button"
 
+            val textProps = resolvedStyle.extractTextProperties()
+            val visualProps = resolvedStyle.extractVisualProperties()
+            val borderProps = resolvedStyle.extractBorderProperties()
+
             Button(
                 onClick = { element.actions?.get(ActionTriggers.ON_CLICK)?.let { action ->
                     actionHandler?.handleAction(action = action, nodeId = element.id)
                 } },
                 modifier = elementModifier,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = parseColor(resolvedStyle.backgroundColor) ?: Color(0xFF007AFF),
-                    contentColor = parseColor(resolvedStyle.textColor) ?: Color.White
+                    containerColor = parseColor(visualProps.backgroundColor) ?: Color(0xFF007AFF),
+                    contentColor = parseColor(textProps.color) ?: Color.White
                 ),
-                shape = RoundedCornerShape((resolvedStyle.borderRadius ?: 8f).dp)
+                shape = RoundedCornerShape((borderProps.radius ?: 8f).dp)
             ) {
                 Text(
                     text = buttonText,
-                    fontSize = (resolvedStyle.fontSize ?: 16f).sp,
-                    fontWeight = resolveFontWeight(resolvedStyle.fontWeight)
+                    fontSize = (textProps.size ?: 16f).sp,
+                    fontWeight = resolveFontWeight(textProps.weight)
                 )
             }
         }
@@ -1170,43 +1175,52 @@ private fun Modifier.applyPadding(layout: Layout?): Modifier {
 @Composable
 private fun Modifier.applyDecorations(style: Style): Modifier {
     var modifier = this
-    
-    val shape = RoundedCornerShape((style.borderRadius ?: 0f).dp)
-    
-    if (style.shadowRadius != null && style.shadowRadius > 0f) {
+
+    // Extract property groups for better code organization
+    val borderProps = style.extractBorderProperties()
+    val shadowProps = style.extractShadowProperties()
+    val visualProps = style.extractVisualProperties()
+
+    val shape = RoundedCornerShape((borderProps.radius ?: 0f).dp)
+
+    // Apply shadow
+    if (shadowProps.radius != null && shadowProps.radius > 0f) {
         modifier = modifier.shadow(
-            elevation = style.shadowRadius.dp,
+            elevation = shadowProps.radius.dp,
             shape = shape,
-            spotColor = parseColor(style.shadowColor) ?: Color.Black.copy(alpha = 0.25f)
+            spotColor = parseColor(shadowProps.color) ?: Color.Black.copy(alpha = 0.25f)
         )
     }
-    
-    if (style.borderRadius != null && style.borderRadius > 0f) {
+
+    // Apply clip
+    if (borderProps.radius != null && borderProps.radius > 0f) {
         modifier = modifier.clip(shape)
     }
-    
+
     // Apply background (new system takes precedence over old backgroundColor)
-    if (style.background != null) {
-        modifier = modifier.applyBackground(style.background)
-    } else if (style.backgroundColor != null) {
+    if (visualProps.background != null) {
+        modifier = modifier.applyBackground(visualProps.background)
+    } else if (visualProps.backgroundColor != null) {
         modifier = modifier.background(
-            color = parseColor(style.backgroundColor) ?: Color.Transparent,
+            color = parseColor(visualProps.backgroundColor) ?: Color.Transparent,
             shape = shape
         )
     }
-    
-    if (style.borderWidth != null && style.borderWidth > 0f) {
+
+    // Apply border
+    if (borderProps.width != null && borderProps.width > 0f) {
         modifier = modifier.border(
-            width = style.borderWidth.dp,
-            color = parseColor(style.borderColor) ?: Color.Gray,
+            width = borderProps.width.dp,
+            color = parseColor(borderProps.color) ?: Color.Gray,
             shape = shape
         )
     }
-    
-    style.opacity?.let { opacity ->
+
+    // Apply opacity
+    visualProps.opacity?.let { opacity ->
         modifier = modifier.alpha(opacity.coerceIn(0f, 1f))
     }
-    
+
     return modifier
 }
 

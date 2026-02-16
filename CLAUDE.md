@@ -110,6 +110,8 @@ Styles consist of:
 - **Text properties** (inherited by children): textColor, fontSize, fontWeight, etc.
 - **Visual properties** (not inherited): backgroundColor, borderRadius, shadows, etc.
 
+**For SDK Developers:** Use property extraction methods (`extractTextProperties()`, `extractVisualProperties()`, etc.) when working on renderer code for better organization. See `.claude/reference/STYLE_THEMING_GUIDE.md` for details.
+
 ### 5. Templates & Variables
 
 Use `{{variableName}}` in bindings to reference variables:

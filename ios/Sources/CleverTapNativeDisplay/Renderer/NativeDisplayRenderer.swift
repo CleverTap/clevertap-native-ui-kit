@@ -612,13 +612,14 @@ struct RenderElement: View {
     @ViewBuilder
     private func renderText() -> some View {
         let text = element.bindings["text"].map { evaluator.evaluateString($0) } ?? ""
-        
+        let textProps = resolvedStyle.extractTextProperties()
+
         Text(text)
-            .foregroundColor(ColorParser.parse(resolvedStyle.textColor) ?? .primary)
-            .font(.system(size: resolvedStyle.fontSize ?? 14))
-            .fontWeight(resolveFontWeight(resolvedStyle.fontWeight))
-            .multilineTextAlignment(resolveTextAlign(resolvedStyle.textAlign))
-            .lineSpacing(max(0, (resolvedStyle.lineHeight ?? 0) - (resolvedStyle.fontSize ?? 14)))
+            .foregroundColor(ColorParser.parse(textProps.color) ?? .primary)
+            .font(.system(size: textProps.size ?? 14))
+            .fontWeight(resolveFontWeight(textProps.weight))
+            .multilineTextAlignment(resolveTextAlign(textProps.align))
+            .lineSpacing(max(0, (textProps.lineHeight ?? 0) - (textProps.size ?? 14)))
             .fixedSize(horizontal: false, vertical: true)
     }
     
@@ -659,21 +660,25 @@ struct RenderElement: View {
     @ViewBuilder
     private func renderButton() -> some View {
         let buttonText = element.bindings["text"].map { evaluator.evaluateString($0) } ?? "Button"
-        
+
+        let textProps = resolvedStyle.extractTextProperties()
+        let visualProps = resolvedStyle.extractVisualProperties()
+        let borderProps = resolvedStyle.extractBorderProperties()
+
         Button(action: {
             if let onClick = element.actions?[ActionTriggers.onClick] {
                 actionHandler?.handleAction(onClick, nodeId: element.id, interactionType: .click)
             }
         }) {
             Text(buttonText)
-                .foregroundColor(ColorParser.parse(resolvedStyle.textColor) ?? .white)
-                .font(.system(size: resolvedStyle.fontSize ?? 16))
-                .fontWeight(resolveFontWeight(resolvedStyle.fontWeight))
+                .foregroundColor(ColorParser.parse(textProps.color) ?? .white)
+                .font(.system(size: textProps.size ?? 16))
+                .fontWeight(resolveFontWeight(textProps.weight))
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
-        .background(ColorParser.parse(resolvedStyle.backgroundColor) ?? Color.blue)
-        .cornerRadius(resolvedStyle.borderRadius ?? 8)
+        .background(ColorParser.parse(visualProps.backgroundColor) ?? Color.blue)
+        .cornerRadius(borderProps.radius ?? 8)
     }
     
     @ViewBuilder
@@ -900,43 +905,53 @@ struct LayoutModifier: ViewModifier {
 
 struct DecorationModifier: ViewModifier {
     let style: Style
-    
+
     func body(content: Content) -> some View {
-        let cornerRadius = style.borderRadius ?? 0
-        
+        // Extract property groups for better code organization
+        let borderProps = style.extractBorderProperties()
+        let shadowProps = style.extractShadowProperties()
+        let visualProps = style.extractVisualProperties()
+
+        let cornerRadius = borderProps.radius ?? 0
+
         content
+            // Apply background
             .background(
                 Group {
-                    if let background = style.background {
+                    if let background = visualProps.background {
                         BackgroundView(background: background)
                             .cornerRadius(cornerRadius)
-                    } else if let bgColor = style.backgroundColor {
+                    } else if let bgColor = visualProps.backgroundColor {
                         ColorParser.parse(bgColor)
                             .cornerRadius(cornerRadius)
                     }
                 }
             )
+            // Apply clip
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            // Apply border
             .overlay(
                 Group {
-                    if let borderWidth = style.borderWidth, borderWidth > 0 {
+                    if let borderWidth = borderProps.width, borderWidth > 0 {
                         RoundedRectangle(cornerRadius: cornerRadius)
                             .stroke(
-                                ColorParser.parse(style.borderColor) ?? .gray,
+                                ColorParser.parse(borderProps.color) ?? .gray,
                                 lineWidth: borderWidth
                             )
                     }
                 }
             )
+            // Apply shadow
             .shadow(
-                color: style.shadowRadius ?? 0 > 0
-                    ? (ColorParser.parse(style.shadowColor)?.opacity(0.25) ?? Color.black.opacity(0.15))
+                color: shadowProps.radius ?? 0 > 0
+                    ? (ColorParser.parse(shadowProps.color)?.opacity(0.25) ?? Color.black.opacity(0.15))
                     : .clear,
-                radius: style.shadowRadius ?? 0,
-                x: style.shadowOffsetX ?? 0,
-                y: style.shadowOffsetY ?? 2
+                radius: shadowProps.radius ?? 0,
+                x: shadowProps.offsetX ?? 0,
+                y: shadowProps.offsetY ?? 2
             )
-            .opacity(Double(style.opacity ?? 1))
+            // Apply opacity
+            .opacity(Double(visualProps.opacity ?? 1))
     }
 }
 
