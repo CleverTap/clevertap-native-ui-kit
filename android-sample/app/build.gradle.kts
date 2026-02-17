@@ -84,6 +84,7 @@ dependencies {
     // Video Playback (required for VIDEO elements)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.media3.hls)
 
     // Kotlin Serialization
     implementation(libs.kotlinx.serialization.json)

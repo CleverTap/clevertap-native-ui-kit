@@ -137,11 +137,13 @@ Use `{{variableName}}` in bindings to reference variables:
 | Type | Binding | Example |
 |------|---------|---------|
 | TEXT | `text` | "Hello {{name}}" |
-| IMAGE | `src` | "https://example.com/image.jpg" |
+| IMAGE | `url` | "https://example.com/image.jpg" |
 | BUTTON | `text` | "Click Me" |
-| VIDEO | `src` | "https://example.com/video.mp4" |
+| VIDEO | `url` (+ autoPlay, loop, muted, showControls, showFullscreen) | "https://example.com/video.mp4" |
 | SPACER | N/A | Fixed or flexible spacing |
 | DIVIDER | N/A | Visual separator |
+
+**Note**: VIDEO element requires `androidx.media3:media3-exoplayer` on Android (host app dependency). iOS uses built-in AVKit.
 
 ---
 
@@ -411,7 +413,8 @@ Visual: backgroundColor, borderRadius, borderWidth, borderColor, shadow*, backgr
 ### Bindings
 ```
 TEXT: "text"
-IMAGE/VIDEO: "src"
+IMAGE/VIDEO: "url"
+VIDEO also supports: autoPlay, loop, muted, showControls, showFullscreen
 ```
 
 ---

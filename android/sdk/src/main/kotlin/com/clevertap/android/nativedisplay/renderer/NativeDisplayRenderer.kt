@@ -71,6 +71,12 @@ import com.clevertap.android.nativedisplay.style.StyleResolver
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+// Media3 imports (compileOnly - available at compile time, provided at runtime by host app)
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.ui.PlayerView
+
 /**
  * Main entry point for rendering native display UI.
  */
@@ -952,7 +958,7 @@ private fun RenderElement(
  * Supports Media3 ExoPlayer with runtime detection and graceful degradation.
  */
 @Composable
-private fun VideoPlayer(
+fun VideoPlayer(
     videoUrl: String,
     autoPlay: Boolean = false,
     loop: Boolean = false,
@@ -962,16 +968,16 @@ private fun VideoPlayer(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
 
-    // Runtime Media3 detection
+    // Single runtime check for Media3 availability
     val isMedia3Available = remember {
-        try {
+        runCatching {
             Class.forName("androidx.media3.exoplayer.ExoPlayer")
-            true
-        } catch (e: ClassNotFoundException) {
-            false
-        }
+        }.onSuccess {
+            android.util.Log.d("VideoPlayer", "Media3 is available")
+        }.onFailure {
+            android.util.Log.w("VideoPlayer", "Media3 not found - add androidx.media3 dependencies")
+        }.isSuccess
     }
 
     if (!isMedia3Available) {
@@ -1001,129 +1007,109 @@ private fun VideoPlayer(
         return
     }
 
+    // Media3 is available - render video player
+    VideoPlayerWithMedia3(
+        context = context,
+        videoUrl = videoUrl,
+        autoPlay = autoPlay,
+        loop = loop,
+        muted = muted,
+        showControls = showControls,
+        showFullscreen = showFullscreen,
+        modifier = modifier
+    )
+}
+
+/**
+ * Internal video player implementation that uses Media3 directly.
+ * Only called when Media3 is confirmed to be available.
+ *
+ * Uses direct ExoPlayer API calls (not reflection) since compileOnly makes classes
+ * available at compile time. The class existence check in VideoPlayer() ensures
+ * Media3 is available at runtime before this function is called.
+ */
+@Composable
+private fun VideoPlayerWithMedia3(
+    context: android.content.Context,
+    videoUrl: String,
+    autoPlay: Boolean,
+    loop: Boolean,
+    muted: Boolean,
+    showControls: Boolean,
+    showFullscreen: Boolean,
+    modifier: Modifier
+) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     // State for custom controls
     var showControlsUI by remember { mutableStateOf(false) }
     var isPlaying by remember { mutableStateOf(autoPlay) }
     var isMuted by remember { mutableStateOf(muted) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    // Create ExoPlayer instance (single instance per URL)
+    // Create ExoPlayer instance - DIRECT API CALLS (no reflection after class check!)
     val exoPlayer = remember(videoUrl) {
-        try {
-            val playerClass = Class.forName("androidx.media3.exoplayer.ExoPlayer")
-            val builderClass = Class.forName("androidx.media3.exoplayer.ExoPlayer\$Builder")
-            val mediaItemClass = Class.forName("androidx.media3.common.MediaItem")
-            val playerInterfaceClass = Class.forName("androidx.media3.common.Player")
-
-            // Create ExoPlayer instance
-            val builder = builderClass.getConstructor(android.content.Context::class.java)
-                .newInstance(context)
-            val player = builderClass.getMethod("build").invoke(builder)
-
-            // Create and set MediaItem
-            val mediaItem = mediaItemClass.getMethod("fromUri", String::class.java)
-                .invoke(null, videoUrl)
-            playerClass.getMethod("setMediaItem", mediaItemClass)
-                .invoke(player, mediaItem)
-
-            // Configure player
-            playerClass.getMethod("prepare").invoke(player)
-            playerClass.getMethod("setPlayWhenReady", Boolean::class.java)
-                .invoke(player, autoPlay)
-
-            // Set repeat mode
-            val repeatMode = if (loop) 1 else 0  // REPEAT_MODE_ONE = 1, REPEAT_MODE_OFF = 0
-            playerClass.getMethod("setRepeatMode", Int::class.java)
-                .invoke(player, repeatMode)
-
-            // Set volume
-            val volume = if (muted) 0f else 1f
-            playerClass.getMethod("setVolume", Float::class.java)
-                .invoke(player, volume)
-
-            player
-        } catch (e: Exception) {
-            null
-        }
+        runCatching {
+            // Direct ExoPlayer API usage - compiles because of compileOnly dependency
+            ExoPlayer.Builder(context)
+                .build()
+                .apply {
+                    setMediaItem(MediaItem.fromUri(videoUrl))
+                    prepare()
+                    playWhenReady = autoPlay
+                    repeatMode = if (loop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
+                    volume = if (muted) 0f else 1f
+                }
+                .also {
+                    android.util.Log.d("VideoPlayer", "✓ Player created for: $videoUrl")
+                }
+        }.onFailure { e ->
+            errorMessage = "Failed to create player: ${e.message}"
+            android.util.Log.e("VideoPlayer", "✗ Player creation failed", e)
+        }.getOrNull()
     }
 
-    // Lifecycle management
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_PAUSE -> {
-                    try {
-                        exoPlayer?.let { player ->
-                            val playerClass = Class.forName("androidx.media3.exoplayer.ExoPlayer")
-                            playerClass.getMethod("pause").invoke(player)
-                        }
-                    } catch (e: Exception) {
-                        // Ignore
-                    }
+    // Lifecycle management - DIRECT method calls
+    DisposableEffect(lifecycleOwner, exoPlayer) {
+        exoPlayer?.let { player ->
+            val observer = LifecycleEventObserver { _, event ->
+                when (event) {
+                    Lifecycle.Event.ON_PAUSE -> player.pause()
+                    Lifecycle.Event.ON_RESUME -> if (autoPlay) player.play()
+                    else -> Unit
                 }
-                Lifecycle.Event.ON_RESUME -> {
-                    if (autoPlay) {
-                        try {
-                            exoPlayer?.let { player ->
-                                val playerClass = Class.forName("androidx.media3.exoplayer.ExoPlayer")
-                                playerClass.getMethod("play").invoke(player)
-                            }
-                        } catch (e: Exception) {
-                            // Ignore
-                        }
-                    }
-                }
-                else -> {}
             }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-            try {
-                exoPlayer?.let { player ->
-                    val playerClass = Class.forName("androidx.media3.exoplayer.ExoPlayer")
-                    playerClass.getMethod("release").invoke(player)
-                }
-            } catch (e: Exception) {
-                // Ignore
+
+            lifecycleOwner.lifecycle.addObserver(observer)
+
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
+                player.release()
+                android.util.Log.d("VideoPlayer", "✓ Player released")
             }
-        }
+        } ?: onDispose { }
     }
 
-    // Player cleanup
-    DisposableEffect(exoPlayer) {
-        onDispose {
-            try {
-                exoPlayer?.let { player ->
-                    val playerClass = Class.forName("androidx.media3.exoplayer.ExoPlayer")
-                    playerClass.getMethod("release").invoke(player)
-                }
-            } catch (e: Exception) {
-                // Ignore
-            }
-        }
-    }
-
-    // Poll player state
+    // Poll player state - DIRECT property access
     LaunchedEffect(exoPlayer) {
-        while (true) {
-            try {
-                exoPlayer?.let { player ->
-                    val playerClass = Class.forName("androidx.media3.exoplayer.ExoPlayer")
-                    isPlaying = playerClass.getMethod("isPlaying").invoke(player) as? Boolean ?: false
-                    val volume = playerClass.getMethod("getVolume").invoke(player) as? Float ?: 1f
-                    isMuted = volume == 0f
+        exoPlayer?.let { player ->
+            while (true) {
+                try {
+                    isPlaying = player.isPlaying
+                    isMuted = player.volume == 0f
+                } catch (e: Exception) {
+                    // Player might be released
+                    break
                 }
-            } catch (e: Exception) {
-                // Ignore
+                delay(100)
             }
-            kotlinx.coroutines.delay(100)
         }
     }
 
     // Auto-hide controls
     LaunchedEffect(showControlsUI) {
         if (showControlsUI) {
-            kotlinx.coroutines.delay(3000)
+            delay(3000)
             showControlsUI = false
         }
     }
@@ -1136,35 +1122,55 @@ private fun VideoPlayer(
             }
         }
     ) {
-        // Video player view
-        if (exoPlayer != null) {
-            AndroidView(
-                factory = { ctx ->
-                    try {
-                        val playerViewClass = Class.forName("androidx.media3.ui.PlayerView")
-                        val playerView = playerViewClass.getConstructor(android.content.Context::class.java)
-                            .newInstance(ctx) as android.view.View
-
-                        // Disable default controls
-                        playerViewClass.getMethod("setUseController", Boolean::class.java)
-                            .invoke(playerView, false)
-
-                        // Set player
-                        val playerInterfaceClass = Class.forName("androidx.media3.common.Player")
-                        playerViewClass.getMethod("setPlayer", playerInterfaceClass)
-                            .invoke(playerView, exoPlayer)
-
-                        playerView
-                    } catch (e: Exception) {
-                        android.view.View(ctx)
-                    }
-                },
-                modifier = Modifier.fillMaxSize()
-            )
+        when {
+            errorMessage != null -> {
+                // Error state
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.DarkGray),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        errorMessage ?: "Unknown error",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+            exoPlayer != null -> {
+                // Video player view - DIRECT PlayerView API calls
+                AndroidView(
+                    factory = { ctx ->
+                        PlayerView(ctx).apply {
+                            player = exoPlayer
+                            useController = false  // Disable default controls (we have custom ones)
+                            android.util.Log.d("VideoPlayer", "✓ PlayerView created")
+                        }
+                    },
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            else -> {
+                // Loading state
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "Loading...",
+                        color = Color.White,
+                        fontSize = 14.sp
+                    )
+                }
+            }
         }
 
         // Custom controls overlay
-        if (showControls) {
+        if (showControls && exoPlayer != null) {
             AnimatedVisibility(
                 visible = showControlsUI,
                 enter = fadeIn(animationSpec = tween(300)),
@@ -1182,19 +1188,14 @@ private fun VideoPlayer(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Play/Pause button
+                        // Play/Pause button - DIRECT method calls
                         IconButton(onClick = {
-                            try {
-                                exoPlayer?.let { player ->
-                                    val playerClass = Class.forName("androidx.media3.exoplayer.ExoPlayer")
-                                    if (isPlaying) {
-                                        playerClass.getMethod("pause").invoke(player)
-                                    } else {
-                                        playerClass.getMethod("play").invoke(player)
-                                    }
-                                }
-                            } catch (e: Exception) {
-                                // Ignore
+                            if (isPlaying) {
+                                exoPlayer.pause()
+                                android.util.Log.d("VideoPlayer", "⏸ Paused")
+                            } else {
+                                exoPlayer.play()
+                                android.util.Log.d("VideoPlayer", "▶ Playing")
                             }
                         }) {
                             if (isPlaying) {
@@ -1222,19 +1223,11 @@ private fun VideoPlayer(
                             }
                         }
 
-                        // Mute/Unmute button
+                        // Mute/Unmute button - DIRECT method calls
                         IconButton(onClick = {
-                            try {
-                                exoPlayer?.let { player ->
-                                    val playerClass = Class.forName("androidx.media3.exoplayer.ExoPlayer")
-                                    val newVolume = if (isMuted) 1f else 0f
-                                    playerClass.getMethod("setVolume", Float::class.java)
-                                        .invoke(player, newVolume)
-                                    isMuted = !isMuted
-                                }
-                            } catch (e: Exception) {
-                                // Ignore
-                            }
+                            exoPlayer.volume = if (isMuted) 1f else 0f
+                            isMuted = !isMuted
+                            android.util.Log.d("VideoPlayer", "🔊 Volume: ${if (isMuted) "Muted" else "Unmuted"}")
                         }) {
                             Text(
                                 text = if (isMuted) "\uD83D\uDD07" else "\uD83D\uDD0A",  // 🔇 🔊 emoji
@@ -1247,6 +1240,7 @@ private fun VideoPlayer(
                         if (showFullscreen) {
                             IconButton(onClick = {
                                 // TODO: Implement fullscreen functionality
+                                android.util.Log.d("VideoPlayer", "⛶ Fullscreen requested (not implemented)")
                             }) {
                                 Text(
                                     text = "⛶",  // Fullscreen symbol

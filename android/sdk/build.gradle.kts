@@ -88,6 +88,7 @@ dependencies {
     // Video playback (optional - host apps must provide)
     compileOnly(libs.androidx.media3.exoplayer)
     compileOnly(libs.androidx.media3.ui)
+    compileOnly(libs.androidx.media3.hls)
 
     // Testing
     testImplementation(libs.junit)
