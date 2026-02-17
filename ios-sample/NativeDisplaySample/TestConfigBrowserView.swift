@@ -172,11 +172,14 @@ struct ConfigRenderView: View {
             } else if let errorMessage = errorMessage {
                 ErrorVieww(message: errorMessage)
             } else if let config = config {
-                ScrollView {
-                    NativeDisplayView(config: config)
-                        .padding()
-                        // Accessibility identifier for XCUITest
-                        .accessibilityIdentifier("native-display-view")
+                GeometryReader { geometry in
+                    ScrollView {
+                        NativeDisplayView(config: config)
+                            .environment(\.nativeDisplayParentSize, geometry.size)
+                            .padding()
+                            // Accessibility identifier for XCUITest
+                            .accessibilityIdentifier("native-display-view")
+                    }
                 }
             } else {
                 PlaceholderView()

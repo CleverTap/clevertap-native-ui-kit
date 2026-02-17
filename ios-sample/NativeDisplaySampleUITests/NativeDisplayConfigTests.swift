@@ -13,13 +13,19 @@ final class NativeDisplayConfigTests: XCTestCase {
         app = XCUIApplication()
         app.launch()
 
-        // Navigate to Test Configs tab
-        let testConfigsTab = app.tabBars.buttons["🧪 Test Configs"]
-        XCTAssertTrue(testConfigsTab.waitForExistence(timeout: 5),
-                     "Test Configs tab should exist in the tab bar")
-        testConfigsTab.tap()
+        // Tap the ellipsis menu button to open the demo menu sheet
+        let menuButton = app.buttons["ellipsis.circle"]
+        XCTAssertTrue(menuButton.waitForExistence(timeout: 5),
+                     "Ellipsis menu button should exist in the toolbar")
+        menuButton.tap()
 
-        // Wait for the navigation bar to appear
+        // Tap "Test Configs" in the demo menu
+        let testConfigsLink = app.staticTexts["Test Configs"]
+        XCTAssertTrue(testConfigsLink.waitForExistence(timeout: 5),
+                     "Test Configs menu item should exist in the demo menu")
+        testConfigsLink.tap()
+
+        // Wait for the Test Configs view to appear
         _ = app.navigationBars["🧪 Test Configs"].waitForExistence(timeout: 5)
     }
 
@@ -47,25 +53,16 @@ final class NativeDisplayConfigTests: XCTestCase {
         let configButton = app.buttons["test-config-test-091"]
         XCTAssertTrue(configButton.waitForExistence(timeout: 5),
                      "Test config button 'test-091' should exist")
-        let app = XCUIApplication()
-        app.activate()
-        //let animationsButton = app/*@START_MENU_TOKEN@*/.buttons["🎬 Animations"]/*[[".tabBars.buttons[\"🎬 Animations\"]",".buttons[\"🎬 Animations\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/
-        //animationsButton.tap()
-        //app/*@START_MENU_TOKEN@*/.buttons["🎬 Animations"]/*[[".buttons.containing(.image, identifier: \"wand.and.sparkles\").firstMatch",".tabBars.buttons[\"🎬 Animations\"]",".buttons[\"🎬 Animations\"]"],[[[-1,2],[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
-        //app/*@START_MENU_TOKEN@*/.buttons["📏 Arrangements"]/*[[".tabBars.buttons[\"📏 Arrangements\"]",".buttons[\"📏 Arrangements\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
-        //animationsButton.tap()
-
         // Tap to load the configuration
         configButton.tap()
 
         // Wait for the configuration to load and render
-        let renderView = app.otherElements["native-display-view"]
+        // The accessibility identifier may appear under different element types in SwiftUI,
+        // so query all descendants instead of just otherElements
+        let renderPredicate = NSPredicate(format: "identifier == %@", "native-display-view")
+        let renderView = app.descendants(matching: .any).matching(renderPredicate).firstMatch
         XCTAssertTrue(renderView.waitForExistence(timeout: 10),
                      "Native display view should render within 10 seconds")
-
-        // Verify the UI rendered successfully
-        XCTAssertTrue(renderView.exists,
-                     "Render view should be visible on screen")
 
         // Verify no error message is displayed
         let errorView = app.staticTexts["Error Loading Config"]
@@ -124,7 +121,8 @@ extension NativeDisplayConfigTests {
         configButton.tap()
 
         // Wait for render view
-        let renderView = app.otherElements["native-display-view"]
+        let renderPredicate = NSPredicate(format: "identifier == %@", "native-display-view")
+        let renderView = app.descendants(matching: .any).matching(renderPredicate).firstMatch
         XCTAssertTrue(renderView.waitForExistence(timeout: 10),
                      "Native display view should render for \(id)")
 

@@ -102,44 +102,44 @@ struct InteractionLog: Identifiable {
 struct BannerDetailView: View {
     let bannerTitle: String
     let configSource: ConfigSource
-
+    
     @StateObject private var viewModel = BannerDetailViewModel()
-
+    
     var body: some View {
         GeometryReader { geometry in
-                   VStack(spacing: 0) {
-                       // Banner Display Area (70% of available space)
-                       ZStack {
-                           Color(.systemGroupedBackground)
-
-                           Group {
-                               if viewModel.isLoading {
-                                   LoadingIndicator()
-                               } else if let error = viewModel.errorMessage {
-                                   ErrorDisplay(message: error) {
-                                       viewModel.loadConfig(from: configSource)
-                                   }
-                               } else if let config = viewModel.config {
-                                   ScrollView {
-                                       NativeDisplayView(
-                                           config: config,
-                                           actionListener: viewModel.actionListener,
-                                           componentListener: viewModel.componentListener
-                                       )
-                                       .padding(16)
-                                   }
-                               }
-                           }
-                       }
-                       .frame(width: geometry.size.width, height: geometry.size.height * 0.7)
-
-                       Divider()
-
-                       // Interaction Log Area (30% of available space)
-                       InteractionLogView(logs: viewModel.interactionLogs)
-                           .frame(width: geometry.size.width, height: geometry.size.height * 0.3)
-                   }
-               }
+            VStack(spacing: 0) {
+                // Banner Display Area (70% of available space)
+                ZStack {
+                    Color(.systemGroupedBackground)
+                    
+                    Group {
+                        if viewModel.isLoading {
+                            LoadingIndicator()
+                        } else if let error = viewModel.errorMessage {
+                            ErrorDisplay(message: error) {
+                                viewModel.loadConfig(from: configSource)
+                            }
+                        } else if let config = viewModel.config {
+                            ScrollView {
+                                NativeDisplayView(
+                                    config: config,
+                                    actionListener: viewModel.actionListener,
+                                    componentListener: viewModel.componentListener
+                                )
+                                .padding(16)
+                            }
+                        }
+                    }
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height * 0.7)
+                
+                Divider()
+                
+                // Interaction Log Area (30% of available space)
+                InteractionLogView(logs: viewModel.interactionLogs)
+                    .frame(width: geometry.size.width, height: geometry.size.height * 0.3)
+            }
+        }
         .navigationTitle(bannerTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

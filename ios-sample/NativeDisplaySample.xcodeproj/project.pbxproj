@@ -114,13 +114,20 @@
 			path = Banners;
 			sourceTree = "<group>";
 		};
+		5742ADE62F4468D8005C1BBE /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				417388E22F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
 		GRP_APP /* NativeDisplaySample */ = {
 			isa = PBXGroup;
 			children = (
 				41C5EB1D2F34E6FC0066BE34 /* JSONViewerView.swift */,
 				411302792F33E757004B6254 /* BannerDetailView.swift */,
 				4113027A2F33E757004B6254 /* BannerShowcaseView.swift */,
-				417388E22F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json */,
 				41F1AD602F2B7D420018C5EA /* JsonLoader.swift */,
 				41F1AD5E2F2B7D330018C5EA /* TestConfigBrowserView.swift */,
 				F001 /* NativeDisplaySampleApp.swift */,
@@ -143,6 +150,7 @@
 		GRP_RES /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5742ADE62F4468D8005C1BBE /* Tests */,
 				4113029C2F34AC72004B6254 /* Banners */,
 				41969A722F0E6A4B0050EB83 /* animation_container_and_children.json */,
 				41969A732F0E6A4B0050EB83 /* animation_container_fade.json */,
@@ -323,7 +331,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevertap.nativedisplayuikit.NativeDisplaySampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -340,7 +348,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevertap.nativedisplayuikit.NativeDisplaySampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
