@@ -82,7 +82,7 @@
                 "id": "avatar",
                 "elementType": "image",
                 "bindings": {
-                  "src": "{{avatarUrl}}"
+                  "url": "{{avatarUrl}}"
                 },
                 "layout": {
                   "width": {
@@ -237,7 +237,7 @@
             "id": "post-image",
             "elementType": "image",
             "bindings": {
-              "src": "{{postImage}}"
+              "url": "{{postImage}}"
             },
             "layout": {
               "width": {

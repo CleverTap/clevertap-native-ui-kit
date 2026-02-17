@@ -80,7 +80,7 @@
                 "id": "avatar",
                 "elementType": "image",
                 "bindings": {
-                  "src": "{{avatarUrl}}"
+                  "url": "{{avatarUrl}}"
                 },
                 "layout": {
                   "width": {

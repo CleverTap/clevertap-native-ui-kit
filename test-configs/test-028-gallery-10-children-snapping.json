@@ -41,7 +41,7 @@
         "id": "item-1",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/160/160"
+          "url": "https://picsum.photos/160/160"
         },
         "layout": {
           "width": {
@@ -62,7 +62,7 @@
         "id": "item-2",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/160/161"
+          "url": "https://picsum.photos/160/161"
         },
         "layout": {
           "width": {
@@ -83,7 +83,7 @@
         "id": "item-3",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/160/162"
+          "url": "https://picsum.photos/160/162"
         },
         "layout": {
           "width": {
@@ -104,7 +104,7 @@
         "id": "item-4",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/160/163"
+          "url": "https://picsum.photos/160/163"
         },
         "layout": {
           "width": {
@@ -125,7 +125,7 @@
         "id": "item-5",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/160/164"
+          "url": "https://picsum.photos/160/164"
         },
         "layout": {
           "width": {
@@ -146,7 +146,7 @@
         "id": "item-6",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/160/165"
+          "url": "https://picsum.photos/160/165"
         },
         "layout": {
           "width": {
@@ -167,7 +167,7 @@
         "id": "item-7",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/160/166"
+          "url": "https://picsum.photos/160/166"
         },
         "layout": {
           "width": {
@@ -188,7 +188,7 @@
         "id": "item-8",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/160/167"
+          "url": "https://picsum.photos/160/167"
         },
         "layout": {
           "width": {
@@ -209,7 +209,7 @@
         "id": "item-9",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/160/168"
+          "url": "https://picsum.photos/160/168"
         },
         "layout": {
           "width": {
@@ -230,7 +230,7 @@
         "id": "item-10",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/160/169"
+          "url": "https://picsum.photos/160/169"
         },
         "layout": {
           "width": {

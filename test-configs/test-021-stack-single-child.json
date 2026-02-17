@@ -32,7 +32,7 @@
         "id": "base-layer",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/800/350"
+          "url": "https://picsum.photos/800/350"
         },
         "layout": {
           "width": {

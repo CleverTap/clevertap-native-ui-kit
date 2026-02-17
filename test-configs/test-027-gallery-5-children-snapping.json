@@ -41,7 +41,7 @@
         "id": "product-1",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/220/220"
+          "url": "https://picsum.photos/220/220"
         },
         "layout": {
           "width": {
@@ -64,7 +64,7 @@
         "id": "product-2",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/220/221"
+          "url": "https://picsum.photos/220/221"
         },
         "layout": {
           "width": {
@@ -87,7 +87,7 @@
         "id": "product-3",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/220/222"
+          "url": "https://picsum.photos/220/222"
         },
         "layout": {
           "width": {
@@ -110,7 +110,7 @@
         "id": "product-4",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/220/223"
+          "url": "https://picsum.photos/220/223"
         },
         "layout": {
           "width": {
@@ -133,7 +133,7 @@
         "id": "product-5",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/220/224"
+          "url": "https://picsum.photos/220/224"
         },
         "layout": {
           "width": {

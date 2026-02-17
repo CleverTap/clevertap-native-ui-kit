@@ -154,7 +154,7 @@
         "id": "hero-image",
         "elementType": "image",
         "bindings": {
-          "src": "{{heroImage}}"
+          "url": "{{heroImage}}"
         },
         "layout": {
           "width": {

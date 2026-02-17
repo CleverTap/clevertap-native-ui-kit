@@ -109,7 +109,7 @@
             "id": "image-1",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/200/200?random=1"
+              "url": "https://picsum.photos/200/200?random=1"
             },
             "layout": {
               "width": {
@@ -196,7 +196,7 @@
             "id": "image-2",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/200/200?random=2"
+              "url": "https://picsum.photos/200/200?random=2"
             },
             "layout": {
               "width": {

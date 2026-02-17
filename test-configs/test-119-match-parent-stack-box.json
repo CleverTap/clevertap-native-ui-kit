@@ -61,7 +61,7 @@
             "type": "element",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/400/180"
+              "url": "https://picsum.photos/400/180"
             },
             "layout": {
               "width": {

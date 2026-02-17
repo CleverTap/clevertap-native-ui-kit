@@ -76,7 +76,7 @@
             "id": "hero-image",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/600/300"
+              "url": "https://picsum.photos/600/300"
             },
             "layout": {
               "width": { "value": 100, "unit": "percent" },

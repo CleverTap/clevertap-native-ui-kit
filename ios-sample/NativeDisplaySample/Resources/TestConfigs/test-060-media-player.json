@@ -37,7 +37,7 @@
         "id": "video-player",
         "elementType": "video",
         "bindings": {
-          "src": "{{videoUrl}}"
+          "url": "{{videoUrl}}"
         },
         "layout": {
           "width": {

@@ -110,7 +110,7 @@
                 "id": "product-image",
                 "elementType": "image",
                 "bindings": {
-                  "src": "https://picsum.photos/400/400"
+                  "url": "https://picsum.photos/400/400"
                 },
                 "layout": {
                   "width": {

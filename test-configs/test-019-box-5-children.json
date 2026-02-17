@@ -32,7 +32,7 @@
         "id": "background-image",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/800/600"
+          "url": "https://picsum.photos/800/600"
         },
         "layout": {
           "width": {

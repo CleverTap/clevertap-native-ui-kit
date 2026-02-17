@@ -63,7 +63,7 @@
             "id": "avatar",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/200/200?random=20"
+              "url": "https://picsum.photos/200/200?random=20"
             },
             "layout": {
               "width": {

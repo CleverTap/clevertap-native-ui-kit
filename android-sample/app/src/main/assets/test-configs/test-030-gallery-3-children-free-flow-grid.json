@@ -69,7 +69,7 @@
             "id": "grid-img-1",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/200/150"
+              "url": "https://picsum.photos/200/150"
             },
             "layout": {
               "width": {
@@ -147,7 +147,7 @@
             "id": "grid-img-2",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/200/180"
+              "url": "https://picsum.photos/200/180"
             },
             "layout": {
               "width": {
@@ -225,7 +225,7 @@
             "id": "grid-img-3",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/200/160"
+              "url": "https://picsum.photos/200/160"
             },
             "layout": {
               "width": {

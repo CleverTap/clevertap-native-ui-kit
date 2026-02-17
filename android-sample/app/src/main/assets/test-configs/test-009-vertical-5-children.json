@@ -96,7 +96,7 @@
         "id": "image",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/400/200"
+          "url": "https://picsum.photos/400/200"
         },
         "layout": {
           "width": {

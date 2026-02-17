@@ -87,7 +87,7 @@
                 "id": "feature-icon",
                 "elementType": "image",
                 "bindings": {
-                  "src": "{{iconUrl}}"
+                  "url": "{{iconUrl}}"
                 },
                 "layout": {
                   "width": {

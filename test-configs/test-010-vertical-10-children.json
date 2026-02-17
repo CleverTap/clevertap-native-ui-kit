@@ -84,7 +84,7 @@
         "id": "image-1",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/400/150"
+          "url": "https://picsum.photos/400/150"
         },
         "layout": {
           "width": {
@@ -128,7 +128,7 @@
         "id": "image-2",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/400/160"
+          "url": "https://picsum.photos/400/160"
         },
         "layout": {
           "width": {
@@ -172,7 +172,7 @@
         "id": "image-3",
         "elementType": "image",
         "bindings": {
-          "src": "https://picsum.photos/400/170"
+          "url": "https://picsum.photos/400/170"
         },
         "layout": {
           "width": {

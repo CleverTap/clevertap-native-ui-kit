@@ -94,7 +94,7 @@
             "id": "full-width-image",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/800/450"
+              "url": "https://picsum.photos/800/450"
             },
             "layout": {
               "width": {
@@ -245,7 +245,7 @@
             "id": "nested-image",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/600/400"
+              "url": "https://picsum.photos/600/400"
             },
             "layout": {
               "width": {

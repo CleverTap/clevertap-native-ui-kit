@@ -75,7 +75,7 @@
                 "id": "gallery-image",
                 "elementType": "image",
                 "bindings": {
-                  "src": "{{imageUrl}}"
+                  "url": "{{imageUrl}}"
                 },
                 "layout": {
                   "width": {

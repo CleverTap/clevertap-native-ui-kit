@@ -91,7 +91,7 @@
             "id": "tight-1",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/200/160"
+              "url": "https://picsum.photos/200/160"
             },
             "layout": {
               "width": {
@@ -112,7 +112,7 @@
             "id": "tight-2",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/200/161"
+              "url": "https://picsum.photos/200/161"
             },
             "layout": {
               "width": {
@@ -133,7 +133,7 @@
             "id": "tight-3",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/200/162"
+              "url": "https://picsum.photos/200/162"
             },
             "layout": {
               "width": {
@@ -154,7 +154,7 @@
             "id": "tight-4",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/200/163"
+              "url": "https://picsum.photos/200/163"
             },
             "layout": {
               "width": {
@@ -231,7 +231,7 @@
             "id": "comfort-1",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/240/160"
+              "url": "https://picsum.photos/240/160"
             },
             "layout": {
               "width": {
@@ -252,7 +252,7 @@
             "id": "comfort-2",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/240/161"
+              "url": "https://picsum.photos/240/161"
             },
             "layout": {
               "width": {
@@ -273,7 +273,7 @@
             "id": "comfort-3",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/240/162"
+              "url": "https://picsum.photos/240/162"
             },
             "layout": {
               "width": {
@@ -294,7 +294,7 @@
             "id": "comfort-4",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/240/163"
+              "url": "https://picsum.photos/240/163"
             },
             "layout": {
               "width": {
@@ -371,7 +371,7 @@
             "id": "spacious-1",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/280/160"
+              "url": "https://picsum.photos/280/160"
             },
             "layout": {
               "width": {
@@ -395,7 +395,7 @@
             "id": "spacious-2",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/280/161"
+              "url": "https://picsum.photos/280/161"
             },
             "layout": {
               "width": {
@@ -419,7 +419,7 @@
             "id": "spacious-3",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/280/162"
+              "url": "https://picsum.photos/280/162"
             },
             "layout": {
               "width": {
@@ -443,7 +443,7 @@
             "id": "spacious-4",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/280/163"
+              "url": "https://picsum.photos/280/163"
             },
             "layout": {
               "width": {

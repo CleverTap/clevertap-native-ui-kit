@@ -110,7 +110,7 @@
                     "id": "product-1-image",
                     "elementType": "image",
                     "bindings": {
-                      "src": "https://picsum.photos/200/200"
+                      "url": "https://picsum.photos/200/200"
                     },
                     "layout": {
                       "width": { "value": 100, "unit": "percent" },
@@ -228,7 +228,7 @@
                     "id": "product-2-image",
                     "elementType": "image",
                     "bindings": {
-                      "src": "https://picsum.photos/200/201"
+                      "url": "https://picsum.photos/200/201"
                     },
                     "layout": {
                       "width": { "value": 100, "unit": "percent" },

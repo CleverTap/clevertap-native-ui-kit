@@ -94,7 +94,7 @@
             "id": "image-1",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/320/180"
+              "url": "https://picsum.photos/320/180"
             },
             "layout": {
               "width": {
@@ -130,7 +130,7 @@
             "id": "image-2",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/280/157"
+              "url": "https://picsum.photos/280/157"
             },
             "layout": {
               "width": {

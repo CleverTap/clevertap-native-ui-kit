@@ -93,7 +93,7 @@
                 "id": "card-1-image",
                 "elementType": "image",
                 "bindings": {
-                  "src": "https://picsum.photos/400/225"
+                  "url": "https://picsum.photos/400/225"
                 },
                 "layout": {
                   "width": { "value": 100, "unit": "percent" },
@@ -125,7 +125,7 @@
                 "id": "card-2-image",
                 "elementType": "image",
                 "bindings": {
-                  "src": "https://picsum.photos/400/226"
+                  "url": "https://picsum.photos/400/226"
                 },
                 "layout": {
                   "width": { "value": 100, "unit": "percent" },
@@ -157,7 +157,7 @@
                 "id": "card-3-image",
                 "elementType": "image",
                 "bindings": {
-                  "src": "https://picsum.photos/400/227"
+                  "url": "https://picsum.photos/400/227"
                 },
                 "layout": {
                   "width": { "value": 100, "unit": "percent" },
