@@ -106,41 +106,40 @@ struct BannerDetailView: View {
     @StateObject private var viewModel = BannerDetailViewModel()
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Banner Display Area (70% of screen)
-            GeometryReader { geometry in
-                ZStack {
-                    Color(.systemGroupedBackground)
+        GeometryReader { geometry in
+                   VStack(spacing: 0) {
+                       // Banner Display Area (70% of available space)
+                       ZStack {
+                           Color(.systemGroupedBackground)
 
-                    if viewModel.isLoading {
-                        LoadingIndicator()
-                    } else if let error = viewModel.errorMessage {
-                        ErrorDisplay(message: error) {
-                            viewModel.loadConfig(from: configSource)
-                        }
-                    } else if let config = viewModel.config {
-                        ScrollView {
-                            NativeDisplayView(
-                                config: config,
-                                actionListener: viewModel.actionListener,
-                                componentListener: viewModel.componentListener
-                            )
-                            .environment(\.nativeDisplayParentSize, geometry.size)
-                            .padding(16)
-                        }
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: UIScreen.main.bounds.height * 0.7)
+                           Group {
+                               if viewModel.isLoading {
+                                   LoadingIndicator()
+                               } else if let error = viewModel.errorMessage {
+                                   ErrorDisplay(message: error) {
+                                       viewModel.loadConfig(from: configSource)
+                                   }
+                               } else if let config = viewModel.config {
+                                   ScrollView {
+                                       NativeDisplayView(
+                                           config: config,
+                                           actionListener: viewModel.actionListener,
+                                           componentListener: viewModel.componentListener
+                                       )
+                                       .padding(16)
+                                   }
+                               }
+                           }
+                       }
+                       .frame(width: geometry.size.width, height: geometry.size.height * 0.7)
 
-            Divider()
+                       Divider()
 
-            // Interaction Log Area (30% of screen)
-            InteractionLogView(logs: viewModel.interactionLogs)
-                .frame(maxWidth: .infinity)
-                .frame(height: UIScreen.main.bounds.height * 0.3)
-        }
+                       // Interaction Log Area (30% of available space)
+                       InteractionLogView(logs: viewModel.interactionLogs)
+                           .frame(width: geometry.size.width, height: geometry.size.height * 0.3)
+                   }
+               }
         .navigationTitle(bannerTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

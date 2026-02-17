@@ -78,7 +78,20 @@ public struct NativeDisplayView: View {
             // → Skip GeometryReader (performance win)
             let screenSize = UIScreen.main.bounds.size
             renderContent(parentSize: screenSize)
-        } else {
+        } else if let aspectRatio = config.root.layout?.aspectRatio,
+                  aspectRatio > 0,
+                  config.root.layout?.height == nil {
+            // Priority 4a: Root has aspect ratio but no explicit height
+            // GeometryReader inside ScrollView gets ~10pt height, so we
+            // read only the width and derive height from the aspect ratio.
+            // JSON aspectRatio is height/width (e.g., 0.55 means height = width * 0.55)
+            WidthReader { width in
+                let derivedHeight = width * aspectRatio
+                renderContent(parentSize: CGSize(width: width, height: derivedHeight))
+                    .frame(width: width, height: derivedHeight)
+            }
+        }
+        else {
             // Priority 4: GeometryReader (ONLY when truly needed)
             // Conditions to reach here:
             // - NO environment override AND
@@ -88,6 +101,40 @@ public struct NativeDisplayView: View {
             GeometryReader { geometry in
                 renderContent(parentSize: geometry.size)
             }
+        }
+    }
+
+    /// Reads the available width without constraining height.
+    /// Unlike GeometryReader, this does not impose a greedy height on its parent,
+    /// making it safe to use inside ScrollView.
+    private struct WidthReader<Content: View>: View {
+        let content: (CGFloat) -> Content
+        @State private var width: CGFloat = UIScreen.main.bounds.width
+
+        init(@ViewBuilder content: @escaping (CGFloat) -> Content) {
+            self.content = content
+        }
+
+        var body: some View {
+            content(width)
+                .background(
+                    GeometryReader { geometry in
+                        Color.clear
+                            .preference(key: WidthPreferenceKey.self, value: geometry.size.width)
+                    }
+                )
+                .onPreferenceChange(WidthPreferenceKey.self) { newWidth in
+                    if newWidth > 0 {
+                        width = newWidth
+                    }
+                }
+        }
+    }
+
+    private struct WidthPreferenceKey: PreferenceKey {
+        static var defaultValue: CGFloat = 0
+        static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+            value = max(value, nextValue())
         }
     }
 
@@ -296,7 +343,12 @@ struct RenderContainer: View {
                     height = parentSize.height * h.value / 100
                 }
             }
-        } else {
+        } else if let aspectRatio = layout?.aspectRatio, aspectRatio > 0 {
+            // Derive height from width using aspect ratio
+            // JSON aspectRatio is height/width (e.g., 0.55 means height = width * 0.55)
+            height = width * aspectRatio
+        }
+        else {
             height = parentSize.height
         }
 
@@ -790,23 +842,30 @@ struct LayoutModifier: ViewModifier {
     }
 
     private func calculateHeight() -> CGFloat? {
-        guard let height = layout?.height else { return nil }
-
-        if let special = height.special {
-            switch special {
-            case .wrapContent:
-                return nil
-            case .matchParent:
-                return nil // Use maxHeight instead
+        if let height = layout?.height {
+            if let special = height.special {
+                switch special {
+                case .wrapContent:
+                    return nil
+                case .matchParent:
+                    return nil // Use maxHeight instead
+                }
+            }
+            switch height.unit {
+            case .dp, .px, .sp:
+                return height.value > 0 ? height.value : nil
+            case .percent:
+                return parentSize.height * height.value / 100
             }
         }
-
-        switch height.unit {
-        case .dp, .px, .sp:
-            return height.value > 0 ? height.value : nil
-        case .percent:
-            return parentSize.height * height.value / 100
+        // No explicit height: derive from aspect ratio if available
+        // JSON aspectRatio is height/width (e.g., 0.55 means height = width * 0.55)
+        // This matches Android: Compose.aspectRatio(1f / jsonRatio) where ratio = w/h
+        if let aspectRatio = layout?.aspectRatio, aspectRatio > 0,
+           let width = calculateWidth(), width > 0 {
+            return width * aspectRatio
         }
+        return nil
     }
 
     private func calculateMaxWidth() -> CGFloat? {
@@ -889,6 +948,13 @@ struct LayoutModifier: ViewModifier {
 
         if hasExplicitWidth && hasExplicitHeight {
             return nil  // Both dimensions explicit, ignore aspect ratio
+        }
+        
+        // If height was already derived from aspect ratio in calculateHeight(),
+        // don't apply the SwiftUI .aspectRatio() modifier (it would constrain
+        // to the parent's proposed size which may be wrong, e.g. in ScrollView)
+        if layout?.height == nil, hasExplicitWidth, calculateWidth() ?? 0 > 0 {
+            return nil  // Height already computed from width * aspectRatio
         }
 
         return aspectRatio
