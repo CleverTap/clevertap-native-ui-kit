@@ -2,6 +2,8 @@
 // Main entry point for rendering native display UI using SwiftUI
 
 import SwiftUI
+import AVKit
+import AVFoundation
 
 // MARK: - Environment Key for Parent Size
 
@@ -683,12 +685,37 @@ struct RenderElement: View {
     
     @ViewBuilder
     private func renderVideo() -> some View {
-        ZStack {
+        let videoUrl = element.bindings["url"].map { evaluator.evaluateString($0) } ?? ""
+
+        let autoPlay = element.bindings["autoPlay"].map { evaluator.evaluateBoolean($0) } ?? false
+        let loop = element.bindings["loop"].map { evaluator.evaluateBoolean($0) } ?? false
+        let muted = element.bindings["muted"].map { evaluator.evaluateBoolean($0) } ?? false
+        let showControls = element.bindings["showControls"].map { evaluator.evaluateBoolean($0) } ?? true
+        let showFullscreen = element.bindings["showFullscreen"].map { evaluator.evaluateBoolean($0) } ?? true
+
+        if !videoUrl.isEmpty, let url = URL(string: videoUrl) {
+            VideoPlayerView(
+                url: url,
+                autoPlay: autoPlay,
+                loop: loop,
+                muted: muted,
+                showControls: showControls,
+                showFullscreen: showFullscreen
+            )
+        } else {
+            // Fallback UI
             Rectangle()
                 .fill(Color.black)
-            
-            Text("Video Player")
-                .foregroundColor(.white)
+                .overlay(
+                    VStack(spacing: 8) {
+                        Image(systemName: "video.slash")
+                            .font(.largeTitle)
+                            .foregroundColor(.gray)
+                        Text("No Video")
+                            .foregroundColor(.gray)
+                            .font(.caption)
+                    }
+                )
         }
     }
     
@@ -990,6 +1017,215 @@ public struct ColorParser {
                 blue: Double((rgbValue & 0x000000FF)) / 255.0,           // BB byte
                 opacity: Double((rgbValue & 0xFF000000) >> 24) / 255.0   // AA byte
             )
+        }
+    }
+}
+
+// MARK: - Video Player Components
+
+/// Manages AVPlayer lifecycle and state for video playback
+private class PlayerManager: ObservableObject {
+    @Published var isPlaying: Bool = false
+    @Published var isMuted: Bool = false
+
+    var player: AVPlayer?
+    private var playerObserver: NSObjectProtocol?
+    private var timeObserver: Any?
+
+    func setupPlayer(url: URL, autoPlay: Bool, loop: Bool, muted: Bool) {
+        let playerItem = AVPlayerItem(url: url)
+        player = AVPlayer(playerItem: playerItem)
+        player?.isMuted = muted
+        self.isMuted = muted
+
+        // Setup loop observer (BEST PRACTICE: specify object parameter)
+        if loop {
+            playerObserver = NotificationCenter.default.addObserver(
+                forName: .AVPlayerItemDidPlayToEndTime,
+                object: playerItem,  // IMPORTANT: prevents memory leaks
+                queue: .main
+            ) { [weak self] _ in
+                self?.player?.seek(to: .zero)
+                self?.player?.play()
+            }
+        }
+
+        // Observe playback state
+        timeObserver = player?.addPeriodicTimeObserver(
+            forInterval: CMTime(seconds: 0.1, preferredTimescale: 600),
+            queue: .main
+        ) { [weak self] _ in  // BEST PRACTICE: [weak self] prevents retain cycle
+            self?.isPlaying = self?.player?.rate ?? 0 > 0
+        }
+
+        if autoPlay {
+            player?.play()
+        }
+    }
+
+    func togglePlayPause() {
+        if isPlaying {
+            player?.pause()
+        } else {
+            player?.play()
+        }
+    }
+
+    func toggleMute() {
+        isMuted.toggle()
+        player?.isMuted = isMuted
+    }
+
+    func cleanup() {
+        player?.pause()
+
+        if let observer = playerObserver {
+            NotificationCenter.default.removeObserver(observer)
+            playerObserver = nil
+        }
+
+        if let timeObs = timeObserver {
+            player?.removeTimeObserver(timeObs)
+            timeObserver = nil
+        }
+
+        player = nil
+    }
+
+    deinit {
+        cleanup()
+    }
+}
+
+/// UIViewRepresentable wrapper for AVPlayerLayer
+private struct VideoPlayerLayer: UIViewRepresentable {
+    let player: AVPlayer?
+
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        view.backgroundColor = .black
+
+        let playerLayer = AVPlayerLayer(player: player)
+        playerLayer.videoGravity = .resizeAspect
+        view.layer.addSublayer(playerLayer)
+
+        context.coordinator.playerLayer = playerLayer
+        return view
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {
+        context.coordinator.playerLayer?.player = player
+
+        // Update layer frame to match view bounds
+        DispatchQueue.main.async {
+            context.coordinator.playerLayer?.frame = uiView.bounds
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
+        coordinator.playerLayer?.removeFromSuperlayer()
+        coordinator.playerLayer = nil
+    }
+
+    class Coordinator {
+        var playerLayer: AVPlayerLayer?
+    }
+}
+
+/// Main video player view with custom controls
+private struct VideoPlayerView: View {
+    let url: URL
+    let autoPlay: Bool
+    let loop: Bool
+    let muted: Bool
+    let showControls: Bool
+    let showFullscreen: Bool
+
+    @StateObject private var playerManager = PlayerManager()
+    @State private var showControlsUI = false
+    @State private var controlsOpacity: Double = 0
+
+    var body: some View {
+        ZStack {
+            // Custom AVPlayerLayer
+            VideoPlayerLayer(player: playerManager.player)
+                .onTapGesture {
+                    if showControls {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            showControlsUI.toggle()
+                            controlsOpacity = showControlsUI ? 1.0 : 0.0
+                        }
+                    }
+                }
+
+            // Custom controls overlay
+            if showControls && controlsOpacity > 0 {
+                VStack {
+                    Spacer()
+
+                    HStack(spacing: 16) {
+                        // Play/Pause button
+                        Button(action: {
+                            playerManager.togglePlayPause()
+                        }) {
+                            Image(systemName: playerManager.isPlaying ? "pause.fill" : "play.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(.white)
+                                .frame(width: 44, height: 44)
+                        }
+
+                        // Mute/Unmute button
+                        Button(action: {
+                            playerManager.toggleMute()
+                        }) {
+                            Image(systemName: playerManager.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(.white)
+                                .frame(width: 44, height: 44)
+                        }
+
+                        // Fullscreen button (if enabled)
+                        if showFullscreen {
+                            Button(action: {
+                                // TODO: Implement fullscreen functionality
+                            }) {
+                                Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(.white)
+                                    .frame(width: 44, height: 44)
+                            }
+                        }
+
+                        Spacer()
+                    }
+                    .padding()
+                    .background(
+                        Color.black.opacity(0.5 * controlsOpacity)
+                    )
+                }
+                .opacity(controlsOpacity)
+            }
+        }
+        .onAppear {
+            playerManager.setupPlayer(url: url, autoPlay: autoPlay, loop: loop, muted: muted)
+        }
+        .onDisappear {
+            playerManager.cleanup()
+        }
+        .onChange(of: showControlsUI) { isShown in
+            if isShown {
+                // Auto-hide after 3 seconds
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        showControlsUI = false
+                        controlsOpacity = 0
+                    }
+                }
+            }
         }
     }
 }

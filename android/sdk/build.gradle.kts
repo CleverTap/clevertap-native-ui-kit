@@ -84,7 +84,11 @@ dependencies {
     
     // Image Loading
     implementation(libs.coil.compose)
-    
+
+    // Video playback (optional - host apps must provide)
+    compileOnly(libs.androidx.media3.exoplayer)
+    compileOnly(libs.androidx.media3.ui)
+
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

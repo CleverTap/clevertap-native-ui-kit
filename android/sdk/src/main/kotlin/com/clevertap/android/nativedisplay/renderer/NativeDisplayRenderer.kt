@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -51,6 +52,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow as ComposeTextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.compose.foundation.clickable
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import coil.compose.rememberAsyncImagePainter
 import com.clevertap.android.nativedisplay.evaluator.VariableEvaluator
 import com.clevertap.android.nativedisplay.handler.ActionHandler
@@ -865,15 +874,48 @@ private fun RenderElement(
         }
 
         ElementType.VIDEO -> {
-            Box(
-                modifier = elementModifier.background(Color.Black),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    "Video Player",
-                    color = Color.White,
-                    fontSize = 16.sp
+            val videoUrl = element.bindings["url"]?.let {
+                evaluator.evaluateString(it)
+            } ?: ""
+
+            val autoPlay = element.bindings["autoPlay"]?.let {
+                evaluator.evaluateString(it).toBoolean()
+            } ?: false
+
+            val loop = element.bindings["loop"]?.let {
+                evaluator.evaluateString(it).toBoolean()
+            } ?: false
+
+            val muted = element.bindings["muted"]?.let {
+                evaluator.evaluateString(it).toBoolean()
+            } ?: false
+
+            val showControls = element.bindings["showControls"]?.let {
+                evaluator.evaluateString(it).toBoolean()
+            } ?: true
+
+            val showFullscreen = element.bindings["showFullscreen"]?.let {
+                evaluator.evaluateString(it).toBoolean()
+            } ?: true
+
+            if (videoUrl.isNotEmpty()) {
+                VideoPlayer(
+                    videoUrl = videoUrl,
+                    autoPlay = autoPlay,
+                    loop = loop,
+                    muted = muted,
+                    showControls = showControls,
+                    showFullscreen = showFullscreen,
+                    modifier = elementModifier
                 )
+            } else {
+                // Fallback for missing URL
+                Box(
+                    modifier = elementModifier.background(Color.DarkGray),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No Video URL", color = Color.Gray, fontSize = 12.sp)
+                }
             }
         }
 
@@ -899,6 +941,321 @@ private fun RenderElement(
                         thickness = dividerConfig.thickness.dp,
                         color = dividerColor
                     )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Video player composable with custom controls.
+ * Supports Media3 ExoPlayer with runtime detection and graceful degradation.
+ */
+@Composable
+private fun VideoPlayer(
+    videoUrl: String,
+    autoPlay: Boolean = false,
+    loop: Boolean = false,
+    muted: Boolean = false,
+    showControls: Boolean = true,
+    showFullscreen: Boolean = true,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    // Runtime Media3 detection
+    val isMedia3Available = remember {
+        try {
+            Class.forName("androidx.media3.exoplayer.ExoPlayer")
+            true
+        } catch (e: ClassNotFoundException) {
+            false
+        }
+    }
+
+    if (!isMedia3Available) {
+        // Fallback UI when Media3 is not available
+        Box(
+            modifier = modifier.background(Color.DarkGray),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    "Video Player Unavailable",
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    fontWeight = ComposeFontWeight.Bold
+                )
+                Text(
+                    "Add Media3 dependency to your app",
+                    color = Color.LightGray,
+                    fontSize = 11.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+        return
+    }
+
+    // State for custom controls
+    var showControlsUI by remember { mutableStateOf(false) }
+    var isPlaying by remember { mutableStateOf(autoPlay) }
+    var isMuted by remember { mutableStateOf(muted) }
+
+    // Create ExoPlayer instance (single instance per URL)
+    val exoPlayer = remember(videoUrl) {
+        try {
+            val playerClass = Class.forName("androidx.media3.exoplayer.ExoPlayer")
+            val builderClass = Class.forName("androidx.media3.exoplayer.ExoPlayer\$Builder")
+            val mediaItemClass = Class.forName("androidx.media3.common.MediaItem")
+            val playerInterfaceClass = Class.forName("androidx.media3.common.Player")
+
+            // Create ExoPlayer instance
+            val builder = builderClass.getConstructor(android.content.Context::class.java)
+                .newInstance(context)
+            val player = builderClass.getMethod("build").invoke(builder)
+
+            // Create and set MediaItem
+            val mediaItem = mediaItemClass.getMethod("fromUri", String::class.java)
+                .invoke(null, videoUrl)
+            playerClass.getMethod("setMediaItem", mediaItemClass)
+                .invoke(player, mediaItem)
+
+            // Configure player
+            playerClass.getMethod("prepare").invoke(player)
+            playerClass.getMethod("setPlayWhenReady", Boolean::class.java)
+                .invoke(player, autoPlay)
+
+            // Set repeat mode
+            val repeatMode = if (loop) 1 else 0  // REPEAT_MODE_ONE = 1, REPEAT_MODE_OFF = 0
+            playerClass.getMethod("setRepeatMode", Int::class.java)
+                .invoke(player, repeatMode)
+
+            // Set volume
+            val volume = if (muted) 0f else 1f
+            playerClass.getMethod("setVolume", Float::class.java)
+                .invoke(player, volume)
+
+            player
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    // Lifecycle management
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE -> {
+                    try {
+                        exoPlayer?.let { player ->
+                            val playerClass = Class.forName("androidx.media3.exoplayer.ExoPlayer")
+                            playerClass.getMethod("pause").invoke(player)
+                        }
+                    } catch (e: Exception) {
+                        // Ignore
+                    }
+                }
+                Lifecycle.Event.ON_RESUME -> {
+                    if (autoPlay) {
+                        try {
+                            exoPlayer?.let { player ->
+                                val playerClass = Class.forName("androidx.media3.exoplayer.ExoPlayer")
+                                playerClass.getMethod("play").invoke(player)
+                            }
+                        } catch (e: Exception) {
+                            // Ignore
+                        }
+                    }
+                }
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            try {
+                exoPlayer?.let { player ->
+                    val playerClass = Class.forName("androidx.media3.exoplayer.ExoPlayer")
+                    playerClass.getMethod("release").invoke(player)
+                }
+            } catch (e: Exception) {
+                // Ignore
+            }
+        }
+    }
+
+    // Player cleanup
+    DisposableEffect(exoPlayer) {
+        onDispose {
+            try {
+                exoPlayer?.let { player ->
+                    val playerClass = Class.forName("androidx.media3.exoplayer.ExoPlayer")
+                    playerClass.getMethod("release").invoke(player)
+                }
+            } catch (e: Exception) {
+                // Ignore
+            }
+        }
+    }
+
+    // Poll player state
+    LaunchedEffect(exoPlayer) {
+        while (true) {
+            try {
+                exoPlayer?.let { player ->
+                    val playerClass = Class.forName("androidx.media3.exoplayer.ExoPlayer")
+                    isPlaying = playerClass.getMethod("isPlaying").invoke(player) as? Boolean ?: false
+                    val volume = playerClass.getMethod("getVolume").invoke(player) as? Float ?: 1f
+                    isMuted = volume == 0f
+                }
+            } catch (e: Exception) {
+                // Ignore
+            }
+            kotlinx.coroutines.delay(100)
+        }
+    }
+
+    // Auto-hide controls
+    LaunchedEffect(showControlsUI) {
+        if (showControlsUI) {
+            kotlinx.coroutines.delay(3000)
+            showControlsUI = false
+        }
+    }
+
+    // UI
+    Box(
+        modifier = modifier.clickable {
+            if (showControls) {
+                showControlsUI = !showControlsUI
+            }
+        }
+    ) {
+        // Video player view
+        if (exoPlayer != null) {
+            AndroidView(
+                factory = { ctx ->
+                    try {
+                        val playerViewClass = Class.forName("androidx.media3.ui.PlayerView")
+                        val playerView = playerViewClass.getConstructor(android.content.Context::class.java)
+                            .newInstance(ctx) as android.view.View
+
+                        // Disable default controls
+                        playerViewClass.getMethod("setUseController", Boolean::class.java)
+                            .invoke(playerView, false)
+
+                        // Set player
+                        val playerInterfaceClass = Class.forName("androidx.media3.common.Player")
+                        playerViewClass.getMethod("setPlayer", playerInterfaceClass)
+                            .invoke(playerView, exoPlayer)
+
+                        playerView
+                    } catch (e: Exception) {
+                        android.view.View(ctx)
+                    }
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+
+        // Custom controls overlay
+        if (showControls) {
+            AnimatedVisibility(
+                visible = showControlsUI,
+                enter = fadeIn(animationSpec = tween(300)),
+                exit = fadeOut(animationSpec = tween(300)),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(Color.Black.copy(alpha = 0.5f))
+                        .padding(16.dp)
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Play/Pause button
+                        IconButton(onClick = {
+                            try {
+                                exoPlayer?.let { player ->
+                                    val playerClass = Class.forName("androidx.media3.exoplayer.ExoPlayer")
+                                    if (isPlaying) {
+                                        playerClass.getMethod("pause").invoke(player)
+                                    } else {
+                                        playerClass.getMethod("play").invoke(player)
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                // Ignore
+                            }
+                        }) {
+                            if (isPlaying) {
+                                // Pause icon (two vertical bars)
+                                Row(horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+                                    Box(
+                                        Modifier
+                                            .width(4.dp)
+                                            .height(16.dp)
+                                            .background(Color.White)
+                                    )
+                                    Box(
+                                        Modifier
+                                            .width(4.dp)
+                                            .height(16.dp)
+                                            .background(Color.White)
+                                    )
+                                }
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Default.PlayArrow,
+                                    contentDescription = "Play",
+                                    tint = Color.White
+                                )
+                            }
+                        }
+
+                        // Mute/Unmute button
+                        IconButton(onClick = {
+                            try {
+                                exoPlayer?.let { player ->
+                                    val playerClass = Class.forName("androidx.media3.exoplayer.ExoPlayer")
+                                    val newVolume = if (isMuted) 1f else 0f
+                                    playerClass.getMethod("setVolume", Float::class.java)
+                                        .invoke(player, newVolume)
+                                    isMuted = !isMuted
+                                }
+                            } catch (e: Exception) {
+                                // Ignore
+                            }
+                        }) {
+                            Text(
+                                text = if (isMuted) "\uD83D\uDD07" else "\uD83D\uDD0A",  // 🔇 🔊 emoji
+                                fontSize = 20.sp,
+                                color = Color.White
+                            )
+                        }
+
+                        // Fullscreen button (if enabled)
+                        if (showFullscreen) {
+                            IconButton(onClick = {
+                                // TODO: Implement fullscreen functionality
+                            }) {
+                                Text(
+                                    text = "⛶",  // Fullscreen symbol
+                                    fontSize = 20.sp,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
