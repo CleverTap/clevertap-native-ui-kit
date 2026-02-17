@@ -2,12 +2,26 @@
   "theme": {
     "id": "stats-card",
     "defaultStyle": {
-      "textColor": "#1F2937",
-      "fontSize": 14
+      "textColor": "#FF1F2937",
+      "fontSize": 14,
+      "fontFamily": "System"
     }
   },
+  "variables": {
+    "revenueLabel": "Revenue",
+    "revenueValue": "$45.2K",
+    "revenueChange": "+12.5%",
+    "ordersLabel": "Orders",
+    "ordersValue": "1,248",
+    "ordersChange": "+8.2%",
+    "usersLabel": "Users",
+    "usersValue": "8,429",
+    "usersChange": "+5.7%",
+    "conversionLabel": "Conversion",
+    "conversionValue": "3.42%",
+    "conversionChange": "+0.8%"
+  },
   "root": {
-    "type": "container",
     "id": "stats-container",
     "containerType": "vertical",
     "layout": {
@@ -16,285 +30,418 @@
         "unit": "percent"
       },
       "height": {
-        "value": 100,
-        "unit": "percent"
+        "value": 1200,
+        "unit": "dp"
       },
       "padding": {
         "all": 20
       }
     },
     "style": {
-      "backgroundColor": "#F9FAFB"
+      "backgroundColor": "#FFF9FAFB"
     },
     "children": [
       {
-        "type": "container",
-        "id": "stats-card",
-        "containerType": "horizontal",
+        "id": "stats-grid",
+        "containerType": "vertical",
         "layout": {
           "width": {
             "value": 100,
             "unit": "percent"
           },
-          "height": {
-            "value": -2,
-            "unit": "dp"
-          },
-          "padding": {
-            "all": 24
-          },
           "arrangement": {
-            "type": "space_between"
+            "spacing": 16,
+            "strategy": "spaced"
           }
-        },
-        "style": {
-          "backgroundColor": "#FFFFFF",
-          "borderRadius": 16,
-          "shadowRadius": 12,
-          "shadowColor": "#000000",
-          "shadowOpacity": 0.08,
-          "shadowOffsetX": 0,
-          "shadowOffsetY": 4
         },
         "children": [
           {
-            "type": "container",
-            "id": "stat-1",
-            "containerType": "vertical",
+            "id": "row-1",
+            "containerType": "horizontal",
             "layout": {
               "width": {
-                "value": -2,
-                "unit": "dp"
+                "value": 100,
+                "unit": "percent"
               },
               "height": {
                 "value": -2,
                 "unit": "dp"
               },
               "arrangement": {
-                "type": "spaced"
+                "spacing": 16,
+                "strategy": "spaced"
               }
             },
             "children": [
               {
-                "type": "element",
-                "id": "stat-1-label",
-                "elementType": "text",
-                "bindings": {
-                  "text": "Revenue"
-                },
+                "id": "stat-card-1",
+                "containerType": "vertical",
                 "layout": {
                   "width": {
-                    "value": -2,
+                    "value": -1,
                     "unit": "dp"
                   },
-                  "height": {
-                    "value": -2,
-                    "unit": "dp"
+                  "padding": {
+                    "all": 20
+                  },
+                  "arrangement": {
+                    "spacing": 12,
+                    "strategy": "spaced"
                   }
                 },
                 "style": {
-                  "fontSize": 12,
-                  "fontWeight": "medium",
-                  "textColor": "#6B7280"
-                }
+                  "backgroundColor": "#FFFFFFFF",
+                  "borderRadius": 16,
+                  "shadowRadius": 12,
+                  "shadowColor": "#FF000000",
+                  "shadowOpacity": 0.08,
+                  "shadowOffsetY": 4
+                },
+                "children": [
+                  {
+                    "id": "revenue-label",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "{{revenueLabel}}"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 12,
+                      "fontWeight": "medium",
+                      "textColor": "#FF6B7280"
+                    },
+                    "type": "element"
+                  },
+                  {
+                    "id": "revenue-value",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "{{revenueValue}}"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 28,
+                      "fontWeight": "bold",
+                      "textColor": "#FF111827"
+                    },
+                    "type": "element"
+                  },
+                  {
+                    "id": "revenue-change",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "{{revenueChange}}"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 12,
+                      "fontWeight": "medium",
+                      "textColor": "#FF10B981"
+                    },
+                    "type": "element"
+                  }
+                ],
+                "type": "container"
               },
               {
-                "type": "element",
-                "id": "stat-1-value",
-                "elementType": "text",
-                "bindings": {
-                  "text": "$45.2K"
-                },
+                "id": "stat-card-2",
+                "containerType": "vertical",
                 "layout": {
                   "width": {
-                    "value": -2,
+                    "value": -1,
                     "unit": "dp"
                   },
-                  "height": {
-                    "value": -2,
-                    "unit": "dp"
+                  "padding": {
+                    "all": 20
+                  },
+                  "arrangement": {
+                    "spacing": 12,
+                    "strategy": "spaced"
                   }
                 },
                 "style": {
-                  "fontSize": 28,
-                  "fontWeight": "bold",
-                  "textColor": "#111827"
-                }
+                  "backgroundColor": "#FFFFFFFF",
+                  "borderRadius": 16,
+                  "shadowRadius": 12,
+                  "shadowColor": "#FF000000",
+                  "shadowOpacity": 0.08,
+                  "shadowOffsetY": 4
+                },
+                "children": [
+                  {
+                    "id": "orders-label",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "{{ordersLabel}}"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 12,
+                      "fontWeight": "medium",
+                      "textColor": "#FF6B7280"
+                    },
+                    "type": "element"
+                  },
+                  {
+                    "id": "orders-value",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "{{ordersValue}}"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 28,
+                      "fontWeight": "bold",
+                      "textColor": "#FF3B82F6"
+                    },
+                    "type": "element"
+                  },
+                  {
+                    "id": "orders-change",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "{{ordersChange}}"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 12,
+                      "fontWeight": "medium",
+                      "textColor": "#FF10B981"
+                    },
+                    "type": "element"
+                  }
+                ],
+                "type": "container"
               }
-            ]
+            ],
+            "type": "container"
           },
           {
-            "type": "element",
-            "id": "spacer-1",
-            "elementType": "spacer",
+            "id": "row-2",
+            "containerType": "horizontal",
             "layout": {
               "width": {
-                "value": 1,
-                "unit": "dp"
-              },
-              "height": {
-                "value": 60,
-                "unit": "dp"
-              }
-            },
-            "style": {
-              "backgroundColor": "#E5E7EB"
-            }
-          },
-          {
-            "type": "container",
-            "id": "stat-2",
-            "containerType": "vertical",
-            "layout": {
-              "width": {
-                "value": -2,
-                "unit": "dp"
+                "value": 100,
+                "unit": "percent"
               },
               "height": {
                 "value": -2,
                 "unit": "dp"
               },
               "arrangement": {
-                "type": "spaced"
+                "spacing": 16,
+                "strategy": "spaced"
               }
             },
             "children": [
               {
-                "type": "element",
-                "id": "stat-2-label",
-                "elementType": "text",
-                "bindings": {
-                  "text": "Orders"
-                },
+                "id": "stat-card-3",
+                "containerType": "vertical",
                 "layout": {
                   "width": {
-                    "value": -2,
+                    "value": -1,
                     "unit": "dp"
                   },
-                  "height": {
-                    "value": -2,
-                    "unit": "dp"
+                  "padding": {
+                    "all": 20
+                  },
+                  "arrangement": {
+                    "spacing": 12,
+                    "strategy": "spaced"
                   }
                 },
                 "style": {
-                  "fontSize": 12,
-                  "fontWeight": "medium",
-                  "textColor": "#6B7280"
-                }
+                  "backgroundColor": "#FFFFFFFF",
+                  "borderRadius": 16,
+                  "shadowRadius": 12,
+                  "shadowColor": "#FF000000",
+                  "shadowOpacity": 0.08,
+                  "shadowOffsetY": 4
+                },
+                "children": [
+                  {
+                    "id": "users-label",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "{{usersLabel}}"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 12,
+                      "fontWeight": "medium",
+                      "textColor": "#FF6B7280"
+                    },
+                    "type": "element"
+                  },
+                  {
+                    "id": "users-value",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "{{usersValue}}"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 28,
+                      "fontWeight": "bold",
+                      "textColor": "#FF8B5CF6"
+                    },
+                    "type": "element"
+                  },
+                  {
+                    "id": "users-change",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "{{usersChange}}"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 12,
+                      "fontWeight": "medium",
+                      "textColor": "#FF10B981"
+                    },
+                    "type": "element"
+                  }
+                ],
+                "type": "container"
               },
               {
-                "type": "element",
-                "id": "stat-2-value",
-                "elementType": "text",
-                "bindings": {
-                  "text": "1,248"
-                },
+                "id": "stat-card-4",
+                "containerType": "vertical",
                 "layout": {
                   "width": {
-                    "value": -2,
+                    "value": -1,
                     "unit": "dp"
                   },
-                  "height": {
-                    "value": -2,
-                    "unit": "dp"
+                  "padding": {
+                    "all": 20
+                  },
+                  "arrangement": {
+                    "spacing": 12,
+                    "strategy": "spaced"
                   }
                 },
                 "style": {
-                  "fontSize": 28,
-                  "fontWeight": "bold",
-                  "textColor": "#10B981"
-                }
-              }
-            ]
-          },
-          {
-            "type": "element",
-            "id": "spacer-2",
-            "elementType": "spacer",
-            "layout": {
-              "width": {
-                "value": 1,
-                "unit": "dp"
-              },
-              "height": {
-                "value": 60,
-                "unit": "dp"
-              }
-            },
-            "style": {
-              "backgroundColor": "#E5E7EB"
-            }
-          },
-          {
-            "type": "container",
-            "id": "stat-3",
-            "containerType": "vertical",
-            "layout": {
-              "width": {
-                "value": -2,
-                "unit": "dp"
-              },
-              "height": {
-                "value": -2,
-                "unit": "dp"
-              },
-              "arrangement": {
-                "type": "spaced"
-              }
-            },
-            "children": [
-              {
-                "type": "element",
-                "id": "stat-3-label",
-                "elementType": "text",
-                "bindings": {
-                  "text": "Users"
+                  "backgroundColor": "#FFFFFFFF",
+                  "borderRadius": 16,
+                  "shadowRadius": 12,
+                  "shadowColor": "#FF000000",
+                  "shadowOpacity": 0.08,
+                  "shadowOffsetY": 4
                 },
-                "layout": {
-                  "width": {
-                    "value": -2,
-                    "unit": "dp"
+                "children": [
+                  {
+                    "id": "conversion-label",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "{{conversionLabel}}"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 12,
+                      "fontWeight": "medium",
+                      "textColor": "#FF6B7280"
+                    },
+                    "type": "element"
                   },
-                  "height": {
-                    "value": -2,
-                    "unit": "dp"
-                  }
-                },
-                "style": {
-                  "fontSize": 12,
-                  "fontWeight": "medium",
-                  "textColor": "#6B7280"
-                }
-              },
-              {
-                "type": "element",
-                "id": "stat-3-value",
-                "elementType": "text",
-                "bindings": {
-                  "text": "8,429"
-                },
-                "layout": {
-                  "width": {
-                    "value": -2,
-                    "unit": "dp"
+                  {
+                    "id": "conversion-value",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "{{conversionValue}}"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 28,
+                      "fontWeight": "bold",
+                      "textColor": "#FFF59E0B"
+                    },
+                    "type": "element"
                   },
-                  "height": {
-                    "value": -2,
-                    "unit": "dp"
+                  {
+                    "id": "conversion-change",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "{{conversionChange}}"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 12,
+                      "fontWeight": "medium",
+                      "textColor": "#FF10B981"
+                    },
+                    "type": "element"
                   }
-                },
-                "style": {
-                  "fontSize": 28,
-                  "fontWeight": "bold",
-                  "textColor": "#3B82F6"
-                }
+                ],
+                "type": "container"
               }
-            ]
+            ],
+            "type": "container"
           }
-        ]
+        ],
+        "type": "container"
       }
-    ]
+    ],
+    "type": "container"
   },
-  "styleClasses": [],
-  "variables": {}
+  "styleClasses": []
 }

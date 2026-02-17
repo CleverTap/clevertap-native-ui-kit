@@ -4,7 +4,13 @@
       "Bash(git mv:*)",
       "Bash(for f in test-*.json)",
       "Bash(do jq:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(for file in test-configs/test-06{0..9}-*.json test-configs/test-070-*.json)",
+      "Bash(do)",
+      "Bash(python3:*)",
+      "Bash(done)",
+      "Bash(git add:*)"
     ]
   }
 }

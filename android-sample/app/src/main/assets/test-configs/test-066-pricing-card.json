@@ -2,12 +2,25 @@
   "theme": {
     "id": "pricing-card",
     "defaultStyle": {
-      "textColor": "#1F2937",
-      "fontSize": 14
+      "textColor": "#FF1F2937",
+      "fontSize": 14,
+      "fontFamily": "System"
     }
   },
+  "variables": {
+    "planName": "Premium Plan",
+    "planPrice": "$49",
+    "planPeriod": "per month",
+    "feature1": "\u2713 Unlimited Projects",
+    "feature2": "\u2713 Priority Support 24/7",
+    "feature3": "\u2713 Advanced Analytics",
+    "feature4": "\u2713 Custom Integrations",
+    "feature5": "\u2713 Team Collaboration",
+    "feature6": "\u2713 Export & Backup",
+    "buttonText": "Subscribe Now",
+    "badge": "POPULAR"
+  },
   "root": {
-    "type": "container",
     "id": "pricing-container",
     "containerType": "vertical",
     "layout": {
@@ -27,15 +40,14 @@
       "background": {
         "type": "linear_gradient",
         "colors": [
-          "#EFF6FF",
-          "#DBEAFE"
+          "#FFEFF6FF",
+          "#FFDBEAFE"
         ],
         "angle": 135
       }
     },
     "children": [
       {
-        "type": "container",
         "id": "pricing-card",
         "containerType": "vertical",
         "layout": {
@@ -43,55 +55,162 @@
             "value": 100,
             "unit": "percent"
           },
-          "height": {
-            "value": -2,
-            "unit": "dp"
-          },
           "padding": {
-            "all": 24
+            "all": 28
           },
           "arrangement": {
-            "type": "spaced"
+            "spacing": 20,
+            "strategy": "spaced"
           }
         },
         "style": {
-          "backgroundColor": "#FFFFFF",
-          "borderRadius": 20,
-          "borderWidth": 2,
-          "borderColor": "#3B82F6",
-          "shadowRadius": 16,
-          "shadowColor": "#3B82F6",
-          "shadowOpacity": 0.2,
-          "shadowOffsetX": 0,
-          "shadowOffsetY": 8
+          "backgroundColor": "#FFFFFFFF",
+          "borderRadius": 24,
+          "borderWidth": 3,
+          "borderColor": "#FF3B82F6",
+          "shadowRadius": 24,
+          "shadowColor": "#FF3B82F6",
+          "shadowOpacity": 0.25,
+          "shadowOffsetY": 12
         },
         "children": [
           {
-            "type": "element",
-            "id": "plan-name",
-            "elementType": "text",
-            "bindings": {
-              "text": "Premium Plan"
-            },
+            "id": "badge-container",
+            "containerType": "horizontal",
             "layout": {
               "width": {
                 "value": 100,
                 "unit": "percent"
               },
-              "height": {
-                "value": -2,
-                "unit": "dp"
+              "arrangement": {
+                "strategy": "center"
               }
             },
-            "style": {
-              "fontSize": 24,
-              "fontWeight": "bold",
-              "textColor": "#3B82F6",
-              "textAlign": "center"
-            }
+            "children": [
+              {
+                "id": "badge",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{badge}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": -2,
+                    "unit": "dp"
+                  },
+                  "padding": {
+                    "left": 16,
+                    "right": 16,
+                    "top": 6,
+                    "bottom": 6
+                  }
+                },
+                "style": {
+                  "fontSize": 12,
+                  "fontWeight": "bold",
+                  "textColor": "#FFFFFFFF",
+                  "backgroundColor": "#FF3B82F6",
+                  "borderRadius": 12
+                },
+                "type": "element"
+              }
+            ],
+            "type": "container"
           },
           {
-            "type": "element",
+            "id": "plan-header",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "arrangement": {
+                "spacing": 8,
+                "strategy": "spaced"
+              }
+            },
+            "children": [
+              {
+                "id": "plan-name",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{planName}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 28,
+                  "fontWeight": "bold",
+                  "textColor": "#FF111827",
+                  "textAlign": "center"
+                },
+                "type": "element"
+              },
+              {
+                "id": "price-container",
+                "containerType": "horizontal",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "arrangement": {
+                    "spacing": 4,
+                    "strategy": "center"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "price",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "{{planPrice}}"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": -2,
+                        "unit": "dp"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 56,
+                      "fontWeight": "bold",
+                      "textColor": "#FF3B82F6"
+                    },
+                    "type": "element"
+                  }
+                ],
+                "type": "container"
+              },
+              {
+                "id": "period",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{planPeriod}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 16,
+                  "fontWeight": "normal",
+                  "textColor": "#FF6B7280",
+                  "textAlign": "center"
+                },
+                "type": "element"
+              }
+            ],
+            "type": "container"
+          },
+          {
             "id": "divider",
             "elementType": "divider",
             "layout": {
@@ -105,102 +224,159 @@
               }
             },
             "style": {
-              "backgroundColor": "#E5E7EB"
-            }
+              "background": {
+                "type": "linear_gradient",
+                "colors": [
+                  "#FF3B82F6",
+                  "#FF8B5CF6"
+                ],
+                "angle": 90
+              }
+            },
+            "type": "element"
           },
           {
-            "type": "element",
-            "id": "price",
-            "elementType": "text",
-            "bindings": {
-              "text": "$49"
-            },
+            "id": "features-list",
+            "containerType": "vertical",
             "layout": {
               "width": {
                 "value": 100,
                 "unit": "percent"
               },
-              "height": {
-                "value": -2,
-                "unit": "dp"
+              "arrangement": {
+                "spacing": 12,
+                "strategy": "spaced"
               }
             },
-            "style": {
-              "fontSize": 48,
-              "fontWeight": "bold",
-              "textColor": "#111827",
-              "textAlign": "center"
-            }
-          },
-          {
-            "type": "element",
-            "id": "billing-period",
-            "elementType": "text",
-            "bindings": {
-              "text": "per month"
-            },
-            "layout": {
-              "width": {
-                "value": 100,
-                "unit": "percent"
+            "children": [
+              {
+                "id": "feature-1",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{feature1}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 15,
+                  "fontWeight": "normal",
+                  "textColor": "#FF374151",
+                  "lineHeight": 22
+                },
+                "type": "element"
               },
-              "height": {
-                "value": -2,
-                "unit": "dp"
-              }
-            },
-            "style": {
-              "fontSize": 16,
-              "fontWeight": "normal",
-              "textColor": "#6B7280",
-              "textAlign": "center"
-            }
-          },
-          {
-            "type": "element",
-            "id": "features",
-            "elementType": "text",
-            "bindings": {
-              "text": "\u2713 Unlimited Projects\n\u2713 Priority Support\n\u2713 Advanced Analytics\n\u2713 Custom Integrations"
-            },
-            "layout": {
-              "width": {
-                "value": 100,
-                "unit": "percent"
+              {
+                "id": "feature-2",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{feature2}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 15,
+                  "fontWeight": "normal",
+                  "textColor": "#FF374151",
+                  "lineHeight": 22
+                },
+                "type": "element"
               },
-              "height": {
-                "value": -2,
-                "unit": "dp"
-              }
-            },
-            "style": {
-              "fontSize": 15,
-              "fontWeight": "normal",
-              "textColor": "#374151",
-              "lineHeight": 28
-            }
-          },
-          {
-            "type": "element",
-            "id": "spacer",
-            "elementType": "spacer",
-            "layout": {
-              "width": {
-                "value": 100,
-                "unit": "percent"
+              {
+                "id": "feature-3",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{feature3}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 15,
+                  "fontWeight": "normal",
+                  "textColor": "#FF374151",
+                  "lineHeight": 22
+                },
+                "type": "element"
               },
-              "height": {
-                "value": 12,
-                "unit": "dp"
+              {
+                "id": "feature-4",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{feature4}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 15,
+                  "fontWeight": "normal",
+                  "textColor": "#FF374151",
+                  "lineHeight": 22
+                },
+                "type": "element"
+              },
+              {
+                "id": "feature-5",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{feature5}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 15,
+                  "fontWeight": "normal",
+                  "textColor": "#FF374151",
+                  "lineHeight": 22
+                },
+                "type": "element"
+              },
+              {
+                "id": "feature-6",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{feature6}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 15,
+                  "fontWeight": "normal",
+                  "textColor": "#FF374151",
+                  "lineHeight": 22
+                },
+                "type": "element"
               }
-            }
+            ],
+            "type": "container"
           },
           {
-            "type": "element",
             "id": "subscribe-button",
             "elementType": "button",
             "bindings": {
-              "text": "Subscribe Now"
+              "text": "{{buttonText}}"
             },
             "layout": {
               "width": {
@@ -213,17 +389,30 @@
               }
             },
             "style": {
-              "backgroundColor": "#3B82F6",
-              "borderRadius": 12,
-              "textColor": "#FFFFFF",
+              "background": {
+                "type": "linear_gradient",
+                "colors": [
+                  "#FF3B82F6",
+                  "#FF8B5CF6"
+                ],
+                "angle": 90
+              },
+              "borderRadius": 16,
+              "textColor": "#FFFFFFFF",
               "fontSize": 18,
-              "fontWeight": "bold"
-            }
+              "fontWeight": "bold",
+              "shadowRadius": 16,
+              "shadowColor": "#FF3B82F6",
+              "shadowOpacity": 0.4,
+              "shadowOffsetY": 6
+            },
+            "type": "element"
           }
-        ]
+        ],
+        "type": "container"
       }
-    ]
+    ],
+    "type": "container"
   },
-  "styleClasses": [],
-  "variables": {}
+  "styleClasses": []
 }

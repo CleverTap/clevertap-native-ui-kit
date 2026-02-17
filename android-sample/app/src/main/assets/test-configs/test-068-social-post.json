@@ -2,12 +2,24 @@
   "theme": {
     "id": "social-post",
     "defaultStyle": {
-      "textColor": "#1F2937",
-      "fontSize": 14
+      "textColor": "#FF1F2937",
+      "fontSize": 14,
+      "fontFamily": "System"
     }
   },
+  "variables": {
+    "userName": "Alex Thompson",
+    "userHandle": "@alexthompson",
+    "avatarUrl": "https://yavuzceliker.github.io/sample-images/image-890.jpg",
+    "postTime": "2 hours ago",
+    "postText": "Just finished an amazing hike! The views from the summit were absolutely breathtaking. Nature never fails to inspire and rejuvenate the soul. \ud83c\udfd4\ufe0f\u2728",
+    "postImage": "https://yavuzceliker.github.io/sample-images/image-1350.jpg",
+    "likes": "342",
+    "comments": "28",
+    "shares": "15",
+    "commentButtonText": "Add Comment"
+  },
   "root": {
-    "type": "container",
     "id": "social-post-container",
     "containerType": "vertical",
     "layout": {
@@ -24,11 +36,10 @@
       }
     },
     "style": {
-      "backgroundColor": "#F9FAFB"
+      "backgroundColor": "#FFF9FAFB"
     },
     "children": [
       {
-        "type": "container",
         "id": "post-card",
         "containerType": "vertical",
         "layout": {
@@ -36,51 +47,42 @@
             "value": 100,
             "unit": "percent"
           },
-          "height": {
-            "value": -2,
-            "unit": "dp"
-          },
           "padding": {
             "all": 16
           },
           "arrangement": {
-            "type": "spaced"
+            "spacing": 16,
+            "strategy": "spaced"
           }
         },
         "style": {
-          "backgroundColor": "#FFFFFF",
-          "borderRadius": 12,
-          "shadowRadius": 8,
-          "shadowColor": "#000000",
+          "backgroundColor": "#FFFFFFFF",
+          "borderRadius": 16,
+          "shadowRadius": 12,
+          "shadowColor": "#FF000000",
           "shadowOpacity": 0.08,
-          "shadowOffsetX": 0,
-          "shadowOffsetY": 2
+          "shadowOffsetY": 4
         },
         "children": [
           {
-            "type": "container",
-            "id": "header",
+            "id": "post-header",
             "containerType": "horizontal",
             "layout": {
               "width": {
                 "value": 100,
                 "unit": "percent"
               },
-              "height": {
-                "value": -2,
-                "unit": "dp"
-              },
               "arrangement": {
-                "type": "spaced"
+                "spacing": 12,
+                "strategy": "spaced"
               }
             },
             "children": [
               {
-                "type": "element",
                 "id": "avatar",
                 "elementType": "image",
                 "bindings": {
-                  "src": "https://picsum.photos/100/100?random=70"
+                  "src": "{{avatarUrl}}"
                 },
                 "layout": {
                   "width": {
@@ -93,11 +95,13 @@
                   }
                 },
                 "style": {
-                  "borderRadius": 24
-                }
+                  "borderRadius": 24,
+                  "borderWidth": 2,
+                  "borderColor": "#FF3B82F6"
+                },
+                "type": "element"
               },
               {
-                "type": "container",
                 "id": "user-info",
                 "containerType": "vertical",
                 "layout": {
@@ -105,95 +109,135 @@
                     "value": -1,
                     "unit": "dp"
                   },
-                  "height": {
-                    "value": -2,
-                    "unit": "dp"
-                  },
                   "arrangement": {
-                    "type": "spaced"
+                    "spacing": 4,
+                    "strategy": "spaced"
                   }
                 },
                 "children": [
                   {
-                    "type": "element",
-                    "id": "username",
+                    "id": "user-name",
                     "elementType": "text",
                     "bindings": {
-                      "text": "Alex Thompson"
+                      "text": "{{userName}}"
                     },
                     "layout": {
                       "width": {
                         "value": 100,
                         "unit": "percent"
-                      },
-                      "height": {
-                        "value": -2,
-                        "unit": "dp"
                       }
                     },
                     "style": {
                       "fontSize": 16,
                       "fontWeight": "bold",
-                      "textColor": "#111827"
-                    }
+                      "textColor": "#FF111827"
+                    },
+                    "type": "element"
                   },
                   {
-                    "type": "element",
-                    "id": "timestamp",
-                    "elementType": "text",
-                    "bindings": {
-                      "text": "2 hours ago"
-                    },
+                    "id": "user-handle-row",
+                    "containerType": "horizontal",
                     "layout": {
                       "width": {
                         "value": 100,
                         "unit": "percent"
                       },
-                      "height": {
-                        "value": -2,
-                        "unit": "dp"
+                      "arrangement": {
+                        "spacing": 8,
+                        "strategy": "spaced"
                       }
                     },
-                    "style": {
-                      "fontSize": 12,
-                      "fontWeight": "normal",
-                      "textColor": "#9CA3AF"
-                    }
+                    "children": [
+                      {
+                        "id": "user-handle",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "{{userHandle}}"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": -2,
+                            "unit": "dp"
+                          }
+                        },
+                        "style": {
+                          "fontSize": 13,
+                          "fontWeight": "normal",
+                          "textColor": "#FF6B7280"
+                        },
+                        "type": "element"
+                      },
+                      {
+                        "id": "separator",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "\u2022"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": -2,
+                            "unit": "dp"
+                          }
+                        },
+                        "style": {
+                          "fontSize": 13,
+                          "textColor": "#FF9CA3AF"
+                        },
+                        "type": "element"
+                      },
+                      {
+                        "id": "post-time",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "{{postTime}}"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": -2,
+                            "unit": "dp"
+                          }
+                        },
+                        "style": {
+                          "fontSize": 13,
+                          "fontWeight": "normal",
+                          "textColor": "#FF9CA3AF"
+                        },
+                        "type": "element"
+                      }
+                    ],
+                    "type": "container"
                   }
-                ]
+                ],
+                "type": "container"
               }
-            ]
+            ],
+            "type": "container"
           },
           {
-            "type": "element",
             "id": "post-text",
             "elementType": "text",
             "bindings": {
-              "text": "Just finished an amazing hike! The views from the summit were absolutely breathtaking. Nature never fails to inspire. \ud83c\udfd4\ufe0f"
+              "text": "{{postText}}"
             },
             "layout": {
               "width": {
                 "value": 100,
                 "unit": "percent"
-              },
-              "height": {
-                "value": -2,
-                "unit": "dp"
               }
             },
             "style": {
               "fontSize": 15,
               "fontWeight": "normal",
-              "textColor": "#374151",
+              "textColor": "#FF374151",
               "lineHeight": 22
-            }
+            },
+            "type": "element"
           },
           {
-            "type": "element",
             "id": "post-image",
             "elementType": "image",
             "bindings": {
-              "src": "https://picsum.photos/800/600?random=71"
+              "src": "{{postImage}}"
             },
             "layout": {
               "width": {
@@ -206,53 +250,107 @@
               }
             },
             "style": {
-              "borderRadius": 8
-            }
+              "borderRadius": 12
+            },
+            "type": "element"
           },
           {
-            "type": "element",
-            "id": "engagement",
-            "elementType": "text",
-            "bindings": {
-              "text": "\u2764\ufe0f 342 likes  \ud83d\udcac 28 comments"
+            "id": "engagement-stats",
+            "containerType": "horizontal",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "arrangement": {
+                "spacing": 20,
+                "strategy": "spaced"
+              }
             },
+            "children": [
+              {
+                "id": "likes-stat",
+                "elementType": "text",
+                "bindings": {
+                  "text": "\u2764\ufe0f {{likes}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": -2,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "medium",
+                  "textColor": "#FF6B7280"
+                },
+                "type": "element"
+              },
+              {
+                "id": "comments-stat",
+                "elementType": "text",
+                "bindings": {
+                  "text": "\ud83d\udcac {{comments}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": -2,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "medium",
+                  "textColor": "#FF6B7280"
+                },
+                "type": "element"
+              },
+              {
+                "id": "shares-stat",
+                "elementType": "text",
+                "bindings": {
+                  "text": "\ud83d\udd04 {{shares}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": -2,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "medium",
+                  "textColor": "#FF6B7280"
+                },
+                "type": "element"
+              }
+            ],
+            "type": "container"
+          },
+          {
+            "id": "divider",
+            "elementType": "divider",
             "layout": {
               "width": {
                 "value": 100,
                 "unit": "percent"
               },
               "height": {
-                "value": -2,
+                "value": 1,
                 "unit": "dp"
               }
             },
             "style": {
-              "fontSize": 13,
-              "fontWeight": "medium",
-              "textColor": "#6B7280"
-            }
+              "backgroundColor": "#FFE5E7EB"
+            },
+            "type": "element"
           },
           {
-            "type": "element",
-            "id": "spacer",
-            "elementType": "spacer",
-            "layout": {
-              "width": {
-                "value": 100,
-                "unit": "percent"
-              },
-              "height": {
-                "value": 8,
-                "unit": "dp"
-              }
-            }
-          },
-          {
-            "type": "element",
             "id": "comment-button",
             "elementType": "button",
             "bindings": {
-              "text": "Add Comment"
+              "text": "{{commentButtonText}}"
             },
             "layout": {
               "width": {
@@ -265,17 +363,23 @@
               }
             },
             "style": {
-              "backgroundColor": "#3B82F6",
-              "borderRadius": 8,
-              "textColor": "#FFFFFF",
+              "backgroundColor": "#FF3B82F6",
+              "borderRadius": 10,
+              "textColor": "#FFFFFFFF",
               "fontSize": 15,
-              "fontWeight": "medium"
-            }
+              "fontWeight": "medium",
+              "shadowRadius": 8,
+              "shadowColor": "#FF3B82F6",
+              "shadowOpacity": 0.3,
+              "shadowOffsetY": 2
+            },
+            "type": "element"
           }
-        ]
+        ],
+        "type": "container"
       }
-    ]
+    ],
+    "type": "container"
   },
-  "styleClasses": [],
-  "variables": {}
+  "styleClasses": []
 }

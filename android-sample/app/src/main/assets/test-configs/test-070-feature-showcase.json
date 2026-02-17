@@ -2,12 +2,23 @@
   "theme": {
     "id": "feature-showcase",
     "defaultStyle": {
-      "textColor": "#1F2937",
-      "fontSize": 16
+      "textColor": "#FF1F2937",
+      "fontSize": 16,
+      "fontFamily": "System"
     }
   },
+  "variables": {
+    "iconUrl": "https://yavuzceliker.github.io/sample-images/image-950.jpg",
+    "featureTitle": "Advanced Analytics",
+    "featureSubtitle": "Real-time Insights",
+    "featureDescription": "Get deep insights into your data with our powerful analytics engine. Track metrics, visualize trends, and make informed decisions with real-time reporting and customizable dashboards.",
+    "benefit1": "\ud83d\udcca Real-time Data Processing",
+    "benefit2": "\ud83d\udcc8 Custom Dashboards",
+    "benefit3": "\ud83c\udfaf Predictive Analytics",
+    "benefit4": "\ud83d\udd14 Smart Alerts",
+    "ctaButton": "Explore Features"
+  },
   "root": {
-    "type": "container",
     "id": "feature-container",
     "containerType": "vertical",
     "layout": {
@@ -27,15 +38,14 @@
       "background": {
         "type": "linear_gradient",
         "colors": [
-          "#FAFAFA",
-          "#F3F4F6"
+          "#FFFAFAFA",
+          "#FFF3F4F6"
         ],
         "angle": 180
       }
     },
     "children": [
       {
-        "type": "container",
         "id": "feature-card",
         "containerType": "vertical",
         "layout": {
@@ -43,97 +53,122 @@
             "value": 100,
             "unit": "percent"
           },
-          "height": {
-            "value": -2,
-            "unit": "dp"
-          },
           "padding": {
-            "all": 20
+            "all": 24
           },
           "arrangement": {
-            "type": "spaced"
+            "spacing": 20,
+            "strategy": "spaced"
           }
         },
         "style": {
-          "backgroundColor": "#FFFFFF",
-          "borderRadius": 16,
-          "shadowRadius": 12,
-          "shadowColor": "#000000",
-          "shadowOpacity": 0.1,
-          "shadowOffsetX": 0,
-          "shadowOffsetY": 4
+          "backgroundColor": "#FFFFFFFF",
+          "borderRadius": 20,
+          "shadowRadius": 16,
+          "shadowColor": "#FF000000",
+          "shadowOpacity": 0.12,
+          "shadowOffsetY": 6
         },
         "children": [
           {
-            "type": "element",
-            "id": "feature-icon",
-            "elementType": "image",
-            "bindings": {
-              "src": "https://picsum.photos/120/120?random=80"
-            },
-            "layout": {
-              "width": {
-                "value": 80,
-                "unit": "dp"
-              },
-              "height": {
-                "value": 80,
-                "unit": "dp"
-              }
-            },
-            "style": {
-              "borderRadius": 16
-            }
-          },
-          {
-            "type": "element",
-            "id": "feature-title",
-            "elementType": "text",
-            "bindings": {
-              "text": "Advanced Analytics"
-            },
+            "id": "icon-container",
+            "containerType": "horizontal",
             "layout": {
               "width": {
                 "value": 100,
                 "unit": "percent"
               },
-              "height": {
-                "value": -2,
-                "unit": "dp"
+              "arrangement": {
+                "strategy": "center"
               }
             },
-            "style": {
-              "fontSize": 28,
-              "fontWeight": "bold",
-              "textColor": "#111827"
-            }
+            "children": [
+              {
+                "id": "feature-icon",
+                "elementType": "image",
+                "bindings": {
+                  "src": "{{iconUrl}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 96,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 96,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "borderRadius": 20,
+                  "shadowRadius": 12,
+                  "shadowColor": "#FF3B82F6",
+                  "shadowOpacity": 0.3,
+                  "shadowOffsetY": 4
+                },
+                "type": "element"
+              }
+            ],
+            "type": "container"
           },
           {
-            "type": "element",
-            "id": "feature-description",
-            "elementType": "text",
-            "bindings": {
-              "text": "Get deep insights into your data with our powerful analytics engine. Track metrics, visualize trends, and make informed decisions with real-time reporting."
-            },
+            "id": "title-section",
+            "containerType": "vertical",
             "layout": {
               "width": {
                 "value": 100,
                 "unit": "percent"
               },
-              "height": {
-                "value": -2,
-                "unit": "dp"
+              "arrangement": {
+                "spacing": 8,
+                "strategy": "spaced"
               }
             },
-            "style": {
-              "fontSize": 16,
-              "fontWeight": "normal",
-              "textColor": "#6B7280",
-              "lineHeight": 24
-            }
+            "children": [
+              {
+                "id": "feature-title",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{featureTitle}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 32,
+                  "fontWeight": "bold",
+                  "textColor": "#FF111827",
+                  "textAlign": "center"
+                },
+                "type": "element"
+              },
+              {
+                "id": "feature-subtitle",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{featureSubtitle}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 16,
+                  "fontWeight": "medium",
+                  "textColor": "#FF3B82F6",
+                  "textAlign": "center"
+                },
+                "type": "element"
+              }
+            ],
+            "type": "container"
           },
           {
-            "type": "element",
             "id": "divider",
             "elementType": "divider",
             "layout": {
@@ -150,17 +185,177 @@
               "background": {
                 "type": "linear_gradient",
                 "colors": [
-                  "#3B82F6",
-                  "#8B5CF6"
+                  "#FF3B82F6",
+                  "#FF8B5CF6"
                 ],
                 "angle": 90
               }
-            }
+            },
+            "type": "element"
+          },
+          {
+            "id": "feature-description",
+            "elementType": "text",
+            "bindings": {
+              "text": "{{featureDescription}}"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 16,
+              "fontWeight": "normal",
+              "textColor": "#FF6B7280",
+              "lineHeight": 26,
+              "textAlign": "center"
+            },
+            "type": "element"
+          },
+          {
+            "id": "benefits-list",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "padding": {
+                "left": 12,
+                "right": 12
+              },
+              "arrangement": {
+                "spacing": 12,
+                "strategy": "spaced"
+              }
+            },
+            "children": [
+              {
+                "id": "benefit-1",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{benefit1}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 15,
+                  "fontWeight": "medium",
+                  "textColor": "#FF374151",
+                  "lineHeight": 22
+                },
+                "type": "element"
+              },
+              {
+                "id": "benefit-2",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{benefit2}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 15,
+                  "fontWeight": "medium",
+                  "textColor": "#FF374151",
+                  "lineHeight": 22
+                },
+                "type": "element"
+              },
+              {
+                "id": "benefit-3",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{benefit3}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 15,
+                  "fontWeight": "medium",
+                  "textColor": "#FF374151",
+                  "lineHeight": 22
+                },
+                "type": "element"
+              },
+              {
+                "id": "benefit-4",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{benefit4}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 15,
+                  "fontWeight": "medium",
+                  "textColor": "#FF374151",
+                  "lineHeight": 22
+                },
+                "type": "element"
+              }
+            ],
+            "type": "container"
+          },
+          {
+            "id": "cta-button",
+            "elementType": "button",
+            "bindings": {
+              "text": "{{ctaButton}}"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 56,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "linear_gradient",
+                "colors": [
+                  "#FF3B82F6",
+                  "#FF8B5CF6"
+                ],
+                "angle": 90
+              },
+              "borderRadius": 16,
+              "textColor": "#FFFFFFFF",
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "shadowRadius": 16,
+              "shadowColor": "#FF3B82F6",
+              "shadowOpacity": 0.4,
+              "shadowOffsetY": 6
+            },
+            "type": "element"
           }
-        ]
+        ],
+        "type": "container"
       }
-    ]
+    ],
+    "type": "container"
   },
-  "styleClasses": [],
-  "variables": {}
+  "styleClasses": []
 }

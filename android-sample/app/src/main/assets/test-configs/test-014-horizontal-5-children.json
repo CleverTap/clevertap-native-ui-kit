@@ -12,15 +12,11 @@
     "containerType": "horizontal",
     "layout": {
       "width": {
-        "value": 100,
-        "unit": "percent"
-      },
-      "height": {
-        "value": 100,
+        "value": 1200,
         "unit": "dp"
       },
-      "padding": {
-        "all": 12
+      "height": {
+        "special": "wrap_content"
       },
       "arrangement": {
         "strategy": "space_between"

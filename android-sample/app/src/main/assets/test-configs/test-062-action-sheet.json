@@ -2,13 +2,21 @@
   "theme": {
     "id": "action-sheet",
     "defaultStyle": {
-      "textColor": "#1F2937",
-      "fontSize": 16
+      "textColor": "#FF1F2937",
+      "fontSize": 16,
+      "fontFamily": "System"
     }
   },
+  "variables": {
+    "sheetTitle": "Choose an Action",
+    "action1": "Share",
+    "action2": "Edit",
+    "action3": "Duplicate",
+    "action4": "Delete",
+    "cancelText": "Cancel"
+  },
   "root": {
-    "type": "container",
-    "id": "action-sheet-container",
+    "id": "action-sheet-backdrop",
     "containerType": "vertical",
     "layout": {
       "width": {
@@ -23,15 +31,14 @@
         "all": 0
       },
       "arrangement": {
-        "type": "end"
+        "strategy": "end"
       }
     },
     "style": {
-      "backgroundColor": "#00000080"
+      "backgroundColor": "#80000000"
     },
     "children": [
       {
-        "type": "container",
         "id": "action-sheet",
         "containerType": "vertical",
         "layout": {
@@ -39,48 +46,71 @@
             "value": 100,
             "unit": "percent"
           },
-          "height": {
-            "value": -2,
-            "unit": "dp"
-          },
           "padding": {
             "all": 0
           }
         },
         "style": {
-          "backgroundColor": "#FFFFFF",
-          "borderRadius": 20
+          "backgroundColor": "#FFF9FAFB",
+          "borderRadius": 24
         },
         "children": [
           {
-            "type": "element",
-            "id": "header",
-            "elementType": "text",
-            "bindings": {
-              "text": "Choose an Action"
-            },
+            "id": "sheet-header",
+            "containerType": "vertical",
             "layout": {
               "width": {
                 "value": 100,
                 "unit": "percent"
-              },
-              "height": {
-                "value": -2,
-                "unit": "dp"
               },
               "padding": {
                 "all": 20
               }
             },
             "style": {
-              "fontSize": 18,
-              "fontWeight": "bold",
-              "textColor": "#111827",
-              "textAlign": "center"
-            }
+              "backgroundColor": "#FFFFFFFF",
+              "borderRadius": 24
+            },
+            "children": [
+              {
+                "id": "header-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{sheetTitle}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 18,
+                  "fontWeight": "bold",
+                  "textColor": "#FF111827",
+                  "textAlign": "center"
+                },
+                "type": "element"
+              },
+              {
+                "id": "handle-spacer",
+                "elementType": "spacer",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 8,
+                    "unit": "dp"
+                  }
+                },
+                "type": "element"
+              }
+            ],
+            "type": "container"
           },
           {
-            "type": "element",
             "id": "divider-1",
             "elementType": "divider",
             "layout": {
@@ -94,85 +124,128 @@
               }
             },
             "style": {
-              "backgroundColor": "#E5E7EB"
-            }
+              "backgroundColor": "#FFE5E7EB"
+            },
+            "type": "element"
           },
           {
-            "type": "element",
-            "id": "action-1",
-            "elementType": "button",
-            "bindings": {
-              "text": "Share"
-            },
+            "id": "actions-container",
+            "containerType": "vertical",
             "layout": {
               "width": {
                 "value": 100,
                 "unit": "percent"
               },
-              "height": {
-                "value": 56,
-                "unit": "dp"
+              "padding": {
+                "all": 0
               }
             },
             "style": {
-              "backgroundColor": "#00000000",
-              "textColor": "#3B82F6",
-              "fontSize": 17,
-              "fontWeight": "medium"
-            }
-          },
-          {
-            "type": "element",
-            "id": "action-2",
-            "elementType": "button",
-            "bindings": {
-              "text": "Edit"
+              "backgroundColor": "#FFFFFFFF"
             },
-            "layout": {
-              "width": {
-                "value": 100,
-                "unit": "percent"
+            "children": [
+              {
+                "id": "action-1",
+                "elementType": "button",
+                "bindings": {
+                  "text": "{{action1}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 56,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#00000000",
+                  "textColor": "#FF3B82F6",
+                  "fontSize": 17,
+                  "fontWeight": "medium"
+                },
+                "type": "element"
               },
-              "height": {
-                "value": 56,
-                "unit": "dp"
-              }
-            },
-            "style": {
-              "backgroundColor": "#00000000",
-              "textColor": "#3B82F6",
-              "fontSize": 17,
-              "fontWeight": "medium"
-            }
-          },
-          {
-            "type": "element",
-            "id": "action-3",
-            "elementType": "button",
-            "bindings": {
-              "text": "Duplicate"
-            },
-            "layout": {
-              "width": {
-                "value": 100,
-                "unit": "percent"
+              {
+                "id": "action-2",
+                "elementType": "button",
+                "bindings": {
+                  "text": "{{action2}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 56,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#00000000",
+                  "textColor": "#FF3B82F6",
+                  "fontSize": 17,
+                  "fontWeight": "medium"
+                },
+                "type": "element"
               },
-              "height": {
-                "value": 56,
-                "unit": "dp"
+              {
+                "id": "action-3",
+                "elementType": "button",
+                "bindings": {
+                  "text": "{{action3}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 56,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#00000000",
+                  "textColor": "#FF3B82F6",
+                  "fontSize": 17,
+                  "fontWeight": "medium"
+                },
+                "type": "element"
+              },
+              {
+                "id": "action-4",
+                "elementType": "button",
+                "bindings": {
+                  "text": "{{action4}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 56,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#00000000",
+                  "textColor": "#FFEF4444",
+                  "fontSize": 17,
+                  "fontWeight": "medium"
+                },
+                "type": "element"
               }
-            },
-            "style": {
-              "backgroundColor": "#00000000",
-              "textColor": "#3B82F6",
-              "fontSize": 17,
-              "fontWeight": "medium"
-            }
+            ],
+            "type": "container"
           },
           {
-            "type": "element",
             "id": "divider-2",
-            "elementType": "divider",
+            "elementType": "spacer",
             "layout": {
               "width": {
                 "value": 100,
@@ -184,15 +257,15 @@
               }
             },
             "style": {
-              "backgroundColor": "#F3F4F6"
-            }
+              "backgroundColor": "#FFF3F4F6"
+            },
+            "type": "element"
           },
           {
-            "type": "element",
             "id": "cancel-button",
             "elementType": "button",
             "bindings": {
-              "text": "Cancel"
+              "text": "{{cancelText}}"
             },
             "layout": {
               "width": {
@@ -205,16 +278,19 @@
               }
             },
             "style": {
-              "backgroundColor": "#00000000",
-              "textColor": "#EF4444",
+              "backgroundColor": "#FFFFFFFF",
+              "textColor": "#FF6B7280",
               "fontSize": 17,
-              "fontWeight": "bold"
-            }
+              "fontWeight": "bold",
+              "borderRadius": 16
+            },
+            "type": "element"
           }
-        ]
+        ],
+        "type": "container"
       }
-    ]
+    ],
+    "type": "container"
   },
-  "styleClasses": [],
-  "variables": {}
+  "styleClasses": []
 }
