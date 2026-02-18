@@ -210,7 +210,7 @@ public struct ImageBackground: Codable, Equatable {
     
     public init(
         url: String,
-        fit: ImageFit = .cover,
+        fit: ImageFit = .crop,
         opacity: CGFloat = 1.0,
         blur: CGFloat = 0,
         tint: String? = nil,

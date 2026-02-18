@@ -57,9 +57,12 @@ data class NativeDisplayElement(
     override val visible: String? = null,
     override val actions: Map<String, Action>? = null,
     override val animation: Animation? = null,
-    
+
     // Divider configuration (only used when elementType = DIVIDER)
-    val dividerConfig: DividerConfig? = null
+    val dividerConfig: DividerConfig? = null,
+
+    // Image configuration (only used when elementType = IMAGE)
+    val imageConfig: ImageConfig? = null
 ) : NativeDisplayNode()
 
 /**
@@ -70,6 +73,15 @@ data class DividerConfig(
     val orientation: Orientation = Orientation.HORIZONTAL,
     val thickness: Float = 1f,  // in dp
     val color: String = "#E0E0E0"
+)
+
+/**
+ * Image configuration.
+ * Controls how images are displayed within their bounds.
+ */
+@Serializable
+data class ImageConfig(
+    val fit: ImageFit = ImageFit.CROP  // How to fit image within bounds
 )
 
 /**

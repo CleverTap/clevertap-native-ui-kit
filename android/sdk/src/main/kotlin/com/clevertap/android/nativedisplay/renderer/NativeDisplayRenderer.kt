@@ -833,13 +833,21 @@ private fun RenderElement(
             } ?: ""
 
             if (imageUrl.isNotEmpty()) {
+                // Map ImageFit to ContentScale
+                val contentScale = when (element.imageConfig?.fit ?: ImageFit.CROP) {
+                    ImageFit.CROP -> ContentScale.Crop        // Fill, may crop edges
+                    ImageFit.CONTAIN -> ContentScale.Fit      // Fit within bounds
+                    ImageFit.FILL -> ContentScale.FillBounds  // Stretch to fill
+                    ImageFit.TILE -> ContentScale.Crop        // Tile not supported for single images
+                }
+
                 Image(
                     painter = rememberAsyncImagePainter(imageUrl),
                     contentDescription = element.bindings["contentDescription"]?.let {
                         evaluator.evaluateString(it)
                     },
                     modifier = elementModifier,
-                    contentScale = ContentScale.Crop
+                    contentScale = contentScale
                 )
             } else {
                 Box(

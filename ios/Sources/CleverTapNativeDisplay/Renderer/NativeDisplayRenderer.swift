@@ -628,8 +628,18 @@ struct RenderElement: View {
     @ViewBuilder
     private func renderImage() -> some View {
         let imageUrl = element.bindings["url"].map { evaluator.evaluateString($0) } ?? ""
-        
+
         if !imageUrl.isEmpty, let url = URL(string: imageUrl) {
+            // Map ImageFit to ContentMode
+            let contentMode: ContentMode = {
+                switch element.imageConfig?.fit ?? .crop {
+                case .crop:    return .fill   // Fill, may crop edges
+                case .contain: return .fit    // Fit within bounds
+                case .fill:    return .fill   // Stretch (approximation, same as crop)
+                case .tile:    return .fill   // Tile not supported for single images
+                }
+            }()
+
             AsyncImage(url: url) { phase in
                 switch phase {
                 case .empty:
@@ -638,7 +648,7 @@ struct RenderElement: View {
                 case .success(let image):
                     image
                         .resizable()
-                        .aspectRatio(contentMode: .fill)
+                        .aspectRatio(contentMode: contentMode)
                         .clipped()
                 case .failure:
                     Image(systemName: "photo")
