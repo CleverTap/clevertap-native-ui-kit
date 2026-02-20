@@ -83,7 +83,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     
     // Image Loading
-    implementation(libs.coil.compose)
+    implementation(libs.io.coil.compose)
+    implementation(libs.io.coil.gif)  // GIF animation support
 
     // Video playback (optional - host apps must provide)
     compileOnly(libs.androidx.media3.exoplayer)

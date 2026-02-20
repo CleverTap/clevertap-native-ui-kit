@@ -9,7 +9,6 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
@@ -60,8 +59,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.clevertap.android.nativedisplay.evaluator.VariableEvaluator
+import com.clevertap.android.nativedisplay.internal.ImageLoaderProvider
 import com.clevertap.android.nativedisplay.handler.ActionHandler
 import com.clevertap.android.nativedisplay.listener.InteractionType
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
@@ -833,6 +835,14 @@ private fun RenderElement(
             } ?: ""
 
             if (imageUrl.isNotEmpty()) {
+                val context = LocalContext.current
+
+                // Remember the ImageLoader to avoid creating it on every recomposition
+                // The ImageLoaderProvider is a singleton, but we cache the reference here
+                val imageLoader = remember(context) {
+                    ImageLoaderProvider.getImageLoader(context)
+                }
+
                 // Map ImageFit to ContentScale
                 val contentScale = when (element.imageConfig?.fit ?: ImageFit.CROP) {
                     ImageFit.CROP -> ContentScale.Crop        // Fill, may crop edges
@@ -841,8 +851,16 @@ private fun RenderElement(
                     ImageFit.TILE -> ContentScale.Crop        // Tile not supported for single images
                 }
 
-                Image(
-                    painter = rememberAsyncImagePainter(imageUrl),
+                // Use SDK's internal ImageLoader with GIF support
+                // This ensures GIF animation works without requiring host app configuration
+                val imageRequest = ImageRequest.Builder(context)
+                    .data(imageUrl)
+                    .crossfade(true)
+                    .build()
+
+                AsyncImage(
+                    model = imageRequest,
+                    imageLoader = imageLoader,
                     contentDescription = element.bindings["contentDescription"]?.let {
                         evaluator.evaluateString(it)
                     },

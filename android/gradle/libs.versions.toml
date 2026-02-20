@@ -34,7 +34,8 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 
 # Image Loading
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+io-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+io-coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
 
 # Video Playback
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }

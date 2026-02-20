@@ -81,7 +81,8 @@ data class DividerConfig(
  */
 @Serializable
 data class ImageConfig(
-    val fit: ImageFit = ImageFit.CROP  // How to fit image within bounds
+    val fit: ImageFit = ImageFit.CROP,  // How to fit image within bounds
+    val animated: Boolean? = null  // null=auto-detect, true=force, false=disable
 )
 
 /**

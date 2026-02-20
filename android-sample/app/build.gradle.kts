@@ -79,7 +79,6 @@ dependencies {
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
-    api(libs.coil.compose)
 
     // Video Playback (required for VIDEO elements)
     implementation(libs.androidx.media3.exoplayer)

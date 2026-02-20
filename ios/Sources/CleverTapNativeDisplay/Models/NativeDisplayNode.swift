@@ -321,19 +321,22 @@ public struct DividerConfig: Codable, Equatable {
 /// Controls how images are displayed within their bounds.
 public struct ImageConfig: Codable, Equatable {
     public let fit: ImageFit
+    public let animated: Bool?
 
-    public init(fit: ImageFit = .crop) {
+    public init(fit: ImageFit = .crop, animated: Bool? = nil) {
         self.fit = fit
+        self.animated = animated
     }
 
     // Custom decoder to handle defaults
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.fit = try container.decodeIfPresent(ImageFit.self, forKey: .fit) ?? .crop
+        self.animated = try container.decodeIfPresent(Bool.self, forKey: .animated)
     }
 
     private enum CodingKeys: String, CodingKey {
-        case fit
+        case fit, animated
     }
 }
 

@@ -7,7 +7,6 @@ kotlinxSerialization = "1.7.3"
 coroutines = "1.9.0"
 lifecycle = "2.8.7"
 navigation = "2.8.5"
-coil = "2.7.0"
 media3 = "1.5.0"
 junit = "4.13.2"
 androidxTest = "1.2.1"
@@ -35,9 +34,6 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 # Coroutines
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
-
-# Image Loading
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
 # Navigation
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }

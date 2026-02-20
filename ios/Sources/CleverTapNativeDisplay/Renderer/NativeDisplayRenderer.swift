@@ -4,6 +4,8 @@
 import SwiftUI
 import AVKit
 import AVFoundation
+import UIKit
+import ImageIO
 
 // MARK: - Environment Key for Parent Size
 
@@ -140,8 +142,8 @@ struct RenderNode: View {
         
         switch node {
         case .container(let container):
-            let layoutModifier = LayoutModifier(layout: node.layout, parentSize: parentSize, nodeId: node.id)
-            let offset = layoutModifier.calculateOffset()
+            let layoutMod = LayoutModifier(layout: node.layout, parentSize: parentSize, nodeId: node.id)
+            let offsetValue = layoutMod.calculateOffset()
 
             RenderContainer(
                 container: container,
@@ -152,21 +154,21 @@ struct RenderNode: View {
                 actionHandler: actionHandler,
                 componentListener: componentListener
             )
-            .modifier(layoutModifier)
+            .modifier(layoutMod)
             .modifier(DecorationModifier(style: resolvedStyle))
-            .offset(x: offset.width, y: offset.height)
+            .offset(x: offsetValue.width, y: offsetValue.height)
             .applyEntranceAnimation(node.animation)
             .applyTappable(
-                            nodeId: node.id,
-                            actions: shouldApplyTappable ? node.actions : nil,
-                            actionHandler: actionHandler,
-                            componentListener: componentListener
-                        )
+                nodeId: node.id,
+                actions: shouldApplyTappable ? node.actions : nil,
+                actionHandler: actionHandler,
+                componentListener: componentListener
+            )
             .id(node.id)
 
         case .element(let element):
-            let layoutModifier = LayoutModifier(layout: node.layout, parentSize: parentSize, nodeId: node.id)
-            let offset = layoutModifier.calculateOffset()
+            let layoutMod = LayoutModifier(layout: node.layout, parentSize: parentSize, nodeId: node.id)
+            let offsetValue = layoutMod.calculateOffset()
 
             RenderElement(
                 element: element,
@@ -175,16 +177,16 @@ struct RenderNode: View {
                 parentSize: parentSize,
                 actionHandler: actionHandler
             )
-            .modifier(layoutModifier)
+            .modifier(layoutMod)
             .modifier(DecorationModifier(style: resolvedStyle))
-            .offset(x: offset.width, y: offset.height)
+            .offset(x: offsetValue.width, y: offsetValue.height)
             .applyEntranceAnimation(node.animation)
             .applyTappable(
-                            nodeId: node.id,
-                            actions: !isButton && shouldApplyTappable ? node.actions : nil,
-                            actionHandler: actionHandler,
-                            componentListener: !isButton ? componentListener : nil
-                        )
+                nodeId: node.id,
+                actions: !isButton && shouldApplyTappable ? node.actions : nil,
+                actionHandler: actionHandler,
+                componentListener: !isButton ? componentListener : nil
+            )
         }
     }
 }
@@ -640,22 +642,32 @@ struct RenderElement: View {
                 }
             }()
 
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case .empty:
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: contentMode)
-                        .clipped()
-                case .failure:
-                    Image(systemName: "photo")
-                        .foregroundColor(.gray)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                @unknown default:
-                    EmptyView()
+            // Check if this is a GIF (auto-detect or explicit)
+            let isGIF = isAnimatedGIF(url: url, config: element.imageConfig)
+
+            if isGIF {
+                // Use custom GIF renderer
+                GIFImage(url: url, contentMode: contentMode)
+                    .clipped()
+            } else {
+                // Use standard AsyncImage for static images
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: contentMode)
+                            .clipped()
+                    case .failure:
+                        Image(systemName: "photo")
+                            .foregroundColor(.gray)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    @unknown default:
+                        EmptyView()
+                    }
                 }
             }
         } else {
@@ -667,6 +679,44 @@ struct RenderElement: View {
                         .font(.caption)
                 )
         }
+    }
+
+    private func isAnimatedGIF(url: URL, config: ImageConfig?) -> Bool {
+        // Explicit control: if animated flag is set, use it
+        if let animated = config?.animated {
+            return animated
+        }
+
+        // Auto-detect using multiple strategies
+        let urlString = url.absoluteString.lowercased()
+
+        // Strategy 1: Check file extension
+        if urlString.hasSuffix(".gif") || urlString.contains(".gif?") {
+            return true
+        }
+
+        // Strategy 2: Check known GIF hosting domains and patterns
+        let host = url.host?.lowercased() ?? ""
+        let path = url.path.lowercased()
+
+        let knownGIFHosts = ["giphy.com", "tenor.com", "gfycat.com", "imgur.com"]
+        let gifPathPatterns = ["/gif/", "/giphy/", "/media/"]
+
+        for gifHost in knownGIFHosts {
+            if host.contains(gifHost) {
+                return true
+            }
+        }
+
+        for pattern in gifPathPatterns {
+            if path.contains(pattern) {
+                return true
+            }
+        }
+
+        // Strategy 3: If still ambiguous, default to false
+        // User can set animated: true explicitly in JSON config
+        return false
     }
     
     @ViewBuilder
