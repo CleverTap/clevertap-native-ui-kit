@@ -35,9 +35,9 @@ NativeDisplayConfig {
 | Type | Binding | Purpose |
 |------|---------|---------|
 | TEXT | `text` | Display text |
-| IMAGE | `src` | Display image |
+| IMAGE | `url` | Display image |
 | BUTTON | `text` | Clickable button |
-| VIDEO | `src` | Display video |
+| VIDEO | `url` (+ autoPlay, loop, muted, showControls, showFullscreen) | Display video with custom controls |
 | SPACER | N/A | Spacing element |
 | DIVIDER | N/A | Visual divider |
 
@@ -271,9 +271,18 @@ Variables are in `variables: Map<String, JsonElement>` at root level.
 ```kotlin
 bindings: Map<String, String> {
   "text": "{{variableName}}",      // TEXT, BUTTON
-  "src": "{{imageUrl}}"            // IMAGE, VIDEO
+  "url": "{{imageUrl}}",           // IMAGE, VIDEO (required)
+
+  // VIDEO-specific bindings (optional)
+  "autoPlay": "{{autoPlayFlag}}",  // Boolean: auto-start playback
+  "loop": "{{loopFlag}}",          // Boolean: repeat when finished
+  "muted": "{{mutedFlag}}",        // Boolean: start with audio muted
+  "showControls": "true",          // Boolean: show custom controls (default: true)
+  "showFullscreen": "true"         // Boolean: show fullscreen button (default: true)
 }
 ```
+
+**Note**: VIDEO element requires `androidx.media3:media3-exoplayer` on Android (host app dependency)
 
 ---
 

@@ -82,7 +82,7 @@ sealed class Background {
         @SerialName("url")
         val url: String,
         @SerialName("fit")
-        val fit: ImageFit = ImageFit.COVER,
+        val fit: ImageFit = ImageFit.CROP,
         @SerialName("opacity")
         val opacity: Float = 1.0f,
         @SerialName("blur")
@@ -211,15 +211,15 @@ sealed class Background {
  */
 @Serializable
 enum class ImageFit {
-    @SerialName("cover")
-    COVER,      // Fill entire area, may crop
-    
+    @SerialName("crop")
+    CROP,       // Fill entire area, may crop edges
+
     @SerialName("contain")
     CONTAIN,    // Fit within area, may letterbox
-    
+
     @SerialName("fill")
     FILL,       // Stretch to fill
-    
+
     @SerialName("tile")
     TILE        // Repeat image
 }

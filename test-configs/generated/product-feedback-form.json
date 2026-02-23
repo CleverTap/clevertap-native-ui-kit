@@ -27,7 +27,7 @@
       "background": {
         "type": "image",
         "url": "https://yavuzceliker.github.io/sample-images/image-140.jpg",
-        "fit": "cover",
+        "fit": "crop",
         "opacity": 1.0,
         "tint": "#000000",
         "tint_opacity": 0.8

@@ -279,7 +279,7 @@ Interactive button element.
 
 ### 4. VIDEO
 
-Plays video content.
+Plays video content with custom controls.
 
 ```json
 {
@@ -290,12 +290,33 @@ Plays video content.
     "url": "https://example.com/video.mp4",
     "autoPlay": "true",
     "loop": "false",
-    "muted": "false"
+    "muted": "false",
+    "showControls": "true",
+    "showFullscreen": "true"
   }
 }
 ```
 
-**Binding keys**: `url`, `autoPlay`, `loop`, `muted`
+**Binding keys**: `url` (required), `autoPlay`, `loop`, `muted`, `showControls`, `showFullscreen`
+
+**Custom Controls Behavior**:
+- **Play/Pause**, **Mute/Unmute**, **Fullscreen** buttons (not platform default UI)
+- Tap video to show/hide controls
+- Auto-hide after 3 seconds of inactivity
+- Fade in/out animation (300ms)
+- `showControls="false"` - hides all controls
+- `showFullscreen="false"` - hides only fullscreen button
+
+**Default values**:
+- autoPlay: `false`
+- loop: `false`
+- muted: `false`
+- showControls: `true`
+- showFullscreen: `true`
+
+**Platform Requirements**:
+- **Android**: Host app must add `androidx.media3:media3-exoplayer` dependency
+- **iOS**: Built-in AVKit framework (no additional dependencies)
 
 ---
 

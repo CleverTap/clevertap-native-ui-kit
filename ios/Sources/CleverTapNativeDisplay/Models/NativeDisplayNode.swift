@@ -208,10 +208,13 @@ public struct NativeDisplayElement: Codable, Equatable {
     public let visible: String?
     public let actions: [String: Action]?
     public let animation: Animation?
-    
+
     // Divider configuration (only used when elementType = DIVIDER)
     public let dividerConfig: DividerConfig?
-    
+
+    // Image configuration (only used when elementType = IMAGE)
+    public let imageConfig: ImageConfig?
+
     private enum CodingKeys: String, CodingKey {
         case type
         case id
@@ -224,6 +227,7 @@ public struct NativeDisplayElement: Codable, Equatable {
         case actions
         case animation
         case dividerConfig
+        case imageConfig
     }
     
     public init(
@@ -236,7 +240,8 @@ public struct NativeDisplayElement: Codable, Equatable {
         visible: String? = nil,
         actions: [String: Action]? = nil,
         animation: Animation? = nil,
-        dividerConfig: DividerConfig? = nil
+        dividerConfig: DividerConfig? = nil,
+        imageConfig: ImageConfig? = nil
     ) {
         self.id = id
         self.elementType = elementType
@@ -248,6 +253,7 @@ public struct NativeDisplayElement: Codable, Equatable {
         self.actions = actions
         self.animation = animation
         self.dividerConfig = dividerConfig
+        self.imageConfig = imageConfig
     }
     
     public init(from decoder: Decoder) throws {
@@ -262,6 +268,7 @@ public struct NativeDisplayElement: Codable, Equatable {
         actions = try container.decodeIfPresent([String: Action].self, forKey: .actions)
         animation = try container.decodeIfPresent(Animation.self, forKey: .animation)
         dividerConfig = try container.decodeIfPresent(DividerConfig.self, forKey: .dividerConfig)
+        imageConfig = try container.decodeIfPresent(ImageConfig.self, forKey: .imageConfig)
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -277,6 +284,7 @@ public struct NativeDisplayElement: Codable, Equatable {
         try container.encodeIfPresent(actions, forKey: .actions)
         try container.encodeIfPresent(animation, forKey: .animation)
         try container.encodeIfPresent(dividerConfig, forKey: .dividerConfig)
+        try container.encodeIfPresent(imageConfig, forKey: .imageConfig)
     }
 }
 
@@ -285,7 +293,7 @@ public struct DividerConfig: Codable, Equatable {
     public let orientation: Orientation
     public let thickness: CGFloat
     public let color: String
-    
+
     public init(
         orientation: Orientation = .horizontal,
         thickness: CGFloat = 1,
@@ -295,7 +303,7 @@ public struct DividerConfig: Codable, Equatable {
         self.thickness = thickness
         self.color = color
     }
-    
+
     // Custom decoder to handle defaults
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -303,9 +311,32 @@ public struct DividerConfig: Codable, Equatable {
         self.thickness = try container.decodeIfPresent(CGFloat.self, forKey: .thickness) ?? 1
         self.color = try container.decodeIfPresent(String.self, forKey: .color) ?? "#E0E0E0"
     }
-    
+
     private enum CodingKeys: String, CodingKey {
         case orientation, thickness, color
+    }
+}
+
+/// Image configuration.
+/// Controls how images are displayed within their bounds.
+public struct ImageConfig: Codable, Equatable {
+    public let fit: ImageFit
+    public let animated: Bool?
+
+    public init(fit: ImageFit = .crop, animated: Bool? = nil) {
+        self.fit = fit
+        self.animated = animated
+    }
+
+    // Custom decoder to handle defaults
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.fit = try container.decodeIfPresent(ImageFit.self, forKey: .fit) ?? .crop
+        self.animated = try container.decodeIfPresent(Bool.self, forKey: .animated)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case fit, animated
     }
 }
 

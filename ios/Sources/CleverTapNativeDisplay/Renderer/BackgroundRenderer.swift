@@ -183,7 +183,7 @@ struct ImageBackgroundView: View {
     
     private var contentMode: ContentMode {
         switch background.fit {
-        case .cover: return .fill
+        case .crop: return .fill
         case .contain: return .fit
         case .fill: return .fill
         case .tile: return .fill // SwiftUI doesn't have native tiling

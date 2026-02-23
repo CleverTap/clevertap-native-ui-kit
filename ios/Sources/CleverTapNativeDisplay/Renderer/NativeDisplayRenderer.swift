@@ -2,6 +2,10 @@
 // Main entry point for rendering native display UI using SwiftUI
 
 import SwiftUI
+import AVKit
+import AVFoundation
+import UIKit
+import ImageIO
 
 // MARK: - Environment Key for Parent Size
 
@@ -185,8 +189,8 @@ struct RenderNode: View {
         
         switch node {
         case .container(let container):
-            let layoutModifier = LayoutModifier(layout: node.layout, parentSize: parentSize, nodeId: node.id)
-            let offset = layoutModifier.calculateOffset()
+            let layoutMod = LayoutModifier(layout: node.layout, parentSize: parentSize, nodeId: node.id)
+            let offsetValue = layoutMod.calculateOffset()
 
             RenderContainer(
                 container: container,
@@ -197,21 +201,21 @@ struct RenderNode: View {
                 actionHandler: actionHandler,
                 componentListener: componentListener
             )
-            .modifier(layoutModifier)
+            .modifier(layoutMod)
             .modifier(DecorationModifier(style: resolvedStyle))
-            .offset(x: offset.width, y: offset.height)
+            .offset(x: offsetValue.width, y: offsetValue.height)
             .applyEntranceAnimation(node.animation)
             .applyTappable(
-                            nodeId: node.id,
-                            actions: shouldApplyTappable ? node.actions : nil,
-                            actionHandler: actionHandler,
-                            componentListener: componentListener
-                        )
+                nodeId: node.id,
+                actions: shouldApplyTappable ? node.actions : nil,
+                actionHandler: actionHandler,
+                componentListener: componentListener
+            )
             .id(node.id)
 
         case .element(let element):
-            let layoutModifier = LayoutModifier(layout: node.layout, parentSize: parentSize, nodeId: node.id)
-            let offset = layoutModifier.calculateOffset()
+            let layoutMod = LayoutModifier(layout: node.layout, parentSize: parentSize, nodeId: node.id)
+            let offsetValue = layoutMod.calculateOffset()
 
             RenderElement(
                 element: element,
@@ -220,16 +224,16 @@ struct RenderNode: View {
                 parentSize: parentSize,
                 actionHandler: actionHandler
             )
-            .modifier(layoutModifier)
+            .modifier(layoutMod)
             .modifier(DecorationModifier(style: resolvedStyle))
-            .offset(x: offset.width, y: offset.height)
+            .offset(x: offsetValue.width, y: offsetValue.height)
             .applyEntranceAnimation(node.animation)
             .applyTappable(
-                            nodeId: node.id,
-                            actions: !isButton && shouldApplyTappable ? node.actions : nil,
-                            actionHandler: actionHandler,
-                            componentListener: !isButton ? componentListener : nil
-                        )
+                nodeId: node.id,
+                actions: !isButton && shouldApplyTappable ? node.actions : nil,
+                actionHandler: actionHandler,
+                componentListener: !isButton ? componentListener : nil
+            )
         }
     }
 }
@@ -678,24 +682,44 @@ struct RenderElement: View {
     @ViewBuilder
     private func renderImage() -> some View {
         let imageUrl = element.bindings["url"].map { evaluator.evaluateString($0) } ?? ""
-        
+
         if !imageUrl.isEmpty, let url = URL(string: imageUrl) {
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case .empty:
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .clipped()
-                case .failure:
-                    Image(systemName: "photo")
-                        .foregroundColor(.gray)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                @unknown default:
-                    EmptyView()
+            // Map ImageFit to ContentMode
+            let contentMode: ContentMode = {
+                switch element.imageConfig?.fit ?? .crop {
+                case .crop:    return .fill   // Fill, may crop edges
+                case .contain: return .fit    // Fit within bounds
+                case .fill:    return .fill   // Stretch (approximation, same as crop)
+                case .tile:    return .fill   // Tile not supported for single images
+                }
+            }()
+
+            // Check if this is a GIF (auto-detect or explicit)
+            let isGIF = isAnimatedGIF(url: url, config: element.imageConfig)
+
+            if isGIF {
+                // Use custom GIF renderer
+                GIFImage(url: url, contentMode: contentMode)
+                    .clipped()
+            } else {
+                // Use standard AsyncImage for static images
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: contentMode)
+                            .clipped()
+                    case .failure:
+                        Image(systemName: "photo")
+                            .foregroundColor(.gray)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    @unknown default:
+                        EmptyView()
+                    }
                 }
             }
         } else {
@@ -707,6 +731,44 @@ struct RenderElement: View {
                         .font(.caption)
                 )
         }
+    }
+
+    private func isAnimatedGIF(url: URL, config: ImageConfig?) -> Bool {
+        // Explicit control: if animated flag is set, use it
+        if let animated = config?.animated {
+            return animated
+        }
+
+        // Auto-detect using multiple strategies
+        let urlString = url.absoluteString.lowercased()
+
+        // Strategy 1: Check file extension
+        if urlString.hasSuffix(".gif") || urlString.contains(".gif?") {
+            return true
+        }
+
+        // Strategy 2: Check known GIF hosting domains and patterns
+        let host = url.host?.lowercased() ?? ""
+        let path = url.path.lowercased()
+
+        let knownGIFHosts = ["giphy.com", "tenor.com", "gfycat.com", "imgur.com"]
+        let gifPathPatterns = ["/gif/", "/giphy/", "/media/"]
+
+        for gifHost in knownGIFHosts {
+            if host.contains(gifHost) {
+                return true
+            }
+        }
+
+        for pattern in gifPathPatterns {
+            if path.contains(pattern) {
+                return true
+            }
+        }
+
+        // Strategy 3: If still ambiguous, default to false
+        // User can set animated: true explicitly in JSON config
+        return false
     }
     
     @ViewBuilder
@@ -735,12 +797,37 @@ struct RenderElement: View {
     
     @ViewBuilder
     private func renderVideo() -> some View {
-        ZStack {
+        let videoUrl = element.bindings["url"].map { evaluator.evaluateString($0) } ?? ""
+
+        let autoPlay = element.bindings["autoPlay"].map { evaluator.evaluateBoolean($0) } ?? false
+        let loop = element.bindings["loop"].map { evaluator.evaluateBoolean($0) } ?? false
+        let muted = element.bindings["muted"].map { evaluator.evaluateBoolean($0) } ?? false
+        let showControls = element.bindings["showControls"].map { evaluator.evaluateBoolean($0) } ?? true
+        let showFullscreen = element.bindings["showFullscreen"].map { evaluator.evaluateBoolean($0) } ?? true
+
+        if !videoUrl.isEmpty, let url = URL(string: videoUrl) {
+            VideoPlayerView(
+                url: url,
+                autoPlay: autoPlay,
+                loop: loop,
+                muted: muted,
+                showControls: showControls,
+                showFullscreen: showFullscreen
+            )
+        } else {
+            // Fallback UI
             Rectangle()
                 .fill(Color.black)
-            
-            Text("Video Player")
-                .foregroundColor(.white)
+                .overlay(
+                    VStack(spacing: 8) {
+                        Image(systemName: "video.slash")
+                            .font(.largeTitle)
+                            .foregroundColor(.gray)
+                        Text("No Video")
+                            .foregroundColor(.gray)
+                            .font(.caption)
+                    }
+                )
         }
     }
     
@@ -1056,6 +1143,215 @@ public struct ColorParser {
                 blue: Double((rgbValue & 0x000000FF)) / 255.0,           // BB byte
                 opacity: Double((rgbValue & 0xFF000000) >> 24) / 255.0   // AA byte
             )
+        }
+    }
+}
+
+// MARK: - Video Player Components
+
+/// Manages AVPlayer lifecycle and state for video playback
+private class PlayerManager: ObservableObject {
+    @Published var isPlaying: Bool = false
+    @Published var isMuted: Bool = false
+
+    var player: AVPlayer?
+    private var playerObserver: NSObjectProtocol?
+    private var timeObserver: Any?
+
+    func setupPlayer(url: URL, autoPlay: Bool, loop: Bool, muted: Bool) {
+        let playerItem = AVPlayerItem(url: url)
+        player = AVPlayer(playerItem: playerItem)
+        player?.isMuted = muted
+        self.isMuted = muted
+
+        // Setup loop observer (BEST PRACTICE: specify object parameter)
+        if loop {
+            playerObserver = NotificationCenter.default.addObserver(
+                forName: .AVPlayerItemDidPlayToEndTime,
+                object: playerItem,  // IMPORTANT: prevents memory leaks
+                queue: .main
+            ) { [weak self] _ in
+                self?.player?.seek(to: .zero)
+                self?.player?.play()
+            }
+        }
+
+        // Observe playback state
+        timeObserver = player?.addPeriodicTimeObserver(
+            forInterval: CMTime(seconds: 0.1, preferredTimescale: 600),
+            queue: .main
+        ) { [weak self] _ in  // BEST PRACTICE: [weak self] prevents retain cycle
+            self?.isPlaying = self?.player?.rate ?? 0 > 0
+        }
+
+        if autoPlay {
+            player?.play()
+        }
+    }
+
+    func togglePlayPause() {
+        if isPlaying {
+            player?.pause()
+        } else {
+            player?.play()
+        }
+    }
+
+    func toggleMute() {
+        isMuted.toggle()
+        player?.isMuted = isMuted
+    }
+
+    func cleanup() {
+        player?.pause()
+
+        if let observer = playerObserver {
+            NotificationCenter.default.removeObserver(observer)
+            playerObserver = nil
+        }
+
+        if let timeObs = timeObserver {
+            player?.removeTimeObserver(timeObs)
+            timeObserver = nil
+        }
+
+        player = nil
+    }
+
+    deinit {
+        cleanup()
+    }
+}
+
+/// UIViewRepresentable wrapper for AVPlayerLayer
+private struct VideoPlayerLayer: UIViewRepresentable {
+    let player: AVPlayer?
+
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        view.backgroundColor = .black
+
+        let playerLayer = AVPlayerLayer(player: player)
+        playerLayer.videoGravity = .resizeAspect
+        view.layer.addSublayer(playerLayer)
+
+        context.coordinator.playerLayer = playerLayer
+        return view
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {
+        context.coordinator.playerLayer?.player = player
+
+        // Update layer frame to match view bounds
+        DispatchQueue.main.async {
+            context.coordinator.playerLayer?.frame = uiView.bounds
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
+        coordinator.playerLayer?.removeFromSuperlayer()
+        coordinator.playerLayer = nil
+    }
+
+    class Coordinator {
+        var playerLayer: AVPlayerLayer?
+    }
+}
+
+/// Main video player view with custom controls
+private struct VideoPlayerView: View {
+    let url: URL
+    let autoPlay: Bool
+    let loop: Bool
+    let muted: Bool
+    let showControls: Bool
+    let showFullscreen: Bool
+
+    @StateObject private var playerManager = PlayerManager()
+    @State private var showControlsUI = false
+    @State private var controlsOpacity: Double = 0
+
+    var body: some View {
+        ZStack {
+            // Custom AVPlayerLayer
+            VideoPlayerLayer(player: playerManager.player)
+                .onTapGesture {
+                    if showControls {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            showControlsUI.toggle()
+                            controlsOpacity = showControlsUI ? 1.0 : 0.0
+                        }
+                    }
+                }
+
+            // Custom controls overlay
+            if showControls && controlsOpacity > 0 {
+                VStack {
+                    Spacer()
+
+                    HStack(spacing: 16) {
+                        // Play/Pause button
+                        Button(action: {
+                            playerManager.togglePlayPause()
+                        }) {
+                            Image(systemName: playerManager.isPlaying ? "pause.fill" : "play.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(.white)
+                                .frame(width: 44, height: 44)
+                        }
+
+                        // Mute/Unmute button
+                        Button(action: {
+                            playerManager.toggleMute()
+                        }) {
+                            Image(systemName: playerManager.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(.white)
+                                .frame(width: 44, height: 44)
+                        }
+
+                        // Fullscreen button (if enabled)
+                        if showFullscreen {
+                            Button(action: {
+                                // TODO: Implement fullscreen functionality
+                            }) {
+                                Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(.white)
+                                    .frame(width: 44, height: 44)
+                            }
+                        }
+
+                        Spacer()
+                    }
+                    .padding()
+                    .background(
+                        Color.black.opacity(0.5 * controlsOpacity)
+                    )
+                }
+                .opacity(controlsOpacity)
+            }
+        }
+        .onAppear {
+            playerManager.setupPlayer(url: url, autoPlay: autoPlay, loop: loop, muted: muted)
+        }
+        .onDisappear {
+            playerManager.cleanup()
+        }
+        .onChange(of: showControlsUI) { isShown in
+            if isShown {
+                // Auto-hide after 3 seconds
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        showControlsUI = false
+                        controlsOpacity = 0
+                    }
+                }
+            }
         }
     }
 }

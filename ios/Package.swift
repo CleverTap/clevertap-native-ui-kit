@@ -5,9 +5,7 @@ let package = Package(
     name: "CleverTapNativeDisplay",
     platforms: [
         .iOS(.v15),
-        .macOS(.v12),
-        .tvOS(.v15),
-        .watchOS(.v8)
+        .tvOS(.v15)
     ],
     products: [
         .library(

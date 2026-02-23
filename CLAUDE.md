@@ -137,11 +137,48 @@ Use `{{variableName}}` in bindings to reference variables:
 | Type | Binding | Example |
 |------|---------|---------|
 | TEXT | `text` | "Hello {{name}}" |
-| IMAGE | `src` | "https://example.com/image.jpg" |
+| IMAGE | `url` | "https://example.com/image.jpg" (supports static images and animated GIFs) |
 | BUTTON | `text` | "Click Me" |
-| VIDEO | `src` | "https://example.com/video.mp4" |
+| VIDEO | `url` (+ autoPlay, loop, muted, showControls, showFullscreen) | "https://example.com/video.mp4" |
 | SPACER | N/A | Fixed or flexible spacing |
 | DIVIDER | N/A | Visual separator |
+
+**Note**: VIDEO element requires `androidx.media3:media3-exoplayer` on Android (host app dependency). iOS uses built-in AVKit.
+
+### GIF Support
+
+IMAGE elements automatically detect and animate GIF files. The SDK uses multiple detection strategies:
+
+**Auto-detection (works automatically):**
+- URLs with `.gif` extension (e.g., `image.gif`, `image.gif?v=123`)
+- Known GIF hosting domains (Giphy, Tenor, Gfycat, Imgur)
+- URLs containing `/gif/`, `/giphy/`, or `/media/` in the path
+
+**Explicit control (for edge cases):**
+```json
+{
+  "elementType": "image",
+  "bindings": { "url": "https://media.giphy.com/media/abc123/giphy" },
+  "imageConfig": {
+    "fit": "crop",
+    "animated": true
+  }
+}
+```
+
+**ImageConfig.animated options:**
+- `null` (default): Auto-detect using URL patterns
+- `true`: Force animation (use for URLs without .gif extension)
+- `false`: Display first frame only (disable animation)
+
+**When to use explicit `animated: true`:**
+- API endpoints returning GIF data (e.g., `https://api.example.com/image/123`)
+- URLs without `.gif` extension on non-standard domains
+- Content-negotiated URLs or CDNs with custom patterns
+
+**Platform implementation:**
+- **Android**: Uses `coil-gif` library (automatic format detection from data)
+- **iOS**: Custom GIF decoder with graceful fallback to static images
 
 ---
 
@@ -411,7 +448,8 @@ Visual: backgroundColor, borderRadius, borderWidth, borderColor, shadow*, backgr
 ### Bindings
 ```
 TEXT: "text"
-IMAGE/VIDEO: "src"
+IMAGE/VIDEO: "url"
+VIDEO also supports: autoPlay, loop, muted, showControls, showFullscreen
 ```
 
 ---

@@ -1,0 +1,142 @@
+{
+  "theme": {
+    "id": "gif-test",
+    "defaultStyle": {
+      "textColor": "#FF000000",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "gif-test-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 16, "unit": "dp" },
+      "arrangement": { "type": "spaced", "spacing": 16, "spacingUnit": "dp", "strategy": "spaced" }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": { "text": "Animated GIF Test" },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": { "fontSize": 20, "fontWeight": "bold" }
+      },
+      {
+        "type": "element",
+        "id": "subtitle-auto",
+        "elementType": "text",
+        "bindings": { "text": "1. GIF with .gif extension (auto-detect)" },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": { "fontSize": 16, "fontWeight": "bold", "textColor": "#FF666666" }
+      },
+      {
+        "type": "element",
+        "id": "gif-auto-detect",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 200, "unit": "dp" }
+        },
+        "style": {
+          "borderRadius": 12,
+          "backgroundColor": "#FFF5F5F5"
+        }
+      },
+      {
+        "type": "element",
+        "id": "subtitle-explicit",
+        "elementType": "text",
+        "bindings": { "text": "2. GIF without extension (explicit animated: true)" },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": { "fontSize": 16, "fontWeight": "bold", "textColor": "#FF666666" }
+      },
+      {
+        "type": "element",
+        "id": "subtitle-static",
+        "elementType": "text",
+        "bindings": { "text": "3. Regular static image (should not animate)" },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": { "fontSize": 16, "fontWeight": "bold", "textColor": "#FF666666" }
+      },
+      {
+        "type": "element",
+        "id": "static-image",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://picsum.photos/400/300"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 200, "unit": "dp" }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      },
+      {
+        "type": "element",
+        "id": "subtitle-fit",
+        "elementType": "text",
+        "bindings": { "text": "4. GIF with different fit modes (contain)" },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": { "fontSize": 16, "fontWeight": "bold", "textColor": "#FF666666" }
+      },
+      {
+        "type": "element",
+        "id": "gif-contain",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif"
+        },
+        "imageConfig": {
+          "fit": "contain"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 200, "unit": "dp" }
+        },
+        "style": {
+          "borderRadius": 12,
+          "backgroundColor": "#FFEEEEEE"
+        }
+      },
+      {
+        "type": "element",
+        "id": "gif-no-extension",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy"
+        },
+        "imageConfig": {
+          "fit": "crop",
+          "animated": true
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 200, "unit": "dp" }
+        },
+        "style": {
+          "borderRadius": 12,
+          "backgroundColor": "#FFF5F5F5"
+        }
+      }
+    ]
+  }
+}

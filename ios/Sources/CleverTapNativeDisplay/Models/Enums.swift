@@ -88,7 +88,7 @@ public enum GalleryMode: String, Codable, CaseIterable {
 
 /// Image fit modes for image backgrounds.
 public enum ImageFit: String, Codable, CaseIterable {
-    case cover      // Fill entire area, may crop
+    case crop       // Fill entire area, may crop edges
     case contain    // Fit within area, may letterbox
     case fill       // Stretch to fill
     case tile       // Repeat image

@@ -164,16 +164,38 @@
 
 ### 4. VIDEO
 
-**Bindings**: `src`
+**Bindings**: `url` (required), `autoPlay`, `loop`, `muted`, `showControls`, `showFullscreen`
+
+**Custom Controls**: The VIDEO element includes custom player controls (not platform default UI):
+- **Play/Pause** - Toggle playback
+- **Mute/Unmute** - Toggle audio
+- **Fullscreen** - Enter/exit fullscreen mode (optional)
+- **Tap to show/hide** - Controls auto-hide after 3 seconds
+- **Configurable** - Use `showControls` to hide all controls, `showFullscreen` to hide fullscreen button
+
+**Platform Requirements**:
+- **Android**: Host app must add `androidx.media3:media3-exoplayer` dependency
+- **iOS**: Built-in AVKit framework (no additional dependencies)
 
 ```json
 {
   "id": "video-player",
   "elementType": "video",
-  "bindings": { "src": "{{videoUrl}}" },
+  "bindings": {
+    "url": "{{videoUrl}}",
+    "autoPlay": "false",
+    "loop": "true",
+    "muted": "false",
+    "showControls": "true",
+    "showFullscreen": "true"
+  },
   "layout": {
     "width": { "value": 100, "unit": "percent" },
     "height": { "value": 300, "unit": "dp" }
+  },
+  "style": {
+    "borderRadius": 12,
+    "backgroundColor": "#000000"
   }
 }
 ```
