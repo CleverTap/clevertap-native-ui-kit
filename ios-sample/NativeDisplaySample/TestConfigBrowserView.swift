@@ -20,16 +20,52 @@ struct TestConfigBrowserView: View {
     @State private var errorMessage: String? = nil
     @State private var isLoading = false
 
-    /// List of available test configurations
-    /// Start with 1 test, designed to scale to 30+
-    private let testConfigs = [
-        TestConfigItem(
-            id: "test-091",
-            filename: "test-091-offset-percent-box-basic",
-            displayName: "091: Offset % - Box Basic",
-            category: "Offset"
-        )
-    ]
+    /// Dynamically discovered test configurations from the app bundle.
+    /// Finds all JSON files matching "test-XXX-*" pattern and sorts by test number.
+    /// Uses Bundle.urls(forResourcesWithExtension:) which only returns accessible files,
+    /// avoiding permission errors from framework bundles or protected resources.
+    private let testConfigs: [TestConfigItem] = {
+        guard let urls = Bundle.main.urls(forResourcesWithExtension: "json", subdirectory: nil) else {
+            return []
+        }
+
+        let testFiles = urls
+            .map { $0.lastPathComponent }
+            .filter { $0.hasPrefix("test-") }
+            .sorted()
+
+        return testFiles.map { filename in
+            let name = filename.replacingOccurrences(of: ".json", with: "")
+            // Extract test number (e.g., "091" from "test-091-offset-percent-box-basic")
+            let parts = name.split(separator: "-", maxSplits: 2)
+            let testNumber = parts.count >= 2 ? String(parts[1]) : "000"
+            let testId = "test-\(testNumber)"
+            let displaySuffix = parts.count >= 3 ? String(parts[2]).replacingOccurrences(of: "-", with: " ").capitalized : ""
+            let displayName = "\(testNumber): \(displaySuffix)"
+
+            return TestConfigItem(
+                id: testId,
+                filename: name,
+                displayName: displayName,
+                category: categorize(testNumber: testNumber)
+            )
+        }
+    }()
+
+    /// Categorize test by its number range
+    private static func categorize(testNumber: String) -> String {
+        guard let num = Int(testNumber) else { return "Other" }
+        switch num {
+        case 1...5: return "Basic Containers"
+        case 6...10: return "Child Variations"
+        case 11...30: return "Layout & Spacing"
+        case 31...50: return "Elements"
+        case 51...70: return "Styles"
+        case 71...90: return "Advanced"
+        case 91...100: return "Offset"
+        default: return "Other"
+        }
+    }
 
     var body: some View {
         NavigationView {
@@ -111,8 +147,9 @@ struct TestConfigListView: View {
             }
             .padding(.bottom, 8)
         }
-        .frame(height: 150)
+        .frame(height: 200)
         .background(Color(.systemGroupedBackground))
+        .accessibilityIdentifier("test-config-list")
     }
 }
 
@@ -174,8 +211,7 @@ struct ConfigRenderView: View {
             } else if let config = config {
                 GeometryReader { geometry in
                     ScrollView {
-                        NativeDisplayView(config: config)
-                            .environment(\.nativeDisplayParentSize, geometry.size)
+                        NativeDisplayView(config: config, parentSize: geometry.size)
                             .padding()
                             // Accessibility identifier for XCUITest
                             .accessibilityIdentifier("native-display-view")

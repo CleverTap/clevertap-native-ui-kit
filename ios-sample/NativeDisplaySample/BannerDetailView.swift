@@ -213,8 +213,19 @@ class BannerDetailViewModel: ObservableObject {
         }
     }
 
-    /// Unified method to load configuration from any URL
+    /// Unified method to load configuration from any URL.
+    /// Handles security-scoped resources (e.g., files picked from the Files app)
+    /// by acquiring access before reading and releasing it afterward.
     private func loadFromURL(_ url: URL) {
+        // For files outside the app sandbox (e.g., from document picker),
+        // we must re-acquire the security scope before reading.
+        let needsSecurityScope = url.startAccessingSecurityScopedResource()
+        defer {
+            if needsSecurityScope {
+                url.stopAccessingSecurityScopedResource()
+            }
+        }
+
         do {
             let data = try Data(contentsOf: url)
 

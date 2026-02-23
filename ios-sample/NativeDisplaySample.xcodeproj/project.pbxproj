@@ -28,6 +28,208 @@
 		41C5EB282F3B40460066BE34 /* banner-10-welcome-onboarding.json in Resources */ = {isa = PBXBuildFile; fileRef = 4113029B2F34AC72004B6254 /* banner-10-welcome-onboarding.json */; };
 		41F1AD5F2F2B7D330018C5EA /* TestConfigBrowserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1AD5E2F2B7D330018C5EA /* TestConfigBrowserView.swift */; };
 		41F1AD612F2B7D420018C5EA /* JsonLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1AD602F2B7D420018C5EA /* JsonLoader.swift */; };
+		571C9E482F47151600AFC271 /* test-013-horizontal-3-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DE72F47151600AFC271 /* test-013-horizontal-3-children.json */; };
+		571C9E492F47151600AFC271 /* test-036-horizontal-center.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DFE2F47151600AFC271 /* test-036-horizontal-center.json */; };
+		571C9E4A2F47151600AFC271 /* test-035-horizontal-start.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DFD2F47151600AFC271 /* test-035-horizontal-start.json */; };
+		571C9E4B2F47151600AFC271 /* test-039-vertical-spacing-8.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E012F47151600AFC271 /* test-039-vertical-spacing-8.json */; };
+		571C9E4C2F47151600AFC271 /* test-034-vertical-space-around.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DFC2F47151600AFC271 /* test-034-vertical-space-around.json */; };
+		571C9E4D2F47151600AFC271 /* test-057-product-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E132F47151600AFC271 /* test-057-product-card.json */; };
+		571C9E4E2F47151600AFC271 /* test-114-combined-product-grid.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E402F47151600AFC271 /* test-114-combined-product-grid.json */; };
+		571C9E4F2F47151600AFC271 /* test-040-vertical-spacing-16.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E022F47151600AFC271 /* test-040-vertical-spacing-16.json */; };
+		571C9E502F47151600AFC271 /* test-015-horizontal-10-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DE92F47151600AFC271 /* test-015-horizontal-10-children.json */; };
+		571C9E512F47151600AFC271 /* test-085-text-style-inheritance.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E242F47151600AFC271 /* test-085-text-style-inheritance.json */; };
+		571C9E522F47151600AFC271 /* test-096-offset-percent-responsive.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E2E2F47151600AFC271 /* test-096-offset-percent-responsive.json */; };
+		571C9E532F47151600AFC271 /* test-104-aspect-ratio-fixed-height.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E362F47151600AFC271 /* test-104-aspect-ratio-fixed-height.json */; };
+		571C9E542F47151600AFC271 /* test-112-combined-nested-complex.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E3E2F47151600AFC271 /* test-112-combined-nested-complex.json */; };
+		571C9E552F47151600AFC271 /* test-019-box-5-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DED2F47151600AFC271 /* test-019-box-5-children.json */; };
+		571C9E562F47151600AFC271 /* test-082-shadows-heavy.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E212F47151600AFC271 /* test-082-shadows-heavy.json */; };
+		571C9E572F47151600AFC271 /* test-053-all-button-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E0F2F47151600AFC271 /* test-053-all-button-elements.json */; };
+		571C9E582F47151600AFC271 /* test-118-mixed-special-dimensions.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E442F47151600AFC271 /* test-118-mixed-special-dimensions.json */; };
+		571C9E592F47151600AFC271 /* test-011-horizontal-empty.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DE52F47151600AFC271 /* test-011-horizontal-empty.json */; };
+		571C9E5A2F47151600AFC271 /* test-078-border-radius.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E1D2F47151600AFC271 /* test-078-border-radius.json */; };
+		571C9E5B2F47151600AFC271 /* test-032-vertical-space-between.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DFA2F47151600AFC271 /* test-032-vertical-space-between.json */; };
+		571C9E5C2F47151600AFC271 /* test-088-theme-default-styles.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E272F47151600AFC271 /* test-088-theme-default-styles.json */; };
+		571C9E5D2F47151600AFC271 /* test-103-aspect-ratio-4-3-fixed-width.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E352F47151600AFC271 /* test-103-aspect-ratio-4-3-fixed-width.json */; };
+		571C9E5E2F47151600AFC271 /* test-077-font-families.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E1C2F47151600AFC271 /* test-077-font-families.json */; };
+		571C9E5F2F47151600AFC271 /* test-026-gallery-3-children-snapping.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF42F47151600AFC271 /* test-026-gallery-3-children-snapping.json */; };
+		571C9E602F47151600AFC271 /* test-041-vertical-spacing-32.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E032F47151600AFC271 /* test-041-vertical-spacing-32.json */; };
+		571C9E612F47151600AFC271 /* test-111-combined-aspect-offset-box.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E3D2F47151600AFC271 /* test-111-combined-aspect-offset-box.json */; };
+		571C9E622F47151600AFC271 /* test-084-combined-visual-styles.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E232F47151600AFC271 /* test-084-combined-visual-styles.json */; };
+		571C9E632F47151600AFC271 /* test-081-shadows-medium.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E202F47151600AFC271 /* test-081-shadows-medium.json */; };
+		571C9E642F47151600AFC271 /* test-094-offset-percent-overflow.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E2C2F47151600AFC271 /* test-094-offset-percent-overflow.json */; };
+		571C9E652F47151600AFC271 /* test-107-aspect-ratio-match-parent.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E392F47151600AFC271 /* test-107-aspect-ratio-match-parent.json */; };
+		571C9E662F47151600AFC271 /* test-116-match-parent-comprehensive.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E422F47151600AFC271 /* test-116-match-parent-comprehensive.json */; };
+		571C9E672F47151600AFC271 /* test-071-text-colors.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E162F47151600AFC271 /* test-071-text-colors.json */; };
+		571C9E682F47151600AFC271 /* test-110-aspect-ratio-mixed-container.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E3C2F47151600AFC271 /* test-110-aspect-ratio-mixed-container.json */; };
+		571C9E692F47151600AFC271 /* test-046-vertical-wrap-content.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E082F47151600AFC271 /* test-046-vertical-wrap-content.json */; };
+		571C9E6A2F47151600AFC271 /* test-030-gallery-3-children-free-flow-grid.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF82F47151600AFC271 /* test-030-gallery-3-children-free-flow-grid.json */; };
+		571C9E6B2F47151600AFC271 /* test-119-match-parent-stack-box.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E452F47151600AFC271 /* test-119-match-parent-stack-box.json */; };
+		571C9E6C2F47151600AFC271 /* test-031-vertical-spaced.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF92F47151600AFC271 /* test-031-vertical-spaced.json */; };
+		571C9E6D2F47151600AFC271 /* test-115-combined-showcase-all.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E412F47151600AFC271 /* test-115-combined-showcase-all.json */; };
+		571C9E6E2F47151600AFC271 /* test-023-stack-5-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF12F47151600AFC271 /* test-023-stack-5-children.json */; };
+		571C9E6F2F47151600AFC271 /* test-073-font-weights.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E182F47151600AFC271 /* test-073-font-weights.json */; };
+		571C9E702F47151600AFC271 /* test-051-all-text-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E0D2F47151600AFC271 /* test-051-all-text-elements.json */; };
+		571C9E712F47151600AFC271 /* test-106-aspect-ratio-wrap-content.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E382F47151600AFC271 /* test-106-aspect-ratio-wrap-content.json */; };
+		571C9E722F47151600AFC271 /* test-025-gallery-single-child.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF32F47151600AFC271 /* test-025-gallery-single-child.json */; };
+		571C9E732F47151600AFC271 /* test-101-aspect-ratio-square-fixed-width.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E332F47151600AFC271 /* test-101-aspect-ratio-square-fixed-width.json */; };
+		571C9E742F47151600AFC271 /* test-022-stack-3-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF02F47151600AFC271 /* test-022-stack-3-children.json */; };
+		571C9E752F47151600AFC271 /* test-083-opacity-variations.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E222F47151600AFC271 /* test-083-opacity-variations.json */; };
+		571C9E762F47151600AFC271 /* test-059-profile-header.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E152F47151600AFC271 /* test-059-profile-header.json */; };
+		571C9E772F47151600AFC271 /* test-042-vertical-padding-uniform.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E042F47151600AFC271 /* test-042-vertical-padding-uniform.json */; };
+		571C9E782F47151600AFC271 /* test-090-styled-profile-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E292F47151600AFC271 /* test-090-styled-profile-card.json */; };
+		571C9E792F47151600AFC271 /* test-048-vertical-mixed-units.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E0A2F47151600AFC271 /* test-048-vertical-mixed-units.json */; };
+		571C9E7A2F47151600AFC271 /* test-100-offset-percent-gallery-peek.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E322F47151600AFC271 /* test-100-offset-percent-gallery-peek.json */; };
+		571C9E7B2F47151600AFC271 /* test-093-offset-percent-negative.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E2B2F47151600AFC271 /* test-093-offset-percent-negative.json */; };
+		571C9E7C2F47151600AFC271 /* test-086-style-class-usage.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E252F47151600AFC271 /* test-086-style-class-usage.json */; };
+		571C9E7D2F47151600AFC271 /* test-043-vertical-padding-individual.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E052F47151600AFC271 /* test-043-vertical-padding-individual.json */; };
+		571C9E7E2F47151600AFC271 /* test-079-border-width-color.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E1E2F47151600AFC271 /* test-079-border-width-color.json */; };
+		571C9E7F2F47151600AFC271 /* test-117-wrap-content-comprehensive.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E432F47151600AFC271 /* test-117-wrap-content-comprehensive.json */; };
+		571C9E802F47151600AFC271 /* test-120-wrap-content-constraints.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E462F47151600AFC271 /* test-120-wrap-content-constraints.json */; };
+		571C9E812F47151600AFC271 /* test-037-horizontal-end.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DFF2F47151600AFC271 /* test-037-horizontal-end.json */; };
+		571C9E822F47151600AFC271 /* test-047-horizontal-percent-width.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E092F47151600AFC271 /* test-047-horizontal-percent-width.json */; };
+		571C9E832F47151600AFC271 /* test-024-gallery-empty.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF22F47151600AFC271 /* test-024-gallery-empty.json */; };
+		571C9E842F47151600AFC271 /* test-027-gallery-5-children-snapping.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF52F47151600AFC271 /* test-027-gallery-5-children-snapping.json */; };
+		571C9E852F47151600AFC271 /* test-109-aspect-ratio-extreme-tall.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E3B2F47151600AFC271 /* test-109-aspect-ratio-extreme-tall.json */; };
+		571C9E862F47151600AFC271 /* test-099-offset-percent-with-padding.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E312F47151600AFC271 /* test-099-offset-percent-with-padding.json */; };
+		571C9E872F47151600AFC271 /* test-056-all-divider-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E122F47151600AFC271 /* test-056-all-divider-elements.json */; };
+		571C9E882F47151600AFC271 /* test-VERIFY-percentage-offset-fix.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E472F47151600AFC271 /* test-VERIFY-percentage-offset-fix.json */; };
+		571C9E892F47151600AFC271 /* test-076-line-height.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E1B2F47151600AFC271 /* test-076-line-height.json */; };
+		571C9E8A2F47151600AFC271 /* test-021-stack-single-child.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DEF2F47151600AFC271 /* test-021-stack-single-child.json */; };
+		571C9E8B2F47151600AFC271 /* test-098-offset-percent-nested.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E302F47151600AFC271 /* test-098-offset-percent-nested.json */; };
+		571C9E8C2F47151600AFC271 /* test-028-gallery-10-children-snapping.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF62F47151600AFC271 /* test-028-gallery-10-children-snapping.json */; };
+		571C9E8D2F47151600AFC271 /* test-044-horizontal-padding-asymmetric.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E062F47151600AFC271 /* test-044-horizontal-padding-asymmetric.json */; };
+		571C9E8E2F47151600AFC271 /* test-050-gallery-spacing-variations.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E0C2F47151600AFC271 /* test-050-gallery-spacing-variations.json */; };
+		571C9E8F2F47151600AFC271 /* test-087-inline-vs-inherited.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E262F47151600AFC271 /* test-087-inline-vs-inherited.json */; };
+		571C9E902F47151600AFC271 /* test-038-vertical-spacing-0.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E002F47151600AFC271 /* test-038-vertical-spacing-0.json */; };
+		571C9E912F47151600AFC271 /* test-105-aspect-ratio-percent-width.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E372F47151600AFC271 /* test-105-aspect-ratio-percent-width.json */; };
+		571C9E922F47151600AFC271 /* test-113-combined-gallery-aspect-peek.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E3F2F47151600AFC271 /* test-113-combined-gallery-aspect-peek.json */; };
+		571C9E932F47151600AFC271 /* test-108-aspect-ratio-extreme-wide.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E3A2F47151600AFC271 /* test-108-aspect-ratio-extreme-wide.json */; };
+		571C9E942F47151600AFC271 /* test-055-all-spacer-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E112F47151600AFC271 /* test-055-all-spacer-elements.json */; };
+		571C9E952F47151600AFC271 /* test-017-box-single-child.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DEB2F47151600AFC271 /* test-017-box-single-child.json */; };
+		571C9E962F47151600AFC271 /* test-095-offset-percent-zero.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E2D2F47151600AFC271 /* test-095-offset-percent-zero.json */; };
+		571C9E972F47151600AFC271 /* test-012-horizontal-single-child.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DE62F47151600AFC271 /* test-012-horizontal-single-child.json */; };
+		571C9E982F47151600AFC271 /* test-102-aspect-ratio-16-9-fixed-width.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E342F47151600AFC271 /* test-102-aspect-ratio-16-9-fixed-width.json */; };
+		571C9E992F47151600AFC271 /* test-033-vertical-space-evenly.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DFB2F47151600AFC271 /* test-033-vertical-space-evenly.json */; };
+		571C9E9A2F47151600AFC271 /* test-052-all-image-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E0E2F47151600AFC271 /* test-052-all-image-elements.json */; };
+		571C9E9B2F47151600AFC271 /* test-014-horizontal-5-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DE82F47151600AFC271 /* test-014-horizontal-5-children.json */; };
+		571C9E9C2F47151600AFC271 /* test-020-stack-empty.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DEE2F47151600AFC271 /* test-020-stack-empty.json */; };
+		571C9E9D2F47151600AFC271 /* test-054-all-video-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E102F47151600AFC271 /* test-054-all-video-elements.json */; };
+		571C9E9E2F47151600AFC271 /* test-018-box-3-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DEC2F47151600AFC271 /* test-018-box-3-children.json */; };
+		571C9E9F2F47151600AFC271 /* test-058-login-form.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E142F47151600AFC271 /* test-058-login-form.json */; };
+		571C9EA02F47151600AFC271 /* test-075-text-decoration.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E1A2F47151600AFC271 /* test-075-text-decoration.json */; };
+		571C9EA12F47151600AFC271 /* test-045-box-padding-large.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E072F47151600AFC271 /* test-045-box-padding-large.json */; };
+		571C9EA22F47151600AFC271 /* test-089-styled-product-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E282F47151600AFC271 /* test-089-styled-product-card.json */; };
+		571C9EA32F47151600AFC271 /* test-080-shadows-light.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E1F2F47151600AFC271 /* test-080-shadows-light.json */; };
+		571C9EA42F47151600AFC271 /* test-097-offset-mixed-units.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E2F2F47151600AFC271 /* test-097-offset-mixed-units.json */; };
+		571C9EA52F47151600AFC271 /* test-072-font-sizes.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E172F47151600AFC271 /* test-072-font-sizes.json */; };
+		571C9EA62F47151600AFC271 /* test-074-text-alignment.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E192F47151600AFC271 /* test-074-text-alignment.json */; };
+		571C9EA72F47151600AFC271 /* test-092-offset-percent-stack-layers.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E2A2F47151600AFC271 /* test-092-offset-percent-stack-layers.json */; };
+		571C9EA82F47151600AFC271 /* test-016-box-empty.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DEA2F47151600AFC271 /* test-016-box-empty.json */; };
+		571C9EA92F47151600AFC271 /* test-049-nested-mixed-arrangements.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E0B2F47151600AFC271 /* test-049-nested-mixed-arrangements.json */; };
+		571C9EAA2F47151600AFC271 /* test-029-gallery-3-children-free-flow.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF72F47151600AFC271 /* test-029-gallery-3-children-free-flow.json */; };
+		571C9EAB2F47151600AFC271 /* test-013-horizontal-3-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DE72F47151600AFC271 /* test-013-horizontal-3-children.json */; };
+		571C9EAC2F47151600AFC271 /* test-036-horizontal-center.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DFE2F47151600AFC271 /* test-036-horizontal-center.json */; };
+		571C9EAD2F47151600AFC271 /* test-035-horizontal-start.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DFD2F47151600AFC271 /* test-035-horizontal-start.json */; };
+		571C9EAE2F47151600AFC271 /* test-039-vertical-spacing-8.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E012F47151600AFC271 /* test-039-vertical-spacing-8.json */; };
+		571C9EAF2F47151600AFC271 /* test-034-vertical-space-around.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DFC2F47151600AFC271 /* test-034-vertical-space-around.json */; };
+		571C9EB02F47151600AFC271 /* test-057-product-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E132F47151600AFC271 /* test-057-product-card.json */; };
+		571C9EB12F47151600AFC271 /* test-114-combined-product-grid.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E402F47151600AFC271 /* test-114-combined-product-grid.json */; };
+		571C9EB22F47151600AFC271 /* test-040-vertical-spacing-16.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E022F47151600AFC271 /* test-040-vertical-spacing-16.json */; };
+		571C9EB32F47151600AFC271 /* test-015-horizontal-10-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DE92F47151600AFC271 /* test-015-horizontal-10-children.json */; };
+		571C9EB42F47151600AFC271 /* test-085-text-style-inheritance.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E242F47151600AFC271 /* test-085-text-style-inheritance.json */; };
+		571C9EB52F47151600AFC271 /* test-096-offset-percent-responsive.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E2E2F47151600AFC271 /* test-096-offset-percent-responsive.json */; };
+		571C9EB62F47151600AFC271 /* test-104-aspect-ratio-fixed-height.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E362F47151600AFC271 /* test-104-aspect-ratio-fixed-height.json */; };
+		571C9EB72F47151600AFC271 /* test-112-combined-nested-complex.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E3E2F47151600AFC271 /* test-112-combined-nested-complex.json */; };
+		571C9EB82F47151600AFC271 /* test-019-box-5-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DED2F47151600AFC271 /* test-019-box-5-children.json */; };
+		571C9EB92F47151600AFC271 /* test-082-shadows-heavy.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E212F47151600AFC271 /* test-082-shadows-heavy.json */; };
+		571C9EBA2F47151600AFC271 /* test-053-all-button-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E0F2F47151600AFC271 /* test-053-all-button-elements.json */; };
+		571C9EBB2F47151600AFC271 /* test-118-mixed-special-dimensions.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E442F47151600AFC271 /* test-118-mixed-special-dimensions.json */; };
+		571C9EBC2F47151600AFC271 /* test-011-horizontal-empty.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DE52F47151600AFC271 /* test-011-horizontal-empty.json */; };
+		571C9EBD2F47151600AFC271 /* test-078-border-radius.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E1D2F47151600AFC271 /* test-078-border-radius.json */; };
+		571C9EBE2F47151600AFC271 /* test-032-vertical-space-between.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DFA2F47151600AFC271 /* test-032-vertical-space-between.json */; };
+		571C9EBF2F47151600AFC271 /* test-088-theme-default-styles.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E272F47151600AFC271 /* test-088-theme-default-styles.json */; };
+		571C9EC02F47151600AFC271 /* test-103-aspect-ratio-4-3-fixed-width.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E352F47151600AFC271 /* test-103-aspect-ratio-4-3-fixed-width.json */; };
+		571C9EC12F47151600AFC271 /* test-077-font-families.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E1C2F47151600AFC271 /* test-077-font-families.json */; };
+		571C9EC22F47151600AFC271 /* test-026-gallery-3-children-snapping.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF42F47151600AFC271 /* test-026-gallery-3-children-snapping.json */; };
+		571C9EC32F47151600AFC271 /* test-041-vertical-spacing-32.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E032F47151600AFC271 /* test-041-vertical-spacing-32.json */; };
+		571C9EC42F47151600AFC271 /* test-111-combined-aspect-offset-box.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E3D2F47151600AFC271 /* test-111-combined-aspect-offset-box.json */; };
+		571C9EC52F47151600AFC271 /* test-084-combined-visual-styles.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E232F47151600AFC271 /* test-084-combined-visual-styles.json */; };
+		571C9EC62F47151600AFC271 /* test-081-shadows-medium.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E202F47151600AFC271 /* test-081-shadows-medium.json */; };
+		571C9EC72F47151600AFC271 /* test-094-offset-percent-overflow.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E2C2F47151600AFC271 /* test-094-offset-percent-overflow.json */; };
+		571C9EC82F47151600AFC271 /* test-107-aspect-ratio-match-parent.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E392F47151600AFC271 /* test-107-aspect-ratio-match-parent.json */; };
+		571C9EC92F47151600AFC271 /* test-116-match-parent-comprehensive.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E422F47151600AFC271 /* test-116-match-parent-comprehensive.json */; };
+		571C9ECA2F47151600AFC271 /* test-071-text-colors.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E162F47151600AFC271 /* test-071-text-colors.json */; };
+		571C9ECB2F47151600AFC271 /* test-110-aspect-ratio-mixed-container.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E3C2F47151600AFC271 /* test-110-aspect-ratio-mixed-container.json */; };
+		571C9ECC2F47151600AFC271 /* test-046-vertical-wrap-content.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E082F47151600AFC271 /* test-046-vertical-wrap-content.json */; };
+		571C9ECD2F47151600AFC271 /* test-030-gallery-3-children-free-flow-grid.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF82F47151600AFC271 /* test-030-gallery-3-children-free-flow-grid.json */; };
+		571C9ECE2F47151600AFC271 /* test-119-match-parent-stack-box.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E452F47151600AFC271 /* test-119-match-parent-stack-box.json */; };
+		571C9ECF2F47151600AFC271 /* test-031-vertical-spaced.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF92F47151600AFC271 /* test-031-vertical-spaced.json */; };
+		571C9ED02F47151600AFC271 /* test-115-combined-showcase-all.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E412F47151600AFC271 /* test-115-combined-showcase-all.json */; };
+		571C9ED12F47151600AFC271 /* test-023-stack-5-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF12F47151600AFC271 /* test-023-stack-5-children.json */; };
+		571C9ED22F47151600AFC271 /* test-073-font-weights.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E182F47151600AFC271 /* test-073-font-weights.json */; };
+		571C9ED32F47151600AFC271 /* test-051-all-text-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E0D2F47151600AFC271 /* test-051-all-text-elements.json */; };
+		571C9ED42F47151600AFC271 /* test-106-aspect-ratio-wrap-content.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E382F47151600AFC271 /* test-106-aspect-ratio-wrap-content.json */; };
+		571C9ED52F47151600AFC271 /* test-025-gallery-single-child.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF32F47151600AFC271 /* test-025-gallery-single-child.json */; };
+		571C9ED62F47151600AFC271 /* test-101-aspect-ratio-square-fixed-width.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E332F47151600AFC271 /* test-101-aspect-ratio-square-fixed-width.json */; };
+		571C9ED72F47151600AFC271 /* test-022-stack-3-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF02F47151600AFC271 /* test-022-stack-3-children.json */; };
+		571C9ED82F47151600AFC271 /* test-083-opacity-variations.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E222F47151600AFC271 /* test-083-opacity-variations.json */; };
+		571C9ED92F47151600AFC271 /* test-059-profile-header.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E152F47151600AFC271 /* test-059-profile-header.json */; };
+		571C9EDA2F47151600AFC271 /* test-042-vertical-padding-uniform.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E042F47151600AFC271 /* test-042-vertical-padding-uniform.json */; };
+		571C9EDB2F47151600AFC271 /* test-090-styled-profile-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E292F47151600AFC271 /* test-090-styled-profile-card.json */; };
+		571C9EDC2F47151600AFC271 /* test-048-vertical-mixed-units.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E0A2F47151600AFC271 /* test-048-vertical-mixed-units.json */; };
+		571C9EDD2F47151600AFC271 /* test-100-offset-percent-gallery-peek.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E322F47151600AFC271 /* test-100-offset-percent-gallery-peek.json */; };
+		571C9EDE2F47151600AFC271 /* test-093-offset-percent-negative.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E2B2F47151600AFC271 /* test-093-offset-percent-negative.json */; };
+		571C9EDF2F47151600AFC271 /* test-086-style-class-usage.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E252F47151600AFC271 /* test-086-style-class-usage.json */; };
+		571C9EE02F47151600AFC271 /* test-043-vertical-padding-individual.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E052F47151600AFC271 /* test-043-vertical-padding-individual.json */; };
+		571C9EE12F47151600AFC271 /* test-079-border-width-color.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E1E2F47151600AFC271 /* test-079-border-width-color.json */; };
+		571C9EE22F47151600AFC271 /* test-117-wrap-content-comprehensive.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E432F47151600AFC271 /* test-117-wrap-content-comprehensive.json */; };
+		571C9EE32F47151600AFC271 /* test-120-wrap-content-constraints.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E462F47151600AFC271 /* test-120-wrap-content-constraints.json */; };
+		571C9EE42F47151600AFC271 /* test-037-horizontal-end.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DFF2F47151600AFC271 /* test-037-horizontal-end.json */; };
+		571C9EE52F47151600AFC271 /* test-047-horizontal-percent-width.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E092F47151600AFC271 /* test-047-horizontal-percent-width.json */; };
+		571C9EE62F47151600AFC271 /* test-024-gallery-empty.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF22F47151600AFC271 /* test-024-gallery-empty.json */; };
+		571C9EE72F47151600AFC271 /* test-027-gallery-5-children-snapping.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF52F47151600AFC271 /* test-027-gallery-5-children-snapping.json */; };
+		571C9EE82F47151600AFC271 /* test-109-aspect-ratio-extreme-tall.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E3B2F47151600AFC271 /* test-109-aspect-ratio-extreme-tall.json */; };
+		571C9EE92F47151600AFC271 /* test-099-offset-percent-with-padding.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E312F47151600AFC271 /* test-099-offset-percent-with-padding.json */; };
+		571C9EEA2F47151600AFC271 /* test-056-all-divider-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E122F47151600AFC271 /* test-056-all-divider-elements.json */; };
+		571C9EEB2F47151600AFC271 /* test-VERIFY-percentage-offset-fix.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E472F47151600AFC271 /* test-VERIFY-percentage-offset-fix.json */; };
+		571C9EEC2F47151600AFC271 /* test-076-line-height.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E1B2F47151600AFC271 /* test-076-line-height.json */; };
+		571C9EED2F47151600AFC271 /* test-021-stack-single-child.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DEF2F47151600AFC271 /* test-021-stack-single-child.json */; };
+		571C9EEE2F47151600AFC271 /* test-098-offset-percent-nested.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E302F47151600AFC271 /* test-098-offset-percent-nested.json */; };
+		571C9EEF2F47151600AFC271 /* test-028-gallery-10-children-snapping.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF62F47151600AFC271 /* test-028-gallery-10-children-snapping.json */; };
+		571C9EF02F47151600AFC271 /* test-044-horizontal-padding-asymmetric.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E062F47151600AFC271 /* test-044-horizontal-padding-asymmetric.json */; };
+		571C9EF12F47151600AFC271 /* test-050-gallery-spacing-variations.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E0C2F47151600AFC271 /* test-050-gallery-spacing-variations.json */; };
+		571C9EF22F47151600AFC271 /* test-087-inline-vs-inherited.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E262F47151600AFC271 /* test-087-inline-vs-inherited.json */; };
+		571C9EF32F47151600AFC271 /* test-038-vertical-spacing-0.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E002F47151600AFC271 /* test-038-vertical-spacing-0.json */; };
+		571C9EF42F47151600AFC271 /* test-105-aspect-ratio-percent-width.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E372F47151600AFC271 /* test-105-aspect-ratio-percent-width.json */; };
+		571C9EF52F47151600AFC271 /* test-113-combined-gallery-aspect-peek.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E3F2F47151600AFC271 /* test-113-combined-gallery-aspect-peek.json */; };
+		571C9EF62F47151600AFC271 /* test-108-aspect-ratio-extreme-wide.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E3A2F47151600AFC271 /* test-108-aspect-ratio-extreme-wide.json */; };
+		571C9EF72F47151600AFC271 /* test-055-all-spacer-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E112F47151600AFC271 /* test-055-all-spacer-elements.json */; };
+		571C9EF82F47151600AFC271 /* test-017-box-single-child.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DEB2F47151600AFC271 /* test-017-box-single-child.json */; };
+		571C9EF92F47151600AFC271 /* test-095-offset-percent-zero.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E2D2F47151600AFC271 /* test-095-offset-percent-zero.json */; };
+		571C9EFA2F47151600AFC271 /* test-012-horizontal-single-child.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DE62F47151600AFC271 /* test-012-horizontal-single-child.json */; };
+		571C9EFB2F47151600AFC271 /* test-102-aspect-ratio-16-9-fixed-width.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E342F47151600AFC271 /* test-102-aspect-ratio-16-9-fixed-width.json */; };
+		571C9EFC2F47151600AFC271 /* test-033-vertical-space-evenly.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DFB2F47151600AFC271 /* test-033-vertical-space-evenly.json */; };
+		571C9EFD2F47151600AFC271 /* test-052-all-image-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E0E2F47151600AFC271 /* test-052-all-image-elements.json */; };
+		571C9EFE2F47151600AFC271 /* test-014-horizontal-5-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DE82F47151600AFC271 /* test-014-horizontal-5-children.json */; };
+		571C9EFF2F47151600AFC271 /* test-020-stack-empty.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DEE2F47151600AFC271 /* test-020-stack-empty.json */; };
+		571C9F002F47151600AFC271 /* test-054-all-video-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E102F47151600AFC271 /* test-054-all-video-elements.json */; };
+		571C9F012F47151600AFC271 /* test-018-box-3-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DEC2F47151600AFC271 /* test-018-box-3-children.json */; };
+		571C9F022F47151600AFC271 /* test-058-login-form.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E142F47151600AFC271 /* test-058-login-form.json */; };
+		571C9F032F47151600AFC271 /* test-075-text-decoration.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E1A2F47151600AFC271 /* test-075-text-decoration.json */; };
+		571C9F042F47151600AFC271 /* test-045-box-padding-large.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E072F47151600AFC271 /* test-045-box-padding-large.json */; };
+		571C9F052F47151600AFC271 /* test-089-styled-product-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E282F47151600AFC271 /* test-089-styled-product-card.json */; };
+		571C9F062F47151600AFC271 /* test-080-shadows-light.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E1F2F47151600AFC271 /* test-080-shadows-light.json */; };
+		571C9F072F47151600AFC271 /* test-097-offset-mixed-units.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E2F2F47151600AFC271 /* test-097-offset-mixed-units.json */; };
+		571C9F082F47151600AFC271 /* test-072-font-sizes.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E172F47151600AFC271 /* test-072-font-sizes.json */; };
+		571C9F092F47151600AFC271 /* test-074-text-alignment.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E192F47151600AFC271 /* test-074-text-alignment.json */; };
+		571C9F0A2F47151600AFC271 /* test-092-offset-percent-stack-layers.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E2A2F47151600AFC271 /* test-092-offset-percent-stack-layers.json */; };
+		571C9F0B2F47151600AFC271 /* test-016-box-empty.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DEA2F47151600AFC271 /* test-016-box-empty.json */; };
+		571C9F0C2F47151600AFC271 /* test-049-nested-mixed-arrangements.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9E0B2F47151600AFC271 /* test-049-nested-mixed-arrangements.json */; };
+		571C9F0D2F47151600AFC271 /* test-029-gallery-3-children-free-flow.json in Resources */ = {isa = PBXBuildFile; fileRef = 571C9DF72F47151600AFC271 /* test-029-gallery-3-children-free-flow.json */; };
+		5742ADFA2F44725D005C1BBE /* test-004-stack-simple.json in Resources */ = {isa = PBXBuildFile; fileRef = 5742ADEA2F44725D005C1BBE /* test-004-stack-simple.json */; };
+		5742AE042F44725D005C1BBE /* test-004-stack-simple.json in Resources */ = {isa = PBXBuildFile; fileRef = 5742ADEA2F44725D005C1BBE /* test-004-stack-simple.json */; };
+		5791FE092F4480EB006D7353 /* test-067-hero-banner.json in Resources */ = {isa = PBXBuildFile; fileRef = 5791FDFD2F4480EB006D7353 /* test-067-hero-banner.json */; };
+		5791FE142F4480EB006D7353 /* test-067-hero-banner.json in Resources */ = {isa = PBXBuildFile; fileRef = 5791FDFD2F4480EB006D7353 /* test-067-hero-banner.json */; };
 		B001 /* NativeDisplaySampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F001 /* NativeDisplaySampleApp.swift */; };
 		B002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F002 /* ContentView.swift */; };
 		B003 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F003 /* Assets.xcassets */; };
@@ -67,6 +269,107 @@
 		41F1AD512F2B6E250018C5EA /* NativeDisplaySampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NativeDisplaySampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		41F1AD5E2F2B7D330018C5EA /* TestConfigBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestConfigBrowserView.swift; sourceTree = "<group>"; };
 		41F1AD602F2B7D420018C5EA /* JsonLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonLoader.swift; sourceTree = "<group>"; };
+		571C9DE52F47151600AFC271 /* test-011-horizontal-empty.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-011-horizontal-empty.json"; sourceTree = "<group>"; };
+		571C9DE62F47151600AFC271 /* test-012-horizontal-single-child.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-012-horizontal-single-child.json"; sourceTree = "<group>"; };
+		571C9DE72F47151600AFC271 /* test-013-horizontal-3-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-013-horizontal-3-children.json"; sourceTree = "<group>"; };
+		571C9DE82F47151600AFC271 /* test-014-horizontal-5-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-014-horizontal-5-children.json"; sourceTree = "<group>"; };
+		571C9DE92F47151600AFC271 /* test-015-horizontal-10-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-015-horizontal-10-children.json"; sourceTree = "<group>"; };
+		571C9DEA2F47151600AFC271 /* test-016-box-empty.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-016-box-empty.json"; sourceTree = "<group>"; };
+		571C9DEB2F47151600AFC271 /* test-017-box-single-child.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-017-box-single-child.json"; sourceTree = "<group>"; };
+		571C9DEC2F47151600AFC271 /* test-018-box-3-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-018-box-3-children.json"; sourceTree = "<group>"; };
+		571C9DED2F47151600AFC271 /* test-019-box-5-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-019-box-5-children.json"; sourceTree = "<group>"; };
+		571C9DEE2F47151600AFC271 /* test-020-stack-empty.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-020-stack-empty.json"; sourceTree = "<group>"; };
+		571C9DEF2F47151600AFC271 /* test-021-stack-single-child.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-021-stack-single-child.json"; sourceTree = "<group>"; };
+		571C9DF02F47151600AFC271 /* test-022-stack-3-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-022-stack-3-children.json"; sourceTree = "<group>"; };
+		571C9DF12F47151600AFC271 /* test-023-stack-5-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-023-stack-5-children.json"; sourceTree = "<group>"; };
+		571C9DF22F47151600AFC271 /* test-024-gallery-empty.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-024-gallery-empty.json"; sourceTree = "<group>"; };
+		571C9DF32F47151600AFC271 /* test-025-gallery-single-child.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-025-gallery-single-child.json"; sourceTree = "<group>"; };
+		571C9DF42F47151600AFC271 /* test-026-gallery-3-children-snapping.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-026-gallery-3-children-snapping.json"; sourceTree = "<group>"; };
+		571C9DF52F47151600AFC271 /* test-027-gallery-5-children-snapping.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-027-gallery-5-children-snapping.json"; sourceTree = "<group>"; };
+		571C9DF62F47151600AFC271 /* test-028-gallery-10-children-snapping.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-028-gallery-10-children-snapping.json"; sourceTree = "<group>"; };
+		571C9DF72F47151600AFC271 /* test-029-gallery-3-children-free-flow.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-029-gallery-3-children-free-flow.json"; sourceTree = "<group>"; };
+		571C9DF82F47151600AFC271 /* test-030-gallery-3-children-free-flow-grid.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-030-gallery-3-children-free-flow-grid.json"; sourceTree = "<group>"; };
+		571C9DF92F47151600AFC271 /* test-031-vertical-spaced.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-031-vertical-spaced.json"; sourceTree = "<group>"; };
+		571C9DFA2F47151600AFC271 /* test-032-vertical-space-between.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-032-vertical-space-between.json"; sourceTree = "<group>"; };
+		571C9DFB2F47151600AFC271 /* test-033-vertical-space-evenly.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-033-vertical-space-evenly.json"; sourceTree = "<group>"; };
+		571C9DFC2F47151600AFC271 /* test-034-vertical-space-around.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-034-vertical-space-around.json"; sourceTree = "<group>"; };
+		571C9DFD2F47151600AFC271 /* test-035-horizontal-start.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-035-horizontal-start.json"; sourceTree = "<group>"; };
+		571C9DFE2F47151600AFC271 /* test-036-horizontal-center.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-036-horizontal-center.json"; sourceTree = "<group>"; };
+		571C9DFF2F47151600AFC271 /* test-037-horizontal-end.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-037-horizontal-end.json"; sourceTree = "<group>"; };
+		571C9E002F47151600AFC271 /* test-038-vertical-spacing-0.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-038-vertical-spacing-0.json"; sourceTree = "<group>"; };
+		571C9E012F47151600AFC271 /* test-039-vertical-spacing-8.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-039-vertical-spacing-8.json"; sourceTree = "<group>"; };
+		571C9E022F47151600AFC271 /* test-040-vertical-spacing-16.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-040-vertical-spacing-16.json"; sourceTree = "<group>"; };
+		571C9E032F47151600AFC271 /* test-041-vertical-spacing-32.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-041-vertical-spacing-32.json"; sourceTree = "<group>"; };
+		571C9E042F47151600AFC271 /* test-042-vertical-padding-uniform.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-042-vertical-padding-uniform.json"; sourceTree = "<group>"; };
+		571C9E052F47151600AFC271 /* test-043-vertical-padding-individual.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-043-vertical-padding-individual.json"; sourceTree = "<group>"; };
+		571C9E062F47151600AFC271 /* test-044-horizontal-padding-asymmetric.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-044-horizontal-padding-asymmetric.json"; sourceTree = "<group>"; };
+		571C9E072F47151600AFC271 /* test-045-box-padding-large.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-045-box-padding-large.json"; sourceTree = "<group>"; };
+		571C9E082F47151600AFC271 /* test-046-vertical-wrap-content.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-046-vertical-wrap-content.json"; sourceTree = "<group>"; };
+		571C9E092F47151600AFC271 /* test-047-horizontal-percent-width.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-047-horizontal-percent-width.json"; sourceTree = "<group>"; };
+		571C9E0A2F47151600AFC271 /* test-048-vertical-mixed-units.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-048-vertical-mixed-units.json"; sourceTree = "<group>"; };
+		571C9E0B2F47151600AFC271 /* test-049-nested-mixed-arrangements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-049-nested-mixed-arrangements.json"; sourceTree = "<group>"; };
+		571C9E0C2F47151600AFC271 /* test-050-gallery-spacing-variations.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-050-gallery-spacing-variations.json"; sourceTree = "<group>"; };
+		571C9E0D2F47151600AFC271 /* test-051-all-text-elements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-051-all-text-elements.json"; sourceTree = "<group>"; };
+		571C9E0E2F47151600AFC271 /* test-052-all-image-elements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-052-all-image-elements.json"; sourceTree = "<group>"; };
+		571C9E0F2F47151600AFC271 /* test-053-all-button-elements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-053-all-button-elements.json"; sourceTree = "<group>"; };
+		571C9E102F47151600AFC271 /* test-054-all-video-elements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-054-all-video-elements.json"; sourceTree = "<group>"; };
+		571C9E112F47151600AFC271 /* test-055-all-spacer-elements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-055-all-spacer-elements.json"; sourceTree = "<group>"; };
+		571C9E122F47151600AFC271 /* test-056-all-divider-elements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-056-all-divider-elements.json"; sourceTree = "<group>"; };
+		571C9E132F47151600AFC271 /* test-057-product-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-057-product-card.json"; sourceTree = "<group>"; };
+		571C9E142F47151600AFC271 /* test-058-login-form.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-058-login-form.json"; sourceTree = "<group>"; };
+		571C9E152F47151600AFC271 /* test-059-profile-header.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-059-profile-header.json"; sourceTree = "<group>"; };
+		571C9E162F47151600AFC271 /* test-071-text-colors.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-071-text-colors.json"; sourceTree = "<group>"; };
+		571C9E172F47151600AFC271 /* test-072-font-sizes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-072-font-sizes.json"; sourceTree = "<group>"; };
+		571C9E182F47151600AFC271 /* test-073-font-weights.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-073-font-weights.json"; sourceTree = "<group>"; };
+		571C9E192F47151600AFC271 /* test-074-text-alignment.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-074-text-alignment.json"; sourceTree = "<group>"; };
+		571C9E1A2F47151600AFC271 /* test-075-text-decoration.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-075-text-decoration.json"; sourceTree = "<group>"; };
+		571C9E1B2F47151600AFC271 /* test-076-line-height.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-076-line-height.json"; sourceTree = "<group>"; };
+		571C9E1C2F47151600AFC271 /* test-077-font-families.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-077-font-families.json"; sourceTree = "<group>"; };
+		571C9E1D2F47151600AFC271 /* test-078-border-radius.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-078-border-radius.json"; sourceTree = "<group>"; };
+		571C9E1E2F47151600AFC271 /* test-079-border-width-color.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-079-border-width-color.json"; sourceTree = "<group>"; };
+		571C9E1F2F47151600AFC271 /* test-080-shadows-light.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-080-shadows-light.json"; sourceTree = "<group>"; };
+		571C9E202F47151600AFC271 /* test-081-shadows-medium.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-081-shadows-medium.json"; sourceTree = "<group>"; };
+		571C9E212F47151600AFC271 /* test-082-shadows-heavy.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-082-shadows-heavy.json"; sourceTree = "<group>"; };
+		571C9E222F47151600AFC271 /* test-083-opacity-variations.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-083-opacity-variations.json"; sourceTree = "<group>"; };
+		571C9E232F47151600AFC271 /* test-084-combined-visual-styles.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-084-combined-visual-styles.json"; sourceTree = "<group>"; };
+		571C9E242F47151600AFC271 /* test-085-text-style-inheritance.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-085-text-style-inheritance.json"; sourceTree = "<group>"; };
+		571C9E252F47151600AFC271 /* test-086-style-class-usage.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-086-style-class-usage.json"; sourceTree = "<group>"; };
+		571C9E262F47151600AFC271 /* test-087-inline-vs-inherited.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-087-inline-vs-inherited.json"; sourceTree = "<group>"; };
+		571C9E272F47151600AFC271 /* test-088-theme-default-styles.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-088-theme-default-styles.json"; sourceTree = "<group>"; };
+		571C9E282F47151600AFC271 /* test-089-styled-product-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-089-styled-product-card.json"; sourceTree = "<group>"; };
+		571C9E292F47151600AFC271 /* test-090-styled-profile-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-090-styled-profile-card.json"; sourceTree = "<group>"; };
+		571C9E2A2F47151600AFC271 /* test-092-offset-percent-stack-layers.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-092-offset-percent-stack-layers.json"; sourceTree = "<group>"; };
+		571C9E2B2F47151600AFC271 /* test-093-offset-percent-negative.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-093-offset-percent-negative.json"; sourceTree = "<group>"; };
+		571C9E2C2F47151600AFC271 /* test-094-offset-percent-overflow.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-094-offset-percent-overflow.json"; sourceTree = "<group>"; };
+		571C9E2D2F47151600AFC271 /* test-095-offset-percent-zero.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-095-offset-percent-zero.json"; sourceTree = "<group>"; };
+		571C9E2E2F47151600AFC271 /* test-096-offset-percent-responsive.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-096-offset-percent-responsive.json"; sourceTree = "<group>"; };
+		571C9E2F2F47151600AFC271 /* test-097-offset-mixed-units.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-097-offset-mixed-units.json"; sourceTree = "<group>"; };
+		571C9E302F47151600AFC271 /* test-098-offset-percent-nested.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-098-offset-percent-nested.json"; sourceTree = "<group>"; };
+		571C9E312F47151600AFC271 /* test-099-offset-percent-with-padding.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-099-offset-percent-with-padding.json"; sourceTree = "<group>"; };
+		571C9E322F47151600AFC271 /* test-100-offset-percent-gallery-peek.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-100-offset-percent-gallery-peek.json"; sourceTree = "<group>"; };
+		571C9E332F47151600AFC271 /* test-101-aspect-ratio-square-fixed-width.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-101-aspect-ratio-square-fixed-width.json"; sourceTree = "<group>"; };
+		571C9E342F47151600AFC271 /* test-102-aspect-ratio-16-9-fixed-width.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-102-aspect-ratio-16-9-fixed-width.json"; sourceTree = "<group>"; };
+		571C9E352F47151600AFC271 /* test-103-aspect-ratio-4-3-fixed-width.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-103-aspect-ratio-4-3-fixed-width.json"; sourceTree = "<group>"; };
+		571C9E362F47151600AFC271 /* test-104-aspect-ratio-fixed-height.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-104-aspect-ratio-fixed-height.json"; sourceTree = "<group>"; };
+		571C9E372F47151600AFC271 /* test-105-aspect-ratio-percent-width.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-105-aspect-ratio-percent-width.json"; sourceTree = "<group>"; };
+		571C9E382F47151600AFC271 /* test-106-aspect-ratio-wrap-content.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-106-aspect-ratio-wrap-content.json"; sourceTree = "<group>"; };
+		571C9E392F47151600AFC271 /* test-107-aspect-ratio-match-parent.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-107-aspect-ratio-match-parent.json"; sourceTree = "<group>"; };
+		571C9E3A2F47151600AFC271 /* test-108-aspect-ratio-extreme-wide.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-108-aspect-ratio-extreme-wide.json"; sourceTree = "<group>"; };
+		571C9E3B2F47151600AFC271 /* test-109-aspect-ratio-extreme-tall.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-109-aspect-ratio-extreme-tall.json"; sourceTree = "<group>"; };
+		571C9E3C2F47151600AFC271 /* test-110-aspect-ratio-mixed-container.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-110-aspect-ratio-mixed-container.json"; sourceTree = "<group>"; };
+		571C9E3D2F47151600AFC271 /* test-111-combined-aspect-offset-box.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-111-combined-aspect-offset-box.json"; sourceTree = "<group>"; };
+		571C9E3E2F47151600AFC271 /* test-112-combined-nested-complex.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-112-combined-nested-complex.json"; sourceTree = "<group>"; };
+		571C9E3F2F47151600AFC271 /* test-113-combined-gallery-aspect-peek.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-113-combined-gallery-aspect-peek.json"; sourceTree = "<group>"; };
+		571C9E402F47151600AFC271 /* test-114-combined-product-grid.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-114-combined-product-grid.json"; sourceTree = "<group>"; };
+		571C9E412F47151600AFC271 /* test-115-combined-showcase-all.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-115-combined-showcase-all.json"; sourceTree = "<group>"; };
+		571C9E422F47151600AFC271 /* test-116-match-parent-comprehensive.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-116-match-parent-comprehensive.json"; sourceTree = "<group>"; };
+		571C9E432F47151600AFC271 /* test-117-wrap-content-comprehensive.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-117-wrap-content-comprehensive.json"; sourceTree = "<group>"; };
+		571C9E442F47151600AFC271 /* test-118-mixed-special-dimensions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-118-mixed-special-dimensions.json"; sourceTree = "<group>"; };
+		571C9E452F47151600AFC271 /* test-119-match-parent-stack-box.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-119-match-parent-stack-box.json"; sourceTree = "<group>"; };
+		571C9E462F47151600AFC271 /* test-120-wrap-content-constraints.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-120-wrap-content-constraints.json"; sourceTree = "<group>"; };
+		571C9E472F47151600AFC271 /* test-VERIFY-percentage-offset-fix.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-VERIFY-percentage-offset-fix.json"; sourceTree = "<group>"; };
+		5742ADEA2F44725D005C1BBE /* test-004-stack-simple.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-004-stack-simple.json"; sourceTree = "<group>"; };
+		5791FDFD2F4480EB006D7353 /* test-067-hero-banner.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-067-hero-banner.json"; sourceTree = "<group>"; };
 		F001 /* NativeDisplaySampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplaySampleApp.swift; sourceTree = "<group>"; };
 		F002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		F003 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -114,12 +417,113 @@
 			path = Banners;
 			sourceTree = "<group>";
 		};
-		5742ADE62F4468D8005C1BBE /* Tests */ = {
+		5742ADE62F4468D8005C1BBE /* TestConfigs */ = {
 			isa = PBXGroup;
 			children = (
+				571C9DE52F47151600AFC271 /* test-011-horizontal-empty.json */,
+				571C9DE62F47151600AFC271 /* test-012-horizontal-single-child.json */,
+				571C9DE72F47151600AFC271 /* test-013-horizontal-3-children.json */,
+				571C9DE82F47151600AFC271 /* test-014-horizontal-5-children.json */,
+				571C9DE92F47151600AFC271 /* test-015-horizontal-10-children.json */,
+				571C9DEA2F47151600AFC271 /* test-016-box-empty.json */,
+				571C9DEB2F47151600AFC271 /* test-017-box-single-child.json */,
+				571C9DEC2F47151600AFC271 /* test-018-box-3-children.json */,
+				571C9DED2F47151600AFC271 /* test-019-box-5-children.json */,
+				571C9DEE2F47151600AFC271 /* test-020-stack-empty.json */,
+				571C9DEF2F47151600AFC271 /* test-021-stack-single-child.json */,
+				571C9DF02F47151600AFC271 /* test-022-stack-3-children.json */,
+				571C9DF12F47151600AFC271 /* test-023-stack-5-children.json */,
+				571C9DF22F47151600AFC271 /* test-024-gallery-empty.json */,
+				571C9DF32F47151600AFC271 /* test-025-gallery-single-child.json */,
+				571C9DF42F47151600AFC271 /* test-026-gallery-3-children-snapping.json */,
+				571C9DF52F47151600AFC271 /* test-027-gallery-5-children-snapping.json */,
+				571C9DF62F47151600AFC271 /* test-028-gallery-10-children-snapping.json */,
+				571C9DF72F47151600AFC271 /* test-029-gallery-3-children-free-flow.json */,
+				571C9DF82F47151600AFC271 /* test-030-gallery-3-children-free-flow-grid.json */,
+				571C9DF92F47151600AFC271 /* test-031-vertical-spaced.json */,
+				571C9DFA2F47151600AFC271 /* test-032-vertical-space-between.json */,
+				571C9DFB2F47151600AFC271 /* test-033-vertical-space-evenly.json */,
+				571C9DFC2F47151600AFC271 /* test-034-vertical-space-around.json */,
+				571C9DFD2F47151600AFC271 /* test-035-horizontal-start.json */,
+				571C9DFE2F47151600AFC271 /* test-036-horizontal-center.json */,
+				571C9DFF2F47151600AFC271 /* test-037-horizontal-end.json */,
+				571C9E002F47151600AFC271 /* test-038-vertical-spacing-0.json */,
+				571C9E012F47151600AFC271 /* test-039-vertical-spacing-8.json */,
+				571C9E022F47151600AFC271 /* test-040-vertical-spacing-16.json */,
+				571C9E032F47151600AFC271 /* test-041-vertical-spacing-32.json */,
+				571C9E042F47151600AFC271 /* test-042-vertical-padding-uniform.json */,
+				571C9E052F47151600AFC271 /* test-043-vertical-padding-individual.json */,
+				571C9E062F47151600AFC271 /* test-044-horizontal-padding-asymmetric.json */,
+				571C9E072F47151600AFC271 /* test-045-box-padding-large.json */,
+				571C9E082F47151600AFC271 /* test-046-vertical-wrap-content.json */,
+				571C9E092F47151600AFC271 /* test-047-horizontal-percent-width.json */,
+				571C9E0A2F47151600AFC271 /* test-048-vertical-mixed-units.json */,
+				571C9E0B2F47151600AFC271 /* test-049-nested-mixed-arrangements.json */,
+				571C9E0C2F47151600AFC271 /* test-050-gallery-spacing-variations.json */,
+				571C9E0D2F47151600AFC271 /* test-051-all-text-elements.json */,
+				571C9E0E2F47151600AFC271 /* test-052-all-image-elements.json */,
+				571C9E0F2F47151600AFC271 /* test-053-all-button-elements.json */,
+				571C9E102F47151600AFC271 /* test-054-all-video-elements.json */,
+				571C9E112F47151600AFC271 /* test-055-all-spacer-elements.json */,
+				571C9E122F47151600AFC271 /* test-056-all-divider-elements.json */,
+				571C9E132F47151600AFC271 /* test-057-product-card.json */,
+				571C9E142F47151600AFC271 /* test-058-login-form.json */,
+				571C9E152F47151600AFC271 /* test-059-profile-header.json */,
+				571C9E162F47151600AFC271 /* test-071-text-colors.json */,
+				571C9E172F47151600AFC271 /* test-072-font-sizes.json */,
+				571C9E182F47151600AFC271 /* test-073-font-weights.json */,
+				571C9E192F47151600AFC271 /* test-074-text-alignment.json */,
+				571C9E1A2F47151600AFC271 /* test-075-text-decoration.json */,
+				571C9E1B2F47151600AFC271 /* test-076-line-height.json */,
+				571C9E1C2F47151600AFC271 /* test-077-font-families.json */,
+				571C9E1D2F47151600AFC271 /* test-078-border-radius.json */,
+				571C9E1E2F47151600AFC271 /* test-079-border-width-color.json */,
+				571C9E1F2F47151600AFC271 /* test-080-shadows-light.json */,
+				571C9E202F47151600AFC271 /* test-081-shadows-medium.json */,
+				571C9E212F47151600AFC271 /* test-082-shadows-heavy.json */,
+				571C9E222F47151600AFC271 /* test-083-opacity-variations.json */,
+				571C9E232F47151600AFC271 /* test-084-combined-visual-styles.json */,
+				571C9E242F47151600AFC271 /* test-085-text-style-inheritance.json */,
+				571C9E252F47151600AFC271 /* test-086-style-class-usage.json */,
+				571C9E262F47151600AFC271 /* test-087-inline-vs-inherited.json */,
+				571C9E272F47151600AFC271 /* test-088-theme-default-styles.json */,
+				571C9E282F47151600AFC271 /* test-089-styled-product-card.json */,
+				571C9E292F47151600AFC271 /* test-090-styled-profile-card.json */,
+				571C9E2A2F47151600AFC271 /* test-092-offset-percent-stack-layers.json */,
+				571C9E2B2F47151600AFC271 /* test-093-offset-percent-negative.json */,
+				571C9E2C2F47151600AFC271 /* test-094-offset-percent-overflow.json */,
+				571C9E2D2F47151600AFC271 /* test-095-offset-percent-zero.json */,
+				571C9E2E2F47151600AFC271 /* test-096-offset-percent-responsive.json */,
+				571C9E2F2F47151600AFC271 /* test-097-offset-mixed-units.json */,
+				571C9E302F47151600AFC271 /* test-098-offset-percent-nested.json */,
+				571C9E312F47151600AFC271 /* test-099-offset-percent-with-padding.json */,
+				571C9E322F47151600AFC271 /* test-100-offset-percent-gallery-peek.json */,
+				571C9E332F47151600AFC271 /* test-101-aspect-ratio-square-fixed-width.json */,
+				571C9E342F47151600AFC271 /* test-102-aspect-ratio-16-9-fixed-width.json */,
+				571C9E352F47151600AFC271 /* test-103-aspect-ratio-4-3-fixed-width.json */,
+				571C9E362F47151600AFC271 /* test-104-aspect-ratio-fixed-height.json */,
+				571C9E372F47151600AFC271 /* test-105-aspect-ratio-percent-width.json */,
+				571C9E382F47151600AFC271 /* test-106-aspect-ratio-wrap-content.json */,
+				571C9E392F47151600AFC271 /* test-107-aspect-ratio-match-parent.json */,
+				571C9E3A2F47151600AFC271 /* test-108-aspect-ratio-extreme-wide.json */,
+				571C9E3B2F47151600AFC271 /* test-109-aspect-ratio-extreme-tall.json */,
+				571C9E3C2F47151600AFC271 /* test-110-aspect-ratio-mixed-container.json */,
+				571C9E3D2F47151600AFC271 /* test-111-combined-aspect-offset-box.json */,
+				571C9E3E2F47151600AFC271 /* test-112-combined-nested-complex.json */,
+				571C9E3F2F47151600AFC271 /* test-113-combined-gallery-aspect-peek.json */,
+				571C9E402F47151600AFC271 /* test-114-combined-product-grid.json */,
+				571C9E412F47151600AFC271 /* test-115-combined-showcase-all.json */,
+				571C9E422F47151600AFC271 /* test-116-match-parent-comprehensive.json */,
+				571C9E432F47151600AFC271 /* test-117-wrap-content-comprehensive.json */,
+				571C9E442F47151600AFC271 /* test-118-mixed-special-dimensions.json */,
+				571C9E452F47151600AFC271 /* test-119-match-parent-stack-box.json */,
+				571C9E462F47151600AFC271 /* test-120-wrap-content-constraints.json */,
+				571C9E472F47151600AFC271 /* test-VERIFY-percentage-offset-fix.json */,
+				5791FDFD2F4480EB006D7353 /* test-067-hero-banner.json */,
+				5742ADEA2F44725D005C1BBE /* test-004-stack-simple.json */,
 				417388E22F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json */,
 			);
-			path = Tests;
+			path = TestConfigs;
 			sourceTree = "<group>";
 		};
 		GRP_APP /* NativeDisplaySample */ = {
@@ -150,7 +554,7 @@
 		GRP_RES /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				5742ADE62F4468D8005C1BBE /* Tests */,
+				5742ADE62F4468D8005C1BBE /* TestConfigs */,
 				4113029C2F34AC72004B6254 /* Banners */,
 				41969A722F0E6A4B0050EB83 /* animation_container_and_children.json */,
 				41969A732F0E6A4B0050EB83 /* animation_container_fade.json */,
@@ -262,7 +666,108 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				571C9E482F47151600AFC271 /* test-013-horizontal-3-children.json in Resources */,
+				571C9E492F47151600AFC271 /* test-036-horizontal-center.json in Resources */,
+				571C9E4A2F47151600AFC271 /* test-035-horizontal-start.json in Resources */,
+				571C9E4B2F47151600AFC271 /* test-039-vertical-spacing-8.json in Resources */,
+				571C9E4C2F47151600AFC271 /* test-034-vertical-space-around.json in Resources */,
+				571C9E4D2F47151600AFC271 /* test-057-product-card.json in Resources */,
+				571C9E4E2F47151600AFC271 /* test-114-combined-product-grid.json in Resources */,
+				571C9E4F2F47151600AFC271 /* test-040-vertical-spacing-16.json in Resources */,
+				571C9E502F47151600AFC271 /* test-015-horizontal-10-children.json in Resources */,
+				571C9E512F47151600AFC271 /* test-085-text-style-inheritance.json in Resources */,
+				571C9E522F47151600AFC271 /* test-096-offset-percent-responsive.json in Resources */,
+				571C9E532F47151600AFC271 /* test-104-aspect-ratio-fixed-height.json in Resources */,
+				571C9E542F47151600AFC271 /* test-112-combined-nested-complex.json in Resources */,
+				571C9E552F47151600AFC271 /* test-019-box-5-children.json in Resources */,
+				571C9E562F47151600AFC271 /* test-082-shadows-heavy.json in Resources */,
+				571C9E572F47151600AFC271 /* test-053-all-button-elements.json in Resources */,
+				571C9E582F47151600AFC271 /* test-118-mixed-special-dimensions.json in Resources */,
+				571C9E592F47151600AFC271 /* test-011-horizontal-empty.json in Resources */,
+				571C9E5A2F47151600AFC271 /* test-078-border-radius.json in Resources */,
+				571C9E5B2F47151600AFC271 /* test-032-vertical-space-between.json in Resources */,
+				571C9E5C2F47151600AFC271 /* test-088-theme-default-styles.json in Resources */,
+				571C9E5D2F47151600AFC271 /* test-103-aspect-ratio-4-3-fixed-width.json in Resources */,
+				571C9E5E2F47151600AFC271 /* test-077-font-families.json in Resources */,
+				571C9E5F2F47151600AFC271 /* test-026-gallery-3-children-snapping.json in Resources */,
+				571C9E602F47151600AFC271 /* test-041-vertical-spacing-32.json in Resources */,
+				571C9E612F47151600AFC271 /* test-111-combined-aspect-offset-box.json in Resources */,
+				571C9E622F47151600AFC271 /* test-084-combined-visual-styles.json in Resources */,
+				571C9E632F47151600AFC271 /* test-081-shadows-medium.json in Resources */,
+				571C9E642F47151600AFC271 /* test-094-offset-percent-overflow.json in Resources */,
+				571C9E652F47151600AFC271 /* test-107-aspect-ratio-match-parent.json in Resources */,
+				571C9E662F47151600AFC271 /* test-116-match-parent-comprehensive.json in Resources */,
+				571C9E672F47151600AFC271 /* test-071-text-colors.json in Resources */,
+				571C9E682F47151600AFC271 /* test-110-aspect-ratio-mixed-container.json in Resources */,
+				571C9E692F47151600AFC271 /* test-046-vertical-wrap-content.json in Resources */,
+				571C9E6A2F47151600AFC271 /* test-030-gallery-3-children-free-flow-grid.json in Resources */,
+				571C9E6B2F47151600AFC271 /* test-119-match-parent-stack-box.json in Resources */,
+				571C9E6C2F47151600AFC271 /* test-031-vertical-spaced.json in Resources */,
+				571C9E6D2F47151600AFC271 /* test-115-combined-showcase-all.json in Resources */,
+				571C9E6E2F47151600AFC271 /* test-023-stack-5-children.json in Resources */,
+				571C9E6F2F47151600AFC271 /* test-073-font-weights.json in Resources */,
+				571C9E702F47151600AFC271 /* test-051-all-text-elements.json in Resources */,
+				571C9E712F47151600AFC271 /* test-106-aspect-ratio-wrap-content.json in Resources */,
+				571C9E722F47151600AFC271 /* test-025-gallery-single-child.json in Resources */,
+				571C9E732F47151600AFC271 /* test-101-aspect-ratio-square-fixed-width.json in Resources */,
+				571C9E742F47151600AFC271 /* test-022-stack-3-children.json in Resources */,
+				571C9E752F47151600AFC271 /* test-083-opacity-variations.json in Resources */,
+				571C9E762F47151600AFC271 /* test-059-profile-header.json in Resources */,
+				571C9E772F47151600AFC271 /* test-042-vertical-padding-uniform.json in Resources */,
+				571C9E782F47151600AFC271 /* test-090-styled-profile-card.json in Resources */,
+				571C9E792F47151600AFC271 /* test-048-vertical-mixed-units.json in Resources */,
+				571C9E7A2F47151600AFC271 /* test-100-offset-percent-gallery-peek.json in Resources */,
+				571C9E7B2F47151600AFC271 /* test-093-offset-percent-negative.json in Resources */,
+				571C9E7C2F47151600AFC271 /* test-086-style-class-usage.json in Resources */,
+				571C9E7D2F47151600AFC271 /* test-043-vertical-padding-individual.json in Resources */,
+				571C9E7E2F47151600AFC271 /* test-079-border-width-color.json in Resources */,
+				571C9E7F2F47151600AFC271 /* test-117-wrap-content-comprehensive.json in Resources */,
+				571C9E802F47151600AFC271 /* test-120-wrap-content-constraints.json in Resources */,
+				571C9E812F47151600AFC271 /* test-037-horizontal-end.json in Resources */,
+				571C9E822F47151600AFC271 /* test-047-horizontal-percent-width.json in Resources */,
+				571C9E832F47151600AFC271 /* test-024-gallery-empty.json in Resources */,
+				571C9E842F47151600AFC271 /* test-027-gallery-5-children-snapping.json in Resources */,
+				571C9E852F47151600AFC271 /* test-109-aspect-ratio-extreme-tall.json in Resources */,
+				571C9E862F47151600AFC271 /* test-099-offset-percent-with-padding.json in Resources */,
+				571C9E872F47151600AFC271 /* test-056-all-divider-elements.json in Resources */,
+				571C9E882F47151600AFC271 /* test-VERIFY-percentage-offset-fix.json in Resources */,
+				571C9E892F47151600AFC271 /* test-076-line-height.json in Resources */,
+				571C9E8A2F47151600AFC271 /* test-021-stack-single-child.json in Resources */,
+				571C9E8B2F47151600AFC271 /* test-098-offset-percent-nested.json in Resources */,
+				571C9E8C2F47151600AFC271 /* test-028-gallery-10-children-snapping.json in Resources */,
+				571C9E8D2F47151600AFC271 /* test-044-horizontal-padding-asymmetric.json in Resources */,
+				571C9E8E2F47151600AFC271 /* test-050-gallery-spacing-variations.json in Resources */,
+				571C9E8F2F47151600AFC271 /* test-087-inline-vs-inherited.json in Resources */,
+				571C9E902F47151600AFC271 /* test-038-vertical-spacing-0.json in Resources */,
+				571C9E912F47151600AFC271 /* test-105-aspect-ratio-percent-width.json in Resources */,
+				571C9E922F47151600AFC271 /* test-113-combined-gallery-aspect-peek.json in Resources */,
+				571C9E932F47151600AFC271 /* test-108-aspect-ratio-extreme-wide.json in Resources */,
+				571C9E942F47151600AFC271 /* test-055-all-spacer-elements.json in Resources */,
+				571C9E952F47151600AFC271 /* test-017-box-single-child.json in Resources */,
+				571C9E962F47151600AFC271 /* test-095-offset-percent-zero.json in Resources */,
+				571C9E972F47151600AFC271 /* test-012-horizontal-single-child.json in Resources */,
+				571C9E982F47151600AFC271 /* test-102-aspect-ratio-16-9-fixed-width.json in Resources */,
+				571C9E992F47151600AFC271 /* test-033-vertical-space-evenly.json in Resources */,
+				571C9E9A2F47151600AFC271 /* test-052-all-image-elements.json in Resources */,
+				571C9E9B2F47151600AFC271 /* test-014-horizontal-5-children.json in Resources */,
+				571C9E9C2F47151600AFC271 /* test-020-stack-empty.json in Resources */,
+				571C9E9D2F47151600AFC271 /* test-054-all-video-elements.json in Resources */,
+				571C9E9E2F47151600AFC271 /* test-018-box-3-children.json in Resources */,
+				571C9E9F2F47151600AFC271 /* test-058-login-form.json in Resources */,
+				571C9EA02F47151600AFC271 /* test-075-text-decoration.json in Resources */,
+				571C9EA12F47151600AFC271 /* test-045-box-padding-large.json in Resources */,
+				571C9EA22F47151600AFC271 /* test-089-styled-product-card.json in Resources */,
+				571C9EA32F47151600AFC271 /* test-080-shadows-light.json in Resources */,
+				571C9EA42F47151600AFC271 /* test-097-offset-mixed-units.json in Resources */,
+				571C9EA52F47151600AFC271 /* test-072-font-sizes.json in Resources */,
+				571C9EA62F47151600AFC271 /* test-074-text-alignment.json in Resources */,
+				571C9EA72F47151600AFC271 /* test-092-offset-percent-stack-layers.json in Resources */,
+				571C9EA82F47151600AFC271 /* test-016-box-empty.json in Resources */,
+				571C9EA92F47151600AFC271 /* test-049-nested-mixed-arrangements.json in Resources */,
+				571C9EAA2F47151600AFC271 /* test-029-gallery-3-children-free-flow.json in Resources */,
 				417388E32F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json in Resources */,
+				5791FE092F4480EB006D7353 /* test-067-hero-banner.json in Resources */,
+				5742AE042F44725D005C1BBE /* test-004-stack-simple.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -271,11 +776,112 @@
 			buildActionMask = 2147483647;
 			files = (
 				41C5EB1F2F3B40460066BE34 /* banner-01-hero-summer-sale.json in Resources */,
+				5791FE142F4480EB006D7353 /* test-067-hero-banner.json in Resources */,
+				5742ADFA2F44725D005C1BBE /* test-004-stack-simple.json in Resources */,
 				41C5EB202F3B40460066BE34 /* banner-02-product-iphone.json in Resources */,
 				41C5EB212F3B40460066BE34 /* banner-03-announcement-update.json in Resources */,
 				41C5EB222F3B40460066BE34 /* banner-04-travel-deals.json in Resources */,
 				41C5EB232F3B40460066BE34 /* banner-05-fashion-collection.json in Resources */,
 				41C5EB242F3B40460066BE34 /* banner-06-credit-card-offer.json in Resources */,
+				571C9EAB2F47151600AFC271 /* test-013-horizontal-3-children.json in Resources */,
+				571C9EAC2F47151600AFC271 /* test-036-horizontal-center.json in Resources */,
+				571C9EAD2F47151600AFC271 /* test-035-horizontal-start.json in Resources */,
+				571C9EAE2F47151600AFC271 /* test-039-vertical-spacing-8.json in Resources */,
+				571C9EAF2F47151600AFC271 /* test-034-vertical-space-around.json in Resources */,
+				571C9EB02F47151600AFC271 /* test-057-product-card.json in Resources */,
+				571C9EB12F47151600AFC271 /* test-114-combined-product-grid.json in Resources */,
+				571C9EB22F47151600AFC271 /* test-040-vertical-spacing-16.json in Resources */,
+				571C9EB32F47151600AFC271 /* test-015-horizontal-10-children.json in Resources */,
+				571C9EB42F47151600AFC271 /* test-085-text-style-inheritance.json in Resources */,
+				571C9EB52F47151600AFC271 /* test-096-offset-percent-responsive.json in Resources */,
+				571C9EB62F47151600AFC271 /* test-104-aspect-ratio-fixed-height.json in Resources */,
+				571C9EB72F47151600AFC271 /* test-112-combined-nested-complex.json in Resources */,
+				571C9EB82F47151600AFC271 /* test-019-box-5-children.json in Resources */,
+				571C9EB92F47151600AFC271 /* test-082-shadows-heavy.json in Resources */,
+				571C9EBA2F47151600AFC271 /* test-053-all-button-elements.json in Resources */,
+				571C9EBB2F47151600AFC271 /* test-118-mixed-special-dimensions.json in Resources */,
+				571C9EBC2F47151600AFC271 /* test-011-horizontal-empty.json in Resources */,
+				571C9EBD2F47151600AFC271 /* test-078-border-radius.json in Resources */,
+				571C9EBE2F47151600AFC271 /* test-032-vertical-space-between.json in Resources */,
+				571C9EBF2F47151600AFC271 /* test-088-theme-default-styles.json in Resources */,
+				571C9EC02F47151600AFC271 /* test-103-aspect-ratio-4-3-fixed-width.json in Resources */,
+				571C9EC12F47151600AFC271 /* test-077-font-families.json in Resources */,
+				571C9EC22F47151600AFC271 /* test-026-gallery-3-children-snapping.json in Resources */,
+				571C9EC32F47151600AFC271 /* test-041-vertical-spacing-32.json in Resources */,
+				571C9EC42F47151600AFC271 /* test-111-combined-aspect-offset-box.json in Resources */,
+				571C9EC52F47151600AFC271 /* test-084-combined-visual-styles.json in Resources */,
+				571C9EC62F47151600AFC271 /* test-081-shadows-medium.json in Resources */,
+				571C9EC72F47151600AFC271 /* test-094-offset-percent-overflow.json in Resources */,
+				571C9EC82F47151600AFC271 /* test-107-aspect-ratio-match-parent.json in Resources */,
+				571C9EC92F47151600AFC271 /* test-116-match-parent-comprehensive.json in Resources */,
+				571C9ECA2F47151600AFC271 /* test-071-text-colors.json in Resources */,
+				571C9ECB2F47151600AFC271 /* test-110-aspect-ratio-mixed-container.json in Resources */,
+				571C9ECC2F47151600AFC271 /* test-046-vertical-wrap-content.json in Resources */,
+				571C9ECD2F47151600AFC271 /* test-030-gallery-3-children-free-flow-grid.json in Resources */,
+				571C9ECE2F47151600AFC271 /* test-119-match-parent-stack-box.json in Resources */,
+				571C9ECF2F47151600AFC271 /* test-031-vertical-spaced.json in Resources */,
+				571C9ED02F47151600AFC271 /* test-115-combined-showcase-all.json in Resources */,
+				571C9ED12F47151600AFC271 /* test-023-stack-5-children.json in Resources */,
+				571C9ED22F47151600AFC271 /* test-073-font-weights.json in Resources */,
+				571C9ED32F47151600AFC271 /* test-051-all-text-elements.json in Resources */,
+				571C9ED42F47151600AFC271 /* test-106-aspect-ratio-wrap-content.json in Resources */,
+				571C9ED52F47151600AFC271 /* test-025-gallery-single-child.json in Resources */,
+				571C9ED62F47151600AFC271 /* test-101-aspect-ratio-square-fixed-width.json in Resources */,
+				571C9ED72F47151600AFC271 /* test-022-stack-3-children.json in Resources */,
+				571C9ED82F47151600AFC271 /* test-083-opacity-variations.json in Resources */,
+				571C9ED92F47151600AFC271 /* test-059-profile-header.json in Resources */,
+				571C9EDA2F47151600AFC271 /* test-042-vertical-padding-uniform.json in Resources */,
+				571C9EDB2F47151600AFC271 /* test-090-styled-profile-card.json in Resources */,
+				571C9EDC2F47151600AFC271 /* test-048-vertical-mixed-units.json in Resources */,
+				571C9EDD2F47151600AFC271 /* test-100-offset-percent-gallery-peek.json in Resources */,
+				571C9EDE2F47151600AFC271 /* test-093-offset-percent-negative.json in Resources */,
+				571C9EDF2F47151600AFC271 /* test-086-style-class-usage.json in Resources */,
+				571C9EE02F47151600AFC271 /* test-043-vertical-padding-individual.json in Resources */,
+				571C9EE12F47151600AFC271 /* test-079-border-width-color.json in Resources */,
+				571C9EE22F47151600AFC271 /* test-117-wrap-content-comprehensive.json in Resources */,
+				571C9EE32F47151600AFC271 /* test-120-wrap-content-constraints.json in Resources */,
+				571C9EE42F47151600AFC271 /* test-037-horizontal-end.json in Resources */,
+				571C9EE52F47151600AFC271 /* test-047-horizontal-percent-width.json in Resources */,
+				571C9EE62F47151600AFC271 /* test-024-gallery-empty.json in Resources */,
+				571C9EE72F47151600AFC271 /* test-027-gallery-5-children-snapping.json in Resources */,
+				571C9EE82F47151600AFC271 /* test-109-aspect-ratio-extreme-tall.json in Resources */,
+				571C9EE92F47151600AFC271 /* test-099-offset-percent-with-padding.json in Resources */,
+				571C9EEA2F47151600AFC271 /* test-056-all-divider-elements.json in Resources */,
+				571C9EEB2F47151600AFC271 /* test-VERIFY-percentage-offset-fix.json in Resources */,
+				571C9EEC2F47151600AFC271 /* test-076-line-height.json in Resources */,
+				571C9EED2F47151600AFC271 /* test-021-stack-single-child.json in Resources */,
+				571C9EEE2F47151600AFC271 /* test-098-offset-percent-nested.json in Resources */,
+				571C9EEF2F47151600AFC271 /* test-028-gallery-10-children-snapping.json in Resources */,
+				571C9EF02F47151600AFC271 /* test-044-horizontal-padding-asymmetric.json in Resources */,
+				571C9EF12F47151600AFC271 /* test-050-gallery-spacing-variations.json in Resources */,
+				571C9EF22F47151600AFC271 /* test-087-inline-vs-inherited.json in Resources */,
+				571C9EF32F47151600AFC271 /* test-038-vertical-spacing-0.json in Resources */,
+				571C9EF42F47151600AFC271 /* test-105-aspect-ratio-percent-width.json in Resources */,
+				571C9EF52F47151600AFC271 /* test-113-combined-gallery-aspect-peek.json in Resources */,
+				571C9EF62F47151600AFC271 /* test-108-aspect-ratio-extreme-wide.json in Resources */,
+				571C9EF72F47151600AFC271 /* test-055-all-spacer-elements.json in Resources */,
+				571C9EF82F47151600AFC271 /* test-017-box-single-child.json in Resources */,
+				571C9EF92F47151600AFC271 /* test-095-offset-percent-zero.json in Resources */,
+				571C9EFA2F47151600AFC271 /* test-012-horizontal-single-child.json in Resources */,
+				571C9EFB2F47151600AFC271 /* test-102-aspect-ratio-16-9-fixed-width.json in Resources */,
+				571C9EFC2F47151600AFC271 /* test-033-vertical-space-evenly.json in Resources */,
+				571C9EFD2F47151600AFC271 /* test-052-all-image-elements.json in Resources */,
+				571C9EFE2F47151600AFC271 /* test-014-horizontal-5-children.json in Resources */,
+				571C9EFF2F47151600AFC271 /* test-020-stack-empty.json in Resources */,
+				571C9F002F47151600AFC271 /* test-054-all-video-elements.json in Resources */,
+				571C9F012F47151600AFC271 /* test-018-box-3-children.json in Resources */,
+				571C9F022F47151600AFC271 /* test-058-login-form.json in Resources */,
+				571C9F032F47151600AFC271 /* test-075-text-decoration.json in Resources */,
+				571C9F042F47151600AFC271 /* test-045-box-padding-large.json in Resources */,
+				571C9F052F47151600AFC271 /* test-089-styled-product-card.json in Resources */,
+				571C9F062F47151600AFC271 /* test-080-shadows-light.json in Resources */,
+				571C9F072F47151600AFC271 /* test-097-offset-mixed-units.json in Resources */,
+				571C9F082F47151600AFC271 /* test-072-font-sizes.json in Resources */,
+				571C9F092F47151600AFC271 /* test-074-text-alignment.json in Resources */,
+				571C9F0A2F47151600AFC271 /* test-092-offset-percent-stack-layers.json in Resources */,
+				571C9F0B2F47151600AFC271 /* test-016-box-empty.json in Resources */,
+				571C9F0C2F47151600AFC271 /* test-049-nested-mixed-arrangements.json in Resources */,
+				571C9F0D2F47151600AFC271 /* test-029-gallery-3-children-free-flow.json in Resources */,
 				41C5EB252F3B40460066BE34 /* banner-07-app-rating.json in Resources */,
 				41C5EB262F3B40460066BE34 /* banner-08-flash-sale.json in Resources */,
 				41C5EB272F3B40460066BE34 /* banner-09-premium-subscription.json in Resources */,

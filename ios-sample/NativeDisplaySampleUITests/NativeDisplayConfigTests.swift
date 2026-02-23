@@ -1,7 +1,12 @@
 import XCTest
 
-/// UI Tests for Native Display configuration rendering
-/// Tests that the app can load and render JSON test configurations correctly
+/// UI Tests for Native Display configuration rendering.
+///
+/// Automatically discovers and tests all JSON configs displayed in the Test Configs browser.
+/// Each config is loaded, rendered, verified for errors, and a screenshot is captured.
+///
+/// The test iterates through all "test-config-*" buttons visible in the app's Test Configs
+/// screen, so adding a new JSON file to the bundle automatically includes it in testing.
 final class NativeDisplayConfigTests: XCTestCase {
 
     var app: XCUIApplication!
@@ -9,7 +14,6 @@ final class NativeDisplayConfigTests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
 
-        // Launch the application
         app = XCUIApplication()
         app.launch()
 
@@ -33,116 +37,129 @@ final class NativeDisplayConfigTests: XCTestCase {
         app = nil
     }
 
-    // MARK: - Test Cases
+    // MARK: - Data-Driven Test Runner
 
-    /// Test 091: Basic percentage offset positioning in Box container
+    /// Runs all test configurations found in the Test Configs browser.
     ///
-    /// This test verifies that the app can:
-    /// 1. Load the test-091-offset-percent-box-basic.json configuration
-    /// 2. Render the configuration without errors
-    /// 3. Display a Box container with 3 children positioned at (10%,10%), (50%,50%), (80%,80%)
+    /// This single test method:
+    /// 1. Queries the app for all buttons whose accessibility identifier matches "test-config-test-*"
+    /// 2. Iterates through each, tapping to load and render
+    /// 3. Verifies the NativeDisplayView appears (no decode/load failure)
+    /// 4. Verifies no error message is shown
+    /// 5. Captures a screenshot attachment per config for visual review
     ///
-    /// Expected visual result:
-    /// - Title: "Test 091: Offset Percent - Box Basic"
-    /// - Test box: 300×300dp Box with white background
-    /// - Blue box (40×40dp) at top-left (10%, 10%)
-    /// - Green box (40×40dp) at center (50%, 50%)
-    /// - Red box (40×40dp) at bottom-right (80%, 80%)
-    func test091_OffsetPercentBoxBasic() throws {
-        // Find the test config button
-        let configButton = app.buttons["test-config-test-091"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5),
-                     "Test config button 'test-091' should exist")
-        // Tap to load the configuration
-        configButton.tap()
+    /// To add a new test config, just add the JSON to the bundle — no test code changes needed.
+    func testAllConfigs() throws {
+        // Locate the config list scroll area (for targeted scrolling)
+        // Use descendants(matching: .any) since SwiftUI may expose the identifier
+        // under different element types (scrollView, other, group, etc.)
+        let configListPredicate = NSPredicate(format: "identifier == %@", "test-config-list")
+        let configList = app.descendants(matching: .any).matching(configListPredicate).firstMatch
+        XCTAssertTrue(configList.waitForExistence(timeout: 5),
+                     "Test config list should exist")
 
-        // Wait for the configuration to load and render
-        // The accessibility identifier may appear under different element types in SwiftUI,
-        // so query all descendants instead of just otherElements
-        let renderPredicate = NSPredicate(format: "identifier == %@", "native-display-view")
-        let renderView = app.descendants(matching: .any).matching(renderPredicate).firstMatch
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10),
-                     "Native display view should render within 10 seconds")
+        // Discover all test-config buttons by their accessibility identifier.
+        // Each TestConfigButton has identifier "test-config-test-XXX" (set in TestConfigBrowserView).
+        let configButtonsPredicate = NSPredicate(format: "identifier BEGINSWITH %@", "test-config-test-")
+        let configButtons = app.buttons.matching(configButtonsPredicate)
 
-        // Verify no error message is displayed
-        let errorView = app.staticTexts["Error Loading Config"]
-        XCTAssertFalse(errorView.exists,
-                      "Should not show error message when config loads successfully")
+        let count = configButtons.count
+        XCTAssertGreaterThan(count, 0, "At least one test config should exist")
+        print("📋 Found \(count) test config(s) to run")
 
-        // Take a screenshot for visual verification
-        let screenshot = app.screenshot()
-        let attachment = XCTAttachment(screenshot: screenshot)
-        attachment.name = "test-091-offset-percent-box-basic"
-        attachment.lifetime = .keepAlways
-        add(attachment)
+        // Collect all button identifiers first (the UI may change as we scroll/tap)
+        var configIds: [String] = []
+        for i in 0..<count {
+            let identifier = configButtons.element(boundBy: i).identifier
+            configIds.append(identifier)
+        }
+        configIds.sort()
 
-        print("✅ Test 091 passed: Config loaded and rendered successfully")
-        print("   Expected: Blue box at (10%,10%), Green at (50%,50%), Red at (80%,80%)")
+        var passed = 0
+        var failed: [String] = []
+
+        for configId in configIds {
+            // Extract the short id (e.g., "test-001") from "test-config-test-001"
+            let shortId = String(configId.dropFirst("test-config-".count))
+
+            print("▶️  Running: \(shortId)")
+
+            // Find the button; scroll within the config list only (not the whole screen)
+            let button = app.buttons[configId]
+            if !button.isHittable {
+                button.scrollToElement(within: configList)
+            }
+
+            guard button.waitForExistence(timeout: 5) else {
+                XCTFail("Button '\(configId)' disappeared")
+                failed.append(shortId)
+                continue
+            }
+            button.tap()
+
+            // Wait for the native display view to render
+            let renderPredicate = NSPredicate(format: "identifier == %@", "native-display-view")
+            let renderView = app.descendants(matching: .any).matching(renderPredicate).firstMatch
+            let rendered = renderView.waitForExistence(timeout: 10)
+
+            // Check for error view
+            let errorView = app.staticTexts["Error Loading Config"]
+            let hasError = errorView.exists
+
+            if !rendered || hasError {
+                let reason = hasError ? "Error Loading Config" : "Render view did not appear"
+                print("  ❌ FAILED: \(shortId) — \(reason)")
+                failed.append(shortId)
+
+                // Still capture a screenshot of the failure state
+                let screenshot = app.screenshot()
+                let attachment = XCTAttachment(screenshot: screenshot)
+                attachment.name = "FAIL-\(shortId)"
+                attachment.lifetime = .keepAlways
+                add(attachment)
+                continue
+            }
+
+            // Capture screenshot for visual verification
+            let screenshot = app.screenshot()
+            let attachment = XCTAttachment(screenshot: screenshot)
+            attachment.name = shortId
+            attachment.lifetime = .keepAlways
+            add(attachment)
+
+            passed += 1
+            print("  ✅ PASSED: \(shortId)")
+        }
+
+        // Summary
+        print("\n" + String(repeating: "═", count: 50))
+        print("📊 Results: \(passed)/\(configIds.count) passed")
+        if !failed.isEmpty {
+            print("❌ Failed configs: \(failed.joined(separator: ", "))")
+        }
+        print(String(repeating: "═", count: 50))
+
+        // Fail the test if any config failed to render
+        XCTAssertTrue(failed.isEmpty,
+                     "The following configs failed to render: \(failed.joined(separator: ", "))")
     }
-
-    // MARK: - Future Test Cases (Template)
-
-    /*
-    /// Template for adding more tests
-    /// Copy this method and update the test number, config ID, and filename
-    func test092_OffsetPercentStackLayers() throws {
-        let configButton = app.buttons["test-config-test-092"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5))
-        configButton.tap()
-
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10))
-
-        let errorView = app.staticTexts["Error Loading Config"]
-        XCTAssertFalse(errorView.exists)
-
-        let screenshot = app.screenshot()
-        let attachment = XCTAttachment(screenshot: screenshot)
-        attachment.name = "test-092-offset-percent-stack-layers"
-        attachment.lifetime = .keepAlways
-        add(attachment)
-
-        print("✅ Test 092 passed")
-    }
-    */
 }
 
-// MARK: - Helper Extensions
+// MARK: - Scroll Helper
 
-extension NativeDisplayConfigTests {
-
-    /// Shared test runner for all config tests
-    /// Use this when scaling to 30 tests to reduce code duplication
-    private func runTestForConfig(id: String, filename: String, expectedDescription: String? = nil) {
-        // Find and tap the config button
-        let configButton = app.buttons["test-config-\(id)"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5),
-                     "Test config button '\(id)' should exist")
-        configButton.tap()
-
-        // Wait for render view
-        let renderPredicate = NSPredicate(format: "identifier == %@", "native-display-view")
-        let renderView = app.descendants(matching: .any).matching(renderPredicate).firstMatch
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10),
-                     "Native display view should render for \(id)")
-
-        // Verify no errors
-        let errorView = app.staticTexts["Error Loading Config"]
-        XCTAssertFalse(errorView.exists,
-                      "Should not show error message for \(id)")
-
-        // Take screenshot
-        let screenshot = app.screenshot()
-        let attachment = XCTAttachment(screenshot: screenshot)
-        attachment.name = filename
-        attachment.lifetime = .keepAlways
-        add(attachment)
-
-        // Log success
-        var message = "✅ Test \(id) passed"
-        if let description = expectedDescription {
-            message += ": \(description)"
+extension XCUIElement {
+    /// Scrolls this element into view with small, incremental drags inside `container`.
+    ///
+    /// Uses a gentle drag (~one row height) instead of `swipeUp()` which overshoots
+    /// in a small 200pt list. Each drag scrolls the container by roughly 70pt so
+    /// buttons are revealed one at a time without jumping past any.
+    func scrollToElement(within container: XCUIElement) {
+        var attempts = 0
+        while !isHittable && attempts < 10 {
+            let start = container.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4))
+            let end   = container.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
+            start.press(forDuration: 0.03, thenDragTo: end)
+            attempts += 1
         }
-        print(message)
     }
 }
