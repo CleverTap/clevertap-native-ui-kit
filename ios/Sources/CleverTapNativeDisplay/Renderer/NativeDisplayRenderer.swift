@@ -34,13 +34,17 @@ public struct NativeDisplayView: View {
     private let evaluator: VariableEvaluator
     private let actionHandler: ActionHandler?
     private let componentListener: NativeDisplayComponentListener?
+    /// Explicit parent size passed via init. Takes highest priority over environment and internal detection.
+    private let explicitParentSize: CGSize?
 
     public init(
         config: ResolvedConfig,
+        parentSize: CGSize? = nil,
         actionListener: NativeDisplayActionListener? = nil,
         componentListener: NativeDisplayComponentListener? = nil
     ) {
         self.config = config
+        self.explicitParentSize = parentSize
         self.styleResolver = StyleResolver(theme: config.theme, styleClasses: config.styleClasses)
         self.evaluator = VariableEvaluator(variables: config.variables)
 
@@ -58,13 +62,13 @@ public struct NativeDisplayView: View {
     @ViewBuilder
     private func renderWithSizeResolution() -> some View {
         // ═══════════════════════════════════════════════════════════════
-        // PRIORITY 1: Environment Override (ABSOLUTE PRIORITY)
+        // PRIORITY 1: Explicit Parent Size (ABSOLUTE PRIORITY)
         // ═══════════════════════════════════════════════════════════════
-        // If integrator sets environment value, use it ALWAYS
+        // Check init parameter first, then environment value
         // - Bypasses ALL other logic (no config scanning, no GeometryReader)
         // - Works even if config has percentages, dynamic root, etc.
-        // - This is the ONLY way to avoid GeometryReader when needed
-        if let explicitSize = environmentParentSize {
+        // - Solves GeometryReader-inside-ScrollView (~10pt height) issue
+        if let explicitSize = explicitParentSize ?? environmentParentSize {
             renderContent(parentSize: explicitSize)
         }
         // ═══════════════════════════════════════════════════════════════
@@ -82,28 +86,22 @@ public struct NativeDisplayView: View {
             // → Skip GeometryReader (performance win)
             let screenSize = UIScreen.main.bounds.size
             renderContent(parentSize: screenSize)
-        } else if let aspectRatio = config.root.layout?.aspectRatio,
-                  aspectRatio > 0,
-                  config.root.layout?.height == nil {
-            // Priority 4a: Root has aspect ratio but no explicit height
-            // GeometryReader inside ScrollView gets ~10pt height, so we
-            // read only the width and derive height from the aspect ratio.
-            // JSON aspectRatio is height/width (e.g., 0.55 means height = width * 0.55)
+        } else {
+            // Priority 4: WidthReader (safe in ScrollView — reads width only)
+            //
+            // GeometryReader is NOT used because it reports ~10pt height inside ScrollView.
+            // WidthReader reads width via background preference key without constraining height.
+            //
+            // For height: if root has aspectRatio, derive height from width.
+            // Otherwise use screen height as a reference for children's percent-height calculations.
+            // Actual container frame heights are controlled by LayoutModifier (returns nil for
+            // undefined height → wrap content) and hasExplicitHeight guard on BOX containers.
+            // This matches Android where Row/Column with no height modifier wraps content.
             WidthReader { width in
-                let derivedHeight = width * aspectRatio
-                renderContent(parentSize: CGSize(width: width, height: derivedHeight))
-                    .frame(width: width, height: derivedHeight)
-            }
-        }
-        else {
-            // Priority 4: GeometryReader (ONLY when truly needed)
-            // Conditions to reach here:
-            // - NO environment override AND
-            // - Root uses percentages/match_parent/wrap_content AND
-            // - Config contains percentages somewhere
-            // → MUST use GeometryReader to measure parent constraints
-            GeometryReader { geometry in
-                renderContent(parentSize: geometry.size)
+                renderContent(parentSize: CGSize(
+                    width: width,
+                    height: self.referenceHeight(forWidth: width)
+                ))
             }
         }
     }
@@ -140,6 +138,18 @@ public struct NativeDisplayView: View {
         static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
             value = max(value, nextValue())
         }
+    }
+
+    /// Computes the reference height for WidthReader-based size resolution.
+    /// If root has aspectRatio (no explicit height), derive height from width.
+    /// Otherwise use screen height as a reference for children's percent-height calculations.
+    private func referenceHeight(forWidth width: CGFloat) -> CGFloat {
+        if let aspectRatio = config.root.layout?.aspectRatio,
+           aspectRatio > 0,
+           config.root.layout?.height == nil {
+            return width * aspectRatio
+        }
+        return UIScreen.main.bounds.height
     }
 
     private func renderContent(parentSize: CGSize) -> some View {
@@ -294,7 +304,13 @@ struct RenderContainer: View {
                     )
                 }
             }
-            .frame(width: containerSize.width, height: containerSize.height, alignment: .topLeading)
+            // Only apply fixed height when explicitly defined. When no height is set,
+            // let ZStack wrap its content height (matching Android FrameLayout behavior).
+            .frame(
+                width: containerSize.width,
+                height: hasExplicitHeight ? containerSize.height : nil,
+                alignment: .topLeading
+            )
             .padding(paddingInsets)
 
         case .gallery:
@@ -309,6 +325,22 @@ struct RenderContainer: View {
             )
             .padding(paddingInsets)
         }
+    }
+
+    /// Returns whether this container has an explicitly defined height
+    /// (via height dimension, aspectRatio, or matchParent).
+    /// When false, the container should wrap its content height (matching Android behavior).
+    private var hasExplicitHeight: Bool {
+        let layout = container.layout
+        if let h = layout?.height {
+            // Has a height dimension (could be dp, percent, matchParent, wrapContent)
+            if h.special == .wrapContent { return false }
+            return true
+        }
+        if let aspectRatio = layout?.aspectRatio, aspectRatio > 0 {
+            return true
+        }
+        return false
     }
 
     /// Calculate the final container size.
@@ -353,6 +385,9 @@ struct RenderContainer: View {
             height = width * aspectRatio
         }
         else {
+            // No explicit height: use parentSize.height so children can calculate
+            // percent heights. The container's own frame height is controlled separately
+            // (LayoutModifier returns nil height → wrap content, matching Android).
             height = parentSize.height
         }
 
@@ -501,16 +536,26 @@ struct RenderContainer: View {
     @ViewBuilder
     private func renderHorizontalContainer(availableSize: CGSize) -> some View {
         let arrangement = container.layout?.arrangement ?? .default
-        
+
         switch arrangement.strategy {
         case .spaced:
-            HStack(alignment: .center, spacing: arrangement.spacing ?? 0) {
+            let spacing = arrangement.spacing ?? 0
+            let childCount = container.children.count
+            let totalSpacing = spacing * CGFloat(max(0, childCount - 1))
+            // Subtract inter-child spacing from available width so percent-width
+            // children compute their widths from the actual distributable space.
+            // Matches Android's Row where fillMaxWidth(fraction) accounts for spacing.
+            let childParentSize = CGSize(
+                width: max(0, availableSize.width - totalSpacing),
+                height: availableSize.height
+            )
+            HStack(alignment: .center, spacing: spacing) {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
                         styleResolver: styleResolver,
                         evaluator: evaluator,
-                        parentSize: availableSize,
+                        parentSize: childParentSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
