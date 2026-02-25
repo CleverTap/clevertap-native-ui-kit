@@ -10,7 +10,20 @@
       "Bash(do)",
       "Bash(python3:*)",
       "Bash(done)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git stash:*)",
+      "Bash(./gradlew :sdk:compileDebugKotlin:*)",
+      "Bash(git commit:*)",
+      "Bash(find:*)",
+      "WebSearch",
+      "Bash(./gradlew build:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(swift build:*)",
+      "Bash(./gradlew clean build:*)",
+      "Bash(./gradlew assembleDebug:*)",
+      "Bash(./gradlew:*)",
+      "Bash(xargs cat:*)",
+      "Bash(git checkout:*)"
     ]
   }
 }

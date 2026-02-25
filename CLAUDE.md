@@ -462,7 +462,8 @@ VIDEO also supports: autoPlay, loop, muted, showControls, showFullscreen
 4. **Create style classes** for reusable component styles
 5. **Use template expressions** for dynamic content
 6. **Keep inline styles** minimal - prefer classes
-7. **Test responsive** behavior on multiple screen sizes
+7. **⚠️ Always specify `lineHeight`** for cross-platform consistency (Android default: `fontSize × 1.5`, iOS default: `fontSize × 1.176`)
+8. **Test responsive** behavior on multiple screen sizes
 
 ---
 

@@ -33,22 +33,26 @@ struct TestConfigBrowserView: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                // Top: Test config selector
-                TestConfigListView(
-                    testConfigs: testConfigs,
-                    selectedConfig: $selectedTestConfig,
-                    onConfigSelected: loadConfig
-                )
+            GeometryReader { geometry in
+                VStack(spacing: 0) {
+                    // Top: Test config selector (30% of screen)
+                    TestConfigListView(
+                        testConfigs: testConfigs,
+                        selectedConfig: $selectedTestConfig,
+                        onConfigSelected: loadConfig
+                    )
+                    .frame(height: geometry.size.height * 0.3)
 
-                Divider()
+                    Divider()
 
-                // Bottom: Render area
-                ConfigRenderView(
-                    config: config,
-                    isLoading: isLoading,
-                    errorMessage: errorMessage
-                )
+                    // Bottom: Render area (70% of screen)
+                    ConfigRenderView(
+                        config: config,
+                        isLoading: isLoading,
+                        errorMessage: errorMessage,
+                        availableHeight: geometry.size.height * 0.7
+                    )
+                }
             }
             .navigationTitle("🧪 Test Configs")
             .navigationBarTitleDisplayMode(.inline)
@@ -111,7 +115,6 @@ struct TestConfigListView: View {
             }
             .padding(.bottom, 8)
         }
-        .frame(height: 150)
         .background(Color(.systemGroupedBackground))
     }
 }
@@ -161,25 +164,32 @@ struct ConfigRenderView: View {
     let config: ResolvedConfig?
     let isLoading: Bool
     let errorMessage: String?
+    let availableHeight: CGFloat
 
     var body: some View {
         ZStack(alignment: .topLeading) {
             Color(.systemGroupedBackground)
-                .edgesIgnoringSafeArea(.all)
 
             if isLoading {
                 LoadingView()
+                    .frame(height: availableHeight)
             } else if let errorMessage = errorMessage {
                 ErrorVieww(message: errorMessage)
+                    .frame(height: availableHeight)
             } else if let config = config {
-                ScrollView {
-                    NativeDisplayView(config: config)
-                        .padding()
-                        // Accessibility identifier for XCUITest
-                        .accessibilityIdentifier("native-display-view")
+                GeometryReader { geometry in
+                    ScrollView {
+                        NativeDisplayView(config: config)
+                            .environment(\.nativeDisplayParentSize, geometry.size)
+                            .padding(16)
+                            // Accessibility identifier for XCUITest
+                            .accessibilityIdentifier("native-display-view")
+                    }
                 }
+                .frame(height: availableHeight)
             } else {
                 PlaceholderView()
+                    .frame(height: availableHeight)
             }
         }
     }

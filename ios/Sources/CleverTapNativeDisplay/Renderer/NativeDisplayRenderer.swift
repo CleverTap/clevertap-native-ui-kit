@@ -219,7 +219,7 @@ struct RenderContainer: View {
 
         switch container.containerType {
         case .vertical:
-            renderVerticalContainer(availableSize: availableSize)
+            renderVerticalContainer(availableSize: availableSize, containerHeight: containerSize.height)
                 .padding(paddingInsets)
 
         case .horizontal:
@@ -318,9 +318,9 @@ struct RenderContainer: View {
     
 
     @ViewBuilder
-    private func renderVerticalContainer(availableSize: CGSize) -> some View {
+    private func renderVerticalContainer(availableSize: CGSize, containerHeight: CGFloat) -> some View {
         let arrangement = container.layout?.arrangement ?? .default
-        
+
         switch arrangement.strategy {
         case .spaced:
             VStack(alignment: .leading, spacing: arrangement.spacing ?? 0) {
@@ -335,7 +335,8 @@ struct RenderContainer: View {
                     )
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(height: containerHeight, alignment: .top)
+            .frame(maxWidth: .infinity)
             
         case .spaceBetween:
             VStack(alignment: .leading, spacing: 0) {
@@ -348,13 +349,14 @@ struct RenderContainer: View {
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
-                    
+
                     if index < container.children.count - 1 {
                         Spacer()
                     }
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(height: containerHeight, alignment: .top)
+            .frame(maxWidth: .infinity)
             
         case .spaceEvenly:
             VStack(alignment: .leading, spacing: 0) {
@@ -371,8 +373,9 @@ struct RenderContainer: View {
                     Spacer()
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
+            .frame(height: containerHeight, alignment: .top)
+            .frame(maxWidth: .infinity)
+
         case .spaceAround:
             VStack(alignment: .leading, spacing: 0) {
                 Spacer(minLength: 0)
@@ -385,7 +388,7 @@ struct RenderContainer: View {
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
-                    
+
                     if index < container.children.count - 1 {
                         Spacer()
                         Spacer()
@@ -393,8 +396,9 @@ struct RenderContainer: View {
                 }
                 Spacer(minLength: 0)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
+            .frame(height: containerHeight, alignment: .top)
+            .frame(maxWidth: .infinity)
+
         case .start:
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(container.children.indices, id: \.self) { index in
@@ -409,7 +413,8 @@ struct RenderContainer: View {
                 }
                 Spacer(minLength: 0)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(height: containerHeight, alignment: .top)
+            .frame(maxWidth: .infinity)
             
         case .center:
             VStack(alignment: .center, spacing: 0) {
@@ -426,8 +431,9 @@ struct RenderContainer: View {
                 }
                 Spacer()
             }
-            .frame(maxWidth: .infinity, alignment: .center)
-            
+            .frame(height: containerHeight, alignment: .top)
+            .frame(maxWidth: .infinity)
+
         case .end:
             VStack(alignment: .trailing, spacing: 0) {
                 Spacer(minLength: 0)
@@ -442,7 +448,8 @@ struct RenderContainer: View {
                     )
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .trailing)
+            .frame(height: containerHeight, alignment: .top)
+            .frame(maxWidth: .infinity)
         }
     }
     

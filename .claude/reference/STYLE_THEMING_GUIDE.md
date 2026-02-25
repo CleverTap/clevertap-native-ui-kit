@@ -58,6 +58,52 @@ opacity: Float           // 0.0 to 1.0
 }
 ```
 
+### ⚠️ Important: lineHeight Cross-Platform Behavior
+
+**Platform-Specific Defaults:**
+
+When `lineHeight` is **not specified** in JSON, each platform uses different default calculations:
+
+- **Android**: `lineHeight = fontSize × 1.5`
+  - Example: `fontSize: 16` → lineHeight: `24sp`
+- **iOS**: `lineHeight = fontSize × 1.176` (San Francisco font default)
+  - Example: `fontSize: 16` → lineHeight: `18.8pt`
+
+**Impact:**
+
+This difference causes inconsistent rendering across platforms. For example, with a fixed container height of 160dp/pt:
+- Android (24sp per text): Shows ~7 text elements
+- iOS (18.8pt per text): Shows ~9 text elements
+
+**Solution:**
+
+**Always specify explicit `lineHeight` in JSON for cross-platform consistency:**
+
+```json
+{
+  "style": {
+    "fontSize": 16,
+    "lineHeight": 20  // Explicit value ensures consistency
+  }
+}
+```
+
+**Recommended Values:**
+- `lineHeight = fontSize × 1.4` - Balanced spacing for most use cases
+- `lineHeight = fontSize × 1.5` - More breathing room (matches Android default)
+- Custom values as needed for design requirements
+
+**For Dashboard/JSON Generators:**
+
+Always calculate and include `lineHeight` when generating configurations:
+```typescript
+const lineHeight = fontSize * 1.4;  // or user-specified value
+```
+
+This ensures WYSIWYG (What You See Is What You Get) behavior between preview and actual devices.
+
+---
+
 ### Visual Properties (Non-cascading)
 
 Applied to individual elements, not inherited:

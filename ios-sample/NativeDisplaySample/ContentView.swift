@@ -201,11 +201,18 @@ struct ArrangementDemoView: View {
                             loadConfig()
                         }
                     } else if let config = config {
-                        ScrollView {
-                            NativeDisplayView(config: config)
-                                .frame(maxWidth: .infinity)
+                        GeometryReader { geometry in
+                            ZStack {
+                                Color(hex: "#F5F5F5")
+                                    .edgesIgnoringSafeArea(.all)
+                                ScrollView {
+                                    NativeDisplayView(config: config)
+                                        .environment(\.nativeDisplayParentSize, geometry.size)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(16)
+                                }
+                            }
                         }
-                        .background(Color(hex: "#F5F5F5"))
                     }
                 }
             }
@@ -358,13 +365,21 @@ struct HomeScreenView: View {
                         loadConfig()
                     }
                 } else if let config = config {
-                    ScrollView {
-                        NativeDisplayView(
-                            config: config,
-                            componentListener: HomeScreenComponentListener()
-                        )
+                    GeometryReader { geometry in
+                        ZStack {
+                            Color(hex: "#F8F9FE")
+                                .edgesIgnoringSafeArea(.all)
+
+                            ScrollView {
+                                NativeDisplayView(
+                                    config: config,
+                                    componentListener: HomeScreenComponentListener()
+                                )
+                                .environment(\.nativeDisplayParentSize, geometry.size)
+                                .padding(16)
+                            }
+                        }
                     }
-                    .background(Color(hex: "#F8F9FE"))
                 }
             }
             .navigationTitle("🏠 Home")
@@ -518,12 +533,19 @@ struct AnimationDemoView: View {
                             loadConfig()
                         }
                     } else if let config = config {
-                        ScrollView {
-                            NativeDisplayView(config: config)
-                                .frame(maxWidth: .infinity)
-                                .padding(16)
+                        GeometryReader { geometry in
+                            ZStack {
+                                Color(hex: "#F5F5F5")
+                                    .edgesIgnoringSafeArea(.all)
+
+                                ScrollView {
+                                    NativeDisplayView(config: config)
+                                        .environment(\.nativeDisplayParentSize, geometry.size)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(16)
+                                }
+                            }
                         }
-                        .background(Color(hex: "#F5F5F5"))
                     }
                 }
             }
