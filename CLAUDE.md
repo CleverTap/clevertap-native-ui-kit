@@ -1,50 +1,6 @@
-# Native Display System - Claude Code Knowledge Base
+# Native Display System — Claude Code Knowledge Base
 
-**Updated**: January 2025
-
----
-
-## Quick Start
-
-The Native Display System is a server-driven UI framework that renders native mobile interfaces from JSON configurations. The SDK supports Android (Kotlin/Compose) and iOS (Swift/SwiftUI).
-
-### What You Can Do
-
-- Parse JSON UI configurations into typed models
-- Validate and resolve styles with inheritance
-- Evaluate template expressions with runtime variables
-- Calculate layouts and render native components
-- Support 5 container types and 6 element types
-- Handle animations, backgrounds, and galleries
-
-### Hello World Example
-
-```json
-{
-  "theme": {
-    "id": "default",
-    "defaultStyle": { "textColor": "#000000", "fontSize": 14 }
-  },
-  "variables": { "name": "World" },
-  "root": {
-    "id": "greeting",
-    "containerType": "vertical",
-    "layout": {
-      "width": { "value": 100, "unit": "percent" },
-      "padding": { "all": 16 }
-    },
-    "children": [
-      {
-        "id": "title",
-        "elementType": "text",
-        "bindings": { "text": "Hello {{name}}!" },
-        "layout": { "width": { "value": 100, "unit": "percent" } },
-        "style": { "fontSize": 24, "fontWeight": "bold" }
-      }
-    ]
-  }
-}
-```
+Server-driven UI framework that renders native mobile interfaces from JSON. Supports Android (Kotlin/Compose) and iOS (Swift/SwiftUI).
 
 ---
 
@@ -54,428 +10,210 @@ The Native Display System is a server-driven UI framework that renders native mo
 clevertap-native-ui-kit/
 ├── android/              # Android SDK (Kotlin + Jetpack Compose)
 │   └── sdk/              # Core SDK module
-├── android-sample/       # Android sample app
+├── android-sample/       # Android Compose sample app
 ├── android-xml-sample/   # Android XML-based sample
 ├── ios/                  # iOS SDK (Swift + SwiftUI)
 │   └── Sources/          # Core SDK source
 ├── ios-sample/           # iOS sample app
 ├── docs/                 # Documentation
-└── .claude/              # Claude Code configuration
-    ├── specs/            # Development specifications
-    └── reference/        # Specialized knowledge docs
+└── .claude/
+    ├── agents/           # Subagent definitions
+    ├── skills/           # Skill definitions
+    ├── specs/            # Feature specifications
+    └── reference/        # Reference documentation
 ```
 
 ---
 
 ## Core Concepts
 
-### 1. Configuration Structure
-
-Every UI is defined by a `NativeDisplayConfig`:
+**Config structure** — every UI is a `NativeDisplayConfig`:
 ```
-{
-  theme: Theme (optional)
-  styleClasses: StyleClass[] (optional)
-  variables: Map<string, any> (for template expressions)
-  root: NativeDisplayNode (required)
-}
+theme (optional) | styleClasses (optional) | variables (optional) | root (required)
 ```
 
-### 2. Nodes: Containers & Elements
+**Two node types:**
+- **Containers** — hold children: `VERTICAL` `HORIZONTAL` `BOX` `GALLERY`
+- **Elements** — leaf nodes: `TEXT` `IMAGE` `BUTTON` `VIDEO` `SPACER` `DIVIDER`
 
-Two types of nodes:
+**Layout** — every node has a `layout` object with `width`, `height`, `padding`, `offset`, `arrangement`
 
-**Containers** - Hold and organize children:
-- VERTICAL, HORIZONTAL, BOX, GALLERY
+**Style cascading** — text properties (`textColor`, `fontSize`, `fontWeight`, etc.) cascade to children; visual properties (`backgroundColor`, `borderRadius`, `shadow*`) do not.
 
-**Elements** - Display content (leaf nodes):
-- TEXT, IMAGE, BUTTON, VIDEO, SPACER, DIVIDER
-
-### 3. Layout System
-
-Every node has a `layout` object:
-```
-{
-  width: Dimension
-  height: Dimension
-  padding: Spacing
-  offset: Offset (for positioning)
-  arrangement: ChildArrangement (for container spacing)
-}
-```
-
-### 4. Style System
-
-Styles consist of:
-- **Text properties** (inherited by children): textColor, fontSize, fontWeight, etc.
-- **Visual properties** (not inherited): backgroundColor, borderRadius, shadows, etc.
-
-**For SDK Developers:** Use property extraction methods (`extractTextProperties()`, `extractVisualProperties()`, etc.) when working on renderer code for better organization. See `.claude/reference/STYLE_THEMING_GUIDE.md` for details.
-
-### 5. Templates & Variables
-
-Use `{{variableName}}` in bindings to reference variables:
-```json
-"bindings": { "text": "Hello {{user.name}}, you have {{count}} items" }
-```
+**Templates** — use `{{variableName}}` or `{{object.property}}` in bindings to reference `variables`
 
 ---
 
 ## Container Types
 
-| Type | Purpose | Example Use |
-|------|---------|-------------|
-| VERTICAL | Stack children vertically | Card layouts, lists |
-| HORIZONTAL | Stack children horizontally | Button groups, tags |
-| BOX | Flexible overlay layout | Complex positioning |
-| GALLERY | Scrollable carousel (3 modes) | Image galleries, product lists |
+| Type | Purpose |
+|------|---------|
+| `VERTICAL` | Stack children vertically |
+| `HORIZONTAL` | Stack children horizontally |
+| `BOX` | Overlay / absolute positioning |
+| `GALLERY` | Scrollable carousel — modes: `SNAPPING` `FREE_FLOW` `FREE_FLOW_GRID` |
 
 ---
 
 ## Element Types
 
-| Type | Binding | Example |
-|------|---------|---------|
-| TEXT | `text` | "Hello {{name}}" |
-| IMAGE | `url` | "https://example.com/image.jpg" (supports static images and animated GIFs) |
-| BUTTON | `text` | "Click Me" |
-| VIDEO | `url` (+ autoPlay, loop, muted, showControls, showFullscreen) | "https://example.com/video.mp4" |
-| SPACER | N/A | Fixed or flexible spacing |
-| DIVIDER | N/A | Visual separator |
+| Type | Binding key | Notes |
+|------|-------------|-------|
+| `TEXT` | `text` | Supports `{{variables}}` |
+| `IMAGE` | `url` | Auto-detects GIF; use `imageConfig.animated` to override |
+| `BUTTON` | `text` | |
+| `VIDEO` | `url` | Also: `autoPlay` `loop` `muted` `showControls` `showFullscreen` |
+| `SPACER` | — | Fixed or flexible spacing |
+| `DIVIDER` | — | Visual separator |
 
-**Note**: VIDEO element requires `androidx.media3:media3-exoplayer` on Android (host app dependency). iOS uses built-in AVKit.
-
-### GIF Support
-
-IMAGE elements automatically detect and animate GIF files. The SDK uses multiple detection strategies:
-
-**Auto-detection (works automatically):**
-- URLs with `.gif` extension (e.g., `image.gif`, `image.gif?v=123`)
-- Known GIF hosting domains (Giphy, Tenor, Gfycat, Imgur)
-- URLs containing `/gif/`, `/giphy/`, or `/media/` in the path
-
-**Explicit control (for edge cases):**
-```json
-{
-  "elementType": "image",
-  "bindings": { "url": "https://media.giphy.com/media/abc123/giphy" },
-  "imageConfig": {
-    "fit": "crop",
-    "animated": true
-  }
-}
-```
-
-**ImageConfig.animated options:**
-- `null` (default): Auto-detect using URL patterns
-- `true`: Force animation (use for URLs without .gif extension)
-- `false`: Display first frame only (disable animation)
-
-**When to use explicit `animated: true`:**
-- API endpoints returning GIF data (e.g., `https://api.example.com/image/123`)
-- URLs without `.gif` extension on non-standard domains
-- Content-negotiated URLs or CDNs with custom patterns
-
-**Platform implementation:**
-- **Android**: Uses `coil-gif` library (automatic format detection from data)
-- **iOS**: Custom GIF decoder with graceful fallback to static images
+> VIDEO requires `androidx.media3:media3-exoplayer` on Android. iOS uses built-in AVKit.
+> GIF details (auto-detection rules, `imageConfig` options) → `.claude/reference/COMPONENTS_GUIDE.md`
 
 ---
 
-## Development Approach
+## Layout System
 
-**Spec-Driven Development**: Every feature starts with a specification before implementation.
+**Dimension units**: `dp` `sp` `percent` `px` | **Special**: `wrap_content` `match_parent`
 
-### Workflow
-1. Define spec in `.claude/specs/`
-2. Implement Android version
-3. Implement iOS version (maintain parity)
-4. Update sample apps
-5. Document changes
+**Arrangement strategies** (all lowercase in JSON): `spaced` `space_between` `space_evenly` `space_around` `start` `center` `end`
 
----
+> Only `spaced` uses a `spacing` field. All other strategies have no spacing fields.
 
-## Documentation Files
-
-### Reference Documentation (in `.claude/reference/`)
-- **CLAUDE_CODE_REFERENCE_ACTUAL.md** - **PRIMARY** - Complete specification verified against actual Kotlin code
-- **CLAUDE_CODE_PATTERNS.md** - Copy-paste ready Kotlin implementations
-- **CLAUDE_CODE_MODELS.md** - Type definitions for Kotlin, Swift, TypeScript
-- **COMPONENTS_GUIDE.md** - Examples for each container and element type
-- **STYLE_THEMING_GUIDE.md** - How to use styles, themes, and styling system
-
-### Architecture Documentation
-- `ARCHITECTURE_DOCS_INDEX.md` - Main documentation index
-- `LAYOUT_CONTENT_SEPARATION.md` - Layout system design
-- `docs/VISUAL_STRATEGY_GUIDE.md` - Visual rendering approach
+**Default values** (safe to omit in JSON — parsing never fails):
+- Dimension: `value=0, unit=dp, special=null`
+- Offset: `x=0, y=0, unit=dp`
+- ChildArrangement: `strategy=spaced, spacingUnit=dp`
 
 ---
 
-## Common Tasks with Claude Code
+## Style System
 
-### Task 1: Parse JSON to Models
+**Resolution order**:
 ```
-"Parse this JSON and create typed NativeDisplayConfig model"
-Reference: CLAUDE_CODE_MODELS.md
-```
-
-### Task 2: Validate Configuration
-```
-"Validate this configuration JSON against the schema"
-Reference: CLAUDE_CODE_REFERENCE_ACTUAL.md
+Theme default → Style class → Inline node style → Parent style (text properties only)
 ```
 
-### Task 3: Resolve Styles
-```
-"Apply style cascading and resolve final styles for each node"
-Reference: CLAUDE_CODE_PATTERNS.md → StyleResolver
-```
+**Color format**: `#RRGGBB` (opaque) or `#AARRGGBB` (with alpha)
 
-### Task 4: Evaluate Templates
-```
-"Evaluate {{variable}} expressions in this configuration"
-Reference: CLAUDE_CODE_PATTERNS.md → VariableEvaluator
-```
+**⚠️ Always specify `lineHeight`** for cross-platform consistency — Android default is `fontSize × 1.5`, iOS is `fontSize × 1.176`.
 
-### Task 5: Generate Sample Data
+---
+
+## Development Workflow
+
+Spec-driven: every feature starts with a spec before implementation.
+
 ```
-"Generate sample JSON configuration for a product card"
-Reference: COMPONENTS_GUIDE.md
+1. Write spec → .claude/specs/
+2. Implement Android (android-sdk agent)
+3. Implement iOS (ios-sdk agent, maintain parity)
+4. Update sample apps (android-sample + ios-sample agents)
+5. /build → /test → /review → /commit
 ```
 
 ---
 
-## Workflows with Skills
+## Skills
 
-Skills are one-command workflows that streamline development. Invoke with `/skill-name`.
+Invoke with `/skill-name`:
 
-### Available Skills
+| Skill | Purpose |
+|-------|---------|
+| `/build [android\|ios]` | Build SDK or sample apps |
+| `/test [android\|ios]` | Run tests |
+| `/generate-json [type]` | Generate valid JSON test configs |
+| `/review` | Review code against project standards |
+| `/commit` | Create a properly formatted git commit |
+| `/statusline` | Show git, build, and test status |
 
-| Skill | Command | Purpose |
-|-------|---------|---------|
-| `/commit` | `/commit` | Create git commit with proper message |
-| `/generate-json` | `/generate-json [type]` | Generate test JSON configs |
-| `/test` | `/test [platform]` | Run Android/iOS tests |
-| `/build` | `/build [platform]` | Build Android/iOS SDK |
-| `/review` | `/review` | Review code changes |
-| `/statusline` | `/statusline` | Show project status |
-
-### Workflow 1: Making Changes
-
-Standard development workflow:
-```
-1. Edit code
-2. /build android      → Verify compilation
-3. /test android       → Run tests
-4. /review             → Check standards
-5. /commit             → Commit with proper message
-```
-
-### Workflow 2: Generating Test Configurations
-
-Create valid test JSON configs:
-```
-1. /generate-json product-card
-   → Generates valid JSON following JSON_STRUCTURE_REFERENCE.md
-   → Uses ARGB color format (#AARRGGBB)
-   → Ensures layout definitions on all nodes
-   → Validates with jq
-
-2. Saved to: test-configs/generated/product-card-test.json
-
-3. /test               → Verify it works
-```
-
-### Workflow 3: Cross-Platform Development
-
-Maintain parity across platforms:
-```
-1. Implement Android feature
-2. /build android
-3. /test android
-4. Implement iOS equivalent
-5. /build ios
-6. /test ios
-7. /review             → Check parity
-8. /commit
-```
-
-### Workflow 4: Quick Status Check
-
-Check project state before starting work:
-```
-/statusline
-  → Git status (branch, changes)
-  → Build status (last build results)
-  → Test status (last test results)
-  → Phase progress (current development phase)
-```
-
-### Workflow 5: Creating Demos
-
-Sample app development:
-```
-1. Design demo UI
-2. /generate-json demo-scenario
-3. Integrate in sample app
-4. /build android
-5. /review
-6. /commit
-```
-
-### Skills Benefits
-
-- ✅ **Consistency** - Same workflow every time
-- ✅ **Validation** - Built-in checks (JSON validation, code review)
-- ✅ **Speed** - One command instead of multiple steps
-- ✅ **Discoverability** - Easy to remember `/skill-name` pattern
-- ✅ **Quality** - Automated standards enforcement
-
-**See**: `.claude/skills/` directory for detailed documentation on each skill
+Full skill documentation → `.claude/skills/`
 
 ---
 
-## Key Features
+## Agent Teams
 
-### ✅ Supported
+Specialized subagents for domain-focused work:
 
-- **4 Container Types**: VERTICAL, HORIZONTAL, BOX, GALLERY
-- **6 Element Types**: TEXT, IMAGE, BUTTON, VIDEO, SPACER, DIVIDER
-- **Rich Styling**: 15+ style properties with cascading
-- **Backgrounds**: 10+ background types (solid, gradients, patterns, animations)
-- **Animations**: 8+ animation types with easing functions
-- **Gallery Modes**: SNAPPING, FREE_FLOW, FREE_FLOW_GRID
-- **Template Expressions**: Variable interpolation with nesting support
-- **Style Classes**: Reusable style definitions
-- **Themes**: Global default styles
+| Agent | Domain |
+|-------|--------|
+| `android-sdk` | Android SDK — Kotlin/Compose implementation |
+| `ios-sdk` | iOS SDK — Swift/SwiftUI implementation |
+| `android-sample` | Android demo apps (Compose + XML) |
+| `ios-sample` | iOS demo app (SwiftUI) |
+| `testing` | Test JSON generation, Roborazzi screenshots, visual comparison |
 
-### Layout Features
-
-- **Dimensions**: DP, SP, PERCENT, PX, WRAP_CONTENT, MATCH_PARENT
-- **Spacing**: Padding with individual side control
-- **Arrangement**: 7 strategies (SPACED, SPACE_BETWEEN, SPACE_EVENLY, SPACE_AROUND, START, CENTER, END)
-- **Positioning**: Offset for absolute positioning in BOX/STACK
-
-### Default Values & Backward Compatibility
-
-**All layout types have sensible defaults to prevent JSON parsing failures:**
-
-- **Dimension**: `value=0`, `unit=DP`, `special=null`
-- **Offset**: `x=0`, `y=0`, `unit=DP`
-- **Spacing**: `unit=DP` (all spacing values optional)
-- **ChildArrangement**: `spacingUnit=DP`, `strategy=SPACED`
-
-This means backend JSON can omit these fields without breaking parsing on mobile clients. Both Android and iOS implementations ensure robust parsing through:
-- **Android**: Default parameter values in `@Serializable` data classes
-- **iOS**: Custom decoders with `decodeIfPresent` + `??` fallbacks
-
-**Example**: An empty dimension `{}` will successfully parse as `{value: 0, unit: "dp", special: null}`
-
----
-
-## Style Resolution Order
-
+**Invoking agents explicitly:**
 ```
-1. Theme Default Style
-   ↓
-2. Style Class
-   ↓
-3. Inline Node Style
-   ↓
-4. Parent Style (text properties only)
+"Using the android-sdk agent, implement the GRID container from spec 013"
+"Using the testing agent, generate 25 GALLERY container test variations"
 ```
 
----
+**Collaboration rules:**
+- SDK agents do not touch sample apps — delegate to sample agents
+- Sample agents do not touch SDK code — delegate to SDK agents
+- Testing agent does not fix bugs — hands issues to SDK agents
+- Cross-platform features need both `android-sdk` AND `ios-sdk`
 
-## Color Format
-
-```
-#RRGGBB        // Hex RGB (e.g., #FF0000 = red)
-#AARRGGBB      // Hex ARGB with alpha (e.g., #80FF0000 = red 50% opacity)
-```
+Agent workflows and examples → `.claude/agents/` and `.claude/AGENTS_QUICK_REFERENCE.md`
 
 ---
 
 ## Code Conventions
 
-### Android (Kotlin)
-- Use `@Serializable` for JSON models
-- Jetpack Compose for UI rendering
-- Follow existing package structure in `android/sdk/`
+**Android**: `@Serializable` data classes · Jetpack Compose rendering · `android/sdk/` package structure
 
-### iOS (Swift)
-- Use `Codable` for JSON models
-- SwiftUI for UI rendering
-- Follow existing module structure in `ios/Sources/`
+**iOS**: `Codable` structs · SwiftUI rendering · `ios/Sources/` module structure
 
----
-
-## Commands Reference
-
-When working on this project:
-- Android build: `cd android && ./gradlew build`
-- Android test: `cd android && ./gradlew test`
-- iOS build: `cd ios && swift build`
-- iOS test: `cd ios && swift test`
+**Commands**:
+```
+Android build:  cd android && ./gradlew build
+Android test:   cd android && ./gradlew test
+iOS build:      cd ios && swift build
+iOS test:       cd ios && swift test
+```
 
 ---
 
 ## Quick Reference
 
-### Containers
-```
-VERTICAL | HORIZONTAL | BOX | GALLERY
-```
+**Containers**: `VERTICAL` `HORIZONTAL` `BOX` `GALLERY`
 
-### Elements
-```
-TEXT | IMAGE | BUTTON | VIDEO | SPACER | DIVIDER
-```
+**Elements**: `TEXT` `IMAGE` `BUTTON` `VIDEO` `SPACER` `DIVIDER`
 
-### Layout
-```
-Dimension: DP, SP, PERCENT, PX, WRAP_CONTENT, MATCH_PARENT
-Arrangement: SPACED, SPACE_BETWEEN, SPACE_EVENLY, SPACE_AROUND, START, CENTER, END
-```
+**Dimensions**: `dp` `sp` `percent` `px` `wrap_content` `match_parent`
 
-### Styles
-```
-Text: textColor, fontSize, fontFamily, fontWeight, fontStyle, lineHeight, letterSpacing,
-      textDecoration, textAlign, maxLines, overflow, textShadow, textGradient, opacity
-Visual: backgroundColor, borderRadius, borderWidth, borderColor, shadow*, background
-```
+**Arrangement**: `spaced` `space_between` `space_evenly` `space_around` `start` `center` `end`
 
-### Bindings
-```
-TEXT: "text"
-IMAGE/VIDEO: "url"
-VIDEO also supports: autoPlay, loop, muted, showControls, showFullscreen
-```
+**Text styles**: `textColor` `fontSize` `fontFamily` `fontWeight` `fontStyle` `lineHeight` `letterSpacing` `textDecoration` `textAlign` `maxLines` `overflow` `textShadow` `textGradient` `opacity`
+
+**Visual styles**: `backgroundColor` `borderRadius` `borderWidth` `borderColor` `shadow*` `background`
 
 ---
 
 ## Best Practices
 
-1. **Always define layout** for every node (container and element)
-2. **Use arrangement strategies** for container spacing instead of manual gaps
-3. **Define theme** for consistent styling across your app
-4. **Create style classes** for reusable component styles
-5. **Use template expressions** for dynamic content
-6. **Keep inline styles** minimal - prefer classes
-7. **⚠️ Always specify `lineHeight`** for cross-platform consistency (Android default: `fontSize × 1.5`, iOS default: `fontSize × 1.176`)
-8. **Test responsive** behavior on multiple screen sizes
+1. Define `layout` on every node — containers and elements
+2. Use `arrangement` strategies for spacing, not manual gaps
+3. Define a `theme` for consistent global styles
+4. Use `styleClasses` for reusable styles; keep inline styles minimal
+5. Use `{{variables}}` for dynamic content
+6. Always specify `lineHeight` to avoid cross-platform differences
+7. Test on multiple screen sizes
 
 ---
 
-## Next Steps
+## Reference Documentation
 
-1. **Reference `.claude/reference/CLAUDE_CODE_REFERENCE_ACTUAL.md`** for complete specification
-2. **Check `.claude/reference/COMPONENTS_GUIDE.md`** for container and element examples
-3. **Review `.claude/reference/CLAUDE_CODE_PATTERNS.md`** for implementation patterns
-4. **Use `.claude/reference/STYLE_THEMING_GUIDE.md`** for styling system details
-5. **Check `.claude/specs/`** for current development specifications
+Read these files on-demand — only when your task requires the detail. Do not load them upfront.
 
----
-
-**Ready to use with Claude Code**  
-All documentation is structured for easy integration with Claude Code's knowledge base system.
+| File | Read when… |
+|------|-----------|
+| `.claude/reference/CLAUDE_CODE_REFERENCE_ACTUAL.md` | Implementing any feature; verifying type definitions or schema rules |
+| `.claude/reference/COMPONENTS_GUIDE.md` | Writing JSON for containers/elements; GIF or VIDEO-specific behaviour |
+| `.claude/reference/JSON_STRUCTURE_REFERENCE.md` | Generating or validating test JSON; unsure about schema rules |
+| `.claude/reference/STYLE_THEMING_GUIDE.md` | Working on styles, themes, backgrounds, or cross-platform consistency |
+| `.claude/reference/CLAUDE_CODE_PATTERNS.md` | Implementing parser, StyleResolver, TemplateEvaluator, or LayoutCalculator |
+| `.claude/reference/CLAUDE_CODE_MODELS.md` | Creating or auditing data model types (Kotlin / Swift / TypeScript) |
+| `.claude/reference/CLIENT_USAGE_MODEL.md` | Checking whether a feature belongs in the SDK vs the client app |
+| `.claude/reference/PLATFORM_ARRANGEMENT_COMPARISON.md` | Ensuring arrangement strategy parity between Android and iOS |
+| `.claude/specs/` | Starting a new feature — read the relevant spec first |

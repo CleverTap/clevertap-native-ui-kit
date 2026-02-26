@@ -116,13 +116,13 @@
 
 ### 2. IMAGE
 
-**Bindings**: `src`
+**Bindings**: `url`
 
 ```json
 {
   "id": "product-image",
   "elementType": "image",
-  "bindings": { "src": "{{imageUrl}}" },
+  "bindings": { "url": "{{imageUrl}}" },
   "layout": {
     "width": { "value": 100, "unit": "percent" },
     "height": { "value": 300, "unit": "dp" }
@@ -130,6 +130,29 @@
   "style": { "borderRadius": 12 }
 }
 ```
+
+#### GIF / Animated Image Support
+
+GIF animation is **auto-detected** from the URL in most cases (`.gif` extension, Giphy/Tenor/Gfycat/Imgur domains, paths containing `/gif/` or `/media/`). Use `imageConfig.animated` only when auto-detection cannot work:
+
+```json
+{
+  "elementType": "image",
+  "bindings": { "url": "https://api.example.com/image/123" },
+  "imageConfig": {
+    "fit": "crop",
+    "animated": true
+  }
+}
+```
+
+| `imageConfig.animated` | Behaviour |
+|---|---|
+| `null` (default) | Auto-detect from URL |
+| `true` | Force animation — use for API endpoints or CDN URLs without `.gif` extension |
+| `false` | Show first frame only — disable animation |
+
+**Platform**: Android uses `coil-gif`; iOS uses a custom GIF decoder with static-image fallback.
 
 ---
 

@@ -114,9 +114,9 @@ object NativeDisplayParser {
                     // Optional warning - TEXT can be styled only
                 }
                 
-                // IMAGE element should have src binding
-                if (node.elementType == "image" && !node.bindings.containsKey("src")) {
-                    errors.add("IMAGE element ${node.id} must have 'src' binding")
+                // IMAGE element should have url binding
+                if (node.elementType == "image" && !node.bindings.containsKey("url")) {
+                    errors.add("IMAGE element ${node.id} must have 'url' binding")
                 }
             }
         }
@@ -773,7 +773,7 @@ object TestConfigs {
             "id": "image",
             "type": "element",
             "elementType": "image",
-            "bindings": { "src": "{{image}}" },
+            "bindings": { "url": "{{image}}" },
             "layout": {
               "width": { "value": 100, "unit": "percent" },
               "height": { "value": 200, "unit": "dp" }
