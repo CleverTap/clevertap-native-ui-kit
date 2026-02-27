@@ -30,7 +30,7 @@ public struct NativeDisplayView: View {
     @Environment(\.nativeDisplayParentSize) private var environmentParentSize
 
     private let config: ResolvedConfig
-    private let styleResolver: StyleResolver
+    private let resolvedStyles: [String: Style]   // Pre-resolved, computed once in init
     private let evaluator: VariableEvaluator
     private let actionHandler: ActionHandler?
     private let componentListener: NativeDisplayComponentListener?
@@ -41,13 +41,14 @@ public struct NativeDisplayView: View {
         componentListener: NativeDisplayComponentListener? = nil
     ) {
         self.config = config
-        self.styleResolver = StyleResolver(theme: config.theme, styleClasses: config.styleClasses)
+        // Pre-resolve all node styles once — views get O(1) lookup, no resolution at render time
+        let resolver = StyleResolver(theme: config.theme, styleClasses: config.styleClasses)
+        self.resolvedStyles = resolver.resolveAll(node: config.root)
         self.evaluator = VariableEvaluator(variables: config.variables)
-
         self.actionHandler = ActionHandler(
-                    actionListener: actionListener,
-                    componentListener: componentListener
-                )
+            actionListener: actionListener,
+            componentListener: componentListener
+        )
         self.componentListener = componentListener
     }
 
@@ -98,7 +99,7 @@ public struct NativeDisplayView: View {
     private func renderContent(parentSize: CGSize) -> some View {
         RenderNode(
             node: config.root,
-            styleResolver: styleResolver,
+            resolvedStyles: resolvedStyles,
             evaluator: evaluator,
             parentSize: parentSize,
             actionHandler: actionHandler,
@@ -110,7 +111,7 @@ public struct NativeDisplayView: View {
 /// Recursively render a display node (container or element).
 struct RenderNode: View {
     let node: NativeDisplayNode
-    let styleResolver: StyleResolver
+    let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let parentSize: CGSize
     let actionHandler: ActionHandler?
@@ -132,8 +133,8 @@ struct RenderNode: View {
     
     @ViewBuilder
     private func renderContent() -> some View {
-        // Resolve style
-        let resolvedStyle = styleResolver.resolveWithColors(node: node)
+        // Look up pre-resolved style
+        let resolvedStyle = resolvedStyles[node.id] ?? Style.empty
         
         let hasServerActions = node.actions != nil && !node.actions!.isEmpty
         let isClientInterested = componentListener?.getInterestedNodeIds()?.contains(node.id) ?? (componentListener != nil)
@@ -147,7 +148,7 @@ struct RenderNode: View {
 
             RenderContainer(
                 container: container,
-                styleResolver: styleResolver,
+                resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
                 parentSize: parentSize,
@@ -194,7 +195,7 @@ struct RenderNode: View {
 /// Render a container with its children.
 struct RenderContainer: View {
     let container: NativeDisplayContainer
-    let styleResolver: StyleResolver
+    let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
     let parentSize: CGSize
@@ -229,17 +230,11 @@ struct RenderContainer: View {
         case .box:
             // For BOX containers, use ZStack with topLeading alignment
             // Children use .offset() (applied in LayoutModifier) to move from their natural position
-
-            // DEBUG: Remove after fixing percentage offset issue
-            let _ = print("🔷 BOX CONTAINER: id=\(container.id), containerSize=\(containerSize), children.count=\(container.children.count)")
-            let _ = container.children.enumerated().forEach { index, child in
-                print("  🔹 BOX CHILD [\(index)]: id=\(child.id), type=\(child), hasOffset=\(child.layout?.offset != nil)")
-            }
             ZStack(alignment: .topLeading) {
-                ForEach(container.children.indices, id: \.self) { index in
+                ForEach(container.children, id: \.id) { child in
                     RenderNode(
-                        node: container.children[index],
-                        styleResolver: styleResolver,
+                        node: child,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: containerSize,
                         actionHandler: actionHandler,
@@ -253,7 +248,7 @@ struct RenderContainer: View {
         case .gallery:
             RenderGallery(
                 container: container,
-                styleResolver: styleResolver,
+                resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
                 parentSize: availableSize,
@@ -310,9 +305,6 @@ struct RenderContainer: View {
             height: max(0, height - padding.top - padding.bottom)
         )
 
-        // DEBUG: Remove after fixing percentage offset issue
-        print("🔵 CONTAINER SIZE: container.id=\(container.id), type=\(container.containerType), parentSize=\(parentSize), calculatedSize=\(finalSize)")
-
         return finalSize
     }
     
@@ -327,7 +319,7 @@ struct RenderContainer: View {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -343,7 +335,7 @@ struct RenderContainer: View {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -364,7 +356,7 @@ struct RenderContainer: View {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -382,7 +374,7 @@ struct RenderContainer: View {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -404,7 +396,7 @@ struct RenderContainer: View {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -422,7 +414,7 @@ struct RenderContainer: View {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -440,7 +432,7 @@ struct RenderContainer: View {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -463,7 +455,7 @@ struct RenderContainer: View {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -477,7 +469,7 @@ struct RenderContainer: View {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -496,7 +488,7 @@ struct RenderContainer: View {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -512,7 +504,7 @@ struct RenderContainer: View {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -532,7 +524,7 @@ struct RenderContainer: View {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -548,7 +540,7 @@ struct RenderContainer: View {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -564,7 +556,7 @@ struct RenderContainer: View {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -845,11 +837,6 @@ struct LayoutModifier: ViewModifier {
         let maxHeight = calculateMaxHeight()
         let aspectRatio = calculateAspectRatio()
 
-        // DEBUG: Remove after fixing percentage offset issue
-        let _ = nodeId.map { nodeId in
-            print("📐 LAYOUT: nodeId=\(nodeId), width=\(width?.description ?? "nil"), height=\(height?.description ?? "nil")")
-        }
-
         // Apply sizing only - offset will be applied after decorations
         if let ratio = aspectRatio {
             content
@@ -945,11 +932,6 @@ struct LayoutModifier: ViewModifier {
             return .zero
         }
 
-        // DEBUG: Remove after fixing percentage offset issue
-        if let nodeId = nodeId {
-            print("🟢 OFFSET: nodeId=\(nodeId), unit=\(offset.unit), x=\(offset.x), y=\(offset.y), parentSize=\(parentSize)")
-        }
-
         let result: CGSize
         switch offset.unit {
         case .dp, .px, .sp:
@@ -959,11 +941,6 @@ struct LayoutModifier: ViewModifier {
             let offsetX = parentSize.width * offset.x / 100
             let offsetY = parentSize.height * offset.y / 100
             result = CGSize(width: offsetX, height: offsetY)
-        }
-
-        // DEBUG: Remove after fixing percentage offset issue
-        if let nodeId = nodeId {
-            print("🟢 OFFSET: nodeId=\(nodeId), CALCULATED: x=\(result.width), y=\(result.height)")
         }
 
         return result

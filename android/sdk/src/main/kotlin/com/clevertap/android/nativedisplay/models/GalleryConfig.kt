@@ -1,5 +1,6 @@
 package com.clevertap.android.nativedisplay.models
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -26,6 +27,7 @@ enum class GalleryMode {
  * 2. FREE_FLOW: Items define their own size, natural scrolling (tag lists, varying widths)
  * 3. FREE_FLOW_GRID: Fixed items per view, peek via itemsPerView (product grids)
  */
+@Immutable
 @Serializable
 data class GalleryConfig(
     // Core mode selection
@@ -50,6 +52,7 @@ data class GalleryConfig(
     val initialPage: Int = 0
 )
 
+@Immutable
 @Serializable
 data class IndicatorStyle(
     val size: Float = 8f,
@@ -60,6 +63,7 @@ data class IndicatorStyle(
     val position: String = "bottom"  // "top", "bottom", "left", "right"
 )
 
+@Immutable
 @Serializable
 data class ArrowStyle(
     val size: Float = 24f,

@@ -116,9 +116,15 @@ DisposableEffect(Unit) {
 
 ### Performance: Minimize Recomposition
 ```kotlin
-@Immutable data class Style(...)    // Mark models Immutable/Stable
-val style = remember(node.id, parentStyle) { styleResolver.resolve(node, parentStyle) }
-LazyColumn { items(children, key = { it.id }) { RenderNode(it) } }
+// Styles are pre-resolved at setConfig() time — never inside composables
+// resolvedStyles: PersistentMap<String, Style> is passed through the tree (O(1) lookup)
+val resolvedStyle = resolvedStyles[node.id] ?: Style.EMPTY
+
+// All model data classes annotated @Immutable; sealed classes @Stable
+// LazyRow/LazyColumn always keyed by stable node ID
+LazyColumn { items(children, key = { it.id }) { child -> RenderNode(child, resolvedStyles, ...) } }
+
+// See .claude/agents/android-sdk/knowledge/performance.md for full guide
 ```
 
 ## Common Gotchas

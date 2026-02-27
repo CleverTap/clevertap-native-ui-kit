@@ -1,5 +1,7 @@
 package com.clevertap.android.nativedisplay.renderer
 
+// Media3 imports (compileOnly - available at compile time, provided at runtime by host app)
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.EaseInBack
 import androidx.compose.animation.core.EaseOutBack
 import androidx.compose.animation.core.FastOutLinearInEasing
@@ -8,32 +10,60 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.material3.VerticalDivider
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -44,43 +74,62 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight as ComposeFontWeight
-import androidx.compose.ui.text.font.FontStyle as ComposeFontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow as ComposeTextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.compose.foundation.clickable
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.clevertap.android.nativedisplay.evaluator.VariableEvaluator
-import com.clevertap.android.nativedisplay.internal.ImageLoaderProvider
 import com.clevertap.android.nativedisplay.handler.ActionHandler
+import com.clevertap.android.nativedisplay.internal.ImageLoaderProvider
 import com.clevertap.android.nativedisplay.listener.InteractionType
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener
-import com.clevertap.android.nativedisplay.models.*
+import com.clevertap.android.nativedisplay.models.Action
+import com.clevertap.android.nativedisplay.models.ActionTriggers
+import com.clevertap.android.nativedisplay.models.Animation
+import com.clevertap.android.nativedisplay.models.AnimationType
+import com.clevertap.android.nativedisplay.models.ArrangementStrategy
+import com.clevertap.android.nativedisplay.models.ArrowStyle
+import com.clevertap.android.nativedisplay.models.ChildArrangement
+import com.clevertap.android.nativedisplay.models.ContainerType
+import com.clevertap.android.nativedisplay.models.DimensionUnit
+import com.clevertap.android.nativedisplay.models.DividerConfig
+import com.clevertap.android.nativedisplay.models.Easing
+import com.clevertap.android.nativedisplay.models.ElementType
+import com.clevertap.android.nativedisplay.models.FontWeight
+import com.clevertap.android.nativedisplay.models.GalleryConfig
+import com.clevertap.android.nativedisplay.models.GalleryMode
+import com.clevertap.android.nativedisplay.models.ImageFit
+import com.clevertap.android.nativedisplay.models.IndicatorStyle
+import com.clevertap.android.nativedisplay.models.Layout
+import com.clevertap.android.nativedisplay.models.NativeDisplayContainer
+import com.clevertap.android.nativedisplay.models.NativeDisplayElement
+import com.clevertap.android.nativedisplay.models.NativeDisplayNode
+import com.clevertap.android.nativedisplay.models.Orientation
+import com.clevertap.android.nativedisplay.models.ResolvedConfig
+import com.clevertap.android.nativedisplay.models.SpecialDimension
+import com.clevertap.android.nativedisplay.models.Style
 import com.clevertap.android.nativedisplay.style.StyleResolver
+import kotlinx.collections.immutable.PersistentMap
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-// Media3 imports (compileOnly - available at compile time, provided at runtime by host app)
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
-import androidx.media3.ui.PlayerView
+import androidx.compose.ui.text.font.FontStyle as ComposeFontStyle
+import androidx.compose.ui.text.font.FontWeight as ComposeFontWeight
+import androidx.compose.ui.text.style.TextOverflow as ComposeTextOverflow
 
 /**
- * Main entry point for rendering native display UI.
+ * Convenience overload that pre-resolves styles internally.
+ * Use this when calling NativeDisplayView directly without going through NativeDisplayViewGroup.
  */
 @Composable
 fun NativeDisplayView(
@@ -89,9 +138,32 @@ fun NativeDisplayView(
     actionListener: NativeDisplayActionListener? = null,
     componentListener: NativeDisplayComponentListener? = null,
 ) {
+    val resolvedStyles = remember(config) {
+        StyleResolver(config.theme, config.styleClasses).resolveAll(config.root)
+    }
+    NativeDisplayView(
+        config = config,
+        resolvedStyles = resolvedStyles,
+        modifier = modifier,
+        actionListener = actionListener,
+        componentListener = componentListener,
+    )
+}
+
+/**
+ * Main entry point for rendering native display UI.
+ */
+@Composable
+fun NativeDisplayView(
+    config: ResolvedConfig,
+    resolvedStyles: PersistentMap<String, Style>,
+    modifier: Modifier = Modifier,
+    actionListener: NativeDisplayActionListener? = null,
+    componentListener: NativeDisplayComponentListener? = null,
+) {
     val context = LocalContext.current
 
-    val actionHandler = remember(actionListener) {
+    val actionHandler = remember(actionListener, componentListener) {
         ActionHandler(
             context = context,
             listener = actionListener,
@@ -105,12 +177,13 @@ fun NativeDisplayView(
         }
     }
 
-    val styleResolver = StyleResolver(theme = config.theme, styleClasses = config.styleClasses)
-    val evaluator = VariableEvaluator(variables = config.variables)
+    val evaluator = remember(config.variables) {
+        VariableEvaluator(variables = config.variables)
+    }
 
     RenderNode(
         node = config.root,
-        styleResolver = styleResolver,
+        resolvedStyles = resolvedStyles,
         evaluator = evaluator,
         modifier = modifier,
         actionHandler = actionHandler,
@@ -124,7 +197,7 @@ fun NativeDisplayView(
 @Composable
 fun RenderNode(
     node: NativeDisplayNode,
-    styleResolver: StyleResolver,
+    resolvedStyles: PersistentMap<String, Style>,
     evaluator: VariableEvaluator,
     modifier: Modifier = Modifier,
     actionHandler: ActionHandler? = null,
@@ -137,7 +210,7 @@ fun RenderNode(
     }
 
     // Resolve style
-    val resolvedStyle = styleResolver.resolveWithColors(node)
+    val resolvedStyle = resolvedStyles[node.id] ?: Style.EMPTY
 
     // Check if this component needs clickable modifier
     val hasServerActions = node.actions?.isNotEmpty() == true
@@ -170,9 +243,8 @@ fun RenderNode(
     when (node) {
         is NativeDisplayContainer -> RenderContainer(
             container = node,
-            styleResolver = styleResolver,
+            resolvedStyles = resolvedStyles,
             evaluator = evaluator,
-            resolvedStyle = resolvedStyle,
             layout = node.layout,
             modifier = finalModifier,
             actionHandler = actionHandler,
@@ -196,9 +268,8 @@ fun RenderNode(
 @Composable
 private fun RenderContainer(
     container: NativeDisplayContainer,
-    styleResolver: StyleResolver,
+    resolvedStyles: PersistentMap<String, Style>,
     evaluator: VariableEvaluator,
-    resolvedStyle: Style,
     layout: Layout?,
     modifier: Modifier = Modifier,
     actionHandler: ActionHandler? = null,
@@ -215,7 +286,7 @@ private fun RenderContainer(
                 container.children.forEach { child ->
                     RenderNode(
                         node = child,
-                        styleResolver = styleResolver,
+                        resolvedStyles = resolvedStyles,
                         evaluator = evaluator,
                         modifier = Modifier,
                         actionHandler = actionHandler,
@@ -233,7 +304,7 @@ private fun RenderContainer(
                 container.children.forEach { child ->
                     RenderNode(
                         node = child,
-                        styleResolver = styleResolver,
+                        resolvedStyles = resolvedStyles,
                         evaluator = evaluator,
                         modifier = Modifier,
                         actionHandler = actionHandler,
@@ -248,7 +319,7 @@ private fun RenderContainer(
                 container.children.forEach { child ->
                     RenderNode(
                         node = child,
-                        styleResolver = styleResolver,
+                        resolvedStyles = resolvedStyles,
                         evaluator = evaluator,
                         modifier = Modifier,
                         actionHandler = actionHandler,
@@ -261,9 +332,8 @@ private fun RenderContainer(
         ContainerType.GALLERY -> {
             RenderGallery(
                 container = container,
-                styleResolver = styleResolver,
+                resolvedStyles = resolvedStyles,
                 evaluator = evaluator,
-                resolvedStyle = resolvedStyle,
                 modifier = containerModifier,
                 actionHandler = actionHandler,
                 componentListener = componentListener
@@ -278,9 +348,8 @@ private fun RenderContainer(
 @Composable
 fun RenderGallery(
     container: NativeDisplayContainer,
-    styleResolver: StyleResolver,
+    resolvedStyles: PersistentMap<String, Style>,
     evaluator: VariableEvaluator,
-    resolvedStyle: Style,
     modifier: Modifier = Modifier,
     actionHandler: ActionHandler? = null,
     componentListener: NativeDisplayComponentListener? = null,
@@ -292,9 +361,8 @@ fun RenderGallery(
             RenderSnappingGallery(
                 container = container,
                 config = config,
-                styleResolver = styleResolver,
+                resolvedStyles = resolvedStyles,
                 evaluator = evaluator,
-                resolvedStyle = resolvedStyle,
                 modifier = modifier,
                 actionHandler = actionHandler,
                 componentListener = componentListener,
@@ -305,9 +373,8 @@ fun RenderGallery(
             RenderFreeFlowGallery(
                 container = container,
                 config = config,
-                styleResolver = styleResolver,
+                resolvedStyles = resolvedStyles,
                 evaluator = evaluator,
-                resolvedStyle = resolvedStyle,
                 modifier = modifier,
                 actionHandler = actionHandler,
                 componentListener = componentListener,
@@ -318,9 +385,8 @@ fun RenderGallery(
             RenderFreeFlowGridGallery(
                 container = container,
                 config = config,
-                styleResolver = styleResolver,
+                resolvedStyles = resolvedStyles,
                 evaluator = evaluator,
-                resolvedStyle = resolvedStyle,
                 modifier = modifier,
                 actionHandler = actionHandler,
                 componentListener = componentListener,
@@ -339,9 +405,8 @@ fun RenderGallery(
 private fun RenderSnappingGallery(
     container: NativeDisplayContainer,
     config: GalleryConfig,
-    styleResolver: StyleResolver,
+    resolvedStyles: PersistentMap<String, Style>,
     evaluator: VariableEvaluator,
-    resolvedStyle: Style,
     modifier: Modifier = Modifier,
     actionHandler: ActionHandler? = null,
     componentListener: NativeDisplayComponentListener? = null,
@@ -398,7 +463,7 @@ private fun RenderSnappingGallery(
                     container.children.getOrNull(page)?.let { child ->
                         RenderNode(
                             node = child,
-                            styleResolver = styleResolver,
+                            resolvedStyles = resolvedStyles,
                             evaluator = evaluator,
                             modifier = Modifier.fillMaxWidth(),
                             actionHandler = actionHandler,
@@ -416,7 +481,7 @@ private fun RenderSnappingGallery(
                     container.children.getOrNull(page)?.let { child ->
                         RenderNode(
                             node = child,
-                            styleResolver = styleResolver,
+                            resolvedStyles = resolvedStyles,
                             evaluator = evaluator,
                             modifier = Modifier.fillMaxHeight(),
                             actionHandler = actionHandler,
@@ -485,9 +550,8 @@ private fun RenderSnappingGallery(
 private fun RenderFreeFlowGallery(
     container: NativeDisplayContainer,
     config: GalleryConfig,
-    styleResolver: StyleResolver,
+    resolvedStyles: PersistentMap<String, Style>,
     evaluator: VariableEvaluator,
-    resolvedStyle: Style,
     modifier: Modifier = Modifier,
     actionHandler: ActionHandler? = null,
     componentListener: NativeDisplayComponentListener? = null,
@@ -499,18 +563,15 @@ private fun RenderFreeFlowGallery(
             modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(config.spacing.dp)
         ) {
-            items(container.children.size) { index ->
-                container.children.getOrNull(index)?.let { child ->
-                    // Child sizes itself via its own Layout properties
-                    RenderNode(
-                        node = child,
-                        styleResolver = styleResolver,
-                        evaluator = evaluator,
-                        modifier = Modifier,
-                        actionHandler = actionHandler,
-                        componentListener = componentListener,
-                    )
-                }
+            items(container.children, key = { it.id }) { child ->
+                RenderNode(
+                    node = child,
+                    resolvedStyles = resolvedStyles,
+                    evaluator = evaluator,
+                    modifier = Modifier,
+                    actionHandler = actionHandler,
+                    componentListener = componentListener,
+                )
             }
         }
     } else {
@@ -518,18 +579,15 @@ private fun RenderFreeFlowGallery(
             modifier = modifier.fillMaxHeight(),
             verticalArrangement = Arrangement.spacedBy(config.spacing.dp)
         ) {
-            items(container.children.size) { index ->
-                container.children.getOrNull(index)?.let { child ->
-                    // Child sizes itself via its own Layout properties
-                    RenderNode(
-                        node = child,
-                        styleResolver = styleResolver,
-                        evaluator = evaluator,
-                        modifier = Modifier,
-                        actionHandler = actionHandler,
-                        componentListener = componentListener,
-                    )
-                }
+            items(container.children, key = { it.id }) { child ->
+                RenderNode(
+                    node = child,
+                    resolvedStyles = resolvedStyles,
+                    evaluator = evaluator,
+                    modifier = Modifier,
+                    actionHandler = actionHandler,
+                    componentListener = componentListener,
+                )
             }
         }
     }
@@ -546,9 +604,8 @@ private fun RenderFreeFlowGallery(
 private fun RenderFreeFlowGridGallery(
     container: NativeDisplayContainer,
     config: GalleryConfig,
-    styleResolver: StyleResolver,
+    resolvedStyles: PersistentMap<String, Style>,
     evaluator: VariableEvaluator,
-    resolvedStyle: Style,
     modifier: Modifier = Modifier,
     actionHandler: ActionHandler? = null,
     componentListener: NativeDisplayComponentListener? = null,
@@ -579,18 +636,16 @@ private fun RenderFreeFlowGridGallery(
                 contentPadding = PaddingValues(horizontal = peekOffset),
                 horizontalArrangement = Arrangement.spacedBy(config.spacing.dp)
             ) {
-                items(container.children.size) { index ->
+                items(container.children, key = { it.id }) { child ->
                     Box(modifier = Modifier.width(itemWidth)) {
-                        container.children.getOrNull(index)?.let { child ->
-                            RenderNode(
-                                node = child,
-                                styleResolver = styleResolver,
-                                evaluator = evaluator,
-                                modifier = Modifier.fillMaxWidth(),
-                                actionHandler = actionHandler,
-                                componentListener = componentListener,
-                            )
-                        }
+                        RenderNode(
+                            node = child,
+                            resolvedStyles = resolvedStyles,
+                            evaluator = evaluator,
+                            modifier = Modifier.fillMaxWidth(),
+                            actionHandler = actionHandler,
+                            componentListener = componentListener,
+                        )
                     }
                 }
             }
@@ -614,18 +669,16 @@ private fun RenderFreeFlowGridGallery(
                 contentPadding = PaddingValues(vertical = peekOffset),
                 verticalArrangement = Arrangement.spacedBy(config.spacing.dp)
             ) {
-                items(container.children.size) { index ->
+                items(container.children, key = { it.id }) { child ->
                     Box(modifier = Modifier.height(itemHeight)) {
-                        container.children.getOrNull(index)?.let { child ->
-                            RenderNode(
-                                node = child,
-                                styleResolver = styleResolver,
-                                evaluator = evaluator,
-                                modifier = Modifier.fillMaxHeight(),
-                                actionHandler = actionHandler,
-                                componentListener = componentListener,
-                            )
-                        }
+                        RenderNode(
+                            node = child,
+                            resolvedStyles = resolvedStyles,
+                            evaluator = evaluator,
+                            modifier = Modifier.fillMaxHeight(),
+                            actionHandler = actionHandler,
+                            componentListener = componentListener,
+                        )
                     }
                 }
             }
@@ -1123,7 +1176,7 @@ private fun VideoPlayerWithMedia3(
                 try {
                     isPlaying = player.isPlaying
                     isMuted = player.volume == 0f
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     // Player might be released
                     break
                 }
@@ -1352,9 +1405,9 @@ private fun Modifier.applySizing(layout: Layout?): Modifier {
 
     // Apply width
     layout.width?.let { width ->
-        modifier = when {
-            width.special == SpecialDimension.MATCH_PARENT -> modifier.fillMaxWidth()
-            width.special == SpecialDimension.WRAP_CONTENT -> modifier.wrapContentWidth()
+        modifier = when (width.special) {
+            SpecialDimension.MATCH_PARENT -> modifier.fillMaxWidth()
+            SpecialDimension.WRAP_CONTENT -> modifier.wrapContentWidth()
             else -> when (width.unit) {
                 DimensionUnit.DP -> modifier.width(width.value.dp)
                 DimensionUnit.PERCENT -> modifier.fillMaxWidth(width.value / 100f)
@@ -1366,9 +1419,9 @@ private fun Modifier.applySizing(layout: Layout?): Modifier {
 
     // Apply height
     layout.height?.let { height ->
-        modifier = when {
-            height.special == SpecialDimension.MATCH_PARENT -> modifier.fillMaxHeight()
-            height.special == SpecialDimension.WRAP_CONTENT -> modifier.wrapContentHeight()
+        modifier = when (height.special) {
+            SpecialDimension.MATCH_PARENT -> modifier.fillMaxHeight()
+            SpecialDimension.WRAP_CONTENT -> modifier.wrapContentHeight()
             else -> when (height.unit) {
                 DimensionUnit.DP -> modifier.height(height.value.dp)
                 DimensionUnit.PERCENT -> modifier.fillMaxHeight(height.value / 100f)
@@ -1631,7 +1684,7 @@ fun parseColor(colorString: String?): Color? {
             }
             else -> null
         }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         null
     }
 }

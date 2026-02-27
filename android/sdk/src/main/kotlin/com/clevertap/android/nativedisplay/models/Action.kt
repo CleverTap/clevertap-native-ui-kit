@@ -1,5 +1,7 @@
 package com.clevertap.android.nativedisplay.models
 
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
@@ -8,6 +10,7 @@ import kotlinx.serialization.json.JsonElement
  * Represents different types of actions that can be triggered by user interactions
  * in the Native Display System.
  */
+@Stable
 @Serializable
 sealed class Action {
     
@@ -18,6 +21,7 @@ sealed class Action {
      * @property openInBrowser If true, opens in external browser. If false, uses Chrome Custom Tab
      * @property customTabsEnabled If true and openInBrowser is false, uses Chrome Custom Tabs
      */
+    @Immutable
     @Serializable
     @SerialName("open_url")
     data class OpenUrl(
@@ -34,6 +38,7 @@ sealed class Action {
      * @property value The data associated with this action (can be any JSON type)
      * @property metadata Optional additional metadata for the action
      */
+    @Immutable
     @Serializable
     @SerialName("custom")
     data class CustomAction(
@@ -48,6 +53,7 @@ sealed class Action {
      * @property destination The navigation destination identifier
      * @property params Optional navigation parameters
      */
+    @Immutable
     @Serializable
     @SerialName("navigate")
     data class Navigate(
@@ -61,6 +67,7 @@ sealed class Action {
      * @property eventName The name of the event to track
      * @property properties Optional event properties
      */
+    @Immutable
     @Serializable
     @SerialName("event")
     data class TrackEvent(
@@ -74,6 +81,7 @@ sealed class Action {
      * @property actions List of actions to execute
      * @property executionMode Whether to execute actions sequentially or in parallel
      */
+    @Immutable
     @Serializable
     @SerialName("composite")
     data class CompositeAction(

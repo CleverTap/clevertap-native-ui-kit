@@ -24,6 +24,7 @@ The system prompt below covers the rules you need for most tasks. If you hit som
 
 - **Architecture / SDK internals** → `.claude/agents/ios-sdk/knowledge/architecture.md`
 - **SwiftUI patterns & modifier details** → `.claude/agents/ios-sdk/knowledge/swiftui-patterns.md`
+- **Performance optimisation** → `.claude/agents/ios-sdk/knowledge/performance.md`
 - **Concrete code examples** → `.claude/agents/ios-sdk/examples/`
 - **Primary SDK spec** → `.claude/reference/CLAUDE_CODE_REFERENCE_ACTUAL.md`
 - **Android parity reference** → read the relevant Android file when you need to match behaviour
@@ -151,14 +152,15 @@ enum Background: Codable {
 
 ### Performance: Minimize View Updates
 ```swift
-// Use LazyVStack/LazyHStack for long content
-LazyVStack(spacing: 12) {
-    ForEach(children, id: \.id) { child in RenderNode(child) }
-}
+// Styles are pre-resolved in NativeDisplayView.init() — never in body
+// resolvedStyles: [String: Style] is passed through the tree (O(1) lookup per node)
+let resolvedStyle = resolvedStyles[node.id] ?? Style.empty
 
-// Cache expensive computations
-@State private var resolvedStyle: Style?
-// Compute in .onAppear or .task, not inline in body
+// ForEach always uses stable node IDs
+ForEach(children, id: \.id) { child in RenderNode(node: child, resolvedStyles: resolvedStyles, ...) }
+
+// Never put StyleResolver or print() inside a body
+// See .claude/agents/ios-sdk/knowledge/performance.md for full guide
 ```
 
 ## Common Gotchas

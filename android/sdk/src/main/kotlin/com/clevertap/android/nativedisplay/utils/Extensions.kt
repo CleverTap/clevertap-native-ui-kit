@@ -4,7 +4,7 @@ import com.clevertap.nativedisplay.utils.SDUIRecyclerViewConfig
 import android.content.Context
 import android.util.TypedValue
 import androidx.recyclerview.widget.RecyclerView
-import com.clevertap.nativedisplay.view.NativeDisplayViewGroup
+import com.clevertap.android.nativedisplay.view.NativeDisplayViewGroup
 
 /**
  * Extension functions for easier SDUI integration.

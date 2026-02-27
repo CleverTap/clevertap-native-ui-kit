@@ -1,5 +1,6 @@
 package com.clevertap.android.nativedisplay.models
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -7,11 +8,13 @@ import kotlinx.serialization.Serializable
  * Background configuration for elements and containers.
  * Supports various background types from simple colors to complex animations.
  */
+@Immutable
 @Serializable
 sealed class Background {
     /**
      * Solid color background.
      */
+    @Immutable
     @Serializable
     @SerialName("solid")
     data class Solid(
@@ -23,6 +26,7 @@ sealed class Background {
      * Linear gradient background.
      * Colors blend in a straight line at the specified angle.
      */
+    @Immutable
     @Serializable
     @SerialName("linear_gradient")
     data class LinearGradient(
@@ -38,6 +42,7 @@ sealed class Background {
      * Radial gradient background.
      * Colors blend from center outward in a circular pattern.
      */
+    @Immutable
     @Serializable
     @SerialName("radial_gradient")
     data class RadialGradient(
@@ -57,6 +62,7 @@ sealed class Background {
      * Sweep/Conic gradient background.
      * Colors blend in a circular sweep pattern.
      */
+    @Immutable
     @Serializable
     @SerialName("sweep_gradient")
     data class SweepGradient(
@@ -76,6 +82,7 @@ sealed class Background {
      * Image background.
      * Static image with various fit modes and effects.
      */
+    @Immutable
     @Serializable
     @SerialName("image")
     data class Image(
@@ -97,6 +104,7 @@ sealed class Background {
      * Shimmer/shine effect background.
      * Light sweeps across background - great for loading states.
      */
+    @Immutable
     @Serializable
     @SerialName("shimmer")
     data class Shimmer(
@@ -116,6 +124,7 @@ sealed class Background {
      * Animated gradient background.
      * Gradient with animated color transitions.
      */
+    @Immutable
     @Serializable
     @SerialName("animated_gradient")
     data class AnimatedGradient(
@@ -137,6 +146,7 @@ sealed class Background {
      * Pulse/breathing effect background.
      * Background opacity or color pulses.
      */
+    @Immutable
     @Serializable
     @SerialName("pulse")
     data class Pulse(
@@ -156,6 +166,7 @@ sealed class Background {
      * Pattern background.
      * Repeating visual pattern.
      */
+    @Immutable
     @Serializable
     @SerialName("pattern")
     data class Pattern(
@@ -177,6 +188,7 @@ sealed class Background {
      * Particle effect background.
      * Moving particles in background.
      */
+    @Immutable
     @Serializable
     @SerialName("particles")
     data class Particles(
@@ -198,6 +210,7 @@ sealed class Background {
      * Layered background.
      * Multiple background layers stacked.
      */
+    @Immutable
     @Serializable
     @SerialName("layered")
     data class Layered(
