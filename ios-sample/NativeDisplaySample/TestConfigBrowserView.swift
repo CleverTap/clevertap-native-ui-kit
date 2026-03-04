@@ -217,7 +217,10 @@ struct ConfigRenderView: View {
                 GeometryReader { geometry in
                     ScrollView {
                         NativeDisplayView(config: config)
-                            .environment(\.nativeDisplayParentSize, geometry.size)
+                            .environment(\.nativeDisplayParentSize, CGSize(
+                                width: geometry.size.width - 32,
+                                height: geometry.size.height
+                            ))
                             .padding(16)
                             // Accessibility identifier for XCUITest
                             .accessibilityIdentifier("native-display-view")

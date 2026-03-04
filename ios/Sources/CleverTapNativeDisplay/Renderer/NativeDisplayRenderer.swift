@@ -295,6 +295,11 @@ struct RenderContainer: View {
                     height = parentSize.height * h.value / 100
                 }
             }
+        } else if let aspectRatio = layout?.aspectRatio, aspectRatio > 0 {
+            // No explicit height — derive from aspect ratio using the already-resolved width.
+            // This mirrors LayoutModifier.resolvedDimensions() so children receive a
+            // parentSize that matches the container's actual rendered height.
+            height = width / aspectRatio
         } else {
             height = parentSize.height
         }
@@ -828,23 +833,46 @@ struct LayoutModifier: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        let width = calculateWidth()
-        let height = calculateHeight()
+        let dims = resolvedDimensions()
         let maxWidth = calculateMaxWidth()
         let maxHeight = calculateMaxHeight()
-        let aspectRatio = calculateAspectRatio()
 
         // Apply sizing only - offset will be applied after decorations
-        if let ratio = aspectRatio {
+        if dims.useAspectRatioModifier, let ratio = calculateAspectRatio() {
             content
-                .frame(width: width, height: height)
+                .frame(width: dims.width, height: dims.height)
                 .aspectRatio(ratio, contentMode: .fit)
                 .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: .topLeading)
         } else {
             content
-                .frame(width: width, height: height)
+                .frame(width: dims.width, height: dims.height)
                 .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: .topLeading)
         }
+    }
+
+    /// Resolves the final width and height, deriving the missing dimension from aspect ratio
+    /// when the other dimension is a known value. This matches Android's behavior where
+    /// Modifier.aspectRatio with a fixed-width constraint gives height = width / ratio.
+    /// Only uses the .aspectRatio() SwiftUI modifier as a last resort when both dimensions
+    /// are unresolved (match_parent), since pixel size is unknown at calculation time.
+    private func resolvedDimensions() -> (width: CGFloat?, height: CGFloat?, useAspectRatioModifier: Bool) {
+        let explicitWidth = calculateWidth()
+        let explicitHeight = calculateHeight()
+        guard let ratio = calculateAspectRatio() else {
+            return (explicitWidth, explicitHeight, false)
+        }
+        if let w = explicitWidth, explicitHeight == nil {
+            // Width known → height = width / ratio (common case: percent width + aspectRatio)
+            return (w, w / ratio, false)
+        }
+        if let h = explicitHeight, explicitWidth == nil {
+            // Height known → width = height * ratio
+            return (h * ratio, h, false)
+        }
+        // Both unresolved (match_parent) → fall back to SwiftUI modifier
+        // Both explicit → aspect ratio ignored (matches Android behaviour)
+        let useModifier = explicitWidth == nil && explicitHeight == nil
+        return (explicitWidth, explicitHeight, useModifier)
     }
 
     private func calculateWidth() -> CGFloat? {

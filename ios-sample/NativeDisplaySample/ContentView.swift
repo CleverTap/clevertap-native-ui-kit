@@ -207,7 +207,10 @@ struct ArrangementDemoView: View {
                                     .edgesIgnoringSafeArea(.all)
                                 ScrollView {
                                     NativeDisplayView(config: config)
-                                        .environment(\.nativeDisplayParentSize, geometry.size)
+                                        .environment(\.nativeDisplayParentSize, CGSize(
+                                            width: geometry.size.width - 32,
+                                            height: geometry.size.height
+                                        ))
                                         .frame(maxWidth: .infinity)
                                         .padding(16)
                                 }
@@ -375,7 +378,10 @@ struct HomeScreenView: View {
                                     config: config,
                                     componentListener: HomeScreenComponentListener()
                                 )
-                                .environment(\.nativeDisplayParentSize, geometry.size)
+                                .environment(\.nativeDisplayParentSize, CGSize(
+                                    width: geometry.size.width - 32,
+                                    height: geometry.size.height
+                                ))
                                 .padding(16)
                             }
                         }
@@ -540,7 +546,10 @@ struct AnimationDemoView: View {
 
                                 ScrollView {
                                     NativeDisplayView(config: config)
-                                        .environment(\.nativeDisplayParentSize, geometry.size)
+                                        .environment(\.nativeDisplayParentSize, CGSize(
+                                            width: geometry.size.width - 32,
+                                            height: geometry.size.height
+                                        ))
                                         .frame(maxWidth: .infinity)
                                         .padding(16)
                                 }

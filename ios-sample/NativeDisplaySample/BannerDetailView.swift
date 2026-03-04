@@ -136,7 +136,7 @@ struct BannerDetailView: View {
                                 componentListener: viewModel.componentListener
                             )
                             .environment(\.nativeDisplayParentSize, CGSize(
-                                width: availableWidth,
+                                width: availableWidth - 32,
                                 height: availableHeight
                             ))
                             .frame(maxWidth: .infinity)
