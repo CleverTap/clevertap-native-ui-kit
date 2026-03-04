@@ -49,8 +49,6 @@ import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -217,7 +215,6 @@ fun RenderNode(
     val isClientInterested = componentListener?.getInterestedNodeIds()?.contains(node.id) ?: (componentListener != null)  // If getInterestedNodeIds returns null, listen to all
 
     val shouldApplyClickable = hasServerActions || isClientInterested
-    val isButton = (node as? NativeDisplayElement)?.elementType == ElementType.BUTTON
 
     // Apply modifiers in correct order
     // IMPORTANT: Offset must be applied BEFORE sizing so percentage calculations
@@ -228,7 +225,7 @@ fun RenderNode(
     finalModifier = finalModifier.applyEntranceAnimation(node.animation)
 
     // Apply clickable only when needed (server actions exist OR client is interested)
-    if (actionHandler != null && !isButton && shouldApplyClickable) {
+    if (actionHandler != null && shouldApplyClickable) {
         finalModifier = finalModifier.applyClickable(
             nodeId = node.id,
             actions = node.actions,
@@ -934,26 +931,15 @@ private fun RenderElement(
             val buttonText = element.bindings["text"]?.let {
                 evaluator.evaluateString(it)
             } ?: "Button"
-
             val textProps = resolvedStyle.extractTextProperties()
-            val visualProps = resolvedStyle.extractVisualProperties()
-            val borderProps = resolvedStyle.extractBorderProperties()
 
-            Button(
-                onClick = { element.actions?.get(ActionTriggers.ON_CLICK)?.let { action ->
-                    actionHandler?.handleAction(action = action, nodeId = element.id)
-                } },
+            Box(
                 modifier = elementModifier,
-                contentPadding = PaddingValues(0.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (visualProps.background != null) Color.Transparent
-                        else parseColor(visualProps.backgroundColor) ?: Color(0xFF007AFF),
-                    contentColor = parseColor(textProps.color) ?: Color.White
-                ),
-                shape = RoundedCornerShape((borderProps.radius ?: 8f).dp)
+                contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = buttonText,
+                    color = parseColor(textProps.color) ?: Color.White,
                     fontSize = (textProps.size ?: 16f).sp,
                     fontWeight = resolveFontWeight(textProps.weight),
                     fontStyle = resolveFontStyle(textProps.style),

@@ -456,7 +456,7 @@ struct RenderContainer: View {
         
         switch arrangement.strategy {
         case .spaced:
-            HStack(alignment: .center, spacing: arrangement.spacing ?? 0) {
+            HStack(alignment: .top, spacing: arrangement.spacing ?? 0) {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
@@ -470,7 +470,7 @@ struct RenderContainer: View {
             }
             
         case .spaceBetween:
-            HStack(alignment: .center, spacing: 0) {
+            HStack(alignment: .top, spacing: 0) {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
@@ -488,7 +488,7 @@ struct RenderContainer: View {
             }
             
         case .spaceEvenly:
-            HStack(alignment: .center, spacing: 0) {
+            HStack(alignment: .top, spacing: 0) {
                 Spacer()
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
@@ -504,7 +504,7 @@ struct RenderContainer: View {
             }
             
         case .spaceAround:
-            HStack(alignment: .center, spacing: 0) {
+            HStack(alignment: .top, spacing: 0) {
                 Spacer(minLength: 0)
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
@@ -525,7 +525,7 @@ struct RenderContainer: View {
             }
             
         case .start:
-            HStack(alignment: .center, spacing: 0) {
+            HStack(alignment: .top, spacing: 0) {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
@@ -540,7 +540,7 @@ struct RenderContainer: View {
             }
             
         case .center:
-            HStack(alignment: .center, spacing: 0) {
+            HStack(alignment: .top, spacing: 0) {
                 Spacer()
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
@@ -556,7 +556,7 @@ struct RenderContainer: View {
             }
             
         case .end:
-            HStack(alignment: .center, spacing: 0) {
+            HStack(alignment: .top, spacing: 0) {
                 Spacer(minLength: 0)
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
@@ -621,14 +621,42 @@ struct RenderElement: View {
     private func renderText() -> some View {
         let text = element.bindings["text"].map { evaluator.evaluateString($0) } ?? ""
         let textProps = resolvedStyle.extractTextProperties()
+        let textAlignment = resolveTextAlign(textProps.align)
 
-        Text(text)
+        // wrap_content elements must NOT expand — the element IS its text width.
+        // All other width modes (match_parent, fixed dp, percent) need the Text to fill
+        // the allocated width so that .multilineTextAlignment() is visually effective.
+        // Without this, a 50pt "Hello" placed in a 300pt frame is always left-anchored
+        // regardless of textAlign, because alignment happens within the Text's own bounds.
+        let isWrapContent = element.layout?.width?.special == .wrapContent
+
+        // Map TextAlignment → Alignment for the frame's horizontal axis.
+        // Vertical positioning is handled by LayoutModifier's topLeading alignment.
+        // Computed via closure so the switch is not inside the @ViewBuilder context.
+        let frameAlignment: Alignment = {
+            switch textAlignment {
+            case .center:   return .center
+            case .trailing: return .trailing
+            default:        return .leading
+            }
+        }()
+
+        // Build the styled Text as a Text value (all Text modifiers return Text).
+        let coreText = Text(text)
             .foregroundColor(ColorParser.parse(textProps.color) ?? .primary)
             .font(.system(size: textProps.size ?? 14))
             .fontWeight(resolveFontWeight(textProps.weight))
-            .multilineTextAlignment(resolveTextAlign(textProps.align))
+            .multilineTextAlignment(textAlignment)
             .lineSpacing(max(0, (textProps.lineHeight ?? 0) - (textProps.size ?? 14)))
-            .fixedSize(horizontal: false, vertical: true)
+
+        if isWrapContent {
+            coreText
+                .fixedSize(horizontal: false, vertical: true)
+        } else {
+            coreText
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: frameAlignment)
+        }
     }
     
     @ViewBuilder
@@ -734,6 +762,8 @@ struct RenderElement: View {
                 actionHandler?.handleAction(onClick, nodeId: element.id, interactionType: .click)
             }
         }) {
+            // Fill the allocated frame so the tappable area covers the full element bounds.
+            // Text is centered within the button — center alignment is the conventional default for buttons.
             Text(buttonText)
                 .foregroundColor(ColorParser.parse(textProps.color) ?? .white)
                 .font(.system(size: textProps.size ?? 16))
@@ -741,9 +771,11 @@ struct RenderElement: View {
                 .multilineTextAlignment(resolveTextAlign(textProps.align))
                 .lineSpacing(max(0, (textProps.lineHeight ?? 0) - (textProps.size ?? 16)))
                 .lineLimit(textProps.maxLines)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
+        .buttonStyle(.plain)
     }
-    
+
     @ViewBuilder
     private func renderVideo() -> some View {
         let videoUrl = element.bindings["url"].map { evaluator.evaluateString($0) } ?? ""
@@ -838,14 +870,16 @@ struct LayoutModifier: ViewModifier {
         let maxHeight = calculateMaxHeight()
 
         // Apply sizing only - offset will be applied after decorations
+        // alignment: .topLeading ensures content anchors to top-start when the frame
+        // is larger than the content's natural size (matches Android's default top-start behaviour)
         if dims.useAspectRatioModifier, let ratio = calculateAspectRatio() {
             content
-                .frame(width: dims.width, height: dims.height)
+                .frame(width: dims.width, height: dims.height, alignment: .topLeading)
                 .aspectRatio(ratio, contentMode: .fit)
                 .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: .topLeading)
         } else {
             content
-                .frame(width: dims.width, height: dims.height)
+                .frame(width: dims.width, height: dims.height, alignment: .topLeading)
                 .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: .topLeading)
         }
     }
