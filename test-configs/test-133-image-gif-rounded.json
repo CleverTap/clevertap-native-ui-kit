@@ -1,0 +1,55 @@
+{
+  "theme": {
+    "id": "test-133"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "aspectRatio": 1.0
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5",
+      "borderRadius": 12
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "gif_image",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "height": {"value": 75, "unit": "percent"},
+          "offset": {"x": 5, "y": 5, "unit": "percent"}
+        },
+        "imageConfig": {
+          "animated": true
+        }
+      },
+      {
+        "type": "element",
+        "id": "caption",
+        "elementType": "text",
+        "bindings": {
+          "text": "Animated GIF Demo"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "offset": {"x": 5, "y": 82, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 14,
+          "fontWeight": "bold",
+          "lineHeight": 20,
+          "textColor": "#333333",
+          "textAlign": "center"
+        }
+      }
+    ]
+  }
+}

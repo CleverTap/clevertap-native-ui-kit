@@ -1,0 +1,39 @@
+{
+  "theme": {
+    "id": "test-139"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#1A1A2E"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "cta_button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Get Started"
+        },
+        "layout": {
+          "width": {"value": 60, "unit": "percent"},
+          "height": {"value": 15, "unit": "percent"},
+          "offset": {"x": 20, "y": 42, "unit": "percent"}
+        },
+        "style": {
+          "backgroundColor": "#2196F3",
+          "textColor": "#FFFFFF",
+          "fontSize": 16,
+          "lineHeight": 22,
+          "borderRadius": 8
+        }
+      }
+    ]
+  }
+}

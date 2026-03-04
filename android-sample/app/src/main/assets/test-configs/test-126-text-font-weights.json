@@ -1,0 +1,91 @@
+{
+  "theme": {
+    "id": "test-126"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#1A1A2E"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "text_light",
+        "elementType": "text",
+        "bindings": {
+          "text": "Light: 300 weight text"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "offset": {"x": 5, "y": 10, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 16,
+          "fontWeight": "light",
+          "lineHeight": 22,
+          "textColor": "#CCCCCC"
+        }
+      },
+      {
+        "type": "element",
+        "id": "text_normal",
+        "elementType": "text",
+        "bindings": {
+          "text": "Normal: 400 weight text"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "offset": {"x": 5, "y": 30, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 16,
+          "fontWeight": "normal",
+          "lineHeight": 22,
+          "textColor": "#CCCCCC"
+        }
+      },
+      {
+        "type": "element",
+        "id": "text_medium",
+        "elementType": "text",
+        "bindings": {
+          "text": "Medium: 500 weight text"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "offset": {"x": 5, "y": 55, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 16,
+          "fontWeight": "medium",
+          "lineHeight": 22,
+          "textColor": "#FFFFFF"
+        }
+      },
+      {
+        "type": "element",
+        "id": "text_bold",
+        "elementType": "text",
+        "bindings": {
+          "text": "Bold: 700 weight text"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "offset": {"x": 5, "y": 75, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 16,
+          "fontWeight": "bold",
+          "lineHeight": 22,
+          "textColor": "#FFFFFF"
+        }
+      }
+    ]
+  }
+}

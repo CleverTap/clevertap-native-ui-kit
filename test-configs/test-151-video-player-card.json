@@ -1,0 +1,89 @@
+{
+  "theme": {
+    "id": "test-151"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#000000"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "video",
+        "elementType": "video",
+        "bindings": {
+          "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        },
+        "layout": {
+          "width": {"value": 100, "unit": "percent"},
+          "height": {"value": 100, "unit": "percent"},
+          "offset": {"x": 0, "y": 0, "unit": "percent"}
+        },
+        "autoPlay": true,
+        "muted": true,
+        "loop": true,
+        "showControls": false,
+        "showFullscreen": false
+      },
+      {
+        "type": "container",
+        "id": "info_bar",
+        "containerType": "box",
+        "layout": {
+          "width": {"value": 100, "unit": "percent"},
+          "height": {"value": 15, "unit": "percent"},
+          "offset": {"x": 0, "y": 85, "unit": "percent"}
+        },
+        "style": {
+          "backgroundColor": "#CC000000"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "video_title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Big Buck Bunny — 2008 Blender Film"
+            },
+            "layout": {
+              "width": {"value": 70, "unit": "percent"},
+              "offset": {"x": 5, "y": 20, "unit": "percent"}
+            },
+            "style": {
+              "fontSize": 13,
+              "lineHeight": 18,
+              "textColor": "#FFFFFF"
+            }
+          }
+        ]
+      },
+      {
+        "type": "element",
+        "id": "share_button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Share"
+        },
+        "layout": {
+          "width": {"value": 15, "unit": "percent"},
+          "height": {"value": 12, "unit": "percent"},
+          "offset": {"x": 82, "y": 87, "unit": "percent"}
+        },
+        "style": {
+          "backgroundColor": "#FF6B6B",
+          "textColor": "#FFFFFF",
+          "fontSize": 12,
+          "lineHeight": 17,
+          "borderRadius": 6
+        }
+      }
+    ]
+  }
+}

@@ -9,6 +9,53 @@
 /* Begin PBXBuildFile section */
 		4113027B2F33E757004B6254 /* BannerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 411302792F33E757004B6254 /* BannerDetailView.swift */; };
 		4113027C2F33E757004B6254 /* BannerShowcaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4113027A2F33E757004B6254 /* BannerShowcaseView.swift */; };
+		414DA69B2F58032500714978 /* test-147-hero-banner-complex.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6912F58032500714978 /* test-147-hero-banner-complex.json */; };
+		414DA69C2F58032500714978 /* test-133-image-gif-rounded.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6832F58032500714978 /* test-133-image-gif-rounded.json */; };
+		414DA69D2F58032500714978 /* test-126-text-font-weights.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA67C2F58032500714978 /* test-126-text-font-weights.json */; };
+		414DA69E2F58032500714978 /* test-124-4x3-ar-text-weights.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA67A2F58032500714978 /* test-124-4x3-ar-text-weights.json */; };
+		414DA69F2F58032500714978 /* test-063-stats-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA66E2F58032500714978 /* test-063-stats-card.json */; };
+		414DA6A02F58032500714978 /* test-061-article-layout.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA66C2F58032500714978 /* test-061-article-layout.json */; };
+		414DA6A12F58032500714978 /* test-144-rounded-box-text.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA68E2F58032500714978 /* test-144-rounded-box-text.json */; };
+		414DA6A22F58032500714978 /* test-137-video-with-controls.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6872F58032500714978 /* test-137-video-with-controls.json */; };
+		414DA6A32F58032500714978 /* test-148-product-card-complex.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6922F58032500714978 /* test-148-product-card-complex.json */; };
+		414DA6A42F58032500714978 /* test-131-text-gradient.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6812F58032500714978 /* test-131-text-gradient.json */; };
+		414DA6A52F58032500714978 /* test-128-text-alignment.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA67E2F58032500714978 /* test-128-text-alignment.json */; };
+		414DA6A62F58032500714978 /* test-149-notification-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6932F58032500714978 /* test-149-notification-card.json */; };
+		414DA6A72F58032500714978 /* test-142-cta-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA68C2F58032500714978 /* test-142-cta-card.json */; };
+		414DA6A82F58032500714978 /* test-146-image-overlay-rounded.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6902F58032500714978 /* test-146-image-overlay-rounded.json */; };
+		414DA6A92F58032500714978 /* test-121-16x9-ar-image-text-button.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6772F58032500714978 /* test-121-16x9-ar-image-text-button.json */; };
+		414DA6AA2F58032500714978 /* test-136-video-autoplay-muted.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6862F58032500714978 /* test-136-video-autoplay-muted.json */; };
+		414DA6AB2F58032500714978 /* test-064-gallery-item.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA66F2F58032500714978 /* test-064-gallery-item.json */; };
+		414DA6AC2F58032500714978 /* test-145-nested-rounded-boxes.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA68F2F58032500714978 /* test-145-nested-rounded-boxes.json */; };
+		414DA6AD2F58032500714978 /* test-060-media-player.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA66B2F58032500714978 /* test-060-media-player.json */; };
+		414DA6AE2F58032500714978 /* test-130-text-maxlines-overflow.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6802F58032500714978 /* test-130-text-maxlines-overflow.json */; };
+		414DA6AF2F58032500714978 /* test-139-button-centered.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6892F58032500714978 /* test-139-button-centered.json */; };
+		414DA6B02F58032500714978 /* test-122-1x1-ar-image-badge-rounded.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6782F58032500714978 /* test-122-1x1-ar-image-badge-rounded.json */; };
+		414DA6B12F58032500714978 /* test-140-button-primary-secondary.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA68A2F58032500714978 /* test-140-button-primary-secondary.json */; };
+		414DA6B22F58032500714978 /* test-151-video-player-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6952F58032500714978 /* test-151-video-player-card.json */; };
+		414DA6B32F58032500714978 /* test-152-text-corners.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6962F58032500714978 /* test-152-text-corners.json */; };
+		414DA6B42F58032500714978 /* test-123-9x16-ar-video-caption.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6792F58032500714978 /* test-123-9x16-ar-video-caption.json */; };
+		414DA6B52F58032500714978 /* test-127-text-font-sizes.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA67D2F58032500714978 /* test-127-text-font-sizes.json */; };
+		414DA6B62F58032500714978 /* test-068-social-post.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6732F58032500714978 /* test-068-social-post.json */; };
+		414DA6B72F58032500714978 /* test-141-button-size-variants.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA68B2F58032500714978 /* test-141-button-size-variants.json */; };
+		414DA6B82F58032500714978 /* test-065-notification.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6702F58032500714978 /* test-065-notification.json */; };
+		414DA6B92F58032500714978 /* test-070-feature-showcase.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6752F58032500714978 /* test-070-feature-showcase.json */; };
+		414DA6BA2F58032500714978 /* test-062-action-sheet.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA66D2F58032500714978 /* test-062-action-sheet.json */; };
+		414DA6BB2F58032500714978 /* test-134-image-border-radius.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6842F58032500714978 /* test-134-image-border-radius.json */; };
+		414DA6BC2F58032500714978 /* test-066-pricing-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6712F58032500714978 /* test-066-pricing-card.json */; };
+		414DA6BD2F58032500714978 /* test-143-button-rounded-text.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA68D2F58032500714978 /* test-143-button-rounded-text.json */; };
+		414DA6BF2F58032500714978 /* test-150-dashboard-widget.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6942F58032500714978 /* test-150-dashboard-widget.json */; };
+		414DA6C02F58032500714978 /* test-135-images-z-order.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6852F58032500714978 /* test-135-images-z-order.json */; };
+		414DA6C12F58032500714978 /* test-153-image-clipped.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6972F58032500714978 /* test-153-image-clipped.json */; };
+		414DA6C22F58032500714978 /* test-154-nested-box-deep.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6982F58032500714978 /* test-154-nested-box-deep.json */; };
+		414DA6C32F58032500714978 /* test-138-9x16-video-button.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6882F58032500714978 /* test-138-9x16-video-button.json */; };
+		414DA6C42F58032500714978 /* test-155-all-element-types.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6992F58032500714978 /* test-155-all-element-types.json */; };
+		414DA6C52F58032500714978 /* test-067-hero-banner.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6722F58032500714978 /* test-067-hero-banner.json */; };
+		414DA6C62F58032500714978 /* test-129-text-decoration-italic.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA67F2F58032500714978 /* test-129-text-decoration-italic.json */; };
+		414DA6C72F58032500714978 /* test-132-image-fit-crop-contain.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6822F58032500714978 /* test-132-image-fit-crop-contain.json */; };
+		414DA6C82F58032500714978 /* test-125-2x1-ar-image-split-button.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA67B2F58032500714978 /* test-125-2x1-ar-image-split-button.json */; };
+		414DA6C92F58032500714978 /* test-069-settings-row.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6742F58032500714978 /* test-069-settings-row.json */; };
+		414DA6CB2F5814B300714978 /* test-156-button-backgrounds.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6CA2F5814B300714978 /* test-156-button-backgrounds.json */; };
 		417388E32F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json in Resources */ = {isa = PBXBuildFile; fileRef = 417388E22F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json */; };
 		417388E42F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json in Resources */ = {isa = PBXBuildFile; fileRef = 417388E22F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json */; };
 		41969A622EFE48010050EB83 /* arrangement_demo.json in Resources */ = {isa = PBXBuildFile; fileRef = 41969A612EFE48010050EB83 /* arrangement_demo.json */; };
@@ -58,6 +105,53 @@
 		411302992F34AC72004B6254 /* banner-08-flash-sale.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "banner-08-flash-sale.json"; sourceTree = "<group>"; };
 		4113029A2F34AC72004B6254 /* banner-09-premium-subscription.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "banner-09-premium-subscription.json"; sourceTree = "<group>"; };
 		4113029B2F34AC72004B6254 /* banner-10-welcome-onboarding.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "banner-10-welcome-onboarding.json"; sourceTree = "<group>"; };
+		414DA66B2F58032500714978 /* test-060-media-player.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-060-media-player.json"; sourceTree = "<group>"; };
+		414DA66C2F58032500714978 /* test-061-article-layout.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-061-article-layout.json"; sourceTree = "<group>"; };
+		414DA66D2F58032500714978 /* test-062-action-sheet.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-062-action-sheet.json"; sourceTree = "<group>"; };
+		414DA66E2F58032500714978 /* test-063-stats-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-063-stats-card.json"; sourceTree = "<group>"; };
+		414DA66F2F58032500714978 /* test-064-gallery-item.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-064-gallery-item.json"; sourceTree = "<group>"; };
+		414DA6702F58032500714978 /* test-065-notification.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-065-notification.json"; sourceTree = "<group>"; };
+		414DA6712F58032500714978 /* test-066-pricing-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-066-pricing-card.json"; sourceTree = "<group>"; };
+		414DA6722F58032500714978 /* test-067-hero-banner.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-067-hero-banner.json"; sourceTree = "<group>"; };
+		414DA6732F58032500714978 /* test-068-social-post.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-068-social-post.json"; sourceTree = "<group>"; };
+		414DA6742F58032500714978 /* test-069-settings-row.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-069-settings-row.json"; sourceTree = "<group>"; };
+		414DA6752F58032500714978 /* test-070-feature-showcase.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-070-feature-showcase.json"; sourceTree = "<group>"; };
+		414DA6772F58032500714978 /* test-121-16x9-ar-image-text-button.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-121-16x9-ar-image-text-button.json"; sourceTree = "<group>"; };
+		414DA6782F58032500714978 /* test-122-1x1-ar-image-badge-rounded.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-122-1x1-ar-image-badge-rounded.json"; sourceTree = "<group>"; };
+		414DA6792F58032500714978 /* test-123-9x16-ar-video-caption.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-123-9x16-ar-video-caption.json"; sourceTree = "<group>"; };
+		414DA67A2F58032500714978 /* test-124-4x3-ar-text-weights.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-124-4x3-ar-text-weights.json"; sourceTree = "<group>"; };
+		414DA67B2F58032500714978 /* test-125-2x1-ar-image-split-button.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-125-2x1-ar-image-split-button.json"; sourceTree = "<group>"; };
+		414DA67C2F58032500714978 /* test-126-text-font-weights.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-126-text-font-weights.json"; sourceTree = "<group>"; };
+		414DA67D2F58032500714978 /* test-127-text-font-sizes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-127-text-font-sizes.json"; sourceTree = "<group>"; };
+		414DA67E2F58032500714978 /* test-128-text-alignment.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-128-text-alignment.json"; sourceTree = "<group>"; };
+		414DA67F2F58032500714978 /* test-129-text-decoration-italic.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-129-text-decoration-italic.json"; sourceTree = "<group>"; };
+		414DA6802F58032500714978 /* test-130-text-maxlines-overflow.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-130-text-maxlines-overflow.json"; sourceTree = "<group>"; };
+		414DA6812F58032500714978 /* test-131-text-gradient.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-131-text-gradient.json"; sourceTree = "<group>"; };
+		414DA6822F58032500714978 /* test-132-image-fit-crop-contain.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-132-image-fit-crop-contain.json"; sourceTree = "<group>"; };
+		414DA6832F58032500714978 /* test-133-image-gif-rounded.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-133-image-gif-rounded.json"; sourceTree = "<group>"; };
+		414DA6842F58032500714978 /* test-134-image-border-radius.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-134-image-border-radius.json"; sourceTree = "<group>"; };
+		414DA6852F58032500714978 /* test-135-images-z-order.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-135-images-z-order.json"; sourceTree = "<group>"; };
+		414DA6862F58032500714978 /* test-136-video-autoplay-muted.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-136-video-autoplay-muted.json"; sourceTree = "<group>"; };
+		414DA6872F58032500714978 /* test-137-video-with-controls.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-137-video-with-controls.json"; sourceTree = "<group>"; };
+		414DA6882F58032500714978 /* test-138-9x16-video-button.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-138-9x16-video-button.json"; sourceTree = "<group>"; };
+		414DA6892F58032500714978 /* test-139-button-centered.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-139-button-centered.json"; sourceTree = "<group>"; };
+		414DA68A2F58032500714978 /* test-140-button-primary-secondary.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-140-button-primary-secondary.json"; sourceTree = "<group>"; };
+		414DA68B2F58032500714978 /* test-141-button-size-variants.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-141-button-size-variants.json"; sourceTree = "<group>"; };
+		414DA68C2F58032500714978 /* test-142-cta-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-142-cta-card.json"; sourceTree = "<group>"; };
+		414DA68D2F58032500714978 /* test-143-button-rounded-text.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-143-button-rounded-text.json"; sourceTree = "<group>"; };
+		414DA68E2F58032500714978 /* test-144-rounded-box-text.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-144-rounded-box-text.json"; sourceTree = "<group>"; };
+		414DA68F2F58032500714978 /* test-145-nested-rounded-boxes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-145-nested-rounded-boxes.json"; sourceTree = "<group>"; };
+		414DA6902F58032500714978 /* test-146-image-overlay-rounded.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-146-image-overlay-rounded.json"; sourceTree = "<group>"; };
+		414DA6912F58032500714978 /* test-147-hero-banner-complex.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-147-hero-banner-complex.json"; sourceTree = "<group>"; };
+		414DA6922F58032500714978 /* test-148-product-card-complex.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-148-product-card-complex.json"; sourceTree = "<group>"; };
+		414DA6932F58032500714978 /* test-149-notification-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-149-notification-card.json"; sourceTree = "<group>"; };
+		414DA6942F58032500714978 /* test-150-dashboard-widget.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-150-dashboard-widget.json"; sourceTree = "<group>"; };
+		414DA6952F58032500714978 /* test-151-video-player-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-151-video-player-card.json"; sourceTree = "<group>"; };
+		414DA6962F58032500714978 /* test-152-text-corners.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-152-text-corners.json"; sourceTree = "<group>"; };
+		414DA6972F58032500714978 /* test-153-image-clipped.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-153-image-clipped.json"; sourceTree = "<group>"; };
+		414DA6982F58032500714978 /* test-154-nested-box-deep.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-154-nested-box-deep.json"; sourceTree = "<group>"; };
+		414DA6992F58032500714978 /* test-155-all-element-types.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-155-all-element-types.json"; sourceTree = "<group>"; };
+		414DA6CA2F5814B300714978 /* test-156-button-backgrounds.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-156-button-backgrounds.json"; sourceTree = "<group>"; };
 		417388E22F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-091-offset-percent-box-basic.json"; sourceTree = "<group>"; };
 		41969A612EFE48010050EB83 /* arrangement_demo.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = arrangement_demo.json; sourceTree = "<group>"; };
 		41969A722F0E6A4B0050EB83 /* animation_container_and_children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = animation_container_and_children.json; sourceTree = "<group>"; };
@@ -114,6 +208,60 @@
 			path = Banners;
 			sourceTree = "<group>";
 		};
+		414DA69A2F58032500714978 /* TestConfigs */ = {
+			isa = PBXGroup;
+			children = (
+				414DA6CA2F5814B300714978 /* test-156-button-backgrounds.json */,
+				414DA66B2F58032500714978 /* test-060-media-player.json */,
+				414DA66C2F58032500714978 /* test-061-article-layout.json */,
+				414DA66D2F58032500714978 /* test-062-action-sheet.json */,
+				414DA66E2F58032500714978 /* test-063-stats-card.json */,
+				414DA66F2F58032500714978 /* test-064-gallery-item.json */,
+				414DA6702F58032500714978 /* test-065-notification.json */,
+				414DA6712F58032500714978 /* test-066-pricing-card.json */,
+				414DA6722F58032500714978 /* test-067-hero-banner.json */,
+				414DA6732F58032500714978 /* test-068-social-post.json */,
+				414DA6742F58032500714978 /* test-069-settings-row.json */,
+				414DA6752F58032500714978 /* test-070-feature-showcase.json */,
+				414DA6772F58032500714978 /* test-121-16x9-ar-image-text-button.json */,
+				414DA6782F58032500714978 /* test-122-1x1-ar-image-badge-rounded.json */,
+				414DA6792F58032500714978 /* test-123-9x16-ar-video-caption.json */,
+				414DA67A2F58032500714978 /* test-124-4x3-ar-text-weights.json */,
+				414DA67B2F58032500714978 /* test-125-2x1-ar-image-split-button.json */,
+				414DA67C2F58032500714978 /* test-126-text-font-weights.json */,
+				414DA67D2F58032500714978 /* test-127-text-font-sizes.json */,
+				414DA67E2F58032500714978 /* test-128-text-alignment.json */,
+				414DA67F2F58032500714978 /* test-129-text-decoration-italic.json */,
+				414DA6802F58032500714978 /* test-130-text-maxlines-overflow.json */,
+				414DA6812F58032500714978 /* test-131-text-gradient.json */,
+				414DA6822F58032500714978 /* test-132-image-fit-crop-contain.json */,
+				414DA6832F58032500714978 /* test-133-image-gif-rounded.json */,
+				414DA6842F58032500714978 /* test-134-image-border-radius.json */,
+				414DA6852F58032500714978 /* test-135-images-z-order.json */,
+				414DA6862F58032500714978 /* test-136-video-autoplay-muted.json */,
+				414DA6872F58032500714978 /* test-137-video-with-controls.json */,
+				414DA6882F58032500714978 /* test-138-9x16-video-button.json */,
+				414DA6892F58032500714978 /* test-139-button-centered.json */,
+				414DA68A2F58032500714978 /* test-140-button-primary-secondary.json */,
+				414DA68B2F58032500714978 /* test-141-button-size-variants.json */,
+				414DA68C2F58032500714978 /* test-142-cta-card.json */,
+				414DA68D2F58032500714978 /* test-143-button-rounded-text.json */,
+				414DA68E2F58032500714978 /* test-144-rounded-box-text.json */,
+				414DA68F2F58032500714978 /* test-145-nested-rounded-boxes.json */,
+				414DA6902F58032500714978 /* test-146-image-overlay-rounded.json */,
+				414DA6912F58032500714978 /* test-147-hero-banner-complex.json */,
+				414DA6922F58032500714978 /* test-148-product-card-complex.json */,
+				414DA6932F58032500714978 /* test-149-notification-card.json */,
+				414DA6942F58032500714978 /* test-150-dashboard-widget.json */,
+				414DA6952F58032500714978 /* test-151-video-player-card.json */,
+				414DA6962F58032500714978 /* test-152-text-corners.json */,
+				414DA6972F58032500714978 /* test-153-image-clipped.json */,
+				414DA6982F58032500714978 /* test-154-nested-box-deep.json */,
+				414DA6992F58032500714978 /* test-155-all-element-types.json */,
+			);
+			path = TestConfigs;
+			sourceTree = "<group>";
+		};
 		GRP_APP /* NativeDisplaySample */ = {
 			isa = PBXGroup;
 			children = (
@@ -143,6 +291,7 @@
 		GRP_RES /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				414DA69A2F58032500714978 /* TestConfigs */,
 				4113029C2F34AC72004B6254 /* Banners */,
 				41969A722F0E6A4B0050EB83 /* animation_container_and_children.json */,
 				41969A732F0E6A4B0050EB83 /* animation_container_fade.json */,
@@ -265,9 +414,56 @@
 				41C5EB1F2F3B40460066BE34 /* banner-01-hero-summer-sale.json in Resources */,
 				41C5EB202F3B40460066BE34 /* banner-02-product-iphone.json in Resources */,
 				41C5EB212F3B40460066BE34 /* banner-03-announcement-update.json in Resources */,
+				414DA69B2F58032500714978 /* test-147-hero-banner-complex.json in Resources */,
+				414DA69C2F58032500714978 /* test-133-image-gif-rounded.json in Resources */,
+				414DA69D2F58032500714978 /* test-126-text-font-weights.json in Resources */,
+				414DA69E2F58032500714978 /* test-124-4x3-ar-text-weights.json in Resources */,
+				414DA69F2F58032500714978 /* test-063-stats-card.json in Resources */,
+				414DA6A02F58032500714978 /* test-061-article-layout.json in Resources */,
+				414DA6A12F58032500714978 /* test-144-rounded-box-text.json in Resources */,
+				414DA6A22F58032500714978 /* test-137-video-with-controls.json in Resources */,
+				414DA6A32F58032500714978 /* test-148-product-card-complex.json in Resources */,
+				414DA6A42F58032500714978 /* test-131-text-gradient.json in Resources */,
+				414DA6A52F58032500714978 /* test-128-text-alignment.json in Resources */,
+				414DA6A62F58032500714978 /* test-149-notification-card.json in Resources */,
+				414DA6A72F58032500714978 /* test-142-cta-card.json in Resources */,
+				414DA6A82F58032500714978 /* test-146-image-overlay-rounded.json in Resources */,
+				414DA6A92F58032500714978 /* test-121-16x9-ar-image-text-button.json in Resources */,
+				414DA6AA2F58032500714978 /* test-136-video-autoplay-muted.json in Resources */,
+				414DA6AB2F58032500714978 /* test-064-gallery-item.json in Resources */,
+				414DA6AC2F58032500714978 /* test-145-nested-rounded-boxes.json in Resources */,
+				414DA6AD2F58032500714978 /* test-060-media-player.json in Resources */,
+				414DA6AE2F58032500714978 /* test-130-text-maxlines-overflow.json in Resources */,
+				414DA6AF2F58032500714978 /* test-139-button-centered.json in Resources */,
+				414DA6B02F58032500714978 /* test-122-1x1-ar-image-badge-rounded.json in Resources */,
+				414DA6B12F58032500714978 /* test-140-button-primary-secondary.json in Resources */,
+				414DA6B22F58032500714978 /* test-151-video-player-card.json in Resources */,
+				414DA6B32F58032500714978 /* test-152-text-corners.json in Resources */,
+				414DA6B42F58032500714978 /* test-123-9x16-ar-video-caption.json in Resources */,
+				414DA6B52F58032500714978 /* test-127-text-font-sizes.json in Resources */,
+				414DA6B62F58032500714978 /* test-068-social-post.json in Resources */,
+				414DA6B72F58032500714978 /* test-141-button-size-variants.json in Resources */,
+				414DA6B82F58032500714978 /* test-065-notification.json in Resources */,
+				414DA6B92F58032500714978 /* test-070-feature-showcase.json in Resources */,
+				414DA6BA2F58032500714978 /* test-062-action-sheet.json in Resources */,
+				414DA6BB2F58032500714978 /* test-134-image-border-radius.json in Resources */,
+				414DA6BC2F58032500714978 /* test-066-pricing-card.json in Resources */,
+				414DA6BD2F58032500714978 /* test-143-button-rounded-text.json in Resources */,
+				414DA6BF2F58032500714978 /* test-150-dashboard-widget.json in Resources */,
+				414DA6C02F58032500714978 /* test-135-images-z-order.json in Resources */,
+				414DA6C12F58032500714978 /* test-153-image-clipped.json in Resources */,
+				414DA6C22F58032500714978 /* test-154-nested-box-deep.json in Resources */,
+				414DA6C32F58032500714978 /* test-138-9x16-video-button.json in Resources */,
+				414DA6C42F58032500714978 /* test-155-all-element-types.json in Resources */,
+				414DA6C52F58032500714978 /* test-067-hero-banner.json in Resources */,
+				414DA6C62F58032500714978 /* test-129-text-decoration-italic.json in Resources */,
+				414DA6C72F58032500714978 /* test-132-image-fit-crop-contain.json in Resources */,
+				414DA6C82F58032500714978 /* test-125-2x1-ar-image-split-button.json in Resources */,
+				414DA6C92F58032500714978 /* test-069-settings-row.json in Resources */,
 				41C5EB222F3B40460066BE34 /* banner-04-travel-deals.json in Resources */,
 				41C5EB232F3B40460066BE34 /* banner-05-fashion-collection.json in Resources */,
 				41C5EB242F3B40460066BE34 /* banner-06-credit-card-offer.json in Resources */,
+				414DA6CB2F5814B300714978 /* test-156-button-backgrounds.json in Resources */,
 				41C5EB252F3B40460066BE34 /* banner-07-app-rating.json in Resources */,
 				41C5EB262F3B40460066BE34 /* banner-08-flash-sale.json in Resources */,
 				41C5EB272F3B40460066BE34 /* banner-09-premium-subscription.json in Resources */,

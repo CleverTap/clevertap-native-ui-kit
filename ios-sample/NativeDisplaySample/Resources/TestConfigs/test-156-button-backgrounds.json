@@ -1,0 +1,239 @@
+{
+  "theme": {
+    "id": "test-156"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {"special": "match_parent"},
+      "height": {"special": "wrap_content"},
+      "padding": {"all": 16, "unit": "dp"},
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 12,
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFFFFF"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "btn_solid_blue",
+        "elementType": "button",
+        "bindings": {
+          "text": "Solid Blue"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "height": {"value": 48, "unit": "dp"}
+        },
+        "style": {
+          "backgroundColor": "#2196F3",
+          "textColor": "#FFFFFF",
+          "fontSize": 16,
+          "lineHeight": 22,
+          "fontWeight": "bold",
+          "borderRadius": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "btn_solid_red",
+        "elementType": "button",
+        "bindings": {
+          "text": "Vibrant Red"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "height": {"value": 48, "unit": "dp"}
+        },
+        "style": {
+          "backgroundColor": "#E53935",
+          "textColor": "#FFFFFF",
+          "fontSize": 16,
+          "lineHeight": 22,
+          "fontWeight": "bold",
+          "borderRadius": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "btn_outlined",
+        "elementType": "button",
+        "bindings": {
+          "text": "Outlined"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "height": {"value": 48, "unit": "dp"}
+        },
+        "style": {
+          "backgroundColor": "#00FFFFFF",
+          "textColor": "#2196F3",
+          "fontSize": 16,
+          "lineHeight": 22,
+          "fontWeight": "bold",
+          "borderRadius": 8,
+          "borderWidth": 2,
+          "borderColor": "#2196F3"
+        }
+      },
+      {
+        "type": "element",
+        "id": "btn_gradient_diagonal",
+        "elementType": "button",
+        "bindings": {
+          "text": "Gradient Diagonal"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "height": {"value": 48, "unit": "dp"}
+        },
+        "style": {
+          "backgroundColor": "#00000000",
+          "textColor": "#FFFFFF",
+          "fontSize": 16,
+          "lineHeight": 22,
+          "fontWeight": "bold",
+          "borderRadius": 8,
+          "background": {
+            "type": "linear_gradient",
+            "angle": 135,
+            "colors": ["#7B1FA2", "#E91E63"],
+            "stops": [0.0, 1.0]
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "btn_gradient_horizontal",
+        "elementType": "button",
+        "bindings": {
+          "text": "Gradient Horizontal"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "height": {"value": 48, "unit": "dp"}
+        },
+        "style": {
+          "backgroundColor": "#00000000",
+          "textColor": "#FFFFFF",
+          "fontSize": 16,
+          "lineHeight": 22,
+          "fontWeight": "bold",
+          "borderRadius": 8,
+          "background": {
+            "type": "linear_gradient",
+            "angle": 90,
+            "colors": ["#1565C0", "#42A5F5"],
+            "stops": [0.0, 1.0]
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "btn_dark",
+        "elementType": "button",
+        "bindings": {
+          "text": "Dark Fill"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "height": {"value": 48, "unit": "dp"}
+        },
+        "style": {
+          "backgroundColor": "#212121",
+          "textColor": "#FFFFFF",
+          "fontSize": 16,
+          "lineHeight": 22,
+          "fontWeight": "bold",
+          "borderRadius": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "btn_pill",
+        "elementType": "button",
+        "bindings": {
+          "text": "Rounded Pill"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "height": {"value": 48, "unit": "dp"}
+        },
+        "style": {
+          "backgroundColor": "#43A047",
+          "textColor": "#FFFFFF",
+          "fontSize": 16,
+          "lineHeight": 22,
+          "fontWeight": "bold",
+          "borderRadius": 50
+        }
+      },
+      {
+        "type": "element",
+        "id": "btn_ghost",
+        "elementType": "button",
+        "bindings": {
+          "text": "Ghost / Muted"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "height": {"value": 48, "unit": "dp"}
+        },
+        "style": {
+          "backgroundColor": "#EEEEEE",
+          "textColor": "#424242",
+          "fontSize": 16,
+          "lineHeight": 22,
+          "fontWeight": "bold",
+          "borderRadius": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "btn_warning",
+        "elementType": "button",
+        "bindings": {
+          "text": "Warning Orange"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "height": {"value": 48, "unit": "dp"}
+        },
+        "style": {
+          "backgroundColor": "#FF6F00",
+          "textColor": "#FFFFFF",
+          "fontSize": 16,
+          "lineHeight": 22,
+          "fontWeight": "bold",
+          "borderRadius": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "btn_teal",
+        "elementType": "button",
+        "bindings": {
+          "text": "Success Teal"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "height": {"value": 48, "unit": "dp"}
+        },
+        "style": {
+          "backgroundColor": "#00897B",
+          "textColor": "#FFFFFF",
+          "fontSize": 16,
+          "lineHeight": 22,
+          "fontWeight": "bold",
+          "borderRadius": 8
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "theme": {
+    "id": "test-146"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#000000"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "bg_image",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://yavuzceliker.github.io/sample-images/image-500.jpg"
+        },
+        "layout": {
+          "width": {"value": 100, "unit": "percent"},
+          "height": {"value": 100, "unit": "percent"},
+          "offset": {"x": 0, "y": 0, "unit": "percent"}
+        },
+        "imageConfig": {
+          "fit": "crop"
+        }
+      },
+      {
+        "type": "container",
+        "id": "overlay_box",
+        "containerType": "box",
+        "layout": {
+          "width": {"value": 60, "unit": "percent"},
+          "height": {"value": 40, "unit": "percent"},
+          "offset": {"x": 20, "y": 55, "unit": "percent"}
+        },
+        "style": {
+          "borderRadius": 12,
+          "backgroundColor": "#CC000000"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "overlay_caption",
+            "elementType": "text",
+            "bindings": {
+              "text": "Overlay Caption"
+            },
+            "layout": {
+              "width": {"value": 80, "unit": "percent"},
+              "offset": {"x": 10, "y": 35, "unit": "percent"}
+            },
+            "style": {
+              "fontSize": 16,
+              "fontWeight": "bold",
+              "lineHeight": 22,
+              "textColor": "#FFFFFF",
+              "textAlign": "center"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

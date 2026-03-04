@@ -1,0 +1,101 @@
+{
+  "theme": {
+    "id": "test-155",
+    "defaultStyle": {
+      "textColor": "#FFFFFF",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "variables": {
+    "testName": "All Element Types in 16:9 BOX"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#000000"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "bg-image",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://yavuzceliker.github.io/sample-images/image-900.jpg"
+        },
+        "layout": {
+          "width": {"value": 100, "unit": "percent"},
+          "height": {"value": 100, "unit": "percent"},
+          "offset": {"x": 0, "y": 0, "unit": "percent"}
+        },
+        "imageConfig": {
+          "fit": "crop"
+        }
+      },
+      {
+        "type": "element",
+        "id": "label",
+        "elementType": "text",
+        "bindings": {
+          "text": "All Element Types"
+        },
+        "layout": {
+          "width": {"value": 60, "unit": "percent"},
+          "offset": {"x": 5, "y": 5, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 14,
+          "fontWeight": "bold",
+          "lineHeight": 20,
+          "textColor": "#FFFFFF",
+          "backgroundColor": "#88000000",
+          "borderRadius": 4
+        }
+      },
+      {
+        "type": "element",
+        "id": "video-inset",
+        "elementType": "video",
+        "bindings": {
+          "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        },
+        "layout": {
+          "width": {"value": 40, "unit": "percent"},
+          "height": {"value": 40, "unit": "percent"},
+          "offset": {"x": 5, "y": 30, "unit": "percent"}
+        },
+        "autoPlay": true,
+        "loop": true,
+        "muted": true,
+        "showControls": false,
+        "showFullscreen": false
+      },
+      {
+        "type": "element",
+        "id": "action-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Action"
+        },
+        "layout": {
+          "width": {"value": 35, "unit": "percent"},
+          "height": {"value": 12, "unit": "percent"},
+          "offset": {"x": 55, "y": 38, "unit": "percent"}
+        },
+        "style": {
+          "backgroundColor": "#FF6B6B",
+          "textColor": "#FFFFFF",
+          "fontSize": 14,
+          "lineHeight": 20,
+          "borderRadius": 8
+        }
+      }
+    ]
+  }
+}

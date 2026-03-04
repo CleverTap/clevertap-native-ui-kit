@@ -1,0 +1,87 @@
+{
+  "theme": {
+    "id": "test-127"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#1A1A2E"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "text_small",
+        "elementType": "text",
+        "bindings": {
+          "text": "12sp small text"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "offset": {"x": 5, "y": 5, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 12,
+          "lineHeight": 17,
+          "textColor": "#CCCCCC"
+        }
+      },
+      {
+        "type": "element",
+        "id": "text_body",
+        "elementType": "text",
+        "bindings": {
+          "text": "16sp body text"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "offset": {"x": 5, "y": 25, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 16,
+          "lineHeight": 22,
+          "textColor": "#FFFFFF"
+        }
+      },
+      {
+        "type": "element",
+        "id": "text_subtitle",
+        "elementType": "text",
+        "bindings": {
+          "text": "24sp subtitle"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "offset": {"x": 5, "y": 50, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 24,
+          "lineHeight": 32,
+          "textColor": "#FFFFFF"
+        }
+      },
+      {
+        "type": "element",
+        "id": "text_headline",
+        "elementType": "text",
+        "bindings": {
+          "text": "32sp headline"
+        },
+        "layout": {
+          "width": {"value": 90, "unit": "percent"},
+          "offset": {"x": 5, "y": 75, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 32,
+          "lineHeight": 42,
+          "textColor": "#FFFFFF"
+        }
+      }
+    ]
+  }
+}

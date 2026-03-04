@@ -1,0 +1,103 @@
+{
+  "theme": {
+    "id": "test-152"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "corner_tl",
+        "elementType": "text",
+        "bindings": {
+          "text": "TL"
+        },
+        "layout": {
+          "width": {"value": 15, "unit": "percent"},
+          "offset": {"x": 2, "y": 2, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 12,
+          "fontWeight": "bold",
+          "lineHeight": 17,
+          "textColor": "#E53935",
+          "backgroundColor": "#FFCCCC",
+          "borderRadius": 4,
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "corner_tr",
+        "elementType": "text",
+        "bindings": {
+          "text": "TR"
+        },
+        "layout": {
+          "width": {"value": 15, "unit": "percent"},
+          "offset": {"x": 80, "y": 2, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 12,
+          "fontWeight": "bold",
+          "lineHeight": 17,
+          "textColor": "#1565C0",
+          "backgroundColor": "#BBDEFB",
+          "borderRadius": 4,
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "corner_bl",
+        "elementType": "text",
+        "bindings": {
+          "text": "BL"
+        },
+        "layout": {
+          "width": {"value": 15, "unit": "percent"},
+          "offset": {"x": 2, "y": 85, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 12,
+          "fontWeight": "bold",
+          "lineHeight": 17,
+          "textColor": "#2E7D32",
+          "backgroundColor": "#C8E6C9",
+          "borderRadius": 4,
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "corner_br",
+        "elementType": "text",
+        "bindings": {
+          "text": "BR"
+        },
+        "layout": {
+          "width": {"value": 15, "unit": "percent"},
+          "offset": {"x": 75, "y": 85, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 12,
+          "fontWeight": "bold",
+          "lineHeight": 17,
+          "textColor": "#E65100",
+          "backgroundColor": "#FFE0B2",
+          "borderRadius": 4,
+          "textAlign": "center"
+        }
+      }
+    ]
+  }
+}

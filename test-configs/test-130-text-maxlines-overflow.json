@@ -1,0 +1,38 @@
+{
+  "theme": {
+    "id": "test-130"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#1A1A2E"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "clamped_text",
+        "elementType": "text",
+        "bindings": {
+          "text": "This is a very long text that should be clamped at exactly two lines using the maxLines and overflow ellipsis configuration. There is more text here that won't be shown."
+        },
+        "layout": {
+          "width": {"value": 80, "unit": "percent"},
+          "offset": {"x": 10, "y": 30, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 16,
+          "lineHeight": 22,
+          "textColor": "#FFFFFF",
+          "maxLines": 2,
+          "overflow": "ellipsis"
+        }
+      }
+    ]
+  }
+}

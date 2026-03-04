@@ -1,0 +1,73 @@
+{
+  "theme": {
+    "id": "test-128"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#1A1A2E"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "text_left",
+        "elementType": "text",
+        "bindings": {
+          "text": "Left aligned text block with multiple words"
+        },
+        "layout": {
+          "width": {"value": 80, "unit": "percent"},
+          "offset": {"x": 10, "y": 15, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 16,
+          "lineHeight": 22,
+          "textColor": "#FFFFFF",
+          "textAlign": "left"
+        }
+      },
+      {
+        "type": "element",
+        "id": "text_center",
+        "elementType": "text",
+        "bindings": {
+          "text": "Center aligned text block with multiple words"
+        },
+        "layout": {
+          "width": {"value": 80, "unit": "percent"},
+          "offset": {"x": 10, "y": 45, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 16,
+          "lineHeight": 22,
+          "textColor": "#FFFFFF",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "text_right",
+        "elementType": "text",
+        "bindings": {
+          "text": "Right aligned text block with multiple words"
+        },
+        "layout": {
+          "width": {"value": 80, "unit": "percent"},
+          "offset": {"x": 10, "y": 72, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 16,
+          "lineHeight": 22,
+          "textColor": "#FFFFFF",
+          "textAlign": "right"
+        }
+      }
+    ]
+  }
+}

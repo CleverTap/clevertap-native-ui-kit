@@ -1,0 +1,57 @@
+{
+  "theme": {
+    "id": "test-138"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "aspectRatio": 0.5625
+    },
+    "style": {
+      "backgroundColor": "#000000"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "video",
+        "elementType": "video",
+        "bindings": {
+          "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        },
+        "layout": {
+          "width": {"value": 100, "unit": "percent"},
+          "height": {"value": 80, "unit": "percent"},
+          "offset": {"x": 0, "y": 0, "unit": "percent"}
+        },
+        "autoPlay": true,
+        "muted": true,
+        "loop": true,
+        "showControls": false,
+        "showFullscreen": false
+      },
+      {
+        "type": "element",
+        "id": "watch_button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Watch Full Video"
+        },
+        "layout": {
+          "width": {"value": 60, "unit": "percent"},
+          "height": {"value": 8, "unit": "percent"},
+          "offset": {"x": 20, "y": 83, "unit": "percent"}
+        },
+        "style": {
+          "backgroundColor": "#FF6B6B",
+          "textColor": "#FFFFFF",
+          "fontSize": 14,
+          "lineHeight": 20,
+          "borderRadius": 8
+        }
+      }
+    ]
+  }
+}

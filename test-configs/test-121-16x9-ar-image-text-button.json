@@ -1,0 +1,73 @@
+{
+  "theme": {
+    "id": "test-121"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#1A1A2E"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "bg_image",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://yavuzceliker.github.io/sample-images/image-1.jpg"
+        },
+        "layout": {
+          "width": {"value": 100, "unit": "percent"},
+          "height": {"value": 100, "unit": "percent"},
+          "offset": {"x": 0, "y": 0, "unit": "percent"}
+        },
+        "imageConfig": {
+          "fit": "crop"
+        }
+      },
+      {
+        "type": "element",
+        "id": "headline",
+        "elementType": "text",
+        "bindings": {
+          "text": "HEADLINE TITLE"
+        },
+        "layout": {
+          "width": {"value": 80, "unit": "percent"},
+          "offset": {"x": 10, "y": 65, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 22,
+          "fontWeight": "bold",
+          "lineHeight": 28,
+          "textColor": "#FFFFFF"
+        }
+      },
+      {
+        "type": "element",
+        "id": "cta_button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Get Started"
+        },
+        "layout": {
+          "width": {"value": 50, "unit": "percent"},
+          "height": {"value": 12, "unit": "percent"},
+          "offset": {"x": 25, "y": 82, "unit": "percent"}
+        },
+        "style": {
+          "backgroundColor": "#FF6B6B",
+          "textColor": "#FFFFFF",
+          "fontSize": 14,
+          "lineHeight": 20,
+          "borderRadius": 8
+        }
+      }
+    ]
+  }
+}

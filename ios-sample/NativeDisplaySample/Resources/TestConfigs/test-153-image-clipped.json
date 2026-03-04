@@ -1,0 +1,35 @@
+{
+  "theme": {
+    "id": "test-153"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#DDDDDD"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "clipped_image",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://yavuzceliker.github.io/sample-images/image-1.jpg"
+        },
+        "layout": {
+          "width": {"value": 60, "unit": "percent"},
+          "height": {"value": 60, "unit": "percent"},
+          "offset": {"x": 40, "y": 40, "unit": "percent"}
+        },
+        "imageConfig": {
+          "fit": "crop"
+        }
+      }
+    ]
+  }
+}

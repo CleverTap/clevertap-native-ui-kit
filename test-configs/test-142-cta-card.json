@@ -1,0 +1,90 @@
+{
+  "theme": {
+    "id": "test-142"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#000000"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "bg_image",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://yavuzceliker.github.io/sample-images/image-400.jpg"
+        },
+        "layout": {
+          "width": {"value": 100, "unit": "percent"},
+          "height": {"value": 100, "unit": "percent"},
+          "offset": {"x": 0, "y": 0, "unit": "percent"}
+        },
+        "imageConfig": {
+          "fit": "crop"
+        }
+      },
+      {
+        "type": "element",
+        "id": "offer_headline",
+        "elementType": "text",
+        "bindings": {
+          "text": "Exclusive Offer"
+        },
+        "layout": {
+          "width": {"value": 80, "unit": "percent"},
+          "offset": {"x": 10, "y": 55, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 22,
+          "fontWeight": "bold",
+          "lineHeight": 28,
+          "textColor": "#FFFFFF"
+        }
+      },
+      {
+        "type": "element",
+        "id": "offer_subtitle",
+        "elementType": "text",
+        "bindings": {
+          "text": "Up to 50% off today only"
+        },
+        "layout": {
+          "width": {"value": 80, "unit": "percent"},
+          "offset": {"x": 10, "y": 70, "unit": "percent"}
+        },
+        "style": {
+          "fontSize": 14,
+          "lineHeight": 20,
+          "textColor": "#EEEEEE"
+        }
+      },
+      {
+        "type": "element",
+        "id": "claim_button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Claim Now"
+        },
+        "layout": {
+          "width": {"value": 50, "unit": "percent"},
+          "height": {"value": 12, "unit": "percent"},
+          "offset": {"x": 25, "y": 82, "unit": "percent"}
+        },
+        "style": {
+          "backgroundColor": "#FF6B6B",
+          "textColor": "#FFFFFF",
+          "fontSize": 15,
+          "lineHeight": 21,
+          "borderRadius": 8
+        }
+      }
+    ]
+  }
+}

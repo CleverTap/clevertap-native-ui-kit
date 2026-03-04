@@ -944,6 +944,7 @@ private fun RenderElement(
                     actionHandler?.handleAction(action = action, nodeId = element.id)
                 } },
                 modifier = elementModifier,
+                contentPadding = PaddingValues(0.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = parseColor(visualProps.backgroundColor) ?: Color(0xFF007AFF),
                     contentColor = parseColor(textProps.color) ?: Color.White
@@ -953,6 +954,7 @@ private fun RenderElement(
                 Text(
                     text = buttonText,
                     fontSize = (textProps.size ?: 16f).sp,
+                    lineHeight = textProps.lineHeight?.sp ?: (textProps.size?.times(1.5f) ?: 21f).sp,
                     fontWeight = resolveFontWeight(textProps.weight)
                 )
             }
