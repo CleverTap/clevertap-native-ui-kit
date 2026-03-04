@@ -723,8 +723,6 @@ struct RenderElement: View {
         let buttonText = element.bindings["text"].map { evaluator.evaluateString($0) } ?? "Button"
 
         let textProps = resolvedStyle.extractTextProperties()
-        let visualProps = resolvedStyle.extractVisualProperties()
-        let borderProps = resolvedStyle.extractBorderProperties()
 
         Button(action: {
             if let onClick = element.actions?[ActionTriggers.onClick] {
@@ -735,11 +733,10 @@ struct RenderElement: View {
                 .foregroundColor(ColorParser.parse(textProps.color) ?? .white)
                 .font(.system(size: textProps.size ?? 16))
                 .fontWeight(resolveFontWeight(textProps.weight))
+                .multilineTextAlignment(resolveTextAlign(textProps.align))
+                .lineSpacing(max(0, (textProps.lineHeight ?? 0) - (textProps.size ?? 16)))
+                .lineLimit(textProps.maxLines)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(ColorParser.parse(visualProps.backgroundColor) ?? Color.blue)
-        .cornerRadius(borderProps.radius ?? 8)
     }
     
     @ViewBuilder

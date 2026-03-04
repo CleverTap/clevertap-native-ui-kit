@@ -946,7 +946,8 @@ private fun RenderElement(
                 modifier = elementModifier,
                 contentPadding = PaddingValues(0.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = parseColor(visualProps.backgroundColor) ?: Color(0xFF007AFF),
+                    containerColor = if (visualProps.background != null) Color.Transparent
+                        else parseColor(visualProps.backgroundColor) ?: Color(0xFF007AFF),
                     contentColor = parseColor(textProps.color) ?: Color.White
                 ),
                 shape = RoundedCornerShape((borderProps.radius ?: 8f).dp)
@@ -954,8 +955,14 @@ private fun RenderElement(
                 Text(
                     text = buttonText,
                     fontSize = (textProps.size ?: 16f).sp,
+                    fontWeight = resolveFontWeight(textProps.weight),
+                    fontStyle = resolveFontStyle(textProps.style),
+                    letterSpacing = (textProps.letterSpacing ?: 0f).sp,
+                    textDecoration = resolveTextDecoration(textProps.decoration),
+                    textAlign = resolveTextAlign(textProps.align),
                     lineHeight = textProps.lineHeight?.sp ?: (textProps.size?.times(1.5f) ?: 21f).sp,
-                    fontWeight = resolveFontWeight(textProps.weight)
+                    maxLines = textProps.maxLines ?: Int.MAX_VALUE,
+                    overflow = resolveTextOverflow(textProps.overflow)
                 )
             }
         }
