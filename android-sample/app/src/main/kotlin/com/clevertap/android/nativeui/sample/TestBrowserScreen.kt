@@ -27,18 +27,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 
 /**
  * TestBrowserScreen - Cycles through test JSON configurations for automated screenshot testing.
  *
  * Features:
- * - TopAppBar with title and counter badge
- * - Navigation row with prev/next icon buttons and filename label
+ * - Navigation row with prev/next icon buttons, filename, and counter (e.g. "26/156")
  * - Scrollable chip strip for quick test selection
  * - Scrollable content area for rendered UI
  * - Loop navigation (wraps around at start/end)
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TestBrowserScreen() {
     val context = LocalContext.current
@@ -244,45 +245,16 @@ fun TestBrowserScreen() {
         testFiles[currentIndex].removeSuffix(".json")
     }
 
-    // Counter label (zero-padded)
+    // Counter label e.g. "26/156"
     val counterLabel = remember(currentIndex) {
-        "${(currentIndex + 1).toString().padStart(3, '0')} / ${testFiles.size}"
+        "${currentIndex + 1}/${testFiles.size}"
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Test Browser",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                },
-                actions = {
-                    Text(
-                        text = counterLabel,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Medium
-                        ),
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f),
-                        modifier = Modifier.padding(end = 16.dp)
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
+    Column(modifier = Modifier.fillMaxSize()) {
             // Navigation row
             NavigationRow(
                 filename = currentFilename,
+                counter = counterLabel,
                 onPrevious = ::goToPrevious,
                 onNext = ::goToNext,
                 modifier = Modifier.fillMaxWidth()
@@ -326,15 +298,15 @@ fun TestBrowserScreen() {
                 }
             }
         }
-    }
 }
 
 /**
- * Navigation row with prev/next icon buttons and centered filename label.
+ * Navigation row with prev/next icon buttons, centered filename, and counter.
  */
 @Composable
 private fun NavigationRow(
     filename: String,
+    counter: String,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
     modifier: Modifier = Modifier
@@ -355,7 +327,16 @@ private fun NavigationRow(
             }
 
             Text(
-                text = filename,
+                text = buildAnnotatedString {
+                    append(filename)
+                    append(" ")
+                    withStyle(SpanStyle(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        fontSize = 11.sp
+                    )) {
+                        append("($counter)")
+                    }
+                },
                 style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp),
                 textAlign = TextAlign.Center,
                 maxLines = 1,
