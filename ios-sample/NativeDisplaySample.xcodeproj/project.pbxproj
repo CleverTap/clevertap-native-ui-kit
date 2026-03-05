@@ -7,59 +7,165 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CC000002B2F0000010TESTCF /* TestConfigs in Resources */ = {isa = PBXBuildFile; fileRef = CC000001A2F0000010TESTCF /* TestConfigs */; };
-
 		4113027B2F33E757004B6254 /* BannerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 411302792F33E757004B6254 /* BannerDetailView.swift */; };
 		4113027C2F33E757004B6254 /* BannerShowcaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4113027A2F33E757004B6254 /* BannerShowcaseView.swift */; };
-		414DA69B2F58032500714978 /* test-147-hero-banner-complex.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6912F58032500714978 /* test-147-hero-banner-complex.json */; };
-		414DA69C2F58032500714978 /* test-133-image-gif-rounded.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6832F58032500714978 /* test-133-image-gif-rounded.json */; };
-		414DA69D2F58032500714978 /* test-126-text-font-weights.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA67C2F58032500714978 /* test-126-text-font-weights.json */; };
-		414DA69E2F58032500714978 /* test-124-4x3-ar-text-weights.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA67A2F58032500714978 /* test-124-4x3-ar-text-weights.json */; };
-		414DA69F2F58032500714978 /* test-063-stats-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA66E2F58032500714978 /* test-063-stats-card.json */; };
-		414DA6A02F58032500714978 /* test-061-article-layout.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA66C2F58032500714978 /* test-061-article-layout.json */; };
-		414DA6A12F58032500714978 /* test-144-rounded-box-text.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA68E2F58032500714978 /* test-144-rounded-box-text.json */; };
-		414DA6A22F58032500714978 /* test-137-video-with-controls.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6872F58032500714978 /* test-137-video-with-controls.json */; };
-		414DA6A32F58032500714978 /* test-148-product-card-complex.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6922F58032500714978 /* test-148-product-card-complex.json */; };
-		414DA6A42F58032500714978 /* test-131-text-gradient.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6812F58032500714978 /* test-131-text-gradient.json */; };
-		414DA6A52F58032500714978 /* test-128-text-alignment.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA67E2F58032500714978 /* test-128-text-alignment.json */; };
-		414DA6A62F58032500714978 /* test-149-notification-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6932F58032500714978 /* test-149-notification-card.json */; };
-		414DA6A72F58032500714978 /* test-142-cta-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA68C2F58032500714978 /* test-142-cta-card.json */; };
-		414DA6A82F58032500714978 /* test-146-image-overlay-rounded.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6902F58032500714978 /* test-146-image-overlay-rounded.json */; };
-		414DA6A92F58032500714978 /* test-121-16x9-ar-image-text-button.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6772F58032500714978 /* test-121-16x9-ar-image-text-button.json */; };
-		414DA6AA2F58032500714978 /* test-136-video-autoplay-muted.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6862F58032500714978 /* test-136-video-autoplay-muted.json */; };
-		414DA6AB2F58032500714978 /* test-064-gallery-item.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA66F2F58032500714978 /* test-064-gallery-item.json */; };
-		414DA6AC2F58032500714978 /* test-145-nested-rounded-boxes.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA68F2F58032500714978 /* test-145-nested-rounded-boxes.json */; };
-		414DA6AD2F58032500714978 /* test-060-media-player.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA66B2F58032500714978 /* test-060-media-player.json */; };
-		414DA6AE2F58032500714978 /* test-130-text-maxlines-overflow.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6802F58032500714978 /* test-130-text-maxlines-overflow.json */; };
-		414DA6AF2F58032500714978 /* test-139-button-centered.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6892F58032500714978 /* test-139-button-centered.json */; };
-		414DA6B02F58032500714978 /* test-122-1x1-ar-image-badge-rounded.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6782F58032500714978 /* test-122-1x1-ar-image-badge-rounded.json */; };
-		414DA6B12F58032500714978 /* test-140-button-primary-secondary.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA68A2F58032500714978 /* test-140-button-primary-secondary.json */; };
-		414DA6B22F58032500714978 /* test-151-video-player-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6952F58032500714978 /* test-151-video-player-card.json */; };
-		414DA6B32F58032500714978 /* test-152-text-corners.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6962F58032500714978 /* test-152-text-corners.json */; };
-		414DA6B42F58032500714978 /* test-123-9x16-ar-video-caption.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6792F58032500714978 /* test-123-9x16-ar-video-caption.json */; };
-		414DA6B52F58032500714978 /* test-127-text-font-sizes.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA67D2F58032500714978 /* test-127-text-font-sizes.json */; };
-		414DA6B62F58032500714978 /* test-068-social-post.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6732F58032500714978 /* test-068-social-post.json */; };
-		414DA6B72F58032500714978 /* test-141-button-size-variants.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA68B2F58032500714978 /* test-141-button-size-variants.json */; };
-		414DA6B82F58032500714978 /* test-065-notification.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6702F58032500714978 /* test-065-notification.json */; };
-		414DA6B92F58032500714978 /* test-070-feature-showcase.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6752F58032500714978 /* test-070-feature-showcase.json */; };
-		414DA6BA2F58032500714978 /* test-062-action-sheet.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA66D2F58032500714978 /* test-062-action-sheet.json */; };
-		414DA6BB2F58032500714978 /* test-134-image-border-radius.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6842F58032500714978 /* test-134-image-border-radius.json */; };
-		414DA6BC2F58032500714978 /* test-066-pricing-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6712F58032500714978 /* test-066-pricing-card.json */; };
-		414DA6BD2F58032500714978 /* test-143-button-rounded-text.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA68D2F58032500714978 /* test-143-button-rounded-text.json */; };
-		414DA6BF2F58032500714978 /* test-150-dashboard-widget.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6942F58032500714978 /* test-150-dashboard-widget.json */; };
-		414DA6C02F58032500714978 /* test-135-images-z-order.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6852F58032500714978 /* test-135-images-z-order.json */; };
-		414DA6C12F58032500714978 /* test-153-image-clipped.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6972F58032500714978 /* test-153-image-clipped.json */; };
-		414DA6C22F58032500714978 /* test-154-nested-box-deep.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6982F58032500714978 /* test-154-nested-box-deep.json */; };
-		414DA6C32F58032500714978 /* test-138-9x16-video-button.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6882F58032500714978 /* test-138-9x16-video-button.json */; };
-		414DA6C42F58032500714978 /* test-155-all-element-types.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6992F58032500714978 /* test-155-all-element-types.json */; };
-		414DA6C52F58032500714978 /* test-067-hero-banner.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6722F58032500714978 /* test-067-hero-banner.json */; };
-		414DA6C62F58032500714978 /* test-129-text-decoration-italic.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA67F2F58032500714978 /* test-129-text-decoration-italic.json */; };
-		414DA6C72F58032500714978 /* test-132-image-fit-crop-contain.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6822F58032500714978 /* test-132-image-fit-crop-contain.json */; };
-		414DA6C82F58032500714978 /* test-125-2x1-ar-image-split-button.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA67B2F58032500714978 /* test-125-2x1-ar-image-split-button.json */; };
-		414DA6C92F58032500714978 /* test-069-settings-row.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6742F58032500714978 /* test-069-settings-row.json */; };
-		414DA6CB2F5814B300714978 /* test-156-button-backgrounds.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6CA2F5814B300714978 /* test-156-button-backgrounds.json */; };
-		417388E32F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json in Resources */ = {isa = PBXBuildFile; fileRef = 417388E22F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json */; };
-		417388E42F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json in Resources */ = {isa = PBXBuildFile; fileRef = 417388E22F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json */; };
+		414DA8B12F59B35E00714978 /* test-092-offset-percent-stack-layers.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA86E2F59B35E00714978 /* test-092-offset-percent-stack-layers.json */; };
+		414DA8B22F59B35E00714978 /* test-140-button-primary-secondary.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA89E2F59B35E00714978 /* test-140-button-primary-secondary.json */; };
+		414DA8B32F59B35E00714978 /* test-003-box-simple.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8152F59B35E00714978 /* test-003-box-simple.json */; };
+		414DA8B42F59B35E00714978 /* test-025-gallery-single-child.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA82B2F59B35E00714978 /* test-025-gallery-single-child.json */; };
+		414DA8B52F59B35E00714978 /* test-153-image-clipped.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8AB2F59B35E00714978 /* test-153-image-clipped.json */; };
+		414DA8B62F59B35E00714978 /* test-102-aspect-ratio-16-9-fixed-width.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8782F59B35E00714978 /* test-102-aspect-ratio-16-9-fixed-width.json */; };
+		414DA8B72F59B35E00714978 /* test-019-box-5-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8252F59B35E00714978 /* test-019-box-5-children.json */; };
+		414DA8B82F59B35E00714978 /* test-131-text-gradient.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8952F59B35E00714978 /* test-131-text-gradient.json */; };
+		414DA8B92F59B35E00714978 /* test-037-horizontal-end.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8372F59B35E00714978 /* test-037-horizontal-end.json */; };
+		414DA8BA2F59B35E00714978 /* test-123-9x16-ar-video-caption.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA88D2F59B35E00714978 /* test-123-9x16-ar-video-caption.json */; };
+		414DA8BB2F59B35E00714978 /* test-094-offset-percent-overflow.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8702F59B35E00714978 /* test-094-offset-percent-overflow.json */; };
+		414DA8BC2F59B35E00714978 /* test-008-vertical-3-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA81A2F59B35E00714978 /* test-008-vertical-3-children.json */; };
+		414DA8BD2F59B35E00714978 /* test-078-border-radius.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8602F59B35E00714978 /* test-078-border-radius.json */; };
+		414DA8BE2F59B35E00714978 /* test-024-gallery-empty.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA82A2F59B35E00714978 /* test-024-gallery-empty.json */; };
+		414DA8BF2F59B35E00714978 /* test-007-vertical-single-child.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8192F59B35E00714978 /* test-007-vertical-single-child.json */; };
+		414DA8C02F59B35E00714978 /* test-108-aspect-ratio-extreme-wide.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA87E2F59B35E00714978 /* test-108-aspect-ratio-extreme-wide.json */; };
+		414DA8C12F59B35E00714978 /* test-032-vertical-space-between.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8322F59B35E00714978 /* test-032-vertical-space-between.json */; };
+		414DA8C22F59B35E00714978 /* test-155-all-element-types.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8AD2F59B35E00714978 /* test-155-all-element-types.json */; };
+		414DA8C32F59B35E00714978 /* test-139-button-centered.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA89D2F59B35E00714978 /* test-139-button-centered.json */; };
+		414DA8C42F59B35E00714978 /* test-075-text-decoration.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA85D2F59B35E00714978 /* test-075-text-decoration.json */; };
+		414DA8C52F59B35E00714978 /* test-055-all-spacer-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8492F59B35E00714978 /* test-055-all-spacer-elements.json */; };
+		414DA8C62F59B35E00714978 /* test-063-stats-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8512F59B35E00714978 /* test-063-stats-card.json */; };
+		414DA8C72F59B35E00714978 /* test-052-all-image-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8462F59B35E00714978 /* test-052-all-image-elements.json */; };
+		414DA8C82F59B35E00714978 /* test-091-offset-percent-box-basic.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA86D2F59B35E00714978 /* test-091-offset-percent-box-basic.json */; };
+		414DA8C92F59B35E00714978 /* test-021-stack-single-child.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8272F59B35E00714978 /* test-021-stack-single-child.json */; };
+		414DA8CA2F59B35E00714978 /* test-059-profile-header.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA84D2F59B35E00714978 /* test-059-profile-header.json */; };
+		414DA8CB2F59B35E00714978 /* test-084-combined-visual-styles.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8662F59B35E00714978 /* test-084-combined-visual-styles.json */; };
+		414DA8CC2F59B35E00714978 /* test-110-aspect-ratio-mixed-container.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8802F59B35E00714978 /* test-110-aspect-ratio-mixed-container.json */; };
+		414DA8CD2F59B35E00714978 /* test-013-horizontal-3-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA81F2F59B35E00714978 /* test-013-horizontal-3-children.json */; };
+		414DA8CE2F59B35E00714978 /* test-031-vertical-spaced.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8312F59B35E00714978 /* test-031-vertical-spaced.json */; };
+		414DA8CF2F59B35E00714978 /* test-130-text-maxlines-overflow.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8942F59B35E00714978 /* test-130-text-maxlines-overflow.json */; };
+		414DA8D02F59B35E00714978 /* test-048-vertical-mixed-units.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8422F59B35E00714978 /* test-048-vertical-mixed-units.json */; };
+		414DA8D12F59B35E00714978 /* test-086-style-class-usage.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8682F59B35E00714978 /* test-086-style-class-usage.json */; };
+		414DA8D22F59B35E00714978 /* test-023-stack-5-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8292F59B35E00714978 /* test-023-stack-5-children.json */; };
+		414DA8D32F59B35E00714978 /* test-060-media-player.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA84E2F59B35E00714978 /* test-060-media-player.json */; };
+		414DA8D42F59B35E00714978 /* test-118-mixed-special-dimensions.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8882F59B35E00714978 /* test-118-mixed-special-dimensions.json */; };
+		414DA8D52F59B35E00714978 /* test-112-combined-nested-complex.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8822F59B35E00714978 /* test-112-combined-nested-complex.json */; };
+		414DA8D62F59B35E00714978 /* test-070-feature-showcase.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8582F59B35E00714978 /* test-070-feature-showcase.json */; };
+		414DA8D72F59B35E00714978 /* test-106-aspect-ratio-wrap-content.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA87C2F59B35E00714978 /* test-106-aspect-ratio-wrap-content.json */; };
+		414DA8D82F59B35E00714978 /* test-090-styled-profile-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA86C2F59B35E00714978 /* test-090-styled-profile-card.json */; };
+		414DA8D92F59B35E00714978 /* test-144-rounded-box-text.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8A22F59B35E00714978 /* test-144-rounded-box-text.json */; };
+		414DA8DA2F59B35E00714978 /* test-033-vertical-space-evenly.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8332F59B35E00714978 /* test-033-vertical-space-evenly.json */; };
+		414DA8DB2F59B35E00714978 /* test-083-opacity-variations.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8652F59B35E00714978 /* test-083-opacity-variations.json */; };
+		414DA8DC2F59B35E00714978 /* test-026-gallery-3-children-snapping.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA82C2F59B35E00714978 /* test-026-gallery-3-children-snapping.json */; };
+		414DA8DD2F59B35E00714978 /* test-016-box-empty.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8222F59B35E00714978 /* test-016-box-empty.json */; };
+		414DA8DE2F59B35E00714978 /* test-154-nested-box-deep.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8AC2F59B35E00714978 /* test-154-nested-box-deep.json */; };
+		414DA8DF2F59B35E00714978 /* test-046-vertical-wrap-content.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8402F59B35E00714978 /* test-046-vertical-wrap-content.json */; };
+		414DA8E02F59B35E00714978 /* test-132-image-fit-crop-contain.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8962F59B35E00714978 /* test-132-image-fit-crop-contain.json */; };
+		414DA8E12F59B35E00714978 /* test-138-9x16-video-button.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA89C2F59B35E00714978 /* test-138-9x16-video-button.json */; };
+		414DA8E22F59B35E00714978 /* test-121-16x9-ar-image-text-button.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA88B2F59B35E00714978 /* test-121-16x9-ar-image-text-button.json */; };
+		414DA8E32F59B35E00714978 /* test-038-vertical-spacing-0.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8382F59B35E00714978 /* test-038-vertical-spacing-0.json */; };
+		414DA8E42F59B35E00714978 /* test-077-font-families.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA85F2F59B35E00714978 /* test-077-font-families.json */; };
+		414DA8E52F59B35E00714978 /* test-081-shadows-medium.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8632F59B35E00714978 /* test-081-shadows-medium.json */; };
+		414DA8E62F59B35E00714978 /* test-151-video-player-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8A92F59B35E00714978 /* test-151-video-player-card.json */; };
+		414DA8E72F59B35E00714978 /* test-036-horizontal-center.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8362F59B35E00714978 /* test-036-horizontal-center.json */; };
+		414DA8E82F59B35E00714978 /* test-120-wrap-content-constraints.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA88A2F59B35E00714978 /* test-120-wrap-content-constraints.json */; };
+		414DA8E92F59B35E00714978 /* test-072-font-sizes.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA85A2F59B35E00714978 /* test-072-font-sizes.json */; };
+		414DA8EA2F59B35E00714978 /* test-050-gallery-spacing-variations.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8442F59B35E00714978 /* test-050-gallery-spacing-variations.json */; };
+		414DA8EB2F59B35E00714978 /* test-069-settings-row.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8572F59B35E00714978 /* test-069-settings-row.json */; };
+		414DA8EC2F59B35E00714978 /* test-095-offset-percent-zero.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8712F59B35E00714978 /* test-095-offset-percent-zero.json */; };
+		414DA8ED2F59B35E00714978 /* test-017-box-single-child.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8232F59B35E00714978 /* test-017-box-single-child.json */; };
+		414DA8EE2F59B35E00714978 /* test-006-vertical-empty.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8182F59B35E00714978 /* test-006-vertical-empty.json */; };
+		414DA8EF2F59B35E00714978 /* test-002-horizontal-simple.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8142F59B35E00714978 /* test-002-horizontal-simple.json */; };
+		414DA8F02F59B35E00714978 /* test-100-offset-percent-gallery-peek.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8762F59B35E00714978 /* test-100-offset-percent-gallery-peek.json */; };
+		414DA8F12F59B35E00714978 /* test-062-action-sheet.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8502F59B35E00714978 /* test-062-action-sheet.json */; };
+		414DA8F22F59B35E00714978 /* test-126-text-font-weights.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8902F59B35E00714978 /* test-126-text-font-weights.json */; };
+		414DA8F32F59B35E00714978 /* test-067-hero-banner.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8552F59B35E00714978 /* test-067-hero-banner.json */; };
+		414DA8F42F59B35E00714978 /* test-012-horizontal-single-child.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA81E2F59B35E00714978 /* test-012-horizontal-single-child.json */; };
+		414DA8F52F59B35E00714978 /* test-049-nested-mixed-arrangements.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8432F59B35E00714978 /* test-049-nested-mixed-arrangements.json */; };
+		414DA8F62F59B35E00714978 /* test-105-aspect-ratio-percent-width.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA87B2F59B35E00714978 /* test-105-aspect-ratio-percent-width.json */; };
+		414DA8F72F59B35E00714978 /* test-143-button-rounded-text.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8A12F59B35E00714978 /* test-143-button-rounded-text.json */; };
+		414DA8F82F59B35E00714978 /* test-122-1x1-ar-image-badge-rounded.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA88C2F59B35E00714978 /* test-122-1x1-ar-image-badge-rounded.json */; };
+		414DA8F92F59B35E00714978 /* test-133-image-gif-rounded.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8972F59B35E00714978 /* test-133-image-gif-rounded.json */; };
+		414DA8FA2F59B35E00714978 /* test-147-hero-banner-complex.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8A52F59B35E00714978 /* test-147-hero-banner-complex.json */; };
+		414DA8FB2F59B35E00714978 /* test-114-combined-product-grid.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8842F59B35E00714978 /* test-114-combined-product-grid.json */; };
+		414DA8FC2F59B35E00714978 /* test-045-box-padding-large.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA83F2F59B35E00714978 /* test-045-box-padding-large.json */; };
+		414DA8FD2F59B35E00714978 /* test-125-2x1-ar-image-split-button.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA88F2F59B35E00714978 /* test-125-2x1-ar-image-split-button.json */; };
+		414DA8FE2F59B35E00714978 /* test-071-text-colors.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8592F59B35E00714978 /* test-071-text-colors.json */; };
+		414DA8FF2F59B35E00714978 /* test-107-aspect-ratio-match-parent.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA87D2F59B35E00714978 /* test-107-aspect-ratio-match-parent.json */; };
+		414DA9002F59B35E00714978 /* test-004-stack-simple.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8162F59B35E00714978 /* test-004-stack-simple.json */; };
+		414DA9012F59B35E00714978 /* test-VERIFY-percentage-offset-fix.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8AF2F59B35E00714978 /* test-VERIFY-percentage-offset-fix.json */; };
+		414DA9022F59B35E00714978 /* test-116-match-parent-comprehensive.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8862F59B35E00714978 /* test-116-match-parent-comprehensive.json */; };
+		414DA9032F59B35E00714978 /* test-043-vertical-padding-individual.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA83D2F59B35E00714978 /* test-043-vertical-padding-individual.json */; };
+		414DA9042F59B35E00714978 /* test-088-theme-default-styles.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA86A2F59B35E00714978 /* test-088-theme-default-styles.json */; };
+		414DA9052F59B35E00714978 /* test-041-vertical-spacing-32.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA83B2F59B35E00714978 /* test-041-vertical-spacing-32.json */; };
+		414DA9062F59B35E00714978 /* test-030-gallery-3-children-free-flow-grid.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8302F59B35E00714978 /* test-030-gallery-3-children-free-flow-grid.json */; };
+		414DA9072F59B35E00714978 /* test-028-gallery-10-children-snapping.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA82E2F59B35E00714978 /* test-028-gallery-10-children-snapping.json */; };
+		414DA9082F59B35E00714978 /* test-018-box-3-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8242F59B35E00714978 /* test-018-box-3-children.json */; };
+		414DA9092F59B35E00714978 /* test-061-article-layout.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA84F2F59B35E00714978 /* test-061-article-layout.json */; };
+		414DA90A2F59B35E00714978 /* test-148-product-card-complex.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8A62F59B35E00714978 /* test-148-product-card-complex.json */; };
+		414DA90B2F59B35E00714978 /* test-057-product-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA84B2F59B35E00714978 /* test-057-product-card.json */; };
+		414DA90C2F59B35E00714978 /* test-134-image-border-radius.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8982F59B35E00714978 /* test-134-image-border-radius.json */; };
+		414DA90D2F59B35E00714978 /* test-137-video-with-controls.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA89B2F59B35E00714978 /* test-137-video-with-controls.json */; };
+		414DA90E2F59B35E00714978 /* test-146-image-overlay-rounded.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8A42F59B35E00714978 /* test-146-image-overlay-rounded.json */; };
+		414DA90F2F59B35E00714978 /* test-027-gallery-5-children-snapping.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA82D2F59B35E00714978 /* test-027-gallery-5-children-snapping.json */; };
+		414DA9102F59B35E00714978 /* test-001-vertical-simple.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8132F59B35E00714978 /* test-001-vertical-simple.json */; };
+		414DA9112F59B35E00714978 /* test-101-aspect-ratio-square-fixed-width.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8772F59B35E00714978 /* test-101-aspect-ratio-square-fixed-width.json */; };
+		414DA9122F59B35E00714978 /* test-129-text-decoration-italic.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8932F59B35E00714978 /* test-129-text-decoration-italic.json */; };
+		414DA9132F59B35E00714978 /* test-040-vertical-spacing-16.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA83A2F59B35E00714978 /* test-040-vertical-spacing-16.json */; };
+		414DA9142F59B35E00714978 /* test-011-horizontal-empty.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA81D2F59B35E00714978 /* test-011-horizontal-empty.json */; };
+		414DA9152F59B35E00714978 /* test-085-text-style-inheritance.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8672F59B35E00714978 /* test-085-text-style-inheritance.json */; };
+		414DA9162F59B35E00714978 /* test-010-vertical-10-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA81C2F59B35E00714978 /* test-010-vertical-10-children.json */; };
+		414DA9172F59B35E00714978 /* test-145-nested-rounded-boxes.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8A32F59B35E00714978 /* test-145-nested-rounded-boxes.json */; };
+		414DA9182F59B35E00714978 /* test-064-gallery-item.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8522F59B35E00714978 /* test-064-gallery-item.json */; };
+		414DA9192F59B35E00714978 /* test-117-wrap-content-comprehensive.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8872F59B35E00714978 /* test-117-wrap-content-comprehensive.json */; };
+		414DA91A2F59B35E00714978 /* test-103-aspect-ratio-4-3-fixed-width.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8792F59B35E00714978 /* test-103-aspect-ratio-4-3-fixed-width.json */; };
+		414DA91B2F59B35E00714978 /* test-039-vertical-spacing-8.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8392F59B35E00714978 /* test-039-vertical-spacing-8.json */; };
+		414DA91C2F59B35E00714978 /* test-058-login-form.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA84C2F59B35E00714978 /* test-058-login-form.json */; };
+		414DA91D2F59B35E00714978 /* test-029-gallery-3-children-free-flow.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA82F2F59B35E00714978 /* test-029-gallery-3-children-free-flow.json */; };
+		414DA91E2F59B35E00714978 /* test-035-horizontal-start.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8352F59B35E00714978 /* test-035-horizontal-start.json */; };
+		414DA91F2F59B35E00714978 /* test-093-offset-percent-negative.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA86F2F59B35E00714978 /* test-093-offset-percent-negative.json */; };
+		414DA9202F59B35E00714978 /* test-089-styled-product-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA86B2F59B35E00714978 /* test-089-styled-product-card.json */; };
+		414DA9212F59B35E00714978 /* test-076-line-height.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA85E2F59B35E00714978 /* test-076-line-height.json */; };
+		414DA9222F59B35E00714978 /* test-053-all-button-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8472F59B35E00714978 /* test-053-all-button-elements.json */; };
+		414DA9232F59B35E00714978 /* test-015-horizontal-10-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8212F59B35E00714978 /* test-015-horizontal-10-children.json */; };
+		414DA9242F59B35E00714978 /* test-111-combined-aspect-offset-box.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8812F59B35E00714978 /* test-111-combined-aspect-offset-box.json */; };
+		414DA9252F59B35E00714978 /* test-109-aspect-ratio-extreme-tall.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA87F2F59B35E00714978 /* test-109-aspect-ratio-extreme-tall.json */; };
+		414DA9262F59B35E00714978 /* test-009-vertical-5-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA81B2F59B35E00714978 /* test-009-vertical-5-children.json */; };
+		414DA9272F59B35E00714978 /* test-022-stack-3-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8282F59B35E00714978 /* test-022-stack-3-children.json */; };
+		414DA9282F59B35E00714978 /* test-074-text-alignment.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA85C2F59B35E00714978 /* test-074-text-alignment.json */; };
+		414DA9292F59B35E00714978 /* test-073-font-weights.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA85B2F59B35E00714978 /* test-073-font-weights.json */; };
+		414DA92A2F59B35E00714978 /* test-136-video-autoplay-muted.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA89A2F59B35E00714978 /* test-136-video-autoplay-muted.json */; };
+		414DA92B2F59B35E00714978 /* test-127-text-font-sizes.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8912F59B35E00714978 /* test-127-text-font-sizes.json */; };
+		414DA92C2F59B35E00714978 /* test-014-horizontal-5-children.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8202F59B35E00714978 /* test-014-horizontal-5-children.json */; };
+		414DA92D2F59B35E00714978 /* test-065-notification.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8532F59B35E00714978 /* test-065-notification.json */; };
+		414DA92E2F59B35E00714978 /* test-020-stack-empty.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8262F59B35E00714978 /* test-020-stack-empty.json */; };
+		414DA92F2F59B35E00714978 /* test-099-offset-percent-with-padding.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8752F59B35E00714978 /* test-099-offset-percent-with-padding.json */; };
+		414DA9302F59B35E00714978 /* test-066-pricing-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8542F59B35E00714978 /* test-066-pricing-card.json */; };
+		414DA9312F59B35E00714978 /* test-128-text-alignment.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8922F59B35E00714978 /* test-128-text-alignment.json */; };
+		414DA9322F59B35E00714978 /* test-152-text-corners.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8AA2F59B35E00714978 /* test-152-text-corners.json */; };
+		414DA9332F59B35E00714978 /* test-142-cta-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8A02F59B35E00714978 /* test-142-cta-card.json */; };
+		414DA9342F59B35E00714978 /* test-115-combined-showcase-all.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8852F59B35E00714978 /* test-115-combined-showcase-all.json */; };
+		414DA9352F59B35E00714978 /* test-042-vertical-padding-uniform.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA83C2F59B35E00714978 /* test-042-vertical-padding-uniform.json */; };
+		414DA9362F59B35E00714978 /* test-056-all-divider-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA84A2F59B35E00714978 /* test-056-all-divider-elements.json */; };
+		414DA9372F59B35E00714978 /* test-098-offset-percent-nested.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8742F59B35E00714978 /* test-098-offset-percent-nested.json */; };
+		414DA9382F59B35E00714978 /* test-097-offset-mixed-units.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8732F59B35E00714978 /* test-097-offset-mixed-units.json */; };
+		414DA9392F59B35E00714978 /* test-104-aspect-ratio-fixed-height.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA87A2F59B35E00714978 /* test-104-aspect-ratio-fixed-height.json */; };
+		414DA93A2F59B35E00714978 /* test-124-4x3-ar-text-weights.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA88E2F59B35E00714978 /* test-124-4x3-ar-text-weights.json */; };
+		414DA93B2F59B35E00714978 /* test-087-inline-vs-inherited.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8692F59B35E00714978 /* test-087-inline-vs-inherited.json */; };
+		414DA93C2F59B35E00714978 /* test-149-notification-card.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8A72F59B35E00714978 /* test-149-notification-card.json */; };
+		414DA93D2F59B35E00714978 /* test-141-button-size-variants.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA89F2F59B35E00714978 /* test-141-button-size-variants.json */; };
+		414DA93E2F59B35E00714978 /* test-119-match-parent-stack-box.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8892F59B35E00714978 /* test-119-match-parent-stack-box.json */; };
+		414DA93F2F59B35E00714978 /* test-150-dashboard-widget.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8A82F59B35E00714978 /* test-150-dashboard-widget.json */; };
+		414DA9402F59B35E00714978 /* test-135-images-z-order.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8992F59B35E00714978 /* test-135-images-z-order.json */; };
+		414DA9412F59B35E00714978 /* test-068-social-post.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8562F59B35E00714978 /* test-068-social-post.json */; };
+		414DA9422F59B35E00714978 /* test-047-horizontal-percent-width.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8412F59B35E00714978 /* test-047-horizontal-percent-width.json */; };
+		414DA9432F59B35E00714978 /* test-096-offset-percent-responsive.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8722F59B35E00714978 /* test-096-offset-percent-responsive.json */; };
+		414DA9442F59B35E00714978 /* test-044-horizontal-padding-asymmetric.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA83E2F59B35E00714978 /* test-044-horizontal-padding-asymmetric.json */; };
+		414DA9452F59B35E00714978 /* test-005-gallery-simple.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8172F59B35E00714978 /* test-005-gallery-simple.json */; };
+		414DA9462F59B35E00714978 /* test-156-button-backgrounds.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8AE2F59B35E00714978 /* test-156-button-backgrounds.json */; };
+		414DA9472F59B35E00714978 /* test-080-shadows-light.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8622F59B35E00714978 /* test-080-shadows-light.json */; };
+		414DA9482F59B35E00714978 /* test-079-border-width-color.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8612F59B35E00714978 /* test-079-border-width-color.json */; };
+		414DA9492F59B35E00714978 /* test-054-all-video-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8482F59B35E00714978 /* test-054-all-video-elements.json */; };
+		414DA94A2F59B35E00714978 /* test-113-combined-gallery-aspect-peek.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8832F59B35E00714978 /* test-113-combined-gallery-aspect-peek.json */; };
+		414DA94B2F59B35E00714978 /* test-051-all-text-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8452F59B35E00714978 /* test-051-all-text-elements.json */; };
+		414DA94C2F59B35E00714978 /* test-082-shadows-heavy.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8642F59B35E00714978 /* test-082-shadows-heavy.json */; };
+		414DA94D2F59B35E00714978 /* test-034-vertical-space-around.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8342F59B35E00714978 /* test-034-vertical-space-around.json */; };
 		41969A622EFE48010050EB83 /* arrangement_demo.json in Resources */ = {isa = PBXBuildFile; fileRef = 41969A612EFE48010050EB83 /* arrangement_demo.json */; };
 		41969A752F0E6A4B0050EB83 /* animation_container_and_children.json in Resources */ = {isa = PBXBuildFile; fileRef = 41969A722F0E6A4B0050EB83 /* animation_container_and_children.json */; };
 		41969A762F0E6A4B0050EB83 /* animation_container_fade.json in Resources */ = {isa = PBXBuildFile; fileRef = 41969A732F0E6A4B0050EB83 /* animation_container_fade.json */; };
@@ -95,8 +201,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		CC000001A2F0000010TESTCF /* TestConfigs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = TestConfigs; path = Resources/TestConfigs; sourceTree = "<group>"; };
-
 		411302792F33E757004B6254 /* BannerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerDetailView.swift; sourceTree = "<group>"; };
 		4113027A2F33E757004B6254 /* BannerShowcaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerShowcaseView.swift; sourceTree = "<group>"; };
 		411302922F34AC72004B6254 /* banner-01-hero-summer-sale.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "banner-01-hero-summer-sale.json"; sourceTree = "<group>"; };
@@ -109,54 +213,163 @@
 		411302992F34AC72004B6254 /* banner-08-flash-sale.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "banner-08-flash-sale.json"; sourceTree = "<group>"; };
 		4113029A2F34AC72004B6254 /* banner-09-premium-subscription.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "banner-09-premium-subscription.json"; sourceTree = "<group>"; };
 		4113029B2F34AC72004B6254 /* banner-10-welcome-onboarding.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "banner-10-welcome-onboarding.json"; sourceTree = "<group>"; };
-		414DA66B2F58032500714978 /* test-060-media-player.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-060-media-player.json"; sourceTree = "<group>"; };
-		414DA66C2F58032500714978 /* test-061-article-layout.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-061-article-layout.json"; sourceTree = "<group>"; };
-		414DA66D2F58032500714978 /* test-062-action-sheet.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-062-action-sheet.json"; sourceTree = "<group>"; };
-		414DA66E2F58032500714978 /* test-063-stats-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-063-stats-card.json"; sourceTree = "<group>"; };
-		414DA66F2F58032500714978 /* test-064-gallery-item.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-064-gallery-item.json"; sourceTree = "<group>"; };
-		414DA6702F58032500714978 /* test-065-notification.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-065-notification.json"; sourceTree = "<group>"; };
-		414DA6712F58032500714978 /* test-066-pricing-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-066-pricing-card.json"; sourceTree = "<group>"; };
-		414DA6722F58032500714978 /* test-067-hero-banner.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-067-hero-banner.json"; sourceTree = "<group>"; };
-		414DA6732F58032500714978 /* test-068-social-post.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-068-social-post.json"; sourceTree = "<group>"; };
-		414DA6742F58032500714978 /* test-069-settings-row.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-069-settings-row.json"; sourceTree = "<group>"; };
-		414DA6752F58032500714978 /* test-070-feature-showcase.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-070-feature-showcase.json"; sourceTree = "<group>"; };
-		414DA6772F58032500714978 /* test-121-16x9-ar-image-text-button.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-121-16x9-ar-image-text-button.json"; sourceTree = "<group>"; };
-		414DA6782F58032500714978 /* test-122-1x1-ar-image-badge-rounded.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-122-1x1-ar-image-badge-rounded.json"; sourceTree = "<group>"; };
-		414DA6792F58032500714978 /* test-123-9x16-ar-video-caption.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-123-9x16-ar-video-caption.json"; sourceTree = "<group>"; };
-		414DA67A2F58032500714978 /* test-124-4x3-ar-text-weights.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-124-4x3-ar-text-weights.json"; sourceTree = "<group>"; };
-		414DA67B2F58032500714978 /* test-125-2x1-ar-image-split-button.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-125-2x1-ar-image-split-button.json"; sourceTree = "<group>"; };
-		414DA67C2F58032500714978 /* test-126-text-font-weights.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-126-text-font-weights.json"; sourceTree = "<group>"; };
-		414DA67D2F58032500714978 /* test-127-text-font-sizes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-127-text-font-sizes.json"; sourceTree = "<group>"; };
-		414DA67E2F58032500714978 /* test-128-text-alignment.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-128-text-alignment.json"; sourceTree = "<group>"; };
-		414DA67F2F58032500714978 /* test-129-text-decoration-italic.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-129-text-decoration-italic.json"; sourceTree = "<group>"; };
-		414DA6802F58032500714978 /* test-130-text-maxlines-overflow.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-130-text-maxlines-overflow.json"; sourceTree = "<group>"; };
-		414DA6812F58032500714978 /* test-131-text-gradient.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-131-text-gradient.json"; sourceTree = "<group>"; };
-		414DA6822F58032500714978 /* test-132-image-fit-crop-contain.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-132-image-fit-crop-contain.json"; sourceTree = "<group>"; };
-		414DA6832F58032500714978 /* test-133-image-gif-rounded.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-133-image-gif-rounded.json"; sourceTree = "<group>"; };
-		414DA6842F58032500714978 /* test-134-image-border-radius.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-134-image-border-radius.json"; sourceTree = "<group>"; };
-		414DA6852F58032500714978 /* test-135-images-z-order.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-135-images-z-order.json"; sourceTree = "<group>"; };
-		414DA6862F58032500714978 /* test-136-video-autoplay-muted.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-136-video-autoplay-muted.json"; sourceTree = "<group>"; };
-		414DA6872F58032500714978 /* test-137-video-with-controls.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-137-video-with-controls.json"; sourceTree = "<group>"; };
-		414DA6882F58032500714978 /* test-138-9x16-video-button.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-138-9x16-video-button.json"; sourceTree = "<group>"; };
-		414DA6892F58032500714978 /* test-139-button-centered.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-139-button-centered.json"; sourceTree = "<group>"; };
-		414DA68A2F58032500714978 /* test-140-button-primary-secondary.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-140-button-primary-secondary.json"; sourceTree = "<group>"; };
-		414DA68B2F58032500714978 /* test-141-button-size-variants.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-141-button-size-variants.json"; sourceTree = "<group>"; };
-		414DA68C2F58032500714978 /* test-142-cta-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-142-cta-card.json"; sourceTree = "<group>"; };
-		414DA68D2F58032500714978 /* test-143-button-rounded-text.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-143-button-rounded-text.json"; sourceTree = "<group>"; };
-		414DA68E2F58032500714978 /* test-144-rounded-box-text.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-144-rounded-box-text.json"; sourceTree = "<group>"; };
-		414DA68F2F58032500714978 /* test-145-nested-rounded-boxes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-145-nested-rounded-boxes.json"; sourceTree = "<group>"; };
-		414DA6902F58032500714978 /* test-146-image-overlay-rounded.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-146-image-overlay-rounded.json"; sourceTree = "<group>"; };
-		414DA6912F58032500714978 /* test-147-hero-banner-complex.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-147-hero-banner-complex.json"; sourceTree = "<group>"; };
-		414DA6922F58032500714978 /* test-148-product-card-complex.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-148-product-card-complex.json"; sourceTree = "<group>"; };
-		414DA6932F58032500714978 /* test-149-notification-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-149-notification-card.json"; sourceTree = "<group>"; };
-		414DA6942F58032500714978 /* test-150-dashboard-widget.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-150-dashboard-widget.json"; sourceTree = "<group>"; };
-		414DA6952F58032500714978 /* test-151-video-player-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-151-video-player-card.json"; sourceTree = "<group>"; };
-		414DA6962F58032500714978 /* test-152-text-corners.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-152-text-corners.json"; sourceTree = "<group>"; };
-		414DA6972F58032500714978 /* test-153-image-clipped.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-153-image-clipped.json"; sourceTree = "<group>"; };
-		414DA6982F58032500714978 /* test-154-nested-box-deep.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-154-nested-box-deep.json"; sourceTree = "<group>"; };
-		414DA6992F58032500714978 /* test-155-all-element-types.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-155-all-element-types.json"; sourceTree = "<group>"; };
-		414DA6CA2F5814B300714978 /* test-156-button-backgrounds.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-156-button-backgrounds.json"; sourceTree = "<group>"; };
-		417388E22F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-091-offset-percent-box-basic.json"; sourceTree = "<group>"; };
+		414DA8132F59B35E00714978 /* test-001-vertical-simple.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-001-vertical-simple.json"; sourceTree = "<group>"; };
+		414DA8142F59B35E00714978 /* test-002-horizontal-simple.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-002-horizontal-simple.json"; sourceTree = "<group>"; };
+		414DA8152F59B35E00714978 /* test-003-box-simple.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-003-box-simple.json"; sourceTree = "<group>"; };
+		414DA8162F59B35E00714978 /* test-004-stack-simple.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-004-stack-simple.json"; sourceTree = "<group>"; };
+		414DA8172F59B35E00714978 /* test-005-gallery-simple.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-005-gallery-simple.json"; sourceTree = "<group>"; };
+		414DA8182F59B35E00714978 /* test-006-vertical-empty.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-006-vertical-empty.json"; sourceTree = "<group>"; };
+		414DA8192F59B35E00714978 /* test-007-vertical-single-child.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-007-vertical-single-child.json"; sourceTree = "<group>"; };
+		414DA81A2F59B35E00714978 /* test-008-vertical-3-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-008-vertical-3-children.json"; sourceTree = "<group>"; };
+		414DA81B2F59B35E00714978 /* test-009-vertical-5-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-009-vertical-5-children.json"; sourceTree = "<group>"; };
+		414DA81C2F59B35E00714978 /* test-010-vertical-10-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-010-vertical-10-children.json"; sourceTree = "<group>"; };
+		414DA81D2F59B35E00714978 /* test-011-horizontal-empty.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-011-horizontal-empty.json"; sourceTree = "<group>"; };
+		414DA81E2F59B35E00714978 /* test-012-horizontal-single-child.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-012-horizontal-single-child.json"; sourceTree = "<group>"; };
+		414DA81F2F59B35E00714978 /* test-013-horizontal-3-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-013-horizontal-3-children.json"; sourceTree = "<group>"; };
+		414DA8202F59B35E00714978 /* test-014-horizontal-5-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-014-horizontal-5-children.json"; sourceTree = "<group>"; };
+		414DA8212F59B35E00714978 /* test-015-horizontal-10-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-015-horizontal-10-children.json"; sourceTree = "<group>"; };
+		414DA8222F59B35E00714978 /* test-016-box-empty.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-016-box-empty.json"; sourceTree = "<group>"; };
+		414DA8232F59B35E00714978 /* test-017-box-single-child.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-017-box-single-child.json"; sourceTree = "<group>"; };
+		414DA8242F59B35E00714978 /* test-018-box-3-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-018-box-3-children.json"; sourceTree = "<group>"; };
+		414DA8252F59B35E00714978 /* test-019-box-5-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-019-box-5-children.json"; sourceTree = "<group>"; };
+		414DA8262F59B35E00714978 /* test-020-stack-empty.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-020-stack-empty.json"; sourceTree = "<group>"; };
+		414DA8272F59B35E00714978 /* test-021-stack-single-child.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-021-stack-single-child.json"; sourceTree = "<group>"; };
+		414DA8282F59B35E00714978 /* test-022-stack-3-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-022-stack-3-children.json"; sourceTree = "<group>"; };
+		414DA8292F59B35E00714978 /* test-023-stack-5-children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-023-stack-5-children.json"; sourceTree = "<group>"; };
+		414DA82A2F59B35E00714978 /* test-024-gallery-empty.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-024-gallery-empty.json"; sourceTree = "<group>"; };
+		414DA82B2F59B35E00714978 /* test-025-gallery-single-child.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-025-gallery-single-child.json"; sourceTree = "<group>"; };
+		414DA82C2F59B35E00714978 /* test-026-gallery-3-children-snapping.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-026-gallery-3-children-snapping.json"; sourceTree = "<group>"; };
+		414DA82D2F59B35E00714978 /* test-027-gallery-5-children-snapping.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-027-gallery-5-children-snapping.json"; sourceTree = "<group>"; };
+		414DA82E2F59B35E00714978 /* test-028-gallery-10-children-snapping.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-028-gallery-10-children-snapping.json"; sourceTree = "<group>"; };
+		414DA82F2F59B35E00714978 /* test-029-gallery-3-children-free-flow.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-029-gallery-3-children-free-flow.json"; sourceTree = "<group>"; };
+		414DA8302F59B35E00714978 /* test-030-gallery-3-children-free-flow-grid.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-030-gallery-3-children-free-flow-grid.json"; sourceTree = "<group>"; };
+		414DA8312F59B35E00714978 /* test-031-vertical-spaced.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-031-vertical-spaced.json"; sourceTree = "<group>"; };
+		414DA8322F59B35E00714978 /* test-032-vertical-space-between.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-032-vertical-space-between.json"; sourceTree = "<group>"; };
+		414DA8332F59B35E00714978 /* test-033-vertical-space-evenly.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-033-vertical-space-evenly.json"; sourceTree = "<group>"; };
+		414DA8342F59B35E00714978 /* test-034-vertical-space-around.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-034-vertical-space-around.json"; sourceTree = "<group>"; };
+		414DA8352F59B35E00714978 /* test-035-horizontal-start.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-035-horizontal-start.json"; sourceTree = "<group>"; };
+		414DA8362F59B35E00714978 /* test-036-horizontal-center.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-036-horizontal-center.json"; sourceTree = "<group>"; };
+		414DA8372F59B35E00714978 /* test-037-horizontal-end.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-037-horizontal-end.json"; sourceTree = "<group>"; };
+		414DA8382F59B35E00714978 /* test-038-vertical-spacing-0.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-038-vertical-spacing-0.json"; sourceTree = "<group>"; };
+		414DA8392F59B35E00714978 /* test-039-vertical-spacing-8.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-039-vertical-spacing-8.json"; sourceTree = "<group>"; };
+		414DA83A2F59B35E00714978 /* test-040-vertical-spacing-16.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-040-vertical-spacing-16.json"; sourceTree = "<group>"; };
+		414DA83B2F59B35E00714978 /* test-041-vertical-spacing-32.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-041-vertical-spacing-32.json"; sourceTree = "<group>"; };
+		414DA83C2F59B35E00714978 /* test-042-vertical-padding-uniform.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-042-vertical-padding-uniform.json"; sourceTree = "<group>"; };
+		414DA83D2F59B35E00714978 /* test-043-vertical-padding-individual.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-043-vertical-padding-individual.json"; sourceTree = "<group>"; };
+		414DA83E2F59B35E00714978 /* test-044-horizontal-padding-asymmetric.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-044-horizontal-padding-asymmetric.json"; sourceTree = "<group>"; };
+		414DA83F2F59B35E00714978 /* test-045-box-padding-large.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-045-box-padding-large.json"; sourceTree = "<group>"; };
+		414DA8402F59B35E00714978 /* test-046-vertical-wrap-content.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-046-vertical-wrap-content.json"; sourceTree = "<group>"; };
+		414DA8412F59B35E00714978 /* test-047-horizontal-percent-width.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-047-horizontal-percent-width.json"; sourceTree = "<group>"; };
+		414DA8422F59B35E00714978 /* test-048-vertical-mixed-units.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-048-vertical-mixed-units.json"; sourceTree = "<group>"; };
+		414DA8432F59B35E00714978 /* test-049-nested-mixed-arrangements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-049-nested-mixed-arrangements.json"; sourceTree = "<group>"; };
+		414DA8442F59B35E00714978 /* test-050-gallery-spacing-variations.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-050-gallery-spacing-variations.json"; sourceTree = "<group>"; };
+		414DA8452F59B35E00714978 /* test-051-all-text-elements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-051-all-text-elements.json"; sourceTree = "<group>"; };
+		414DA8462F59B35E00714978 /* test-052-all-image-elements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-052-all-image-elements.json"; sourceTree = "<group>"; };
+		414DA8472F59B35E00714978 /* test-053-all-button-elements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-053-all-button-elements.json"; sourceTree = "<group>"; };
+		414DA8482F59B35E00714978 /* test-054-all-video-elements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-054-all-video-elements.json"; sourceTree = "<group>"; };
+		414DA8492F59B35E00714978 /* test-055-all-spacer-elements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-055-all-spacer-elements.json"; sourceTree = "<group>"; };
+		414DA84A2F59B35E00714978 /* test-056-all-divider-elements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-056-all-divider-elements.json"; sourceTree = "<group>"; };
+		414DA84B2F59B35E00714978 /* test-057-product-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-057-product-card.json"; sourceTree = "<group>"; };
+		414DA84C2F59B35E00714978 /* test-058-login-form.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-058-login-form.json"; sourceTree = "<group>"; };
+		414DA84D2F59B35E00714978 /* test-059-profile-header.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-059-profile-header.json"; sourceTree = "<group>"; };
+		414DA84E2F59B35E00714978 /* test-060-media-player.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-060-media-player.json"; sourceTree = "<group>"; };
+		414DA84F2F59B35E00714978 /* test-061-article-layout.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-061-article-layout.json"; sourceTree = "<group>"; };
+		414DA8502F59B35E00714978 /* test-062-action-sheet.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-062-action-sheet.json"; sourceTree = "<group>"; };
+		414DA8512F59B35E00714978 /* test-063-stats-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-063-stats-card.json"; sourceTree = "<group>"; };
+		414DA8522F59B35E00714978 /* test-064-gallery-item.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-064-gallery-item.json"; sourceTree = "<group>"; };
+		414DA8532F59B35E00714978 /* test-065-notification.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-065-notification.json"; sourceTree = "<group>"; };
+		414DA8542F59B35E00714978 /* test-066-pricing-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-066-pricing-card.json"; sourceTree = "<group>"; };
+		414DA8552F59B35E00714978 /* test-067-hero-banner.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-067-hero-banner.json"; sourceTree = "<group>"; };
+		414DA8562F59B35E00714978 /* test-068-social-post.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-068-social-post.json"; sourceTree = "<group>"; };
+		414DA8572F59B35E00714978 /* test-069-settings-row.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-069-settings-row.json"; sourceTree = "<group>"; };
+		414DA8582F59B35E00714978 /* test-070-feature-showcase.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-070-feature-showcase.json"; sourceTree = "<group>"; };
+		414DA8592F59B35E00714978 /* test-071-text-colors.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-071-text-colors.json"; sourceTree = "<group>"; };
+		414DA85A2F59B35E00714978 /* test-072-font-sizes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-072-font-sizes.json"; sourceTree = "<group>"; };
+		414DA85B2F59B35E00714978 /* test-073-font-weights.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-073-font-weights.json"; sourceTree = "<group>"; };
+		414DA85C2F59B35E00714978 /* test-074-text-alignment.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-074-text-alignment.json"; sourceTree = "<group>"; };
+		414DA85D2F59B35E00714978 /* test-075-text-decoration.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-075-text-decoration.json"; sourceTree = "<group>"; };
+		414DA85E2F59B35E00714978 /* test-076-line-height.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-076-line-height.json"; sourceTree = "<group>"; };
+		414DA85F2F59B35E00714978 /* test-077-font-families.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-077-font-families.json"; sourceTree = "<group>"; };
+		414DA8602F59B35E00714978 /* test-078-border-radius.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-078-border-radius.json"; sourceTree = "<group>"; };
+		414DA8612F59B35E00714978 /* test-079-border-width-color.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-079-border-width-color.json"; sourceTree = "<group>"; };
+		414DA8622F59B35E00714978 /* test-080-shadows-light.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-080-shadows-light.json"; sourceTree = "<group>"; };
+		414DA8632F59B35E00714978 /* test-081-shadows-medium.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-081-shadows-medium.json"; sourceTree = "<group>"; };
+		414DA8642F59B35E00714978 /* test-082-shadows-heavy.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-082-shadows-heavy.json"; sourceTree = "<group>"; };
+		414DA8652F59B35E00714978 /* test-083-opacity-variations.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-083-opacity-variations.json"; sourceTree = "<group>"; };
+		414DA8662F59B35E00714978 /* test-084-combined-visual-styles.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-084-combined-visual-styles.json"; sourceTree = "<group>"; };
+		414DA8672F59B35E00714978 /* test-085-text-style-inheritance.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-085-text-style-inheritance.json"; sourceTree = "<group>"; };
+		414DA8682F59B35E00714978 /* test-086-style-class-usage.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-086-style-class-usage.json"; sourceTree = "<group>"; };
+		414DA8692F59B35E00714978 /* test-087-inline-vs-inherited.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-087-inline-vs-inherited.json"; sourceTree = "<group>"; };
+		414DA86A2F59B35E00714978 /* test-088-theme-default-styles.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-088-theme-default-styles.json"; sourceTree = "<group>"; };
+		414DA86B2F59B35E00714978 /* test-089-styled-product-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-089-styled-product-card.json"; sourceTree = "<group>"; };
+		414DA86C2F59B35E00714978 /* test-090-styled-profile-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-090-styled-profile-card.json"; sourceTree = "<group>"; };
+		414DA86D2F59B35E00714978 /* test-091-offset-percent-box-basic.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-091-offset-percent-box-basic.json"; sourceTree = "<group>"; };
+		414DA86E2F59B35E00714978 /* test-092-offset-percent-stack-layers.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-092-offset-percent-stack-layers.json"; sourceTree = "<group>"; };
+		414DA86F2F59B35E00714978 /* test-093-offset-percent-negative.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-093-offset-percent-negative.json"; sourceTree = "<group>"; };
+		414DA8702F59B35E00714978 /* test-094-offset-percent-overflow.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-094-offset-percent-overflow.json"; sourceTree = "<group>"; };
+		414DA8712F59B35E00714978 /* test-095-offset-percent-zero.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-095-offset-percent-zero.json"; sourceTree = "<group>"; };
+		414DA8722F59B35E00714978 /* test-096-offset-percent-responsive.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-096-offset-percent-responsive.json"; sourceTree = "<group>"; };
+		414DA8732F59B35E00714978 /* test-097-offset-mixed-units.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-097-offset-mixed-units.json"; sourceTree = "<group>"; };
+		414DA8742F59B35E00714978 /* test-098-offset-percent-nested.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-098-offset-percent-nested.json"; sourceTree = "<group>"; };
+		414DA8752F59B35E00714978 /* test-099-offset-percent-with-padding.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-099-offset-percent-with-padding.json"; sourceTree = "<group>"; };
+		414DA8762F59B35E00714978 /* test-100-offset-percent-gallery-peek.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-100-offset-percent-gallery-peek.json"; sourceTree = "<group>"; };
+		414DA8772F59B35E00714978 /* test-101-aspect-ratio-square-fixed-width.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-101-aspect-ratio-square-fixed-width.json"; sourceTree = "<group>"; };
+		414DA8782F59B35E00714978 /* test-102-aspect-ratio-16-9-fixed-width.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-102-aspect-ratio-16-9-fixed-width.json"; sourceTree = "<group>"; };
+		414DA8792F59B35E00714978 /* test-103-aspect-ratio-4-3-fixed-width.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-103-aspect-ratio-4-3-fixed-width.json"; sourceTree = "<group>"; };
+		414DA87A2F59B35E00714978 /* test-104-aspect-ratio-fixed-height.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-104-aspect-ratio-fixed-height.json"; sourceTree = "<group>"; };
+		414DA87B2F59B35E00714978 /* test-105-aspect-ratio-percent-width.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-105-aspect-ratio-percent-width.json"; sourceTree = "<group>"; };
+		414DA87C2F59B35E00714978 /* test-106-aspect-ratio-wrap-content.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-106-aspect-ratio-wrap-content.json"; sourceTree = "<group>"; };
+		414DA87D2F59B35E00714978 /* test-107-aspect-ratio-match-parent.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-107-aspect-ratio-match-parent.json"; sourceTree = "<group>"; };
+		414DA87E2F59B35E00714978 /* test-108-aspect-ratio-extreme-wide.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-108-aspect-ratio-extreme-wide.json"; sourceTree = "<group>"; };
+		414DA87F2F59B35E00714978 /* test-109-aspect-ratio-extreme-tall.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-109-aspect-ratio-extreme-tall.json"; sourceTree = "<group>"; };
+		414DA8802F59B35E00714978 /* test-110-aspect-ratio-mixed-container.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-110-aspect-ratio-mixed-container.json"; sourceTree = "<group>"; };
+		414DA8812F59B35E00714978 /* test-111-combined-aspect-offset-box.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-111-combined-aspect-offset-box.json"; sourceTree = "<group>"; };
+		414DA8822F59B35E00714978 /* test-112-combined-nested-complex.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-112-combined-nested-complex.json"; sourceTree = "<group>"; };
+		414DA8832F59B35E00714978 /* test-113-combined-gallery-aspect-peek.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-113-combined-gallery-aspect-peek.json"; sourceTree = "<group>"; };
+		414DA8842F59B35E00714978 /* test-114-combined-product-grid.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-114-combined-product-grid.json"; sourceTree = "<group>"; };
+		414DA8852F59B35E00714978 /* test-115-combined-showcase-all.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-115-combined-showcase-all.json"; sourceTree = "<group>"; };
+		414DA8862F59B35E00714978 /* test-116-match-parent-comprehensive.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-116-match-parent-comprehensive.json"; sourceTree = "<group>"; };
+		414DA8872F59B35E00714978 /* test-117-wrap-content-comprehensive.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-117-wrap-content-comprehensive.json"; sourceTree = "<group>"; };
+		414DA8882F59B35E00714978 /* test-118-mixed-special-dimensions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-118-mixed-special-dimensions.json"; sourceTree = "<group>"; };
+		414DA8892F59B35E00714978 /* test-119-match-parent-stack-box.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-119-match-parent-stack-box.json"; sourceTree = "<group>"; };
+		414DA88A2F59B35E00714978 /* test-120-wrap-content-constraints.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-120-wrap-content-constraints.json"; sourceTree = "<group>"; };
+		414DA88B2F59B35E00714978 /* test-121-16x9-ar-image-text-button.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-121-16x9-ar-image-text-button.json"; sourceTree = "<group>"; };
+		414DA88C2F59B35E00714978 /* test-122-1x1-ar-image-badge-rounded.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-122-1x1-ar-image-badge-rounded.json"; sourceTree = "<group>"; };
+		414DA88D2F59B35E00714978 /* test-123-9x16-ar-video-caption.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-123-9x16-ar-video-caption.json"; sourceTree = "<group>"; };
+		414DA88E2F59B35E00714978 /* test-124-4x3-ar-text-weights.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-124-4x3-ar-text-weights.json"; sourceTree = "<group>"; };
+		414DA88F2F59B35E00714978 /* test-125-2x1-ar-image-split-button.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-125-2x1-ar-image-split-button.json"; sourceTree = "<group>"; };
+		414DA8902F59B35E00714978 /* test-126-text-font-weights.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-126-text-font-weights.json"; sourceTree = "<group>"; };
+		414DA8912F59B35E00714978 /* test-127-text-font-sizes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-127-text-font-sizes.json"; sourceTree = "<group>"; };
+		414DA8922F59B35E00714978 /* test-128-text-alignment.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-128-text-alignment.json"; sourceTree = "<group>"; };
+		414DA8932F59B35E00714978 /* test-129-text-decoration-italic.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-129-text-decoration-italic.json"; sourceTree = "<group>"; };
+		414DA8942F59B35E00714978 /* test-130-text-maxlines-overflow.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-130-text-maxlines-overflow.json"; sourceTree = "<group>"; };
+		414DA8952F59B35E00714978 /* test-131-text-gradient.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-131-text-gradient.json"; sourceTree = "<group>"; };
+		414DA8962F59B35E00714978 /* test-132-image-fit-crop-contain.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-132-image-fit-crop-contain.json"; sourceTree = "<group>"; };
+		414DA8972F59B35E00714978 /* test-133-image-gif-rounded.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-133-image-gif-rounded.json"; sourceTree = "<group>"; };
+		414DA8982F59B35E00714978 /* test-134-image-border-radius.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-134-image-border-radius.json"; sourceTree = "<group>"; };
+		414DA8992F59B35E00714978 /* test-135-images-z-order.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-135-images-z-order.json"; sourceTree = "<group>"; };
+		414DA89A2F59B35E00714978 /* test-136-video-autoplay-muted.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-136-video-autoplay-muted.json"; sourceTree = "<group>"; };
+		414DA89B2F59B35E00714978 /* test-137-video-with-controls.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-137-video-with-controls.json"; sourceTree = "<group>"; };
+		414DA89C2F59B35E00714978 /* test-138-9x16-video-button.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-138-9x16-video-button.json"; sourceTree = "<group>"; };
+		414DA89D2F59B35E00714978 /* test-139-button-centered.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-139-button-centered.json"; sourceTree = "<group>"; };
+		414DA89E2F59B35E00714978 /* test-140-button-primary-secondary.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-140-button-primary-secondary.json"; sourceTree = "<group>"; };
+		414DA89F2F59B35E00714978 /* test-141-button-size-variants.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-141-button-size-variants.json"; sourceTree = "<group>"; };
+		414DA8A02F59B35E00714978 /* test-142-cta-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-142-cta-card.json"; sourceTree = "<group>"; };
+		414DA8A12F59B35E00714978 /* test-143-button-rounded-text.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-143-button-rounded-text.json"; sourceTree = "<group>"; };
+		414DA8A22F59B35E00714978 /* test-144-rounded-box-text.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-144-rounded-box-text.json"; sourceTree = "<group>"; };
+		414DA8A32F59B35E00714978 /* test-145-nested-rounded-boxes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-145-nested-rounded-boxes.json"; sourceTree = "<group>"; };
+		414DA8A42F59B35E00714978 /* test-146-image-overlay-rounded.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-146-image-overlay-rounded.json"; sourceTree = "<group>"; };
+		414DA8A52F59B35E00714978 /* test-147-hero-banner-complex.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-147-hero-banner-complex.json"; sourceTree = "<group>"; };
+		414DA8A62F59B35E00714978 /* test-148-product-card-complex.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-148-product-card-complex.json"; sourceTree = "<group>"; };
+		414DA8A72F59B35E00714978 /* test-149-notification-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-149-notification-card.json"; sourceTree = "<group>"; };
+		414DA8A82F59B35E00714978 /* test-150-dashboard-widget.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-150-dashboard-widget.json"; sourceTree = "<group>"; };
+		414DA8A92F59B35E00714978 /* test-151-video-player-card.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-151-video-player-card.json"; sourceTree = "<group>"; };
+		414DA8AA2F59B35E00714978 /* test-152-text-corners.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-152-text-corners.json"; sourceTree = "<group>"; };
+		414DA8AB2F59B35E00714978 /* test-153-image-clipped.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-153-image-clipped.json"; sourceTree = "<group>"; };
+		414DA8AC2F59B35E00714978 /* test-154-nested-box-deep.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-154-nested-box-deep.json"; sourceTree = "<group>"; };
+		414DA8AD2F59B35E00714978 /* test-155-all-element-types.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-155-all-element-types.json"; sourceTree = "<group>"; };
+		414DA8AE2F59B35E00714978 /* test-156-button-backgrounds.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-156-button-backgrounds.json"; sourceTree = "<group>"; };
+		414DA8AF2F59B35E00714978 /* test-VERIFY-percentage-offset-fix.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-VERIFY-percentage-offset-fix.json"; sourceTree = "<group>"; };
 		41969A612EFE48010050EB83 /* arrangement_demo.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = arrangement_demo.json; sourceTree = "<group>"; };
 		41969A722F0E6A4B0050EB83 /* animation_container_and_children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = animation_container_and_children.json; sourceTree = "<group>"; };
 		41969A732F0E6A4B0050EB83 /* animation_container_fade.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = animation_container_fade.json; sourceTree = "<group>"; };
@@ -212,56 +425,166 @@
 			path = Banners;
 			sourceTree = "<group>";
 		};
-		414DA69A2F58032500714978 /* TestConfigs */ = {
+		414DA8B02F59B35E00714978 /* TestConfigs */ = {
 			isa = PBXGroup;
 			children = (
-				414DA6CA2F5814B300714978 /* test-156-button-backgrounds.json */,
-				414DA66B2F58032500714978 /* test-060-media-player.json */,
-				414DA66C2F58032500714978 /* test-061-article-layout.json */,
-				414DA66D2F58032500714978 /* test-062-action-sheet.json */,
-				414DA66E2F58032500714978 /* test-063-stats-card.json */,
-				414DA66F2F58032500714978 /* test-064-gallery-item.json */,
-				414DA6702F58032500714978 /* test-065-notification.json */,
-				414DA6712F58032500714978 /* test-066-pricing-card.json */,
-				414DA6722F58032500714978 /* test-067-hero-banner.json */,
-				414DA6732F58032500714978 /* test-068-social-post.json */,
-				414DA6742F58032500714978 /* test-069-settings-row.json */,
-				414DA6752F58032500714978 /* test-070-feature-showcase.json */,
-				414DA6772F58032500714978 /* test-121-16x9-ar-image-text-button.json */,
-				414DA6782F58032500714978 /* test-122-1x1-ar-image-badge-rounded.json */,
-				414DA6792F58032500714978 /* test-123-9x16-ar-video-caption.json */,
-				414DA67A2F58032500714978 /* test-124-4x3-ar-text-weights.json */,
-				414DA67B2F58032500714978 /* test-125-2x1-ar-image-split-button.json */,
-				414DA67C2F58032500714978 /* test-126-text-font-weights.json */,
-				414DA67D2F58032500714978 /* test-127-text-font-sizes.json */,
-				414DA67E2F58032500714978 /* test-128-text-alignment.json */,
-				414DA67F2F58032500714978 /* test-129-text-decoration-italic.json */,
-				414DA6802F58032500714978 /* test-130-text-maxlines-overflow.json */,
-				414DA6812F58032500714978 /* test-131-text-gradient.json */,
-				414DA6822F58032500714978 /* test-132-image-fit-crop-contain.json */,
-				414DA6832F58032500714978 /* test-133-image-gif-rounded.json */,
-				414DA6842F58032500714978 /* test-134-image-border-radius.json */,
-				414DA6852F58032500714978 /* test-135-images-z-order.json */,
-				414DA6862F58032500714978 /* test-136-video-autoplay-muted.json */,
-				414DA6872F58032500714978 /* test-137-video-with-controls.json */,
-				414DA6882F58032500714978 /* test-138-9x16-video-button.json */,
-				414DA6892F58032500714978 /* test-139-button-centered.json */,
-				414DA68A2F58032500714978 /* test-140-button-primary-secondary.json */,
-				414DA68B2F58032500714978 /* test-141-button-size-variants.json */,
-				414DA68C2F58032500714978 /* test-142-cta-card.json */,
-				414DA68D2F58032500714978 /* test-143-button-rounded-text.json */,
-				414DA68E2F58032500714978 /* test-144-rounded-box-text.json */,
-				414DA68F2F58032500714978 /* test-145-nested-rounded-boxes.json */,
-				414DA6902F58032500714978 /* test-146-image-overlay-rounded.json */,
-				414DA6912F58032500714978 /* test-147-hero-banner-complex.json */,
-				414DA6922F58032500714978 /* test-148-product-card-complex.json */,
-				414DA6932F58032500714978 /* test-149-notification-card.json */,
-				414DA6942F58032500714978 /* test-150-dashboard-widget.json */,
-				414DA6952F58032500714978 /* test-151-video-player-card.json */,
-				414DA6962F58032500714978 /* test-152-text-corners.json */,
-				414DA6972F58032500714978 /* test-153-image-clipped.json */,
-				414DA6982F58032500714978 /* test-154-nested-box-deep.json */,
-				414DA6992F58032500714978 /* test-155-all-element-types.json */,
+				414DA8132F59B35E00714978 /* test-001-vertical-simple.json */,
+				414DA8142F59B35E00714978 /* test-002-horizontal-simple.json */,
+				414DA8152F59B35E00714978 /* test-003-box-simple.json */,
+				414DA8162F59B35E00714978 /* test-004-stack-simple.json */,
+				414DA8172F59B35E00714978 /* test-005-gallery-simple.json */,
+				414DA8182F59B35E00714978 /* test-006-vertical-empty.json */,
+				414DA8192F59B35E00714978 /* test-007-vertical-single-child.json */,
+				414DA81A2F59B35E00714978 /* test-008-vertical-3-children.json */,
+				414DA81B2F59B35E00714978 /* test-009-vertical-5-children.json */,
+				414DA81C2F59B35E00714978 /* test-010-vertical-10-children.json */,
+				414DA81D2F59B35E00714978 /* test-011-horizontal-empty.json */,
+				414DA81E2F59B35E00714978 /* test-012-horizontal-single-child.json */,
+				414DA81F2F59B35E00714978 /* test-013-horizontal-3-children.json */,
+				414DA8202F59B35E00714978 /* test-014-horizontal-5-children.json */,
+				414DA8212F59B35E00714978 /* test-015-horizontal-10-children.json */,
+				414DA8222F59B35E00714978 /* test-016-box-empty.json */,
+				414DA8232F59B35E00714978 /* test-017-box-single-child.json */,
+				414DA8242F59B35E00714978 /* test-018-box-3-children.json */,
+				414DA8252F59B35E00714978 /* test-019-box-5-children.json */,
+				414DA8262F59B35E00714978 /* test-020-stack-empty.json */,
+				414DA8272F59B35E00714978 /* test-021-stack-single-child.json */,
+				414DA8282F59B35E00714978 /* test-022-stack-3-children.json */,
+				414DA8292F59B35E00714978 /* test-023-stack-5-children.json */,
+				414DA82A2F59B35E00714978 /* test-024-gallery-empty.json */,
+				414DA82B2F59B35E00714978 /* test-025-gallery-single-child.json */,
+				414DA82C2F59B35E00714978 /* test-026-gallery-3-children-snapping.json */,
+				414DA82D2F59B35E00714978 /* test-027-gallery-5-children-snapping.json */,
+				414DA82E2F59B35E00714978 /* test-028-gallery-10-children-snapping.json */,
+				414DA82F2F59B35E00714978 /* test-029-gallery-3-children-free-flow.json */,
+				414DA8302F59B35E00714978 /* test-030-gallery-3-children-free-flow-grid.json */,
+				414DA8312F59B35E00714978 /* test-031-vertical-spaced.json */,
+				414DA8322F59B35E00714978 /* test-032-vertical-space-between.json */,
+				414DA8332F59B35E00714978 /* test-033-vertical-space-evenly.json */,
+				414DA8342F59B35E00714978 /* test-034-vertical-space-around.json */,
+				414DA8352F59B35E00714978 /* test-035-horizontal-start.json */,
+				414DA8362F59B35E00714978 /* test-036-horizontal-center.json */,
+				414DA8372F59B35E00714978 /* test-037-horizontal-end.json */,
+				414DA8382F59B35E00714978 /* test-038-vertical-spacing-0.json */,
+				414DA8392F59B35E00714978 /* test-039-vertical-spacing-8.json */,
+				414DA83A2F59B35E00714978 /* test-040-vertical-spacing-16.json */,
+				414DA83B2F59B35E00714978 /* test-041-vertical-spacing-32.json */,
+				414DA83C2F59B35E00714978 /* test-042-vertical-padding-uniform.json */,
+				414DA83D2F59B35E00714978 /* test-043-vertical-padding-individual.json */,
+				414DA83E2F59B35E00714978 /* test-044-horizontal-padding-asymmetric.json */,
+				414DA83F2F59B35E00714978 /* test-045-box-padding-large.json */,
+				414DA8402F59B35E00714978 /* test-046-vertical-wrap-content.json */,
+				414DA8412F59B35E00714978 /* test-047-horizontal-percent-width.json */,
+				414DA8422F59B35E00714978 /* test-048-vertical-mixed-units.json */,
+				414DA8432F59B35E00714978 /* test-049-nested-mixed-arrangements.json */,
+				414DA8442F59B35E00714978 /* test-050-gallery-spacing-variations.json */,
+				414DA8452F59B35E00714978 /* test-051-all-text-elements.json */,
+				414DA8462F59B35E00714978 /* test-052-all-image-elements.json */,
+				414DA8472F59B35E00714978 /* test-053-all-button-elements.json */,
+				414DA8482F59B35E00714978 /* test-054-all-video-elements.json */,
+				414DA8492F59B35E00714978 /* test-055-all-spacer-elements.json */,
+				414DA84A2F59B35E00714978 /* test-056-all-divider-elements.json */,
+				414DA84B2F59B35E00714978 /* test-057-product-card.json */,
+				414DA84C2F59B35E00714978 /* test-058-login-form.json */,
+				414DA84D2F59B35E00714978 /* test-059-profile-header.json */,
+				414DA84E2F59B35E00714978 /* test-060-media-player.json */,
+				414DA84F2F59B35E00714978 /* test-061-article-layout.json */,
+				414DA8502F59B35E00714978 /* test-062-action-sheet.json */,
+				414DA8512F59B35E00714978 /* test-063-stats-card.json */,
+				414DA8522F59B35E00714978 /* test-064-gallery-item.json */,
+				414DA8532F59B35E00714978 /* test-065-notification.json */,
+				414DA8542F59B35E00714978 /* test-066-pricing-card.json */,
+				414DA8552F59B35E00714978 /* test-067-hero-banner.json */,
+				414DA8562F59B35E00714978 /* test-068-social-post.json */,
+				414DA8572F59B35E00714978 /* test-069-settings-row.json */,
+				414DA8582F59B35E00714978 /* test-070-feature-showcase.json */,
+				414DA8592F59B35E00714978 /* test-071-text-colors.json */,
+				414DA85A2F59B35E00714978 /* test-072-font-sizes.json */,
+				414DA85B2F59B35E00714978 /* test-073-font-weights.json */,
+				414DA85C2F59B35E00714978 /* test-074-text-alignment.json */,
+				414DA85D2F59B35E00714978 /* test-075-text-decoration.json */,
+				414DA85E2F59B35E00714978 /* test-076-line-height.json */,
+				414DA85F2F59B35E00714978 /* test-077-font-families.json */,
+				414DA8602F59B35E00714978 /* test-078-border-radius.json */,
+				414DA8612F59B35E00714978 /* test-079-border-width-color.json */,
+				414DA8622F59B35E00714978 /* test-080-shadows-light.json */,
+				414DA8632F59B35E00714978 /* test-081-shadows-medium.json */,
+				414DA8642F59B35E00714978 /* test-082-shadows-heavy.json */,
+				414DA8652F59B35E00714978 /* test-083-opacity-variations.json */,
+				414DA8662F59B35E00714978 /* test-084-combined-visual-styles.json */,
+				414DA8672F59B35E00714978 /* test-085-text-style-inheritance.json */,
+				414DA8682F59B35E00714978 /* test-086-style-class-usage.json */,
+				414DA8692F59B35E00714978 /* test-087-inline-vs-inherited.json */,
+				414DA86A2F59B35E00714978 /* test-088-theme-default-styles.json */,
+				414DA86B2F59B35E00714978 /* test-089-styled-product-card.json */,
+				414DA86C2F59B35E00714978 /* test-090-styled-profile-card.json */,
+				414DA86D2F59B35E00714978 /* test-091-offset-percent-box-basic.json */,
+				414DA86E2F59B35E00714978 /* test-092-offset-percent-stack-layers.json */,
+				414DA86F2F59B35E00714978 /* test-093-offset-percent-negative.json */,
+				414DA8702F59B35E00714978 /* test-094-offset-percent-overflow.json */,
+				414DA8712F59B35E00714978 /* test-095-offset-percent-zero.json */,
+				414DA8722F59B35E00714978 /* test-096-offset-percent-responsive.json */,
+				414DA8732F59B35E00714978 /* test-097-offset-mixed-units.json */,
+				414DA8742F59B35E00714978 /* test-098-offset-percent-nested.json */,
+				414DA8752F59B35E00714978 /* test-099-offset-percent-with-padding.json */,
+				414DA8762F59B35E00714978 /* test-100-offset-percent-gallery-peek.json */,
+				414DA8772F59B35E00714978 /* test-101-aspect-ratio-square-fixed-width.json */,
+				414DA8782F59B35E00714978 /* test-102-aspect-ratio-16-9-fixed-width.json */,
+				414DA8792F59B35E00714978 /* test-103-aspect-ratio-4-3-fixed-width.json */,
+				414DA87A2F59B35E00714978 /* test-104-aspect-ratio-fixed-height.json */,
+				414DA87B2F59B35E00714978 /* test-105-aspect-ratio-percent-width.json */,
+				414DA87C2F59B35E00714978 /* test-106-aspect-ratio-wrap-content.json */,
+				414DA87D2F59B35E00714978 /* test-107-aspect-ratio-match-parent.json */,
+				414DA87E2F59B35E00714978 /* test-108-aspect-ratio-extreme-wide.json */,
+				414DA87F2F59B35E00714978 /* test-109-aspect-ratio-extreme-tall.json */,
+				414DA8802F59B35E00714978 /* test-110-aspect-ratio-mixed-container.json */,
+				414DA8812F59B35E00714978 /* test-111-combined-aspect-offset-box.json */,
+				414DA8822F59B35E00714978 /* test-112-combined-nested-complex.json */,
+				414DA8832F59B35E00714978 /* test-113-combined-gallery-aspect-peek.json */,
+				414DA8842F59B35E00714978 /* test-114-combined-product-grid.json */,
+				414DA8852F59B35E00714978 /* test-115-combined-showcase-all.json */,
+				414DA8862F59B35E00714978 /* test-116-match-parent-comprehensive.json */,
+				414DA8872F59B35E00714978 /* test-117-wrap-content-comprehensive.json */,
+				414DA8882F59B35E00714978 /* test-118-mixed-special-dimensions.json */,
+				414DA8892F59B35E00714978 /* test-119-match-parent-stack-box.json */,
+				414DA88A2F59B35E00714978 /* test-120-wrap-content-constraints.json */,
+				414DA88B2F59B35E00714978 /* test-121-16x9-ar-image-text-button.json */,
+				414DA88C2F59B35E00714978 /* test-122-1x1-ar-image-badge-rounded.json */,
+				414DA88D2F59B35E00714978 /* test-123-9x16-ar-video-caption.json */,
+				414DA88E2F59B35E00714978 /* test-124-4x3-ar-text-weights.json */,
+				414DA88F2F59B35E00714978 /* test-125-2x1-ar-image-split-button.json */,
+				414DA8902F59B35E00714978 /* test-126-text-font-weights.json */,
+				414DA8912F59B35E00714978 /* test-127-text-font-sizes.json */,
+				414DA8922F59B35E00714978 /* test-128-text-alignment.json */,
+				414DA8932F59B35E00714978 /* test-129-text-decoration-italic.json */,
+				414DA8942F59B35E00714978 /* test-130-text-maxlines-overflow.json */,
+				414DA8952F59B35E00714978 /* test-131-text-gradient.json */,
+				414DA8962F59B35E00714978 /* test-132-image-fit-crop-contain.json */,
+				414DA8972F59B35E00714978 /* test-133-image-gif-rounded.json */,
+				414DA8982F59B35E00714978 /* test-134-image-border-radius.json */,
+				414DA8992F59B35E00714978 /* test-135-images-z-order.json */,
+				414DA89A2F59B35E00714978 /* test-136-video-autoplay-muted.json */,
+				414DA89B2F59B35E00714978 /* test-137-video-with-controls.json */,
+				414DA89C2F59B35E00714978 /* test-138-9x16-video-button.json */,
+				414DA89D2F59B35E00714978 /* test-139-button-centered.json */,
+				414DA89E2F59B35E00714978 /* test-140-button-primary-secondary.json */,
+				414DA89F2F59B35E00714978 /* test-141-button-size-variants.json */,
+				414DA8A02F59B35E00714978 /* test-142-cta-card.json */,
+				414DA8A12F59B35E00714978 /* test-143-button-rounded-text.json */,
+				414DA8A22F59B35E00714978 /* test-144-rounded-box-text.json */,
+				414DA8A32F59B35E00714978 /* test-145-nested-rounded-boxes.json */,
+				414DA8A42F59B35E00714978 /* test-146-image-overlay-rounded.json */,
+				414DA8A52F59B35E00714978 /* test-147-hero-banner-complex.json */,
+				414DA8A62F59B35E00714978 /* test-148-product-card-complex.json */,
+				414DA8A72F59B35E00714978 /* test-149-notification-card.json */,
+				414DA8A82F59B35E00714978 /* test-150-dashboard-widget.json */,
+				414DA8A92F59B35E00714978 /* test-151-video-player-card.json */,
+				414DA8AA2F59B35E00714978 /* test-152-text-corners.json */,
+				414DA8AB2F59B35E00714978 /* test-153-image-clipped.json */,
+				414DA8AC2F59B35E00714978 /* test-154-nested-box-deep.json */,
+				414DA8AD2F59B35E00714978 /* test-155-all-element-types.json */,
+				414DA8AE2F59B35E00714978 /* test-156-button-backgrounds.json */,
+				414DA8AF2F59B35E00714978 /* test-VERIFY-percentage-offset-fix.json */,
 			);
 			path = TestConfigs;
 			sourceTree = "<group>";
@@ -272,7 +595,6 @@
 				41C5EB1D2F34E6FC0066BE34 /* JSONViewerView.swift */,
 				411302792F33E757004B6254 /* BannerDetailView.swift */,
 				4113027A2F33E757004B6254 /* BannerShowcaseView.swift */,
-				417388E22F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json */,
 				41F1AD602F2B7D420018C5EA /* JsonLoader.swift */,
 				41F1AD5E2F2B7D330018C5EA /* TestConfigBrowserView.swift */,
 				F001 /* NativeDisplaySampleApp.swift */,
@@ -295,7 +617,7 @@
 		GRP_RES /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CC000001A2F0000010TESTCF /* TestConfigs */,
+				414DA8B02F59B35E00714978 /* TestConfigs */,
 				4113029C2F34AC72004B6254 /* Banners */,
 				41969A722F0E6A4B0050EB83 /* animation_container_and_children.json */,
 				41969A732F0E6A4B0050EB83 /* animation_container_fade.json */,
@@ -407,7 +729,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				417388E32F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -415,23 +736,179 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-41C5EB1F2F3B40460066BE34 /* banner-01-hero-summer-sale.json in Resources */,
-41C5EB202F3B40460066BE34 /* banner-02-product-iphone.json in Resources */,
-41C5EB212F3B40460066BE34 /* banner-03-announcement-update.json in Resources */,
-41C5EB222F3B40460066BE34 /* banner-04-travel-deals.json in Resources */,
-41C5EB232F3B40460066BE34 /* banner-05-fashion-collection.json in Resources */,
-41C5EB242F3B40460066BE34 /* banner-06-credit-card-offer.json in Resources */,
-41C5EB252F3B40460066BE34 /* banner-07-app-rating.json in Resources */,
-41C5EB262F3B40460066BE34 /* banner-08-flash-sale.json in Resources */,
-41C5EB272F3B40460066BE34 /* banner-09-premium-subscription.json in Resources */,
-41C5EB282F3B40460066BE34 /* banner-10-welcome-onboarding.json in Resources */,
-B003 /* Assets.xcassets in Resources */,
-41969A752F0E6A4B0050EB83 /* animation_container_and_children.json in Resources */,
-41969A762F0E6A4B0050EB83 /* animation_container_fade.json in Resources */,
-41969A772F0E6A4B0050EB83 /* animation_staggered_children.json in Resources */,
-41969A622EFE48010050EB83 /* arrangement_demo.json in Resources */,
-B005 /* home_screen.json in Resources */,
-				CC000002B2F0000010TESTCF /* TestConfigs in Resources */,
+				41C5EB1F2F3B40460066BE34 /* banner-01-hero-summer-sale.json in Resources */,
+				41C5EB202F3B40460066BE34 /* banner-02-product-iphone.json in Resources */,
+				41C5EB212F3B40460066BE34 /* banner-03-announcement-update.json in Resources */,
+				41C5EB222F3B40460066BE34 /* banner-04-travel-deals.json in Resources */,
+				41C5EB232F3B40460066BE34 /* banner-05-fashion-collection.json in Resources */,
+				41C5EB242F3B40460066BE34 /* banner-06-credit-card-offer.json in Resources */,
+				41C5EB252F3B40460066BE34 /* banner-07-app-rating.json in Resources */,
+				41C5EB262F3B40460066BE34 /* banner-08-flash-sale.json in Resources */,
+				41C5EB272F3B40460066BE34 /* banner-09-premium-subscription.json in Resources */,
+				41C5EB282F3B40460066BE34 /* banner-10-welcome-onboarding.json in Resources */,
+				B003 /* Assets.xcassets in Resources */,
+				41969A752F0E6A4B0050EB83 /* animation_container_and_children.json in Resources */,
+				41969A762F0E6A4B0050EB83 /* animation_container_fade.json in Resources */,
+				41969A772F0E6A4B0050EB83 /* animation_staggered_children.json in Resources */,
+				41969A622EFE48010050EB83 /* arrangement_demo.json in Resources */,
+				B005 /* home_screen.json in Resources */,
+				414DA8B12F59B35E00714978 /* test-092-offset-percent-stack-layers.json in Resources */,
+				414DA8B22F59B35E00714978 /* test-140-button-primary-secondary.json in Resources */,
+				414DA8B32F59B35E00714978 /* test-003-box-simple.json in Resources */,
+				414DA8B42F59B35E00714978 /* test-025-gallery-single-child.json in Resources */,
+				414DA8B52F59B35E00714978 /* test-153-image-clipped.json in Resources */,
+				414DA8B62F59B35E00714978 /* test-102-aspect-ratio-16-9-fixed-width.json in Resources */,
+				414DA8B72F59B35E00714978 /* test-019-box-5-children.json in Resources */,
+				414DA8B82F59B35E00714978 /* test-131-text-gradient.json in Resources */,
+				414DA8B92F59B35E00714978 /* test-037-horizontal-end.json in Resources */,
+				414DA8BA2F59B35E00714978 /* test-123-9x16-ar-video-caption.json in Resources */,
+				414DA8BB2F59B35E00714978 /* test-094-offset-percent-overflow.json in Resources */,
+				414DA8BC2F59B35E00714978 /* test-008-vertical-3-children.json in Resources */,
+				414DA8BD2F59B35E00714978 /* test-078-border-radius.json in Resources */,
+				414DA8BE2F59B35E00714978 /* test-024-gallery-empty.json in Resources */,
+				414DA8BF2F59B35E00714978 /* test-007-vertical-single-child.json in Resources */,
+				414DA8C02F59B35E00714978 /* test-108-aspect-ratio-extreme-wide.json in Resources */,
+				414DA8C12F59B35E00714978 /* test-032-vertical-space-between.json in Resources */,
+				414DA8C22F59B35E00714978 /* test-155-all-element-types.json in Resources */,
+				414DA8C32F59B35E00714978 /* test-139-button-centered.json in Resources */,
+				414DA8C42F59B35E00714978 /* test-075-text-decoration.json in Resources */,
+				414DA8C52F59B35E00714978 /* test-055-all-spacer-elements.json in Resources */,
+				414DA8C62F59B35E00714978 /* test-063-stats-card.json in Resources */,
+				414DA8C72F59B35E00714978 /* test-052-all-image-elements.json in Resources */,
+				414DA8C82F59B35E00714978 /* test-091-offset-percent-box-basic.json in Resources */,
+				414DA8C92F59B35E00714978 /* test-021-stack-single-child.json in Resources */,
+				414DA8CA2F59B35E00714978 /* test-059-profile-header.json in Resources */,
+				414DA8CB2F59B35E00714978 /* test-084-combined-visual-styles.json in Resources */,
+				414DA8CC2F59B35E00714978 /* test-110-aspect-ratio-mixed-container.json in Resources */,
+				414DA8CD2F59B35E00714978 /* test-013-horizontal-3-children.json in Resources */,
+				414DA8CE2F59B35E00714978 /* test-031-vertical-spaced.json in Resources */,
+				414DA8CF2F59B35E00714978 /* test-130-text-maxlines-overflow.json in Resources */,
+				414DA8D02F59B35E00714978 /* test-048-vertical-mixed-units.json in Resources */,
+				414DA8D12F59B35E00714978 /* test-086-style-class-usage.json in Resources */,
+				414DA8D22F59B35E00714978 /* test-023-stack-5-children.json in Resources */,
+				414DA8D32F59B35E00714978 /* test-060-media-player.json in Resources */,
+				414DA8D42F59B35E00714978 /* test-118-mixed-special-dimensions.json in Resources */,
+				414DA8D52F59B35E00714978 /* test-112-combined-nested-complex.json in Resources */,
+				414DA8D62F59B35E00714978 /* test-070-feature-showcase.json in Resources */,
+				414DA8D72F59B35E00714978 /* test-106-aspect-ratio-wrap-content.json in Resources */,
+				414DA8D82F59B35E00714978 /* test-090-styled-profile-card.json in Resources */,
+				414DA8D92F59B35E00714978 /* test-144-rounded-box-text.json in Resources */,
+				414DA8DA2F59B35E00714978 /* test-033-vertical-space-evenly.json in Resources */,
+				414DA8DB2F59B35E00714978 /* test-083-opacity-variations.json in Resources */,
+				414DA8DC2F59B35E00714978 /* test-026-gallery-3-children-snapping.json in Resources */,
+				414DA8DD2F59B35E00714978 /* test-016-box-empty.json in Resources */,
+				414DA8DE2F59B35E00714978 /* test-154-nested-box-deep.json in Resources */,
+				414DA8DF2F59B35E00714978 /* test-046-vertical-wrap-content.json in Resources */,
+				414DA8E02F59B35E00714978 /* test-132-image-fit-crop-contain.json in Resources */,
+				414DA8E12F59B35E00714978 /* test-138-9x16-video-button.json in Resources */,
+				414DA8E22F59B35E00714978 /* test-121-16x9-ar-image-text-button.json in Resources */,
+				414DA8E32F59B35E00714978 /* test-038-vertical-spacing-0.json in Resources */,
+				414DA8E42F59B35E00714978 /* test-077-font-families.json in Resources */,
+				414DA8E52F59B35E00714978 /* test-081-shadows-medium.json in Resources */,
+				414DA8E62F59B35E00714978 /* test-151-video-player-card.json in Resources */,
+				414DA8E72F59B35E00714978 /* test-036-horizontal-center.json in Resources */,
+				414DA8E82F59B35E00714978 /* test-120-wrap-content-constraints.json in Resources */,
+				414DA8E92F59B35E00714978 /* test-072-font-sizes.json in Resources */,
+				414DA8EA2F59B35E00714978 /* test-050-gallery-spacing-variations.json in Resources */,
+				414DA8EB2F59B35E00714978 /* test-069-settings-row.json in Resources */,
+				414DA8EC2F59B35E00714978 /* test-095-offset-percent-zero.json in Resources */,
+				414DA8ED2F59B35E00714978 /* test-017-box-single-child.json in Resources */,
+				414DA8EE2F59B35E00714978 /* test-006-vertical-empty.json in Resources */,
+				414DA8EF2F59B35E00714978 /* test-002-horizontal-simple.json in Resources */,
+				414DA8F02F59B35E00714978 /* test-100-offset-percent-gallery-peek.json in Resources */,
+				414DA8F12F59B35E00714978 /* test-062-action-sheet.json in Resources */,
+				414DA8F22F59B35E00714978 /* test-126-text-font-weights.json in Resources */,
+				414DA8F32F59B35E00714978 /* test-067-hero-banner.json in Resources */,
+				414DA8F42F59B35E00714978 /* test-012-horizontal-single-child.json in Resources */,
+				414DA8F52F59B35E00714978 /* test-049-nested-mixed-arrangements.json in Resources */,
+				414DA8F62F59B35E00714978 /* test-105-aspect-ratio-percent-width.json in Resources */,
+				414DA8F72F59B35E00714978 /* test-143-button-rounded-text.json in Resources */,
+				414DA8F82F59B35E00714978 /* test-122-1x1-ar-image-badge-rounded.json in Resources */,
+				414DA8F92F59B35E00714978 /* test-133-image-gif-rounded.json in Resources */,
+				414DA8FA2F59B35E00714978 /* test-147-hero-banner-complex.json in Resources */,
+				414DA8FB2F59B35E00714978 /* test-114-combined-product-grid.json in Resources */,
+				414DA8FC2F59B35E00714978 /* test-045-box-padding-large.json in Resources */,
+				414DA8FD2F59B35E00714978 /* test-125-2x1-ar-image-split-button.json in Resources */,
+				414DA8FE2F59B35E00714978 /* test-071-text-colors.json in Resources */,
+				414DA8FF2F59B35E00714978 /* test-107-aspect-ratio-match-parent.json in Resources */,
+				414DA9002F59B35E00714978 /* test-004-stack-simple.json in Resources */,
+				414DA9012F59B35E00714978 /* test-VERIFY-percentage-offset-fix.json in Resources */,
+				414DA9022F59B35E00714978 /* test-116-match-parent-comprehensive.json in Resources */,
+				414DA9032F59B35E00714978 /* test-043-vertical-padding-individual.json in Resources */,
+				414DA9042F59B35E00714978 /* test-088-theme-default-styles.json in Resources */,
+				414DA9052F59B35E00714978 /* test-041-vertical-spacing-32.json in Resources */,
+				414DA9062F59B35E00714978 /* test-030-gallery-3-children-free-flow-grid.json in Resources */,
+				414DA9072F59B35E00714978 /* test-028-gallery-10-children-snapping.json in Resources */,
+				414DA9082F59B35E00714978 /* test-018-box-3-children.json in Resources */,
+				414DA9092F59B35E00714978 /* test-061-article-layout.json in Resources */,
+				414DA90A2F59B35E00714978 /* test-148-product-card-complex.json in Resources */,
+				414DA90B2F59B35E00714978 /* test-057-product-card.json in Resources */,
+				414DA90C2F59B35E00714978 /* test-134-image-border-radius.json in Resources */,
+				414DA90D2F59B35E00714978 /* test-137-video-with-controls.json in Resources */,
+				414DA90E2F59B35E00714978 /* test-146-image-overlay-rounded.json in Resources */,
+				414DA90F2F59B35E00714978 /* test-027-gallery-5-children-snapping.json in Resources */,
+				414DA9102F59B35E00714978 /* test-001-vertical-simple.json in Resources */,
+				414DA9112F59B35E00714978 /* test-101-aspect-ratio-square-fixed-width.json in Resources */,
+				414DA9122F59B35E00714978 /* test-129-text-decoration-italic.json in Resources */,
+				414DA9132F59B35E00714978 /* test-040-vertical-spacing-16.json in Resources */,
+				414DA9142F59B35E00714978 /* test-011-horizontal-empty.json in Resources */,
+				414DA9152F59B35E00714978 /* test-085-text-style-inheritance.json in Resources */,
+				414DA9162F59B35E00714978 /* test-010-vertical-10-children.json in Resources */,
+				414DA9172F59B35E00714978 /* test-145-nested-rounded-boxes.json in Resources */,
+				414DA9182F59B35E00714978 /* test-064-gallery-item.json in Resources */,
+				414DA9192F59B35E00714978 /* test-117-wrap-content-comprehensive.json in Resources */,
+				414DA91A2F59B35E00714978 /* test-103-aspect-ratio-4-3-fixed-width.json in Resources */,
+				414DA91B2F59B35E00714978 /* test-039-vertical-spacing-8.json in Resources */,
+				414DA91C2F59B35E00714978 /* test-058-login-form.json in Resources */,
+				414DA91D2F59B35E00714978 /* test-029-gallery-3-children-free-flow.json in Resources */,
+				414DA91E2F59B35E00714978 /* test-035-horizontal-start.json in Resources */,
+				414DA91F2F59B35E00714978 /* test-093-offset-percent-negative.json in Resources */,
+				414DA9202F59B35E00714978 /* test-089-styled-product-card.json in Resources */,
+				414DA9212F59B35E00714978 /* test-076-line-height.json in Resources */,
+				414DA9222F59B35E00714978 /* test-053-all-button-elements.json in Resources */,
+				414DA9232F59B35E00714978 /* test-015-horizontal-10-children.json in Resources */,
+				414DA9242F59B35E00714978 /* test-111-combined-aspect-offset-box.json in Resources */,
+				414DA9252F59B35E00714978 /* test-109-aspect-ratio-extreme-tall.json in Resources */,
+				414DA9262F59B35E00714978 /* test-009-vertical-5-children.json in Resources */,
+				414DA9272F59B35E00714978 /* test-022-stack-3-children.json in Resources */,
+				414DA9282F59B35E00714978 /* test-074-text-alignment.json in Resources */,
+				414DA9292F59B35E00714978 /* test-073-font-weights.json in Resources */,
+				414DA92A2F59B35E00714978 /* test-136-video-autoplay-muted.json in Resources */,
+				414DA92B2F59B35E00714978 /* test-127-text-font-sizes.json in Resources */,
+				414DA92C2F59B35E00714978 /* test-014-horizontal-5-children.json in Resources */,
+				414DA92D2F59B35E00714978 /* test-065-notification.json in Resources */,
+				414DA92E2F59B35E00714978 /* test-020-stack-empty.json in Resources */,
+				414DA92F2F59B35E00714978 /* test-099-offset-percent-with-padding.json in Resources */,
+				414DA9302F59B35E00714978 /* test-066-pricing-card.json in Resources */,
+				414DA9312F59B35E00714978 /* test-128-text-alignment.json in Resources */,
+				414DA9322F59B35E00714978 /* test-152-text-corners.json in Resources */,
+				414DA9332F59B35E00714978 /* test-142-cta-card.json in Resources */,
+				414DA9342F59B35E00714978 /* test-115-combined-showcase-all.json in Resources */,
+				414DA9352F59B35E00714978 /* test-042-vertical-padding-uniform.json in Resources */,
+				414DA9362F59B35E00714978 /* test-056-all-divider-elements.json in Resources */,
+				414DA9372F59B35E00714978 /* test-098-offset-percent-nested.json in Resources */,
+				414DA9382F59B35E00714978 /* test-097-offset-mixed-units.json in Resources */,
+				414DA9392F59B35E00714978 /* test-104-aspect-ratio-fixed-height.json in Resources */,
+				414DA93A2F59B35E00714978 /* test-124-4x3-ar-text-weights.json in Resources */,
+				414DA93B2F59B35E00714978 /* test-087-inline-vs-inherited.json in Resources */,
+				414DA93C2F59B35E00714978 /* test-149-notification-card.json in Resources */,
+				414DA93D2F59B35E00714978 /* test-141-button-size-variants.json in Resources */,
+				414DA93E2F59B35E00714978 /* test-119-match-parent-stack-box.json in Resources */,
+				414DA93F2F59B35E00714978 /* test-150-dashboard-widget.json in Resources */,
+				414DA9402F59B35E00714978 /* test-135-images-z-order.json in Resources */,
+				414DA9412F59B35E00714978 /* test-068-social-post.json in Resources */,
+				414DA9422F59B35E00714978 /* test-047-horizontal-percent-width.json in Resources */,
+				414DA9432F59B35E00714978 /* test-096-offset-percent-responsive.json in Resources */,
+				414DA9442F59B35E00714978 /* test-044-horizontal-padding-asymmetric.json in Resources */,
+				414DA9452F59B35E00714978 /* test-005-gallery-simple.json in Resources */,
+				414DA9462F59B35E00714978 /* test-156-button-backgrounds.json in Resources */,
+				414DA9472F59B35E00714978 /* test-080-shadows-light.json in Resources */,
+				414DA9482F59B35E00714978 /* test-079-border-width-color.json in Resources */,
+				414DA9492F59B35E00714978 /* test-054-all-video-elements.json in Resources */,
+				414DA94A2F59B35E00714978 /* test-113-combined-gallery-aspect-peek.json in Resources */,
+				414DA94B2F59B35E00714978 /* test-051-all-text-elements.json in Resources */,
+				414DA94C2F59B35E00714978 /* test-082-shadows-heavy.json in Resources */,
+				414DA94D2F59B35E00714978 /* test-034-vertical-space-around.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
