@@ -1,0 +1,468 @@
+{
+  "theme": {
+    "id": "shadows-light-theme",
+    "defaultStyle": {
+      "fontSize": 16,
+      "textColor": "#333333",
+      "fontWeight": "normal"
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "shadows-light-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 24
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 24,
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Light Shadow Examples"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 28,
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "textColor": "#000000"
+        }
+      },
+      {
+        "type": "container",
+        "id": "shadow-1",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.1,
+          "shadowRadius": 2,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 1
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "shadow-1-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Subtle Elevation"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 18,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "type": "element",
+            "id": "shadow-1-desc",
+            "elementType": "text",
+            "bindings": {
+              "text": "Shadow: opacity 0.1, radius 2, offset (0, 1)"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#757575"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "shadow-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.15,
+          "shadowRadius": 4,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 2
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "shadow-2-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Light Elevation"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 18,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "type": "element",
+            "id": "shadow-2-desc",
+            "elementType": "text",
+            "bindings": {
+              "text": "Shadow: opacity 0.15, radius 4, offset (0, 2)"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#757575"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "shadow-3",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.2,
+          "shadowRadius": 6,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "shadow-3-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Moderate Elevation"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 18,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "type": "element",
+            "id": "shadow-3-desc",
+            "elementType": "text",
+            "bindings": {
+              "text": "Shadow: opacity 0.2, radius 6, offset (0, 3)"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#757575"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "colored-shadows",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 80,
+            "unit": "dp"
+          },
+          "arrangement": {
+            "strategy": "space_evenly"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "blue-shadow",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 70,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#2196F3",
+              "borderRadius": 12,
+              "shadowColor": "#2196F3",
+              "shadowOpacity": 0.3,
+              "shadowRadius": 8,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 4
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "green-shadow",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 70,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#4CAF50",
+              "borderRadius": 12,
+              "shadowColor": "#4CAF50",
+              "shadowOpacity": 0.3,
+              "shadowRadius": 8,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 4
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "purple-shadow",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 70,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#9C27B0",
+              "borderRadius": 12,
+              "shadowColor": "#9C27B0",
+              "shadowOpacity": 0.3,
+              "shadowRadius": 8,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 4
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "card-example",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 20
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.12,
+          "shadowRadius": 8,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 2
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "card-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Card with Light Shadow"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "textColor": "#000000"
+            }
+          },
+          {
+            "type": "element",
+            "id": "card-body",
+            "elementType": "text",
+            "bindings": {
+              "text": "Light shadows are perfect for cards, buttons, and floating elements that need subtle depth without overwhelming the design."
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "lineHeight": 1.5,
+              "textColor": "#666666"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

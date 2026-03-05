@@ -1,0 +1,193 @@
+{
+  "theme": {
+    "id": "test-095",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    }
+  },
+  "variables": {
+    "testName": "Percentage Offset - Zero Values"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333"
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests zero percentage offset (0%,0%). Should position at top-left corner, respecting padding if present."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666"
+        }
+      },
+      {
+        "type": "container",
+        "id": "test-container",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "arrangement": {
+            "spacing": 16,
+            "spacingUnit": "dp",
+            "strategy": "spaced"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "box-no-padding",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 300,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 150,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderWidth": 2,
+              "borderColor": "#000000"
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "zero-offset-no-padding",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 60,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 60,
+                    "unit": "dp"
+                  },
+                  "offset": {
+                    "x": 0,
+                    "y": 0,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#2196F3"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "box-with-padding",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 300,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 150,
+                "unit": "dp"
+              },
+              "padding": {
+                "all": 20,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderWidth": 2,
+              "borderColor": "#000000"
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "zero-offset-with-padding",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 60,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 60,
+                    "unit": "dp"
+                  },
+                  "offset": {
+                    "x": 0,
+                    "y": 0,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#4CAF50"
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": []
+}

@@ -1,0 +1,496 @@
+{
+  "theme": {
+    "id": "shadows-heavy-theme",
+    "defaultStyle": {
+      "fontSize": 16,
+      "textColor": "#FFFFFF",
+      "fontWeight": "normal"
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "shadows-heavy-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 24
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 24,
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#263238"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Heavy Shadow Examples"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 28,
+          "fontWeight": "bold",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "container",
+        "id": "shadow-12",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 20
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 16,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.4,
+          "shadowRadius": 20,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 12
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "shadow-12-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Heavy Shadow"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "textColor": "#000000"
+            }
+          },
+          {
+            "type": "element",
+            "id": "shadow-12-desc",
+            "elementType": "text",
+            "bindings": {
+              "text": "opacity 0.4, radius 20, offset (0, 12)"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#666666"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "shadow-16",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 20
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 16,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.5,
+          "shadowRadius": 24,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 16
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "shadow-16-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Dramatic Shadow"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "textColor": "#000000"
+            }
+          },
+          {
+            "type": "element",
+            "id": "shadow-16-desc",
+            "elementType": "text",
+            "bindings": {
+              "text": "opacity 0.5, radius 24, offset (0, 16)"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#666666"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "shadow-24",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 20
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 16,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.6,
+          "shadowRadius": 32,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 24
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "shadow-24-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Extreme Shadow"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "textColor": "#000000"
+            }
+          },
+          {
+            "type": "element",
+            "id": "shadow-24-desc",
+            "elementType": "text",
+            "bindings": {
+              "text": "opacity 0.6, radius 32, offset (0, 24)"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#666666"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "modal-example",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 24
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 16,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 20,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.55,
+          "shadowRadius": 28,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 20
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "modal-icon",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 60,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 60,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FF6F00",
+              "borderRadius": 30
+            },
+            "children": []
+          },
+          {
+            "type": "element",
+            "id": "modal-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Important Dialog"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 24,
+              "fontWeight": "bold",
+              "textAlign": "center",
+              "textColor": "#000000"
+            }
+          },
+          {
+            "type": "element",
+            "id": "modal-body",
+            "elementType": "text",
+            "bindings": {
+              "text": "Heavy shadows are ideal for modals, dialogs, and floating action buttons that need to clearly float above all other content."
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "lineHeight": 1.5,
+              "textAlign": "center",
+              "textColor": "#666666"
+            }
+          },
+          {
+            "type": "container",
+            "id": "modal-button",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 50,
+                "unit": "dp"
+              },
+              "padding": {
+                "all": 12
+              }
+            },
+            "style": {
+              "backgroundColor": "#2196F3",
+              "borderRadius": 25
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "button-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Understand"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  }
+                },
+                "style": {
+                  "fontSize": 16,
+                  "fontWeight": "bold",
+                  "textColor": "#FFFFFF"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "fab-example",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 80,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 80,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FF4081",
+          "borderRadius": 40,
+          "shadowColor": "#FF4081",
+          "shadowOpacity": 0.5,
+          "shadowRadius": 20,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 12
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "fab-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "FAB"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

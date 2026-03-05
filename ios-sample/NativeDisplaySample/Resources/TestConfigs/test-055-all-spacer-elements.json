@@ -1,0 +1,131 @@
+{
+  "theme": {
+    "id": "spacer-layout",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "spacer-demo",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "colors": [
+          "#FEF3C7",
+          "#FDE68A"
+        ],
+        "angle": 135
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "spacer-small",
+        "elementType": "spacer",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 24,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#F59E0B40"
+        }
+      },
+      {
+        "type": "element",
+        "id": "spacer-medium",
+        "elementType": "spacer",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 48,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#F59E0B60"
+        }
+      },
+      {
+        "type": "element",
+        "id": "spacer-large",
+        "elementType": "spacer",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 72,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#F59E0B80"
+        }
+      },
+      {
+        "type": "element",
+        "id": "spacer-flexible",
+        "elementType": "spacer",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": -1,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#F59E0BA0"
+        }
+      },
+      {
+        "type": "element",
+        "id": "spacer-extra-large",
+        "elementType": "spacer",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 96,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#F59E0BC0"
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

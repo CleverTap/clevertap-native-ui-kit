@@ -1,0 +1,773 @@
+{
+  "theme": {
+    "id": "profile-theme",
+    "defaultStyle": {
+      "fontSize": 14,
+      "textColor": "#333333",
+      "fontWeight": "normal",
+      "lineHeight": 1.4
+    }
+  },
+  "styleClasses": [
+    {
+      "id": "stat-value",
+      "style": {
+        "fontSize": 24,
+        "fontWeight": "bold",
+        "textColor": "#000000"
+      }
+    },
+    {
+      "id": "stat-label",
+      "style": {
+        "fontSize": 12,
+        "textColor": "#999999"
+      }
+    },
+    {
+      "id": "action-button",
+      "style": {
+        "backgroundColor": "#2196F3",
+        "textColor": "#FFFFFF",
+        "fontSize": 14,
+        "fontWeight": "bold",
+        "borderRadius": 20,
+        "shadowColor": "#2196F3",
+        "shadowOpacity": 0.25,
+        "shadowRadius": 8,
+        "shadowOffsetX": 0,
+        "shadowOffsetY": 4
+      }
+    }
+  ],
+  "root": {
+    "type": "container",
+    "id": "profile-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 20
+      },
+      "arrangement": {
+        "strategy": "center"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F0F4F8"
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "profile-card",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 0
+          },
+          "arrangement": {
+            "strategy": "start"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 20,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.15,
+          "shadowRadius": 16,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 8
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "header-background",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 150,
+                "unit": "dp"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "gradient-bg",
+                "elementType": "image",
+                "bindings": {
+                  "url": "https://picsum.photos/400/300"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 150,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "borderRadius": 20,
+                  "opacity": 0.8
+                }
+              },
+              {
+                "type": "container",
+                "id": "overlay",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 150,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#2196F3",
+                  "opacity": 0.7,
+                  "borderRadius": 20
+                },
+                "children": []
+              },
+              {
+                "type": "container",
+                "id": "verified-badge",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "padding": {
+                    "horizontal": 12,
+                    "vertical": 6
+                  },
+                  "offset": {
+                    "x": -16,
+                    "y": 16
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#4CAF50",
+                  "borderRadius": 12,
+                  "shadowColor": "#4CAF50",
+                  "shadowOpacity": 0.4,
+                  "shadowRadius": 8,
+                  "shadowOffsetX": 0,
+                  "shadowOffsetY": 4
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "verified-text",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "\u2713 Verified"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 0,
+                        "unit": "dp",
+                        "special": "wrap_content"
+                      },
+                      "height": {
+                        "value": 0,
+                        "unit": "dp",
+                        "special": "wrap_content"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 12,
+                      "fontWeight": "bold",
+                      "textColor": "#FFFFFF"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "profile-content",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "all": 24
+              },
+              "arrangement": {
+                "strategy": "spaced",
+                "spacing": 20,
+                "spacingUnit": "dp"
+              }
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "avatar-section",
+                "containerType": "vertical",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "arrangement": {
+                    "strategy": "center"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "avatar-container",
+                    "containerType": "box",
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "dp"
+                      },
+                      "height": {
+                        "value": 100,
+                        "unit": "dp"
+                      }
+                    },
+                    "style": {
+                      "backgroundColor": "#E3F2FD",
+                      "borderRadius": 50,
+                      "borderWidth": 4,
+                      "borderColor": "#FFFFFF",
+                      "shadowColor": "#000000",
+                      "shadowOpacity": 0.2,
+                      "shadowRadius": 12,
+                      "shadowOffsetX": 0,
+                      "shadowOffsetY": 6
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "avatar-initials",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "AJ"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          },
+                          "height": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          }
+                        },
+                        "style": {
+                          "fontSize": 40,
+                          "fontWeight": "bold",
+                          "textColor": "#2196F3"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "name-section",
+                "containerType": "vertical",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "arrangement": {
+                    "strategy": "center"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "name",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "Alex Johnson"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      },
+                      "height": {
+                        "value": 0,
+                        "unit": "dp",
+                        "special": "wrap_content"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 26,
+                      "fontWeight": "bold",
+                      "textAlign": "center",
+                      "textColor": "#000000"
+                    }
+                  },
+                  {
+                    "type": "element",
+                    "id": "username",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "@alexj"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      },
+                      "height": {
+                        "value": 0,
+                        "unit": "dp",
+                        "special": "wrap_content"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 16,
+                      "textAlign": "center",
+                      "textColor": "#2196F3"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "bio",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Product Designer | Travel Enthusiast | Coffee Lover \u2615\ufe0f Sharing my journey through design and life."
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "textAlign": "center",
+                  "textColor": "#666666",
+                  "lineHeight": 1.6
+                }
+              },
+              {
+                "type": "container",
+                "id": "stats-container",
+                "containerType": "horizontal",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "padding": {
+                    "vertical": 16
+                  },
+                  "arrangement": {
+                    "strategy": "space_evenly"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#F5F5F5",
+                  "borderRadius": 12
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "posts-stat",
+                    "containerType": "vertical",
+                    "layout": {
+                      "width": {
+                        "value": 0,
+                        "unit": "dp",
+                        "special": "wrap_content"
+                      },
+                      "height": {
+                        "value": 0,
+                        "unit": "dp",
+                        "special": "wrap_content"
+                      },
+                      "arrangement": {
+                        "strategy": "center"
+                      }
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "posts-value",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "1,247"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          },
+                          "height": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          }
+                        },
+                        "styleClass": "stat-value"
+                      },
+                      {
+                        "type": "element",
+                        "id": "posts-label",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Posts"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          },
+                          "height": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          }
+                        },
+                        "styleClass": "stat-label"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "followers-stat",
+                    "containerType": "vertical",
+                    "layout": {
+                      "width": {
+                        "value": 0,
+                        "unit": "dp",
+                        "special": "wrap_content"
+                      },
+                      "height": {
+                        "value": 0,
+                        "unit": "dp",
+                        "special": "wrap_content"
+                      },
+                      "arrangement": {
+                        "strategy": "center"
+                      }
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "followers-value",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "42.5K"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          },
+                          "height": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          }
+                        },
+                        "styleClass": "stat-value"
+                      },
+                      {
+                        "type": "element",
+                        "id": "followers-label",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Followers"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          },
+                          "height": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          }
+                        },
+                        "styleClass": "stat-label"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "following-stat",
+                    "containerType": "vertical",
+                    "layout": {
+                      "width": {
+                        "value": 0,
+                        "unit": "dp",
+                        "special": "wrap_content"
+                      },
+                      "height": {
+                        "value": 0,
+                        "unit": "dp",
+                        "special": "wrap_content"
+                      },
+                      "arrangement": {
+                        "strategy": "center"
+                      }
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "following-value",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "892"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          },
+                          "height": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          }
+                        },
+                        "styleClass": "stat-value"
+                      },
+                      {
+                        "type": "element",
+                        "id": "following-label",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Following"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          },
+                          "height": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          }
+                        },
+                        "styleClass": "stat-label"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "divider",
+                "elementType": "divider",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 1,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#E0E0E0"
+                }
+              },
+              {
+                "type": "container",
+                "id": "action-buttons",
+                "containerType": "horizontal",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 48,
+                    "unit": "dp"
+                  },
+                  "arrangement": {
+                    "strategy": "spaced",
+                    "spacing": 12,
+                    "spacingUnit": "dp"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "follow-button",
+                    "containerType": "box",
+                    "layout": {
+                      "width": {
+                        "value": 0,
+                        "unit": "percent",
+                        "weight": 1
+                      },
+                      "height": {
+                        "value": 48,
+                        "unit": "dp"
+                      },
+                      "padding": {
+                        "all": 12
+                      }
+                    },
+                    "styleClass": "action-button",
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "follow-text",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Follow"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          },
+                          "height": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "message-button",
+                    "containerType": "box",
+                    "layout": {
+                      "width": {
+                        "value": 0,
+                        "unit": "percent",
+                        "weight": 1
+                      },
+                      "height": {
+                        "value": 48,
+                        "unit": "dp"
+                      },
+                      "padding": {
+                        "all": 12
+                      }
+                    },
+                    "style": {
+                      "backgroundColor": "#FFFFFF",
+                      "borderRadius": 20,
+                      "borderWidth": 2,
+                      "borderColor": "#2196F3"
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "message-text",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Message"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          },
+                          "height": {
+                            "value": 0,
+                            "unit": "dp",
+                            "special": "wrap_content"
+                          }
+                        },
+                        "style": {
+                          "fontSize": 14,
+                          "fontWeight": "bold",
+                          "textColor": "#2196F3"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "variables": {}
+}

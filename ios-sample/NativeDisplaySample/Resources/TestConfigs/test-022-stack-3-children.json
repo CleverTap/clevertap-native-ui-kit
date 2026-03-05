@@ -1,0 +1,178 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#FFFFFF",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "stack-3-children",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 400,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "backgroundColor": "#263238"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "layer-1",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://picsum.photos/800/400"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "opacity": 0.5
+        }
+      },
+      {
+        "type": "container",
+        "id": "layer-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 24
+          },
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "unit": "dp"
+          },
+          "arrangement": {
+            "strategy": "center"
+          }
+        },
+        "style": {
+          "backgroundColor": "#00000066"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "overlay-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Layered Design"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 32,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "textAlign": "center"
+            }
+          },
+          {
+            "type": "element",
+            "id": "overlay-subtitle",
+            "elementType": "text",
+            "bindings": {
+              "text": "Multiple layers stacked together"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 18,
+              "textColor": "#E0E0E0",
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "element",
+        "id": "layer-3",
+        "elementType": "text",
+        "bindings": {
+          "text": "Top Layer Badge"
+        },
+        "layout": {
+          "width": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "top": 8,
+            "bottom": 8,
+            "left": 16,
+            "right": 16
+          },
+          "offset": {
+            "x": 16,
+            "y": 16,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FF6F00",
+          "textColor": "#FFFFFF",
+          "fontSize": 14,
+          "fontWeight": "bold",
+          "borderRadius": 20
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

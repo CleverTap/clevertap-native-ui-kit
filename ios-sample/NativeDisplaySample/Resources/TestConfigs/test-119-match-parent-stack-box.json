@@ -1,0 +1,567 @@
+{
+  "theme": {
+    "id": "test-119",
+    "defaultStyle": {
+      "textColor": "#FFFFFF",
+      "fontSize": 14,
+      "fontWeight": "normal"
+    }
+  },
+  "variables": {
+    "testName": "MATCH_PARENT in Stack and Box Test",
+    "testDescription": "Demonstrates MATCH_PARENT behavior in overlay containers (BOX and STACK) with layering"
+  },
+  "root": {
+    "id": "root-container",
+    "type": "container",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 600,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 0
+      },
+      "arrangement": {
+        "spacing": 12,
+        "strategy": "spaced",
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#263238"
+    },
+    "children": [
+      {
+        "id": "box-fullscreen-background",
+        "type": "container",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 180,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 0
+          }
+        },
+        "style": {},
+        "children": [
+          {
+            "id": "background-layer",
+            "type": "element",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://picsum.photos/400/180"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              }
+            },
+            "style": {}
+          },
+          {
+            "id": "overlay-gradient",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": ""
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "linear_gradient",
+                "colors": [
+                  "#00000000",
+                  "#000000CC"
+                ],
+                "angle": 180
+              }
+            }
+          },
+          {
+            "id": "overlay-title",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "BOX: Full-screen background with MATCH_PARENT"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "all": 16
+              },
+              "offset": {
+                "x": 0,
+                "y": 100,
+                "unit": "percent",
+                "anchorX": 0,
+                "anchorY": 1
+              }
+            },
+            "style": {
+              "textColor": "#FFFFFF",
+              "fontSize": 16,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "id": "badge-top-right",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "NEW"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "top": 6,
+                "right": 12,
+                "bottom": 6,
+                "left": 12
+              },
+              "offset": {
+                "x": 100,
+                "y": 0,
+                "unit": "percent",
+                "anchorX": 1,
+                "anchorY": 0
+              }
+            },
+            "style": {
+              "backgroundColor": "#FF5722",
+              "textColor": "#FFFFFF",
+              "fontSize": 12,
+              "fontWeight": "bold",
+              "borderRadius": 8
+            }
+          }
+        ]
+      },
+      {
+        "id": "stack-layered-content",
+        "type": "container",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 170,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 0
+          }
+        },
+        "style": {},
+        "children": [
+          {
+            "id": "stack-base",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": ""
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "linear_gradient",
+                "colors": [
+                  "#673AB7",
+                  "#9C27B0"
+                ],
+                "angle": 135
+              }
+            }
+          },
+          {
+            "id": "stack-content-container",
+            "type": "container",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "padding": {
+                "all": 16
+              },
+              "arrangement": {
+                "strategy": "space_between"
+              }
+            },
+            "style": {},
+            "children": [
+              {
+                "id": "stack-header",
+                "type": "element",
+                "elementType": "text",
+                "bindings": {
+                  "text": "STACK: Full-sized layers with MATCH_PARENT"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "match_parent"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "padding": {
+                    "all": 0
+                  }
+                },
+                "style": {
+                  "textColor": "#FFFFFF",
+                  "fontSize": 16,
+                  "fontWeight": "bold"
+                }
+              },
+              {
+                "id": "stack-description",
+                "type": "element",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Base layer fills entire container. Content layer also uses MATCH_PARENT to align properly."
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "match_parent"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "padding": {
+                    "all": 0
+                  }
+                },
+                "style": {
+                  "textColor": "#FFFFFFCC",
+                  "fontSize": 13
+                }
+              }
+            ]
+          },
+          {
+            "id": "stack-floating-button",
+            "type": "element",
+            "elementType": "button",
+            "bindings": {
+              "text": "Action"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "top": 10,
+                "right": 20,
+                "bottom": 10,
+                "left": 20
+              },
+              "offset": {
+                "x": 50,
+                "y": 100,
+                "unit": "percent",
+                "anchorX": 0.5,
+                "anchorY": 1
+              }
+            },
+            "style": {
+              "backgroundColor": "#FF5722",
+              "textColor": "#FFFFFF",
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "borderRadius": 24,
+              "shadowRadius": 8,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 4,
+              "shadowColor": "#00000044"
+            }
+          }
+        ]
+      },
+      {
+        "id": "box-hero-section",
+        "type": "container",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 220,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 0
+          }
+        },
+        "style": {},
+        "children": [
+          {
+            "id": "hero-background",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": ""
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "radial_gradient",
+                "colors": [
+                  "#FF9800",
+                  "#F44336"
+                ],
+                "centerX": 50,
+                "centerY": 50,
+                "radius": 100
+              }
+            }
+          },
+          {
+            "id": "hero-pattern-overlay",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": ""
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "pattern",
+                "pattern_type": "dots",
+                "primary_color": "#FFFFFF22",
+                "secondary_color": "#AABBFF22",
+                "spacing": 20,
+                "size": 4
+              }
+            }
+          },
+          {
+            "id": "hero-content",
+            "type": "container",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "padding": {
+                "all": 24
+              },
+              "arrangement": {
+                "strategy": "center"
+              }
+            },
+            "style": {},
+            "children": [
+              {
+                "id": "hero-title",
+                "type": "element",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Hero Section"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "match_parent"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "padding": {
+                    "all": 0
+                  }
+                },
+                "style": {
+                  "textColor": "#FFFFFF",
+                  "fontSize": 28,
+                  "fontWeight": "bold",
+                  "textAlign": "center"
+                }
+              },
+              {
+                "id": "hero-subtitle",
+                "type": "element",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Layered backgrounds with MATCH_PARENT create beautiful hero sections"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "match_parent"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "padding": {
+                    "top": 8,
+                    "right": 0,
+                    "bottom": 0,
+                    "left": 0
+                  }
+                },
+                "style": {
+                  "textColor": "#FFFFFFDD",
+                  "fontSize": 14,
+                  "textAlign": "center"
+                }
+              },
+              {
+                "id": "hero-cta",
+                "type": "element",
+                "elementType": "button",
+                "bindings": {
+                  "text": "Get Started"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "padding": {
+                    "top": 12,
+                    "right": 32,
+                    "bottom": 12,
+                    "left": 32
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#FFFFFF",
+                  "textColor": "#FF5722",
+                  "fontSize": 15,
+                  "fontWeight": "bold",
+                  "borderRadius": 24
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

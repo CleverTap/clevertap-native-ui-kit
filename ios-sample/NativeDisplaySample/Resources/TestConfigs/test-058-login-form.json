@@ -1,0 +1,168 @@
+{
+  "theme": {
+    "id": "login-form",
+    "defaultStyle": {
+      "textColor": "#374151",
+      "fontSize": 16
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "login-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 32
+      },
+      "arrangement": {
+        "type": "center"
+      }
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "colors": [
+          "#667EEA",
+          "#764BA2"
+        ],
+        "angle": 135
+      }
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "login-card",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": -2,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 24
+          },
+          "arrangement": {
+            "type": "spaced"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 20,
+          "shadowRadius": 20,
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.3,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Welcome Back"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": -2,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 28,
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "textAlign": "center"
+            }
+          },
+          {
+            "type": "element",
+            "id": "divider",
+            "elementType": "divider",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 1,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#E5E7EB"
+            }
+          },
+          {
+            "type": "element",
+            "id": "sign-in-button",
+            "elementType": "button",
+            "bindings": {
+              "text": "Sign In"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 56,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#667EEA",
+              "borderRadius": 12,
+              "textColor": "#FFFFFF",
+              "fontSize": 18,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "type": "element",
+            "id": "forgot-button",
+            "elementType": "button",
+            "bindings": {
+              "text": "Forgot Password?"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 48,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#00000000",
+              "textColor": "#667EEA",
+              "fontSize": 14,
+              "fontWeight": "medium",
+              "textDecoration": "underline"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

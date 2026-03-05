@@ -1,0 +1,237 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#FFFFFF",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "stack-5-children",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 500,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "backgroundColor": "#1A237E"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "layer-1-background",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://picsum.photos/800/500"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "opacity": 0.3
+        }
+      },
+      {
+        "type": "container",
+        "id": "layer-2-gradient",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "linear_gradient",
+            "angle": 180,
+            "colors": [
+              "#00000000",
+              "#000000AA"
+            ]
+          }
+        },
+        "children": []
+      },
+      {
+        "type": "element",
+        "id": "layer-3-top-badge",
+        "elementType": "text",
+        "bindings": {
+          "text": "FEATURED"
+        },
+        "layout": {
+          "width": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "top": 6,
+            "bottom": 6,
+            "left": 12,
+            "right": 12
+          },
+          "offset": {
+            "x": 16,
+            "y": 16,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#D32F2F",
+          "textColor": "#FFFFFF",
+          "fontSize": 12,
+          "fontWeight": "bold",
+          "borderRadius": 4
+        }
+      },
+      {
+        "type": "container",
+        "id": "layer-4-content",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 24
+          },
+          "offset": {
+            "x": 0,
+            "y": 24,
+            "unit": "dp"
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 12,
+            "spacingUnit": "dp"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "content-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Complex Stack Layout"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 28,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF"
+            }
+          },
+          {
+            "type": "element",
+            "id": "content-description",
+            "elementType": "text",
+            "bindings": {
+              "text": "Demonstrating multiple layers with complex positioning"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 16,
+              "textColor": "#E0E0E0"
+            }
+          }
+        ]
+      },
+      {
+        "type": "element",
+        "id": "layer-5-action-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Explore Now"
+        },
+        "layout": {
+          "width": {
+            "value": 180,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 50,
+            "unit": "dp"
+          },
+          "offset": {
+            "x": 50,
+            "y": 40,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "backgroundColor": "#1976D2",
+          "textColor": "#FFFFFF",
+          "fontSize": 16,
+          "fontWeight": "bold",
+          "borderRadius": 25
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

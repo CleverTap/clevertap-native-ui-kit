@@ -1,0 +1,63 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#BF360C",
+      "fontSize": 16
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "gallery-single",
+    "containerType": "gallery",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 350,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 16
+      }
+    },
+    "style": {
+      "backgroundColor": "#FBE9E7"
+    },
+    "galleryConfig": {
+      "mode": "snapping",
+      "orientation": "horizontal",
+      "peek": {
+        "before": 20,
+        "after": 20
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "single-item",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://picsum.photos/600/300"
+        },
+        "layout": {
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 300,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 16
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

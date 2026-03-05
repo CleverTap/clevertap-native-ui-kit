@@ -1,0 +1,454 @@
+{
+  "theme": {
+    "id": "test-116",
+    "defaultStyle": {
+      "textColor": "#FFFFFF",
+      "fontSize": 14,
+      "fontWeight": "normal"
+    }
+  },
+  "variables": {
+    "testName": "MATCH_PARENT Comprehensive Test",
+    "testDescription": "Demonstrates MATCH_PARENT behavior across all container types (VERTICAL, HORIZONTAL, BOX, STACK)"
+  },
+  "root": {
+    "id": "root-container",
+    "type": "container",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 600,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 0
+      },
+      "arrangement": {
+        "spacing": 8,
+        "strategy": "spaced",
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "id": "section-vertical-match",
+        "type": "container",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 130,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 8
+          },
+          "arrangement": {
+            "spacing": 4,
+            "strategy": "spaced",
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#E3F2FD",
+          "borderRadius": 8,
+          "borderWidth": 2,
+          "borderColor": "#2196F3"
+        },
+        "children": [
+          {
+            "id": "label-vertical",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "VERTICAL: Child with MATCH_PARENT width"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 24,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "textColor": "#1976D2",
+              "fontSize": 12,
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "id": "child-match-vertical",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "I fill the full width using MATCH_PARENT"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 80,
+                "unit": "dp"
+              },
+              "padding": {
+                "all": 12
+              }
+            },
+            "style": {
+              "backgroundColor": "#4CAF50",
+              "textColor": "#FFFFFF",
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "borderRadius": 4
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-horizontal-match",
+        "type": "container",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 110,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 8
+          },
+          "arrangement": {
+            "spacing": 8,
+            "strategy": "spaced",
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFF3E0",
+          "borderRadius": 8,
+          "borderWidth": 2,
+          "borderColor": "#FF9800"
+        },
+        "children": [
+          {
+            "id": "horizontal-child-1",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "HORIZONTAL: MATCH_PARENT height fills container"
+            },
+            "layout": {
+              "width": {
+                "value": 120,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "padding": {
+                "all": 8
+              }
+            },
+            "style": {
+              "backgroundColor": "#FF5722",
+              "textColor": "#FFFFFF",
+              "fontSize": 11,
+              "fontWeight": "bold",
+              "borderRadius": 4
+            }
+          },
+          {
+            "id": "horizontal-child-2",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "Also MATCH_PARENT height"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "padding": {
+                "all": 8
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFC107",
+              "textColor": "#000000",
+              "fontSize": 11,
+              "fontWeight": "bold",
+              "borderRadius": 4
+            }
+          },
+          {
+            "id": "horizontal-child-3",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "Full height"
+            },
+            "layout": {
+              "width": {
+                "value": 80,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "padding": {
+                "all": 8
+              }
+            },
+            "style": {
+              "backgroundColor": "#FF9800",
+              "textColor": "#FFFFFF",
+              "fontSize": 11,
+              "fontWeight": "bold",
+              "borderRadius": 4
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-box-match",
+        "type": "container",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 150,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 8
+          }
+        },
+        "style": {
+          "backgroundColor": "#F3E5F5",
+          "borderRadius": 8,
+          "borderWidth": 2,
+          "borderColor": "#9C27B0"
+        },
+        "children": [
+          {
+            "id": "box-background",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "BOX: Background with MATCH_PARENT fills entire container"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "padding": {
+                "all": 16
+              }
+            },
+            "style": {
+              "backgroundColor": "#9C27B0AA",
+              "textColor": "#FFFFFF",
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "borderRadius": 4
+            }
+          },
+          {
+            "id": "box-overlay",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "Overlay"
+            },
+            "layout": {
+              "width": {
+                "value": 80,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 40,
+                "unit": "dp"
+              },
+              "padding": {
+                "all": 8
+              },
+              "offset": {
+                "x": 10,
+                "y": 10,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#E91E63",
+              "textColor": "#FFFFFF",
+              "fontSize": 11,
+              "fontWeight": "bold",
+              "borderRadius": 4
+            }
+          }
+        ]
+      },
+      {
+        "id": "section-stack-match",
+        "type": "container",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 180,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 8
+          }
+        },
+        "style": {
+          "backgroundColor": "#E8F5E9",
+          "borderRadius": 8,
+          "borderWidth": 2,
+          "borderColor": "#4CAF50"
+        },
+        "children": [
+          {
+            "id": "stack-layer-1",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "STACK: Layer 1 - MATCH_PARENT fills base"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "padding": {
+                "all": 20
+              }
+            },
+            "style": {
+              "backgroundColor": "#4CAF50",
+              "textColor": "#FFFFFF",
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "borderRadius": 4
+            }
+          },
+          {
+            "id": "stack-layer-2",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "Layer 2 - Partial overlay"
+            },
+            "layout": {
+              "width": {
+                "value": 180,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 60,
+                "unit": "dp"
+              },
+              "padding": {
+                "all": 12
+              },
+              "offset": {
+                "x": 50,
+                "y": 50,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "backgroundColor": "#8BC34AAA",
+              "textColor": "#000000",
+              "fontSize": 12,
+              "fontWeight": "bold",
+              "borderRadius": 4
+            }
+          },
+          {
+            "id": "stack-layer-3",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "Badge"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 30,
+                "unit": "dp"
+              },
+              "padding": {
+                "all": 6
+              },
+              "offset": {
+                "x": 10,
+                "y": 10,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FF5722",
+              "textColor": "#FFFFFF",
+              "fontSize": 11,
+              "fontWeight": "bold",
+              "borderRadius": 15
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

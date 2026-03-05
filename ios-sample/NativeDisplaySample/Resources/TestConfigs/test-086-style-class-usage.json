@@ -1,0 +1,640 @@
+{
+  "theme": {
+    "id": "style-class-theme",
+    "defaultStyle": {
+      "fontSize": 14,
+      "textColor": "#333333",
+      "fontWeight": "normal"
+    }
+  },
+  "styleClasses": [
+    {
+      "id": "primary-button",
+      "style": {
+        "backgroundColor": "#2196F3",
+        "textColor": "#FFFFFF",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "borderRadius": 24,
+        "shadowColor": "#2196F3",
+        "shadowOpacity": 0.3,
+        "shadowRadius": 8,
+        "shadowOffsetX": 0,
+        "shadowOffsetY": 4
+      }
+    },
+    {
+      "id": "secondary-button",
+      "style": {
+        "backgroundColor": "#FFFFFF",
+        "textColor": "#2196F3",
+        "fontSize": 16,
+        "fontWeight": "bold",
+        "borderRadius": 24,
+        "borderWidth": 2,
+        "borderColor": "#2196F3"
+      }
+    },
+    {
+      "id": "card-style",
+      "style": {
+        "backgroundColor": "#FFFFFF",
+        "borderRadius": 12,
+        "shadowColor": "#000000",
+        "shadowOpacity": 0.15,
+        "shadowRadius": 8,
+        "shadowOffsetX": 0,
+        "shadowOffsetY": 2
+      }
+    },
+    {
+      "id": "heading-text",
+      "style": {
+        "fontSize": 24,
+        "fontWeight": "bold",
+        "textColor": "#000000"
+      }
+    },
+    {
+      "id": "body-text",
+      "style": {
+        "fontSize": 14,
+        "lineHeight": 1.5,
+        "textColor": "#666666"
+      }
+    },
+    {
+      "id": "success-badge",
+      "style": {
+        "backgroundColor": "#4CAF50",
+        "textColor": "#FFFFFF",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "borderRadius": 12
+      }
+    },
+    {
+      "id": "error-badge",
+      "style": {
+        "backgroundColor": "#F44336",
+        "textColor": "#FFFFFF",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "borderRadius": 12
+      }
+    }
+  ],
+  "root": {
+    "type": "container",
+    "id": "style-class-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 20
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 20,
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Style Class Usage Demo"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "styleClass": "heading-text"
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "This example demonstrates how styleClasses enable reusable styling across multiple components."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "styleClass": "body-text"
+      },
+      {
+        "type": "container",
+        "id": "button-demo",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 12,
+            "spacingUnit": "dp"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "primary-btn-1",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 48,
+                "unit": "dp"
+              },
+              "padding": {
+                "all": 12
+              }
+            },
+            "styleClass": "primary-button",
+            "children": [
+              {
+                "type": "element",
+                "id": "primary-btn-1-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Primary Button 1"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "primary-btn-2",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 48,
+                "unit": "dp"
+              },
+              "padding": {
+                "all": 12
+              }
+            },
+            "styleClass": "primary-button",
+            "children": [
+              {
+                "type": "element",
+                "id": "primary-btn-2-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Primary Button 2"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "secondary-btn",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 48,
+                "unit": "dp"
+              },
+              "padding": {
+                "all": 12
+              }
+            },
+            "styleClass": "secondary-button",
+            "children": [
+              {
+                "type": "element",
+                "id": "secondary-btn-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Secondary Button"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "card-1",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8,
+            "spacingUnit": "dp"
+          }
+        },
+        "styleClass": "card-style",
+        "children": [
+          {
+            "type": "element",
+            "id": "card-1-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Card Using Style Class"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "styleClass": "heading-text",
+            "style": {
+              "fontSize": 18
+            }
+          },
+          {
+            "type": "element",
+            "id": "card-1-body",
+            "elementType": "text",
+            "bindings": {
+              "text": "This card uses the 'card-style' class for consistent appearance across the app."
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "styleClass": "body-text"
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "card-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8,
+            "spacingUnit": "dp"
+          }
+        },
+        "styleClass": "card-style",
+        "children": [
+          {
+            "type": "element",
+            "id": "card-2-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Another Card"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "styleClass": "heading-text",
+            "style": {
+              "fontSize": 18
+            }
+          },
+          {
+            "type": "element",
+            "id": "card-2-body",
+            "elementType": "text",
+            "bindings": {
+              "text": "Same styling, different content. Style classes make this easy!"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "styleClass": "body-text"
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "badges",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "arrangement": {
+            "strategy": "space_evenly"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "success-1",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "horizontal": 12,
+                "vertical": 6
+              }
+            },
+            "styleClass": "success-badge",
+            "children": [
+              {
+                "type": "element",
+                "id": "success-1-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "ACTIVE"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "error-1",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "horizontal": 12,
+                "vertical": 6
+              }
+            },
+            "styleClass": "error-badge",
+            "children": [
+              {
+                "type": "element",
+                "id": "error-1-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "ERROR"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "success-2",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "horizontal": 12,
+                "vertical": 6
+              }
+            },
+            "styleClass": "success-badge",
+            "children": [
+              {
+                "type": "element",
+                "id": "success-2-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "VERIFIED"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "override-example",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 48,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 12
+          }
+        },
+        "styleClass": "primary-button",
+        "style": {
+          "backgroundColor": "#9C27B0",
+          "shadowColor": "#9C27B0"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "override-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "Primary Style + Purple Override"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "variables": {}
+}

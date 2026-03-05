@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CC000002B2F0000010TESTCF /* TestConfigs in Resources */ = {isa = PBXBuildFile; fileRef = CC000001A2F0000010TESTCF /* TestConfigs */; };
+
 		4113027B2F33E757004B6254 /* BannerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 411302792F33E757004B6254 /* BannerDetailView.swift */; };
 		4113027C2F33E757004B6254 /* BannerShowcaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4113027A2F33E757004B6254 /* BannerShowcaseView.swift */; };
 		414DA69B2F58032500714978 /* test-147-hero-banner-complex.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA6912F58032500714978 /* test-147-hero-banner-complex.json */; };
@@ -93,6 +95,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CC000001A2F0000010TESTCF /* TestConfigs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = TestConfigs; path = Resources/TestConfigs; sourceTree = "<group>"; };
+
 		411302792F33E757004B6254 /* BannerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerDetailView.swift; sourceTree = "<group>"; };
 		4113027A2F33E757004B6254 /* BannerShowcaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerShowcaseView.swift; sourceTree = "<group>"; };
 		411302922F34AC72004B6254 /* banner-01-hero-summer-sale.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "banner-01-hero-summer-sale.json"; sourceTree = "<group>"; };
@@ -291,7 +295,7 @@
 		GRP_RES /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				414DA69A2F58032500714978 /* TestConfigs */,
+				CC000001A2F0000010TESTCF /* TestConfigs */,
 				4113029C2F34AC72004B6254 /* Banners */,
 				41969A722F0E6A4B0050EB83 /* animation_container_and_children.json */,
 				41969A732F0E6A4B0050EB83 /* animation_container_fade.json */,
@@ -411,70 +415,23 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				41C5EB1F2F3B40460066BE34 /* banner-01-hero-summer-sale.json in Resources */,
-				41C5EB202F3B40460066BE34 /* banner-02-product-iphone.json in Resources */,
-				41C5EB212F3B40460066BE34 /* banner-03-announcement-update.json in Resources */,
-				414DA69B2F58032500714978 /* test-147-hero-banner-complex.json in Resources */,
-				414DA69C2F58032500714978 /* test-133-image-gif-rounded.json in Resources */,
-				414DA69D2F58032500714978 /* test-126-text-font-weights.json in Resources */,
-				414DA69E2F58032500714978 /* test-124-4x3-ar-text-weights.json in Resources */,
-				414DA69F2F58032500714978 /* test-063-stats-card.json in Resources */,
-				414DA6A02F58032500714978 /* test-061-article-layout.json in Resources */,
-				414DA6A12F58032500714978 /* test-144-rounded-box-text.json in Resources */,
-				414DA6A22F58032500714978 /* test-137-video-with-controls.json in Resources */,
-				414DA6A32F58032500714978 /* test-148-product-card-complex.json in Resources */,
-				414DA6A42F58032500714978 /* test-131-text-gradient.json in Resources */,
-				414DA6A52F58032500714978 /* test-128-text-alignment.json in Resources */,
-				414DA6A62F58032500714978 /* test-149-notification-card.json in Resources */,
-				414DA6A72F58032500714978 /* test-142-cta-card.json in Resources */,
-				414DA6A82F58032500714978 /* test-146-image-overlay-rounded.json in Resources */,
-				414DA6A92F58032500714978 /* test-121-16x9-ar-image-text-button.json in Resources */,
-				414DA6AA2F58032500714978 /* test-136-video-autoplay-muted.json in Resources */,
-				414DA6AB2F58032500714978 /* test-064-gallery-item.json in Resources */,
-				414DA6AC2F58032500714978 /* test-145-nested-rounded-boxes.json in Resources */,
-				414DA6AD2F58032500714978 /* test-060-media-player.json in Resources */,
-				414DA6AE2F58032500714978 /* test-130-text-maxlines-overflow.json in Resources */,
-				414DA6AF2F58032500714978 /* test-139-button-centered.json in Resources */,
-				414DA6B02F58032500714978 /* test-122-1x1-ar-image-badge-rounded.json in Resources */,
-				414DA6B12F58032500714978 /* test-140-button-primary-secondary.json in Resources */,
-				414DA6B22F58032500714978 /* test-151-video-player-card.json in Resources */,
-				414DA6B32F58032500714978 /* test-152-text-corners.json in Resources */,
-				414DA6B42F58032500714978 /* test-123-9x16-ar-video-caption.json in Resources */,
-				414DA6B52F58032500714978 /* test-127-text-font-sizes.json in Resources */,
-				414DA6B62F58032500714978 /* test-068-social-post.json in Resources */,
-				414DA6B72F58032500714978 /* test-141-button-size-variants.json in Resources */,
-				414DA6B82F58032500714978 /* test-065-notification.json in Resources */,
-				414DA6B92F58032500714978 /* test-070-feature-showcase.json in Resources */,
-				414DA6BA2F58032500714978 /* test-062-action-sheet.json in Resources */,
-				414DA6BB2F58032500714978 /* test-134-image-border-radius.json in Resources */,
-				414DA6BC2F58032500714978 /* test-066-pricing-card.json in Resources */,
-				414DA6BD2F58032500714978 /* test-143-button-rounded-text.json in Resources */,
-				414DA6BF2F58032500714978 /* test-150-dashboard-widget.json in Resources */,
-				414DA6C02F58032500714978 /* test-135-images-z-order.json in Resources */,
-				414DA6C12F58032500714978 /* test-153-image-clipped.json in Resources */,
-				414DA6C22F58032500714978 /* test-154-nested-box-deep.json in Resources */,
-				414DA6C32F58032500714978 /* test-138-9x16-video-button.json in Resources */,
-				414DA6C42F58032500714978 /* test-155-all-element-types.json in Resources */,
-				414DA6C52F58032500714978 /* test-067-hero-banner.json in Resources */,
-				414DA6C62F58032500714978 /* test-129-text-decoration-italic.json in Resources */,
-				414DA6C72F58032500714978 /* test-132-image-fit-crop-contain.json in Resources */,
-				414DA6C82F58032500714978 /* test-125-2x1-ar-image-split-button.json in Resources */,
-				414DA6C92F58032500714978 /* test-069-settings-row.json in Resources */,
-				41C5EB222F3B40460066BE34 /* banner-04-travel-deals.json in Resources */,
-				41C5EB232F3B40460066BE34 /* banner-05-fashion-collection.json in Resources */,
-				41C5EB242F3B40460066BE34 /* banner-06-credit-card-offer.json in Resources */,
-				414DA6CB2F5814B300714978 /* test-156-button-backgrounds.json in Resources */,
-				41C5EB252F3B40460066BE34 /* banner-07-app-rating.json in Resources */,
-				41C5EB262F3B40460066BE34 /* banner-08-flash-sale.json in Resources */,
-				41C5EB272F3B40460066BE34 /* banner-09-premium-subscription.json in Resources */,
-				41C5EB282F3B40460066BE34 /* banner-10-welcome-onboarding.json in Resources */,
-				B003 /* Assets.xcassets in Resources */,
-				41969A752F0E6A4B0050EB83 /* animation_container_and_children.json in Resources */,
-				417388E42F2B8EAB00CC1951 /* test-091-offset-percent-box-basic.json in Resources */,
-				41969A762F0E6A4B0050EB83 /* animation_container_fade.json in Resources */,
-				41969A772F0E6A4B0050EB83 /* animation_staggered_children.json in Resources */,
-				41969A622EFE48010050EB83 /* arrangement_demo.json in Resources */,
-				B005 /* home_screen.json in Resources */,
+41C5EB1F2F3B40460066BE34 /* banner-01-hero-summer-sale.json in Resources */,
+41C5EB202F3B40460066BE34 /* banner-02-product-iphone.json in Resources */,
+41C5EB212F3B40460066BE34 /* banner-03-announcement-update.json in Resources */,
+41C5EB222F3B40460066BE34 /* banner-04-travel-deals.json in Resources */,
+41C5EB232F3B40460066BE34 /* banner-05-fashion-collection.json in Resources */,
+41C5EB242F3B40460066BE34 /* banner-06-credit-card-offer.json in Resources */,
+41C5EB252F3B40460066BE34 /* banner-07-app-rating.json in Resources */,
+41C5EB262F3B40460066BE34 /* banner-08-flash-sale.json in Resources */,
+41C5EB272F3B40460066BE34 /* banner-09-premium-subscription.json in Resources */,
+41C5EB282F3B40460066BE34 /* banner-10-welcome-onboarding.json in Resources */,
+B003 /* Assets.xcassets in Resources */,
+41969A752F0E6A4B0050EB83 /* animation_container_and_children.json in Resources */,
+41969A762F0E6A4B0050EB83 /* animation_container_fade.json in Resources */,
+41969A772F0E6A4B0050EB83 /* animation_staggered_children.json in Resources */,
+41969A622EFE48010050EB83 /* arrangement_demo.json in Resources */,
+B005 /* home_screen.json in Resources */,
+				CC000002B2F0000010TESTCF /* TestConfigs in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

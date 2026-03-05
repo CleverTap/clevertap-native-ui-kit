@@ -1,0 +1,274 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#1A237E",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "gallery-3-snapping",
+    "containerType": "gallery",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 400,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "backgroundColor": "#E8EAF6"
+    },
+    "galleryConfig": {
+      "mode": "snapping",
+      "orientation": "horizontal",
+      "peek": {
+        "before": 16,
+        "after": 16
+      },
+      "spacing": 12
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "card-1",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 85,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 12,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 16,
+          "shadowRadius": 8,
+          "shadowOffsetY": 4,
+          "shadowColor": "#00000033"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "image-1",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://picsum.photos/500/250"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 250,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 12
+            }
+          },
+          {
+            "type": "element",
+            "id": "title-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "Mountain Adventure"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "textColor": "#1A237E"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "card-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 85,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 12,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 16,
+          "shadowRadius": 8,
+          "shadowOffsetY": 4,
+          "shadowColor": "#00000033"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "image-2",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://picsum.photos/500/251"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 250,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 12
+            }
+          },
+          {
+            "type": "element",
+            "id": "title-2",
+            "elementType": "text",
+            "bindings": {
+              "text": "Ocean Breeze"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "textColor": "#1A237E"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "card-3",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 85,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 12,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 16,
+          "shadowRadius": 8,
+          "shadowOffsetY": 4,
+          "shadowColor": "#00000033"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "image-3",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://picsum.photos/500/252"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 250,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 12
+            }
+          },
+          {
+            "type": "element",
+            "id": "title-3",
+            "elementType": "text",
+            "bindings": {
+              "text": "City Lights"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "textColor": "#1A237E"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

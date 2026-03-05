@@ -1,0 +1,60 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#F57F17",
+      "fontSize": 16
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "stack-single",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 350,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFF9C4"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "base-layer",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://picsum.photos/800/350"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "opacity": 0.8
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

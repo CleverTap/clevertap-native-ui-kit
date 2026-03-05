@@ -1,0 +1,107 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#424242",
+      "fontSize": 16
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "vertical-3-children",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 500,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 16
+      },
+      "arrangement": {
+        "strategy": "space_between"
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFF3E0",
+      "borderRadius": 16
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "header",
+        "elementType": "text",
+        "bindings": {
+          "text": "Product Showcase"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "textColor": "#E65100"
+        }
+      },
+      {
+        "type": "element",
+        "id": "product-image",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://picsum.photos/400/300"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 300,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Discover our premium collection of handcrafted items"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 16,
+          "textColor": "#5D4037",
+          "lineHeight": 24
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

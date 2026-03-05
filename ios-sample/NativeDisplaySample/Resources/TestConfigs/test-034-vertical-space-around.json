@@ -1,0 +1,162 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#6A1B9A",
+      "fontSize": 16
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "vertical-space-around",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 600,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 20
+      },
+      "arrangement": {
+        "strategy": "space_around"
+      }
+    },
+    "style": {
+      "background": {
+        "type": "radial_gradient",
+        "colors": [
+          "#E1BEE7",
+          "#BA68C8"
+        ],
+        "centerX": 0.5,
+        "centerY": 0.5,
+        "radius": 1.0
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "header",
+        "elementType": "text",
+        "bindings": {
+          "text": "SPACE_AROUND Arrangement"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "textColor": "#4A148C"
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Half space at edges, full space between items"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 16,
+          "textColor": "#6A1B9A"
+        }
+      },
+      {
+        "type": "element",
+        "id": "circle-1",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://picsum.photos/120/120"
+        },
+        "layout": {
+          "width": {
+            "value": 120,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 120,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 60,
+          "borderWidth": 4,
+          "borderColor": "#FFFFFF"
+        }
+      },
+      {
+        "type": "element",
+        "id": "circle-2",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://picsum.photos/120/121"
+        },
+        "layout": {
+          "width": {
+            "value": 120,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 120,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 60,
+          "borderWidth": 4,
+          "borderColor": "#FFFFFF"
+        }
+      },
+      {
+        "type": "element",
+        "id": "circle-3",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://picsum.photos/120/122"
+        },
+        "layout": {
+          "width": {
+            "value": 120,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 120,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 60,
+          "borderWidth": 4,
+          "borderColor": "#FFFFFF"
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

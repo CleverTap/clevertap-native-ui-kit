@@ -1,0 +1,149 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#F57C00",
+      "fontSize": 16
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "vertical-spacing-8",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 600,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 16
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 8,
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFF3E0"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "header",
+        "elementType": "text",
+        "bindings": {
+          "text": "Small Spacing (8dp)"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "textColor": "#E65100"
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Compact layout with minimal gaps"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 16,
+          "textColor": "#F57C00"
+        }
+      },
+      {
+        "type": "element",
+        "id": "card-1",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://picsum.photos/400/100"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "card-2",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://picsum.photos/400/101"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "card-3",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://picsum.photos/400/102"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 8
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

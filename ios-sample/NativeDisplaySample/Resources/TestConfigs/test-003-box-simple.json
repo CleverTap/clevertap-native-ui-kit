@@ -1,0 +1,97 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {
+      "textColor": "#212121",
+      "fontSize": 14,
+      "fontFamily": "system"
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "box-container",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 250,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 16
+      }
+    },
+    "style": {
+      "background": {
+        "type": "radial_gradient",
+        "center_x": 0.5,
+        "center_y": 0.5,
+        "radius": 1.0,
+        "colors": [
+          "#FFF9C4",
+          "#FFE082",
+          "#FFD54F"
+        ]
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "image-element",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://picsum.photos/200/200"
+        },
+        "layout": {
+          "width": {
+            "value": 200,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 200,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "text-element",
+        "elementType": "text",
+        "bindings": {
+          "text": "BOX Container Test"
+        },
+        "layout": {
+          "width": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "offset": {
+            "x": 16,
+            "y": 210,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "fontSize": 16,
+          "fontWeight": "bold",
+          "textColor": "#000000",
+          "backgroundColor": "#FFFFFFCC"
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

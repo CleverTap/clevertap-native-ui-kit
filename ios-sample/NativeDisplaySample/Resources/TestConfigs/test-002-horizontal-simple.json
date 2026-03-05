@@ -1,0 +1,94 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {
+      "textColor": "#212121",
+      "fontSize": 14,
+      "fontFamily": "system"
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "horizontal-container",
+    "containerType": "horizontal",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 0,
+        "unit": "dp",
+        "special": "wrap_content"
+      },
+      "padding": {
+        "all": 16
+      },
+      "arrangement": {
+        "spacing": 12,
+        "strategy": "spaced",
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "angle": 135,
+        "colors": [
+          "#667eea",
+          "#764ba2"
+        ]
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "text-element",
+        "elementType": "text",
+        "bindings": {
+          "text": "HORIZONTAL Container Test"
+        },
+        "layout": {
+          "width": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 20,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFF"
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-element",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://picsum.photos/200/200"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 100,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 8
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

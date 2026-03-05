@@ -1,0 +1,615 @@
+{
+  "theme": {
+    "id": "override-theme",
+    "defaultStyle": {
+      "fontSize": 14,
+      "textColor": "#999999",
+      "fontWeight": "normal"
+    }
+  },
+  "styleClasses": [
+    {
+      "id": "base-container",
+      "style": {
+        "backgroundColor": "#E3F2FD",
+        "borderRadius": 12,
+        "textColor": "#1976D2",
+        "fontSize": 16
+      }
+    }
+  ],
+  "root": {
+    "type": "container",
+    "id": "override-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 20
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 20,
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#FAFAFA"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Inline Styles Override Inheritance"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 26,
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "textColor": "#000000"
+        }
+      },
+      {
+        "type": "element",
+        "id": "explanation",
+        "elementType": "text",
+        "bindings": {
+          "text": "Style Resolution Order: 1. Theme Default \u2192 2. Style Class \u2192 3. Inline Style \u2192 4. Parent Inherited"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 14,
+          "textAlign": "center",
+          "textColor": "#666666",
+          "lineHeight": 1.5
+        }
+      },
+      {
+        "type": "container",
+        "id": "example-1",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 12,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "borderWidth": 1,
+          "borderColor": "#E0E0E0",
+          "textColor": "#2196F3",
+          "fontSize": 18
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "ex1-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "Example 1: Theme \u2192 Inherited \u2192 Inline"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontWeight": "bold",
+              "textColor": "#000000"
+            }
+          },
+          {
+            "type": "element",
+            "id": "ex1-inherited",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text is blue (18sp) from parent container."
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "id": "ex1-override-color",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text overrides color to red (inline), keeps 18sp."
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "textColor": "#F44336"
+            }
+          },
+          {
+            "type": "element",
+            "id": "ex1-override-both",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text overrides both: green, 14sp."
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "textColor": "#4CAF50",
+              "fontSize": 14
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "example-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 12,
+            "spacingUnit": "dp"
+          }
+        },
+        "styleClass": "base-container",
+        "children": [
+          {
+            "type": "element",
+            "id": "ex2-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "Example 2: Style Class + Override"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontWeight": "bold",
+              "textColor": "#000000"
+            }
+          },
+          {
+            "type": "element",
+            "id": "ex2-class",
+            "elementType": "text",
+            "bindings": {
+              "text": "Inherits from styleClass: blue text, 16sp."
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "id": "ex2-override",
+            "elementType": "text",
+            "bindings": {
+              "text": "Inline style overrides: purple text, bold, 20sp."
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "textColor": "#9C27B0",
+              "fontSize": 20,
+              "fontWeight": "bold"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "example-3",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 12,
+            "spacingUnit": "dp"
+          }
+        },
+        "styleClass": "base-container",
+        "style": {
+          "backgroundColor": "#FFF3E0",
+          "textColor": "#E65100",
+          "fontSize": 14
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "ex3-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "Example 3: Style Class + Container Inline + Child Override"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontWeight": "bold",
+              "textColor": "#000000"
+            }
+          },
+          {
+            "type": "element",
+            "id": "ex3-inherited",
+            "elementType": "text",
+            "bindings": {
+              "text": "Container overrides styleClass: orange text, 14sp (not blue 16sp)."
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "id": "ex3-child-override",
+            "elementType": "text",
+            "bindings": {
+              "text": "Child further overrides: cyan, 18sp."
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "textColor": "#00BCD4",
+              "fontSize": 18
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "nested-demo",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#E8F5E9",
+          "borderRadius": 12,
+          "textColor": "#2E7D32",
+          "fontSize": 16,
+          "fontWeight": "medium"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "nested-level-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "Level 1: Green, 16sp, medium (from container)"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "id": "nested-container-2",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "all": 12
+              },
+              "arrangement": {
+                "strategy": "spaced",
+                "spacing": 4,
+                "spacingUnit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#C8E6C9",
+              "borderRadius": 8,
+              "fontSize": 14
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "nested-level-2",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Level 2: Still green & medium, but 14sp (size overridden)"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "nested-level-2-override",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Level 2 with inline: Dark green, bold, 12sp"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  }
+                },
+                "style": {
+                  "textColor": "#1B5E20",
+                  "fontWeight": "bold",
+                  "fontSize": 12
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "summary",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFF9C4",
+          "borderRadius": 12
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "summary-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Key Takeaway:"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "textColor": "#F57F17"
+            }
+          },
+          {
+            "type": "element",
+            "id": "summary-body",
+            "elementType": "text",
+            "bindings": {
+              "text": "Inline styles always win! They override inherited styles from parents and styleClasses. Use inline styles sparingly for specific overrides."
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "lineHeight": 1.5,
+              "textColor": "#333333"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "variables": {}
+}

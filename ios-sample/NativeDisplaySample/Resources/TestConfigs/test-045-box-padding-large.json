@@ -1,0 +1,156 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#FFFFFF",
+      "fontSize": 16
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "box-padding-large",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 500,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 32
+      }
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "angle": 135,
+        "colors": [
+          "#1A237E",
+          "#3F51B5",
+          "#5C6BC0"
+        ]
+      },
+      "borderWidth": 6,
+      "borderColor": "#FFFFFF"
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "content-box",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 24
+          },
+          "offset": {
+            "x": 50,
+            "y": 50,
+            "unit": "percent"
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 16,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 20,
+          "shadowRadius": 16,
+          "shadowOffsetY": 8,
+          "shadowColor": "#00000044"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Large Padding (32dp)"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 28,
+              "fontWeight": "bold",
+              "textColor": "#1A237E",
+              "textAlign": "center"
+            }
+          },
+          {
+            "type": "element",
+            "id": "description",
+            "elementType": "text",
+            "bindings": {
+              "text": "Large padding creates dramatic framing effect"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 16,
+              "textColor": "#3F51B5",
+              "textAlign": "center",
+              "lineHeight": 24
+            }
+          },
+          {
+            "type": "element",
+            "id": "note",
+            "elementType": "text",
+            "bindings": {
+              "text": "Content feels protected and emphasized"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#5C6BC0",
+              "textAlign": "center"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

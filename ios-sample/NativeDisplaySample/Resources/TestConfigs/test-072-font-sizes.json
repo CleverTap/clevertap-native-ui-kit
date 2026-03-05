@@ -1,0 +1,193 @@
+{
+  "theme": {
+    "id": "font-sizes-theme",
+    "defaultStyle": {
+      "textColor": "#333333",
+      "fontWeight": "normal"
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "font-sizes-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 20
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 16,
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFFFFF"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "size-12",
+        "elementType": "text",
+        "bindings": {
+          "text": "Font size 12sp - Small caption text"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 12
+        }
+      },
+      {
+        "type": "element",
+        "id": "size-14",
+        "elementType": "text",
+        "bindings": {
+          "text": "Font size 14sp - Body text small"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 14
+        }
+      },
+      {
+        "type": "element",
+        "id": "size-16",
+        "elementType": "text",
+        "bindings": {
+          "text": "Font size 16sp - Body text default"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 16
+        }
+      },
+      {
+        "type": "element",
+        "id": "size-20",
+        "elementType": "text",
+        "bindings": {
+          "text": "Font size 20sp - Subheading"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 20
+        }
+      },
+      {
+        "type": "element",
+        "id": "size-24",
+        "elementType": "text",
+        "bindings": {
+          "text": "Font size 24sp - Heading"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 24
+        }
+      },
+      {
+        "type": "element",
+        "id": "size-32",
+        "elementType": "text",
+        "bindings": {
+          "text": "Font size 32sp - Large Title"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 32
+        }
+      },
+      {
+        "type": "element",
+        "id": "size-48",
+        "elementType": "text",
+        "bindings": {
+          "text": "Font size 48sp - Display"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 48
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

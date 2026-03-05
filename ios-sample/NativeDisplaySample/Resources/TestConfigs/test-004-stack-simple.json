@@ -1,0 +1,103 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {
+      "textColor": "#212121",
+      "fontSize": 14,
+      "fontFamily": "system"
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "stack-container",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 250,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 16
+      }
+    },
+    "style": {
+      "background": {
+        "type": "layered",
+        "layers": [
+          {
+            "type": "solid",
+            "color": "#E8F5E9"
+          },
+          {
+            "type": "pattern",
+            "pattern_type": "dots",
+            "primary_color": "#00000000",
+            "secondary_color": "#4CAF5020",
+            "size": 4,
+            "spacing": 20
+          }
+        ]
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "image-element",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://picsum.photos/200/200"
+        },
+        "layout": {
+          "width": {
+            "value": 200,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 200,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "text-element",
+        "elementType": "text",
+        "bindings": {
+          "text": "STACK Container Test"
+        },
+        "layout": {
+          "width": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "offset": {
+            "x": 8,
+            "y": 8,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "fontSize": 16,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFF",
+          "backgroundColor": "#000000CC"
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

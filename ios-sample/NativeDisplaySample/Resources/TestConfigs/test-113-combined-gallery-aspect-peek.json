@@ -1,0 +1,244 @@
+{
+  "theme": {
+    "id": "test-113",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    }
+  },
+  "variables": {
+    "testName": "Combined - Gallery-Style Peek with Aspect Ratio"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 16, "unit": "dp" },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333"
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests gallery peek effect using Stack with percentage offsets and aspect ratios. Cards maintain 16:9 ratio while layered."
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666"
+        }
+      },
+      {
+        "type": "container",
+        "id": "gallery-peek-1",
+        "containerType": "box",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 280, "unit": "dp" }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF"
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "card-1",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 75, "unit": "percent" },
+              "aspectRatio": 1.777,
+              "offset": { "x": 0, "y": 8, "unit": "percent" }
+            },
+            "style": {
+              "backgroundColor": "#2196F3",
+              "borderRadius": 12,
+              "shadowColor": "#00000040",
+              "shadowRadius": 12,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 4
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "card-1-image",
+                "elementType": "image",
+                "bindings": {
+                  "url": "https://picsum.photos/400/225"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": 100, "unit": "percent" }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "card-2",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 75, "unit": "percent" },
+              "aspectRatio": 1.777,
+              "offset": { "x": 12, "y": 11, "unit": "percent" }
+            },
+            "style": {
+              "backgroundColor": "#4CAF50",
+              "borderRadius": 12,
+              "shadowColor": "#00000040",
+              "shadowRadius": 12,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 4
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "card-2-image",
+                "elementType": "image",
+                "bindings": {
+                  "url": "https://picsum.photos/400/226"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": 100, "unit": "percent" }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "card-3",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 75, "unit": "percent" },
+              "aspectRatio": 1.777,
+              "offset": { "x": 24, "y": 14, "unit": "percent" }
+            },
+            "style": {
+              "backgroundColor": "#FF9800",
+              "borderRadius": 12,
+              "shadowColor": "#00000040",
+              "shadowRadius": 12,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 4
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "card-3-image",
+                "elementType": "image",
+                "bindings": {
+                  "url": "https://picsum.photos/400/227"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": 100, "unit": "percent" }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "gallery-peek-2",
+        "containerType": "box",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 200, "unit": "dp" }
+        },
+        "style": {
+          "backgroundColor": "#FAFAFA"
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "square-card-1",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 140, "unit": "dp" },
+              "aspectRatio": 1.0,
+              "offset": { "x": 5, "y": 10, "unit": "percent" }
+            },
+            "style": {
+              "backgroundColor": "#9C27B0",
+              "borderRadius": 8,
+              "shadowColor": "#00000030",
+              "shadowRadius": 8,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 2
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "square-card-2",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 140, "unit": "dp" },
+              "aspectRatio": 1.0,
+              "offset": { "x": 35, "y": 10, "unit": "percent" }
+            },
+            "style": {
+              "backgroundColor": "#F44336",
+              "borderRadius": 8,
+              "shadowColor": "#00000030",
+              "shadowRadius": 8,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 2
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "square-card-3",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 140, "unit": "dp" },
+              "aspectRatio": 1.0,
+              "offset": { "x": 65, "y": 10, "unit": "percent" }
+            },
+            "style": {
+              "backgroundColor": "#00BCD4",
+              "borderRadius": 8,
+              "shadowColor": "#00000030",
+              "shadowRadius": 8,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 2
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+}

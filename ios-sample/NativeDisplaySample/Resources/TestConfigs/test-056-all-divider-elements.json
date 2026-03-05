@@ -1,0 +1,132 @@
+{
+  "theme": {
+    "id": "divider-sections",
+    "defaultStyle": {
+      "textColor": "#374151",
+      "fontSize": 14
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "divider-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "backgroundColor": "#F9FAFB"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "divider-thin",
+        "elementType": "divider",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 1,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#E5E7EB"
+        }
+      },
+      {
+        "type": "element",
+        "id": "divider-medium",
+        "elementType": "divider",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 2,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#D1D5DB"
+        }
+      },
+      {
+        "type": "element",
+        "id": "divider-thick",
+        "elementType": "divider",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 4,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#9CA3AF"
+        }
+      },
+      {
+        "type": "element",
+        "id": "divider-colored",
+        "elementType": "divider",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 3,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "linear_gradient",
+            "colors": [
+              "#3B82F6",
+              "#8B5CF6",
+              "#EC4899"
+            ],
+            "angle": 90
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "divider-partial",
+        "elementType": "divider",
+        "layout": {
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 2,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#6B7280"
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

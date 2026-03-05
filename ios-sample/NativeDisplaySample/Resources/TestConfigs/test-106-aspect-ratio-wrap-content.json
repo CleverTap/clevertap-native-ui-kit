@@ -1,0 +1,160 @@
+{
+  "theme": {
+    "id": "test-106",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    }
+  },
+  "variables": {
+    "testName": "Aspect Ratio - WRAP_CONTENT Edge Case"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 16, "unit": "dp" },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333"
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests aspect ratio with WRAP_CONTENT dimensions. Should wrap content while respecting aspect ratio constraints where possible."
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666"
+        }
+      },
+      {
+        "type": "container",
+        "id": "wrap-width-with-ratio",
+        "containerType": "box",
+        "layout": {
+          "width": { "special": "wrap_content" },
+          "aspectRatio": 1.0,
+          "padding": { "all": 16, "unit": "dp" }
+        },
+        "style": {
+          "backgroundColor": "#2196F3",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "wrap-text-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "WRAP_CONTENT width + 1:1 ratio"
+            },
+            "layout": {
+              "width": { "value": 200, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#FFFFFF",
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "wrap-height-with-ratio",
+        "containerType": "box",
+        "layout": {
+          "height": { "special": "wrap_content" },
+          "aspectRatio": 2.0,
+          "padding": { "all": 16, "unit": "dp" }
+        },
+        "style": {
+          "backgroundColor": "#4CAF50",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "wrap-text-2",
+            "elementType": "text",
+            "bindings": {
+              "text": "WRAP_CONTENT height\n2:1 ratio"
+            },
+            "layout": {
+              "width": { "value": 250, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#FFFFFF",
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "both-wrap-with-ratio",
+        "containerType": "box",
+        "layout": {
+          "width": { "special": "wrap_content" },
+          "height": { "special": "wrap_content" },
+          "aspectRatio": 1.5,
+          "padding": { "all": 20, "unit": "dp" }
+        },
+        "style": {
+          "backgroundColor": "#FF9800",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "wrap-text-3",
+            "elementType": "text",
+            "bindings": {
+              "text": "Both WRAP_CONTENT\n1.5:1 ratio"
+            },
+            "layout": {
+              "width": { "value": 180, "unit": "dp" }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#FFFFFF",
+              "textAlign": "center"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

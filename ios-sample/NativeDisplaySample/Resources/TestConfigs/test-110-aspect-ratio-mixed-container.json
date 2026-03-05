@@ -1,0 +1,317 @@
+{
+  "theme": {
+    "id": "test-110",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    }
+  },
+  "variables": {
+    "testName": "Aspect Ratio - Mixed Container with Multiple Ratios"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 100, "unit": "percent" },
+      "padding": { "all": 16, "unit": "dp" },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333"
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests multiple elements with different aspect ratios in a single container. Verifies that different ratios coexist correctly."
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666"
+        }
+      },
+      {
+        "type": "container",
+        "id": "mixed-grid",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "arrangement": {
+            "spacing": 12,
+            "spacingUnit": "dp",
+            "strategy": "space_between"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "square-box",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 100, "unit": "dp" },
+              "aspectRatio": 1.0
+            },
+            "style": {
+              "backgroundColor": "#2196F3",
+              "borderRadius": 8
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "square-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "1:1"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "padding": { "all": 8, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 12,
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "portrait-box",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 80, "unit": "dp" },
+              "aspectRatio": 0.75
+            },
+            "style": {
+              "backgroundColor": "#4CAF50",
+              "borderRadius": 8
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "portrait-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "3:4"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "padding": { "all": 8, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 12,
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "landscape-box",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 120, "unit": "dp" },
+              "aspectRatio": 1.5
+            },
+            "style": {
+              "backgroundColor": "#FF9800",
+              "borderRadius": 8
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "landscape-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "3:2"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "padding": { "all": 8, "unit": "dp" }
+                },
+                "style": {
+                  "fontSize": 12,
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "widescreen-banner",
+        "containerType": "box",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "aspectRatio": 1.777,
+          "padding": { "all": 16, "unit": "dp" }
+        },
+        "style": {
+          "backgroundColor": "#9C27B0",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "banner-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "16:9 Widescreen Banner"
+            },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" }
+            },
+            "style": {
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "complex-layout",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "arrangement": {
+            "spacing": 12,
+            "spacingUnit": "dp",
+            "strategy": "start"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "vertical-sidebar",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 60, "unit": "dp" },
+              "aspectRatio": 0.3
+            },
+            "style": {
+              "backgroundColor": "#607D8B",
+              "borderRadius": 8
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "content-cards",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": 250, "unit": "dp" },
+              "arrangement": {
+                "spacing": 8,
+                "spacingUnit": "dp",
+                "strategy": "spaced"
+              }
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "card-1",
+                "containerType": "box",
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "aspectRatio": 2.5,
+                  "padding": { "all": 12, "unit": "dp" }
+                },
+                "style": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 6,
+                  "borderWidth": 1,
+                  "borderColor": "#E0E0E0"
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "card-1-text",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "Card 1 - 2.5:1 ratio"
+                    },
+                    "layout": {
+                      "width": { "value": 100, "unit": "percent" }
+                    },
+                    "style": {
+                      "fontSize": 12,
+                      "textColor": "#333333"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "card-2",
+                "containerType": "box",
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "aspectRatio": 2.5,
+                  "padding": { "all": 12, "unit": "dp" }
+                },
+                "style": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 6,
+                  "borderWidth": 1,
+                  "borderColor": "#E0E0E0"
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "card-2-text",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "Card 2 - 2.5:1 ratio"
+                    },
+                    "layout": {
+                      "width": { "value": 100, "unit": "percent" }
+                    },
+                    "style": {
+                      "fontSize": 12,
+                      "textColor": "#333333"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
