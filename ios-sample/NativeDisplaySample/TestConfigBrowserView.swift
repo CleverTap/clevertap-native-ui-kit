@@ -198,20 +198,35 @@ struct TestConfigBrowserView: View {
 
     // MARK: - Helpers
 
-    /// Discover all test-NNN-*.json files present in the TestConfigs bundle directory
+    /// Discover all test-NNN-*.json files present in the app bundle.
+    ///
+    /// Searches two locations and merges results (deduplicating by filename):
+    ///   1. `<bundle>/TestConfigs/` — the standard folder group used by the Xcode project
+    ///   2. `<bundle root>/` — fallback for test files added directly at the bundle root
     private func discoverTestFiles() -> [String] {
         guard let resourcePath = Bundle.main.resourcePath else { return [] }
-        let testConfigsPath = (resourcePath as NSString).appendingPathComponent("TestConfigs")
         let fileManager = FileManager.default
+        var seen = Set<String>()
+        var results: [String] = []
 
-        guard let files = try? fileManager.contentsOfDirectory(atPath: testConfigsPath) else {
-            return []
+        // Helper: collect matching filenames from a directory path
+        func collect(from directoryPath: String) {
+            guard let files = try? fileManager.contentsOfDirectory(atPath: directoryPath) else { return }
+            for file in files where file.hasPrefix("test-") && file.hasSuffix(".json") {
+                let name = (file as NSString).deletingPathExtension
+                if seen.insert(name).inserted {
+                    results.append(name)
+                }
+            }
         }
 
-        return files
-            .filter { $0.hasPrefix("test-") && $0.hasSuffix(".json") }
-            .sorted()
-            .map { $0.replacingOccurrences(of: ".json", with: "") }
+        // 1. TestConfigs subfolder (primary location)
+        collect(from: (resourcePath as NSString).appendingPathComponent("TestConfigs"))
+
+        // 2. Bundle root (fallback for files not inside the TestConfigs group)
+        collect(from: resourcePath)
+
+        return results.sorted()
     }
 
     /// Extract the numeric portion from a filename like "test-121-some-description" -> "121"
