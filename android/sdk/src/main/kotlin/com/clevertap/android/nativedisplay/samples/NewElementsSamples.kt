@@ -212,7 +212,7 @@ object NewElementsSamples {
                             snapBehavior = SnapBehavior.CENTER,
                             showIndicators = true,
                             showArrows = false,
-                            peekPercentage = 15f,
+                            peek = PeekConfig(before = 24f, after = 24f),
                             spacing = 12f
                         ),
                         children = createGalleryItems(5)
@@ -273,7 +273,7 @@ object NewElementsSamples {
                             snapBehavior = SnapBehavior.CENTER,
                             showIndicators = true,
                             showArrows = true,
-                            peekPercentage = 20f,
+                            peek = PeekConfig(before = 32f, after = 32f),
                             spacing = 12f,
                             autoScrollInterval = 3000,
                             infiniteScroll = true,
@@ -428,7 +428,7 @@ object NewElementsSamples {
                             snapBehavior = SnapBehavior.CENTER,
                             showIndicators = true,
                             showArrows = true,
-                            peekPercentage = 10f,
+                            peek = PeekConfig(before = 16f, after = 16f),
                             spacing = 12f,
                             indicatorStyle = IndicatorStyle(
                                 size = 8f,

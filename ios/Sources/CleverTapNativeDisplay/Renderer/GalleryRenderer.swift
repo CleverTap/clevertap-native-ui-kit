@@ -78,8 +78,11 @@ struct SnappingGalleryView: View {
     var body: some View {
         GeometryReader { geometry in
             let containerSize = geometry.size
-            let peekFraction = config.peekPercentage / 100
-            
+            let peekBefore = container.children.count > 1 ? config.peek.before : 0
+            let peekAfter  = container.children.count > 1 ? config.peek.after  : 0
+            let effectiveWidth  = max(0, containerSize.width - peekBefore - peekAfter)
+            let effectiveHeight = max(0, containerSize.height - peekBefore - peekAfter)
+
             ZStack {
                 // Main Pager
                 if config.orientation == .horizontal {
@@ -89,7 +92,7 @@ struct SnappingGalleryView: View {
                                 node: child,
                                 resolvedStyles: resolvedStyles,
                                 evaluator: evaluator,
-                                parentSize: containerSize,
+                                parentSize: CGSize(width: effectiveWidth, height: containerSize.height),
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
                             )
@@ -98,7 +101,7 @@ struct SnappingGalleryView: View {
                         }
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
-                    .padding(.horizontal, containerSize.width * peekFraction / 2)
+                    .padding(EdgeInsets(top: 0, leading: peekBefore, bottom: 0, trailing: peekAfter))
                 } else {
                     // Vertical scrolling with snapping
                     // Use TabView with rotation for vertical paging (iOS 15 compatible)
@@ -108,7 +111,7 @@ struct SnappingGalleryView: View {
                                 node: child,
                                 resolvedStyles: resolvedStyles,
                                 evaluator: evaluator,
-                                parentSize: containerSize,
+                                parentSize: CGSize(width: containerSize.width, height: effectiveHeight),
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
                             )
@@ -119,7 +122,7 @@ struct SnappingGalleryView: View {
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
                     .rotationEffect(.degrees(90))
-                    .padding(.vertical, containerSize.height * peekFraction / 2)
+                    .padding(EdgeInsets(top: peekBefore, leading: 0, bottom: peekAfter, trailing: 0))
                 }
                 
                 // Navigation arrows
@@ -240,7 +243,7 @@ struct FreeFlowGridGalleryView: View {
     var body: some View {
         GeometryReader { geometry in
             let containerSize = geometry.size
-            let itemsPerView = max(0.1, config.itemsPerView)
+            let itemsPerView = max(0.1, config.effectiveItemsPerView)
             
             if config.orientation == .horizontal {
                 let totalSpacing = config.spacing * (itemsPerView - 1)

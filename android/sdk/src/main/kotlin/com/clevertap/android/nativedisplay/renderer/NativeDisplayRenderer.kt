@@ -420,18 +420,10 @@ private fun RenderSnappingGallery(
         val containerWidth = this.maxWidth
         val containerHeight = this.maxHeight
 
-        // Calculate peek padding
-        val peekFraction = config.peekPercentage / 100f
-        val horizontalPadding = if (container.children.size > 1 && peekFraction > 0f) {
-            containerWidth * peekFraction / 2f
-        } else {
-            0.dp
-        }
-        val verticalPadding = if (container.children.size > 1 && peekFraction > 0f) {
-            containerHeight * peekFraction / 2f
-        } else {
-            0.dp
-        }
+        // Calculate peek padding from dp-based PeekConfig
+        val peekBefore = config.peek.before.dp
+        val peekAfter = config.peek.after.dp
+        val hasPeek = container.children.size > 1 && (peekBefore > 0.dp || peekAfter > 0.dp)
 
         // Auto-scroll
         if (config.autoScrollInterval > 0 && container.children.size > 1) {
@@ -454,8 +446,10 @@ private fun RenderSnappingGallery(
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(horizontal = horizontalPadding),
-                    pageSpacing = config.spacing.dp
+                    contentPadding = if (hasPeek) PaddingValues(start = peekBefore, end = peekAfter)
+                                     else PaddingValues(0.dp),
+                    pageSpacing = config.spacing.dp,
+                    beyondViewportPageCount = if (container.children.size > 1) 1 else 0
                 ) { page ->
                     container.children.getOrNull(page)?.let { child ->
                         RenderNode(
@@ -472,8 +466,10 @@ private fun RenderSnappingGallery(
                 VerticalPager(
                     state = pagerState,
                     modifier = Modifier.fillMaxHeight(),
-                    contentPadding = PaddingValues(vertical = verticalPadding),
-                    pageSpacing = config.spacing.dp
+                    contentPadding = if (hasPeek) PaddingValues(top = peekBefore, bottom = peekAfter)
+                                     else PaddingValues(0.dp),
+                    pageSpacing = config.spacing.dp,
+                    beyondViewportPageCount = if (container.children.size > 1) 1 else 0
                 ) { page ->
                     container.children.getOrNull(page)?.let { child ->
                         RenderNode(
@@ -615,7 +611,7 @@ private fun RenderFreeFlowGridGallery(
 
         if (config.orientation == Orientation.HORIZONTAL) {
             // Calculate item width based on itemsPerView
-            val itemsPerView = config.itemsPerView.coerceAtLeast(0.1f)
+            val itemsPerView = config.effectiveItemsPerView.coerceAtLeast(0.1f)
             val totalSpacing = config.spacing.dp * (itemsPerView - 1)
             val itemWidth = (containerWidth - totalSpacing) / itemsPerView
 
@@ -648,7 +644,7 @@ private fun RenderFreeFlowGridGallery(
             }
         } else {
             // Calculate item height based on itemsPerView
-            val itemsPerView = config.itemsPerView.coerceAtLeast(0.1f)
+            val itemsPerView = config.effectiveItemsPerView.coerceAtLeast(0.1f)
             val totalSpacing = config.spacing.dp * (itemsPerView - 1)
             val itemHeight = (containerHeight - totalSpacing) / itemsPerView
 

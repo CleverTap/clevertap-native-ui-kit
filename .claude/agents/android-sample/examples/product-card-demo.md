@@ -51,7 +51,7 @@ Complete e-commerce product card demonstrating:
         "galleryConfig": {
           "mode": "snapping",
           "snapBehavior": "center",
-          "peekPercentage": 10
+          "peek": {"before": 10, "after": 10}
         },
         "children": [...]
       },

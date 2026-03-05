@@ -83,7 +83,7 @@
     "mode": "snapping",
     "orientation": "horizontal",
     "snapBehavior": "center",
-    "peekPercentage": 20,
+    "peek": {"before": 20, "after": 20},
     "spacing": 16,
     "showIndicators": true
   },

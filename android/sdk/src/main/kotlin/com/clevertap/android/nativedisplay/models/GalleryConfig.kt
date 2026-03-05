@@ -20,6 +20,17 @@ enum class GalleryMode {
 }
 
 /**
+ * Peek configuration for snapping gallery mode.
+ * Specifies how much of adjacent items to reveal on each side, in dp.
+ */
+@Immutable
+@Serializable
+data class PeekConfig(
+    val before: Float = 0f,  // dp: leading side reveal
+    val after: Float = 0f    // dp: trailing side reveal
+)
+
+/**
  * Gallery configuration for carousel/scrolling containers.
  *
  * Three distinct modes:
@@ -36,10 +47,11 @@ data class GalleryConfig(
 
     // SNAPPING mode parameters
     val snapBehavior: SnapBehavior = SnapBehavior.CENTER,
-    val peekPercentage: Float = 0f,  // 0-100, percentage of adjacent items to show
+    val peek: PeekConfig = PeekConfig(),
 
     // FREE_FLOW_GRID mode parameters
     val itemsPerView: Float = 1f,    // Number of items visible (2.5 = 2 full + 0.5 peek)
+    val columns: Int? = null,
 
     // Common parameters
     val spacing: Float = 8f,          // Gap between items in dp
@@ -50,7 +62,9 @@ data class GalleryConfig(
     val showArrows: Boolean = false,
     val arrowStyle: ArrowStyle? = null,
     val initialPage: Int = 0
-)
+) {
+    val effectiveItemsPerView: Float get() = columns?.toFloat() ?: itemsPerView
+}
 
 @Immutable
 @Serializable
