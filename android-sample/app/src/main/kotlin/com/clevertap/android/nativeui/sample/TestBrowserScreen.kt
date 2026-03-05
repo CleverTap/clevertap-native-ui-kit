@@ -1,29 +1,40 @@
 package com.clevertap.android.nativeui.sample
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
 
 /**
  * TestBrowserScreen - Cycles through test JSON configurations for automated screenshot testing.
  *
  * Features:
- * - Previous/Next navigation buttons at the top
- * - Cycles through all test JSON files (test-001 through test-030)
- * - Shows current test number and filename
+ * - TopAppBar with title and counter badge
+ * - Navigation row with prev/next icon buttons and filename label
+ * - Scrollable chip strip for quick test selection
  * - Scrollable content area for rendered UI
  * - Loop navigation (wraps around at start/end)
  */
@@ -32,7 +43,7 @@ import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
 fun TestBrowserScreen() {
     val context = LocalContext.current
 
-    // List of all test configuration files (120 tests)
+    // List of all test configuration files (156 tests)
     val testFiles = remember {
         listOf(
             "test-001-vertical-simple.json",
@@ -215,21 +226,47 @@ fun TestBrowserScreen() {
         currentIndex = if (currentIndex < testFiles.size - 1) currentIndex + 1 else 0
     }
 
+    // Chip strip state
+    val chipListState = rememberLazyListState()
+    val screenWidthDp = LocalConfiguration.current.screenWidthDp
+    val density = LocalDensity.current
+
+    // Auto-scroll chip strip when currentIndex changes
+    LaunchedEffect(currentIndex) {
+        val chipWidthPx = with(density) { 44.dp.toPx() }
+        val screenWidthPx = with(density) { screenWidthDp.dp.toPx() }
+        val scrollOffset = -(screenWidthPx / 2 - chipWidthPx / 2).toInt()
+        chipListState.animateScrollToItem(currentIndex, scrollOffset)
+    }
+
+    // Current filename without extension
+    val currentFilename = remember(currentIndex) {
+        testFiles[currentIndex].removeSuffix(".json")
+    }
+
+    // Counter label (zero-padded)
+    val counterLabel = remember(currentIndex) {
+        "${(currentIndex + 1).toString().padStart(3, '0')} / ${testFiles.size}"
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Column {
-                        Text(
-                            "Test Browser",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(
-                            "Test ${currentIndex + 1}/${testFiles.size}: ${testFiles[currentIndex]}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
-                        )
-                    }
+                    Text(
+                        "Test Browser",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                },
+                actions = {
+                    Text(
+                        text = counterLabel,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.Medium
+                        ),
+                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f),
+                        modifier = Modifier.padding(end = 16.dp)
+                    )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -243,12 +280,20 @@ fun TestBrowserScreen() {
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Navigation Controls
-            NavigationControls(
-                currentIndex = currentIndex,
-                totalTests = testFiles.size,
+            // Navigation row
+            NavigationRow(
+                filename = currentFilename,
                 onPrevious = ::goToPrevious,
                 onNext = ::goToNext,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            // Chip strip
+            ChipStrip(
+                testCount = testFiles.size,
+                currentIndex = currentIndex,
+                listState = chipListState,
+                onChipSelected = { index -> currentIndex = index },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -256,10 +301,10 @@ fun TestBrowserScreen() {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .weight(1f)
                     .background(Color(0xFFF5F5F5))
             ) {
                 if (currentConfig != null) {
-                    // Scrollable content
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -271,7 +316,6 @@ fun TestBrowserScreen() {
                         )
                     }
                 } else {
-                    // Error state
                     ErrorIndicator(
                         message = "Failed to load ${testFiles[currentIndex]}",
                         modifier = Modifier
@@ -286,76 +330,92 @@ fun TestBrowserScreen() {
 }
 
 /**
- * Navigation controls bar with Previous and Next buttons
+ * Navigation row with prev/next icon buttons and centered filename label.
  */
 @Composable
-private fun NavigationControls(
-    currentIndex: Int,
-    totalTests: Int,
+private fun NavigationRow(
+    filename: String,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
         modifier = modifier,
-        color = MaterialTheme.colorScheme.surface,
-        shadowElevation = 4.dp
+        color = MaterialTheme.colorScheme.surfaceVariant
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Previous Button
-            Button(
-                onClick = onPrevious,
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
+            IconButton(onClick = onPrevious) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Previous Test",
-                    modifier = Modifier.size(20.dp)
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Previous Test"
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Previous")
             }
 
-            // Counter Display
-            Surface(
+            Text(
+                text = filename,
+                style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp),
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
+            )
+
+            IconButton(onClick = onNext) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = "Next Test"
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Scrollable chip strip for quick test selection.
+ */
+@Composable
+private fun ChipStrip(
+    testCount: Int,
+    currentIndex: Int,
+    listState: androidx.compose.foundation.lazy.LazyListState,
+    onChipSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyRow(
+        state = listState,
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(vertical = 6.dp),
+        contentPadding = PaddingValues(horizontal = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        itemsIndexed(List(testCount) { it }) { index, _ ->
+            val isSelected = index == currentIndex
+            val label = (index + 1).toString().padStart(3, '0')
+
+            Box(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp),
-                color = MaterialTheme.colorScheme.primaryContainer,
-                shape = MaterialTheme.shapes.small
+                    .height(32.dp)
+                    .widthIn(min = 40.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(
+                        if (isSelected) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.surfaceVariant
+                    )
+                    .clickable { onChipSelected(index) }
+                    .padding(horizontal = 4.dp),
+                contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "${currentIndex + 1} / $totalTests",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-            }
-
-            // Next Button
-            Button(
-                onClick = onNext,
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Text("Next")
-                Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    imageVector = Icons.Default.ArrowForward,
-                    contentDescription = "Next Test",
-                    modifier = Modifier.size(20.dp)
+                    text = label,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                        color = if (isSelected) MaterialTheme.colorScheme.onPrimary
+                        else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 )
             }
         }
@@ -383,7 +443,7 @@ private fun ErrorIndicator(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "⚠️ Error",
+                text = "Error",
                 style = MaterialTheme.typography.titleLarge,
                 color = Color(0xFFC62828),
                 fontWeight = FontWeight.Bold
