@@ -357,36 +357,41 @@ fun RenderTextElement(
 }
 
 /**
- * Pattern: Rendering BUTTON element with multiple property groups
- * Use this when rendering buttons that need text, visual, and border properties
+ * Pattern: Rendering BUTTON element
+ * Use Box + elementModifier (NOT Material3 Button) to avoid the 40dp minimum height
+ * enforced by ButtonDefaults. Click handling is done by applyClickable() in RenderNode,
+ * not inline here — so ON_LONG_PRESS and ON_DOUBLE_TAP work the same as for all elements.
+ * Text is centered (Alignment.Center) — conventional for buttons.
  */
 @Composable
 fun RenderButtonElement(
     element: NativeDisplayElement,
     resolvedStyle: Style,
-    evaluator: VariableEvaluator
+    evaluator: VariableEvaluator,
+    elementModifier: Modifier   // Includes sizing + padding; click applied upstream by applyClickable()
 ) {
-    // Extract property groups
     val textProps = resolvedStyle.extractTextProperties()
-    val visualProps = resolvedStyle.extractVisualProperties()
-    val borderProps = resolvedStyle.extractBorderProperties()
 
     val buttonText = element.bindings["text"]?.let {
         evaluator.evaluateString(it)
     } ?: "Button"
 
-    Button(
-        onClick = { /* handle action */ },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = parseColor(visualProps.backgroundColor) ?: Color(0xFF007AFF),
-            contentColor = parseColor(textProps.color) ?: Color.White
-        ),
-        shape = RoundedCornerShape((borderProps.radius ?: 8f).dp)
+    Box(
+        modifier = elementModifier,
+        contentAlignment = Alignment.Center
     ) {
         Text(
             text = buttonText,
+            color = parseColor(textProps.color) ?: Color.White,
             fontSize = (textProps.size ?: 16f).sp,
-            fontWeight = resolveFontWeight(textProps.weight)
+            fontWeight = resolveFontWeight(textProps.weight),
+            fontStyle = resolveFontStyle(textProps.style),
+            letterSpacing = (textProps.letterSpacing ?: 0f).sp,
+            textDecoration = resolveTextDecoration(textProps.decoration),
+            textAlign = resolveTextAlign(textProps.align),
+            lineHeight = textProps.lineHeight?.sp ?: (textProps.size?.times(1.5f) ?: 21f).sp,
+            maxLines = textProps.maxLines ?: Int.MAX_VALUE,
+            overflow = resolveTextOverflow(textProps.overflow)
         )
     }
 }
@@ -453,45 +458,73 @@ private fun Modifier.applyDecorations(style: Style): Modifier {
 ```swift
 /**
  * Pattern: Rendering TEXT element with property extraction
- * Use this when rendering text elements in SwiftUI
+ * Use this when rendering text elements in SwiftUI.
+ *
+ * Key requirement: for .multilineTextAlignment() to be visually effective the Text
+ * must fill its allocated width. Without .frame(maxWidth: .infinity) a short Text
+ * renders at its natural (narrow) width and alignment has no visible effect.
+ * Exception: wrap_content TEXT — the element IS its text width, do not expand.
  */
 @ViewBuilder
 private func renderText() -> some View {
     let text = element.bindings["text"].map { evaluator.evaluateString($0) } ?? ""
     let textProps = resolvedStyle.extractTextProperties()
+    let textAlignment = resolveTextAlign(textProps.align)
+    let isWrapContent = element.layout?.width?.special == .wrapContent
 
-    Text(text)
+    let frameAlignment: Alignment = {
+        switch textAlignment {
+        case .center:   return .center
+        case .trailing: return .trailing
+        default:        return .leading
+        }
+    }()
+
+    let coreText = Text(text)
         .foregroundColor(ColorParser.parse(textProps.color) ?? .primary)
         .font(.system(size: textProps.size ?? 14))
         .fontWeight(resolveFontWeight(textProps.weight))
-        .multilineTextAlignment(resolveTextAlign(textProps.align))
+        .multilineTextAlignment(textAlignment)
         .lineSpacing(max(0, (textProps.lineHeight ?? 0) - (textProps.size ?? 14)))
+
+    if isWrapContent {
+        coreText.fixedSize(horizontal: false, vertical: true)
+    } else {
+        coreText
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: frameAlignment)
+    }
 }
 
 /**
- * Pattern: Rendering BUTTON element with multiple property groups
- * Use this when rendering buttons in SwiftUI
+ * Pattern: Rendering BUTTON element in SwiftUI
+ * Use .buttonStyle(.plain) so DecorationModifier (applied in RenderNode) owns all
+ * visual styling (background, border, corner radius). Do NOT apply manual .background /
+ * .cornerRadius here — that would double-apply styles.
+ * The label uses .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+ * so the tappable area fills the full allocated element bounds and text is centered.
  */
 @ViewBuilder
 private func renderButton() -> some View {
     let buttonText = element.bindings["text"].map { evaluator.evaluateString($0) } ?? "Button"
-
     let textProps = resolvedStyle.extractTextProperties()
-    let visualProps = resolvedStyle.extractVisualProperties()
-    let borderProps = resolvedStyle.extractBorderProperties()
 
     Button(action: {
-        // Handle action
+        // ON_CLICK handled here; applyTappable() is skipped for BUTTON elements
+        if let onClick = element.actions?[ActionTriggers.onClick] {
+            actionHandler?.handleAction(onClick, nodeId: element.id, interactionType: .click)
+        }
     }) {
         Text(buttonText)
             .foregroundColor(ColorParser.parse(textProps.color) ?? .white)
             .font(.system(size: textProps.size ?? 16))
             .fontWeight(resolveFontWeight(textProps.weight))
+            .multilineTextAlignment(resolveTextAlign(textProps.align))
+            .lineSpacing(max(0, (textProps.lineHeight ?? 0) - (textProps.size ?? 16)))
+            .lineLimit(textProps.maxLines)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
     }
-    .padding(.horizontal, 16)
-    .padding(.vertical, 8)
-    .background(ColorParser.parse(visualProps.backgroundColor) ?? Color.blue)
-    .cornerRadius(borderProps.radius ?? 8)
+    .buttonStyle(.plain)
 }
 
 /**
