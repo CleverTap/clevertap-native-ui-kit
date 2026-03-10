@@ -166,6 +166,7 @@
 		414DA94B2F59B35E00714978 /* test-051-all-text-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8452F59B35E00714978 /* test-051-all-text-elements.json */; };
 		414DA94C2F59B35E00714978 /* test-082-shadows-heavy.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8642F59B35E00714978 /* test-082-shadows-heavy.json */; };
 		414DA94D2F59B35E00714978 /* test-034-vertical-space-around.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8342F59B35E00714978 /* test-034-vertical-space-around.json */; };
+		414DA94F2F6001EC00714978 /* ImagePreloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 414DA94E2F6001EC00714978 /* ImagePreloader.swift */; };
 		41969A622EFE48010050EB83 /* arrangement_demo.json in Resources */ = {isa = PBXBuildFile; fileRef = 41969A612EFE48010050EB83 /* arrangement_demo.json */; };
 		41969A752F0E6A4B0050EB83 /* animation_container_and_children.json in Resources */ = {isa = PBXBuildFile; fileRef = 41969A722F0E6A4B0050EB83 /* animation_container_and_children.json */; };
 		41969A762F0E6A4B0050EB83 /* animation_container_fade.json in Resources */ = {isa = PBXBuildFile; fileRef = 41969A732F0E6A4B0050EB83 /* animation_container_fade.json */; };
@@ -370,6 +371,7 @@
 		414DA8AD2F59B35E00714978 /* test-155-all-element-types.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-155-all-element-types.json"; sourceTree = "<group>"; };
 		414DA8AE2F59B35E00714978 /* test-156-button-backgrounds.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-156-button-backgrounds.json"; sourceTree = "<group>"; };
 		414DA8AF2F59B35E00714978 /* test-VERIFY-percentage-offset-fix.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-VERIFY-percentage-offset-fix.json"; sourceTree = "<group>"; };
+		414DA94E2F6001EC00714978 /* ImagePreloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreloader.swift; sourceTree = "<group>"; };
 		41969A612EFE48010050EB83 /* arrangement_demo.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = arrangement_demo.json; sourceTree = "<group>"; };
 		41969A722F0E6A4B0050EB83 /* animation_container_and_children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = animation_container_and_children.json; sourceTree = "<group>"; };
 		41969A732F0E6A4B0050EB83 /* animation_container_fade.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = animation_container_fade.json; sourceTree = "<group>"; };
@@ -592,6 +594,7 @@
 		GRP_APP /* NativeDisplaySample */ = {
 			isa = PBXGroup;
 			children = (
+				414DA94E2F6001EC00714978 /* ImagePreloader.swift */,
 				41C5EB1D2F34E6FC0066BE34 /* JSONViewerView.swift */,
 				411302792F33E757004B6254 /* BannerDetailView.swift */,
 				4113027A2F33E757004B6254 /* BannerShowcaseView.swift */,
@@ -926,6 +929,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				414DA94F2F6001EC00714978 /* ImagePreloader.swift in Sources */,
 				41C5EB1E2F34E6FC0066BE34 /* JSONViewerView.swift in Sources */,
 				41F1AD612F2B7D420018C5EA /* JsonLoader.swift in Sources */,
 				B001 /* NativeDisplaySampleApp.swift in Sources */,

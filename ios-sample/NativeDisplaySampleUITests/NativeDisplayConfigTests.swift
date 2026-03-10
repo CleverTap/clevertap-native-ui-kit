@@ -23,7 +23,18 @@ final class NativeDisplayConfigTests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
+
+        // Ask the app to pre-populate URLCache.shared with all image URLs before tests run.
+        // ImagePreloader.swift downloads images in parallel and sets "images-preloaded"
+        // when complete. Both AsyncImage and GIFImage benefit via URLCache.shared.
+        app.launchEnvironment["PRELOAD_IMAGES"] = "1"
         app.launch()
+
+        // Wait for image preloading to finish before navigating anywhere.
+        // 30 s is a ceiling — on a typical connection this resolves in ~10 s.
+        let preloaded = app.descendants(matching: .any)
+            .matching(identifier: "images-preloaded").firstMatch
+        _ = preloaded.waitForExistence(timeout: 30)
 
         // Tap the menu button (ellipsis) added in ContentView toolbar
         let menuButton = app.buttons["menu-button"]
