@@ -246,7 +246,6 @@ final class NativeDisplayConfigTests: XCTestCase {
 
         var failedConfigs: [(name: String, reason: String)] = []
 
-        nextButton.tap()
         for (index, filename) in configs.enumerated() {
             // Wait for load to settle (success or failure both appear in ~100 ms).
             // Only falls back to the full 2 s if the view is in an unexpected state.

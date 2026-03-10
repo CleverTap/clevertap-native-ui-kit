@@ -3,23 +3,30 @@ import CleverTapNativeDisplay
 
 @main
 struct NativeDisplaySampleApp: App {
+#if DEBUG
     @StateObject private var preloader = ImagePreloader()
 
     private var preloadImages: Bool {
         ProcessInfo.processInfo.environment["PRELOAD_IMAGES"] == "1"
     }
+#endif
 
     var body: some Scene {
         WindowGroup {
+#if DEBUG
             ContentView()
                 .overlay(preloadBadge)
                 .task {
                     guard preloadImages else { return }
                     await preloader.preloadAll()
                 }
+#else
+            ContentView()
+#endif
         }
     }
 
+#if DEBUG
     /// Zero-size view that exposes "images-preloaded" accessibility identifier
     /// once preloading completes. XCUITest waits on this before starting the screenshot loop.
     @ViewBuilder
@@ -30,4 +37,5 @@ struct NativeDisplaySampleApp: App {
                 .accessibilityIdentifier("images-preloaded")
         }
     }
+#endif
 }

@@ -214,14 +214,23 @@ struct RenderContainer: View {
         // Calculate the container's actual dimensions (considering explicit layout dimensions)
         let containerSize = calculateContainerSize(parentSize: parentSize, padding: paddingInsets)
 
+        // Determine which axes are wrap_content — those axes must NOT receive a hard frame constraint.
+        // wrap_content lets SwiftUI measure the intrinsic content size on that axis.
+        let widthIsWrap = container.layout?.width?.special == .wrapContent
+        let heightIsWrap = container.layout?.height?.special == .wrapContent
+
         // Available size for children is the container size (after accounting for padding)
         // This ensures children get correct space even before LayoutModifier applies
         let availableSize = containerSize
 
         switch container.containerType {
         case .vertical:
-            renderVerticalContainer(availableSize: availableSize, containerHeight: containerSize.height)
-                .padding(paddingInsets)
+            renderVerticalContainer(
+                availableSize: availableSize,
+                containerHeight: containerSize.height,
+                heightIsWrap: heightIsWrap
+            )
+            .padding(paddingInsets)
 
         case .horizontal:
             renderHorizontalContainer(availableSize: availableSize)
@@ -242,7 +251,11 @@ struct RenderContainer: View {
                     )
                 }
             }
-            .frame(width: containerSize.width, height: containerSize.height, alignment: .topLeading)
+            .frame(
+                width: widthIsWrap ? nil : containerSize.width,
+                height: heightIsWrap ? nil : containerSize.height,
+                alignment: .topLeading
+            )
             .padding(paddingInsets)
 
         case .gallery:
@@ -268,8 +281,11 @@ struct RenderContainer: View {
         // Calculate width
         let width: CGFloat
         if let w = layout?.width {
-            if let special = w.special {
-                width = special == .matchParent ? parentSize.width : 0
+            if w.special != nil {
+                // matchParent or wrap_content: both use parentSize so percent-based children
+                // resolve correctly. The actual frame constraint is omitted at the call site
+                // for wrap_content axes.
+                width = parentSize.width
             } else {
                 switch w.unit {
                 case .dp, .px, .sp:
@@ -285,8 +301,11 @@ struct RenderContainer: View {
         // Calculate height
         let height: CGFloat
         if let h = layout?.height {
-            if let special = h.special {
-                height = special == .matchParent ? parentSize.height : 0
+            if h.special != nil {
+                // matchParent or wrap_content: both use parentSize so percent-based children
+                // resolve correctly. The actual frame constraint is omitted at the call site
+                // for wrap_content axes.
+                height = parentSize.height
             } else {
                 switch h.unit {
                 case .dp, .px, .sp:
@@ -315,7 +334,7 @@ struct RenderContainer: View {
     
 
     @ViewBuilder
-    private func renderVerticalContainer(availableSize: CGSize, containerHeight: CGFloat) -> some View {
+    private func renderVerticalContainer(availableSize: CGSize, containerHeight: CGFloat, heightIsWrap: Bool) -> some View {
         let arrangement = container.layout?.arrangement ?? .default
 
         switch arrangement.strategy {
@@ -332,9 +351,9 @@ struct RenderContainer: View {
                     )
                 }
             }
-            .frame(height: containerHeight, alignment: .top)
+            .frame(height: heightIsWrap ? nil : containerHeight, alignment: .top)
             .frame(maxWidth: .infinity)
-            
+
         case .spaceBetween:
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(container.children.indices, id: \.self) { index in
@@ -352,9 +371,9 @@ struct RenderContainer: View {
                     }
                 }
             }
-            .frame(height: containerHeight, alignment: .top)
+            .frame(height: heightIsWrap ? nil : containerHeight, alignment: .top)
             .frame(maxWidth: .infinity)
-            
+
         case .spaceEvenly:
             VStack(alignment: .leading, spacing: 0) {
                 Spacer()
@@ -370,7 +389,7 @@ struct RenderContainer: View {
                     Spacer()
                 }
             }
-            .frame(height: containerHeight, alignment: .top)
+            .frame(height: heightIsWrap ? nil : containerHeight, alignment: .top)
             .frame(maxWidth: .infinity)
 
         case .spaceAround:
@@ -393,7 +412,7 @@ struct RenderContainer: View {
                 }
                 Spacer(minLength: 0)
             }
-            .frame(height: containerHeight, alignment: .top)
+            .frame(height: heightIsWrap ? nil : containerHeight, alignment: .top)
             .frame(maxWidth: .infinity)
 
         case .start:
@@ -410,9 +429,9 @@ struct RenderContainer: View {
                 }
                 Spacer(minLength: 0)
             }
-            .frame(height: containerHeight, alignment: .top)
+            .frame(height: heightIsWrap ? nil : containerHeight, alignment: .top)
             .frame(maxWidth: .infinity)
-            
+
         case .center:
             VStack(alignment: .center, spacing: 0) {
                 Spacer()
@@ -428,7 +447,7 @@ struct RenderContainer: View {
                 }
                 Spacer()
             }
-            .frame(height: containerHeight, alignment: .top)
+            .frame(height: heightIsWrap ? nil : containerHeight, alignment: .top)
             .frame(maxWidth: .infinity)
 
         case .end:
@@ -445,7 +464,7 @@ struct RenderContainer: View {
                     )
                 }
             }
-            .frame(height: containerHeight, alignment: .top)
+            .frame(height: heightIsWrap ? nil : containerHeight, alignment: .top)
             .frame(maxWidth: .infinity)
         }
     }
@@ -692,6 +711,7 @@ struct RenderElement: View {
                         image
                             .resizable()
                             .aspectRatio(contentMode: contentMode)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                             .clipped()
                     case .failure:
                         Image(systemName: "photo")
