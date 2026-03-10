@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.778
     },
     "style": {
@@ -22,9 +25,19 @@
           "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
         },
         "layout": {
-          "width": {"value": 100, "unit": "percent"},
-          "height": {"value": 100, "unit": "percent"},
-          "offset": {"x": 0, "y": 0, "unit": "percent"}
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "unit": "percent"
+          }
         },
         "autoPlay": true,
         "muted": true,
@@ -37,9 +50,19 @@
         "id": "info_bar",
         "containerType": "box",
         "layout": {
-          "width": {"value": 100, "unit": "percent"},
-          "height": {"value": 15, "unit": "percent"},
-          "offset": {"x": 0, "y": 85, "unit": "percent"}
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 15,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 85,
+            "unit": "percent"
+          }
         },
         "style": {
           "backgroundColor": "#CC000000"
@@ -53,8 +76,15 @@
               "text": "Big Buck Bunny — 2008 Blender Film"
             },
             "layout": {
-              "width": {"value": 70, "unit": "percent"},
-              "offset": {"x": 5, "y": 20, "unit": "percent"}
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 20,
+                "unit": "percent"
+              }
             },
             "style": {
               "fontSize": 13,
@@ -72,9 +102,19 @@
           "text": "Share"
         },
         "layout": {
-          "width": {"value": 15, "unit": "percent"},
-          "height": {"value": 12, "unit": "percent"},
-          "offset": {"x": 82, "y": 87, "unit": "percent"}
+          "width": {
+            "value": 15,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 12,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 82,
+            "y": 87,
+            "unit": "percent"
+          }
         },
         "style": {
           "backgroundColor": "#FF6B6B",

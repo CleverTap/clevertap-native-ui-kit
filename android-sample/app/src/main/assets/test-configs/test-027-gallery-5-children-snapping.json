@@ -3,7 +3,8 @@
     "id": "test-theme",
     "defaultStyle": {
       "textColor": "#004D40",
-      "fontSize": 14
+      "fontSize": 14,
+      "lineHeight": 20
     }
   },
   "root": {
@@ -41,7 +42,7 @@
         "id": "product-1",
         "elementType": "image",
         "bindings": {
-          "url": "https://picsum.photos/220/220"
+          "url": "https://yavuzceliker.github.io/sample-images/image-34.jpg"
         },
         "layout": {
           "width": {
@@ -64,7 +65,7 @@
         "id": "product-2",
         "elementType": "image",
         "bindings": {
-          "url": "https://picsum.photos/220/221"
+          "url": "https://yavuzceliker.github.io/sample-images/image-35.jpg"
         },
         "layout": {
           "width": {
@@ -87,7 +88,7 @@
         "id": "product-3",
         "elementType": "image",
         "bindings": {
-          "url": "https://picsum.photos/220/222"
+          "url": "https://yavuzceliker.github.io/sample-images/image-36.jpg"
         },
         "layout": {
           "width": {
@@ -110,7 +111,7 @@
         "id": "product-4",
         "elementType": "image",
         "bindings": {
-          "url": "https://picsum.photos/220/223"
+          "url": "https://yavuzceliker.github.io/sample-images/image-37.jpg"
         },
         "layout": {
           "width": {
@@ -133,7 +134,7 @@
         "id": "product-5",
         "elementType": "image",
         "bindings": {
-          "url": "https://picsum.photos/220/224"
+          "url": "https://yavuzceliker.github.io/sample-images/image-38.jpg"
         },
         "layout": {
           "width": {

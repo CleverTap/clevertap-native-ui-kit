@@ -3,7 +3,8 @@
     "id": "test-110",
     "defaultStyle": {
       "textColor": "#000000",
-      "fontSize": 14
+      "fontSize": 14,
+      "lineHeight": 20
     }
   },
   "variables": {
@@ -14,9 +15,18 @@
     "id": "root",
     "containerType": "vertical",
     "layout": {
-      "width": { "value": 100, "unit": "percent" },
-      "height": { "value": 100, "unit": "percent" },
-      "padding": { "all": 16, "unit": "dp" },
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
       "arrangement": {
         "spacing": 16,
         "spacingUnit": "dp",
@@ -35,12 +45,16 @@
           "text": "{{testName}}"
         },
         "layout": {
-          "width": { "value": 100, "unit": "percent" }
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 18,
           "fontWeight": "bold",
-          "textColor": "#333333"
+          "textColor": "#333333",
+          "lineHeight": 25
         }
       },
       {
@@ -51,11 +65,15 @@
           "text": "Tests multiple elements with different aspect ratios in a single container. Verifies that different ratios coexist correctly."
         },
         "layout": {
-          "width": { "value": 100, "unit": "percent" }
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 12,
-          "textColor": "#666666"
+          "textColor": "#666666",
+          "lineHeight": 17
         }
       },
       {
@@ -63,7 +81,10 @@
         "id": "mixed-grid",
         "containerType": "horizontal",
         "layout": {
-          "width": { "value": 100, "unit": "percent" },
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
           "arrangement": {
             "spacing": 12,
             "spacingUnit": "dp",
@@ -76,7 +97,10 @@
             "id": "square-box",
             "containerType": "box",
             "layout": {
-              "width": { "value": 100, "unit": "dp" },
+              "width": {
+                "value": 100,
+                "unit": "dp"
+              },
               "aspectRatio": 1.0
             },
             "style": {
@@ -92,13 +116,20 @@
                   "text": "1:1"
                 },
                 "layout": {
-                  "width": { "value": 100, "unit": "percent" },
-                  "padding": { "all": 8, "unit": "dp" }
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "all": 8,
+                    "unit": "dp"
+                  }
                 },
                 "style": {
                   "fontSize": 12,
                   "textColor": "#FFFFFF",
-                  "textAlign": "center"
+                  "textAlign": "center",
+                  "lineHeight": 17
                 }
               }
             ]
@@ -108,7 +139,10 @@
             "id": "portrait-box",
             "containerType": "box",
             "layout": {
-              "width": { "value": 80, "unit": "dp" },
+              "width": {
+                "value": 80,
+                "unit": "dp"
+              },
               "aspectRatio": 0.75
             },
             "style": {
@@ -124,13 +158,20 @@
                   "text": "3:4"
                 },
                 "layout": {
-                  "width": { "value": 100, "unit": "percent" },
-                  "padding": { "all": 8, "unit": "dp" }
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "all": 8,
+                    "unit": "dp"
+                  }
                 },
                 "style": {
                   "fontSize": 12,
                   "textColor": "#FFFFFF",
-                  "textAlign": "center"
+                  "textAlign": "center",
+                  "lineHeight": 17
                 }
               }
             ]
@@ -140,7 +181,10 @@
             "id": "landscape-box",
             "containerType": "box",
             "layout": {
-              "width": { "value": 120, "unit": "dp" },
+              "width": {
+                "value": 120,
+                "unit": "dp"
+              },
               "aspectRatio": 1.5
             },
             "style": {
@@ -156,13 +200,20 @@
                   "text": "3:2"
                 },
                 "layout": {
-                  "width": { "value": 100, "unit": "percent" },
-                  "padding": { "all": 8, "unit": "dp" }
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "all": 8,
+                    "unit": "dp"
+                  }
                 },
                 "style": {
                   "fontSize": 12,
                   "textColor": "#FFFFFF",
-                  "textAlign": "center"
+                  "textAlign": "center",
+                  "lineHeight": 17
                 }
               }
             ]
@@ -174,9 +225,15 @@
         "id": "widescreen-banner",
         "containerType": "box",
         "layout": {
-          "width": { "value": 100, "unit": "percent" },
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
           "aspectRatio": 1.777,
-          "padding": { "all": 16, "unit": "dp" }
+          "padding": {
+            "all": 16,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#9C27B0",
@@ -191,13 +248,17 @@
               "text": "16:9 Widescreen Banner"
             },
             "layout": {
-              "width": { "value": 100, "unit": "percent" }
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              }
             },
             "style": {
               "fontSize": 18,
               "fontWeight": "bold",
               "textColor": "#FFFFFF",
-              "textAlign": "center"
+              "textAlign": "center",
+              "lineHeight": 25
             }
           }
         ]
@@ -207,7 +268,10 @@
         "id": "complex-layout",
         "containerType": "horizontal",
         "layout": {
-          "width": { "value": 100, "unit": "percent" },
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
           "arrangement": {
             "spacing": 12,
             "spacingUnit": "dp",
@@ -220,7 +284,10 @@
             "id": "vertical-sidebar",
             "containerType": "box",
             "layout": {
-              "width": { "value": 60, "unit": "dp" },
+              "width": {
+                "value": 60,
+                "unit": "dp"
+              },
               "aspectRatio": 0.3
             },
             "style": {
@@ -234,7 +301,10 @@
             "id": "content-cards",
             "containerType": "vertical",
             "layout": {
-              "width": { "value": 250, "unit": "dp" },
+              "width": {
+                "value": 250,
+                "unit": "dp"
+              },
               "arrangement": {
                 "spacing": 8,
                 "spacingUnit": "dp",
@@ -247,9 +317,15 @@
                 "id": "card-1",
                 "containerType": "box",
                 "layout": {
-                  "width": { "value": 100, "unit": "percent" },
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
                   "aspectRatio": 2.5,
-                  "padding": { "all": 12, "unit": "dp" }
+                  "padding": {
+                    "all": 12,
+                    "unit": "dp"
+                  }
                 },
                 "style": {
                   "backgroundColor": "#FFFFFF",
@@ -266,11 +342,15 @@
                       "text": "Card 1 - 2.5:1 ratio"
                     },
                     "layout": {
-                      "width": { "value": 100, "unit": "percent" }
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
                     },
                     "style": {
                       "fontSize": 12,
-                      "textColor": "#333333"
+                      "textColor": "#333333",
+                      "lineHeight": 17
                     }
                   }
                 ]
@@ -280,9 +360,15 @@
                 "id": "card-2",
                 "containerType": "box",
                 "layout": {
-                  "width": { "value": 100, "unit": "percent" },
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
                   "aspectRatio": 2.5,
-                  "padding": { "all": 12, "unit": "dp" }
+                  "padding": {
+                    "all": 12,
+                    "unit": "dp"
+                  }
                 },
                 "style": {
                   "backgroundColor": "#FFFFFF",
@@ -299,11 +385,15 @@
                       "text": "Card 2 - 2.5:1 ratio"
                     },
                     "layout": {
-                      "width": { "value": 100, "unit": "percent" }
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
                     },
                     "style": {
                       "fontSize": 12,
-                      "textColor": "#333333"
+                      "textColor": "#333333",
+                      "lineHeight": 17
                     }
                   }
                 ]

@@ -4,7 +4,8 @@
     "defaultStyle": {
       "fontSize": 16,
       "textColor": "#222222",
-      "fontWeight": "normal"
+      "fontWeight": "normal",
+      "lineHeight": 22
     }
   },
   "root": {
@@ -55,7 +56,8 @@
           "fontSize": 24,
           "fontWeight": "bold",
           "textAlign": "center",
-          "textColor": "#000000"
+          "textColor": "#000000",
+          "lineHeight": 34
         }
       },
       {
@@ -107,7 +109,8 @@
             "style": {
               "fontSize": 14,
               "fontWeight": "bold",
-              "textColor": "#666666"
+              "textColor": "#666666",
+              "lineHeight": 20
             }
           },
           {
@@ -129,7 +132,7 @@
               }
             },
             "style": {
-              "lineHeight": 1.0,
+              "lineHeight": 14,
               "fontSize": 14
             }
           }
@@ -184,7 +187,8 @@
             "style": {
               "fontSize": 14,
               "fontWeight": "bold",
-              "textColor": "#666666"
+              "textColor": "#666666",
+              "lineHeight": 20
             }
           },
           {
@@ -206,7 +210,7 @@
               }
             },
             "style": {
-              "lineHeight": 1.2,
+              "lineHeight": 17,
               "fontSize": 14
             }
           }
@@ -261,7 +265,8 @@
             "style": {
               "fontSize": 14,
               "fontWeight": "bold",
-              "textColor": "#666666"
+              "textColor": "#666666",
+              "lineHeight": 20
             }
           },
           {
@@ -283,7 +288,7 @@
               }
             },
             "style": {
-              "lineHeight": 1.5,
+              "lineHeight": 21,
               "fontSize": 14
             }
           }
@@ -338,7 +343,8 @@
             "style": {
               "fontSize": 14,
               "fontWeight": "bold",
-              "textColor": "#666666"
+              "textColor": "#666666",
+              "lineHeight": 20
             }
           },
           {
@@ -360,7 +366,7 @@
               }
             },
             "style": {
-              "lineHeight": 2.0,
+              "lineHeight": 28,
               "fontSize": 14
             }
           }

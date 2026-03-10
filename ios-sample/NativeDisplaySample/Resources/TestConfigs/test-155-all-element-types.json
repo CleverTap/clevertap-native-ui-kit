@@ -15,7 +15,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.778
     },
     "style": {
@@ -27,12 +30,22 @@
         "id": "bg-image",
         "elementType": "image",
         "bindings": {
-          "url": "https://yavuzceliker.github.io/sample-images/image-900.jpg"
+          "url": "https://yavuzceliker.github.io/sample-images/image-114.jpg"
         },
         "layout": {
-          "width": {"value": 100, "unit": "percent"},
-          "height": {"value": 100, "unit": "percent"},
-          "offset": {"x": 0, "y": 0, "unit": "percent"}
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "unit": "percent"
+          }
         },
         "imageConfig": {
           "fit": "crop"
@@ -46,8 +59,15 @@
           "text": "All Element Types"
         },
         "layout": {
-          "width": {"value": 60, "unit": "percent"},
-          "offset": {"x": 5, "y": 5, "unit": "percent"}
+          "width": {
+            "value": 60,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 5,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 14,
@@ -66,9 +86,19 @@
           "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
         },
         "layout": {
-          "width": {"value": 40, "unit": "percent"},
-          "height": {"value": 40, "unit": "percent"},
-          "offset": {"x": 5, "y": 30, "unit": "percent"}
+          "width": {
+            "value": 40,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 40,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 30,
+            "unit": "percent"
+          }
         },
         "autoPlay": true,
         "loop": true,
@@ -84,9 +114,19 @@
           "text": "Action"
         },
         "layout": {
-          "width": {"value": 35, "unit": "percent"},
-          "height": {"value": 12, "unit": "percent"},
-          "offset": {"x": 55, "y": 38, "unit": "percent"}
+          "width": {
+            "value": 35,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 12,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 55,
+            "y": 38,
+            "unit": "percent"
+          }
         },
         "style": {
           "backgroundColor": "#FF6B6B",

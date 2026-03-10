@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.778
     },
     "style": {
@@ -22,8 +25,15 @@
           "text": "Left aligned text block with multiple words"
         },
         "layout": {
-          "width": {"value": 80, "unit": "percent"},
-          "offset": {"x": 10, "y": 15, "unit": "percent"}
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 15,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 16,
@@ -40,8 +50,15 @@
           "text": "Center aligned text block with multiple words"
         },
         "layout": {
-          "width": {"value": 80, "unit": "percent"},
-          "offset": {"x": 10, "y": 45, "unit": "percent"}
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 45,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 16,
@@ -58,8 +75,15 @@
           "text": "Right aligned text block with multiple words"
         },
         "layout": {
-          "width": {"value": 80, "unit": "percent"},
-          "offset": {"x": 10, "y": 72, "unit": "percent"}
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 72,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 16,

@@ -3,7 +3,8 @@
     "id": "test-theme",
     "defaultStyle": {
       "textColor": "#424242",
-      "fontSize": 16
+      "fontSize": 16,
+      "lineHeight": 22
     }
   },
   "root": {
@@ -52,7 +53,8 @@
         "style": {
           "fontSize": 24,
           "fontWeight": "bold",
-          "textColor": "#E65100"
+          "textColor": "#E65100",
+          "lineHeight": 34
         }
       },
       {
@@ -60,7 +62,7 @@
         "id": "product-image",
         "elementType": "image",
         "bindings": {
-          "url": "https://picsum.photos/400/300"
+          "url": "https://yavuzceliker.github.io/sample-images/image-7.jpg"
         },
         "layout": {
           "width": {

@@ -4,7 +4,8 @@
     "defaultStyle": {
       "textColor": "#000000",
       "fontSize": 14,
-      "fontWeight": "normal"
+      "fontWeight": "normal",
+      "lineHeight": 20
     }
   },
   "variables": {
@@ -91,7 +92,8 @@
             "style": {
               "textColor": "#1976D2",
               "fontSize": 12,
-              "fontWeight": "bold"
+              "fontWeight": "bold",
+              "lineHeight": 17
             }
           },
           {
@@ -121,7 +123,8 @@
               "textColor": "#FFFFFF",
               "fontSize": 14,
               "fontWeight": "bold",
-              "borderRadius": 4
+              "borderRadius": 4,
+              "lineHeight": 20
             }
           },
           {
@@ -151,7 +154,8 @@
               "textColor": "#FFFFFF",
               "fontSize": 14,
               "fontWeight": "bold",
-              "borderRadius": 4
+              "borderRadius": 4,
+              "lineHeight": 20
             }
           }
         ]
@@ -210,7 +214,8 @@
             "style": {
               "textColor": "#F57C00",
               "fontSize": 12,
-              "fontWeight": "bold"
+              "fontWeight": "bold",
+              "lineHeight": 17
             }
           }
         ]
@@ -275,7 +280,8 @@
               "textColor": "#FFFFFF",
               "fontSize": 13,
               "fontWeight": "bold",
-              "borderRadius": 4
+              "borderRadius": 4,
+              "lineHeight": 18
             }
           },
           {
@@ -308,7 +314,8 @@
               "textColor": "#000000",
               "fontSize": 13,
               "fontWeight": "bold",
-              "borderRadius": 4
+              "borderRadius": 4,
+              "lineHeight": 18
             }
           },
           {
@@ -341,7 +348,8 @@
               "textColor": "#FFFFFF",
               "fontSize": 13,
               "fontWeight": "bold",
-              "borderRadius": 4
+              "borderRadius": 4,
+              "lineHeight": 18
             }
           }
         ]
@@ -400,7 +408,8 @@
             "style": {
               "textColor": "#7B1FA2",
               "fontSize": 12,
-              "fontWeight": "bold"
+              "fontWeight": "bold",
+              "lineHeight": 17
             }
           },
           {
@@ -408,7 +417,7 @@
             "type": "element",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/200/100"
+              "url": "https://yavuzceliker.github.io/sample-images/image-103.jpg"
             },
             "layout": {
               "width": {
@@ -480,7 +489,8 @@
             "style": {
               "textColor": "#388E3C",
               "fontSize": 12,
-              "fontWeight": "bold"
+              "fontWeight": "bold",
+              "lineHeight": 17
             }
           },
           {
@@ -539,7 +549,8 @@
                   "textColor": "#FFFFFF",
                   "fontSize": 13,
                   "fontWeight": "bold",
-                  "borderRadius": 4
+                  "borderRadius": 4,
+                  "lineHeight": 18
                 }
               },
               {
@@ -569,7 +580,8 @@
                   "textColor": "#000000",
                   "fontSize": 13,
                   "fontWeight": "bold",
-                  "borderRadius": 4
+                  "borderRadius": 4,
+                  "lineHeight": 18
                 }
               },
               {
@@ -599,7 +611,8 @@
                   "textColor": "#000000",
                   "fontSize": 13,
                   "fontWeight": "bold",
-                  "borderRadius": 4
+                  "borderRadius": 4,
+                  "lineHeight": 18
                 }
               }
             ]

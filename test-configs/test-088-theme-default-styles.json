@@ -5,7 +5,7 @@
       "fontSize": 16,
       "textColor": "#37474F",
       "fontWeight": "normal",
-      "lineHeight": 1.5,
+      "lineHeight": 24,
       "fontFamily": "system"
     }
   },
@@ -57,7 +57,8 @@
           "fontSize": 28,
           "fontWeight": "bold",
           "textColor": "#000000",
-          "textAlign": "center"
+          "textAlign": "center",
+          "lineHeight": 39
         }
       },
       {
@@ -132,7 +133,8 @@
             },
             "style": {
               "fontSize": 20,
-              "fontWeight": "bold"
+              "fontWeight": "bold",
+              "lineHeight": 28
             }
           },
           {
@@ -228,7 +230,8 @@
             },
             "style": {
               "fontSize": 20,
-              "fontWeight": "bold"
+              "fontWeight": "bold",
+              "lineHeight": 28
             }
           },
           {
@@ -250,7 +253,8 @@
               }
             },
             "style": {
-              "fontSize": 12
+              "fontSize": 12,
+              "lineHeight": 17
             }
           },
           {
@@ -272,7 +276,8 @@
               }
             },
             "style": {
-              "fontSize": 20
+              "fontSize": 20,
+              "lineHeight": 28
             }
           },
           {
@@ -353,7 +358,8 @@
           "shadowOffsetX": 0,
           "shadowOffsetY": 2,
           "textColor": "#D32F2F",
-          "fontSize": 18
+          "fontSize": 18,
+          "lineHeight": 25
         },
         "children": [
           {
@@ -376,7 +382,8 @@
             },
             "style": {
               "fontSize": 20,
-              "fontWeight": "bold"
+              "fontWeight": "bold",
+              "lineHeight": 28
             }
           },
           {
@@ -471,7 +478,8 @@
             "style": {
               "fontSize": 18,
               "fontWeight": "bold",
-              "textColor": "#2E7D32"
+              "textColor": "#2E7D32",
+              "lineHeight": 25
             }
           },
           {
@@ -479,7 +487,7 @@
             "id": "benefit-1",
             "elementType": "text",
             "bindings": {
-              "text": "\u2022 Consistency: All text starts with the same baseline styling"
+              "text": "• Consistency: All text starts with the same baseline styling"
             },
             "layout": {
               "width": {
@@ -498,7 +506,7 @@
             "id": "benefit-2",
             "elementType": "text",
             "bindings": {
-              "text": "\u2022 Efficiency: Less code - only override what's different"
+              "text": "• Efficiency: Less code - only override what's different"
             },
             "layout": {
               "width": {
@@ -517,7 +525,7 @@
             "id": "benefit-3",
             "elementType": "text",
             "bindings": {
-              "text": "\u2022 Maintainability: Change theme defaults to update entire app"
+              "text": "• Maintainability: Change theme defaults to update entire app"
             },
             "layout": {
               "width": {
@@ -536,7 +544,7 @@
             "id": "benefit-4",
             "elementType": "text",
             "bindings": {
-              "text": "\u2022 Readability: Cleaner JSON with fewer style properties"
+              "text": "• Readability: Cleaner JSON with fewer style properties"
             },
             "layout": {
               "width": {

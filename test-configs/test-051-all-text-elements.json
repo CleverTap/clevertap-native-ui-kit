@@ -4,7 +4,8 @@
     "defaultStyle": {
       "textColor": "#1A1A1A",
       "fontSize": 14,
-      "fontWeight": "normal"
+      "fontWeight": "normal",
+      "lineHeight": 20
     }
   },
   "root": {
@@ -59,7 +60,8 @@
           "fontSize": 32,
           "fontWeight": "bold",
           "textColor": "#000000",
-          "textAlign": "center"
+          "textAlign": "center",
+          "lineHeight": 45
         }
       },
       {
@@ -83,7 +85,8 @@
           "fontSize": 18,
           "fontWeight": "medium",
           "textColor": "#666666",
-          "textAlign": "center"
+          "textAlign": "center",
+          "lineHeight": 25
         }
       },
       {
@@ -130,7 +133,8 @@
         "style": {
           "fontSize": 12,
           "fontWeight": "normal",
-          "textColor": "#999999"
+          "textColor": "#999999",
+          "lineHeight": 17
         }
       },
       {
@@ -155,7 +159,8 @@
           "fontWeight": "bold",
           "textColor": "#2563EB",
           "textAlign": "center",
-          "textDecoration": "underline"
+          "textDecoration": "underline",
+          "lineHeight": 20
         }
       }
     ]

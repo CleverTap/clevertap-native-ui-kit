@@ -3,7 +3,8 @@
     "id": "test-111",
     "defaultStyle": {
       "textColor": "#000000",
-      "fontSize": 14
+      "fontSize": 14,
+      "lineHeight": 20
     }
   },
   "variables": {
@@ -14,9 +15,18 @@
     "id": "root",
     "containerType": "vertical",
     "layout": {
-      "width": { "value": 100, "unit": "percent" },
-      "height": { "value": 100, "unit": "percent" },
-      "padding": { "all": 16, "unit": "dp" },
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
       "arrangement": {
         "spacing": 16,
         "spacingUnit": "dp",
@@ -35,12 +45,16 @@
           "text": "{{testName}}"
         },
         "layout": {
-          "width": { "value": 100, "unit": "percent" }
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 18,
           "fontWeight": "bold",
-          "textColor": "#333333"
+          "textColor": "#333333",
+          "lineHeight": 25
         }
       },
       {
@@ -51,11 +65,15 @@
           "text": "Tests combining aspect ratio with percentage-based offset in Box containers. Elements maintain their aspect ratios while positioned at specific percentages."
         },
         "layout": {
-          "width": { "value": 100, "unit": "percent" }
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 12,
-          "textColor": "#666666"
+          "textColor": "#666666",
+          "lineHeight": 17
         }
       },
       {
@@ -63,8 +81,14 @@
         "id": "demo-box",
         "containerType": "box",
         "layout": {
-          "width": { "value": 320, "unit": "dp" },
-          "height": { "value": 320, "unit": "dp" }
+          "width": {
+            "value": 320,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 320,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#FFFFFF",
@@ -77,9 +101,16 @@
             "id": "square-top-left",
             "containerType": "box",
             "layout": {
-              "width": { "value": 80, "unit": "dp" },
+              "width": {
+                "value": 80,
+                "unit": "dp"
+              },
               "aspectRatio": 1.0,
-              "offset": { "x": 5, "y": 5, "unit": "percent" }
+              "offset": {
+                "x": 5,
+                "y": 5,
+                "unit": "percent"
+              }
             },
             "style": {
               "backgroundColor": "#2196F3",
@@ -92,9 +123,16 @@
             "id": "wide-center",
             "containerType": "box",
             "layout": {
-              "width": { "value": 180, "unit": "dp" },
+              "width": {
+                "value": 180,
+                "unit": "dp"
+              },
               "aspectRatio": 2.5,
-              "offset": { "x": 25, "y": 40, "unit": "percent" }
+              "offset": {
+                "x": 25,
+                "y": 40,
+                "unit": "percent"
+              }
             },
             "style": {
               "backgroundColor": "#4CAF50",
@@ -108,9 +146,16 @@
             "id": "portrait-right",
             "containerType": "box",
             "layout": {
-              "width": { "value": 70, "unit": "dp" },
+              "width": {
+                "value": 70,
+                "unit": "dp"
+              },
               "aspectRatio": 0.6,
-              "offset": { "x": 75, "y": 10, "unit": "percent" }
+              "offset": {
+                "x": 75,
+                "y": 10,
+                "unit": "percent"
+              }
             },
             "style": {
               "backgroundColor": "#FF9800",
@@ -123,9 +168,16 @@
             "id": "square-bottom-right",
             "containerType": "box",
             "layout": {
-              "width": { "value": 90, "unit": "dp" },
+              "width": {
+                "value": 90,
+                "unit": "dp"
+              },
               "aspectRatio": 1.0,
-              "offset": { "x": 70, "y": 70, "unit": "percent" }
+              "offset": {
+                "x": 70,
+                "y": 70,
+                "unit": "percent"
+              }
             },
             "style": {
               "backgroundColor": "#F44336",
@@ -138,9 +190,16 @@
             "id": "16-9-center",
             "containerType": "box",
             "layout": {
-              "width": { "value": 160, "unit": "dp" },
+              "width": {
+                "value": 160,
+                "unit": "dp"
+              },
               "aspectRatio": 1.777,
-              "offset": { "x": 35, "y": 55, "unit": "percent" }
+              "offset": {
+                "x": 35,
+                "y": 55,
+                "unit": "percent"
+              }
             },
             "style": {
               "backgroundColor": "#9C27B0",

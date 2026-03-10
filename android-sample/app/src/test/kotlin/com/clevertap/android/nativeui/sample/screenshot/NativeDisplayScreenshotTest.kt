@@ -3,17 +3,24 @@ package com.clevertap.android.nativeui.sample.screenshot
 import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.clevertap.android.nativedisplay.renderer.LocalImageLoader
+import com.clevertap.android.nativedisplay.renderer.LocalVideoPlayerFactory
 import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
 import com.clevertap.android.nativeui.sample.JsonLoader
+import com.github.takahirom.roborazzi.captureRoboGif
 import com.github.takahirom.roborazzi.captureRoboImage
+import org.junit.AfterClass
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.Collections
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import org.robolectric.annotation.LooperMode
@@ -40,29 +47,99 @@ import org.robolectric.annotation.LooperMode
 @LooperMode(LooperMode.Mode.PAUSED)
 class NativeDisplayScreenshotTest {
 
+    companion object {
+        private var imageUrls: Set<String> = emptySet()
+        private val failedConfigs: MutableList<Pair<String, String>> =
+            Collections.synchronizedList(mutableListOf())
+
+        @JvmStatic
+        @AfterClass
+        fun writeFailureReport() {
+            if (failedConfigs.isEmpty()) {
+                println("✅ All ${157} configs rendered successfully.")
+                return
+            }
+            val lines = failedConfigs.map { (name, reason) -> "  $name  →  $reason" }
+            val report = buildString {
+                appendLine("Failed configs (${failedConfigs.size} / 157):")
+                appendLine(lines.joinToString("\n"))
+            }
+            println("⚠️\n$report")
+
+            // Write alongside screenshots so it's easy to compare with iOS results
+            val reportFile = java.io.File("configs/FAILED_CONFIGS.txt")
+            reportFile.parentFile?.mkdirs()
+            reportFile.writeText(report)
+            println("📄 Failure report saved to: ${reportFile.absolutePath}")
+        }
+    }
+
     @get:Rule
     val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+
+    @Before
+    fun prewarmImages() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        if (!ImagePrewarmCache.isInitialized) {
+            imageUrls = collectImageUrlsFromAssets(context)
+            ImagePrewarmCache.initialize(imageUrls)
+        }
+    }
 
     private fun captureConfig(filename: String) {
         val config = JsonLoader.loadFromAssets(
             ApplicationProvider.getApplicationContext(),
             "test-configs/$filename"
         )
-
-        require(config != null) { "Failed to load $filename" }
-
-        composeTestRule.setContent {
-            NativeDisplayView(
-                config = config,
-                modifier = Modifier.fillMaxSize()
-            )
+        if (config == null) {
+            failedConfigs.add(filename to "Failed to load — JsonLoader returned null")
+            return
         }
+        try {
+            composeTestRule.setContent {
+                CompositionLocalProvider(
+                    LocalImageLoader provides { ctx -> buildPrewarmedImageLoader(ctx) },
+                    LocalVideoPlayerFactory provides stubVideoPlayerFactory,
+                ) {
+                    NativeDisplayView(config = config, modifier = Modifier.fillMaxSize())
+                }
+            }
+            composeTestRule.waitForIdle()
+            composeTestRule.waitForIdle()  // second pump for Coil result propagation
+            composeTestRule.onRoot().captureRoboImage(filePath = "configs/$filename.png")
+        } catch (e: Exception) {
+            failedConfigs.add(filename to "Render error — ${e.javaClass.simpleName}: ${e.message?.take(120)}")
+        }
+    }
 
-        composeTestRule.waitForIdle()
-
-        composeTestRule.onRoot().captureRoboImage(
-            filePath = "configs/$filename.png"
+    private fun captureConfigAsGif(filename: String) {
+        val config = JsonLoader.loadFromAssets(
+            ApplicationProvider.getApplicationContext(),
+            "test-configs/$filename"
         )
+        if (config == null) {
+            failedConfigs.add(filename to "Failed to load — JsonLoader returned null")
+            return
+        }
+        try {
+            composeTestRule.setContent {
+                CompositionLocalProvider(
+                    LocalImageLoader provides { ctx -> buildPrewarmedImageLoader(ctx) },
+                ) {
+                    NativeDisplayView(config = config, modifier = Modifier.fillMaxSize())
+                }
+            }
+            composeTestRule.onRoot().captureRoboGif(
+                composeRule = composeTestRule,
+                filePath = "configs/$filename.gif",
+            ) {
+                composeTestRule.mainClock.advanceTimeBy(500)
+                composeTestRule.mainClock.advanceTimeBy(500)
+                composeTestRule.mainClock.advanceTimeBy(1000)
+            }
+        } catch (e: Exception) {
+            failedConfigs.add(filename to "Render error — ${e.javaClass.simpleName}: ${e.message?.take(120)}")
+        }
     }
 
     // ============================================================================
@@ -145,7 +222,7 @@ class NativeDisplayScreenshotTest {
     @Test fun test051AllTextElements() = captureConfig("test-051-all-text-elements.json")
     @Test fun test052AllImageElements() = captureConfig("test-052-all-image-elements.json")
     @Test fun test053AllButtonElements() = captureConfig("test-053-all-button-elements.json")
-    @Test fun test054AllVideoElements() = captureConfig("test-054-all-video-elements.json")
+    @Test fun test054AllVideoElements() = captureConfigAsGif("test-054-all-video-elements.json")
     @Test fun test055AllSpacerElements() = captureConfig("test-055-all-spacer-elements.json")
     @Test fun test056AllDividerElements() = captureConfig("test-056-all-divider-elements.json")
 
@@ -270,9 +347,9 @@ class NativeDisplayScreenshotTest {
     @Test fun test135ImagesZOrder() = captureConfig("test-135-images-z-order.json")
 
     // Group 4: VIDEO Variations
-    @Test fun test136VideoAutoplayMuted() = captureConfig("test-136-video-autoplay-muted.json")
-    @Test fun test137VideoWithControls() = captureConfig("test-137-video-with-controls.json")
-    @Test fun test138VideoButton9x16() = captureConfig("test-138-9x16-video-button.json")
+    @Test fun test136VideoAutoplayMuted() = captureConfigAsGif("test-136-video-autoplay-muted.json")
+    @Test fun test137VideoWithControls() = captureConfigAsGif("test-137-video-with-controls.json")
+    @Test fun test138VideoButton9x16() = captureConfigAsGif("test-138-9x16-video-button.json")
 
     // Group 5: BUTTON Variations
     @Test fun test139ButtonCentered() = captureConfig("test-139-button-centered.json")
@@ -291,7 +368,7 @@ class NativeDisplayScreenshotTest {
     @Test fun test148ProductCardComplex() = captureConfig("test-148-product-card-complex.json")
     @Test fun test149NotificationCard() = captureConfig("test-149-notification-card.json")
     @Test fun test150DashboardWidget() = captureConfig("test-150-dashboard-widget.json")
-    @Test fun test151VideoPlayerCard() = captureConfig("test-151-video-player-card.json")
+    @Test fun test151VideoPlayerCard() = captureConfigAsGif("test-151-video-player-card.json")
 
     // Group 8: Edge Cases
     @Test fun test152TextCorners() = captureConfig("test-152-text-corners.json")

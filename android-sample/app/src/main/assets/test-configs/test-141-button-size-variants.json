@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.0
     },
     "style": {
@@ -22,9 +25,19 @@
           "text": "Small"
         },
         "layout": {
-          "width": {"value": 30, "unit": "percent"},
-          "height": {"value": 10, "unit": "percent"},
-          "offset": {"x": 35, "y": 20, "unit": "percent"}
+          "width": {
+            "value": 30,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 10,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 35,
+            "y": 20,
+            "unit": "percent"
+          }
         },
         "style": {
           "backgroundColor": "#9C27B0",
@@ -42,9 +55,19 @@
           "text": "Medium Button"
         },
         "layout": {
-          "width": {"value": 50, "unit": "percent"},
-          "height": {"value": 12, "unit": "percent"},
-          "offset": {"x": 25, "y": 44, "unit": "percent"}
+          "width": {
+            "value": 50,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 12,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 25,
+            "y": 44,
+            "unit": "percent"
+          }
         },
         "style": {
           "backgroundColor": "#E91E63",
@@ -62,9 +85,19 @@
           "text": "Large Action Button"
         },
         "layout": {
-          "width": {"value": 70, "unit": "percent"},
-          "height": {"value": 14, "unit": "percent"},
-          "offset": {"x": 15, "y": 65, "unit": "percent"}
+          "width": {
+            "value": 70,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 14,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 15,
+            "y": 65,
+            "unit": "percent"
+          }
         },
         "style": {
           "backgroundColor": "#F44336",

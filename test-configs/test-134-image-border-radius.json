@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.333
     },
     "style": {
@@ -19,9 +22,19 @@
         "id": "rounded_frame",
         "containerType": "box",
         "layout": {
-          "width": {"value": 80, "unit": "percent"},
-          "height": {"value": 70, "unit": "percent"},
-          "offset": {"x": 10, "y": 10, "unit": "percent"}
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 70,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 10,
+            "unit": "percent"
+          }
         },
         "style": {
           "borderRadius": 20,
@@ -33,11 +46,17 @@
             "id": "rounded_image",
             "elementType": "image",
             "bindings": {
-              "url": "https://yavuzceliker.github.io/sample-images/image-300.jpg"
+              "url": "https://yavuzceliker.github.io/sample-images/image-106.jpg"
             },
             "layout": {
-              "width": {"value": 100, "unit": "percent"},
-              "height": {"value": 100, "unit": "percent"}
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
             }
           }
         ]
@@ -50,8 +69,15 @@
           "text": "Rounded Image"
         },
         "layout": {
-          "width": {"value": 40, "unit": "percent"},
-          "offset": {"x": 5, "y": 5, "unit": "percent"}
+          "width": {
+            "value": 40,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 5,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 11,

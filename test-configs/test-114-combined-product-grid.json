@@ -3,7 +3,8 @@
     "id": "test-114",
     "defaultStyle": {
       "textColor": "#000000",
-      "fontSize": 14
+      "fontSize": 14,
+      "lineHeight": 20
     }
   },
   "variables": {
@@ -14,9 +15,18 @@
     "id": "root",
     "containerType": "vertical",
     "layout": {
-      "width": { "value": 100, "unit": "percent" },
-      "height": { "value": 100, "unit": "percent" },
-      "padding": { "all": 16, "unit": "dp" },
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
       "arrangement": {
         "spacing": 16,
         "spacingUnit": "dp",
@@ -35,12 +45,16 @@
           "text": "{{testName}}"
         },
         "layout": {
-          "width": { "value": 100, "unit": "percent" }
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 18,
           "fontWeight": "bold",
-          "textColor": "#333333"
+          "textColor": "#333333",
+          "lineHeight": 25
         }
       },
       {
@@ -51,11 +65,15 @@
           "text": "Tests realistic e-commerce product grid using aspect ratios for product images and percentage positioning for badges."
         },
         "layout": {
-          "width": { "value": 100, "unit": "percent" }
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 12,
-          "textColor": "#666666"
+          "textColor": "#666666",
+          "lineHeight": 17
         }
       },
       {
@@ -63,7 +81,10 @@
         "id": "product-row-1",
         "containerType": "horizontal",
         "layout": {
-          "width": { "value": 100, "unit": "percent" },
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
           "arrangement": {
             "spacing": 12,
             "spacingUnit": "dp",
@@ -76,7 +97,10 @@
             "id": "product-card-1",
             "containerType": "vertical",
             "layout": {
-              "width": { "value": 48, "unit": "percent" },
+              "width": {
+                "value": 48,
+                "unit": "percent"
+              },
               "arrangement": {
                 "spacing": 8,
                 "spacingUnit": "dp",
@@ -97,7 +121,10 @@
                 "id": "product-1-image-container",
                 "containerType": "box",
                 "layout": {
-                  "width": { "value": 100, "unit": "percent" },
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
                   "aspectRatio": 1.0
                 },
                 "style": {
@@ -110,11 +137,17 @@
                     "id": "product-1-image",
                     "elementType": "image",
                     "bindings": {
-                      "url": "https://picsum.photos/200/200"
+                      "url": "https://yavuzceliker.github.io/sample-images/image-100.jpg"
                     },
                     "layout": {
-                      "width": { "value": 100, "unit": "percent" },
-                      "height": { "value": 100, "unit": "percent" }
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      },
+                      "height": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
                     }
                   },
                   {
@@ -122,10 +155,24 @@
                     "id": "badge-1",
                     "containerType": "box",
                     "layout": {
-                      "width": { "value": 60, "unit": "dp" },
-                      "height": { "value": 24, "unit": "dp" },
-                      "offset": { "x": 5, "y": 5, "unit": "percent" },
-                      "padding": { "horizontal": 8, "vertical": 4, "unit": "dp" }
+                      "width": {
+                        "value": 60,
+                        "unit": "dp"
+                      },
+                      "height": {
+                        "value": 24,
+                        "unit": "dp"
+                      },
+                      "offset": {
+                        "x": 5,
+                        "y": 5,
+                        "unit": "percent"
+                      },
+                      "padding": {
+                        "horizontal": 8,
+                        "vertical": 4,
+                        "unit": "dp"
+                      }
                     },
                     "style": {
                       "backgroundColor": "#F44336",
@@ -140,13 +187,17 @@
                           "text": "Sale"
                         },
                         "layout": {
-                          "width": { "value": 100, "unit": "percent" }
+                          "width": {
+                            "value": 100,
+                            "unit": "percent"
+                          }
                         },
                         "style": {
                           "fontSize": 10,
                           "fontWeight": "bold",
                           "textColor": "#FFFFFF",
-                          "textAlign": "center"
+                          "textAlign": "center",
+                          "lineHeight": 14
                         }
                       }
                     ]
@@ -161,13 +212,20 @@
                   "text": "Product Name"
                 },
                 "layout": {
-                  "width": { "value": 100, "unit": "percent" },
-                  "padding": { "horizontal": 12, "unit": "dp" }
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "horizontal": 12,
+                    "unit": "dp"
+                  }
                 },
                 "style": {
                   "fontSize": 14,
                   "fontWeight": "bold",
-                  "textColor": "#333333"
+                  "textColor": "#333333",
+                  "lineHeight": 20
                 }
               },
               {
@@ -178,13 +236,21 @@
                   "text": "$99.99"
                 },
                 "layout": {
-                  "width": { "value": 100, "unit": "percent" },
-                  "padding": { "horizontal": 12, "bottom": 12, "unit": "dp" }
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "horizontal": 12,
+                    "bottom": 12,
+                    "unit": "dp"
+                  }
                 },
                 "style": {
                   "fontSize": 16,
                   "fontWeight": "bold",
-                  "textColor": "#2196F3"
+                  "textColor": "#2196F3",
+                  "lineHeight": 22
                 }
               }
             ]
@@ -194,7 +260,10 @@
             "id": "product-card-2",
             "containerType": "vertical",
             "layout": {
-              "width": { "value": 48, "unit": "percent" },
+              "width": {
+                "value": 48,
+                "unit": "percent"
+              },
               "arrangement": {
                 "spacing": 8,
                 "spacingUnit": "dp",
@@ -215,7 +284,10 @@
                 "id": "product-2-image-container",
                 "containerType": "box",
                 "layout": {
-                  "width": { "value": 100, "unit": "percent" },
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
                   "aspectRatio": 1.0
                 },
                 "style": {
@@ -228,11 +300,17 @@
                     "id": "product-2-image",
                     "elementType": "image",
                     "bindings": {
-                      "url": "https://picsum.photos/200/201"
+                      "url": "https://yavuzceliker.github.io/sample-images/image-101.jpg"
                     },
                     "layout": {
-                      "width": { "value": 100, "unit": "percent" },
-                      "height": { "value": 100, "unit": "percent" }
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      },
+                      "height": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
                     }
                   },
                   {
@@ -240,10 +318,24 @@
                     "id": "badge-2",
                     "containerType": "box",
                     "layout": {
-                      "width": { "value": 60, "unit": "dp" },
-                      "height": { "value": 24, "unit": "dp" },
-                      "offset": { "x": 5, "y": 5, "unit": "percent" },
-                      "padding": { "horizontal": 8, "vertical": 4, "unit": "dp" }
+                      "width": {
+                        "value": 60,
+                        "unit": "dp"
+                      },
+                      "height": {
+                        "value": 24,
+                        "unit": "dp"
+                      },
+                      "offset": {
+                        "x": 5,
+                        "y": 5,
+                        "unit": "percent"
+                      },
+                      "padding": {
+                        "horizontal": 8,
+                        "vertical": 4,
+                        "unit": "dp"
+                      }
                     },
                     "style": {
                       "backgroundColor": "#4CAF50",
@@ -258,13 +350,17 @@
                           "text": "New"
                         },
                         "layout": {
-                          "width": { "value": 100, "unit": "percent" }
+                          "width": {
+                            "value": 100,
+                            "unit": "percent"
+                          }
                         },
                         "style": {
                           "fontSize": 10,
                           "fontWeight": "bold",
                           "textColor": "#FFFFFF",
-                          "textAlign": "center"
+                          "textAlign": "center",
+                          "lineHeight": 14
                         }
                       }
                     ]
@@ -279,13 +375,20 @@
                   "text": "Another Product"
                 },
                 "layout": {
-                  "width": { "value": 100, "unit": "percent" },
-                  "padding": { "horizontal": 12, "unit": "dp" }
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "horizontal": 12,
+                    "unit": "dp"
+                  }
                 },
                 "style": {
                   "fontSize": 14,
                   "fontWeight": "bold",
-                  "textColor": "#333333"
+                  "textColor": "#333333",
+                  "lineHeight": 20
                 }
               },
               {
@@ -296,13 +399,21 @@
                   "text": "$149.99"
                 },
                 "layout": {
-                  "width": { "value": 100, "unit": "percent" },
-                  "padding": { "horizontal": 12, "bottom": 12, "unit": "dp" }
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "horizontal": 12,
+                    "bottom": 12,
+                    "unit": "dp"
+                  }
                 },
                 "style": {
                   "fontSize": 16,
                   "fontWeight": "bold",
-                  "textColor": "#2196F3"
+                  "textColor": "#2196F3",
+                  "lineHeight": 22
                 }
               }
             ]
@@ -314,9 +425,15 @@
         "id": "banner-with-aspect",
         "containerType": "box",
         "layout": {
-          "width": { "value": 100, "unit": "percent" },
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
           "aspectRatio": 3.5,
-          "padding": { "all": 16, "unit": "dp" }
+          "padding": {
+            "all": 16,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#FF9800",
@@ -331,13 +448,17 @@
               "text": "Special Offer: 50% OFF"
             },
             "layout": {
-              "width": { "value": 100, "unit": "percent" }
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              }
             },
             "style": {
               "fontSize": 18,
               "fontWeight": "bold",
               "textColor": "#FFFFFF",
-              "textAlign": "center"
+              "textAlign": "center",
+              "lineHeight": 25
             }
           }
         ]

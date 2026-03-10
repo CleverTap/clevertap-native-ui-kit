@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.778
     },
     "style": {
@@ -22,8 +25,15 @@
           "text": "Underlined text decoration"
         },
         "layout": {
-          "width": {"value": 80, "unit": "percent"},
-          "offset": {"x": 10, "y": 20, "unit": "percent"}
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 20,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 18,
@@ -40,8 +50,15 @@
           "text": "Strikethrough text decoration"
         },
         "layout": {
-          "width": {"value": 80, "unit": "percent"},
-          "offset": {"x": 10, "y": 45, "unit": "percent"}
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 45,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 18,
@@ -58,8 +75,15 @@
           "text": "Italic font style text"
         },
         "layout": {
-          "width": {"value": 80, "unit": "percent"},
-          "offset": {"x": 10, "y": 70, "unit": "percent"}
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 70,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 18,

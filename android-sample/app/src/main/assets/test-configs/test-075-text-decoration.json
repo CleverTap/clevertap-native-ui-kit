@@ -4,7 +4,8 @@
     "defaultStyle": {
       "fontSize": 18,
       "textColor": "#333333",
-      "fontWeight": "normal"
+      "fontWeight": "normal",
+      "lineHeight": 25
     }
   },
   "root": {
@@ -55,7 +56,8 @@
           "fontSize": 26,
           "fontWeight": "bold",
           "textAlign": "center",
-          "textColor": "#1976D2"
+          "textColor": "#1976D2",
+          "lineHeight": 36
         }
       },
       {
@@ -109,7 +111,8 @@
             "style": {
               "fontSize": 14,
               "fontWeight": "medium",
-              "textColor": "#757575"
+              "textColor": "#757575",
+              "lineHeight": 20
             }
           },
           {
@@ -187,7 +190,8 @@
             "style": {
               "fontSize": 14,
               "fontWeight": "medium",
-              "textColor": "#757575"
+              "textColor": "#757575",
+              "lineHeight": 20
             }
           },
           {
@@ -266,7 +270,8 @@
             "style": {
               "fontSize": 14,
               "fontWeight": "medium",
-              "textColor": "#757575"
+              "textColor": "#757575",
+              "lineHeight": 20
             }
           },
           {
@@ -288,7 +293,7 @@
               }
             },
             "style": {
-              "textDecoration": "line-through",
+              "textDecoration": "strikethrough",
               "textColor": "#F44336"
             }
           }
@@ -340,9 +345,10 @@
               }
             },
             "style": {
-              "textDecoration": "line-through",
+              "textDecoration": "strikethrough",
               "textColor": "#999999",
-              "fontSize": 16
+              "fontSize": 16,
+              "lineHeight": 22
             }
           },
           {
@@ -367,7 +373,8 @@
             "style": {
               "textColor": "#D32F2F",
               "fontSize": 24,
-              "fontWeight": "bold"
+              "fontWeight": "bold",
+              "lineHeight": 34
             }
           },
           {
@@ -392,7 +399,8 @@
             "style": {
               "textDecoration": "underline",
               "textColor": "#1976D2",
-              "fontSize": 14
+              "fontSize": 14,
+              "lineHeight": 20
             }
           }
         ]

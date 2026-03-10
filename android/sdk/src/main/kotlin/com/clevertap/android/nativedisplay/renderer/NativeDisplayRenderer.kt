@@ -885,8 +885,9 @@ private fun RenderElement(
 
                 // Remember the ImageLoader to avoid creating it on every recomposition
                 // The ImageLoaderProvider is a singleton, but we cache the reference here
-                val imageLoader = remember(context) {
-                    ImageLoaderProvider.getImageLoader(context)
+                val imageLoaderFactory = LocalImageLoader.current
+                val imageLoader = remember(context, imageLoaderFactory) {
+                    imageLoaderFactory?.invoke(context) ?: ImageLoaderProvider.getImageLoader(context)
                 }
 
                 // Map ImageFit to ContentScale
@@ -975,15 +976,20 @@ private fun RenderElement(
             } ?: true
 
             if (videoUrl.isNotEmpty()) {
-                VideoPlayer(
-                    videoUrl = videoUrl,
-                    autoPlay = autoPlay,
-                    loop = loop,
-                    muted = muted,
-                    showControls = showControls,
-                    showFullscreen = showFullscreen,
-                    modifier = elementModifier
-                )
+                val videoFactory = LocalVideoPlayerFactory.current
+                if (videoFactory != null) {
+                    videoFactory(videoUrl, autoPlay, loop, muted, showControls, showFullscreen, elementModifier)
+                } else {
+                    VideoPlayer(
+                        videoUrl = videoUrl,
+                        autoPlay = autoPlay,
+                        loop = loop,
+                        muted = muted,
+                        showControls = showControls,
+                        showFullscreen = showFullscreen,
+                        modifier = elementModifier
+                    )
+                }
             } else {
                 // Fallback for missing URL
                 Box(

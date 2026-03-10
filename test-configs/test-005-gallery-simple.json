@@ -4,7 +4,8 @@
     "defaultStyle": {
       "textColor": "#212121",
       "fontSize": 14,
-      "fontFamily": "system"
+      "fontFamily": "system",
+      "lineHeight": 20
     }
   },
   "root": {
@@ -101,7 +102,8 @@
             "style": {
               "fontSize": 18,
               "fontWeight": "bold",
-              "textColor": "#000000"
+              "textColor": "#000000",
+              "lineHeight": 25
             }
           },
           {
@@ -109,7 +111,7 @@
             "id": "image-1",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/200/200?random=1"
+              "url": "https://yavuzceliker.github.io/sample-images/image-5.jpg"
             },
             "layout": {
               "width": {
@@ -188,7 +190,8 @@
             "style": {
               "fontSize": 18,
               "fontWeight": "bold",
-              "textColor": "#000000"
+              "textColor": "#000000",
+              "lineHeight": 25
             }
           },
           {
@@ -196,7 +199,7 @@
             "id": "image-2",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/200/200?random=2"
+              "url": "https://yavuzceliker.github.io/sample-images/image-6.jpg"
             },
             "layout": {
               "width": {

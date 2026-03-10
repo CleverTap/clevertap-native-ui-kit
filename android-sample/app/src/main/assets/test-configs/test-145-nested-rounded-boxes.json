@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.778
     },
     "style": {
@@ -20,9 +23,19 @@
         "id": "inner_box",
         "containerType": "box",
         "layout": {
-          "width": {"value": 50, "unit": "percent"},
-          "height": {"value": 50, "unit": "percent"},
-          "offset": {"x": 25, "y": 25, "unit": "percent"}
+          "width": {
+            "value": 50,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 50,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 25,
+            "y": 25,
+            "unit": "percent"
+          }
         },
         "style": {
           "borderRadius": 12,
@@ -37,8 +50,15 @@
               "text": "Inner Box"
             },
             "layout": {
-              "width": {"value": 80, "unit": "percent"},
-              "offset": {"x": 10, "y": 35, "unit": "percent"}
+              "width": {
+                "value": 80,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 10,
+                "y": 35,
+                "unit": "percent"
+              }
             },
             "style": {
               "fontSize": 16,

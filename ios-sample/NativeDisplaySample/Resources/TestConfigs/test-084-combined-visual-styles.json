@@ -4,7 +4,8 @@
     "defaultStyle": {
       "fontSize": 16,
       "textColor": "#333333",
-      "fontWeight": "normal"
+      "fontWeight": "normal",
+      "lineHeight": 22
     }
   },
   "root": {
@@ -55,7 +56,8 @@
           "fontSize": 28,
           "fontWeight": "bold",
           "textAlign": "center",
-          "textColor": "#1976D2"
+          "textColor": "#1976D2",
+          "lineHeight": 39
         }
       },
       {
@@ -114,7 +116,8 @@
             "style": {
               "fontSize": 20,
               "fontWeight": "bold",
-              "textColor": "#2196F3"
+              "textColor": "#2196F3",
+              "lineHeight": 28
             }
           },
           {
@@ -137,7 +140,7 @@
             },
             "style": {
               "fontSize": 14,
-              "lineHeight": 1.5,
+              "lineHeight": 21,
               "textColor": "#666666"
             }
           }
@@ -198,7 +201,8 @@
             "style": {
               "fontSize": 20,
               "fontWeight": "bold",
-              "textColor": "#FFFFFF"
+              "textColor": "#FFFFFF",
+              "lineHeight": 28
             }
           },
           {
@@ -221,7 +225,7 @@
             },
             "style": {
               "fontSize": 14,
-              "lineHeight": 1.5,
+              "lineHeight": 21,
               "textColor": "#FFFFFF"
             }
           }
@@ -304,7 +308,8 @@
                 "style": {
                   "fontSize": 22,
                   "fontWeight": "bold",
-                  "textColor": "#FFFFFF"
+                  "textColor": "#FFFFFF",
+                  "lineHeight": 31
                 }
               }
             ]
@@ -353,7 +358,7 @@
                 },
                 "style": {
                   "fontSize": 14,
-                  "lineHeight": 1.5,
+                  "lineHeight": 21,
                   "textColor": "#333333"
                 }
               }
@@ -430,7 +435,8 @@
                 "style": {
                   "fontSize": 14,
                   "fontWeight": "bold",
-                  "textColor": "#FFFFFF"
+                  "textColor": "#FFFFFF",
+                  "lineHeight": 20
                 }
               }
             ]
@@ -486,7 +492,8 @@
                 "style": {
                   "fontSize": 14,
                   "fontWeight": "bold",
-                  "textColor": "#FFFFFF"
+                  "textColor": "#FFFFFF",
+                  "lineHeight": 20
                 }
               }
             ]
@@ -542,7 +549,8 @@
             "style": {
               "fontSize": 24,
               "fontWeight": "bold",
-              "textColor": "#FFFFFF"
+              "textColor": "#FFFFFF",
+              "lineHeight": 34
             }
           }
         ]

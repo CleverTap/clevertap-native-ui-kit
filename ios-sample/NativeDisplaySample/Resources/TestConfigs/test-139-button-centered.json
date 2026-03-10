@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.778
     },
     "style": {
@@ -22,9 +25,19 @@
           "text": "Get Started"
         },
         "layout": {
-          "width": {"value": 60, "unit": "percent"},
-          "height": {"value": 15, "unit": "percent"},
-          "offset": {"x": 20, "y": 42, "unit": "percent"}
+          "width": {
+            "value": 60,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 15,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 20,
+            "y": 42,
+            "unit": "percent"
+          }
         },
         "style": {
           "backgroundColor": "#2196F3",

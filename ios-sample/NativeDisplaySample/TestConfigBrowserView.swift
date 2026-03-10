@@ -78,6 +78,7 @@ struct TestConfigBrowserView: View {
                     .frame(width: 44, height: 44)
             }
             .disabled(testFiles.isEmpty)
+            .accessibilityIdentifier("nav-next")
         }
         .background(Color(UIColor.secondarySystemBackground))
     }
@@ -91,15 +92,18 @@ struct TestConfigBrowserView: View {
                     ForEach(testFiles.indices, id: \.self) { i in
                         let label = extractNumber(from: testFiles[i])
                         let isSelected = i == currentIndex
-                        Text(label)
-                            .font(.system(size: 11, weight: isSelected ? .semibold : .regular, design: .monospaced))
-                            .foregroundColor(isSelected ? .white : .primary)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 4)
-                            .background(isSelected ? Color.blue : Color(UIColor.tertiarySystemBackground))
-                            .cornerRadius(4)
-                            .id(i)
-                            .onTapGesture { jumpTo(i) }
+                        Button(action: { jumpTo(i) }) {
+                            Text(label)
+                                .font(.system(size: 11, weight: isSelected ? .semibold : .regular, design: .monospaced))
+                                .foregroundColor(isSelected ? .white : .primary)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 4)
+                                .background(isSelected ? Color.blue : Color(UIColor.tertiarySystemBackground))
+                                .cornerRadius(4)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .id(i)
+                        .accessibilityIdentifier("chip-\(testFiles[i])")
                     }
                 }
                 .padding(.horizontal, 8)
@@ -133,6 +137,7 @@ struct TestConfigBrowserView: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
                 }
+                .accessibilityIdentifier("content-settled")
             } else if let config = config {
                 GeometryReader { geometry in
                     ScrollView {
@@ -145,6 +150,7 @@ struct TestConfigBrowserView: View {
                             .accessibilityIdentifier("native-display-view")
                     }
                 }
+                .accessibilityIdentifier("content-settled")
             } else {
                 VStack(spacing: 12) {
                     Image(systemName: "doc.text.magnifyingglass")

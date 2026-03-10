@@ -4,7 +4,8 @@
     "defaultStyle": {
       "fontSize": 16,
       "textColor": "#000000",
-      "fontWeight": "normal"
+      "fontWeight": "normal",
+      "lineHeight": 22
     }
   },
   "root": {
@@ -54,7 +55,8 @@
         "style": {
           "fontSize": 28,
           "fontWeight": "bold",
-          "textAlign": "center"
+          "textAlign": "center",
+          "lineHeight": 39
         }
       },
       {
@@ -101,7 +103,8 @@
             "style": {
               "fontSize": 16,
               "fontWeight": "bold",
-              "textColor": "#FFFFFF"
+              "textColor": "#FFFFFF",
+              "lineHeight": 22
             }
           },
           {
@@ -124,7 +127,8 @@
             },
             "style": {
               "fontSize": 14,
-              "textColor": "#FFFFFF"
+              "textColor": "#FFFFFF",
+              "lineHeight": 20
             }
           }
         ]
@@ -173,7 +177,8 @@
             "style": {
               "fontSize": 16,
               "fontWeight": "bold",
-              "textColor": "#FFFFFF"
+              "textColor": "#FFFFFF",
+              "lineHeight": 22
             }
           },
           {
@@ -196,7 +201,8 @@
             },
             "style": {
               "fontSize": 14,
-              "textColor": "#FFFFFF"
+              "textColor": "#FFFFFF",
+              "lineHeight": 20
             }
           }
         ]
@@ -245,7 +251,8 @@
             "style": {
               "fontSize": 16,
               "fontWeight": "bold",
-              "textColor": "#FFFFFF"
+              "textColor": "#FFFFFF",
+              "lineHeight": 22
             }
           },
           {
@@ -268,7 +275,8 @@
             },
             "style": {
               "fontSize": 14,
-              "textColor": "#FFFFFF"
+              "textColor": "#FFFFFF",
+              "lineHeight": 20
             }
           }
         ]
@@ -317,7 +325,8 @@
             "style": {
               "fontSize": 16,
               "fontWeight": "bold",
-              "textColor": "#FFFFFF"
+              "textColor": "#FFFFFF",
+              "lineHeight": 22
             }
           },
           {
@@ -340,7 +349,8 @@
             },
             "style": {
               "fontSize": 14,
-              "textColor": "#FFFFFF"
+              "textColor": "#FFFFFF",
+              "lineHeight": 20
             }
           }
         ]
@@ -389,7 +399,8 @@
             "style": {
               "fontSize": 16,
               "fontWeight": "bold",
-              "textColor": "#000000"
+              "textColor": "#000000",
+              "lineHeight": 22
             }
           },
           {
@@ -412,7 +423,8 @@
             },
             "style": {
               "fontSize": 14,
-              "textColor": "#000000"
+              "textColor": "#000000",
+              "lineHeight": 20
             }
           }
         ]
@@ -437,7 +449,7 @@
             "id": "overlay-image",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/400/300"
+              "url": "https://yavuzceliker.github.io/sample-images/image-86.jpg"
             },
             "layout": {
               "width": {
@@ -503,7 +515,8 @@
               "fontSize": 24,
               "fontWeight": "bold",
               "textAlign": "center",
-              "textColor": "#FFFFFF"
+              "textColor": "#FFFFFF",
+              "lineHeight": 34
             }
           }
         ]

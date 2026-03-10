@@ -7,9 +7,16 @@
     "id": "root",
     "containerType": "vertical",
     "layout": {
-      "width": {"special": "match_parent"},
-      "height": {"special": "wrap_content"},
-      "padding": {"all": 16, "unit": "dp"},
+      "width": {
+        "special": "match_parent"
+      },
+      "height": {
+        "special": "wrap_content"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
       "arrangement": {
         "strategy": "spaced",
         "spacing": 12,
@@ -28,8 +35,14 @@
           "text": "Solid Blue"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "height": {"value": 48, "unit": "dp"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 48,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#2196F3",
@@ -48,8 +61,14 @@
           "text": "Vibrant Red"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "height": {"value": 48, "unit": "dp"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 48,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#E53935",
@@ -68,8 +87,14 @@
           "text": "Outlined"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "height": {"value": 48, "unit": "dp"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 48,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#00FFFFFF",
@@ -90,8 +115,14 @@
           "text": "Gradient Diagonal"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "height": {"value": 48, "unit": "dp"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 48,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#00000000",
@@ -103,8 +134,14 @@
           "background": {
             "type": "linear_gradient",
             "angle": 135,
-            "colors": ["#7B1FA2", "#E91E63"],
-            "stops": [0.0, 1.0]
+            "colors": [
+              "#7B1FA2",
+              "#E91E63"
+            ],
+            "stops": [
+              0.0,
+              1.0
+            ]
           }
         }
       },
@@ -116,8 +153,14 @@
           "text": "Gradient Horizontal"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "height": {"value": 48, "unit": "dp"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 48,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#00000000",
@@ -129,8 +172,14 @@
           "background": {
             "type": "linear_gradient",
             "angle": 90,
-            "colors": ["#1565C0", "#42A5F5"],
-            "stops": [0.0, 1.0]
+            "colors": [
+              "#1565C0",
+              "#42A5F5"
+            ],
+            "stops": [
+              0.0,
+              1.0
+            ]
           }
         }
       },
@@ -142,8 +191,14 @@
           "text": "Dark Fill"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "height": {"value": 48, "unit": "dp"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 48,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#212121",
@@ -162,8 +217,14 @@
           "text": "Rounded Pill"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "height": {"value": 48, "unit": "dp"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 48,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#43A047",
@@ -182,8 +243,14 @@
           "text": "Ghost / Muted"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "height": {"value": 48, "unit": "dp"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 48,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#EEEEEE",
@@ -202,8 +269,14 @@
           "text": "Warning Orange"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "height": {"value": 48, "unit": "dp"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 48,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#FF6F00",
@@ -222,8 +295,14 @@
           "text": "Success Teal"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "height": {"value": 48, "unit": "dp"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 48,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#00897B",

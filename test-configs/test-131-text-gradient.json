@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.778
     },
     "style": {
@@ -22,18 +25,30 @@
           "text": "GRADIENT HEADLINE"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "offset": {"x": 5, "y": 25, "unit": "percent"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 25,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 28,
           "fontWeight": "bold",
           "lineHeight": 36,
           "textGradient": {
+            "type": "linear",
             "angle": 90,
-            "colorStops": [
-              {"color": "#FF6B6B", "position": 0.0},
-              {"color": "#4ECDC4", "position": 1.0}
+            "colors": [
+              "#FF6B6B",
+              "#4ECDC4"
+            ],
+            "stops": [
+              0.0,
+              1.0
             ]
           }
         }
@@ -46,17 +61,29 @@
           "text": "gradient subtitle text"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "offset": {"x": 5, "y": 60, "unit": "percent"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 60,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 18,
           "lineHeight": 24,
           "textGradient": {
+            "type": "linear",
             "angle": 45,
-            "colorStops": [
-              {"color": "#A8EDEA", "position": 0.0},
-              {"color": "#FED6E3", "position": 1.0}
+            "colors": [
+              "#A8EDEA",
+              "#FED6E3"
+            ],
+            "stops": [
+              0.0,
+              1.0
             ]
           }
         }

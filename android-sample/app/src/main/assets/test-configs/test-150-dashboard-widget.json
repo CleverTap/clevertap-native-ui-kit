@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.0
     },
     "style": {
@@ -19,12 +22,22 @@
         "id": "bg_image",
         "elementType": "image",
         "bindings": {
-          "url": "https://yavuzceliker.github.io/sample-images/image-800.jpg"
+          "url": "https://yavuzceliker.github.io/sample-images/image-113.jpg"
         },
         "layout": {
-          "width": {"value": 100, "unit": "percent"},
-          "height": {"value": 100, "unit": "percent"},
-          "offset": {"x": 0, "y": 0, "unit": "percent"}
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "unit": "percent"
+          }
         },
         "imageConfig": {
           "fit": "crop"
@@ -35,9 +48,19 @@
         "id": "dark_overlay",
         "containerType": "box",
         "layout": {
-          "width": {"value": 100, "unit": "percent"},
-          "height": {"value": 100, "unit": "percent"},
-          "offset": {"x": 0, "y": 0, "unit": "percent"}
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "unit": "percent"
+          }
         },
         "style": {
           "backgroundColor": "#88000000"
@@ -52,8 +75,15 @@
           "text": "DASHBOARD"
         },
         "layout": {
-          "width": {"value": 80, "unit": "percent"},
-          "offset": {"x": 10, "y": 10, "unit": "percent"}
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 10,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 11,
@@ -71,8 +101,15 @@
           "text": "142"
         },
         "layout": {
-          "width": {"value": 80, "unit": "percent"},
-          "offset": {"x": 10, "y": 35, "unit": "percent"}
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 35,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 42,
@@ -90,8 +127,15 @@
           "text": "Active Users"
         },
         "layout": {
-          "width": {"value": 80, "unit": "percent"},
-          "offset": {"x": 10, "y": 62, "unit": "percent"}
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 62,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 14,
@@ -108,9 +152,19 @@
           "text": "View Report"
         },
         "layout": {
-          "width": {"value": 50, "unit": "percent"},
-          "height": {"value": 10, "unit": "percent"},
-          "offset": {"x": 25, "y": 80, "unit": "percent"}
+          "width": {
+            "value": 50,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 10,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 25,
+            "y": 80,
+            "unit": "percent"
+          }
         },
         "style": {
           "backgroundColor": "#2196F3",

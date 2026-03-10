@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.333
     },
     "style": {
@@ -22,8 +25,15 @@
           "text": "Light Weight Text Sample"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "offset": {"x": 5, "y": 10, "unit": "percent"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 10,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 18,
@@ -40,8 +50,15 @@
           "text": "Normal Weight Text Sample"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "offset": {"x": 5, "y": 35, "unit": "percent"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 35,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 18,
@@ -58,8 +75,15 @@
           "text": "Medium Weight Text Sample"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "offset": {"x": 5, "y": 58, "unit": "percent"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 58,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 18,
@@ -76,8 +100,15 @@
           "text": "Bold Weight Text Sample"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "offset": {"x": 5, "y": 78, "unit": "percent"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 78,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 18,

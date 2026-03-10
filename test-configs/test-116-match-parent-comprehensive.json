@@ -4,7 +4,8 @@
     "defaultStyle": {
       "textColor": "#FFFFFF",
       "fontSize": 14,
-      "fontWeight": "normal"
+      "fontWeight": "normal",
+      "lineHeight": 20
     }
   },
   "variables": {
@@ -86,7 +87,8 @@
             "style": {
               "textColor": "#1976D2",
               "fontSize": 12,
-              "fontWeight": "bold"
+              "fontWeight": "bold",
+              "lineHeight": 17
             }
           },
           {
@@ -115,7 +117,8 @@
               "textColor": "#FFFFFF",
               "fontSize": 14,
               "fontWeight": "bold",
-              "borderRadius": 4
+              "borderRadius": 4,
+              "lineHeight": 20
             }
           }
         ]
@@ -175,7 +178,8 @@
               "textColor": "#FFFFFF",
               "fontSize": 11,
               "fontWeight": "bold",
-              "borderRadius": 4
+              "borderRadius": 4,
+              "lineHeight": 15
             }
           },
           {
@@ -204,7 +208,8 @@
               "textColor": "#000000",
               "fontSize": 11,
               "fontWeight": "bold",
-              "borderRadius": 4
+              "borderRadius": 4,
+              "lineHeight": 15
             }
           },
           {
@@ -233,7 +238,8 @@
               "textColor": "#FFFFFF",
               "fontSize": 11,
               "fontWeight": "bold",
-              "borderRadius": 4
+              "borderRadius": 4,
+              "lineHeight": 15
             }
           }
         ]
@@ -289,7 +295,8 @@
               "textColor": "#FFFFFF",
               "fontSize": 13,
               "fontWeight": "bold",
-              "borderRadius": 4
+              "borderRadius": 4,
+              "lineHeight": 18
             }
           },
           {
@@ -322,7 +329,8 @@
               "textColor": "#FFFFFF",
               "fontSize": 11,
               "fontWeight": "bold",
-              "borderRadius": 4
+              "borderRadius": 4,
+              "lineHeight": 15
             }
           }
         ]
@@ -378,7 +386,8 @@
               "textColor": "#FFFFFF",
               "fontSize": 13,
               "fontWeight": "bold",
-              "borderRadius": 4
+              "borderRadius": 4,
+              "lineHeight": 18
             }
           },
           {
@@ -411,7 +420,8 @@
               "textColor": "#000000",
               "fontSize": 12,
               "fontWeight": "bold",
-              "borderRadius": 4
+              "borderRadius": 4,
+              "lineHeight": 17
             }
           },
           {
@@ -444,7 +454,8 @@
               "textColor": "#FFFFFF",
               "fontSize": 11,
               "fontWeight": "bold",
-              "borderRadius": 15
+              "borderRadius": 15,
+              "lineHeight": 15
             }
           }
         ]

@@ -3,7 +3,8 @@
     "id": "test-theme",
     "defaultStyle": {
       "textColor": "#1A237E",
-      "fontSize": 16
+      "fontSize": 16,
+      "lineHeight": 22
     }
   },
   "root": {
@@ -60,7 +61,8 @@
         "style": {
           "fontSize": 24,
           "fontWeight": "bold",
-          "textColor": "#1A237E"
+          "textColor": "#1A237E",
+          "lineHeight": 34
         }
       },
       {
@@ -83,7 +85,8 @@
         },
         "style": {
           "fontSize": 16,
-          "textColor": "#3F51B5"
+          "textColor": "#3F51B5",
+          "lineHeight": 22
         }
       },
       {
@@ -110,7 +113,8 @@
           "backgroundColor": "#FFFFFF",
           "borderRadius": 8,
           "fontSize": 18,
-          "textColor": "#1A237E"
+          "textColor": "#1A237E",
+          "lineHeight": 25
         }
       },
       {
@@ -137,7 +141,8 @@
           "backgroundColor": "#FFFFFF",
           "borderRadius": 8,
           "fontSize": 18,
-          "textColor": "#1A237E"
+          "textColor": "#1A237E",
+          "lineHeight": 25
         }
       },
       {
@@ -164,7 +169,8 @@
           "backgroundColor": "#FFFFFF",
           "borderRadius": 8,
           "fontSize": 18,
-          "textColor": "#1A237E"
+          "textColor": "#1A237E",
+          "lineHeight": 25
         }
       }
     ]

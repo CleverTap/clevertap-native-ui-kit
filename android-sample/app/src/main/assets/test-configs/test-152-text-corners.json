@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.778
     },
     "style": {
@@ -22,8 +25,15 @@
           "text": "TL"
         },
         "layout": {
-          "width": {"value": 15, "unit": "percent"},
-          "offset": {"x": 2, "y": 2, "unit": "percent"}
+          "width": {
+            "value": 15,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 2,
+            "y": 2,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 12,
@@ -43,8 +53,15 @@
           "text": "TR"
         },
         "layout": {
-          "width": {"value": 15, "unit": "percent"},
-          "offset": {"x": 80, "y": 2, "unit": "percent"}
+          "width": {
+            "value": 15,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 80,
+            "y": 2,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 12,
@@ -64,8 +81,15 @@
           "text": "BL"
         },
         "layout": {
-          "width": {"value": 15, "unit": "percent"},
-          "offset": {"x": 2, "y": 85, "unit": "percent"}
+          "width": {
+            "value": 15,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 2,
+            "y": 85,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 12,
@@ -85,8 +109,15 @@
           "text": "BR"
         },
         "layout": {
-          "width": {"value": 15, "unit": "percent"},
-          "offset": {"x": 75, "y": 85, "unit": "percent"}
+          "width": {
+            "value": 15,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 75,
+            "y": 85,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 12,

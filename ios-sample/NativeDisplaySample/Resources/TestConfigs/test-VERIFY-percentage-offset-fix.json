@@ -3,7 +3,8 @@
     "id": "verify-fix",
     "defaultStyle": {
       "textColor": "#000000",
-      "fontSize": 14
+      "fontSize": 14,
+      "lineHeight": 20
     }
   },
   "variables": {
@@ -14,9 +15,18 @@
     "id": "root",
     "containerType": "vertical",
     "layout": {
-      "width": { "value": 100, "unit": "percent" },
-      "height": { "value": 100, "unit": "percent" },
-      "padding": { "all": 16, "unit": "dp" },
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
       "arrangement": {
         "spacing": 16,
         "spacingUnit": "dp",
@@ -35,12 +45,16 @@
           "text": "{{testName}}"
         },
         "layout": {
-          "width": { "value": 100, "unit": "percent" }
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 18,
           "fontWeight": "bold",
-          "textColor": "#333333"
+          "textColor": "#333333",
+          "lineHeight": 25
         }
       },
       {
@@ -51,11 +65,15 @@
           "text": "Parent box is 300dp x 300dp. Child box is 50dp x 50dp with 10% offset. If correct, child should be at (30dp, 30dp) from parent's top-left, NOT at (5dp, 5dp)."
         },
         "layout": {
-          "width": { "value": 100, "unit": "percent" }
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 12,
-          "textColor": "#666666"
+          "textColor": "#666666",
+          "lineHeight": 17
         }
       },
       {
@@ -63,8 +81,14 @@
         "id": "parent-box",
         "containerType": "box",
         "layout": {
-          "width": { "value": 300, "unit": "dp" },
-          "height": { "value": 300, "unit": "dp" }
+          "width": {
+            "value": 300,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 300,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#E0E0E0",
@@ -80,12 +104,20 @@
               "text": "← 30dp marker"
             },
             "layout": {
-              "width": { "value": 100, "unit": "dp" },
-              "offset": { "x": 30, "y": 30, "unit": "dp" }
+              "width": {
+                "value": 100,
+                "unit": "dp"
+              },
+              "offset": {
+                "x": 30,
+                "y": 30,
+                "unit": "dp"
+              }
             },
             "style": {
               "fontSize": 10,
-              "textColor": "#999999"
+              "textColor": "#999999",
+              "lineHeight": 14
             }
           },
           {
@@ -93,9 +125,19 @@
             "id": "child-box",
             "containerType": "box",
             "layout": {
-              "width": { "value": 50, "unit": "dp" },
-              "height": { "value": 50, "unit": "dp" },
-              "offset": { "x": 10, "y": 10, "unit": "percent" }
+              "width": {
+                "value": 50,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 50,
+                "unit": "dp"
+              },
+              "offset": {
+                "x": 10,
+                "y": 10,
+                "unit": "percent"
+              }
             },
             "style": {
               "backgroundColor": "#2196F3",
@@ -111,14 +153,21 @@
                   "text": "10%"
                 },
                 "layout": {
-                  "width": { "value": 100, "unit": "percent" },
-                  "padding": { "all": 8, "unit": "dp" }
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "all": 8,
+                    "unit": "dp"
+                  }
                 },
                 "style": {
                   "fontSize": 12,
                   "fontWeight": "bold",
                   "textColor": "#FFFFFF",
-                  "textAlign": "center"
+                  "textAlign": "center",
+                  "lineHeight": 17
                 }
               }
             ]
@@ -133,14 +182,21 @@
           "text": "✅ EXPECTED: Blue box should align with the '30dp marker' text above it\n❌ BUG: Blue box would be near top-left corner (only 5dp offset)"
         },
         "layout": {
-          "width": { "value": 100, "unit": "percent" },
-          "padding": { "all": 12, "unit": "dp" }
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 12,
+            "unit": "dp"
+          }
         },
         "style": {
           "fontSize": 12,
           "textColor": "#333333",
           "backgroundColor": "#FFFFCC",
-          "borderRadius": 4
+          "borderRadius": 4,
+          "lineHeight": 17
         }
       }
     ]

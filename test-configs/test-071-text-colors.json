@@ -3,7 +3,8 @@
     "id": "text-colors-theme",
     "defaultStyle": {
       "fontSize": 16,
-      "fontWeight": "normal"
+      "fontWeight": "normal",
+      "lineHeight": 22
     }
   },
   "root": {
@@ -54,7 +55,8 @@
           "fontSize": 24,
           "fontWeight": "bold",
           "textColor": "#000000",
-          "textAlign": "center"
+          "textAlign": "center",
+          "lineHeight": 34
         }
       },
       {
@@ -77,7 +79,8 @@
         },
         "style": {
           "textColor": "#000000",
-          "fontSize": 18
+          "fontSize": 18,
+          "lineHeight": 25
         }
       },
       {
@@ -100,7 +103,8 @@
         },
         "style": {
           "textColor": "#FF0000",
-          "fontSize": 18
+          "fontSize": 18,
+          "lineHeight": 25
         }
       },
       {
@@ -123,7 +127,8 @@
         },
         "style": {
           "textColor": "#00AA00",
-          "fontSize": 18
+          "fontSize": 18,
+          "lineHeight": 25
         }
       },
       {
@@ -146,7 +151,8 @@
         },
         "style": {
           "textColor": "#0066FF",
-          "fontSize": 18
+          "fontSize": 18,
+          "lineHeight": 25
         }
       },
       {
@@ -169,7 +175,8 @@
         },
         "style": {
           "textColor": "#9933FF",
-          "fontSize": 18
+          "fontSize": 18,
+          "lineHeight": 25
         }
       },
       {
@@ -192,7 +199,8 @@
         },
         "style": {
           "textColor": "#FF0000CC",
-          "fontSize": 18
+          "fontSize": 18,
+          "lineHeight": 25
         }
       },
       {
@@ -215,7 +223,8 @@
         },
         "style": {
           "textColor": "#0066FF80",
-          "fontSize": 18
+          "fontSize": 18,
+          "lineHeight": 25
         }
       },
       {
@@ -238,7 +247,8 @@
         },
         "style": {
           "textColor": "#00000033",
-          "fontSize": 18
+          "fontSize": 18,
+          "lineHeight": 25
         }
       }
     ]

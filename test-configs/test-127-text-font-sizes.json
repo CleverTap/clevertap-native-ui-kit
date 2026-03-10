@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.778
     },
     "style": {
@@ -22,8 +25,15 @@
           "text": "12sp small text"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "offset": {"x": 5, "y": 5, "unit": "percent"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 5,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 12,
@@ -39,8 +49,15 @@
           "text": "16sp body text"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "offset": {"x": 5, "y": 25, "unit": "percent"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 25,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 16,
@@ -56,8 +73,15 @@
           "text": "24sp subtitle"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "offset": {"x": 5, "y": 50, "unit": "percent"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 50,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 24,
@@ -73,8 +97,15 @@
           "text": "32sp headline"
         },
         "layout": {
-          "width": {"value": 90, "unit": "percent"},
-          "offset": {"x": 5, "y": 75, "unit": "percent"}
+          "width": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 75,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 32,

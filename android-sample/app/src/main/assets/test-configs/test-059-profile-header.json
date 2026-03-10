@@ -3,7 +3,8 @@
     "id": "profile-header",
     "defaultStyle": {
       "textColor": "#1F2937",
-      "fontSize": 14
+      "fontSize": 14,
+      "lineHeight": 20
     }
   },
   "root": {
@@ -63,7 +64,7 @@
             "id": "avatar",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/200/200?random=20"
+              "url": "https://yavuzceliker.github.io/sample-images/image-84.jpg"
             },
             "layout": {
               "width": {
@@ -102,7 +103,8 @@
               "fontSize": 28,
               "fontWeight": "bold",
               "textColor": "#FFFFFF",
-              "textAlign": "center"
+              "textAlign": "center",
+              "lineHeight": 39
             }
           },
           {
@@ -110,7 +112,7 @@
             "id": "bio",
             "elementType": "text",
             "bindings": {
-              "text": "Product Designer \u2022 Tech Enthusiast \u2022 Coffee Lover"
+              "text": "Product Designer • Tech Enthusiast • Coffee Lover"
             },
             "layout": {
               "width": {
@@ -126,7 +128,8 @@
               "fontSize": 16,
               "fontWeight": "normal",
               "textColor": "#E0E7FF",
-              "textAlign": "center"
+              "textAlign": "center",
+              "lineHeight": 22
             }
           },
           {
@@ -166,7 +169,8 @@
               "borderRadius": 24,
               "textColor": "#6366F1",
               "fontSize": 16,
-              "fontWeight": "bold"
+              "fontWeight": "bold",
+              "lineHeight": 22
             }
           }
         ]

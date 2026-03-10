@@ -4,7 +4,8 @@
     "defaultStyle": {
       "fontSize": 16,
       "textColor": "#333333",
-      "fontWeight": "normal"
+      "fontWeight": "normal",
+      "lineHeight": 22
     }
   },
   "root": {
@@ -55,7 +56,8 @@
           "fontSize": 28,
           "fontWeight": "bold",
           "textAlign": "center",
-          "textColor": "#000000"
+          "textColor": "#000000",
+          "lineHeight": 39
         }
       },
       {
@@ -105,7 +107,8 @@
             },
             "style": {
               "fontSize": 20,
-              "fontWeight": "bold"
+              "fontWeight": "bold",
+              "lineHeight": 28
             }
           },
           {
@@ -128,7 +131,8 @@
             },
             "style": {
               "fontSize": 14,
-              "textColor": "#757575"
+              "textColor": "#757575",
+              "lineHeight": 20
             }
           }
         ]
@@ -180,7 +184,8 @@
             },
             "style": {
               "fontSize": 20,
-              "fontWeight": "bold"
+              "fontWeight": "bold",
+              "lineHeight": 28
             }
           },
           {
@@ -203,7 +208,8 @@
             },
             "style": {
               "fontSize": 14,
-              "textColor": "#757575"
+              "textColor": "#757575",
+              "lineHeight": 20
             }
           }
         ]
@@ -255,7 +261,8 @@
             },
             "style": {
               "fontSize": 20,
-              "fontWeight": "bold"
+              "fontWeight": "bold",
+              "lineHeight": 28
             }
           },
           {
@@ -278,7 +285,8 @@
             },
             "style": {
               "fontSize": 14,
-              "textColor": "#757575"
+              "textColor": "#757575",
+              "lineHeight": 20
             }
           }
         ]
@@ -319,7 +327,7 @@
             "id": "product-image",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/400/200"
+              "url": "https://yavuzceliker.github.io/sample-images/image-85.jpg"
             },
             "layout": {
               "width": {
@@ -380,7 +388,8 @@
                 "style": {
                   "fontSize": 18,
                   "fontWeight": "bold",
-                  "textColor": "#000000"
+                  "textColor": "#000000",
+                  "lineHeight": 25
                 }
               },
               {
@@ -403,7 +412,8 @@
                 },
                 "style": {
                   "fontSize": 14,
-                  "textColor": "#666666"
+                  "textColor": "#666666",
+                  "lineHeight": 20
                 }
               },
               {
@@ -427,7 +437,8 @@
                 "style": {
                   "fontSize": 24,
                   "fontWeight": "bold",
-                  "textColor": "#2196F3"
+                  "textColor": "#2196F3",
+                  "lineHeight": 34
                 }
               }
             ]

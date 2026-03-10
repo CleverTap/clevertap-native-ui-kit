@@ -11,6 +11,7 @@ struct ContentView: View {
                             Image(systemName: "ellipsis.circle")
                                 .font(.system(size: 20))
                         }
+                        .accessibilityIdentifier("menu-button")
                     }
                 }
         }

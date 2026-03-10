@@ -4,7 +4,8 @@
     "defaultStyle": {
       "textColor": "#212121",
       "fontSize": 14,
-      "fontFamily": "system"
+      "fontFamily": "system",
+      "lineHeight": 20
     }
   },
   "root": {
@@ -49,7 +50,7 @@
         "id": "image-element",
         "elementType": "image",
         "bindings": {
-          "url": "https://picsum.photos/200/200"
+          "url": "https://yavuzceliker.github.io/sample-images/image-4.jpg"
         },
         "layout": {
           "width": {
@@ -93,7 +94,8 @@
           "fontSize": 16,
           "fontWeight": "bold",
           "textColor": "#FFFFFF",
-          "backgroundColor": "#000000CC"
+          "backgroundColor": "#000000CC",
+          "lineHeight": 22
         }
       }
     ]

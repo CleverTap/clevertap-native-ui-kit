@@ -4,7 +4,8 @@
     "defaultStyle": {
       "textColor": "#FF1F2937",
       "fontSize": 14,
-      "fontFamily": "System"
+      "fontFamily": "System",
+      "lineHeight": 20
     }
   },
   "variables": {
@@ -155,7 +156,7 @@
                         "id": "likes",
                         "elementType": "text",
                         "bindings": {
-                          "text": "\u2764\ufe0f {{likes}}"
+                          "text": "❤️ {{likes}}"
                         },
                         "layout": {
                           "width": {
@@ -169,7 +170,8 @@
                           "textColor": "#FFFFFFFF",
                           "shadowRadius": 4,
                           "shadowColor": "#FF000000",
-                          "shadowOpacity": 0.3
+                          "shadowOpacity": 0.3,
+                          "lineHeight": 20
                         },
                         "type": "element"
                       },
@@ -177,7 +179,7 @@
                         "id": "views",
                         "elementType": "text",
                         "bindings": {
-                          "text": "\ud83d\udc41\ufe0f {{views}}"
+                          "text": "👁️ {{views}}"
                         },
                         "layout": {
                           "width": {
@@ -191,7 +193,8 @@
                           "textColor": "#FFFFFFFF",
                           "shadowRadius": 4,
                           "shadowColor": "#FF000000",
-                          "shadowOpacity": 0.3
+                          "shadowOpacity": 0.3,
+                          "lineHeight": 20
                         },
                         "type": "element"
                       }
@@ -236,7 +239,8 @@
                 "style": {
                   "fontSize": 20,
                   "fontWeight": "bold",
-                  "textColor": "#FF111827"
+                  "textColor": "#FF111827",
+                  "lineHeight": 28
                 },
                 "type": "element"
               },
@@ -275,7 +279,8 @@
                 "style": {
                   "fontSize": 12,
                   "fontWeight": "medium",
-                  "textColor": "#FF9CA3AF"
+                  "textColor": "#FF9CA3AF",
+                  "lineHeight": 17
                 },
                 "type": "element"
               },
@@ -311,7 +316,8 @@
                   "shadowRadius": 12,
                   "shadowColor": "#FF3B82F6",
                   "shadowOpacity": 0.4,
-                  "shadowOffsetY": 4
+                  "shadowOffsetY": 4,
+                  "lineHeight": 22
                 },
                 "type": "element"
               }

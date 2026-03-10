@@ -4,7 +4,8 @@
     "defaultStyle": {
       "textColor": "#FFFFFFFF",
       "fontSize": 16,
-      "fontFamily": "System"
+      "fontFamily": "System",
+      "lineHeight": 22
     }
   },
   "variables": {
@@ -186,7 +187,8 @@
                   "shadowRadius": 20,
                   "shadowColor": "#FFF59E0B",
                   "shadowOpacity": 0.6,
-                  "shadowOffsetY": 8
+                  "shadowOffsetY": 8,
+                  "lineHeight": 28
                 },
                 "type": "element"
               },
@@ -215,7 +217,8 @@
                     "radius": 4,
                     "offsetX": 0,
                     "offsetY": 2
-                  }
+                  },
+                  "lineHeight": 20
                 },
                 "type": "element"
               }

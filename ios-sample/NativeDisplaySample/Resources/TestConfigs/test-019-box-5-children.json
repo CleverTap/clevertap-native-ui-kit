@@ -3,7 +3,8 @@
     "id": "test-theme",
     "defaultStyle": {
       "textColor": "#01579B",
-      "fontSize": 12
+      "fontSize": 12,
+      "lineHeight": 17
     }
   },
   "root": {
@@ -32,7 +33,7 @@
         "id": "background-image",
         "elementType": "image",
         "bindings": {
-          "url": "https://picsum.photos/800/600"
+          "url": "https://yavuzceliker.github.io/sample-images/image-26.jpg"
         },
         "layout": {
           "width": {
@@ -85,7 +86,8 @@
           "textColor": "#FFFFFF",
           "fontSize": 14,
           "fontWeight": "bold",
-          "borderRadius": 4
+          "borderRadius": 4,
+          "lineHeight": 20
         }
       },
       {
@@ -120,7 +122,8 @@
           "textColor": "#FFFFFF",
           "fontSize": 28,
           "fontWeight": "bold",
-          "borderRadius": 8
+          "borderRadius": 8,
+          "lineHeight": 39
         }
       },
       {
@@ -154,7 +157,8 @@
           "backgroundColor": "#FFFFFF",
           "textColor": "#01579B",
           "fontSize": 16,
-          "borderRadius": 6
+          "borderRadius": 6,
+          "lineHeight": 22
         }
       },
       {
@@ -184,7 +188,8 @@
           "textColor": "#FFFFFF",
           "fontSize": 18,
           "fontWeight": "bold",
-          "borderRadius": 25
+          "borderRadius": 25,
+          "lineHeight": 25
         }
       }
     ]

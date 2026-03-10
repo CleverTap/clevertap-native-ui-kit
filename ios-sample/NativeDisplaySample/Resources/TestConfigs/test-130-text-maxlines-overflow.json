@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.778
     },
     "style": {
@@ -22,8 +25,15 @@
           "text": "This is a very long text that should be clamped at exactly two lines using the maxLines and overflow ellipsis configuration. There is more text here that won't be shown."
         },
         "layout": {
-          "width": {"value": 80, "unit": "percent"},
-          "offset": {"x": 10, "y": 30, "unit": "percent"}
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 30,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 16,

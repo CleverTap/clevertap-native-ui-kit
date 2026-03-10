@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.778
     },
     "style": {
@@ -22,9 +25,19 @@
           "text": "Primary Action"
         },
         "layout": {
-          "width": {"value": 60, "unit": "percent"},
-          "height": {"value": 14, "unit": "percent"},
-          "offset": {"x": 20, "y": 35, "unit": "percent"}
+          "width": {
+            "value": 60,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 14,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 20,
+            "y": 35,
+            "unit": "percent"
+          }
         },
         "style": {
           "backgroundColor": "#2196F3",
@@ -42,9 +55,19 @@
           "text": "Secondary Action"
         },
         "layout": {
-          "width": {"value": 60, "unit": "percent"},
-          "height": {"value": 14, "unit": "percent"},
-          "offset": {"x": 20, "y": 55, "unit": "percent"}
+          "width": {
+            "value": 60,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 14,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 20,
+            "y": 55,
+            "unit": "percent"
+          }
         },
         "style": {
           "backgroundColor": "#FFFFFF",

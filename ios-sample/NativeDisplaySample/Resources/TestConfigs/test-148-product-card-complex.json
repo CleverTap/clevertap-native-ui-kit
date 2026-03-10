@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.333
     },
     "style": {
@@ -19,12 +22,22 @@
         "id": "product_image",
         "elementType": "image",
         "bindings": {
-          "url": "https://yavuzceliker.github.io/sample-images/image-700.jpg"
+          "url": "https://yavuzceliker.github.io/sample-images/image-112.jpg"
         },
         "layout": {
-          "width": {"value": 100, "unit": "percent"},
-          "height": {"value": 50, "unit": "percent"},
-          "offset": {"x": 0, "y": 0, "unit": "percent"}
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 50,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "unit": "percent"
+          }
         },
         "imageConfig": {
           "fit": "crop"
@@ -38,8 +51,15 @@
           "text": "$99.99"
         },
         "layout": {
-          "width": {"value": 28, "unit": "percent"},
-          "offset": {"x": 65, "y": 5, "unit": "percent"}
+          "width": {
+            "value": 28,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 65,
+            "y": 5,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 13,
@@ -59,8 +79,15 @@
           "text": "★★★★☆  4.2 (128 reviews)"
         },
         "layout": {
-          "width": {"value": 80, "unit": "percent"},
-          "offset": {"x": 5, "y": 55, "unit": "percent"}
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 55,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 13,
@@ -76,9 +103,19 @@
           "text": "Add to Cart"
         },
         "layout": {
-          "width": {"value": 80, "unit": "percent"},
-          "height": {"value": 13, "unit": "percent"},
-          "offset": {"x": 10, "y": 75, "unit": "percent"}
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 13,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 75,
+            "unit": "percent"
+          }
         },
         "style": {
           "backgroundColor": "#2196F3",

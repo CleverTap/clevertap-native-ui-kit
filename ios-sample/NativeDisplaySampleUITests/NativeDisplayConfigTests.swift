@@ -1,556 +1,278 @@
 import XCTest
 
-/// UI Tests for Native Display configuration rendering
-/// Tests that the app can load and render JSON test configurations correctly
+/// Screenshot capture for all 157 Native Display test configurations.
+///
+/// A single test method navigates through every config sequentially using the
+/// in-app "next" arrow — one app launch, one navigation, 157 screenshots.
+///
+/// Run:
+///   xcodebuild test -scheme NativeDisplaySample \
+///     -destination 'platform=iOS Simulator,name=iPhone 16' \
+///     -only-testing NativeDisplaySampleUITests/NativeDisplayConfigTests/testAllConfigs_Sequential
+///
+/// Screenshots are saved as XCTAttachments inside the .xcresult bundle:
+///   ~/Library/Developer/Xcode/DerivedData/<Project>-<hash>/Logs/Test/<run>.xcresult
+///
+/// To extract screenshots from the .xcresult:
+///   xcrun xcresulttool get --path <run>.xcresult --format json   # explore structure
+///   xcparse screenshots <run>.xcresult <output-dir>/             # extract (brew install chargepoint/xcparse/xcparse)
 final class NativeDisplayConfigTests: XCTestCase {
 
     var app: XCUIApplication!
 
     override func setUpWithError() throws {
         continueAfterFailure = false
-
-        // Launch the application
         app = XCUIApplication()
         app.launch()
 
-        // Navigate to Test Configs tab
-        let testConfigsTab = app.tabBars.buttons["🧪 Test Configs"]
-        XCTAssertTrue(testConfigsTab.waitForExistence(timeout: 5),
-                     "Test Configs tab should exist in the tab bar")
-        testConfigsTab.tap()
+        // Tap the menu button (ellipsis) added in ContentView toolbar
+        let menuButton = app.buttons["menu-button"]
+        XCTAssertTrue(menuButton.waitForExistence(timeout: 5),
+                      "Menu button should exist in the navigation bar")
+        menuButton.tap()
 
-        // Wait for the navigation bar to appear
-        _ = app.navigationBars["🧪 Test Configs"].waitForExistence(timeout: 5)
+        // Tap "Test Configs" in the demo menu list
+        let testConfigsItem = app.staticTexts["Test Configs"]
+        XCTAssertTrue(testConfigsItem.waitForExistence(timeout: 5),
+                      "Test Configs menu item should exist")
+        testConfigsItem.tap()
+
+        // Confirm TestConfigBrowserView is showing
+        let testBrowserTitle = app.staticTexts["Test Browser"]
+        XCTAssertTrue(testBrowserTitle.waitForExistence(timeout: 5),
+                      "Test Browser view should appear after tapping Test Configs")
+
+        // Wait for onAppear to fire and the first config to settle.
+        // "Test Browser" appears immediately on push, but onAppear fires asynchronously.
+        // Without this wait, the first nextButton.tap() hits a disabled button and is ignored.
+        let firstContent = app.descendants(matching: .any)
+            .matching(identifier: "content-settled").firstMatch
+        _ = firstContent.waitForExistence(timeout: 5)
     }
 
     override func tearDownWithError() throws {
         app = nil
     }
 
-    // MARK: - Test Cases
+    // MARK: - Single Sequential Run
 
-    /// Test 091: Basic percentage offset positioning in Box container
+    /// Captures screenshots for all 157 test configs in one pass.
     ///
-    /// This test verifies that the app can:
-    /// 1. Load the test-091-offset-percent-box-basic.json configuration
-    /// 2. Render the configuration without errors
-    /// 3. Display a Box container with 3 children positioned at (10%,10%), (50%,50%), (80%,80%)
-    ///
-    /// Expected visual result:
-    /// - Title: "Test 091: Offset Percent - Box Basic"
-    /// - Test box: 300×300dp Box with white background
-    /// - Blue box (40×40dp) at top-left (10%, 10%)
-    /// - Green box (40×40dp) at center (50%, 50%)
-    /// - Red box (40×40dp) at bottom-right (80%, 80%)
-    func test091_OffsetPercentBoxBasic() throws {
-        // Find the test config button
-        let configButton = app.buttons["test-config-test-091"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5),
-                     "Test config button 'test-091' should exist")
-        let app = XCUIApplication()
-        app.activate()
-        //let animationsButton = app/*@START_MENU_TOKEN@*/.buttons["🎬 Animations"]/*[[".tabBars.buttons[\"🎬 Animations\"]",".buttons[\"🎬 Animations\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/
-        //animationsButton.tap()
-        //app/*@START_MENU_TOKEN@*/.buttons["🎬 Animations"]/*[[".buttons.containing(.image, identifier: \"wand.and.sparkles\").firstMatch",".tabBars.buttons[\"🎬 Animations\"]",".buttons[\"🎬 Animations\"]"],[[[-1,2],[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
-        //app/*@START_MENU_TOKEN@*/.buttons["📏 Arrangements"]/*[[".tabBars.buttons[\"📏 Arrangements\"]",".buttons[\"📏 Arrangements\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
-        //animationsButton.tap()
+    /// Uses the "nav-next" arrow button to advance through configs without relaunching
+    /// the app. `native-display-view` is waited on before each screenshot so the
+    /// 50 ms async load delay is correctly handled.
+    func testAllConfigs_Sequential() throws {
+        // Filenames in the same alphabetical order that TestConfigBrowserView produces.
+        // "test-VERIFY-..." sorts last because 'V' (86) > any digit (48–57) in ASCII.
+        let configs: [String] = [
+            //"test-001-vertical-simple",
+            "test-002-horizontal-simple",
+            "test-003-box-simple",
+            "test-004-stack-simple",
+            "test-005-gallery-simple",
+            "test-006-vertical-empty",
+            "test-007-vertical-single-child",
+            "test-008-vertical-3-children",
+            "test-009-vertical-5-children",
+            "test-010-vertical-10-children",
+            "test-011-horizontal-empty",
+            "test-012-horizontal-single-child",
+            "test-013-horizontal-3-children",
+            "test-014-horizontal-5-children",
+            "test-015-horizontal-10-children",
+            "test-016-box-empty",
+            "test-017-box-single-child",
+            "test-018-box-3-children",
+            "test-019-box-5-children",
+            "test-020-stack-empty",
+            "test-021-stack-single-child",
+            "test-022-stack-3-children",
+            "test-023-stack-5-children",
+            "test-024-gallery-empty",
+            "test-025-gallery-single-child",
+            "test-026-gallery-3-children-snapping",
+            "test-027-gallery-5-children-snapping",
+            "test-028-gallery-10-children-snapping",
+            "test-029-gallery-3-children-free-flow",
+            "test-030-gallery-3-children-free-flow-grid",
+            "test-031-vertical-spaced",
+            "test-032-vertical-space-between",
+            "test-033-vertical-space-evenly",
+            "test-034-vertical-space-around",
+            "test-035-horizontal-start",
+            "test-036-horizontal-center",
+            "test-037-horizontal-end",
+            "test-038-vertical-spacing-0",
+            "test-039-vertical-spacing-8",
+            "test-040-vertical-spacing-16",
+            "test-041-vertical-spacing-32",
+            "test-042-vertical-padding-uniform",
+            "test-043-vertical-padding-individual",
+            "test-044-horizontal-padding-asymmetric",
+            "test-045-box-padding-large",
+            "test-046-vertical-wrap-content",
+            "test-047-horizontal-percent-width",
+            "test-048-vertical-mixed-units",
+            "test-049-nested-mixed-arrangements",
+            "test-050-gallery-spacing-variations",
+            "test-051-all-text-elements",
+            "test-052-all-image-elements",
+            "test-053-all-button-elements",
+            "test-054-all-video-elements",
+            "test-055-all-spacer-elements",
+            "test-056-all-divider-elements",
+            "test-057-product-card",
+            "test-058-login-form",
+            "test-059-profile-header",
+            "test-060-media-player",
+            "test-061-article-layout",
+            "test-062-action-sheet",
+            "test-063-stats-card",
+            "test-064-gallery-item",
+            "test-065-notification",
+            "test-066-pricing-card",
+            "test-067-hero-banner",
+            "test-068-social-post",
+            "test-069-settings-row",
+            "test-070-feature-showcase",
+            "test-071-text-colors",
+            "test-072-font-sizes",
+            "test-073-font-weights",
+            "test-074-text-alignment",
+            "test-075-text-decoration",
+            "test-076-line-height",
+            "test-077-font-families",
+            "test-078-border-radius",
+            "test-079-border-width-color",
+            "test-080-shadows-light",
+            "test-081-shadows-medium",
+            "test-082-shadows-heavy",
+            "test-083-opacity-variations",
+            "test-084-combined-visual-styles",
+            "test-085-text-style-inheritance",
+            "test-086-style-class-usage",
+            "test-087-inline-vs-inherited",
+            "test-088-theme-default-styles",
+            "test-089-styled-product-card",
+            "test-090-styled-profile-card",
+            "test-091-offset-percent-box-basic",
+            "test-092-offset-percent-stack-layers",
+            "test-093-offset-percent-negative",
+            "test-094-offset-percent-overflow",
+            "test-095-offset-percent-zero",
+            "test-096-offset-percent-responsive",
+            "test-097-offset-mixed-units",
+            "test-098-offset-percent-nested",
+            "test-099-offset-percent-with-padding",
+            "test-100-offset-percent-gallery-peek",
+            "test-101-aspect-ratio-square-fixed-width",
+            "test-102-aspect-ratio-16-9-fixed-width",
+            "test-103-aspect-ratio-4-3-fixed-width",
+            "test-104-aspect-ratio-fixed-height",
+            "test-105-aspect-ratio-percent-width",
+            "test-106-aspect-ratio-wrap-content",
+            "test-107-aspect-ratio-match-parent",
+            "test-108-aspect-ratio-extreme-wide",
+            "test-109-aspect-ratio-extreme-tall",
+            "test-110-aspect-ratio-mixed-container",
+            "test-111-combined-aspect-offset-box",
+            "test-112-combined-nested-complex",
+            "test-113-combined-gallery-aspect-peek",
+            "test-114-combined-product-grid",
+            "test-115-combined-showcase-all",
+            "test-116-match-parent-comprehensive",
+            "test-117-wrap-content-comprehensive",
+            "test-118-mixed-special-dimensions",
+            "test-119-match-parent-stack-box",
+            "test-120-wrap-content-constraints",
+            "test-121-16x9-ar-image-text-button",
+            "test-122-1x1-ar-image-badge-rounded",
+            "test-123-9x16-ar-video-caption",
+            "test-124-4x3-ar-text-weights",
+            "test-125-2x1-ar-image-split-button",
+            "test-126-text-font-weights",
+            "test-127-text-font-sizes",
+            "test-128-text-alignment",
+            "test-129-text-decoration-italic",
+            "test-130-text-maxlines-overflow",
+            "test-131-text-gradient",
+            "test-132-image-fit-crop-contain",
+            "test-133-image-gif-rounded",
+            "test-134-image-border-radius",
+            "test-135-images-z-order",
+            "test-136-video-autoplay-muted",
+            "test-137-video-with-controls",
+            "test-138-9x16-video-button",
+            "test-139-button-centered",
+            "test-140-button-primary-secondary",
+            "test-141-button-size-variants",
+            "test-142-cta-card",
+            "test-143-button-rounded-text",
+            "test-144-rounded-box-text",
+            "test-145-nested-rounded-boxes",
+            "test-146-image-overlay-rounded",
+            "test-147-hero-banner-complex",
+            "test-148-product-card-complex",
+            "test-149-notification-card",
+            "test-150-dashboard-widget",
+            "test-151-video-player-card",
+            "test-152-text-corners",
+            "test-153-image-clipped",
+            "test-154-nested-box-deep",
+            "test-155-all-element-types",
+            "test-156-button-backgrounds",
+            "test-VERIFY-percentage-offset-fix",
+        ]
 
-        // Tap to load the configuration
-        configButton.tap()
+        // content-settled appears for BOTH success (native-display-view) and failure (error VStack).
+        // Waiting on it resolves in ~100 ms either way — no more burning full timeout on failures.
+        let contentSettled = app.descendants(matching: .any)
+            .matching(identifier: "content-settled").firstMatch
+        let renderView = app.descendants(matching: .any)
+            .matching(identifier: "native-display-view").firstMatch
+        let nextButton = app.buttons["nav-next"]
+        let failedLoadPredicate = NSPredicate(format: "label BEGINSWITH 'Failed to load'")
 
-        // Wait for the configuration to load and render
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10),
-                     "Native display view should render within 10 seconds")
+        var failedConfigs: [(name: String, reason: String)] = []
 
-        // Verify the UI rendered successfully
-        XCTAssertTrue(renderView.exists,
-                     "Render view should be visible on screen")
+        nextButton.tap()
+        for (index, filename) in configs.enumerated() {
+            // Wait for load to settle (success or failure both appear in ~100 ms).
+            // Only falls back to the full 2 s if the view is in an unexpected state.
+            _ = contentSettled.waitForExistence(timeout: 2)
 
-        // Verify no error message is displayed
-        let errorView = app.staticTexts["Error Loading Config"]
-        XCTAssertFalse(errorView.exists,
-                      "Should not show error message when config loads successfully")
+            if !renderView.exists {
+                let reason = app.staticTexts.matching(failedLoadPredicate).firstMatch.exists
+                    ? "Failed to load"
+                    : "Timed out — no render, no error message"
+                failedConfigs.append((name: filename, reason: reason))
+            }
 
-        // Take a screenshot for visual verification
-        let screenshot = app.screenshot()
-        let attachment = XCTAttachment(screenshot: screenshot)
-        attachment.name = "test-091-offset-percent-box-basic"
-        attachment.lifetime = .keepAlways
-        add(attachment)
+            // Capture full-screen screenshot regardless (shows error state or blank)
+            let screenshot = XCTAttachment(screenshot: app.screenshot())
+            screenshot.name = filename
+            screenshot.lifetime = .keepAlways
+            add(screenshot)
 
-        print("✅ Test 091 passed: Config loaded and rendered successfully")
-        print("   Expected: Blue box at (10%,10%), Green at (50%,50%), Red at (80%,80%)")
-    }
-
-    // MARK: - Phase 10: Percentage BOX Container Test Suite (test-121 to test-155)
-
-    // Group 1: Aspect Ratio Showcases
-    func test121_16x9ArImageTextButton() throws {
-        let configButton = app.buttons["test-config-test-121"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-121 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-121")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-121-16x9-ar-image-text-button"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test122_1x1ArImageBadgeRounded() throws {
-        let configButton = app.buttons["test-config-test-122"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-122 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-122")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-122-1x1-ar-image-badge-rounded"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test123_9x16ArVideoCaption() throws {
-        let configButton = app.buttons["test-config-test-123"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-123 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-123")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-123-9x16-ar-video-caption"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test124_4x3ArTextWeights() throws {
-        let configButton = app.buttons["test-config-test-124"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-124 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-124")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-124-4x3-ar-text-weights"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test125_2x1ArImageSplitButton() throws {
-        let configButton = app.buttons["test-config-test-125"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-125 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-125")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-125-2x1-ar-image-split-button"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    // Group 2: TEXT Style Variations
-    func test126_TextFontWeights() throws {
-        let configButton = app.buttons["test-config-test-126"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-126 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-126")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-126-text-font-weights"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test127_TextFontSizes() throws {
-        let configButton = app.buttons["test-config-test-127"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-127 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-127")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-127-text-font-sizes"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test128_TextAlignment() throws {
-        let configButton = app.buttons["test-config-test-128"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-128 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-128")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-128-text-alignment"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test129_TextDecorationItalic() throws {
-        let configButton = app.buttons["test-config-test-129"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-129 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-129")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-129-text-decoration-italic"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test130_TextMaxlinesOverflow() throws {
-        let configButton = app.buttons["test-config-test-130"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-130 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-130")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-130-text-maxlines-overflow"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test131_TextGradient() throws {
-        let configButton = app.buttons["test-config-test-131"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-131 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-131")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-131-text-gradient"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    // Group 3: IMAGE Variations
-    func test132_ImageFitCropContain() throws {
-        let configButton = app.buttons["test-config-test-132"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-132 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-132")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-132-image-fit-crop-contain"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test133_ImageGifRounded() throws {
-        let configButton = app.buttons["test-config-test-133"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-133 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-133")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-133-image-gif-rounded"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test134_ImageBorderRadius() throws {
-        let configButton = app.buttons["test-config-test-134"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-134 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-134")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-134-image-border-radius"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test135_ImagesZOrder() throws {
-        let configButton = app.buttons["test-config-test-135"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-135 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-135")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-135-images-z-order"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    // Group 4: VIDEO Variations
-    func test136_VideoAutoplayMuted() throws {
-        let configButton = app.buttons["test-config-test-136"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-136 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-136")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-136-video-autoplay-muted"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test137_VideoWithControls() throws {
-        let configButton = app.buttons["test-config-test-137"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-137 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-137")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-137-video-with-controls"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test138_VideoButton9x16() throws {
-        let configButton = app.buttons["test-config-test-138"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-138 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-138")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-138-9x16-video-button"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    // Group 5: BUTTON Variations
-    func test139_ButtonCentered() throws {
-        let configButton = app.buttons["test-config-test-139"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-139 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-139")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-139-button-centered"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test140_ButtonPrimarySecondary() throws {
-        let configButton = app.buttons["test-config-test-140"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-140 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-140")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-140-button-primary-secondary"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test141_ButtonSizeVariants() throws {
-        let configButton = app.buttons["test-config-test-141"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-141 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-141")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-141-button-size-variants"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test142_CtaCard() throws {
-        let configButton = app.buttons["test-config-test-142"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-142 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-142")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-142-cta-card"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test143_ButtonRoundedText() throws {
-        let configButton = app.buttons["test-config-test-143"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-143 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-143")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-143-button-rounded-text"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    // Group 6: Rounded Corners
-    func test144_RoundedBoxText() throws {
-        let configButton = app.buttons["test-config-test-144"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-144 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-144")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-144-rounded-box-text"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test145_NestedRoundedBoxes() throws {
-        let configButton = app.buttons["test-config-test-145"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-145 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-145")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-145-nested-rounded-boxes"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test146_ImageOverlayRounded() throws {
-        let configButton = app.buttons["test-config-test-146"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-146 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-146")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-146-image-overlay-rounded"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    // Group 7: Complex Compositions
-    func test147_HeroBannerComplex() throws {
-        let configButton = app.buttons["test-config-test-147"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-147 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-147")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-147-hero-banner-complex"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test148_ProductCardComplex() throws {
-        let configButton = app.buttons["test-config-test-148"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-148 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-148")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-148-product-card-complex"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test149_NotificationCard() throws {
-        let configButton = app.buttons["test-config-test-149"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-149 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-149")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-149-notification-card"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test150_DashboardWidget() throws {
-        let configButton = app.buttons["test-config-test-150"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-150 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-150")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-150-dashboard-widget"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test151_VideoPlayerCard() throws {
-        let configButton = app.buttons["test-config-test-151"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-151 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-151")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-151-video-player-card"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    // Group 8: Edge Cases
-    func test152_TextCorners() throws {
-        let configButton = app.buttons["test-config-test-152"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-152 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-152")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-152-text-corners"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test153_ImageClipped() throws {
-        let configButton = app.buttons["test-config-test-153"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-153 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-153")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-153-image-clipped"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test154_NestedBoxDeep() throws {
-        let configButton = app.buttons["test-config-test-154"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-154 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-154")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-154-nested-box-deep"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test155_AllElementTypes() throws {
-        let configButton = app.buttons["test-config-test-155"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-155 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-155")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-155-all-element-types"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    func test156_ButtonBackgrounds() throws {
-        let configButton = app.buttons["test-config-test-156"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5), "test-156 button should exist")
-        configButton.tap()
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10), "Should render test-156")
-        XCTAssertFalse(app.staticTexts["Error Loading Config"].exists, "Should not show error")
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "test-156-button-backgrounds"; attachment.lifetime = .keepAlways; add(attachment)
-    }
-
-    // MARK: - Future Test Cases (Template)
-
-    /*
-    /// Template for adding more tests
-    /// Copy this method and update the test number, config ID, and filename
-    func test092_OffsetPercentStackLayers() throws {
-        let configButton = app.buttons["test-config-test-092"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5))
-        configButton.tap()
-
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10))
-
-        let errorView = app.staticTexts["Error Loading Config"]
-        XCTAssertFalse(errorView.exists)
-
-        let screenshot = app.screenshot()
-        let attachment = XCTAttachment(screenshot: screenshot)
-        attachment.name = "test-092-offset-percent-stack-layers"
-        attachment.lifetime = .keepAlways
-        add(attachment)
-
-        print("✅ Test 092 passed")
-    }
-    */
-}
-
-// MARK: - Helper Extensions
-
-extension NativeDisplayConfigTests {
-
-    /// Shared test runner for all config tests
-    /// Use this when scaling to 30 tests to reduce code duplication
-    private func runTestForConfig(id: String, filename: String, expectedDescription: String? = nil) {
-        // Find and tap the config button
-        let configButton = app.buttons["test-config-\(id)"]
-        XCTAssertTrue(configButton.waitForExistence(timeout: 5),
-                     "Test config button '\(id)' should exist")
-        configButton.tap()
-
-        // Wait for render view
-        let renderView = app.otherElements["native-display-view"]
-        XCTAssertTrue(renderView.waitForExistence(timeout: 10),
-                     "Native display view should render for \(id)")
-
-        // Verify no errors
-        let errorView = app.staticTexts["Error Loading Config"]
-        XCTAssertFalse(errorView.exists,
-                      "Should not show error message for \(id)")
-
-        // Take screenshot
-        let screenshot = app.screenshot()
-        let attachment = XCTAttachment(screenshot: screenshot)
-        attachment.name = filename
-        attachment.lifetime = .keepAlways
-        add(attachment)
-
-        // Log success
-        var message = "✅ Test \(id) passed"
-        if let description = expectedDescription {
-            message += ": \(description)"
+            guard index < configs.count - 1 else { break }
+            nextButton.tap()
         }
-        print(message)
+
+        // ── Failure report ────────────────────────────────────────────────
+        if !failedConfigs.isEmpty {
+            let lines = failedConfigs.map { "  \($0.name)  →  \($0.reason)" }
+            let report = "Failed configs (\(failedConfigs.count) / \(configs.count)):\n"
+                + lines.joined(separator: "\n")
+
+            // Attach as a text file so it appears in Report Navigator alongside screenshots
+            let reportAttachment = XCTAttachment(string: report)
+            reportAttachment.name = "FAILED_CONFIGS"
+            reportAttachment.lifetime = .keepAlways
+            add(reportAttachment)
+
+            print("⚠️  \(report)")
+        } else {
+            print("✅  All \(configs.count) configs rendered successfully.")
+        }
     }
 }

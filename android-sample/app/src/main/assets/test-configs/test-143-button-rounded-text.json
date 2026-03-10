@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 1.333
     },
     "style": {
@@ -22,8 +25,15 @@
           "text": "Round Button Demo"
         },
         "layout": {
-          "width": {"value": 80, "unit": "percent"},
-          "offset": {"x": 10, "y": 20, "unit": "percent"}
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 20,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 18,
@@ -41,9 +51,19 @@
           "text": "Fully Rounded CTA"
         },
         "layout": {
-          "width": {"value": 70, "unit": "percent"},
-          "height": {"value": 16, "unit": "percent"},
-          "offset": {"x": 15, "y": 55, "unit": "percent"}
+          "width": {
+            "value": 70,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 16,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 15,
+            "y": 55,
+            "unit": "percent"
+          }
         },
         "style": {
           "backgroundColor": "#4CAF50",

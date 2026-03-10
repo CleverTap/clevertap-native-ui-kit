@@ -7,7 +7,10 @@
     "id": "root",
     "containerType": "box",
     "layout": {
-      "width": {"value": 100, "unit": "percent"},
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
       "aspectRatio": 0.5625
     },
     "style": {
@@ -22,9 +25,19 @@
           "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
         },
         "layout": {
-          "width": {"value": 100, "unit": "percent"},
-          "height": {"value": 80, "unit": "percent"},
-          "offset": {"x": 0, "y": 0, "unit": "percent"}
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "unit": "percent"
+          }
         },
         "autoPlay": true,
         "muted": true,
@@ -40,9 +53,19 @@
           "text": "Watch Full Video"
         },
         "layout": {
-          "width": {"value": 60, "unit": "percent"},
-          "height": {"value": 8, "unit": "percent"},
-          "offset": {"x": 20, "y": 83, "unit": "percent"}
+          "width": {
+            "value": 60,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 8,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 20,
+            "y": 83,
+            "unit": "percent"
+          }
         },
         "style": {
           "backgroundColor": "#FF6B6B",

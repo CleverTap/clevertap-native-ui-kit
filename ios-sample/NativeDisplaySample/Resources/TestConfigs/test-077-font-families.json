@@ -4,7 +4,8 @@
     "defaultStyle": {
       "fontSize": 16,
       "textColor": "#333333",
-      "fontWeight": "normal"
+      "fontWeight": "normal",
+      "lineHeight": 22
     }
   },
   "root": {
@@ -55,7 +56,8 @@
           "fontSize": 26,
           "fontWeight": "bold",
           "textAlign": "center",
-          "textColor": "#1565C0"
+          "textColor": "#1565C0",
+          "lineHeight": 36
         }
       },
       {
@@ -109,7 +111,8 @@
             "style": {
               "fontSize": 14,
               "fontWeight": "medium",
-              "textColor": "#757575"
+              "textColor": "#757575",
+              "lineHeight": 20
             }
           },
           {
@@ -132,7 +135,8 @@
             },
             "style": {
               "fontFamily": "system",
-              "fontSize": 16
+              "fontSize": 16,
+              "lineHeight": 22
             }
           }
         ]
@@ -188,7 +192,8 @@
             "style": {
               "fontSize": 14,
               "fontWeight": "medium",
-              "textColor": "#757575"
+              "textColor": "#757575",
+              "lineHeight": 20
             }
           },
           {
@@ -212,7 +217,8 @@
             "style": {
               "fontFamily": "monospace",
               "fontSize": 14,
-              "backgroundColor": "#F5F5F5"
+              "backgroundColor": "#F5F5F5",
+              "lineHeight": 20
             }
           }
         ]
@@ -268,7 +274,8 @@
             "style": {
               "fontSize": 14,
               "fontWeight": "medium",
-              "textColor": "#757575"
+              "textColor": "#757575",
+              "lineHeight": 20
             }
           },
           {
@@ -292,7 +299,7 @@
             "style": {
               "fontFamily": "serif",
               "fontSize": 16,
-              "lineHeight": 1.6
+              "lineHeight": 26
             }
           }
         ]
@@ -346,7 +353,8 @@
             "style": {
               "fontSize": 14,
               "fontWeight": "bold",
-              "textColor": "#1565C0"
+              "textColor": "#1565C0",
+              "lineHeight": 20
             }
           },
           {
@@ -369,7 +377,8 @@
             },
             "style": {
               "fontFamily": "system",
-              "fontSize": 18
+              "fontSize": 18,
+              "lineHeight": 25
             }
           },
           {
@@ -392,7 +401,8 @@
             },
             "style": {
               "fontFamily": "monospace",
-              "fontSize": 18
+              "fontSize": 18,
+              "lineHeight": 25
             }
           },
           {
@@ -415,7 +425,8 @@
             },
             "style": {
               "fontFamily": "serif",
-              "fontSize": 18
+              "fontSize": 18,
+              "lineHeight": 25
             }
           }
         ]
@@ -443,7 +454,8 @@
           "fontSize": 14,
           "backgroundColor": "#263238",
           "textColor": "#AAAAAA",
-          "borderRadius": 8
+          "borderRadius": 8,
+          "lineHeight": 20
         }
       }
     ]

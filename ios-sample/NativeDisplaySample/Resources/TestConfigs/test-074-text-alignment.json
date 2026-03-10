@@ -4,7 +4,8 @@
     "defaultStyle": {
       "fontSize": 16,
       "textColor": "#000000",
-      "fontWeight": "normal"
+      "fontWeight": "normal",
+      "lineHeight": 22
     }
   },
   "root": {
@@ -57,7 +58,8 @@
           "textAlign": "center",
           "backgroundColor": "#2196F3",
           "textColor": "#FFFFFF",
-          "borderRadius": 8
+          "borderRadius": 8,
+          "lineHeight": 34
         }
       },
       {
@@ -109,7 +111,8 @@
             "style": {
               "fontSize": 14,
               "fontWeight": "bold",
-              "textColor": "#666666"
+              "textColor": "#666666",
+              "lineHeight": 20
             }
           },
           {
@@ -132,7 +135,8 @@
             },
             "style": {
               "textAlign": "start",
-              "fontSize": 16
+              "fontSize": 16,
+              "lineHeight": 22
             }
           }
         ]
@@ -186,7 +190,8 @@
             "style": {
               "fontSize": 14,
               "fontWeight": "bold",
-              "textColor": "#666666"
+              "textColor": "#666666",
+              "lineHeight": 20
             }
           },
           {
@@ -209,7 +214,8 @@
             },
             "style": {
               "textAlign": "center",
-              "fontSize": 16
+              "fontSize": 16,
+              "lineHeight": 22
             }
           }
         ]
@@ -263,7 +269,8 @@
             "style": {
               "fontSize": 14,
               "fontWeight": "bold",
-              "textColor": "#666666"
+              "textColor": "#666666",
+              "lineHeight": 20
             }
           },
           {
@@ -286,7 +293,8 @@
             },
             "style": {
               "textAlign": "end",
-              "fontSize": 16
+              "fontSize": 16,
+              "lineHeight": 22
             }
           }
         ]
@@ -312,7 +320,7 @@
         "style": {
           "textAlign": "center",
           "fontSize": 14,
-          "lineHeight": 1.5,
+          "lineHeight": 21,
           "backgroundColor": "#FFF3E0",
           "borderRadius": 8
         }
