@@ -3,7 +3,8 @@
     "id": "test-theme",
     "defaultStyle": {
       "textColor": "#4E342E",
-      "fontSize": 14
+      "fontSize": 14,
+      "lineHeight": 20
     }
   },
   "root": {
@@ -36,7 +37,7 @@
         "id": "card-1",
         "elementType": "image",
         "bindings": {
-          "url": "https://picsum.photos/150/150"
+          "url": "https://yavuzceliker.github.io/sample-images/image-12.jpg"
         },
         "layout": {
           "width": {
@@ -57,7 +58,7 @@
         "id": "card-2",
         "elementType": "image",
         "bindings": {
-          "url": "https://picsum.photos/150/151"
+          "url": "https://yavuzceliker.github.io/sample-images/image-13.jpg"
         },
         "layout": {
           "width": {
@@ -78,7 +79,7 @@
         "id": "card-3",
         "elementType": "image",
         "bindings": {
-          "url": "https://picsum.photos/150/152"
+          "url": "https://yavuzceliker.github.io/sample-images/image-14.jpg"
         },
         "layout": {
           "width": {

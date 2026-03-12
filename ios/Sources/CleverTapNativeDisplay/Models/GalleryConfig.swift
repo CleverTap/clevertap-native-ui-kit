@@ -3,6 +3,25 @@
 
 import Foundation
 
+/// Peek configuration for gallery items (dp-based leading/trailing reveal).
+public struct PeekConfig: Codable, Equatable {
+    public let before: CGFloat  // dp: leading side reveal
+    public let after: CGFloat   // dp: trailing side reveal
+
+    public init(before: CGFloat = 0, after: CGFloat = 0) {
+        self.before = before
+        self.after = after
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        before = try c.decodeIfPresent(CGFloat.self, forKey: .before) ?? 0
+        after  = try c.decodeIfPresent(CGFloat.self, forKey: .after)  ?? 0
+    }
+
+    private enum CodingKeys: String, CodingKey { case before, after }
+}
+
 /// Gallery configuration for carousel/scrolling containers.
 ///
 /// Three distinct modes:
@@ -16,10 +35,11 @@ public struct GalleryConfig: Codable, Equatable {
     
     // SNAPPING mode parameters
     public let snapBehavior: SnapBehavior
-    public let peekPercentage: CGFloat  // 0-100, percentage of adjacent items to show
-    
+    public let peek: PeekConfig         // dp-based leading/trailing peek
+
     // FREE_FLOW_GRID mode parameters
     public let itemsPerView: CGFloat    // Number of items visible (2.5 = 2 full + 0.5 peek)
+    public let columns: Int?            // Optional column count override for effectiveItemsPerView
     
     // Common parameters
     public let spacing: CGFloat          // Gap between items in dp
@@ -35,8 +55,9 @@ public struct GalleryConfig: Codable, Equatable {
         mode: GalleryMode = .snapping,
         orientation: Orientation = .horizontal,
         snapBehavior: SnapBehavior = .center,
-        peekPercentage: CGFloat = 0,
+        peek: PeekConfig = PeekConfig(),
         itemsPerView: CGFloat = 1,
+        columns: Int? = nil,
         spacing: CGFloat = 8,
         showIndicators: Bool = false,
         indicatorStyle: IndicatorStyle? = nil,
@@ -49,8 +70,9 @@ public struct GalleryConfig: Codable, Equatable {
         self.mode = mode
         self.orientation = orientation
         self.snapBehavior = snapBehavior
-        self.peekPercentage = peekPercentage
+        self.peek = peek
         self.itemsPerView = itemsPerView
+        self.columns = columns
         self.spacing = spacing
         self.showIndicators = showIndicators
         self.indicatorStyle = indicatorStyle
@@ -67,8 +89,9 @@ public struct GalleryConfig: Codable, Equatable {
         self.mode = try container.decodeIfPresent(GalleryMode.self, forKey: .mode) ?? .snapping
         self.orientation = try container.decodeIfPresent(Orientation.self, forKey: .orientation) ?? .horizontal
         self.snapBehavior = try container.decodeIfPresent(SnapBehavior.self, forKey: .snapBehavior) ?? .center
-        self.peekPercentage = try container.decodeIfPresent(CGFloat.self, forKey: .peekPercentage) ?? 0
+        self.peek = try container.decodeIfPresent(PeekConfig.self, forKey: .peek) ?? PeekConfig()
         self.itemsPerView = try container.decodeIfPresent(CGFloat.self, forKey: .itemsPerView) ?? 1
+        self.columns = try container.decodeIfPresent(Int.self, forKey: .columns)
         self.spacing = try container.decodeIfPresent(CGFloat.self, forKey: .spacing) ?? 8
         self.showIndicators = try container.decodeIfPresent(Bool.self, forKey: .showIndicators) ?? false
         self.indicatorStyle = try container.decodeIfPresent(IndicatorStyle.self, forKey: .indicatorStyle)
@@ -80,9 +103,15 @@ public struct GalleryConfig: Codable, Equatable {
     }
     
     private enum CodingKeys: String, CodingKey {
-        case mode, orientation, snapBehavior, peekPercentage, itemsPerView
+        case mode, orientation, snapBehavior, peek, itemsPerView, columns
         case spacing, showIndicators, indicatorStyle, autoScrollInterval
         case infiniteScroll, showArrows, arrowStyle, initialPage
+    }
+
+    /// Returns `columns` (if set) as CGFloat, otherwise falls back to `itemsPerView`.
+    public var effectiveItemsPerView: CGFloat {
+        if let c = columns { return CGFloat(c) }
+        return itemsPerView
     }
 }
 

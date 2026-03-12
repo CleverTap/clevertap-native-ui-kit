@@ -6,7 +6,7 @@ import SwiftUI
 /// Main gallery renderer that routes to the appropriate implementation based on mode.
 struct RenderGallery: View {
     let container: NativeDisplayContainer
-    let styleResolver: StyleResolver
+    let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
     let parentSize: CGSize
@@ -21,7 +21,7 @@ struct RenderGallery: View {
             SnappingGalleryView(
                 container: container,
                 config: config,
-                styleResolver: styleResolver,
+                resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
                 parentSize: parentSize,
@@ -33,7 +33,7 @@ struct RenderGallery: View {
             FreeFlowGalleryView(
                 container: container,
                 config: config,
-                styleResolver: styleResolver,
+                resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
                 parentSize: parentSize,
@@ -45,7 +45,7 @@ struct RenderGallery: View {
             FreeFlowGridGalleryView(
                 container: container,
                 config: config,
-                styleResolver: styleResolver,
+                resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
                 parentSize: parentSize,
@@ -65,7 +65,7 @@ struct RenderGallery: View {
 struct SnappingGalleryView: View {
     let container: NativeDisplayContainer
     let config: GalleryConfig
-    let styleResolver: StyleResolver
+    let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
     let parentSize: CGSize
@@ -78,18 +78,21 @@ struct SnappingGalleryView: View {
     var body: some View {
         GeometryReader { geometry in
             let containerSize = geometry.size
-            let peekFraction = config.peekPercentage / 100
-            
+            let peekBefore = container.children.count > 1 ? config.peek.before : 0
+            let peekAfter  = container.children.count > 1 ? config.peek.after  : 0
+            let effectiveWidth  = max(0, containerSize.width - peekBefore - peekAfter)
+            let effectiveHeight = max(0, containerSize.height - peekBefore - peekAfter)
+
             ZStack {
                 // Main Pager
                 if config.orientation == .horizontal {
                     TabView(selection: $currentPage) {
-                        ForEach(container.children.indices, id: \.self) { index in
+                        ForEach(Array(container.children.enumerated()), id: \.element.id) { index, child in
                             RenderNode(
-                                node: container.children[index],
-                                styleResolver: styleResolver,
+                                node: child,
+                                resolvedStyles: resolvedStyles,
                                 evaluator: evaluator,
-                                parentSize: containerSize,
+                                parentSize: CGSize(width: effectiveWidth, height: containerSize.height),
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
                             )
@@ -98,17 +101,17 @@ struct SnappingGalleryView: View {
                         }
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
-                    .padding(.horizontal, containerSize.width * peekFraction / 2)
+                    .padding(EdgeInsets(top: 0, leading: peekBefore, bottom: 0, trailing: peekAfter))
                 } else {
                     // Vertical scrolling with snapping
                     // Use TabView with rotation for vertical paging (iOS 15 compatible)
                     TabView(selection: $currentPage) {
-                        ForEach(container.children.indices, id: \.self) { index in
+                        ForEach(Array(container.children.enumerated()), id: \.element.id) { index, child in
                             RenderNode(
-                                node: container.children[index],
-                                styleResolver: styleResolver,
+                                node: child,
+                                resolvedStyles: resolvedStyles,
                                 evaluator: evaluator,
-                                parentSize: containerSize,
+                                parentSize: CGSize(width: containerSize.width, height: effectiveHeight),
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
                             )
@@ -119,7 +122,7 @@ struct SnappingGalleryView: View {
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
                     .rotationEffect(.degrees(90))
-                    .padding(.vertical, containerSize.height * peekFraction / 2)
+                    .padding(EdgeInsets(top: peekBefore, leading: 0, bottom: peekAfter, trailing: 0))
                 }
                 
                 // Navigation arrows
@@ -174,7 +177,7 @@ struct SnappingGalleryView: View {
 struct FreeFlowGalleryView: View {
     let container: NativeDisplayContainer
     let config: GalleryConfig
-    let styleResolver: StyleResolver
+    let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
     let parentSize: CGSize
@@ -188,10 +191,10 @@ struct FreeFlowGalleryView: View {
             if config.orientation == .horizontal {
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack(alignment: .center, spacing: config.spacing) {
-                        ForEach(container.children.indices, id: \.self) { index in
+                        ForEach(container.children, id: \.id) { child in
                             RenderNode(
-                                node: container.children[index],
-                                styleResolver: styleResolver,
+                                node: child,
+                                resolvedStyles: resolvedStyles,
                                 evaluator: evaluator,
                                 parentSize: containerSize,
                                 actionHandler: actionHandler,
@@ -203,10 +206,10 @@ struct FreeFlowGalleryView: View {
             } else {
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVStack(spacing: config.spacing) {
-                        ForEach(container.children.indices, id: \.self) { index in
+                        ForEach(container.children, id: \.id) { child in
                             RenderNode(
-                                node: container.children[index],
-                                styleResolver: styleResolver,
+                                node: child,
+                                resolvedStyles: resolvedStyles,
                                 evaluator: evaluator,
                                 parentSize: containerSize,
                                 actionHandler: actionHandler,
@@ -230,7 +233,7 @@ struct FreeFlowGalleryView: View {
 struct FreeFlowGridGalleryView: View {
     let container: NativeDisplayContainer
     let config: GalleryConfig
-    let styleResolver: StyleResolver
+    let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
     let parentSize: CGSize
@@ -240,7 +243,7 @@ struct FreeFlowGridGalleryView: View {
     var body: some View {
         GeometryReader { geometry in
             let containerSize = geometry.size
-            let itemsPerView = max(0.1, config.itemsPerView)
+            let itemsPerView = max(0.1, config.effectiveItemsPerView)
             
             if config.orientation == .horizontal {
                 let totalSpacing = config.spacing * (itemsPerView - 1)
@@ -253,10 +256,10 @@ struct FreeFlowGridGalleryView: View {
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack(spacing: config.spacing) {
-                        ForEach(container.children.indices, id: \.self) { index in
+                        ForEach(container.children, id: \.id) { child in
                             RenderNode(
-                                node: container.children[index],
-                                styleResolver: styleResolver,
+                                node: child,
+                                resolvedStyles: resolvedStyles,
                                 evaluator: evaluator,
                                 parentSize: CGSize(width: itemWidth, height: containerSize.height),
                                 actionHandler: actionHandler,
@@ -270,18 +273,18 @@ struct FreeFlowGridGalleryView: View {
             } else {
                 let totalSpacing = config.spacing * (itemsPerView - 1)
                 let itemHeight = (containerSize.height - totalSpacing) / itemsPerView
-                
+
                 // Calculate peek offset for centering
                 let fullItems = floor(itemsPerView)
                 let partialItem = itemsPerView - fullItems
                 let peekOffset = partialItem > 0 ? itemHeight * partialItem / 2 : 0
-                
+
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVStack(spacing: config.spacing) {
-                        ForEach(container.children.indices, id: \.self) { index in
+                        ForEach(container.children, id: \.id) { child in
                             RenderNode(
-                                node: container.children[index],
-                                styleResolver: styleResolver,
+                                node: child,
+                                resolvedStyles: resolvedStyles,
                                 evaluator: evaluator,
                                 parentSize: CGSize(width: containerSize.width, height: itemHeight),
                                 actionHandler: actionHandler,

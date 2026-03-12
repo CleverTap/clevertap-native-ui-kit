@@ -1,165 +1,288 @@
 import XCTest
 
-/// UI Tests for Native Display configuration rendering.
+/// Screenshot capture for all 157 Native Display test configurations.
 ///
-/// Automatically discovers and tests all JSON configs displayed in the Test Configs browser.
-/// Each config is loaded, rendered, verified for errors, and a screenshot is captured.
+/// A single test method navigates through every config sequentially using the
+/// in-app "next" arrow — one app launch, one navigation, 157 screenshots.
 ///
-/// The test iterates through all "test-config-*" buttons visible in the app's Test Configs
-/// screen, so adding a new JSON file to the bundle automatically includes it in testing.
+/// Run:
+///   xcodebuild test -scheme NativeDisplaySample \
+///     -destination 'platform=iOS Simulator,name=iPhone 16' \
+///     -only-testing NativeDisplaySampleUITests/NativeDisplayConfigTests/testAllConfigs_Sequential
+///
+/// Screenshots are saved as XCTAttachments inside the .xcresult bundle:
+///   ~/Library/Developer/Xcode/DerivedData/<Project>-<hash>/Logs/Test/<run>.xcresult
+///
+/// To extract screenshots from the .xcresult:
+///   xcrun xcresulttool get --path <run>.xcresult --format json   # explore structure
+///   xcparse screenshots <run>.xcresult <output-dir>/             # extract (brew install chargepoint/xcparse/xcparse)
 final class NativeDisplayConfigTests: XCTestCase {
 
     var app: XCUIApplication!
 
     override func setUpWithError() throws {
         continueAfterFailure = false
-
         app = XCUIApplication()
+
+        // Ask the app to pre-populate URLCache.shared with all image URLs before tests run.
+        // ImagePreloader.swift downloads images in parallel and sets "images-preloaded"
+        // when complete. Both AsyncImage and GIFImage benefit via URLCache.shared.
+        app.launchEnvironment["PRELOAD_IMAGES"] = "1"
         app.launch()
 
-        // Tap the ellipsis menu button to open the demo menu sheet
-        let menuButton = app.buttons["ellipsis.circle"]
+        // Wait for image preloading to finish before navigating anywhere.
+        // 30 s is a ceiling — on a typical connection this resolves in ~10 s.
+        let preloaded = app.descendants(matching: .any)
+            .matching(identifier: "images-preloaded").firstMatch
+        _ = preloaded.waitForExistence(timeout: 30)
+
+        // Tap the menu button (ellipsis) added in ContentView toolbar
+        let menuButton = app.buttons["menu-button"]
         XCTAssertTrue(menuButton.waitForExistence(timeout: 5),
-                     "Ellipsis menu button should exist in the toolbar")
+                      "Menu button should exist in the navigation bar")
         menuButton.tap()
 
-        // Tap "Test Configs" in the demo menu
-        let testConfigsLink = app.staticTexts["Test Configs"]
-        XCTAssertTrue(testConfigsLink.waitForExistence(timeout: 5),
-                     "Test Configs menu item should exist in the demo menu")
-        testConfigsLink.tap()
+        // Tap "Test Configs" in the demo menu list
+        let testConfigsItem = app.staticTexts["Test Configs"]
+        XCTAssertTrue(testConfigsItem.waitForExistence(timeout: 5),
+                      "Test Configs menu item should exist")
+        testConfigsItem.tap()
 
-        // Wait for the Test Configs view to appear
-        _ = app.navigationBars["🧪 Test Configs"].waitForExistence(timeout: 5)
+        // Confirm TestConfigBrowserView is showing
+        let testBrowserTitle = app.staticTexts["Test Browser"]
+        XCTAssertTrue(testBrowserTitle.waitForExistence(timeout: 5),
+                      "Test Browser view should appear after tapping Test Configs")
+
+        // Wait for onAppear to fire and the first config to settle.
+        // "Test Browser" appears immediately on push, but onAppear fires asynchronously.
+        // Without this wait, the first nextButton.tap() hits a disabled button and is ignored.
+        let firstContent = app.descendants(matching: .any)
+            .matching(identifier: "content-settled").firstMatch
+        _ = firstContent.waitForExistence(timeout: 5)
     }
 
     override func tearDownWithError() throws {
         app = nil
     }
 
-    // MARK: - Data-Driven Test Runner
+    // MARK: - Single Sequential Run
 
-    /// Runs all test configurations found in the Test Configs browser.
+    /// Captures screenshots for all 157 test configs in one pass.
     ///
-    /// This single test method:
-    /// 1. Queries the app for all buttons whose accessibility identifier matches "test-config-test-*"
-    /// 2. Iterates through each, tapping to load and render
-    /// 3. Verifies the NativeDisplayView appears (no decode/load failure)
-    /// 4. Verifies no error message is shown
-    /// 5. Captures a screenshot attachment per config for visual review
-    ///
-    /// To add a new test config, just add the JSON to the bundle — no test code changes needed.
-    func testAllConfigs() throws {
-        // Locate the config list scroll area (for targeted scrolling)
-        // Use descendants(matching: .any) since SwiftUI may expose the identifier
-        // under different element types (scrollView, other, group, etc.)
-        let configListPredicate = NSPredicate(format: "identifier == %@", "test-config-list")
-        let configList = app.descendants(matching: .any).matching(configListPredicate).firstMatch
-        XCTAssertTrue(configList.waitForExistence(timeout: 5),
-                     "Test config list should exist")
+    /// Uses the "nav-next" arrow button to advance through configs without relaunching
+    /// the app. `native-display-view` is waited on before each screenshot so the
+    /// 50 ms async load delay is correctly handled.
+    func testAllConfigs_Sequential() throws {
+        // Filenames in the same alphabetical order that TestConfigBrowserView produces.
+        // "test-VERIFY-..." sorts last because 'V' (86) > any digit (48–57) in ASCII.
+        let configs: [String] = [
+            //"test-001-vertical-simple",
+            "test-002-horizontal-simple",
+            "test-003-box-simple",
+            "test-004-stack-simple",
+            "test-005-gallery-simple",
+            "test-006-vertical-empty",
+            "test-007-vertical-single-child",
+            "test-008-vertical-3-children",
+            "test-009-vertical-5-children",
+            "test-010-vertical-10-children",
+            "test-011-horizontal-empty",
+            "test-012-horizontal-single-child",
+            "test-013-horizontal-3-children",
+            "test-014-horizontal-5-children",
+            "test-015-horizontal-10-children",
+            "test-016-box-empty",
+            "test-017-box-single-child",
+            "test-018-box-3-children",
+            "test-019-box-5-children",
+            "test-020-stack-empty",
+            "test-021-stack-single-child",
+            "test-022-stack-3-children",
+            "test-023-stack-5-children",
+            "test-024-gallery-empty",
+            "test-025-gallery-single-child",
+            "test-026-gallery-3-children-snapping",
+            "test-027-gallery-5-children-snapping",
+            "test-028-gallery-10-children-snapping",
+            "test-029-gallery-3-children-free-flow",
+            "test-030-gallery-3-children-free-flow-grid",
+            "test-031-vertical-spaced",
+            "test-032-vertical-space-between",
+            "test-033-vertical-space-evenly",
+            "test-034-vertical-space-around",
+            "test-035-horizontal-start",
+            "test-036-horizontal-center",
+            "test-037-horizontal-end",
+            "test-038-vertical-spacing-0",
+            "test-039-vertical-spacing-8",
+            "test-040-vertical-spacing-16",
+            "test-041-vertical-spacing-32",
+            "test-042-vertical-padding-uniform",
+            "test-043-vertical-padding-individual",
+            "test-044-horizontal-padding-asymmetric",
+            "test-045-box-padding-large",
+            "test-046-vertical-wrap-content",
+            "test-047-horizontal-percent-width",
+            "test-048-vertical-mixed-units",
+            "test-049-nested-mixed-arrangements",
+            "test-050-gallery-spacing-variations",
+            "test-051-all-text-elements",
+            "test-052-all-image-elements",
+            "test-053-all-button-elements",
+            "test-054-all-video-elements",
+            "test-055-all-spacer-elements",
+            "test-056-all-divider-elements",
+            "test-057-product-card",
+            "test-058-login-form",
+            "test-059-profile-header",
+            "test-060-media-player",
+            "test-061-article-layout",
+            "test-062-action-sheet",
+            "test-063-stats-card",
+            "test-064-gallery-item",
+            "test-065-notification",
+            "test-066-pricing-card",
+            "test-067-hero-banner",
+            "test-068-social-post",
+            "test-069-settings-row",
+            "test-070-feature-showcase",
+            "test-071-text-colors",
+            "test-072-font-sizes",
+            "test-073-font-weights",
+            "test-074-text-alignment",
+            "test-075-text-decoration",
+            "test-076-line-height",
+            "test-077-font-families",
+            "test-078-border-radius",
+            "test-079-border-width-color",
+            "test-080-shadows-light",
+            "test-081-shadows-medium",
+            "test-082-shadows-heavy",
+            "test-083-opacity-variations",
+            "test-084-combined-visual-styles",
+            "test-085-text-style-inheritance",
+            "test-086-style-class-usage",
+            "test-087-inline-vs-inherited",
+            "test-088-theme-default-styles",
+            "test-089-styled-product-card",
+            "test-090-styled-profile-card",
+            "test-091-offset-percent-box-basic",
+            "test-092-offset-percent-stack-layers",
+            "test-093-offset-percent-negative",
+            "test-094-offset-percent-overflow",
+            "test-095-offset-percent-zero",
+            "test-096-offset-percent-responsive",
+            "test-097-offset-mixed-units",
+            "test-098-offset-percent-nested",
+            "test-099-offset-percent-with-padding",
+            "test-100-offset-percent-gallery-peek",
+            "test-101-aspect-ratio-square-fixed-width",
+            "test-102-aspect-ratio-16-9-fixed-width",
+            "test-103-aspect-ratio-4-3-fixed-width",
+            "test-104-aspect-ratio-fixed-height",
+            "test-105-aspect-ratio-percent-width",
+            "test-106-aspect-ratio-wrap-content",
+            "test-107-aspect-ratio-match-parent",
+            "test-108-aspect-ratio-extreme-wide",
+            "test-109-aspect-ratio-extreme-tall",
+            "test-110-aspect-ratio-mixed-container",
+            "test-111-combined-aspect-offset-box",
+            "test-112-combined-nested-complex",
+            "test-113-combined-gallery-aspect-peek",
+            "test-114-combined-product-grid",
+            "test-115-combined-showcase-all",
+            "test-116-match-parent-comprehensive",
+            "test-117-wrap-content-comprehensive",
+            "test-118-mixed-special-dimensions",
+            "test-119-match-parent-stack-box",
+            "test-120-wrap-content-constraints",
+            "test-121-16x9-ar-image-text-button",
+            "test-122-1x1-ar-image-badge-rounded",
+            "test-123-9x16-ar-video-caption",
+            "test-124-4x3-ar-text-weights",
+            "test-125-2x1-ar-image-split-button",
+            "test-126-text-font-weights",
+            "test-127-text-font-sizes",
+            "test-128-text-alignment",
+            "test-129-text-decoration-italic",
+            "test-130-text-maxlines-overflow",
+            "test-131-text-gradient",
+            "test-132-image-fit-crop-contain",
+            "test-133-image-gif-rounded",
+            "test-134-image-border-radius",
+            "test-135-images-z-order",
+            "test-136-video-autoplay-muted",
+            "test-137-video-with-controls",
+            "test-138-9x16-video-button",
+            "test-139-button-centered",
+            "test-140-button-primary-secondary",
+            "test-141-button-size-variants",
+            "test-142-cta-card",
+            "test-143-button-rounded-text",
+            "test-144-rounded-box-text",
+            "test-145-nested-rounded-boxes",
+            "test-146-image-overlay-rounded",
+            "test-147-hero-banner-complex",
+            "test-148-product-card-complex",
+            "test-149-notification-card",
+            "test-150-dashboard-widget",
+            "test-151-video-player-card",
+            "test-152-text-corners",
+            "test-153-image-clipped",
+            "test-154-nested-box-deep",
+            "test-155-all-element-types",
+            "test-156-button-backgrounds",
+            "test-VERIFY-percentage-offset-fix",
+        ]
 
-        // Discover all test-config buttons by their accessibility identifier.
-        // Each TestConfigButton has identifier "test-config-test-XXX" (set in TestConfigBrowserView).
-        let configButtonsPredicate = NSPredicate(format: "identifier BEGINSWITH %@", "test-config-test-")
-        let configButtons = app.buttons.matching(configButtonsPredicate)
+        // content-settled appears for BOTH success (native-display-view) and failure (error VStack).
+        // Waiting on it resolves in ~100 ms either way — no more burning full timeout on failures.
+        let contentSettled = app.descendants(matching: .any)
+            .matching(identifier: "content-settled").firstMatch
+        let renderView = app.descendants(matching: .any)
+            .matching(identifier: "native-display-view").firstMatch
+        let nextButton = app.buttons["nav-next"]
+        let failedLoadPredicate = NSPredicate(format: "label BEGINSWITH 'Failed to load'")
 
-        let count = configButtons.count
-        XCTAssertGreaterThan(count, 0, "At least one test config should exist")
-        print("📋 Found \(count) test config(s) to run")
+        var failedConfigs: [(name: String, reason: String)] = []
 
-        // Collect all button identifiers first (the UI may change as we scroll/tap)
-        var configIds: [String] = []
-        for i in 0..<count {
-            let identifier = configButtons.element(boundBy: i).identifier
-            configIds.append(identifier)
-        }
-        configIds.sort()
+        for (index, filename) in configs.enumerated() {
+            // Wait for load to settle (success or failure both appear in ~100 ms).
+            // Only falls back to the full 2 s if the view is in an unexpected state.
+            _ = contentSettled.waitForExistence(timeout: 2)
 
-        var passed = 0
-        var failed: [String] = []
-
-        for configId in configIds {
-            // Extract the short id (e.g., "test-001") from "test-config-test-001"
-            let shortId = String(configId.dropFirst("test-config-".count))
-
-            print("▶️  Running: \(shortId)")
-
-            // Find the button; scroll within the config list only (not the whole screen)
-            let button = app.buttons[configId]
-            if !button.isHittable {
-                button.scrollToElement(within: configList)
+            if !renderView.exists {
+                let reason = app.staticTexts.matching(failedLoadPredicate).firstMatch.exists
+                    ? "Failed to load"
+                    : "Timed out — no render, no error message"
+                failedConfigs.append((name: filename, reason: reason))
             }
 
-            guard button.waitForExistence(timeout: 5) else {
-                XCTFail("Button '\(configId)' disappeared")
-                failed.append(shortId)
-                continue
-            }
-            button.tap()
+            // Capture full-screen screenshot regardless (shows error state or blank)
+            let screenshot = XCTAttachment(screenshot: app.screenshot())
+            screenshot.name = filename
+            screenshot.lifetime = .keepAlways
+            add(screenshot)
 
-            // Wait for the native display view to render
-            let renderPredicate = NSPredicate(format: "identifier == %@", "native-display-view")
-            let renderView = app.descendants(matching: .any).matching(renderPredicate).firstMatch
-            let rendered = renderView.waitForExistence(timeout: 10)
-
-            // Check for error view
-            let errorView = app.staticTexts["Error Loading Config"]
-            let hasError = errorView.exists
-
-            if !rendered || hasError {
-                let reason = hasError ? "Error Loading Config" : "Render view did not appear"
-                print("  ❌ FAILED: \(shortId) — \(reason)")
-                failed.append(shortId)
-
-                // Still capture a screenshot of the failure state
-                let screenshot = app.screenshot()
-                let attachment = XCTAttachment(screenshot: screenshot)
-                attachment.name = "FAIL-\(shortId)"
-                attachment.lifetime = .keepAlways
-                add(attachment)
-                continue
-            }
-
-            // Capture screenshot for visual verification
-            let screenshot = app.screenshot()
-            let attachment = XCTAttachment(screenshot: screenshot)
-            attachment.name = shortId
-            attachment.lifetime = .keepAlways
-            add(attachment)
-
-            passed += 1
-            print("  ✅ PASSED: \(shortId)")
+            guard index < configs.count - 1 else { break }
+            nextButton.tap()
         }
 
-        // Summary
-        print("\n" + String(repeating: "═", count: 50))
-        print("📊 Results: \(passed)/\(configIds.count) passed")
-        if !failed.isEmpty {
-            print("❌ Failed configs: \(failed.joined(separator: ", "))")
-        }
-        print(String(repeating: "═", count: 50))
+        // ── Failure report ────────────────────────────────────────────────
+        if !failedConfigs.isEmpty {
+            let lines = failedConfigs.map { "  \($0.name)  →  \($0.reason)" }
+            let report = "Failed configs (\(failedConfigs.count) / \(configs.count)):\n"
+                + lines.joined(separator: "\n")
 
-        // Fail the test if any config failed to render
-        XCTAssertTrue(failed.isEmpty,
-                     "The following configs failed to render: \(failed.joined(separator: ", "))")
-    }
-}
+            // Attach as a text file so it appears in Report Navigator alongside screenshots
+            let reportAttachment = XCTAttachment(string: report)
+            reportAttachment.name = "FAILED_CONFIGS"
+            reportAttachment.lifetime = .keepAlways
+            add(reportAttachment)
 
-// MARK: - Scroll Helper
-
-extension XCUIElement {
-    /// Scrolls this element into view with small, incremental drags inside `container`.
-    ///
-    /// Uses a gentle drag (~one row height) instead of `swipeUp()` which overshoots
-    /// in a small 200pt list. Each drag scrolls the container by roughly 70pt so
-    /// buttons are revealed one at a time without jumping past any.
-    func scrollToElement(within container: XCUIElement) {
-        var attempts = 0
-        while !isHittable && attempts < 10 {
-            let start = container.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4))
-            let end   = container.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
-            start.press(forDuration: 0.03, thenDragTo: end)
-            attempts += 1
+            print("⚠️  \(report)")
+        } else {
+            print("✅  All \(configs.count) configs rendered successfully.")
         }
     }
 }

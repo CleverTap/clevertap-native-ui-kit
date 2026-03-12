@@ -1,4 +1,4 @@
-package com.clevertap.nativedisplay.view
+package com.clevertap.android.nativedisplay.view
 
 import android.content.Context
 import android.util.AttributeSet
@@ -6,18 +6,24 @@ import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.widget.FrameLayout
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.core.view.ViewCompat.isNestedScrollingEnabled
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
+import com.clevertap.android.nativedisplay.models.Style
 import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
+import com.clevertap.android.nativedisplay.style.StyleResolver
+import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.persistentMapOf
+import kotlin.math.abs
 
 /**
  * Traditional Android View wrapper for Native Display SDUI content.
@@ -78,6 +84,7 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
     private var configState = mutableStateOf<ResolvedConfig?>(null)
     private var actionListenerState = mutableStateOf<NativeDisplayActionListener?>(null)
     private var componentListenerState = mutableStateOf<NativeDisplayComponentListener?>(null)
+    private var resolvedStylesState = mutableStateOf<PersistentMap<String, Style>>(persistentMapOf())
 
     // State tracking
     private var isRecycled = false
@@ -114,11 +121,13 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
                 val config by remember { configState }
                 val actionListener by remember { actionListenerState }
                 val componentListener by remember { componentListenerState }
+                val resolvedStyles by remember { resolvedStylesState }
 
                 config?.let { resolvedConfig ->
                     MaterialTheme {
                         NativeDisplayView(
                             config = resolvedConfig,
+                            resolvedStyles = resolvedStyles,
                             modifier = Modifier,
                             actionListener = actionListener,
                             componentListener = componentListener
@@ -169,20 +178,19 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
      * @param actionListener Optional listener for user actions
      * @param componentListener Optional listener for component lifecycle events
      */
+    @JvmOverloads
     fun setConfig(
         config: ResolvedConfig,
         actionListener: NativeDisplayActionListener? = null,
         componentListener: NativeDisplayComponentListener? = null
     ) {
-        // Clear recycled state
         isRecycled = false
-
-        // Update state - this triggers recomposition
+        // Pre-resolve all node styles once — composables get O(1) lookup, no recomputation
+        val resolver = StyleResolver(config.theme, config.styleClasses)
+        resolvedStylesState.value = resolver.resolveAll(config.root)
         configState.value = config
         actionListenerState.value = actionListener
         componentListenerState.value = componentListener
-
-        // Request layout to ensure proper sizing
         requestLayout()
     }
 
@@ -193,6 +201,7 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
         configState.value = null
         actionListenerState.value = null
         componentListenerState.value = null
+        resolvedStylesState.value = persistentMapOf()
     }
 
     /**
@@ -201,13 +210,10 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
      */
     fun onRecycled() {
         isRecycled = true
-
-        // Clear listeners to prevent memory leaks
         actionListenerState.value = null
         componentListenerState.value = null
-
-        // Clear config
         configState.value = null
+        resolvedStylesState.value = persistentMapOf()
     }
 
     /**
@@ -242,8 +248,8 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
 
                 val x = ev.getX(pointerIndex)
                 val y = ev.getY(pointerIndex)
-                val dx = Math.abs(x - initialX)
-                val dy = Math.abs(y - initialY)
+                val dx = abs(x - initialX)
+                val dy = abs(y - initialY)
 
                 if (scrollState == ScrollState.IDLE) {
                     // Determine scroll direction with threshold

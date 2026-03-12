@@ -777,6 +777,48 @@ Combine percentages with aspect ratios for responsive, proportional layouts:
 }
 ```
 
+### ⚠️ IMPORTANT: Always Specify lineHeight for Cross-Platform Consistency
+
+**Problem:** Android and iOS have different default `lineHeight` calculations when not explicitly specified:
+
+| Platform | Default Formula | fontSize: 16 Result |
+|----------|----------------|---------------------|
+| Android  | `fontSize × 1.5` | 24sp |
+| iOS      | `fontSize × 1.176` | 18.8pt |
+
+This causes **inconsistent rendering** - the same JSON will display differently on each platform.
+
+**Solution:** Always include explicit `lineHeight` in text element styles:
+
+```json
+{
+  "elementType": "text",
+  "style": {
+    "fontSize": 16,
+    "lineHeight": 20  // ✅ Always specify this
+  }
+}
+```
+
+**Recommended Formula:**
+```
+lineHeight = fontSize × 1.4
+```
+
+**Examples:**
+- `fontSize: 14` → `lineHeight: 20` (or `19.6` if precise)
+- `fontSize: 16` → `lineHeight: 22` (or `22.4` if precise)
+- `fontSize: 18` → `lineHeight: 25` (or `25.2` if precise)
+- `fontSize: 20` → `lineHeight: 28`
+
+**Why This Matters:**
+- ✅ Ensures WYSIWYG between preview and devices
+- ✅ Consistent Android-iOS rendering
+- ✅ Predictable layout calculations
+- ✅ No surprises in container overflow/clipping
+
+---
+
 ### Color Format
 
 Colors must be hex strings:
@@ -982,6 +1024,7 @@ Actions are defined in the `actions` object with trigger keys:
         },
         "style": {
           "fontSize": 20,
+          "lineHeight": 28,
           "fontWeight": "bold"
         }
       },
@@ -1003,6 +1046,7 @@ Actions are defined in the `actions` object with trigger keys:
         },
         "style": {
           "fontSize": 14,
+          "lineHeight": 20,
           "textColor": "#666666"
         }
       }
@@ -1118,6 +1162,7 @@ Actions are defined in the `actions` object with trigger keys:
 - [ ] NOT missing `"type"` field on nodes
 - [ ] NOT forgetting `"bindings": {}` on elements
 - [ ] NOT using `{"dp": 16}` format ❌ (should be `{"value": 16, "unit": "dp"}` ✅)
+- [ ] ⚠️ NOT omitting `lineHeight` on text elements ❌ (always specify: `"lineHeight": fontSize × 1.4` ✅)
 
 ---
 

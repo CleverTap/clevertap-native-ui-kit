@@ -3,7 +3,8 @@
     "id": "test-theme",
     "defaultStyle": {
       "textColor": "#F57F17",
-      "fontSize": 16
+      "fontSize": 16,
+      "lineHeight": 22
     }
   },
   "root": {
@@ -32,7 +33,7 @@
         "id": "base-layer",
         "elementType": "image",
         "bindings": {
-          "url": "https://picsum.photos/800/350"
+          "url": "https://yavuzceliker.github.io/sample-images/image-27.jpg"
         },
         "layout": {
           "width": {

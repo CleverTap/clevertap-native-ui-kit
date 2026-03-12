@@ -77,6 +77,9 @@ dependencies {
     
     // Kotlin Serialization
     implementation(libs.kotlinx.serialization.json)
+
+    // Immutable Collections
+    implementation(libs.kotlinx.collections.immutable)
     
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)

@@ -1,0 +1,103 @@
+{
+  "theme": {
+    "id": "test-125"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "aspectRatio": 2.0
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "left_image",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://yavuzceliker.github.io/sample-images/image-100.jpg"
+        },
+        "layout": {
+          "width": {
+            "value": 50,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "unit": "percent"
+          }
+        },
+        "imageConfig": {
+          "fit": "crop"
+        }
+      },
+      {
+        "type": "element",
+        "id": "featured_title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Featured Item"
+        },
+        "layout": {
+          "width": {
+            "value": 40,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 55,
+            "y": 20,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 20,
+          "fontWeight": "bold",
+          "lineHeight": 26,
+          "textColor": "#1A1A2E"
+        }
+      },
+      {
+        "type": "element",
+        "id": "shop_button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Shop Now"
+        },
+        "layout": {
+          "width": {
+            "value": 35,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 18,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 58,
+            "y": 60,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "backgroundColor": "#2196F3",
+          "textColor": "#FFFFFF",
+          "fontSize": 14,
+          "lineHeight": 20,
+          "borderRadius": 8
+        }
+      }
+    ]
+  }
+}

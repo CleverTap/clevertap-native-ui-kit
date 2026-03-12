@@ -4,7 +4,8 @@
     "defaultStyle": {
       "fontSize": 16,
       "textColor": "#333333",
-      "fontWeight": "medium"
+      "fontWeight": "medium",
+      "lineHeight": 22
     }
   },
   "root": {
@@ -55,7 +56,8 @@
           "fontSize": 24,
           "fontWeight": "bold",
           "textAlign": "center",
-          "textColor": "#000000"
+          "textColor": "#000000",
+          "lineHeight": 34
         }
       },
       {
@@ -101,7 +103,8 @@
               }
             },
             "style": {
-              "fontSize": 16
+              "fontSize": 16,
+              "lineHeight": 22
             }
           },
           {
@@ -124,7 +127,8 @@
             },
             "style": {
               "fontSize": 12,
-              "textColor": "#757575"
+              "textColor": "#757575",
+              "lineHeight": 17
             }
           }
         ]
@@ -172,7 +176,8 @@
               }
             },
             "style": {
-              "fontSize": 16
+              "fontSize": 16,
+              "lineHeight": 22
             }
           },
           {
@@ -195,7 +200,8 @@
             },
             "style": {
               "fontSize": 12,
-              "textColor": "#757575"
+              "textColor": "#757575",
+              "lineHeight": 17
             }
           }
         ]
@@ -243,7 +249,8 @@
               }
             },
             "style": {
-              "fontSize": 16
+              "fontSize": 16,
+              "lineHeight": 22
             }
           },
           {
@@ -266,7 +273,8 @@
             },
             "style": {
               "fontSize": 12,
-              "textColor": "#757575"
+              "textColor": "#757575",
+              "lineHeight": 17
             }
           }
         ]
@@ -314,7 +322,8 @@
               }
             },
             "style": {
-              "fontSize": 16
+              "fontSize": 16,
+              "lineHeight": 22
             }
           },
           {
@@ -337,7 +346,8 @@
             },
             "style": {
               "fontSize": 12,
-              "textColor": "#757575"
+              "textColor": "#757575",
+              "lineHeight": 17
             }
           }
         ]
@@ -496,7 +506,8 @@
             "style": {
               "fontSize": 14,
               "fontWeight": "bold",
-              "textColor": "#F57F17"
+              "textColor": "#F57F17",
+              "lineHeight": 20
             }
           }
         ]

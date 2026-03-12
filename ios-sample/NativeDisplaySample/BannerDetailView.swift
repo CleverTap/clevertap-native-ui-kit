@@ -106,38 +106,50 @@ struct BannerDetailView: View {
     @StateObject private var viewModel = BannerDetailViewModel()
     
     var body: some View {
-        GeometryReader { geometry in
+        // 70-30 SPLIT LAYOUT: Similar to Android implementation
+        // Top 70%: Banner display area with independent scrolling
+        // Bottom 30%: Interaction log area with independent scrolling
+
+        GeometryReader { outerGeometry in
+            let availableWidth = outerGeometry.size.width
+            let availableHeight = outerGeometry.size.height
+            let bannerHeight = availableHeight * 0.7
+            let logHeight = availableHeight * 0.3
+
             VStack(spacing: 0) {
-                // Banner Display Area (70% of available space)
-                ZStack {
+                // Top 70%: Banner Display Area with own scrollable content
+                ZStack(alignment: .topLeading) {
                     Color(.systemGroupedBackground)
-                    
-                    Group {
-                        if viewModel.isLoading {
-                            LoadingIndicator()
-                        } else if let error = viewModel.errorMessage {
-                            ErrorDisplay(message: error) {
-                                viewModel.loadConfig(from: configSource)
-                            }
-                        } else if let config = viewModel.config {
-                            ScrollView {
-                                NativeDisplayView(
-                                    config: config,
-                                    actionListener: viewModel.actionListener,
-                                    componentListener: viewModel.componentListener
-                                )
-                                .padding(16)
-                            }
+
+                    if viewModel.isLoading {
+                        LoadingIndicator()
+                    } else if let error = viewModel.errorMessage {
+                        ErrorDisplay(message: error) {
+                            viewModel.loadConfig(from: configSource)
+                        }
+                    } else if let config = viewModel.config {
+                        // Scrollable banner area
+                        ScrollView {
+                            NativeDisplayView(
+                                config: config,
+                                actionListener: viewModel.actionListener,
+                                componentListener: viewModel.componentListener
+                            )
+                            .environment(\.nativeDisplayParentSize, CGSize(
+                                width: availableWidth - 32,
+                                height: availableHeight
+                            ))
+                            .frame(maxWidth: .infinity)
+                            .padding(16)
                         }
                     }
                 }
-                .frame(width: geometry.size.width, height: geometry.size.height * 0.7)
-                
+                .frame(height: bannerHeight)
                 Divider()
-                
-                // Interaction Log Area (30% of available space)
+
+                // Bottom 30%: Interaction Log Area with own scrollable content
                 InteractionLogView(logs: viewModel.interactionLogs)
-                    .frame(width: geometry.size.width, height: geometry.size.height * 0.3)
+                    .frame(height: logHeight)
             }
         }
         .navigationTitle(bannerTitle)
@@ -381,7 +393,7 @@ struct InteractionLogView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Header
+            // Header (fixed at top)
             HStack {
                 Image(systemName: "list.bullet.rectangle")
                     .foregroundColor(.blue)
@@ -398,7 +410,7 @@ struct InteractionLogView: View {
 
             Divider()
 
-            // Log list
+            // Log list (scrollable)
             if logs.isEmpty {
                 EmptyLogView()
             } else {

@@ -3,7 +3,8 @@
     "id": "font-weights-theme",
     "defaultStyle": {
       "fontSize": 18,
-      "textColor": "#222222"
+      "textColor": "#222222",
+      "lineHeight": 25
     }
   },
   "root": {
@@ -54,7 +55,8 @@
           "fontSize": 28,
           "fontWeight": "bold",
           "textAlign": "center",
-          "textColor": "#000000"
+          "textColor": "#000000",
+          "lineHeight": 39
         }
       },
       {
@@ -106,7 +108,7 @@
         "id": "weight-semibold",
         "elementType": "text",
         "bindings": {
-          "text": "Semibold weight - Strong emphasis for subheadings"
+          "text": "Bold weight (semibold) - Strong emphasis for subheadings"
         },
         "layout": {
           "width": {
@@ -120,7 +122,7 @@
           }
         },
         "style": {
-          "fontWeight": "semibold"
+          "fontWeight": "bold"
         }
       },
       {
@@ -185,7 +187,8 @@
             },
             "style": {
               "fontWeight": "normal",
-              "fontSize": 16
+              "fontSize": 16,
+              "lineHeight": 22
             }
           },
           {
@@ -209,7 +212,8 @@
             },
             "style": {
               "fontWeight": "medium",
-              "fontSize": 16
+              "fontSize": 16,
+              "lineHeight": 22
             }
           },
           {
@@ -232,8 +236,9 @@
               }
             },
             "style": {
-              "fontWeight": "semibold",
-              "fontSize": 16
+              "fontWeight": "bold",
+              "fontSize": 16,
+              "lineHeight": 22
             }
           },
           {
@@ -257,7 +262,8 @@
             },
             "style": {
               "fontWeight": "bold",
-              "fontSize": 16
+              "fontSize": 16,
+              "lineHeight": 22
             }
           }
         ]

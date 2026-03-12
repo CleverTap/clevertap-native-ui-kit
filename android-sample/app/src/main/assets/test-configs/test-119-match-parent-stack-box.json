@@ -4,7 +4,8 @@
     "defaultStyle": {
       "textColor": "#FFFFFF",
       "fontSize": 14,
-      "fontWeight": "normal"
+      "fontWeight": "normal",
+      "lineHeight": 20
     }
   },
   "variables": {
@@ -61,7 +62,7 @@
             "type": "element",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/400/180"
+              "url": "https://yavuzceliker.github.io/sample-images/image-105.jpg"
             },
             "layout": {
               "width": {
@@ -139,7 +140,8 @@
             "style": {
               "textColor": "#FFFFFF",
               "fontSize": 16,
-              "fontWeight": "bold"
+              "fontWeight": "bold",
+              "lineHeight": 22
             }
           },
           {
@@ -179,7 +181,8 @@
               "textColor": "#FFFFFF",
               "fontSize": 12,
               "fontWeight": "bold",
-              "borderRadius": 8
+              "borderRadius": 8,
+              "lineHeight": 17
             }
           }
         ]
@@ -282,7 +285,8 @@
                 "style": {
                   "textColor": "#FFFFFF",
                   "fontSize": 16,
-                  "fontWeight": "bold"
+                  "fontWeight": "bold",
+                  "lineHeight": 22
                 }
               },
               {
@@ -309,7 +313,8 @@
                 },
                 "style": {
                   "textColor": "#FFFFFFCC",
-                  "fontSize": 13
+                  "fontSize": 13,
+                  "lineHeight": 18
                 }
               }
             ]
@@ -355,7 +360,8 @@
               "shadowRadius": 8,
               "shadowOffsetX": 0,
               "shadowOffsetY": 4,
-              "shadowColor": "#00000044"
+              "shadowColor": "#00000044",
+              "lineHeight": 20
             }
           }
         ]
@@ -491,7 +497,8 @@
                   "textColor": "#FFFFFF",
                   "fontSize": 28,
                   "fontWeight": "bold",
-                  "textAlign": "center"
+                  "textAlign": "center",
+                  "lineHeight": 39
                 }
               },
               {
@@ -522,7 +529,8 @@
                 "style": {
                   "textColor": "#FFFFFFDD",
                   "fontSize": 14,
-                  "textAlign": "center"
+                  "textAlign": "center",
+                  "lineHeight": 20
                 }
               },
               {
@@ -555,7 +563,8 @@
                   "textColor": "#FF5722",
                   "fontSize": 15,
                   "fontWeight": "bold",
-                  "borderRadius": 24
+                  "borderRadius": 24,
+                  "lineHeight": 21
                 }
               }
             ]

@@ -3,7 +3,8 @@
     "id": "product-card",
     "defaultStyle": {
       "textColor": "#1F2937",
-      "fontSize": 14
+      "fontSize": 14,
+      "lineHeight": 20
     }
   },
   "root": {
@@ -62,7 +63,7 @@
             "id": "product-image",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/600/600?random=10"
+              "url": "https://yavuzceliker.github.io/sample-images/image-83.jpg"
             },
             "layout": {
               "width": {
@@ -98,7 +99,8 @@
             "style": {
               "fontSize": 20,
               "fontWeight": "bold",
-              "textColor": "#111827"
+              "textColor": "#111827",
+              "lineHeight": 28
             }
           },
           {
@@ -121,7 +123,8 @@
             "style": {
               "fontSize": 24,
               "fontWeight": "bold",
-              "textColor": "#10B981"
+              "textColor": "#10B981",
+              "lineHeight": 34
             }
           },
           {
@@ -146,7 +149,8 @@
               "borderRadius": 12,
               "textColor": "#FFFFFF",
               "fontSize": 16,
-              "fontWeight": "bold"
+              "fontWeight": "bold",
+              "lineHeight": 22
             }
           }
         ]

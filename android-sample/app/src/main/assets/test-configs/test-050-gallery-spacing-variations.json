@@ -3,7 +3,8 @@
     "id": "test-theme",
     "defaultStyle": {
       "textColor": "#37474F",
-      "fontSize": 14
+      "fontSize": 14,
+      "lineHeight": 20
     }
   },
   "root": {
@@ -53,7 +54,8 @@
         "style": {
           "fontSize": 26,
           "fontWeight": "bold",
-          "textColor": "#263238"
+          "textColor": "#263238",
+          "lineHeight": 36
         }
       },
       {
@@ -91,7 +93,7 @@
             "id": "tight-1",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/200/160"
+              "url": "https://yavuzceliker.github.io/sample-images/image-67.jpg"
             },
             "layout": {
               "width": {
@@ -112,7 +114,7 @@
             "id": "tight-2",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/200/161"
+              "url": "https://yavuzceliker.github.io/sample-images/image-68.jpg"
             },
             "layout": {
               "width": {
@@ -133,7 +135,7 @@
             "id": "tight-3",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/200/162"
+              "url": "https://yavuzceliker.github.io/sample-images/image-69.jpg"
             },
             "layout": {
               "width": {
@@ -154,7 +156,7 @@
             "id": "tight-4",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/200/163"
+              "url": "https://yavuzceliker.github.io/sample-images/image-70.jpg"
             },
             "layout": {
               "width": {
@@ -193,7 +195,8 @@
         "style": {
           "fontSize": 14,
           "textColor": "#546E7A",
-          "textAlign": "center"
+          "textAlign": "center",
+          "lineHeight": 20
         }
       },
       {
@@ -231,7 +234,7 @@
             "id": "comfort-1",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/240/160"
+              "url": "https://yavuzceliker.github.io/sample-images/image-71.jpg"
             },
             "layout": {
               "width": {
@@ -252,7 +255,7 @@
             "id": "comfort-2",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/240/161"
+              "url": "https://yavuzceliker.github.io/sample-images/image-72.jpg"
             },
             "layout": {
               "width": {
@@ -273,7 +276,7 @@
             "id": "comfort-3",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/240/162"
+              "url": "https://yavuzceliker.github.io/sample-images/image-73.jpg"
             },
             "layout": {
               "width": {
@@ -294,7 +297,7 @@
             "id": "comfort-4",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/240/163"
+              "url": "https://yavuzceliker.github.io/sample-images/image-74.jpg"
             },
             "layout": {
               "width": {
@@ -333,7 +336,8 @@
         "style": {
           "fontSize": 14,
           "textColor": "#546E7A",
-          "textAlign": "center"
+          "textAlign": "center",
+          "lineHeight": 20
         }
       },
       {
@@ -371,7 +375,7 @@
             "id": "spacious-1",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/280/160"
+              "url": "https://yavuzceliker.github.io/sample-images/image-75.jpg"
             },
             "layout": {
               "width": {
@@ -395,7 +399,7 @@
             "id": "spacious-2",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/280/161"
+              "url": "https://yavuzceliker.github.io/sample-images/image-76.jpg"
             },
             "layout": {
               "width": {
@@ -419,7 +423,7 @@
             "id": "spacious-3",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/280/162"
+              "url": "https://yavuzceliker.github.io/sample-images/image-77.jpg"
             },
             "layout": {
               "width": {
@@ -443,7 +447,7 @@
             "id": "spacious-4",
             "elementType": "image",
             "bindings": {
-              "url": "https://picsum.photos/280/163"
+              "url": "https://yavuzceliker.github.io/sample-images/image-78.jpg"
             },
             "layout": {
               "width": {
@@ -485,7 +489,8 @@
         "style": {
           "fontSize": 14,
           "textColor": "#546E7A",
-          "textAlign": "center"
+          "textAlign": "center",
+          "lineHeight": 20
         }
       }
     ]

@@ -1,10 +1,12 @@
 package com.clevertap.android.nativedisplay.models
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
 /**
  * Represents a dimension value that can be either a specific value or a special dimension.
  */
+@Immutable
 @Serializable
 data class Dimension(
     val value: Float = 0f,
@@ -27,6 +29,7 @@ data class Dimension(
  * Used for positioning elements at specific locations within Box containers.
  * Supports negative values for positioning outside the normal flow.
  */
+@Immutable
 @Serializable
 data class Offset(
     val x: Float = 0f,
@@ -45,6 +48,7 @@ data class Offset(
  * Spacing values for padding.
  * Can specify individual sides or use shortcuts for all/horizontal/vertical.
  */
+@Immutable
 @Serializable
 data class Spacing(
     val all: Float? = null,
@@ -80,6 +84,7 @@ data class Spacing(
  * Child arrangement strategy for container layouts.
  * Defines how children are positioned and spaced within Column/Row containers.
  */
+@Immutable
 @Serializable
 data class ChildArrangement(
     /**
@@ -150,6 +155,7 @@ data class ChildArrangement(
 /**
  * Layout properties for positioning and sizing elements.
  */
+@Immutable
 @Serializable
 data class Layout(
     val width: Dimension? = null,

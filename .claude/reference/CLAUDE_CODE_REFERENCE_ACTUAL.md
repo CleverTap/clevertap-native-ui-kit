@@ -212,10 +212,11 @@ GalleryConfig {
   
   # SNAPPING mode
   snapBehavior: SnapBehavior (NONE, START, CENTER, END)
-  peekPercentage: Float (0-100)
-  
+  peek: PeekConfig { before: Float (dp), after: Float (dp) }
+
   # FREE_FLOW_GRID mode
   itemsPerView: Float (e.g., 2.5 = 2 full + 0.5 peek)
+  columns: Int? (overrides itemsPerView with integer count)
   
   # Common
   spacing: Float (dp between items)

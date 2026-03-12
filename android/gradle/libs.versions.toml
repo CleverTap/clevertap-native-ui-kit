@@ -8,6 +8,7 @@ coroutines = "1.9.0"
 lifecycle = "2.8.7"
 coil = "2.7.0"
 media3 = "1.5.0"
+kotlinxCollectionsImmutable = "0.3.8"
 junit = "4.13.2"
 androidxTest = "1.2.1"
 espresso = "3.6.1"
@@ -32,6 +33,9 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 # Coroutines
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+
+# Immutable Collections
+kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 
 # Image Loading
 io-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }

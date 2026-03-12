@@ -3,7 +3,8 @@
     "id": "video-showcase",
     "defaultStyle": {
       "textColor": "#FFFFFF",
-      "fontSize": 14
+      "fontSize": 14,
+      "lineHeight": 20
     }
   },
   "root": {

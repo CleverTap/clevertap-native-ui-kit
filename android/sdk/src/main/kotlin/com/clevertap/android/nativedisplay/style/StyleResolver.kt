@@ -1,6 +1,8 @@
 package com.clevertap.android.nativedisplay.style
 
 import com.clevertap.android.nativedisplay.models.*
+import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.toPersistentMap
 
 /**
  * Resolves styles with proper cascading and priority.
@@ -62,6 +64,46 @@ class StyleResolver(
         )
     }
     
+    /**
+     * Pre-resolve styles for an entire node tree in a single pass.
+     * Call this once at config-set time; pass the result into composables instead of StyleResolver.
+     *
+     * Includes parent-to-child cascading of text properties so composables only need
+     * an O(1) map lookup — no style resolution logic at render time.
+     *
+     * @param node Root node to start resolution from
+     * @param parentCascadingStyle Cascading text style from parent (empty for root)
+     * @return Immutable map from node ID → fully resolved Style (including cascading)
+     */
+    fun resolveAll(
+        node: NativeDisplayNode,
+        parentCascadingStyle: Style = Style.EMPTY
+    ): PersistentMap<String, Style> {
+        val result = mutableMapOf<String, Style>()
+        resolveAllInto(node, parentCascadingStyle, result)
+        return result.toPersistentMap()
+    }
+
+    private fun resolveAllInto(
+        node: NativeDisplayNode,
+        parentCascadingStyle: Style,
+        result: MutableMap<String, Style>
+    ) {
+        // Resolve this node's own style (theme + styleClass + inline + color palette)
+        val ownStyle = resolveWithColors(node)
+        // Merge with parent's cascading text properties (own style wins, parent fills gaps)
+        val finalStyle = ownStyle.mergeWith(parentCascadingStyle)
+        result[node.id] = finalStyle
+
+        // Recurse into children with cascading text properties
+        if (node is NativeDisplayContainer) {
+            val cascading = finalStyle.cascadingOnly()
+            for (child in node.children) {
+                resolveAllInto(child, cascading, result)
+            }
+        }
+    }
+
     /**
      * Resolve a color value, checking theme palette if it's a named color.
      */

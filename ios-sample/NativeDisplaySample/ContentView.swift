@@ -2,23 +2,17 @@ import SwiftUI
 import CleverTapNativeDisplay
 
 struct ContentView: View {
-    @State private var showingDemoMenu = false
-
     var body: some View {
         NavigationView {
             BannerShowcaseView()
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: {
-                            showingDemoMenu = true
-                        }) {
+                        NavigationLink(destination: DemoMenuView()) {
                             Image(systemName: "ellipsis.circle")
                                 .font(.system(size: 20))
                         }
+                        .accessibilityIdentifier("menu-button")
                     }
-                }
-                .sheet(isPresented: $showingDemoMenu) {
-                    DemoMenuView()
                 }
         }
         .navigationViewStyle(StackNavigationViewStyle())
@@ -29,55 +23,44 @@ struct ContentView: View {
 
 /// Menu to access other demo screens
 struct DemoMenuView: View {
-    @Environment(\.dismiss) private var dismiss
-
     var body: some View {
-        NavigationView {
-            List {
-                Section(header: Text("Demo Screens")) {
-                    NavigationLink(destination: ArrangementDemoView()) {
-                        DemoMenuItem(
-                            icon: "rectangle.3.group",
-                            title: "Arrangements",
-                            description: "Explore all 7 arrangement strategies"
-                        )
-                    }
-
-                    NavigationLink(destination: AnimationDemoView()) {
-                        DemoMenuItem(
-                            icon: "wand.and.stars",
-                            title: "Animations",
-                            description: "Container and element animations"
-                        )
-                    }
-
-                    NavigationLink(destination: TestConfigBrowserView()) {
-                        DemoMenuItem(
-                            icon: "testtube.2",
-                            title: "Test Configs",
-                            description: "Browse and test configurations"
-                        )
-                    }
-
-                    NavigationLink(destination: HomeScreenView()) {
-                        DemoMenuItem(
-                            icon: "house.fill",
-                            title: "Home Screen",
-                            description: "Example home screen layout"
-                        )
-                    }
+        List {
+            Section(header: Text("Demo Screens")) {
+                NavigationLink(destination: ArrangementDemoView()) {
+                    DemoMenuItem(
+                        icon: "rectangle.3.group",
+                        title: "Arrangements",
+                        description: "Explore all 7 arrangement strategies"
+                    )
                 }
-            }
-            .navigationTitle("Other Demos")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
+
+                NavigationLink(destination: AnimationDemoView()) {
+                    DemoMenuItem(
+                        icon: "wand.and.stars",
+                        title: "Animations",
+                        description: "Container and element animations"
+                    )
+                }
+
+                NavigationLink(destination: TestConfigBrowserView()) {
+                    DemoMenuItem(
+                        icon: "testtube.2",
+                        title: "Test Configs",
+                        description: "Browse and test configurations"
+                    )
+                }
+
+                NavigationLink(destination: HomeScreenView()) {
+                    DemoMenuItem(
+                        icon: "house.fill",
+                        title: "Home Screen",
+                        description: "Example home screen layout"
+                    )
                 }
             }
         }
+        .navigationTitle("Other Demos")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -165,55 +148,63 @@ struct ArrangementDemoView: View {
     ]
     
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                // Strategy Picker at the top
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(strategies, id: \.0) { name, strategy in
-                            StrategyButton(
-                                title: name,
-                                isSelected: selectedStrategy == strategy,
-                                action: {
-                                    selectedStrategy = strategy
-                                    updateArrangementStrategy(strategy)
-                                }
-                            )
-                        }
+        VStack(spacing: 0) {
+            // Strategy Picker at the top
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(strategies, id: \.0) { name, strategy in
+                        StrategyButton(
+                            title: name,
+                            isSelected: selectedStrategy == strategy,
+                            action: {
+                                selectedStrategy = strategy
+                                updateArrangementStrategy(strategy)
+                            }
+                        )
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
                 }
-                .background(Color(.systemBackground))
-                .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 2)
-                
-                // Main content
-                Group {
-                    if isLoading {
-                        VStack {
-                            ProgressView()
-                            Text("Loading...")
-                                .foregroundColor(.gray)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+            }
+            .background(Color(.systemBackground))
+            .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 2)
+
+            // Main content
+            Group {
+                if isLoading {
+                    VStack {
+                        ProgressView()
+                        Text("Loading...")
+                            .foregroundColor(.gray)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let error = errorMessage {
+                    ErrorView(message: error) {
+                        loadConfig()
+                    }
+                } else if let config = config {
+                    GeometryReader { geometry in
+                        ZStack {
+                            Color(hex: "#F5F5F5")
+                                .edgesIgnoringSafeArea(.all)
+                            ScrollView {
+                                NativeDisplayView(config: config)
+                                    .environment(\.nativeDisplayParentSize, CGSize(
+                                        width: geometry.size.width - 32,
+                                        height: geometry.size.height
+                                    ))
+                                    .frame(maxWidth: .infinity)
+                                    .padding(16)
+                            }
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    } else if let error = errorMessage {
-                        ErrorView(message: error) {
-                            loadConfig()
-                        }
-                    } else if let config = config {
-                        ScrollView {
-                            NativeDisplayView(config: config)
-                                .frame(maxWidth: .infinity)
-                        }
-                        .background(Color(hex: "#F5F5F5"))
                     }
                 }
             }
-            .navigationTitle("📏 Arrangements")
-            .navigationBarTitleDisplayMode(.inline)
-            .onAppear {
-                loadConfig()
-            }
+        }
+        .navigationTitle("📏 Arrangements")
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            loadConfig()
         }
     }
     
@@ -345,33 +336,42 @@ struct HomeScreenView: View {
     @State private var isLoading = true
     
     var body: some View {
-        NavigationView {
-            Group {
-                if isLoading {
-                    VStack {
-                        ProgressView()
-                        Text("Loading...")
-                            .foregroundColor(.gray)
+        Group {
+            if isLoading {
+                VStack {
+                    ProgressView()
+                    Text("Loading...")
+                        .foregroundColor(.gray)
+                }
+            } else if let error = errorMessage {
+                ErrorView(message: error) {
+                    loadConfig()
+                }
+            } else if let config = config {
+                GeometryReader { geometry in
+                    ZStack {
+                        Color(hex: "#F8F9FE")
+                            .edgesIgnoringSafeArea(.all)
+
+                        ScrollView {
+                            NativeDisplayView(
+                                config: config,
+                                componentListener: HomeScreenComponentListener()
+                            )
+                            .environment(\.nativeDisplayParentSize, CGSize(
+                                width: geometry.size.width - 32,
+                                height: geometry.size.height
+                            ))
+                            .padding(16)
+                        }
                     }
-                } else if let error = errorMessage {
-                    ErrorView(message: error) {
-                        loadConfig()
-                    }
-                } else if let config = config {
-                    ScrollView {
-                        NativeDisplayView(
-                            config: config,
-                            componentListener: HomeScreenComponentListener()
-                        )
-                    }
-                    .background(Color(hex: "#F8F9FE"))
                 }
             }
-            .navigationTitle("🏠 Home")
-            .navigationBarTitleDisplayMode(.inline)
-            .onAppear {
-                loadConfig()
-            }
+        }
+        .navigationTitle("🏠 Home")
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            loadConfig()
         }
     }
     
@@ -465,73 +465,81 @@ struct AnimationDemoView: View {
     ]
     
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                // Demo Selector at the top
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(demos.indices, id: \.self) { index in
-                            DemoButton(
-                                title: demos[index].0,
-                                isSelected: selectedDemo == index,
-                                action: {
-                                    selectedDemo = index
-                                    loadConfig()
-                                }
-                            )
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                }
-                .background(Color(.systemBackground))
-                .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 2)
-                
-                // Info Card
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Image(systemName: "lightbulb.fill")
-                            .foregroundColor(Color(hex: "#E65100"))
-                        Text(infoText)
-                            .font(.system(size: 14))
-                            .foregroundColor(Color(hex: "#E65100"))
-                            .fixedSize(horizontal: false, vertical: true)
+        VStack(spacing: 0) {
+            // Demo Selector at the top
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(demos.indices, id: \.self) { index in
+                        DemoButton(
+                            title: demos[index].0,
+                            isSelected: selectedDemo == index,
+                            action: {
+                                selectedDemo = index
+                                loadConfig()
+                            }
+                        )
                     }
                 }
-                .padding(16)
-                .background(Color(hex: "#FFF3E0"))
-                .cornerRadius(8)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
-                
-                // Main content
-                Group {
-                    if isLoading {
-                        VStack {
-                            ProgressView()
-                            Text("Loading...")
-                                .foregroundColor(.gray)
+            }
+            .background(Color(.systemBackground))
+            .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 2)
+
+            // Info Card
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Image(systemName: "lightbulb.fill")
+                        .foregroundColor(Color(hex: "#E65100"))
+                    Text(infoText)
+                        .font(.system(size: 14))
+                        .foregroundColor(Color(hex: "#E65100"))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .padding(16)
+            .background(Color(hex: "#FFF3E0"))
+            .cornerRadius(8)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+
+            // Main content
+            Group {
+                if isLoading {
+                    VStack {
+                        ProgressView()
+                        Text("Loading...")
+                            .foregroundColor(.gray)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let error = errorMessage {
+                    ErrorView(message: error) {
+                        loadConfig()
+                    }
+                } else if let config = config {
+                    GeometryReader { geometry in
+                        ZStack {
+                            Color(hex: "#F5F5F5")
+                                .edgesIgnoringSafeArea(.all)
+
+                            ScrollView {
+                                NativeDisplayView(config: config)
+                                    .environment(\.nativeDisplayParentSize, CGSize(
+                                        width: geometry.size.width - 32,
+                                        height: geometry.size.height
+                                    ))
+                                    .frame(maxWidth: .infinity)
+                                    .padding(16)
+                            }
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    } else if let error = errorMessage {
-                        ErrorView(message: error) {
-                            loadConfig()
-                        }
-                    } else if let config = config {
-                        ScrollView {
-                            NativeDisplayView(config: config)
-                                .frame(maxWidth: .infinity)
-                                .padding(16)
-                        }
-                        .background(Color(hex: "#F5F5F5"))
                     }
                 }
             }
-            .navigationTitle("🎬 Animations")
-            .navigationBarTitleDisplayMode(.inline)
-            .onAppear {
-                loadConfig()
-            }
+        }
+        .navigationTitle("🎬 Animations")
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            loadConfig()
         }
     }
     

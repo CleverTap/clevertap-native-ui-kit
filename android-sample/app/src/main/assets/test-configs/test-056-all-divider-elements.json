@@ -3,7 +3,8 @@
     "id": "divider-sections",
     "defaultStyle": {
       "textColor": "#374151",
-      "fontSize": 14
+      "fontSize": 14,
+      "lineHeight": 20
     }
   },
   "root": {

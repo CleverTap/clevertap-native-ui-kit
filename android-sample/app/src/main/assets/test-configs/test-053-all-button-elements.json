@@ -4,7 +4,8 @@
     "defaultStyle": {
       "textColor": "#FFFFFF",
       "fontSize": 16,
-      "fontWeight": "medium"
+      "fontWeight": "medium",
+      "lineHeight": 22
     }
   },
   "root": {
@@ -66,7 +67,8 @@
           "shadowColor": "#000000",
           "shadowOpacity": 0.3,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 4
+          "shadowOffsetY": 4,
+          "lineHeight": 25
         }
       },
       {
@@ -90,7 +92,8 @@
           "backgroundColor": "#10B981",
           "borderRadius": 12,
           "fontSize": 16,
-          "fontWeight": "medium"
+          "fontWeight": "medium",
+          "lineHeight": 22
         }
       },
       {
@@ -116,7 +119,8 @@
           "borderWidth": 2,
           "borderColor": "#FFFFFF",
           "fontSize": 16,
-          "fontWeight": "medium"
+          "fontWeight": "medium",
+          "lineHeight": 22
         }
       },
       {
@@ -140,7 +144,8 @@
           "backgroundColor": "#EF4444",
           "borderRadius": 12,
           "fontSize": 16,
-          "fontWeight": "bold"
+          "fontWeight": "bold",
+          "lineHeight": 22
         }
       }
     ]

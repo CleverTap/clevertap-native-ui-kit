@@ -4,7 +4,8 @@
     "defaultStyle": {
       "textColor": "#FF1F2937",
       "fontSize": 14,
-      "fontFamily": "System"
+      "fontFamily": "System",
+      "lineHeight": 20
     }
   },
   "variables": {
@@ -144,7 +145,8 @@
                     "style": {
                       "fontSize": 16,
                       "fontWeight": "bold",
-                      "textColor": "#FF111827"
+                      "textColor": "#FF111827",
+                      "lineHeight": 22
                     },
                     "type": "element"
                   },
@@ -163,7 +165,8 @@
                     "style": {
                       "fontSize": 12,
                       "fontWeight": "normal",
-                      "textColor": "#FF9CA3AF"
+                      "textColor": "#FF9CA3AF",
+                      "lineHeight": 17
                     },
                     "type": "element"
                   }
@@ -185,7 +188,8 @@
                 "style": {
                   "fontSize": 15,
                   "fontWeight": "medium",
-                  "textColor": "#FF374151"
+                  "textColor": "#FF374151",
+                  "lineHeight": 21
                 },
                 "type": "element"
               },
@@ -234,7 +238,8 @@
                   "shadowRadius": 8,
                   "shadowColor": "#FF3B82F6",
                   "shadowOpacity": 0.3,
-                  "shadowOffsetY": 2
+                  "shadowOffsetY": 2,
+                  "lineHeight": 20
                 },
                 "type": "element"
               }

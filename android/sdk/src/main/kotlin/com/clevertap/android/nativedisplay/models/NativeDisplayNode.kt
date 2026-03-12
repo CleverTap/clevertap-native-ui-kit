@@ -1,5 +1,7 @@
 package com.clevertap.android.nativedisplay.models
 
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -7,6 +9,7 @@ import kotlinx.serialization.Serializable
  * Base sealed class for all display nodes (containers and elements).
  * Supports unlimited nesting for maximum flexibility.
  */
+@Stable
 @Serializable
 sealed class NativeDisplayNode {
     abstract val id: String
@@ -22,6 +25,7 @@ sealed class NativeDisplayNode {
  * Container node that can hold multiple children (both containers and elements).
  * Supports unlimited nesting depth.
  */
+@Immutable
 @Serializable
 @SerialName("container")
 data class NativeDisplayContainer(
@@ -45,6 +49,7 @@ data class NativeDisplayContainer(
 /**
  * Element node that displays actual content (leaf node).
  */
+@Immutable
 @Serializable
 @SerialName("element")
 data class NativeDisplayElement(
@@ -68,6 +73,7 @@ data class NativeDisplayElement(
 /**
  * Divider configuration.
  */
+@Immutable
 @Serializable
 data class DividerConfig(
     val orientation: Orientation = Orientation.HORIZONTAL,
@@ -79,6 +85,7 @@ data class DividerConfig(
  * Image configuration.
  * Controls how images are displayed within their bounds.
  */
+@Immutable
 @Serializable
 data class ImageConfig(
     val fit: ImageFit = ImageFit.CROP,  // How to fit image within bounds
@@ -88,6 +95,7 @@ data class ImageConfig(
 /**
  * Animation configuration (Phase 4+).
  */
+@Immutable
 @Serializable
 data class Animation(
     val type: AnimationType = AnimationType.NONE,

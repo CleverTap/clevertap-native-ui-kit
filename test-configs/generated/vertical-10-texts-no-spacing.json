@@ -31,7 +31,8 @@
           "width": {"special": "match_parent"}
         },
         "style": {
-          "fontSize": 16
+          "fontSize": 16,
+          "lineHeight": 20
         }
       },
       {
@@ -45,7 +46,8 @@
           "width": {"special": "match_parent"}
         },
         "style": {
-          "fontSize": 16
+          "fontSize": 16,
+          "lineHeight": 20
         }
       },
       {
@@ -59,7 +61,8 @@
           "width": {"special": "match_parent"}
         },
         "style": {
-          "fontSize": 16
+          "fontSize": 16,
+          "lineHeight": 20
         }
       },
       {
@@ -73,7 +76,8 @@
           "width": {"special": "match_parent"}
         },
         "style": {
-          "fontSize": 16
+          "fontSize": 16,
+          "lineHeight": 20
         }
       },
       {
@@ -87,7 +91,8 @@
           "width": {"special": "match_parent"}
         },
         "style": {
-          "fontSize": 16
+          "fontSize": 16,
+          "lineHeight": 20
         }
       },
       {
@@ -101,7 +106,8 @@
           "width": {"special": "match_parent"}
         },
         "style": {
-          "fontSize": 16
+          "fontSize": 16,
+          "lineHeight": 20
         }
       },
       {
@@ -115,7 +121,8 @@
           "width": {"special": "match_parent"}
         },
         "style": {
-          "fontSize": 16
+          "fontSize": 16,
+          "lineHeight": 20
         }
       },
       {
@@ -129,7 +136,8 @@
           "width": {"special": "match_parent"}
         },
         "style": {
-          "fontSize": 16
+          "fontSize": 16,
+          "lineHeight": 20
         }
       },
       {
@@ -143,7 +151,8 @@
           "width": {"special": "match_parent"}
         },
         "style": {
-          "fontSize": 16
+          "fontSize": 16,
+          "lineHeight": 20
         }
       },
       {
@@ -157,7 +166,8 @@
           "width": {"special": "match_parent"}
         },
         "style": {
-          "fontSize": 16
+          "fontSize": 16,
+          "lineHeight": 20
         }
       }
     ]

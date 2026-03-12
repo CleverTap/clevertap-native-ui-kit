@@ -3,7 +3,8 @@
     "id": "test-112",
     "defaultStyle": {
       "textColor": "#000000",
-      "fontSize": 14
+      "fontSize": 14,
+      "lineHeight": 20
     }
   },
   "variables": {
@@ -14,9 +15,18 @@
     "id": "root",
     "containerType": "vertical",
     "layout": {
-      "width": { "value": 100, "unit": "percent" },
-      "height": { "value": 100, "unit": "percent" },
-      "padding": { "all": 16, "unit": "dp" },
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
       "arrangement": {
         "spacing": 16,
         "spacingUnit": "dp",
@@ -35,12 +45,16 @@
           "text": "{{testName}}"
         },
         "layout": {
-          "width": { "value": 100, "unit": "percent" }
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 18,
           "fontWeight": "bold",
-          "textColor": "#333333"
+          "textColor": "#333333",
+          "lineHeight": 25
         }
       },
       {
@@ -51,11 +65,15 @@
           "text": "Tests complex nested containers with both aspect ratios and percentage offsets at multiple levels."
         },
         "layout": {
-          "width": { "value": 100, "unit": "percent" }
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 12,
-          "textColor": "#666666"
+          "textColor": "#666666",
+          "lineHeight": 17
         }
       },
       {
@@ -63,7 +81,10 @@
         "id": "outer-container",
         "containerType": "box",
         "layout": {
-          "width": { "value": 100, "unit": "percent" },
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
           "aspectRatio": 1.5
         },
         "style": {
@@ -78,9 +99,16 @@
             "id": "level-1-box",
             "containerType": "box",
             "layout": {
-              "width": { "value": 70, "unit": "percent" },
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
               "aspectRatio": 1.333,
-              "offset": { "x": 15, "y": 10, "unit": "percent" }
+              "offset": {
+                "x": 15,
+                "y": 10,
+                "unit": "percent"
+              }
             },
             "style": {
               "backgroundColor": "#E8F5E9",
@@ -94,9 +122,16 @@
                 "id": "level-2-left",
                 "containerType": "box",
                 "layout": {
-                  "width": { "value": 100, "unit": "dp" },
+                  "width": {
+                    "value": 100,
+                    "unit": "dp"
+                  },
                   "aspectRatio": 1.0,
-                  "offset": { "x": 5, "y": 15, "unit": "percent" }
+                  "offset": {
+                    "x": 5,
+                    "y": 15,
+                    "unit": "percent"
+                  }
                 },
                 "style": {
                   "backgroundColor": "#FFF3E0",
@@ -110,9 +145,16 @@
                     "id": "level-3-inner",
                     "containerType": "box",
                     "layout": {
-                      "width": { "value": 50, "unit": "percent" },
+                      "width": {
+                        "value": 50,
+                        "unit": "percent"
+                      },
                       "aspectRatio": 1.0,
-                      "offset": { "x": 25, "y": 25, "unit": "percent" }
+                      "offset": {
+                        "x": 25,
+                        "y": 25,
+                        "unit": "percent"
+                      }
                     },
                     "style": {
                       "backgroundColor": "#FFEBEE",
@@ -129,9 +171,16 @@
                 "id": "level-2-right",
                 "containerType": "box",
                 "layout": {
-                  "width": { "value": 120, "unit": "dp" },
+                  "width": {
+                    "value": 120,
+                    "unit": "dp"
+                  },
                   "aspectRatio": 0.75,
-                  "offset": { "x": 60, "y": 30, "unit": "percent" }
+                  "offset": {
+                    "x": 60,
+                    "y": 30,
+                    "unit": "percent"
+                  }
                 },
                 "style": {
                   "backgroundColor": "#F3E5F5",
@@ -150,7 +199,10 @@
         "id": "horizontal-mix",
         "containerType": "horizontal",
         "layout": {
-          "width": { "value": 100, "unit": "percent" },
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
           "arrangement": {
             "spacing": 12,
             "spacingUnit": "dp",
@@ -163,7 +215,10 @@
             "id": "card-1-outer",
             "containerType": "box",
             "layout": {
-              "width": { "value": 150, "unit": "dp" },
+              "width": {
+                "value": 150,
+                "unit": "dp"
+              },
               "aspectRatio": 1.2
             },
             "style": {
@@ -178,9 +233,16 @@
                 "id": "card-1-image",
                 "containerType": "box",
                 "layout": {
-                  "width": { "value": 80, "unit": "percent" },
+                  "width": {
+                    "value": 80,
+                    "unit": "percent"
+                  },
                   "aspectRatio": 1.0,
-                  "offset": { "x": 10, "y": 5, "unit": "percent" }
+                  "offset": {
+                    "x": 10,
+                    "y": 5,
+                    "unit": "percent"
+                  }
                 },
                 "style": {
                   "backgroundColor": "#2196F3",
@@ -195,7 +257,10 @@
             "id": "card-2-outer",
             "containerType": "box",
             "layout": {
-              "width": { "value": 150, "unit": "dp" },
+              "width": {
+                "value": 150,
+                "unit": "dp"
+              },
               "aspectRatio": 1.2
             },
             "style": {
@@ -210,9 +275,16 @@
                 "id": "card-2-image",
                 "containerType": "box",
                 "layout": {
-                  "width": { "value": 80, "unit": "percent" },
+                  "width": {
+                    "value": 80,
+                    "unit": "percent"
+                  },
                   "aspectRatio": 1.0,
-                  "offset": { "x": 10, "y": 5, "unit": "percent" }
+                  "offset": {
+                    "x": 10,
+                    "y": 5,
+                    "unit": "percent"
+                  }
                 },
                 "style": {
                   "backgroundColor": "#4CAF50",

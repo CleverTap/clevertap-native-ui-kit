@@ -3,7 +3,8 @@
     "id": "test-106",
     "defaultStyle": {
       "textColor": "#000000",
-      "fontSize": 14
+      "fontSize": 14,
+      "lineHeight": 20
     }
   },
   "variables": {
@@ -14,9 +15,18 @@
     "id": "root",
     "containerType": "vertical",
     "layout": {
-      "width": { "value": 100, "unit": "percent" },
-      "height": { "value": 100, "unit": "percent" },
-      "padding": { "all": 16, "unit": "dp" },
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
       "arrangement": {
         "spacing": 16,
         "spacingUnit": "dp",
@@ -35,12 +45,16 @@
           "text": "{{testName}}"
         },
         "layout": {
-          "width": { "value": 100, "unit": "percent" }
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 18,
           "fontWeight": "bold",
-          "textColor": "#333333"
+          "textColor": "#333333",
+          "lineHeight": 25
         }
       },
       {
@@ -51,11 +65,15 @@
           "text": "Tests aspect ratio with WRAP_CONTENT dimensions. Should wrap content while respecting aspect ratio constraints where possible."
         },
         "layout": {
-          "width": { "value": 100, "unit": "percent" }
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
         },
         "style": {
           "fontSize": 12,
-          "textColor": "#666666"
+          "textColor": "#666666",
+          "lineHeight": 17
         }
       },
       {
@@ -63,9 +81,14 @@
         "id": "wrap-width-with-ratio",
         "containerType": "box",
         "layout": {
-          "width": { "value": 0, "unit": "dp","special": "wrap_content" },
+          "width": {
+            "special": "wrap_content"
+          },
           "aspectRatio": 1.0,
-          "padding": { "all": 16, "unit": "dp" }
+          "padding": {
+            "all": 16,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#2196F3",
@@ -80,12 +103,16 @@
               "text": "WRAP_CONTENT width + 1:1 ratio"
             },
             "layout": {
-              "width": { "value": 200, "unit": "dp" }
+              "width": {
+                "value": 200,
+                "unit": "dp"
+              }
             },
             "style": {
               "fontSize": 14,
               "textColor": "#FFFFFF",
-              "textAlign": "center"
+              "textAlign": "center",
+              "lineHeight": 20
             }
           }
         ]
@@ -95,9 +122,14 @@
         "id": "wrap-height-with-ratio",
         "containerType": "box",
         "layout": {
-          "height": { "value": 0, "unit": "dp","special": "wrap_content" },
+          "height": {
+            "special": "wrap_content"
+          },
           "aspectRatio": 2.0,
-          "padding": { "all": 16, "unit": "dp" }
+          "padding": {
+            "all": 16,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#4CAF50",
@@ -112,12 +144,16 @@
               "text": "WRAP_CONTENT height\n2:1 ratio"
             },
             "layout": {
-              "width": { "value": 250, "unit": "dp" }
+              "width": {
+                "value": 250,
+                "unit": "dp"
+              }
             },
             "style": {
               "fontSize": 14,
               "textColor": "#FFFFFF",
-              "textAlign": "center"
+              "textAlign": "center",
+              "lineHeight": 20
             }
           }
         ]
@@ -127,10 +163,17 @@
         "id": "both-wrap-with-ratio",
         "containerType": "box",
         "layout": {
-          "width": { "value": 0, "unit": "dp","special": "wrap_content" },
-          "height": { "value": 0, "unit": "dp","special": "wrap_content" },
+          "width": {
+            "special": "wrap_content"
+          },
+          "height": {
+            "special": "wrap_content"
+          },
           "aspectRatio": 1.5,
-          "padding": { "all": 20, "unit": "dp" }
+          "padding": {
+            "all": 20,
+            "unit": "dp"
+          }
         },
         "style": {
           "backgroundColor": "#FF9800",
@@ -145,12 +188,16 @@
               "text": "Both WRAP_CONTENT\n1.5:1 ratio"
             },
             "layout": {
-              "width": { "value": 180, "unit": "dp" }
+              "width": {
+                "value": 180,
+                "unit": "dp"
+              }
             },
             "style": {
               "fontSize": 14,
               "textColor": "#FFFFFF",
-              "textAlign": "center"
+              "textAlign": "center",
+              "lineHeight": 20
             }
           }
         ]

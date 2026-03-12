@@ -1,13 +1,14 @@
 {
   "theme": {
-    "id": "test-091",
+    "id": "test-093",
     "defaultStyle": {
       "textColor": "#000000",
-      "fontSize": 14
+      "fontSize": 14,
+      "lineHeight": 20
     }
   },
   "variables": {
-    "testName": "Percentage Offset - Box Basic"
+    "testName": "Percentage Offset - Negative Values"
   },
   "root": {
     "type": "container",
@@ -52,7 +53,8 @@
         "style": {
           "fontSize": 18,
           "fontWeight": "bold",
-          "textColor": "#333333"
+          "textColor": "#333333",
+          "lineHeight": 25
         }
       },
       {
@@ -60,7 +62,7 @@
         "id": "description",
         "elementType": "text",
         "bindings": {
-          "text": "Tests basic percentage-based offset positioning in a Box container. Blue box at 10%,10%. Green box at 50%,50%. Red box at 80%,80%."
+          "text": "Tests negative percentage offset values. Boxes should position outside or at edges of the container. Green box at -10%,-10%. Red box at 110%,110%."
         },
         "layout": {
           "width": {
@@ -70,7 +72,8 @@
         },
         "style": {
           "fontSize": 12,
-          "textColor": "#666666"
+          "textColor": "#666666",
+          "lineHeight": 17
         }
       },
       {
@@ -89,26 +92,26 @@
         },
         "style": {
           "backgroundColor": "#FFFFFF",
-          "borderWidth": 1,
-          "borderColor": "#CCCCCC"
+          "borderWidth": 2,
+          "borderColor": "#000000"
         },
         "children": [
           {
             "type": "container",
-            "id": "box-10-10",
+            "id": "box-center",
             "containerType": "box",
             "layout": {
               "width": {
-                "value": 40,
+                "value": 60,
                 "unit": "dp"
               },
               "height": {
-                "value": 40,
+                "value": 60,
                 "unit": "dp"
               },
               "offset": {
-                "x": 10,
-                "y": 10,
+                "x": 50,
+                "y": 50,
                 "unit": "percent"
               }
             },
@@ -119,31 +122,33 @@
           },
           {
             "type": "container",
-            "id": "box-50-50",
+            "id": "box-negative",
             "containerType": "box",
             "layout": {
               "width": {
-                "value": 40,
+                "value": 60,
                 "unit": "dp"
               },
               "height": {
-                "value": 40,
+                "value": 60,
                 "unit": "dp"
               },
               "offset": {
-                "x": 50,
-                "y": 50,
+                "x": -10,
+                "y": -10,
                 "unit": "percent"
               }
             },
             "style": {
-              "backgroundColor": "#4CAF50"
+              "backgroundColor": "#4CAF50",
+              "borderWidth": 2,
+              "borderColor": "#2E7D32"
             },
             "children": []
           },
           {
             "type": "container",
-            "id": "box-80-80",
+            "id": "box-overflow",
             "containerType": "box",
             "layout": {
               "width": {
@@ -155,13 +160,15 @@
                 "unit": "dp"
               },
               "offset": {
-                "x": 80,
-                "y": 80,
+                "x": 110,
+                "y": 110,
                 "unit": "percent"
               }
             },
             "style": {
-              "backgroundColor": "#F44336"
+              "backgroundColor": "#F44336",
+              "borderWidth": 2,
+              "borderColor": "#C62828"
             },
             "children": []
           }
@@ -171,4 +178,3 @@
   },
   "styleClasses": []
 }
-

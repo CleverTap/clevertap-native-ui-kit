@@ -30,28 +30,25 @@ public struct NativeDisplayView: View {
     @Environment(\.nativeDisplayParentSize) private var environmentParentSize
 
     private let config: ResolvedConfig
-    private let styleResolver: StyleResolver
+    private let resolvedStyles: [String: Style]   // Pre-resolved, computed once in init
     private let evaluator: VariableEvaluator
     private let actionHandler: ActionHandler?
     private let componentListener: NativeDisplayComponentListener?
-    /// Explicit parent size passed via init. Takes highest priority over environment and internal detection.
-    private let explicitParentSize: CGSize?
 
     public init(
         config: ResolvedConfig,
-        parentSize: CGSize? = nil,
         actionListener: NativeDisplayActionListener? = nil,
         componentListener: NativeDisplayComponentListener? = nil
     ) {
         self.config = config
-        self.explicitParentSize = parentSize
-        self.styleResolver = StyleResolver(theme: config.theme, styleClasses: config.styleClasses)
+        // Pre-resolve all node styles once — views get O(1) lookup, no resolution at render time
+        let resolver = StyleResolver(theme: config.theme, styleClasses: config.styleClasses)
+        self.resolvedStyles = resolver.resolveAll(node: config.root)
         self.evaluator = VariableEvaluator(variables: config.variables)
-
         self.actionHandler = ActionHandler(
-                    actionListener: actionListener,
-                    componentListener: componentListener
-                )
+            actionListener: actionListener,
+            componentListener: componentListener
+        )
         self.componentListener = componentListener
     }
 
@@ -62,13 +59,13 @@ public struct NativeDisplayView: View {
     @ViewBuilder
     private func renderWithSizeResolution() -> some View {
         // ═══════════════════════════════════════════════════════════════
-        // PRIORITY 1: Explicit Parent Size (ABSOLUTE PRIORITY)
+        // PRIORITY 1: Environment Override (ABSOLUTE PRIORITY)
         // ═══════════════════════════════════════════════════════════════
-        // Check init parameter first, then environment value
+        // If integrator sets environment value, use it ALWAYS
         // - Bypasses ALL other logic (no config scanning, no GeometryReader)
         // - Works even if config has percentages, dynamic root, etc.
-        // - Solves GeometryReader-inside-ScrollView (~10pt height) issue
-        if let explicitSize = explicitParentSize ?? environmentParentSize {
+        // - This is the ONLY way to avoid GeometryReader when needed
+        if let explicitSize = environmentParentSize {
             renderContent(parentSize: explicitSize)
         }
         // ═══════════════════════════════════════════════════════════════
@@ -87,75 +84,22 @@ public struct NativeDisplayView: View {
             let screenSize = UIScreen.main.bounds.size
             renderContent(parentSize: screenSize)
         } else {
-            // Priority 4: WidthReader (safe in ScrollView — reads width only)
-            //
-            // GeometryReader is NOT used because it reports ~10pt height inside ScrollView.
-            // WidthReader reads width via background preference key without constraining height.
-            //
-            // For height: if root has aspectRatio, derive height from width.
-            // Otherwise use screen height as a reference for children's percent-height calculations.
-            // Actual container frame heights are controlled by LayoutModifier (returns nil for
-            // undefined height → wrap content) and hasExplicitHeight guard on BOX containers.
-            // This matches Android where Row/Column with no height modifier wraps content.
-            WidthReader { width in
-                renderContent(parentSize: CGSize(
-                    width: width,
-                    height: self.referenceHeight(forWidth: width)
-                ))
+            // Priority 4: GeometryReader (ONLY when truly needed)
+            // Conditions to reach here:
+            // - NO environment override AND
+            // - Root uses percentages/match_parent/wrap_content AND
+            // - Config contains percentages somewhere
+            // → MUST use GeometryReader to measure parent constraints
+            GeometryReader { geometry in
+                renderContent(parentSize: geometry.size)
             }
         }
-    }
-
-    /// Reads the available width without constraining height.
-    /// Unlike GeometryReader, this does not impose a greedy height on its parent,
-    /// making it safe to use inside ScrollView.
-    private struct WidthReader<Content: View>: View {
-        let content: (CGFloat) -> Content
-        @State private var width: CGFloat = UIScreen.main.bounds.width
-
-        init(@ViewBuilder content: @escaping (CGFloat) -> Content) {
-            self.content = content
-        }
-
-        var body: some View {
-            content(width)
-                .background(
-                    GeometryReader { geometry in
-                        Color.clear
-                            .preference(key: WidthPreferenceKey.self, value: geometry.size.width)
-                    }
-                )
-                .onPreferenceChange(WidthPreferenceKey.self) { newWidth in
-                    if newWidth > 0 {
-                        width = newWidth
-                    }
-                }
-        }
-    }
-
-    private struct WidthPreferenceKey: PreferenceKey {
-        static var defaultValue: CGFloat = 0
-        static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-            value = max(value, nextValue())
-        }
-    }
-
-    /// Computes the reference height for WidthReader-based size resolution.
-    /// If root has aspectRatio (no explicit height), derive height from width.
-    /// Otherwise use screen height as a reference for children's percent-height calculations.
-    private func referenceHeight(forWidth width: CGFloat) -> CGFloat {
-        if let aspectRatio = config.root.layout?.aspectRatio,
-           aspectRatio > 0,
-           config.root.layout?.height == nil {
-            return width * aspectRatio
-        }
-        return UIScreen.main.bounds.height
     }
 
     private func renderContent(parentSize: CGSize) -> some View {
         RenderNode(
             node: config.root,
-            styleResolver: styleResolver,
+            resolvedStyles: resolvedStyles,
             evaluator: evaluator,
             parentSize: parentSize,
             actionHandler: actionHandler,
@@ -167,7 +111,7 @@ public struct NativeDisplayView: View {
 /// Recursively render a display node (container or element).
 struct RenderNode: View {
     let node: NativeDisplayNode
-    let styleResolver: StyleResolver
+    let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let parentSize: CGSize
     let actionHandler: ActionHandler?
@@ -189,8 +133,8 @@ struct RenderNode: View {
     
     @ViewBuilder
     private func renderContent() -> some View {
-        // Resolve style
-        let resolvedStyle = styleResolver.resolveWithColors(node: node)
+        // Look up pre-resolved style
+        let resolvedStyle = resolvedStyles[node.id] ?? Style.empty
         
         let hasServerActions = node.actions != nil && !node.actions!.isEmpty
         let isClientInterested = componentListener?.getInterestedNodeIds()?.contains(node.id) ?? (componentListener != nil)
@@ -204,7 +148,7 @@ struct RenderNode: View {
 
             RenderContainer(
                 container: container,
-                styleResolver: styleResolver,
+                resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
                 parentSize: parentSize,
@@ -251,7 +195,7 @@ struct RenderNode: View {
 /// Render a container with its children.
 struct RenderContainer: View {
     let container: NativeDisplayContainer
-    let styleResolver: StyleResolver
+    let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
     let parentSize: CGSize
@@ -270,14 +214,23 @@ struct RenderContainer: View {
         // Calculate the container's actual dimensions (considering explicit layout dimensions)
         let containerSize = calculateContainerSize(parentSize: parentSize, padding: paddingInsets)
 
+        // Determine which axes are wrap_content — those axes must NOT receive a hard frame constraint.
+        // wrap_content lets SwiftUI measure the intrinsic content size on that axis.
+        let widthIsWrap = container.layout?.width?.special == .wrapContent
+        let heightIsWrap = container.layout?.height?.special == .wrapContent
+
         // Available size for children is the container size (after accounting for padding)
         // This ensures children get correct space even before LayoutModifier applies
         let availableSize = containerSize
 
         switch container.containerType {
         case .vertical:
-            renderVerticalContainer(availableSize: availableSize)
-                .padding(paddingInsets)
+            renderVerticalContainer(
+                availableSize: availableSize,
+                containerHeight: containerSize.height,
+                heightIsWrap: heightIsWrap
+            )
+            .padding(paddingInsets)
 
         case .horizontal:
             renderHorizontalContainer(availableSize: availableSize)
@@ -286,17 +239,11 @@ struct RenderContainer: View {
         case .box:
             // For BOX containers, use ZStack with topLeading alignment
             // Children use .offset() (applied in LayoutModifier) to move from their natural position
-
-            // DEBUG: Remove after fixing percentage offset issue
-            let _ = print("🔷 BOX CONTAINER: id=\(container.id), containerSize=\(containerSize), children.count=\(container.children.count)")
-            let _ = container.children.enumerated().forEach { index, child in
-                print("  🔹 BOX CHILD [\(index)]: id=\(child.id), type=\(child), hasOffset=\(child.layout?.offset != nil)")
-            }
             ZStack(alignment: .topLeading) {
-                ForEach(container.children.indices, id: \.self) { index in
+                ForEach(container.children, id: \.id) { child in
                     RenderNode(
-                        node: container.children[index],
-                        styleResolver: styleResolver,
+                        node: child,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: containerSize,
                         actionHandler: actionHandler,
@@ -304,11 +251,9 @@ struct RenderContainer: View {
                     )
                 }
             }
-            // Only apply fixed height when explicitly defined. When no height is set,
-            // let ZStack wrap its content height (matching Android FrameLayout behavior).
             .frame(
-                width: containerSize.width,
-                height: hasExplicitHeight ? containerSize.height : nil,
+                width: widthIsWrap ? nil : containerSize.width,
+                height: heightIsWrap ? nil : containerSize.height,
                 alignment: .topLeading
             )
             .padding(paddingInsets)
@@ -316,7 +261,7 @@ struct RenderContainer: View {
         case .gallery:
             RenderGallery(
                 container: container,
-                styleResolver: styleResolver,
+                resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
                 parentSize: availableSize,
@@ -325,22 +270,6 @@ struct RenderContainer: View {
             )
             .padding(paddingInsets)
         }
-    }
-
-    /// Returns whether this container has an explicitly defined height
-    /// (via height dimension, aspectRatio, or matchParent).
-    /// When false, the container should wrap its content height (matching Android behavior).
-    private var hasExplicitHeight: Bool {
-        let layout = container.layout
-        if let h = layout?.height {
-            // Has a height dimension (could be dp, percent, matchParent, wrapContent)
-            if h.special == .wrapContent { return false }
-            return true
-        }
-        if let aspectRatio = layout?.aspectRatio, aspectRatio > 0 {
-            return true
-        }
-        return false
     }
 
     /// Calculate the final container size.
@@ -352,8 +281,11 @@ struct RenderContainer: View {
         // Calculate width
         let width: CGFloat
         if let w = layout?.width {
-            if let special = w.special {
-                width = special == .matchParent ? parentSize.width : 0
+            if w.special != nil {
+                // matchParent or wrap_content: both use parentSize so percent-based children
+                // resolve correctly. The actual frame constraint is omitted at the call site
+                // for wrap_content axes.
+                width = parentSize.width
             } else {
                 switch w.unit {
                 case .dp, .px, .sp:
@@ -369,8 +301,11 @@ struct RenderContainer: View {
         // Calculate height
         let height: CGFloat
         if let h = layout?.height {
-            if let special = h.special {
-                height = special == .matchParent ? parentSize.height : 0
+            if h.special != nil {
+                // matchParent or wrap_content: both use parentSize so percent-based children
+                // resolve correctly. The actual frame constraint is omitted at the call site
+                // for wrap_content axes.
+                height = parentSize.height
             } else {
                 switch h.unit {
                 case .dp, .px, .sp:
@@ -380,14 +315,11 @@ struct RenderContainer: View {
                 }
             }
         } else if let aspectRatio = layout?.aspectRatio, aspectRatio > 0 {
-            // Derive height from width using aspect ratio
-            // JSON aspectRatio is height/width (e.g., 0.55 means height = width * 0.55)
-            height = width * aspectRatio
-        }
-        else {
-            // No explicit height: use parentSize.height so children can calculate
-            // percent heights. The container's own frame height is controlled separately
-            // (LayoutModifier returns nil height → wrap content, matching Android).
+            // No explicit height — derive from aspect ratio using the already-resolved width.
+            // This mirrors LayoutModifier.resolvedDimensions() so children receive a
+            // parentSize that matches the container's actual rendered height.
+            height = width / aspectRatio
+        } else {
             height = parentSize.height
         }
 
@@ -397,24 +329,21 @@ struct RenderContainer: View {
             height: max(0, height - padding.top - padding.bottom)
         )
 
-        // DEBUG: Remove after fixing percentage offset issue
-        print("🔵 CONTAINER SIZE: container.id=\(container.id), type=\(container.containerType), parentSize=\(parentSize), calculatedSize=\(finalSize)")
-
         return finalSize
     }
     
 
     @ViewBuilder
-    private func renderVerticalContainer(availableSize: CGSize) -> some View {
+    private func renderVerticalContainer(availableSize: CGSize, containerHeight: CGFloat, heightIsWrap: Bool) -> some View {
         let arrangement = container.layout?.arrangement ?? .default
-        
+
         switch arrangement.strategy {
         case .spaced:
             VStack(alignment: .leading, spacing: arrangement.spacing ?? 0) {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -422,34 +351,36 @@ struct RenderContainer: View {
                     )
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
+            .frame(height: heightIsWrap ? nil : containerHeight, alignment: .top)
+            .frame(maxWidth: .infinity)
+
         case .spaceBetween:
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
-                    
+
                     if index < container.children.count - 1 {
                         Spacer()
                     }
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
+            .frame(height: heightIsWrap ? nil : containerHeight, alignment: .top)
+            .frame(maxWidth: .infinity)
+
         case .spaceEvenly:
             VStack(alignment: .leading, spacing: 0) {
                 Spacer()
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -458,21 +389,22 @@ struct RenderContainer: View {
                     Spacer()
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
+            .frame(height: heightIsWrap ? nil : containerHeight, alignment: .top)
+            .frame(maxWidth: .infinity)
+
         case .spaceAround:
             VStack(alignment: .leading, spacing: 0) {
                 Spacer(minLength: 0)
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
-                    
+
                     if index < container.children.count - 1 {
                         Spacer()
                         Spacer()
@@ -480,14 +412,15 @@ struct RenderContainer: View {
                 }
                 Spacer(minLength: 0)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
+            .frame(height: heightIsWrap ? nil : containerHeight, alignment: .top)
+            .frame(maxWidth: .infinity)
+
         case .start:
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -496,15 +429,16 @@ struct RenderContainer: View {
                 }
                 Spacer(minLength: 0)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
+            .frame(height: heightIsWrap ? nil : containerHeight, alignment: .top)
+            .frame(maxWidth: .infinity)
+
         case .center:
             VStack(alignment: .center, spacing: 0) {
                 Spacer()
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -513,15 +447,16 @@ struct RenderContainer: View {
                 }
                 Spacer()
             }
-            .frame(maxWidth: .infinity, alignment: .center)
-            
+            .frame(height: heightIsWrap ? nil : containerHeight, alignment: .top)
+            .frame(maxWidth: .infinity)
+
         case .end:
             VStack(alignment: .trailing, spacing: 0) {
                 Spacer(minLength: 0)
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -529,33 +464,24 @@ struct RenderContainer: View {
                     )
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .trailing)
+            .frame(height: heightIsWrap ? nil : containerHeight, alignment: .top)
+            .frame(maxWidth: .infinity)
         }
     }
     
     @ViewBuilder
     private func renderHorizontalContainer(availableSize: CGSize) -> some View {
         let arrangement = container.layout?.arrangement ?? .default
-
+        
         switch arrangement.strategy {
         case .spaced:
-            let spacing = arrangement.spacing ?? 0
-            let childCount = container.children.count
-            let totalSpacing = spacing * CGFloat(max(0, childCount - 1))
-            // Subtract inter-child spacing from available width so percent-width
-            // children compute their widths from the actual distributable space.
-            // Matches Android's Row where fillMaxWidth(fraction) accounts for spacing.
-            let childParentSize = CGSize(
-                width: max(0, availableSize.width - totalSpacing),
-                height: availableSize.height
-            )
-            HStack(alignment: .center, spacing: spacing) {
+            HStack(alignment: .top, spacing: arrangement.spacing ?? 0) {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
-                        parentSize: childParentSize,
+                        parentSize: availableSize,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
@@ -563,11 +489,11 @@ struct RenderContainer: View {
             }
             
         case .spaceBetween:
-            HStack(alignment: .center, spacing: 0) {
+            HStack(alignment: .top, spacing: 0) {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -581,12 +507,12 @@ struct RenderContainer: View {
             }
             
         case .spaceEvenly:
-            HStack(alignment: .center, spacing: 0) {
+            HStack(alignment: .top, spacing: 0) {
                 Spacer()
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -597,12 +523,12 @@ struct RenderContainer: View {
             }
             
         case .spaceAround:
-            HStack(alignment: .center, spacing: 0) {
+            HStack(alignment: .top, spacing: 0) {
                 Spacer(minLength: 0)
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -618,11 +544,11 @@ struct RenderContainer: View {
             }
             
         case .start:
-            HStack(alignment: .center, spacing: 0) {
+            HStack(alignment: .top, spacing: 0) {
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -633,12 +559,12 @@ struct RenderContainer: View {
             }
             
         case .center:
-            HStack(alignment: .center, spacing: 0) {
+            HStack(alignment: .top, spacing: 0) {
                 Spacer()
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -649,12 +575,12 @@ struct RenderContainer: View {
             }
             
         case .end:
-            HStack(alignment: .center, spacing: 0) {
+            HStack(alignment: .top, spacing: 0) {
                 Spacer(minLength: 0)
                 ForEach(container.children.indices, id: \.self) { index in
                     RenderNode(
                         node: container.children[index],
-                        styleResolver: styleResolver,
+                        resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
                         actionHandler: actionHandler,
@@ -714,14 +640,42 @@ struct RenderElement: View {
     private func renderText() -> some View {
         let text = element.bindings["text"].map { evaluator.evaluateString($0) } ?? ""
         let textProps = resolvedStyle.extractTextProperties()
+        let textAlignment = resolveTextAlign(textProps.align)
 
-        Text(text)
+        // wrap_content elements must NOT expand — the element IS its text width.
+        // All other width modes (match_parent, fixed dp, percent) need the Text to fill
+        // the allocated width so that .multilineTextAlignment() is visually effective.
+        // Without this, a 50pt "Hello" placed in a 300pt frame is always left-anchored
+        // regardless of textAlign, because alignment happens within the Text's own bounds.
+        let isWrapContent = element.layout?.width?.special == .wrapContent
+
+        // Map TextAlignment → Alignment for the frame's horizontal axis.
+        // Vertical positioning is handled by LayoutModifier's topLeading alignment.
+        // Computed via closure so the switch is not inside the @ViewBuilder context.
+        let frameAlignment: Alignment = {
+            switch textAlignment {
+            case .center:   return .center
+            case .trailing: return .trailing
+            default:        return .leading
+            }
+        }()
+
+        // Build the styled Text as a Text value (all Text modifiers return Text).
+        let coreText = Text(text)
             .foregroundColor(ColorParser.parse(textProps.color) ?? .primary)
             .font(.system(size: textProps.size ?? 14))
             .fontWeight(resolveFontWeight(textProps.weight))
-            .multilineTextAlignment(resolveTextAlign(textProps.align))
+            .multilineTextAlignment(textAlignment)
             .lineSpacing(max(0, (textProps.lineHeight ?? 0) - (textProps.size ?? 14)))
-            .fixedSize(horizontal: false, vertical: true)
+
+        if isWrapContent {
+            coreText
+                .fixedSize(horizontal: false, vertical: true)
+        } else {
+            coreText
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: frameAlignment)
+        }
     }
     
     @ViewBuilder
@@ -757,6 +711,7 @@ struct RenderElement: View {
                         image
                             .resizable()
                             .aspectRatio(contentMode: contentMode)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                             .clipped()
                     case .failure:
                         Image(systemName: "photo")
@@ -821,25 +776,26 @@ struct RenderElement: View {
         let buttonText = element.bindings["text"].map { evaluator.evaluateString($0) } ?? "Button"
 
         let textProps = resolvedStyle.extractTextProperties()
-        let visualProps = resolvedStyle.extractVisualProperties()
-        let borderProps = resolvedStyle.extractBorderProperties()
 
         Button(action: {
             if let onClick = element.actions?[ActionTriggers.onClick] {
                 actionHandler?.handleAction(onClick, nodeId: element.id, interactionType: .click)
             }
         }) {
+            // Fill the allocated frame so the tappable area covers the full element bounds.
+            // Text is centered within the button — center alignment is the conventional default for buttons.
             Text(buttonText)
                 .foregroundColor(ColorParser.parse(textProps.color) ?? .white)
                 .font(.system(size: textProps.size ?? 16))
                 .fontWeight(resolveFontWeight(textProps.weight))
+                .multilineTextAlignment(resolveTextAlign(textProps.align))
+                .lineSpacing(max(0, (textProps.lineHeight ?? 0) - (textProps.size ?? 16)))
+                .lineLimit(textProps.maxLines)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(ColorParser.parse(visualProps.backgroundColor) ?? Color.blue)
-        .cornerRadius(borderProps.radius ?? 8)
+        .buttonStyle(.plain)
     }
-    
+
     @ViewBuilder
     private func renderVideo() -> some View {
         let videoUrl = element.bindings["url"].map { evaluator.evaluateString($0) } ?? ""
@@ -929,28 +885,48 @@ struct LayoutModifier: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        let width = calculateWidth()
-        let height = calculateHeight()
+        let dims = resolvedDimensions()
         let maxWidth = calculateMaxWidth()
         let maxHeight = calculateMaxHeight()
-        let aspectRatio = calculateAspectRatio()
-
-        // DEBUG: Remove after fixing percentage offset issue
-        let _ = nodeId.map { nodeId in
-            print("📐 LAYOUT: nodeId=\(nodeId), width=\(width?.description ?? "nil"), height=\(height?.description ?? "nil")")
-        }
 
         // Apply sizing only - offset will be applied after decorations
-        if let ratio = aspectRatio {
+        // alignment: .topLeading ensures content anchors to top-start when the frame
+        // is larger than the content's natural size (matches Android's default top-start behaviour)
+        if dims.useAspectRatioModifier, let ratio = calculateAspectRatio() {
             content
-                .frame(width: width, height: height)
+                .frame(width: dims.width, height: dims.height, alignment: .topLeading)
                 .aspectRatio(ratio, contentMode: .fit)
                 .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: .topLeading)
         } else {
             content
-                .frame(width: width, height: height)
+                .frame(width: dims.width, height: dims.height, alignment: .topLeading)
                 .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: .topLeading)
         }
+    }
+
+    /// Resolves the final width and height, deriving the missing dimension from aspect ratio
+    /// when the other dimension is a known value. This matches Android's behavior where
+    /// Modifier.aspectRatio with a fixed-width constraint gives height = width / ratio.
+    /// Only uses the .aspectRatio() SwiftUI modifier as a last resort when both dimensions
+    /// are unresolved (match_parent), since pixel size is unknown at calculation time.
+    private func resolvedDimensions() -> (width: CGFloat?, height: CGFloat?, useAspectRatioModifier: Bool) {
+        let explicitWidth = calculateWidth()
+        let explicitHeight = calculateHeight()
+        guard let ratio = calculateAspectRatio() else {
+            return (explicitWidth, explicitHeight, false)
+        }
+        if let w = explicitWidth, explicitHeight == nil {
+            // Width known → height = width / ratio (common case: percent width + aspectRatio)
+            return (w, w / ratio, false)
+        }
+        if let h = explicitHeight, explicitWidth == nil {
+            // Height known → width = height * ratio
+            return (h * ratio, h, false)
+        }
+        // Both unresolved (match_parent) → fall back to SwiftUI modifier
+        // Both explicit → aspect ratio ignored (matches Android behaviour)
+        let useModifier = explicitWidth == nil && explicitHeight == nil
+        return (explicitWidth, explicitHeight, useModifier)
     }
 
     private func calculateWidth() -> CGFloat? {
@@ -974,30 +950,23 @@ struct LayoutModifier: ViewModifier {
     }
 
     private func calculateHeight() -> CGFloat? {
-        if let height = layout?.height {
-            if let special = height.special {
-                switch special {
-                case .wrapContent:
-                    return nil
-                case .matchParent:
-                    return nil // Use maxHeight instead
-                }
-            }
-            switch height.unit {
-            case .dp, .px, .sp:
-                return height.value > 0 ? height.value : nil
-            case .percent:
-                return parentSize.height * height.value / 100
+        guard let height = layout?.height else { return nil }
+
+        if let special = height.special {
+            switch special {
+            case .wrapContent:
+                return nil
+            case .matchParent:
+                return nil // Use maxHeight instead
             }
         }
-        // No explicit height: derive from aspect ratio if available
-        // JSON aspectRatio is height/width (e.g., 0.55 means height = width * 0.55)
-        // This matches Android: Compose.aspectRatio(1f / jsonRatio) where ratio = w/h
-        if let aspectRatio = layout?.aspectRatio, aspectRatio > 0,
-           let width = calculateWidth(), width > 0 {
-            return width * aspectRatio
+
+        switch height.unit {
+        case .dp, .px, .sp:
+            return height.value > 0 ? height.value : nil
+        case .percent:
+            return parentSize.height * height.value / 100
         }
-        return nil
     }
 
     private func calculateMaxWidth() -> CGFloat? {

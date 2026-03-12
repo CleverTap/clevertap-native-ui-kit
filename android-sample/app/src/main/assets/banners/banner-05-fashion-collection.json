@@ -29,7 +29,7 @@
         "id": "fashion-image",
         "elementType": "image",
         "bindings": {
-          "url": "https://yavuzceliker.github.io/sample-images/image-233.jpg"
+          "url": "https://cdn.dummyjson.com/products/images/womens-dresses/Black%20Elegant%20Cocktail%20Dress/1.png"
         },
         "layout": {
           "width": { "value": 100, "unit": "percent" },

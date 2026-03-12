@@ -1,5 +1,6 @@
 package com.clevertap.android.nativedisplay.models
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
 /**
@@ -43,6 +44,7 @@ import kotlinx.serialization.Serializable
  * This class maintains full backward compatibility with existing JSON configurations.
  * All properties are nullable and optional.
  */
+@Immutable
 @Serializable
 data class Style(
     // ==================== TEXT PROPERTIES (Cascading) ====================
@@ -274,6 +276,7 @@ data class Style(
  * Text shadow configuration for text elements.
  * Provides drop shadow effect on text.
  */
+@Immutable
 @Serializable
 data class TextShadow(
     val color: String,              // Hex color (e.g., "#00000040" for semi-transparent black)
@@ -286,6 +289,7 @@ data class TextShadow(
  * Text gradient configuration for gradient text effects.
  * Supports linear gradients on text.
  */
+@Immutable
 @Serializable
 data class TextGradient(
     val type: String = "linear",    // "linear" (radial and sweep not supported on text)
@@ -297,6 +301,7 @@ data class TextGradient(
 /**
  * Named style class that can be referenced by elements.
  */
+@Immutable
 @Serializable
 data class StyleClass(
     val name: String,
@@ -306,6 +311,7 @@ data class StyleClass(
 /**
  * Theme containing default styles and color palette.
  */
+@Immutable
 @Serializable
 data class Theme(
     val id: String,

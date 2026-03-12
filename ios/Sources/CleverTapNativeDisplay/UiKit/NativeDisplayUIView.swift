@@ -8,6 +8,28 @@
 import UIKit
 import SwiftUI
 
+/// Internal SwiftUI root wrapper. Avoids AnyView type erasure for better SwiftUI diffing.
+@available(iOS 13.0, *)
+struct _NativeDisplayRoot: View {
+    let config: ResolvedConfig
+    let parentSize: CGSize?
+    let actionListener: NativeDisplayActionListener?
+    let componentListener: NativeDisplayComponentListener?
+
+    var body: some View {
+        let view = NativeDisplayView(
+            config: config,
+            actionListener: actionListener,
+            componentListener: componentListener
+        )
+        if let size = parentSize {
+            view.environment(\.nativeDisplayParentSize, size)
+        } else {
+            view
+        }
+    }
+}
+
 /// UIKit UIView that hosts the SwiftUI NativeDisplayView.
 /// Use this to embed native display content in existing UIKit views.
 ///
@@ -28,7 +50,7 @@ open class NativeDisplayUIView: UIView {
     private let actionListener: NativeDisplayActionListener?
     private let componentListener: NativeDisplayComponentListener?
     private let parentSize: CGSize?
-    private var hostingController: UIHostingController<AnyView>?
+    private var hostingController: UIHostingController<_NativeDisplayRoot>?
     private weak var parentViewController: UIViewController?
 
     // MARK: - Initialization
@@ -60,34 +82,15 @@ open class NativeDisplayUIView: UIView {
     // MARK: - Setup
     
     private func setupSwiftUIView() {
-        // Create hosting controller with SwiftUI view
-        let hostingController: UIHostingController<AnyView>
-
-        if let size = parentSize {
-            // Apply environment override if parent size is provided
-            let view = NativeDisplayView(
-                config: config,
-                actionListener: actionListener,
-                componentListener: componentListener
-            )
-            .environment(\.nativeDisplayParentSize, size)
-            hostingController = UIHostingController(rootView: AnyView(view))
-        } else {
-            // No environment override needed
-            let view = NativeDisplayView(
-                config: config,
-                actionListener: actionListener,
-                componentListener: componentListener
-            )
-            hostingController = UIHostingController(rootView: AnyView(view))
-        }
-
+        let rootView = _NativeDisplayRoot(
+            config: config,
+            parentSize: parentSize,
+            actionListener: actionListener,
+            componentListener: componentListener
+        )
+        let hostingController = UIHostingController(rootView: rootView)
         hostingController.view.backgroundColor = .clear
-
-        // Add hosting controller's view
         addSubview(hostingController.view)
-
-        // Setup constraints
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             hostingController.view.topAnchor.constraint(equalTo: topAnchor),
@@ -95,7 +98,6 @@ open class NativeDisplayUIView: UIView {
             hostingController.view.trailingAnchor.constraint(equalTo: trailingAnchor),
             hostingController.view.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
-
         self.hostingController = hostingController
     }
     
@@ -129,23 +131,13 @@ open class NativeDisplayUIView: UIView {
     
     /// Update the configuration dynamically
     /// - Parameter config: New configuration to display
-    public func updateConfig(_ config: ResolvedConfig) {
-        if let size = parentSize {
-            let view = NativeDisplayView(
-                config: config,
-                actionListener: actionListener,
-                componentListener: componentListener
-            )
-            .environment(\.nativeDisplayParentSize, size)
-            hostingController?.rootView = AnyView(view)
-        } else {
-            let view = NativeDisplayView(
-                config: config,
-                actionListener: actionListener,
-                componentListener: componentListener
-            )
-            hostingController?.rootView = AnyView(view)
-        }
+    public func updateConfig(_ newConfig: ResolvedConfig) {
+        hostingController?.rootView = _NativeDisplayRoot(
+            config: newConfig,
+            parentSize: parentSize,
+            actionListener: actionListener,
+            componentListener: componentListener
+        )
     }
     
     // MARK: - Intrinsic Content Size

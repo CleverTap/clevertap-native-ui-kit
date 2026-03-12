@@ -251,8 +251,9 @@ Containers hold and layout child elements.
 | `mode` | string | `"snapping"` | `"snapping"`, `"free_flow"`, `"free_flow_grid"` |
 | `orientation` | string | `"horizontal"` | `"horizontal"` or `"vertical"` |
 | `spacing` | number | `8` | Gap between items (dp) |
-| `peekPercentage` | number | `0` | Peek % (snapping mode only) |
-| `itemsPerView` | number | `1` | Items visible (grid mode only) |
+| `peek` | object | `{}` | `{"before": dp, "after": dp}` — adjacent card reveal (snapping mode only) |
+| `itemsPerView` | number | `1` | Items visible (free_flow_grid mode only) |
+| `columns` | number | `null` | Override itemsPerView with integer column count (free_flow_grid mode only) |
 | `showIndicators` | boolean | `false` | Show page indicators |
 | `autoScrollInterval` | number | `0` | Auto-scroll ms (0 = off) |
 
@@ -267,7 +268,7 @@ Containers hold and layout child elements.
   "galleryConfig": {
     "mode": "snapping",
     "orientation": "horizontal",
-    "peekPercentage": 15,
+    "peek": {"before": 15, "after": 15},
     "showIndicators": true,
     "autoScrollInterval": 3000
   },

@@ -51,7 +51,8 @@
           }
         },
         "style": {
-          "fontSize": 12
+          "fontSize": 12,
+          "lineHeight": 17
         }
       },
       {
@@ -73,7 +74,8 @@
           }
         },
         "style": {
-          "fontSize": 14
+          "fontSize": 14,
+          "lineHeight": 20
         }
       },
       {
@@ -95,7 +97,8 @@
           }
         },
         "style": {
-          "fontSize": 16
+          "fontSize": 16,
+          "lineHeight": 22
         }
       },
       {
@@ -117,7 +120,8 @@
           }
         },
         "style": {
-          "fontSize": 20
+          "fontSize": 20,
+          "lineHeight": 28
         }
       },
       {
@@ -139,7 +143,8 @@
           }
         },
         "style": {
-          "fontSize": 24
+          "fontSize": 24,
+          "lineHeight": 34
         }
       },
       {
@@ -161,7 +166,8 @@
           }
         },
         "style": {
-          "fontSize": 32
+          "fontSize": 32,
+          "lineHeight": 45
         }
       },
       {
@@ -183,7 +189,8 @@
           }
         },
         "style": {
-          "fontSize": 48
+          "fontSize": 48,
+          "lineHeight": 67
         }
       }
     ]

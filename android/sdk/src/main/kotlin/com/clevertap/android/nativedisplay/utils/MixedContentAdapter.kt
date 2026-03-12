@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
-import com.clevertap.nativedisplay.view.NativeDisplayViewGroup
+import com.clevertap.android.nativedisplay.view.NativeDisplayViewGroup
 
 /**
  * Base adapter for mixing native and SDUI content in RecyclerView.

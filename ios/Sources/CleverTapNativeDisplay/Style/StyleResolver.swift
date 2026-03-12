@@ -68,6 +68,45 @@ public class StyleResolver {
         )
     }
     
+    /// Pre-resolve styles for an entire node tree in a single pass.
+    /// Call once at config-set time; pass the result into views as a [String: Style] dict.
+    ///
+    /// Includes parent-to-child cascading of text properties so views only need
+    /// an O(1) dictionary lookup — no StyleResolver in the view tree at all.
+    ///
+    /// - Parameters:
+    ///   - node: Root node to start resolution from
+    ///   - parentCascadingStyle: Cascading text style from parent (nil for root)
+    /// - Returns: Dictionary from node ID → fully resolved Style (including cascading)
+    public func resolveAll(
+        node: NativeDisplayNode,
+        parentCascadingStyle: Style? = nil
+    ) -> [String: Style] {
+        var result = [String: Style]()
+        resolveAllInto(node: node, parentCascadingStyle: parentCascadingStyle, result: &result)
+        return result
+    }
+
+    private func resolveAllInto(
+        node: NativeDisplayNode,
+        parentCascadingStyle: Style?,
+        result: inout [String: Style]
+    ) {
+        // Resolve this node's own style (theme + styleClass + inline + color palette)
+        let ownStyle = resolveWithColors(node: node)
+        // Merge with parent cascading text properties (own style wins, parent fills gaps)
+        let finalStyle = ownStyle.mergedWith(parentCascadingStyle)
+        result[node.id] = finalStyle
+
+        // Recurse into children passing cascading text properties
+        if case .container(let container) = node {
+            let cascading = finalStyle.cascadingOnly()
+            for child in container.children {
+                resolveAllInto(node: child, parentCascadingStyle: cascading, result: &result)
+            }
+        }
+    }
+
     /// Resolve a color value, checking theme palette if it's a named color.
     private func resolveColor(_ color: String?) -> String? {
         guard let color = color else { return nil }

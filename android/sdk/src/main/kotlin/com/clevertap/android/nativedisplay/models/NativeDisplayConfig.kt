@@ -1,5 +1,6 @@
 package com.clevertap.android.nativedisplay.models
 
+import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 
@@ -7,6 +8,7 @@ import kotlinx.serialization.json.JsonElement
  * Main configuration for native display rendering.
  * Supports both Phase 1 (monolithic) and Phase 2+ (split APIs).
  */
+@Immutable
 @Serializable
 data class NativeDisplayConfig(
     val version: String = "1.0",
@@ -46,6 +48,7 @@ data class NativeDisplayConfig(
 /**
  * Reference to external template (Phase 2+).
  */
+@Immutable
 @Serializable
 data class TemplateReference(
     val templateId: String,
@@ -56,6 +59,7 @@ data class TemplateReference(
 /**
  * Reference to external style data (Phase 2+).
  */
+@Immutable
 @Serializable
 data class StyleReference(
     val styleId: String,
@@ -66,6 +70,7 @@ data class StyleReference(
 /**
  * Reference to external data (Phase 2+).
  */
+@Immutable
 @Serializable
 data class DataReference(
     val dataId: String,
@@ -76,6 +81,7 @@ data class DataReference(
  * Resolved configuration after loading all resources.
  * Used internally after fetching templates, styles, and data.
  */
+@Immutable
 @Serializable
 data class ResolvedConfig(
     val theme: Theme = Theme.DEFAULT,

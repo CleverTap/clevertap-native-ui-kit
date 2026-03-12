@@ -3,7 +3,8 @@
     "id": "test-theme",
     "defaultStyle": {
       "textColor": "#5E35B1",
-      "fontSize": 16
+      "fontSize": 16,
+      "lineHeight": 22
     }
   },
   "root": {
@@ -53,7 +54,8 @@
         "style": {
           "fontSize": 24,
           "fontWeight": "bold",
-          "textColor": "#4A148C"
+          "textColor": "#4A148C",
+          "lineHeight": 34
         }
       },
       {
@@ -76,7 +78,8 @@
         },
         "style": {
           "fontSize": 16,
-          "textColor": "#5E35B1"
+          "textColor": "#5E35B1",
+          "lineHeight": 22
         }
       },
       {
@@ -128,7 +131,8 @@
             "style": {
               "fontSize": 20,
               "fontWeight": "bold",
-              "textColor": "#4A148C"
+              "textColor": "#4A148C",
+              "lineHeight": 28
             }
           },
           {
@@ -151,7 +155,8 @@
             },
             "style": {
               "fontSize": 14,
-              "textColor": "#7E57C2"
+              "textColor": "#7E57C2",
+              "lineHeight": 20
             }
           }
         ]
@@ -205,7 +210,8 @@
             "style": {
               "fontSize": 20,
               "fontWeight": "bold",
-              "textColor": "#4A148C"
+              "textColor": "#4A148C",
+              "lineHeight": 28
             }
           },
           {
@@ -228,7 +234,8 @@
             },
             "style": {
               "fontSize": 14,
-              "textColor": "#7E57C2"
+              "textColor": "#7E57C2",
+              "lineHeight": 20
             }
           }
         ]
@@ -282,7 +289,8 @@
             "style": {
               "fontSize": 20,
               "fontWeight": "bold",
-              "textColor": "#4A148C"
+              "textColor": "#4A148C",
+              "lineHeight": 28
             }
           },
           {
@@ -305,7 +313,8 @@
             },
             "style": {
               "fontSize": 14,
-              "textColor": "#7E57C2"
+              "textColor": "#7E57C2",
+              "lineHeight": 20
             }
           }
         ]

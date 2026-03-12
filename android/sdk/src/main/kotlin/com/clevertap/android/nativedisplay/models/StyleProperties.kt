@@ -1,5 +1,7 @@
 package com.clevertap.android.nativedisplay.models
 
+import androidx.compose.runtime.Immutable
+
 /**
  * Text styling properties extracted from Style.
  * Used internally by renderer for text elements (TEXT, BUTTON).
@@ -20,6 +22,7 @@ package com.clevertap.android.nativedisplay.models
  * - textGradient: Gradient effect on text
  * - opacity: Text opacity (0.0 to 1.0)
  */
+@Immutable
 data class TextProperties(
     val color: String?,
     val size: Float?,
@@ -69,6 +72,7 @@ data class TextProperties(
  * - backgroundColor: Simple solid background color
  * - opacity: Element opacity (0.0 to 1.0)
  */
+@Immutable
 data class VisualProperties(
     val background: Background?,
     val backgroundColor: String?,
@@ -95,6 +99,7 @@ data class VisualProperties(
  * - width: Border width in DP (stroke thickness)
  * - color: Border color in hex format
  */
+@Immutable
 data class BorderProperties(
     val radius: Float?,
     val width: Float?,
@@ -122,6 +127,7 @@ data class BorderProperties(
  * - offsetX: Horizontal shadow offset in DP
  * - offsetY: Vertical shadow offset in DP
  */
+@Immutable
 data class ShadowProperties(
     val color: String?,
     val radius: Float?,

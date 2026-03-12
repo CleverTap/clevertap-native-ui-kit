@@ -4,19 +4,20 @@
     "defaultStyle": {
       "textColor": "#FF1F2937",
       "fontSize": 14,
-      "fontFamily": "System"
+      "fontFamily": "System",
+      "lineHeight": 20
     }
   },
   "variables": {
     "planName": "Premium Plan",
     "planPrice": "$49",
     "planPeriod": "per month",
-    "feature1": "\u2713 Unlimited Projects",
-    "feature2": "\u2713 Priority Support 24/7",
-    "feature3": "\u2713 Advanced Analytics",
-    "feature4": "\u2713 Custom Integrations",
-    "feature5": "\u2713 Team Collaboration",
-    "feature6": "\u2713 Export & Backup",
+    "feature1": "✓ Unlimited Projects",
+    "feature2": "✓ Priority Support 24/7",
+    "feature3": "✓ Advanced Analytics",
+    "feature4": "✓ Custom Integrations",
+    "feature5": "✓ Team Collaboration",
+    "feature6": "✓ Export & Backup",
     "buttonText": "Subscribe Now",
     "badge": "POPULAR"
   },
@@ -110,7 +111,8 @@
                   "fontWeight": "bold",
                   "textColor": "#FFFFFFFF",
                   "backgroundColor": "#FF3B82F6",
-                  "borderRadius": 12
+                  "borderRadius": 12,
+                  "lineHeight": 17
                 },
                 "type": "element"
               }
@@ -147,7 +149,8 @@
                   "fontSize": 28,
                   "fontWeight": "bold",
                   "textColor": "#FF111827",
-                  "textAlign": "center"
+                  "textAlign": "center",
+                  "lineHeight": 39
                 },
                 "type": "element"
               },
@@ -180,7 +183,8 @@
                     "style": {
                       "fontSize": 56,
                       "fontWeight": "bold",
-                      "textColor": "#FF3B82F6"
+                      "textColor": "#FF3B82F6",
+                      "lineHeight": 78
                     },
                     "type": "element"
                   }
@@ -203,7 +207,8 @@
                   "fontSize": 16,
                   "fontWeight": "normal",
                   "textColor": "#FF6B7280",
-                  "textAlign": "center"
+                  "textAlign": "center",
+                  "lineHeight": 22
                 },
                 "type": "element"
               }
@@ -404,7 +409,8 @@
               "shadowRadius": 16,
               "shadowColor": "#FF3B82F6",
               "shadowOpacity": 0.4,
-              "shadowOffsetY": 6
+              "shadowOffsetY": 6,
+              "lineHeight": 25
             },
             "type": "element"
           }

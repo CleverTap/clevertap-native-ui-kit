@@ -4,25 +4,26 @@
     "defaultStyle": {
       "textColor": "#FF1F2937",
       "fontSize": 16,
-      "fontFamily": "System"
+      "fontFamily": "System",
+      "lineHeight": 22
     }
   },
   "variables": {
     "section1Title": "ACCOUNT",
     "setting1Label": "Profile Settings",
-    "setting1Icon": "\ud83d\udc64",
+    "setting1Icon": "👤",
     "setting2Label": "Security & Privacy",
-    "setting2Icon": "\ud83d\udd12",
+    "setting2Icon": "🔒",
     "section2Title": "PREFERENCES",
     "setting3Label": "Notifications",
-    "setting3Icon": "\ud83d\udd14",
+    "setting3Icon": "🔔",
     "setting4Label": "Language & Region",
-    "setting4Icon": "\ud83c\udf0d",
+    "setting4Icon": "🌍",
     "section3Title": "SUPPORT",
     "setting5Label": "Help Center",
-    "setting5Icon": "\u2753",
+    "setting5Icon": "❓",
     "setting6Label": "Contact Support",
-    "setting6Icon": "\ud83d\udcac"
+    "setting6Icon": "💬"
   },
   "root": {
     "id": "settings-container",
@@ -65,7 +66,8 @@
         "style": {
           "fontSize": 13,
           "fontWeight": "bold",
-          "textColor": "#FF6B7280"
+          "textColor": "#FF6B7280",
+          "lineHeight": 18
         },
         "type": "element"
       },
@@ -133,7 +135,8 @@
                       }
                     },
                     "style": {
-                      "fontSize": 20
+                      "fontSize": 20,
+                      "lineHeight": 28
                     },
                     "type": "element"
                   },
@@ -152,7 +155,8 @@
                     "style": {
                       "fontSize": 17,
                       "fontWeight": "normal",
-                      "textColor": "#FF111827"
+                      "textColor": "#FF111827",
+                      "lineHeight": 24
                     },
                     "type": "element"
                   }
@@ -163,7 +167,7 @@
                 "id": "arrow-1",
                 "elementType": "text",
                 "bindings": {
-                  "text": "\u203a"
+                  "text": "›"
                 },
                 "layout": {
                   "width": {
@@ -174,7 +178,8 @@
                 "style": {
                   "fontSize": 24,
                   "fontWeight": "normal",
-                  "textColor": "#FF9CA3AF"
+                  "textColor": "#FF9CA3AF",
+                  "lineHeight": 34
                 },
                 "type": "element"
               }
@@ -250,7 +255,8 @@
                       }
                     },
                     "style": {
-                      "fontSize": 20
+                      "fontSize": 20,
+                      "lineHeight": 28
                     },
                     "type": "element"
                   },
@@ -269,7 +275,8 @@
                     "style": {
                       "fontSize": 17,
                       "fontWeight": "normal",
-                      "textColor": "#FF111827"
+                      "textColor": "#FF111827",
+                      "lineHeight": 24
                     },
                     "type": "element"
                   }
@@ -280,7 +287,7 @@
                 "id": "arrow-2",
                 "elementType": "text",
                 "bindings": {
-                  "text": "\u203a"
+                  "text": "›"
                 },
                 "layout": {
                   "width": {
@@ -291,7 +298,8 @@
                 "style": {
                   "fontSize": 24,
                   "fontWeight": "normal",
-                  "textColor": "#FF9CA3AF"
+                  "textColor": "#FF9CA3AF",
+                  "lineHeight": 34
                 },
                 "type": "element"
               }
@@ -322,7 +330,8 @@
         "style": {
           "fontSize": 13,
           "fontWeight": "bold",
-          "textColor": "#FF6B7280"
+          "textColor": "#FF6B7280",
+          "lineHeight": 18
         },
         "type": "element"
       },
@@ -390,7 +399,8 @@
                       }
                     },
                     "style": {
-                      "fontSize": 20
+                      "fontSize": 20,
+                      "lineHeight": 28
                     },
                     "type": "element"
                   },
@@ -409,7 +419,8 @@
                     "style": {
                       "fontSize": 17,
                       "fontWeight": "normal",
-                      "textColor": "#FF111827"
+                      "textColor": "#FF111827",
+                      "lineHeight": 24
                     },
                     "type": "element"
                   }
@@ -420,7 +431,7 @@
                 "id": "arrow-3",
                 "elementType": "text",
                 "bindings": {
-                  "text": "\u203a"
+                  "text": "›"
                 },
                 "layout": {
                   "width": {
@@ -431,7 +442,8 @@
                 "style": {
                   "fontSize": 24,
                   "fontWeight": "normal",
-                  "textColor": "#FF9CA3AF"
+                  "textColor": "#FF9CA3AF",
+                  "lineHeight": 34
                 },
                 "type": "element"
               }
@@ -507,7 +519,8 @@
                       }
                     },
                     "style": {
-                      "fontSize": 20
+                      "fontSize": 20,
+                      "lineHeight": 28
                     },
                     "type": "element"
                   },
@@ -526,7 +539,8 @@
                     "style": {
                       "fontSize": 17,
                       "fontWeight": "normal",
-                      "textColor": "#FF111827"
+                      "textColor": "#FF111827",
+                      "lineHeight": 24
                     },
                     "type": "element"
                   }
@@ -537,7 +551,7 @@
                 "id": "arrow-4",
                 "elementType": "text",
                 "bindings": {
-                  "text": "\u203a"
+                  "text": "›"
                 },
                 "layout": {
                   "width": {
@@ -548,7 +562,8 @@
                 "style": {
                   "fontSize": 24,
                   "fontWeight": "normal",
-                  "textColor": "#FF9CA3AF"
+                  "textColor": "#FF9CA3AF",
+                  "lineHeight": 34
                 },
                 "type": "element"
               }

@@ -3,7 +3,8 @@
     "id": "test-101",
     "defaultStyle": {
       "textColor": "#000000",
-      "fontSize": 14
+      "fontSize": 14,
+      "lineHeight": 20
     }
   },
   "variables": {
@@ -52,7 +53,8 @@
         "style": {
           "fontSize": 18,
           "fontWeight": "bold",
-          "textColor": "#333333"
+          "textColor": "#333333",
+          "lineHeight": 25
         }
       },
       {
@@ -66,15 +68,12 @@
           "width": {
             "value": 100,
             "unit": "percent"
-          },
-          "height": {
-            "value": 100,
-            "unit": "percent"
           }
         },
         "style": {
           "fontSize": 12,
-          "textColor": "#666666"
+          "textColor": "#666666",
+          "lineHeight": 17
         }
       },
       {
@@ -182,7 +181,8 @@
             "style": {
               "fontSize": 14,
               "textColor": "#FFFFFF",
-              "textAlign": "center"
+              "textAlign": "center",
+              "lineHeight": 20
             }
           }
         ]

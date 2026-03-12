@@ -1,286 +1,245 @@
 import SwiftUI
 import CleverTapNativeDisplay
 
-// MARK: - Data Models
-
-/// Represents a test configuration item
-struct TestConfigItem: Identifiable {
-    let id: String
-    let filename: String
-    let displayName: String
-    let category: String
-}
-
 // MARK: - Main View
 
-/// Test Configuration Browser - Displays and renders test JSON configurations
+/// Test Configuration Browser - Sequential navigation through all test JSON configs
 struct TestConfigBrowserView: View {
-    @State private var selectedTestConfig: String? = nil
+    @State private var testFiles: [String] = []
+    @State private var currentIndex: Int = 0
     @State private var config: ResolvedConfig? = nil
     @State private var errorMessage: String? = nil
-    @State private var isLoading = false
-
-    /// Dynamically discovered test configurations from the app bundle.
-    /// Finds all JSON files matching "test-XXX-*" pattern and sorts by test number.
-    /// Uses Bundle.urls(forResourcesWithExtension:) which only returns accessible files,
-    /// avoiding permission errors from framework bundles or protected resources.
-    private let testConfigs: [TestConfigItem] = {
-        guard let urls = Bundle.main.urls(forResourcesWithExtension: "json", subdirectory: nil) else {
-            return []
-        }
-
-        let testFiles = urls
-            .map { $0.lastPathComponent }
-            .filter { $0.hasPrefix("test-") }
-            .sorted()
-
-        return testFiles.map { filename in
-            let name = filename.replacingOccurrences(of: ".json", with: "")
-            // Extract test number (e.g., "091" from "test-091-offset-percent-box-basic")
-            let parts = name.split(separator: "-", maxSplits: 2)
-            let testNumber = parts.count >= 2 ? String(parts[1]) : "000"
-            let testId = "test-\(testNumber)"
-            let displaySuffix = parts.count >= 3 ? String(parts[2]).replacingOccurrences(of: "-", with: " ").capitalized : ""
-            let displayName = "\(testNumber): \(displaySuffix)"
-
-            return TestConfigItem(
-                id: testId,
-                filename: name,
-                displayName: displayName,
-                category: categorize(testNumber: testNumber)
-            )
-        }
-    }()
-
-    /// Categorize test by its number range
-    private static func categorize(testNumber: String) -> String {
-        guard let num = Int(testNumber) else { return "Other" }
-        switch num {
-        case 1...5: return "Basic Containers"
-        case 6...10: return "Child Variations"
-        case 11...30: return "Layout & Spacing"
-        case 31...50: return "Elements"
-        case 51...70: return "Styles"
-        case 71...90: return "Advanced"
-        case 91...100: return "Offset"
-        default: return "Other"
-        }
-    }
+    @State private var isLoading: Bool = false
 
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                // Top: Test config selector
-                TestConfigListView(
-                    testConfigs: testConfigs,
-                    selectedConfig: $selectedTestConfig,
-                    onConfigSelected: loadConfig
-                )
+        VStack(spacing: 0) {
+            // Title bar
+            titleBar
+            Divider()
 
-                Divider()
+            // Navigation row with prev/next
+            navRow
+            Divider()
 
-                // Bottom: Render area
-                ConfigRenderView(
-                    config: config,
-                    isLoading: isLoading,
-                    errorMessage: errorMessage
-                )
-            }
-            .navigationTitle("🧪 Test Configs")
-            .navigationBarTitleDisplayMode(.inline)
+            // Scrollable chip strip
+            chipStrip
+            Divider()
+
+            // Rendered content area
+            contentArea
         }
-        .navigationViewStyle(StackNavigationViewStyle())
+        .onAppear {
+            testFiles = discoverTestFiles()
+            if !testFiles.isEmpty {
+                loadConfig()
+            }
+        }
     }
 
-    /// Load the selected test configuration
-    private func loadConfig(configId: String) {
-        guard let testConfig = testConfigs.first(where: { $0.id == configId }) else {
-            errorMessage = "Configuration not found: \(configId)"
-            return
-        }
+    // MARK: - Title Bar
 
+    private var titleBar: some View {
+        HStack {
+            Text("Test Browser")
+                .font(.headline)
+            Spacer()
+            if !testFiles.isEmpty {
+                Text("\(String(format: "%03d", currentIndex + 1)) / \(testFiles.count)")
+                    .font(.subheadline.monospacedDigit())
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(Color(UIColor.systemBackground))
+    }
+
+    // MARK: - Navigation Row
+
+    private var navRow: some View {
+        HStack(spacing: 0) {
+            Button(action: goToPrev) {
+                Image(systemName: "chevron.left")
+                    .imageScale(.medium)
+                    .frame(width: 44, height: 44)
+            }
+            .disabled(testFiles.isEmpty)
+
+            Text(testFiles.isEmpty ? "" : testFiles[currentIndex])
+                .font(.system(size: 13))
+                .lineLimit(1)
+                .truncationMode(.middle)
+                .frame(maxWidth: .infinity)
+                .multilineTextAlignment(.center)
+
+            Button(action: goToNext) {
+                Image(systemName: "chevron.right")
+                    .imageScale(.medium)
+                    .frame(width: 44, height: 44)
+            }
+            .disabled(testFiles.isEmpty)
+            .accessibilityIdentifier("nav-next")
+        }
+        .background(Color(UIColor.secondarySystemBackground))
+    }
+
+    // MARK: - Chip Strip
+
+    private var chipStrip: some View {
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 4) {
+                    ForEach(testFiles.indices, id: \.self) { i in
+                        let label = extractNumber(from: testFiles[i])
+                        let isSelected = i == currentIndex
+                        Button(action: { jumpTo(i) }) {
+                            Text(label)
+                                .font(.system(size: 11, weight: isSelected ? .semibold : .regular, design: .monospaced))
+                                .foregroundColor(isSelected ? .white : .primary)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 4)
+                                .background(isSelected ? Color.blue : Color(UIColor.tertiarySystemBackground))
+                                .cornerRadius(4)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .id(i)
+                        .accessibilityIdentifier("chip-\(testFiles[i])")
+                    }
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
+            }
+            .onChange(of: currentIndex) { newIndex in
+                withAnimation {
+                    proxy.scrollTo(max(0, newIndex - 4), anchor: .leading)
+                }
+            }
+        }
+    }
+
+    // MARK: - Content Area
+
+    private var contentArea: some View {
+        ZStack {
+            Color(UIColor.systemGroupedBackground)
+
+            if isLoading {
+                ProgressView()
+                    .scaleEffect(1.5)
+            } else if let errorMessage = errorMessage {
+                VStack(spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 40))
+                        .foregroundColor(.red)
+                    Text(errorMessage)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
+                }
+                .accessibilityIdentifier("content-settled")
+            } else if let config = config {
+                GeometryReader { geometry in
+                    ScrollView {
+                        NativeDisplayView(config: config)
+                            .environment(\.nativeDisplayParentSize, CGSize(
+                                width: geometry.size.width - 32,
+                                height: geometry.size.height
+                            ))
+                            .padding(16)
+                            .accessibilityIdentifier("native-display-view")
+                    }
+                }
+                .accessibilityIdentifier("content-settled")
+            } else {
+                VStack(spacing: 12) {
+                    Image(systemName: "doc.text.magnifyingglass")
+                        .font(.system(size: 40))
+                        .foregroundColor(.gray)
+                    Text("No test files found in bundle")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    // MARK: - Navigation
+
+    private func goToPrev() {
+        guard !testFiles.isEmpty else { return }
+        currentIndex = currentIndex == 0 ? testFiles.count - 1 : currentIndex - 1
+        loadConfig()
+    }
+
+    private func goToNext() {
+        guard !testFiles.isEmpty else { return }
+        currentIndex = currentIndex == testFiles.count - 1 ? 0 : currentIndex + 1
+        loadConfig()
+    }
+
+    private func jumpTo(_ index: Int) {
+        guard index >= 0, index < testFiles.count else { return }
+        currentIndex = index
+        loadConfig()
+    }
+
+    private func loadConfig() {
+        guard !testFiles.isEmpty else { return }
+        let filename = testFiles[currentIndex]
         isLoading = true
         errorMessage = nil
         config = nil
 
-        // Simulate async loading (in case of future network loading)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            if let loadedConfig = JsonLoader.loadTestConfig(filename: testConfig.filename) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            if let loadedConfig = JsonLoader.loadTestConfig(filename: filename) {
                 self.config = loadedConfig
-                self.errorMessage = nil
             } else {
-                self.config = nil
-                self.errorMessage = "Failed to load configuration: \(testConfig.filename)"
+                self.errorMessage = "Failed to load: \(filename).json"
             }
             self.isLoading = false
         }
     }
-}
 
-// MARK: - Test Config List
+    // MARK: - Helpers
 
-/// Displays the list of test configurations
-struct TestConfigListView: View {
-    let testConfigs: [TestConfigItem]
-    @Binding var selectedConfig: String?
-    let onConfigSelected: (String) -> Void
+    /// Discover all test-NNN-*.json files present in the app bundle.
+    ///
+    /// Searches two locations and merges results (deduplicating by filename):
+    ///   1. `<bundle>/TestConfigs/` — the standard folder group used by the Xcode project
+    ///   2. `<bundle root>/` — fallback for test files added directly at the bundle root
+    private func discoverTestFiles() -> [String] {
+        guard let resourcePath = Bundle.main.resourcePath else { return [] }
+        let fileManager = FileManager.default
+        var seen = Set<String>()
+        var results: [String] = []
 
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Select a test configuration to render:")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal)
-                    .padding(.top, 8)
-
-                ForEach(testConfigs) { config in
-                    TestConfigButton(
-                        config: config,
-                        isSelected: selectedConfig == config.id,
-                        onTap: {
-                            selectedConfig = config.id
-                            onConfigSelected(config.id)
-                        }
-                    )
+        // Helper: collect matching filenames from a directory path
+        func collect(from directoryPath: String) {
+            guard let files = try? fileManager.contentsOfDirectory(atPath: directoryPath) else { return }
+            for file in files where file.hasPrefix("test-") && file.hasSuffix(".json") {
+                let name = (file as NSString).deletingPathExtension
+                if seen.insert(name).inserted {
+                    results.append(name)
                 }
             }
-            .padding(.bottom, 8)
         }
-        .frame(height: 200)
-        .background(Color(.systemGroupedBackground))
-        .accessibilityIdentifier("test-config-list")
+
+        // 1. TestConfigs subfolder (primary location)
+        collect(from: (resourcePath as NSString).appendingPathComponent("TestConfigs"))
+
+        // 2. Bundle root (fallback for files not inside the TestConfigs group)
+        collect(from: resourcePath)
+
+        return results.sorted()
     }
-}
 
-// MARK: - Test Config Button
-
-/// Button for selecting a test configuration
-struct TestConfigButton: View {
-    let config: TestConfigItem
-    let isSelected: Bool
-    let onTap: () -> Void
-
-    var body: some View {
-        Button(action: onTap) {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(config.displayName)
-                        .font(.body)
-                        .foregroundColor(.primary)
-
-                    Text(config.category)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-
-                Spacer()
-
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.blue)
-                }
-            }
-            .padding()
-            .background(isSelected ? Color.blue.opacity(0.1) : Color(.systemBackground))
-            .cornerRadius(8)
-        }
-        .padding(.horizontal)
-        // Accessibility identifier for XCUITest
-        .accessibilityIdentifier("test-config-\(config.id)")
-    }
-}
-
-// MARK: - Config Render View
-
-/// Displays the rendered configuration or loading/error states
-struct ConfigRenderView: View {
-    let config: ResolvedConfig?
-    let isLoading: Bool
-    let errorMessage: String?
-
-    var body: some View {
-        ZStack(alignment: .topLeading) {
-            Color(.systemGroupedBackground)
-                .edgesIgnoringSafeArea(.all)
-
-            if isLoading {
-                LoadingView()
-            } else if let errorMessage = errorMessage {
-                ErrorVieww(message: errorMessage)
-            } else if let config = config {
-                GeometryReader { geometry in
-                    ScrollView {
-                        NativeDisplayView(config: config, parentSize: geometry.size)
-                            .padding()
-                            // Accessibility identifier for XCUITest
-                            .accessibilityIdentifier("native-display-view")
-                    }
-                }
-            } else {
-                PlaceholderView()
-            }
-        }
-    }
-}
-
-// MARK: - Supporting Views
-
-/// Loading indicator view
-struct LoadingView: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            ProgressView()
-                .scaleEffect(1.5)
-            Text("Loading configuration...")
-                .font(.caption)
-                .foregroundColor(.secondary)
-        }
-    }
-}
-
-/// Error display view
-struct ErrorVieww: View {
-    let message: String
-
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 48))
-                .foregroundColor(.red)
-
-            Text("Error Loading Config")
-                .font(.headline)
-
-            Text(message)
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-        }
-        .padding()
-    }
-}
-
-/// Placeholder view when no config is selected
-struct PlaceholderView: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "doc.text.magnifyingglass")
-                .font(.system(size: 48))
-                .foregroundColor(.gray)
-
-            Text("No Configuration Selected")
-                .font(.headline)
-                .foregroundColor(.secondary)
-
-            Text("Select a test configuration from the list above to view its rendered output.")
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
-        }
-        .padding()
+    /// Extract the numeric portion from a filename like "test-121-some-description" -> "121"
+    private func extractNumber(from filename: String) -> String {
+        let parts = filename.split(separator: "-")
+        guard parts.count >= 2 else { return "???" }
+        return String(parts[1])
     }
 }
 
