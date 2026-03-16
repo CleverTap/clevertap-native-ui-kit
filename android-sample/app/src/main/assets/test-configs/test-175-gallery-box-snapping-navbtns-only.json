@@ -582,7 +582,7 @@
                   {
                     "type": "container",
                     "id": "nav-overlay",
-                    "containerType": "horizontal",
+                    "containerType": "box",
                     "layout": {
                       "width": {
                         "value": 100,
@@ -590,15 +590,7 @@
                       },
                       "height": {
                         "special": "match_parent"
-                      },
-                      "padding": {
-                        "left": 8,
-                        "right": 8,
-                        "unit": "dp"
                       }
-                    },
-                    "arrangement": {
-                      "strategy": "space_between"
                     },
                     "children": [
                       {
@@ -616,6 +608,11 @@
                           "height": {
                             "value": 44,
                             "unit": "dp"
+                          },
+                          "offset": {
+                            "x": 2,
+                            "y": 38,
+                            "unit": "percent"
                           }
                         },
                         "style": {
@@ -640,6 +637,11 @@
                           "height": {
                             "value": 44,
                             "unit": "dp"
+                          },
+                          "offset": {
+                            "x": 87,
+                            "y": 38,
+                            "unit": "percent"
                           }
                         },
                         "style": {
