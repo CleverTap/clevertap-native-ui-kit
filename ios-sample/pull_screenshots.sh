@@ -44,7 +44,7 @@ xcresult = sys.argv[1]
 out_dir  = Path(sys.argv[2])
 
 def xcresult_json(ref_id=None):
-    cmd = ["xcrun", "xcresulttool", "get", "--path", xcresult, "--format", "json"]
+    cmd = ["xcrun", "xcresulttool", "get", "--legacy", "--path", xcresult, "--format", "json"]
     if ref_id:
         cmd += ["--id", ref_id]
     r = subprocess.run(cmd, capture_output=True, text=True)
@@ -97,7 +97,7 @@ ok = 0
 for i, att in enumerate(attachments, 1):
     ext = "png" if "png" in att["uti"] else "jpeg" if "jpeg" in att["uti"] else "bin"
     out_file = out_dir / f"{att['name']}.{ext}"
-    cmd = ["xcrun", "xcresulttool", "get",
+    cmd = ["xcrun", "xcresulttool", "get", "--legacy",
            "--path", xcresult, "--id", att["id"]]
     r = subprocess.run(cmd, capture_output=True)
     if r.returncode == 0 and r.stdout:
@@ -113,7 +113,7 @@ print(f"\n✅  {ok}/{len(attachments)} screenshot(s) saved.")
 for att in attachments:
     if att["name"] == "FAILED_CONFIGS":
         r = subprocess.run(
-            ["xcrun", "xcresulttool", "get", "--path", xcresult, "--id", att["id"]],
+            ["xcrun", "xcresulttool", "get", "--legacy", "--path", xcresult, "--id", att["id"]],
             capture_output=True
         )
         if r.returncode == 0:

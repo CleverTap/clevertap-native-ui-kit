@@ -159,6 +159,26 @@
 		414DA9442F59B35E00714978 /* test-044-horizontal-padding-asymmetric.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA83E2F59B35E00714978 /* test-044-horizontal-padding-asymmetric.json */; };
 		414DA9452F59B35E00714978 /* test-005-gallery-simple.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8172F59B35E00714978 /* test-005-gallery-simple.json */; };
 		414DA9462F59B35E00714978 /* test-156-button-backgrounds.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8AE2F59B35E00714978 /* test-156-button-backgrounds.json */; };
+		928C42919F004A31BB13CF22 /* test-157-gallery-box-freeflow-indicators-navbtns.json in Resources */ = {isa = PBXBuildFile; fileRef = A2C5A89EB9CA43999EFA40B4 /* test-157-gallery-box-freeflow-indicators-navbtns.json */; };
+		4B08E4C20BD64AF4B3F1FF0F /* test-158-gallery-box-freeflow-indicators-only.json in Resources */ = {isa = PBXBuildFile; fileRef = CE27615A6EED4B039CA1BEF0 /* test-158-gallery-box-freeflow-indicators-only.json */; };
+		0051F63963A94A48AB3A8EF9 /* test-159-gallery-box-freeflow-navbtns-only.json in Resources */ = {isa = PBXBuildFile; fileRef = 7F6254B5184B47E6BD59E17B /* test-159-gallery-box-freeflow-navbtns-only.json */; };
+		F92F902E204141BD8E73BC71 /* test-160-gallery-box-freeflow-minimal.json in Resources */ = {isa = PBXBuildFile; fileRef = DE22C28163C34271B305D73A /* test-160-gallery-box-freeflow-minimal.json */; };
+		6A10C50176CF4C489D1CA3E6 /* test-161-gallery-box-freeflow-tall-images.json in Resources */ = {isa = PBXBuildFile; fileRef = 930987B748C14557B5AECCD4 /* test-161-gallery-box-freeflow-tall-images.json */; };
+		8227DBFCA5CF475386E23572 /* test-162-gallery-box-freeflow-video-items.json in Resources */ = {isa = PBXBuildFile; fileRef = 6371017E9C314A05807F35E3 /* test-162-gallery-box-freeflow-video-items.json */; };
+		18D9E4C143324F96893142EA /* test-163-gallery-box-freeflow-button-items.json in Resources */ = {isa = PBXBuildFile; fileRef = 03801AE84D464BBFB85416C0 /* test-163-gallery-box-freeflow-button-items.json */; };
+		5850BD150D4947F19C844DA7 /* test-164-gallery-box-freeflow-5items.json in Resources */ = {isa = PBXBuildFile; fileRef = EDE728627F324FF4A7B1FE6B /* test-164-gallery-box-freeflow-5items.json */; };
+		2BF9CEB6EA0743AA9E5D761E /* test-165-gallery-box-grid2col-indicators-navbtns.json in Resources */ = {isa = PBXBuildFile; fileRef = A4390197357E4CFE8A7DC635 /* test-165-gallery-box-grid2col-indicators-navbtns.json */; };
+		117ED25EABA74C31A0AE60F1 /* test-166-gallery-box-grid2col-indicators-only.json in Resources */ = {isa = PBXBuildFile; fileRef = AE5BC3356FA54F87A4034CB2 /* test-166-gallery-box-grid2col-indicators-only.json */; };
+		C2747DBE595B4454B00DECD6 /* test-167-gallery-box-grid2col-navbtns-only.json in Resources */ = {isa = PBXBuildFile; fileRef = 25971AABCF9F4A2F8DEFAC80 /* test-167-gallery-box-grid2col-navbtns-only.json */; };
+		4BC24769CC4E49119396B753 /* test-168-gallery-box-grid2col-minimal.json in Resources */ = {isa = PBXBuildFile; fileRef = C8A1CC8F14AA4AD58768F31D /* test-168-gallery-box-grid2col-minimal.json */; };
+		3F574FEEB4BD4C9CAA474EE5 /* test-169-gallery-box-grid3col-indicators.json in Resources */ = {isa = PBXBuildFile; fileRef = 036C1B131E82404F85EF2352 /* test-169-gallery-box-grid3col-indicators.json */; };
+		6922B2D8D9B7411BB5DBD10B /* test-170-gallery-box-grid3col-navbtns.json in Resources */ = {isa = PBXBuildFile; fileRef = BF5F19EE4EE342AE99BC8729 /* test-170-gallery-box-grid3col-navbtns.json */; };
+		A35AC29DF561472BA82FC02D /* test-171-gallery-box-grid2col-video.json in Resources */ = {isa = PBXBuildFile; fileRef = 6FB82056B44E4A3F97601A10 /* test-171-gallery-box-grid2col-video.json */; };
+		73603C0EDACB43D2A7E237B0 /* test-172-gallery-box-grid2col-vertical.json in Resources */ = {isa = PBXBuildFile; fileRef = 56A884EDEB4D4F459BC3B4BB /* test-172-gallery-box-grid2col-vertical.json */; };
+		CF8E0727D378400F8A9E458F /* test-173-gallery-box-snapping-indicators-navbtns.json in Resources */ = {isa = PBXBuildFile; fileRef = BF1A8006A0274AE18D120F65 /* test-173-gallery-box-snapping-indicators-navbtns.json */; };
+		8F745EBF29B74C529E26A137 /* test-174-gallery-box-snapping-indicators-only.json in Resources */ = {isa = PBXBuildFile; fileRef = BB01D817B0E1488DA6DDD891 /* test-174-gallery-box-snapping-indicators-only.json */; };
+		D33F18BFA33547518B83B546 /* test-175-gallery-box-snapping-navbtns-only.json in Resources */ = {isa = PBXBuildFile; fileRef = 53ABB20AE02B4A2E9AB5BE00 /* test-175-gallery-box-snapping-navbtns-only.json */; };
+		08376C9EB98E41F6A08BFB61 /* test-176-gallery-box-snapping-minimal.json in Resources */ = {isa = PBXBuildFile; fileRef = 15F76B946BFA4E8586890136 /* test-176-gallery-box-snapping-minimal.json */; };
 		414DA9472F59B35E00714978 /* test-080-shadows-light.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8622F59B35E00714978 /* test-080-shadows-light.json */; };
 		414DA9482F59B35E00714978 /* test-079-border-width-color.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8612F59B35E00714978 /* test-079-border-width-color.json */; };
 		414DA9492F59B35E00714978 /* test-054-all-video-elements.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8482F59B35E00714978 /* test-054-all-video-elements.json */; };
@@ -370,6 +390,26 @@
 		414DA8AC2F59B35E00714978 /* test-154-nested-box-deep.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-154-nested-box-deep.json"; sourceTree = "<group>"; };
 		414DA8AD2F59B35E00714978 /* test-155-all-element-types.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-155-all-element-types.json"; sourceTree = "<group>"; };
 		414DA8AE2F59B35E00714978 /* test-156-button-backgrounds.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-156-button-backgrounds.json"; sourceTree = "<group>"; };
+		A2C5A89EB9CA43999EFA40B4 /* test-157-gallery-box-freeflow-indicators-navbtns.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-157-gallery-box-freeflow-indicators-navbtns.json"; sourceTree = "<group>"; };
+		CE27615A6EED4B039CA1BEF0 /* test-158-gallery-box-freeflow-indicators-only.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-158-gallery-box-freeflow-indicators-only.json"; sourceTree = "<group>"; };
+		7F6254B5184B47E6BD59E17B /* test-159-gallery-box-freeflow-navbtns-only.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-159-gallery-box-freeflow-navbtns-only.json"; sourceTree = "<group>"; };
+		DE22C28163C34271B305D73A /* test-160-gallery-box-freeflow-minimal.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-160-gallery-box-freeflow-minimal.json"; sourceTree = "<group>"; };
+		930987B748C14557B5AECCD4 /* test-161-gallery-box-freeflow-tall-images.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-161-gallery-box-freeflow-tall-images.json"; sourceTree = "<group>"; };
+		6371017E9C314A05807F35E3 /* test-162-gallery-box-freeflow-video-items.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-162-gallery-box-freeflow-video-items.json"; sourceTree = "<group>"; };
+		03801AE84D464BBFB85416C0 /* test-163-gallery-box-freeflow-button-items.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-163-gallery-box-freeflow-button-items.json"; sourceTree = "<group>"; };
+		EDE728627F324FF4A7B1FE6B /* test-164-gallery-box-freeflow-5items.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-164-gallery-box-freeflow-5items.json"; sourceTree = "<group>"; };
+		A4390197357E4CFE8A7DC635 /* test-165-gallery-box-grid2col-indicators-navbtns.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-165-gallery-box-grid2col-indicators-navbtns.json"; sourceTree = "<group>"; };
+		AE5BC3356FA54F87A4034CB2 /* test-166-gallery-box-grid2col-indicators-only.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-166-gallery-box-grid2col-indicators-only.json"; sourceTree = "<group>"; };
+		25971AABCF9F4A2F8DEFAC80 /* test-167-gallery-box-grid2col-navbtns-only.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-167-gallery-box-grid2col-navbtns-only.json"; sourceTree = "<group>"; };
+		C8A1CC8F14AA4AD58768F31D /* test-168-gallery-box-grid2col-minimal.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-168-gallery-box-grid2col-minimal.json"; sourceTree = "<group>"; };
+		036C1B131E82404F85EF2352 /* test-169-gallery-box-grid3col-indicators.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-169-gallery-box-grid3col-indicators.json"; sourceTree = "<group>"; };
+		BF5F19EE4EE342AE99BC8729 /* test-170-gallery-box-grid3col-navbtns.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-170-gallery-box-grid3col-navbtns.json"; sourceTree = "<group>"; };
+		6FB82056B44E4A3F97601A10 /* test-171-gallery-box-grid2col-video.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-171-gallery-box-grid2col-video.json"; sourceTree = "<group>"; };
+		56A884EDEB4D4F459BC3B4BB /* test-172-gallery-box-grid2col-vertical.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-172-gallery-box-grid2col-vertical.json"; sourceTree = "<group>"; };
+		BF1A8006A0274AE18D120F65 /* test-173-gallery-box-snapping-indicators-navbtns.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-173-gallery-box-snapping-indicators-navbtns.json"; sourceTree = "<group>"; };
+		BB01D817B0E1488DA6DDD891 /* test-174-gallery-box-snapping-indicators-only.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-174-gallery-box-snapping-indicators-only.json"; sourceTree = "<group>"; };
+		53ABB20AE02B4A2E9AB5BE00 /* test-175-gallery-box-snapping-navbtns-only.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-175-gallery-box-snapping-navbtns-only.json"; sourceTree = "<group>"; };
+		15F76B946BFA4E8586890136 /* test-176-gallery-box-snapping-minimal.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-176-gallery-box-snapping-minimal.json"; sourceTree = "<group>"; };
 		414DA8AF2F59B35E00714978 /* test-VERIFY-percentage-offset-fix.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-VERIFY-percentage-offset-fix.json"; sourceTree = "<group>"; };
 		414DA94E2F6001EC00714978 /* ImagePreloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreloader.swift; sourceTree = "<group>"; };
 		41969A612EFE48010050EB83 /* arrangement_demo.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = arrangement_demo.json; sourceTree = "<group>"; };
@@ -586,6 +626,26 @@
 				414DA8AC2F59B35E00714978 /* test-154-nested-box-deep.json */,
 				414DA8AD2F59B35E00714978 /* test-155-all-element-types.json */,
 				414DA8AE2F59B35E00714978 /* test-156-button-backgrounds.json */,
+				A2C5A89EB9CA43999EFA40B4 /* test-157-gallery-box-freeflow-indicators-navbtns.json */,
+				CE27615A6EED4B039CA1BEF0 /* test-158-gallery-box-freeflow-indicators-only.json */,
+				7F6254B5184B47E6BD59E17B /* test-159-gallery-box-freeflow-navbtns-only.json */,
+				DE22C28163C34271B305D73A /* test-160-gallery-box-freeflow-minimal.json */,
+				930987B748C14557B5AECCD4 /* test-161-gallery-box-freeflow-tall-images.json */,
+				6371017E9C314A05807F35E3 /* test-162-gallery-box-freeflow-video-items.json */,
+				03801AE84D464BBFB85416C0 /* test-163-gallery-box-freeflow-button-items.json */,
+				EDE728627F324FF4A7B1FE6B /* test-164-gallery-box-freeflow-5items.json */,
+				A4390197357E4CFE8A7DC635 /* test-165-gallery-box-grid2col-indicators-navbtns.json */,
+				AE5BC3356FA54F87A4034CB2 /* test-166-gallery-box-grid2col-indicators-only.json */,
+				25971AABCF9F4A2F8DEFAC80 /* test-167-gallery-box-grid2col-navbtns-only.json */,
+				C8A1CC8F14AA4AD58768F31D /* test-168-gallery-box-grid2col-minimal.json */,
+				036C1B131E82404F85EF2352 /* test-169-gallery-box-grid3col-indicators.json */,
+				BF5F19EE4EE342AE99BC8729 /* test-170-gallery-box-grid3col-navbtns.json */,
+				6FB82056B44E4A3F97601A10 /* test-171-gallery-box-grid2col-video.json */,
+				56A884EDEB4D4F459BC3B4BB /* test-172-gallery-box-grid2col-vertical.json */,
+				BF1A8006A0274AE18D120F65 /* test-173-gallery-box-snapping-indicators-navbtns.json */,
+				BB01D817B0E1488DA6DDD891 /* test-174-gallery-box-snapping-indicators-only.json */,
+				53ABB20AE02B4A2E9AB5BE00 /* test-175-gallery-box-snapping-navbtns-only.json */,
+				15F76B946BFA4E8586890136 /* test-176-gallery-box-snapping-minimal.json */,
 				414DA8AF2F59B35E00714978 /* test-VERIFY-percentage-offset-fix.json */,
 			);
 			path = TestConfigs;
@@ -905,6 +965,26 @@
 				414DA9442F59B35E00714978 /* test-044-horizontal-padding-asymmetric.json in Resources */,
 				414DA9452F59B35E00714978 /* test-005-gallery-simple.json in Resources */,
 				414DA9462F59B35E00714978 /* test-156-button-backgrounds.json in Resources */,
+				928C42919F004A31BB13CF22 /* test-157-gallery-box-freeflow-indicators-navbtns.json in Resources */,
+				4B08E4C20BD64AF4B3F1FF0F /* test-158-gallery-box-freeflow-indicators-only.json in Resources */,
+				0051F63963A94A48AB3A8EF9 /* test-159-gallery-box-freeflow-navbtns-only.json in Resources */,
+				F92F902E204141BD8E73BC71 /* test-160-gallery-box-freeflow-minimal.json in Resources */,
+				6A10C50176CF4C489D1CA3E6 /* test-161-gallery-box-freeflow-tall-images.json in Resources */,
+				8227DBFCA5CF475386E23572 /* test-162-gallery-box-freeflow-video-items.json in Resources */,
+				18D9E4C143324F96893142EA /* test-163-gallery-box-freeflow-button-items.json in Resources */,
+				5850BD150D4947F19C844DA7 /* test-164-gallery-box-freeflow-5items.json in Resources */,
+				2BF9CEB6EA0743AA9E5D761E /* test-165-gallery-box-grid2col-indicators-navbtns.json in Resources */,
+				117ED25EABA74C31A0AE60F1 /* test-166-gallery-box-grid2col-indicators-only.json in Resources */,
+				C2747DBE595B4454B00DECD6 /* test-167-gallery-box-grid2col-navbtns-only.json in Resources */,
+				4BC24769CC4E49119396B753 /* test-168-gallery-box-grid2col-minimal.json in Resources */,
+				3F574FEEB4BD4C9CAA474EE5 /* test-169-gallery-box-grid3col-indicators.json in Resources */,
+				6922B2D8D9B7411BB5DBD10B /* test-170-gallery-box-grid3col-navbtns.json in Resources */,
+				A35AC29DF561472BA82FC02D /* test-171-gallery-box-grid2col-video.json in Resources */,
+				73603C0EDACB43D2A7E237B0 /* test-172-gallery-box-grid2col-vertical.json in Resources */,
+				CF8E0727D378400F8A9E458F /* test-173-gallery-box-snapping-indicators-navbtns.json in Resources */,
+				8F745EBF29B74C529E26A137 /* test-174-gallery-box-snapping-indicators-only.json in Resources */,
+				D33F18BFA33547518B83B546 /* test-175-gallery-box-snapping-navbtns-only.json in Resources */,
+				08376C9EB98E41F6A08BFB61 /* test-176-gallery-box-snapping-minimal.json in Resources */,
 				414DA9472F59B35E00714978 /* test-080-shadows-light.json in Resources */,
 				414DA9482F59B35E00714978 /* test-079-border-width-color.json in Resources */,
 				414DA9492F59B35E00714978 /* test-054-all-video-elements.json in Resources */,
