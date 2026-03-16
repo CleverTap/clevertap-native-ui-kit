@@ -1,0 +1,795 @@
+{
+  "theme": {
+    "id": "gallery-164"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "special": "match_parent"
+      },
+      "height": {
+        "special": "wrap_content"
+      },
+      "padding": {
+        "all": 12,
+        "unit": "dp"
+      }
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "outer-card",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "aspectRatio": 1.15
+        },
+        "style": {
+          "backgroundColor": "#FFFFFFFF",
+          "borderRadius": 20,
+          "shadowColor": "#40000000",
+          "shadowRadius": 16,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 6
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "card-content",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "special": "match_parent"
+              }
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "title-section",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 22,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "left": 16,
+                    "right": 16,
+                    "top": 14,
+                    "bottom": 10,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#FF059669"
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "title-content",
+                    "containerType": "vertical",
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      },
+                      "height": {
+                        "special": "match_parent"
+                      }
+                    },
+                    "arrangement": {
+                      "spacing": 6,
+                      "spacingUnit": "dp",
+                      "strategy": "spaced"
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "category-tag",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "SPORTS"
+                        },
+                        "style": {
+                          "fontSize": 11,
+                          "fontWeight": "bold",
+                          "textColor": "#CCFFFFFF",
+                          "lineHeight": 16
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "big-title",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Get Active"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": 100,
+                            "unit": "percent"
+                          },
+                          "height": {
+                            "special": "wrap_content"
+                          }
+                        },
+                        "style": {
+                          "fontSize": 22,
+                          "fontWeight": "bold",
+                          "textColor": "#FFFFFFFF",
+                          "lineHeight": 30
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "element",
+                    "id": "see-all",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "All →"
+                    },
+                    "layout": {
+                      "width": {
+                        "special": "wrap_content"
+                      },
+                      "height": {
+                        "special": "wrap_content"
+                      },
+                      "offset": {
+                        "x": 76,
+                        "y": 10,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 13,
+                      "textColor": "#DDFFFFFF",
+                      "lineHeight": 18,
+                      "maxLines": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "gallery-wrapper",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 58,
+                    "unit": "percent"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "gallery",
+                    "containerType": "gallery",
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      },
+                      "height": {
+                        "special": "match_parent"
+                      }
+                    },
+                    "galleryConfig": {
+                      "mode": "free_flow",
+                      "orientation": "horizontal",
+                      "spacing": 10,
+                      "showIndicators": false
+                    },
+                    "children": [
+                      {
+                        "type": "container",
+                        "id": "item-1",
+                        "containerType": "vertical",
+                        "layout": {
+                          "width": {
+                            "value": 50,
+                            "unit": "percent"
+                          },
+                          "height": {
+                            "special": "match_parent"
+                          }
+                        },
+                        "style": {
+                          "backgroundColor": "#FFFFFFFF",
+                          "borderRadius": 14,
+                          "shadowColor": "#1A000000",
+                          "shadowRadius": 6,
+                          "shadowOffsetX": 0,
+                          "shadowOffsetY": 3
+                        },
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "item-1-img",
+                            "elementType": "image",
+                            "bindings": {
+                              "url": "https://yavuzceliker.github.io/sample-images/image-33.jpg"
+                            },
+                            "layout": {
+                              "width": {
+                                "value": 100,
+                                "unit": "percent"
+                              },
+                              "height": {
+                                "value": 65,
+                                "unit": "percent"
+                              }
+                            },
+                            "style": {
+                              "imageConfig": {
+                                "fit": "crop"
+                              }
+                            }
+                          },
+                          {
+                            "type": "container",
+                            "id": "item-1-info",
+                            "containerType": "vertical",
+                            "layout": {
+                              "width": {
+                                "value": 100,
+                                "unit": "percent"
+                              },
+                              "height": {
+                                "value": 35,
+                                "unit": "percent"
+                              },
+                              "padding": {
+                                "left": 10,
+                                "right": 10,
+                                "top": 8,
+                                "bottom": 8,
+                                "unit": "dp"
+                              }
+                            },
+                            "arrangement": {
+                              "spacing": 4,
+                              "spacingUnit": "dp",
+                              "strategy": "spaced"
+                            },
+                            "children": [
+                              {
+                                "type": "element",
+                                "id": "item-1-title",
+                                "elementType": "text",
+                                "bindings": {
+                                  "text": "Running Shoe"
+                                },
+                                "layout": {
+                                  "width": {
+                                    "value": 100,
+                                    "unit": "percent"
+                                  },
+                                  "height": {
+                                    "special": "wrap_content"
+                                  }
+                                },
+                                "style": {
+                                  "fontSize": 14,
+                                  "fontWeight": "bold",
+                                  "textColor": "#FF1A1A2E",
+                                  "lineHeight": 20,
+                                  "maxLines": 1,
+                                  "overflow": "ellipsis"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "container",
+                        "id": "item-2",
+                        "containerType": "vertical",
+                        "layout": {
+                          "width": {
+                            "value": 50,
+                            "unit": "percent"
+                          },
+                          "height": {
+                            "special": "match_parent"
+                          }
+                        },
+                        "style": {
+                          "backgroundColor": "#FFFFFFFF",
+                          "borderRadius": 14,
+                          "shadowColor": "#1A000000",
+                          "shadowRadius": 6,
+                          "shadowOffsetX": 0,
+                          "shadowOffsetY": 3
+                        },
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "item-2-img",
+                            "elementType": "image",
+                            "bindings": {
+                              "url": "https://yavuzceliker.github.io/sample-images/image-49.jpg"
+                            },
+                            "layout": {
+                              "width": {
+                                "value": 100,
+                                "unit": "percent"
+                              },
+                              "height": {
+                                "value": 65,
+                                "unit": "percent"
+                              }
+                            },
+                            "style": {
+                              "imageConfig": {
+                                "fit": "crop"
+                              }
+                            }
+                          },
+                          {
+                            "type": "container",
+                            "id": "item-2-info",
+                            "containerType": "vertical",
+                            "layout": {
+                              "width": {
+                                "value": 100,
+                                "unit": "percent"
+                              },
+                              "height": {
+                                "value": 35,
+                                "unit": "percent"
+                              },
+                              "padding": {
+                                "left": 10,
+                                "right": 10,
+                                "top": 8,
+                                "bottom": 8,
+                                "unit": "dp"
+                              }
+                            },
+                            "arrangement": {
+                              "spacing": 4,
+                              "spacingUnit": "dp",
+                              "strategy": "spaced"
+                            },
+                            "children": [
+                              {
+                                "type": "element",
+                                "id": "item-2-title",
+                                "elementType": "text",
+                                "bindings": {
+                                  "text": "Yoga Mat"
+                                },
+                                "layout": {
+                                  "width": {
+                                    "value": 100,
+                                    "unit": "percent"
+                                  },
+                                  "height": {
+                                    "special": "wrap_content"
+                                  }
+                                },
+                                "style": {
+                                  "fontSize": 14,
+                                  "fontWeight": "bold",
+                                  "textColor": "#FF1A1A2E",
+                                  "lineHeight": 20,
+                                  "maxLines": 1,
+                                  "overflow": "ellipsis"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "container",
+                        "id": "item-3",
+                        "containerType": "vertical",
+                        "layout": {
+                          "width": {
+                            "value": 50,
+                            "unit": "percent"
+                          },
+                          "height": {
+                            "special": "match_parent"
+                          }
+                        },
+                        "style": {
+                          "backgroundColor": "#FFFFFFFF",
+                          "borderRadius": 14,
+                          "shadowColor": "#1A000000",
+                          "shadowRadius": 6,
+                          "shadowOffsetX": 0,
+                          "shadowOffsetY": 3
+                        },
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "item-3-img",
+                            "elementType": "image",
+                            "bindings": {
+                              "url": "https://yavuzceliker.github.io/sample-images/image-50.jpg"
+                            },
+                            "layout": {
+                              "width": {
+                                "value": 100,
+                                "unit": "percent"
+                              },
+                              "height": {
+                                "value": 65,
+                                "unit": "percent"
+                              }
+                            },
+                            "style": {
+                              "imageConfig": {
+                                "fit": "crop"
+                              }
+                            }
+                          },
+                          {
+                            "type": "container",
+                            "id": "item-3-info",
+                            "containerType": "vertical",
+                            "layout": {
+                              "width": {
+                                "value": 100,
+                                "unit": "percent"
+                              },
+                              "height": {
+                                "value": 35,
+                                "unit": "percent"
+                              },
+                              "padding": {
+                                "left": 10,
+                                "right": 10,
+                                "top": 8,
+                                "bottom": 8,
+                                "unit": "dp"
+                              }
+                            },
+                            "arrangement": {
+                              "spacing": 4,
+                              "spacingUnit": "dp",
+                              "strategy": "spaced"
+                            },
+                            "children": [
+                              {
+                                "type": "element",
+                                "id": "item-3-title",
+                                "elementType": "text",
+                                "bindings": {
+                                  "text": "Water Bottle"
+                                },
+                                "layout": {
+                                  "width": {
+                                    "value": 100,
+                                    "unit": "percent"
+                                  },
+                                  "height": {
+                                    "special": "wrap_content"
+                                  }
+                                },
+                                "style": {
+                                  "fontSize": 14,
+                                  "fontWeight": "bold",
+                                  "textColor": "#FF1A1A2E",
+                                  "lineHeight": 20,
+                                  "maxLines": 1,
+                                  "overflow": "ellipsis"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "container",
+                        "id": "item-4",
+                        "containerType": "vertical",
+                        "layout": {
+                          "width": {
+                            "value": 50,
+                            "unit": "percent"
+                          },
+                          "height": {
+                            "special": "match_parent"
+                          }
+                        },
+                        "style": {
+                          "backgroundColor": "#FFFFFFFF",
+                          "borderRadius": 14,
+                          "shadowColor": "#1A000000",
+                          "shadowRadius": 6,
+                          "shadowOffsetX": 0,
+                          "shadowOffsetY": 3
+                        },
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "item-4-img",
+                            "elementType": "image",
+                            "bindings": {
+                              "url": "https://yavuzceliker.github.io/sample-images/image-52.jpg"
+                            },
+                            "layout": {
+                              "width": {
+                                "value": 100,
+                                "unit": "percent"
+                              },
+                              "height": {
+                                "value": 65,
+                                "unit": "percent"
+                              }
+                            },
+                            "style": {
+                              "imageConfig": {
+                                "fit": "crop"
+                              }
+                            }
+                          },
+                          {
+                            "type": "container",
+                            "id": "item-4-info",
+                            "containerType": "vertical",
+                            "layout": {
+                              "width": {
+                                "value": 100,
+                                "unit": "percent"
+                              },
+                              "height": {
+                                "value": 35,
+                                "unit": "percent"
+                              },
+                              "padding": {
+                                "left": 10,
+                                "right": 10,
+                                "top": 8,
+                                "bottom": 8,
+                                "unit": "dp"
+                              }
+                            },
+                            "arrangement": {
+                              "spacing": 4,
+                              "spacingUnit": "dp",
+                              "strategy": "spaced"
+                            },
+                            "children": [
+                              {
+                                "type": "element",
+                                "id": "item-4-title",
+                                "elementType": "text",
+                                "bindings": {
+                                  "text": "Gym Gloves"
+                                },
+                                "layout": {
+                                  "width": {
+                                    "value": 100,
+                                    "unit": "percent"
+                                  },
+                                  "height": {
+                                    "special": "wrap_content"
+                                  }
+                                },
+                                "style": {
+                                  "fontSize": 14,
+                                  "fontWeight": "bold",
+                                  "textColor": "#FF1A1A2E",
+                                  "lineHeight": 20,
+                                  "maxLines": 1,
+                                  "overflow": "ellipsis"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "container",
+                        "id": "item-5",
+                        "containerType": "vertical",
+                        "layout": {
+                          "width": {
+                            "value": 50,
+                            "unit": "percent"
+                          },
+                          "height": {
+                            "special": "match_parent"
+                          }
+                        },
+                        "style": {
+                          "backgroundColor": "#FFFFFFFF",
+                          "borderRadius": 14,
+                          "shadowColor": "#1A000000",
+                          "shadowRadius": 6,
+                          "shadowOffsetX": 0,
+                          "shadowOffsetY": 3
+                        },
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "item-5-img",
+                            "elementType": "image",
+                            "bindings": {
+                              "url": "https://yavuzceliker.github.io/sample-images/image-53.jpg"
+                            },
+                            "layout": {
+                              "width": {
+                                "value": 100,
+                                "unit": "percent"
+                              },
+                              "height": {
+                                "value": 65,
+                                "unit": "percent"
+                              }
+                            },
+                            "style": {
+                              "imageConfig": {
+                                "fit": "crop"
+                              }
+                            }
+                          },
+                          {
+                            "type": "container",
+                            "id": "item-5-info",
+                            "containerType": "vertical",
+                            "layout": {
+                              "width": {
+                                "value": 100,
+                                "unit": "percent"
+                              },
+                              "height": {
+                                "value": 35,
+                                "unit": "percent"
+                              },
+                              "padding": {
+                                "left": 10,
+                                "right": 10,
+                                "top": 8,
+                                "bottom": 8,
+                                "unit": "dp"
+                              }
+                            },
+                            "arrangement": {
+                              "spacing": 4,
+                              "spacingUnit": "dp",
+                              "strategy": "spaced"
+                            },
+                            "children": [
+                              {
+                                "type": "element",
+                                "id": "item-5-title",
+                                "elementType": "text",
+                                "bindings": {
+                                  "text": "Track Pants"
+                                },
+                                "layout": {
+                                  "width": {
+                                    "value": 100,
+                                    "unit": "percent"
+                                  },
+                                  "height": {
+                                    "special": "wrap_content"
+                                  }
+                                },
+                                "style": {
+                                  "fontSize": 14,
+                                  "fontWeight": "bold",
+                                  "textColor": "#FF1A1A2E",
+                                  "lineHeight": 20,
+                                  "maxLines": 1,
+                                  "overflow": "ellipsis"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "footer",
+                "containerType": "horizontal",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 20,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "left": 16,
+                    "right": 12,
+                    "unit": "dp"
+                  }
+                },
+                "arrangement": {
+                  "strategy": "space_between"
+                },
+                "style": {
+                  "backgroundColor": "#FFFAFAFA"
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "footer-info",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "Members get 20% off"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 55,
+                        "unit": "percent"
+                      },
+                      "height": {
+                        "special": "wrap_content"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 14,
+                      "textColor": "#FF6B7280",
+                      "lineHeight": 22,
+                      "maxLines": 1,
+                      "overflow": "ellipsis"
+                    }
+                  },
+                  {
+                    "type": "element",
+                    "id": "footer-cta",
+                    "elementType": "button",
+                    "bindings": {
+                      "text": "Join Now"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 38,
+                        "unit": "percent"
+                      },
+                      "height": {
+                        "value": 44,
+                        "unit": "dp"
+                      }
+                    },
+                    "style": {
+                      "backgroundColor": "#FF059669",
+                      "textColor": "#FFFFFFFF",
+                      "fontSize": 14,
+                      "fontWeight": "bold",
+                      "borderRadius": 18
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

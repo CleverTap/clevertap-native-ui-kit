@@ -44,7 +44,7 @@ import androidx.compose.ui.text.withStyle
 fun TestBrowserScreen() {
     val context = LocalContext.current
 
-    // List of all test configuration files (156 tests)
+    // List of all test configuration files (176 tests)
     val testFiles = remember {
         listOf(
             "test-001-vertical-simple.json",
@@ -202,7 +202,27 @@ fun TestBrowserScreen() {
             "test-153-image-clipped.json",
             "test-154-nested-box-deep.json",
             "test-155-all-element-types.json",
-            "test-156-button-backgrounds.json"
+            "test-156-button-backgrounds.json",
+            "test-157-gallery-box-freeflow-indicators-navbtns.json",
+            "test-158-gallery-box-freeflow-indicators-only.json",
+            "test-159-gallery-box-freeflow-navbtns-only.json",
+            "test-160-gallery-box-freeflow-minimal.json",
+            "test-161-gallery-box-freeflow-tall-images.json",
+            "test-162-gallery-box-freeflow-video-items.json",
+            "test-163-gallery-box-freeflow-button-items.json",
+            "test-164-gallery-box-freeflow-5items.json",
+            "test-165-gallery-box-grid2col-indicators-navbtns.json",
+            "test-166-gallery-box-grid2col-indicators-only.json",
+            "test-167-gallery-box-grid2col-navbtns-only.json",
+            "test-168-gallery-box-grid2col-minimal.json",
+            "test-169-gallery-box-grid3col-indicators.json",
+            "test-170-gallery-box-grid3col-navbtns.json",
+            "test-171-gallery-box-grid2col-video.json",
+            "test-172-gallery-box-grid2col-vertical.json",
+            "test-173-gallery-box-snapping-indicators-navbtns.json",
+            "test-174-gallery-box-snapping-indicators-only.json",
+            "test-175-gallery-box-snapping-navbtns-only.json",
+            "test-176-gallery-box-snapping-minimal.json"
         )
     }
 

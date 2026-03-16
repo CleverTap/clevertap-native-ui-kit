@@ -11,6 +11,10 @@ struct TestConfigBrowserView: View {
     @State private var errorMessage: String? = nil
     @State private var isLoading: Bool = false
 
+    private var isUITest: Bool {
+        ProcessInfo.processInfo.environment["XCUITEST"] == "1"
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             // Title bar
@@ -143,10 +147,10 @@ struct TestConfigBrowserView: View {
                     ScrollView {
                         NativeDisplayView(config: config)
                             .environment(\.nativeDisplayParentSize, CGSize(
-                                width: geometry.size.width - 32,
+                                width: geometry.size.width - (isUITest ? 0 : 32),
                                 height: geometry.size.height
                             ))
-                            .padding(16)
+                            .padding(isUITest ? 0 : 16)
                             .accessibilityIdentifier("native-display-view")
                     }
                 }

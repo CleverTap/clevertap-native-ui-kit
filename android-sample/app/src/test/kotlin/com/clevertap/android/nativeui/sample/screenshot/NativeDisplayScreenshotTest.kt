@@ -56,12 +56,12 @@ class NativeDisplayScreenshotTest {
         @AfterClass
         fun writeFailureReport() {
             if (failedConfigs.isEmpty()) {
-                println("✅ All ${157} configs rendered successfully.")
+                println("✅ All ${177} configs rendered successfully.")
                 return
             }
             val lines = failedConfigs.map { (name, reason) -> "  $name  →  $reason" }
             val report = buildString {
-                appendLine("Failed configs (${failedConfigs.size} / 157):")
+                appendLine("Failed configs (${failedConfigs.size} / 177):")
                 appendLine(lines.joinToString("\n"))
             }
             println("⚠️\n$report")
@@ -376,6 +376,36 @@ class NativeDisplayScreenshotTest {
     @Test fun test154NestedBoxDeep() = captureConfig("test-154-nested-box-deep.json")
     @Test fun test155AllElementTypes() = captureConfig("test-155-all-element-types.json")
     @Test fun test156ButtonBackgrounds() = captureConfig("test-156-button-backgrounds.json")
+
+    // ============================================================================
+    // Gallery Combination Tests (box-based, percentage sizing, all mode/indicator/nav combos)
+    // ============================================================================
+
+    // free_flow
+    @Test fun test157GalleryBoxFreeflowIndicatorsNavbtns() = captureConfig("test-157-gallery-box-freeflow-indicators-navbtns.json")
+    @Test fun test158GalleryBoxFreeflowIndicatorsOnly() = captureConfig("test-158-gallery-box-freeflow-indicators-only.json")
+    @Test fun test159GalleryBoxFreeflowNavbtnsOnly() = captureConfig("test-159-gallery-box-freeflow-navbtns-only.json")
+    @Test fun test160GalleryBoxFreeflowMinimal() = captureConfig("test-160-gallery-box-freeflow-minimal.json")
+    @Test fun test161GalleryBoxFreeflowTallImages() = captureConfig("test-161-gallery-box-freeflow-tall-images.json")
+    @Test fun test162GalleryBoxFreeflowVideoItems() = captureConfig("test-162-gallery-box-freeflow-video-items.json")
+    @Test fun test163GalleryBoxFreeflowButtonItems() = captureConfig("test-163-gallery-box-freeflow-button-items.json")
+    @Test fun test164GalleryBoxFreeflow5items() = captureConfig("test-164-gallery-box-freeflow-5items.json")
+
+    // free_flow_grid
+    @Test fun test165GalleryBoxGrid2colIndicatorsNavbtns() = captureConfig("test-165-gallery-box-grid2col-indicators-navbtns.json")
+    @Test fun test166GalleryBoxGrid2colIndicatorsOnly() = captureConfig("test-166-gallery-box-grid2col-indicators-only.json")
+    @Test fun test167GalleryBoxGrid2colNavbtnsOnly() = captureConfig("test-167-gallery-box-grid2col-navbtns-only.json")
+    @Test fun test168GalleryBoxGrid2colMinimal() = captureConfig("test-168-gallery-box-grid2col-minimal.json")
+    @Test fun test169GalleryBoxGrid3colIndicators() = captureConfig("test-169-gallery-box-grid3col-indicators.json")
+    @Test fun test170GalleryBoxGrid3colNavbtns() = captureConfig("test-170-gallery-box-grid3col-navbtns.json")
+    @Test fun test171GalleryBoxGrid2colVideo() = captureConfig("test-171-gallery-box-grid2col-video.json")
+    @Test fun test172GalleryBoxGrid2colVertical() = captureConfig("test-172-gallery-box-grid2col-vertical.json")
+
+    // snapping
+    @Test fun test173GalleryBoxSnappingIndicatorsNavbtns() = captureConfig("test-173-gallery-box-snapping-indicators-navbtns.json")
+    @Test fun test174GalleryBoxSnappingIndicatorsOnly() = captureConfig("test-174-gallery-box-snapping-indicators-only.json")
+    @Test fun test175GalleryBoxSnappingNavbtnsOnly() = captureConfig("test-175-gallery-box-snapping-navbtns-only.json")
+    @Test fun test176GalleryBoxSnappingMinimal() = captureConfig("test-176-gallery-box-snapping-minimal.json")
 
     // ============================================================================
     // Verification Test

@@ -9,13 +9,12 @@ struct RenderGallery: View {
     let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
-    let parentSize: CGSize
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
-    
+
     var body: some View {
         let config = container.galleryConfig ?? GalleryConfig()
-        
+
         switch config.mode {
         case .snapping:
             SnappingGalleryView(
@@ -24,11 +23,10 @@ struct RenderGallery: View {
                 resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
-                parentSize: parentSize,
                 actionHandler: actionHandler,
                 componentListener: componentListener
             )
-            
+
         case .freeFlow:
             FreeFlowGalleryView(
                 container: container,
@@ -36,11 +34,10 @@ struct RenderGallery: View {
                 resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
-                parentSize: parentSize,
                 actionHandler: actionHandler,
                 componentListener: componentListener
             )
-            
+
         case .freeFlowGrid:
             FreeFlowGridGalleryView(
                 container: container,
@@ -48,7 +45,6 @@ struct RenderGallery: View {
                 resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
-                parentSize: parentSize,
                 actionHandler: actionHandler,
                 componentListener: componentListener
             )
@@ -68,7 +64,6 @@ struct SnappingGalleryView: View {
     let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
-    let parentSize: CGSize
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
     
@@ -180,7 +175,6 @@ struct FreeFlowGalleryView: View {
     let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
-    let parentSize: CGSize
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
     
@@ -236,7 +230,6 @@ struct FreeFlowGridGalleryView: View {
     let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
-    let parentSize: CGSize
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
     
@@ -265,6 +258,7 @@ struct FreeFlowGridGalleryView: View {
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
                             )
+                            .frame(maxWidth: .infinity)
                             .frame(width: itemWidth)
                         }
                     }
@@ -290,6 +284,7 @@ struct FreeFlowGridGalleryView: View {
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
                             )
+                            .frame(maxHeight: .infinity)
                             .frame(height: itemHeight)
                         }
                     }

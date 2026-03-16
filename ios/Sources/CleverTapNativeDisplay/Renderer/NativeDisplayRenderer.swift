@@ -264,7 +264,6 @@ struct RenderContainer: View {
                 resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
-                parentSize: availableSize,
                 actionHandler: actionHandler,
                 componentListener: componentListener
             )

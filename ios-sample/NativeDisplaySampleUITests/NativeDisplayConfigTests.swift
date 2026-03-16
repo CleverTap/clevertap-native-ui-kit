@@ -1,9 +1,9 @@
 import XCTest
 
-/// Screenshot capture for all 157 Native Display test configurations.
+/// Screenshot capture for all 177 Native Display test configurations.
 ///
 /// A single test method navigates through every config sequentially using the
-/// in-app "next" arrow — one app launch, one navigation, 157 screenshots.
+/// in-app "next" arrow — one app launch, one navigation, 177 screenshots.
 ///
 /// Run:
 ///   xcodebuild test -scheme NativeDisplaySample \
@@ -28,6 +28,7 @@ final class NativeDisplayConfigTests: XCTestCase {
         // ImagePreloader.swift downloads images in parallel and sets "images-preloaded"
         // when complete. Both AsyncImage and GIFImage benefit via URLCache.shared.
         app.launchEnvironment["PRELOAD_IMAGES"] = "1"
+        app.launchEnvironment["XCUITEST"] = "1"
         app.launch()
 
         // Wait for image preloading to finish before navigating anywhere.
@@ -67,7 +68,7 @@ final class NativeDisplayConfigTests: XCTestCase {
 
     // MARK: - Single Sequential Run
 
-    /// Captures screenshots for all 157 test configs in one pass.
+    /// Captures screenshots for all 177 test configs in one pass.
     ///
     /// Uses the "nav-next" arrow button to advance through configs without relaunching
     /// the app. `native-display-view` is waited on before each screenshot so the
@@ -232,6 +233,26 @@ final class NativeDisplayConfigTests: XCTestCase {
             "test-154-nested-box-deep",
             "test-155-all-element-types",
             "test-156-button-backgrounds",
+            "test-157-gallery-box-freeflow-indicators-navbtns",
+            "test-158-gallery-box-freeflow-indicators-only",
+            "test-159-gallery-box-freeflow-navbtns-only",
+            "test-160-gallery-box-freeflow-minimal",
+            "test-161-gallery-box-freeflow-tall-images",
+            "test-162-gallery-box-freeflow-video-items",
+            "test-163-gallery-box-freeflow-button-items",
+            "test-164-gallery-box-freeflow-5items",
+            "test-165-gallery-box-grid2col-indicators-navbtns",
+            "test-166-gallery-box-grid2col-indicators-only",
+            "test-167-gallery-box-grid2col-navbtns-only",
+            "test-168-gallery-box-grid2col-minimal",
+            "test-169-gallery-box-grid3col-indicators",
+            "test-170-gallery-box-grid3col-navbtns",
+            "test-171-gallery-box-grid2col-video",
+            "test-172-gallery-box-grid2col-vertical",
+            "test-173-gallery-box-snapping-indicators-navbtns",
+            "test-174-gallery-box-snapping-indicators-only",
+            "test-175-gallery-box-snapping-navbtns-only",
+            "test-176-gallery-box-snapping-minimal",
             "test-VERIFY-percentage-offset-fix",
         ]
 
@@ -258,8 +279,10 @@ final class NativeDisplayConfigTests: XCTestCase {
                 failedConfigs.append((name: filename, reason: reason))
             }
 
-            // Capture full-screen screenshot regardless (shows error state or blank)
-            let screenshot = XCTAttachment(screenshot: app.screenshot())
+            // Capture element-level screenshot of NativeDisplayView (no chrome, no padding)
+            let renderView = app.descendants(matching: .any)
+                .matching(identifier: "native-display-view").firstMatch
+            let screenshot = XCTAttachment(screenshot: renderView.exists ? renderView.screenshot() : app.screenshot())
             screenshot.name = filename
             screenshot.lifetime = .keepAlways
             add(screenshot)
