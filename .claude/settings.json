@@ -2,6 +2,10 @@
   "project": "clevertap-native-ui-kit",
   "description": "Native Display UI Kit - Server-driven UI framework",
   
+  "env": {
+      "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  
   "paths": {
     "android_sdk": "android/sdk",
     "ios_sdk": "ios/Sources",

@@ -23,7 +23,8 @@ let package = Package(
         .testTarget(
             name: "CleverTapNativeDisplayTests",
             dependencies: ["CleverTapNativeDisplay"],
-            path: "Tests/CleverTapNativeDisplayTests"
+            path: "Tests/CleverTapNativeDisplayTests",
+            resources: [.copy("BenchmarkConfigs")]
         ),
     ]
 )

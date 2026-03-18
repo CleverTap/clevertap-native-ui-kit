@@ -1,0 +1,367 @@
+{
+  "theme": {
+    "id": "stress-theme",
+    "defaultStyle": {
+      "textColor": "#212121",
+      "fontSize": 14,
+      "lineHeight": 20,
+      "fontWeight": "normal"
+    },
+    "colors": {
+      "primary": "#1976D2",
+      "secondary": "#FF5722",
+      "accent": "#FFC107",
+      "surface": "#FFFFFF",
+      "background": "#F5F5F5",
+      "error": "#D32F2F",
+      "onPrimary": "#FFFFFF",
+      "onSurface": "#212121"
+    }
+  },
+  "styleClasses": [
+    {"name": "h1", "style": {"fontSize": 28, "fontWeight": "bold", "lineHeight": 36}},
+    {"name": "h2", "style": {"fontSize": 22, "fontWeight": "bold", "lineHeight": 30}},
+    {"name": "h3", "style": {"fontSize": 18, "fontWeight": "medium", "lineHeight": 24}},
+    {"name": "body", "style": {"fontSize": 14, "lineHeight": 20}},
+    {"name": "caption", "style": {"fontSize": 12, "lineHeight": 16, "textColor": "#757575"}},
+    {"name": "card", "style": {"backgroundColor": "#FFFFFF", "borderRadius": 12, "shadowColor": "#00000020", "shadowRadius": 4, "shadowOffsetY": 2}},
+    {"name": "card-flat", "style": {"backgroundColor": "#FFFFFF", "borderRadius": 8, "borderWidth": 1, "borderColor": "#E0E0E0"}},
+    {"name": "chip", "style": {"backgroundColor": "#E3F2FD", "borderRadius": 16, "textColor": "#1976D2", "fontSize": 12, "lineHeight": 16}},
+    {"name": "badge-success", "style": {"backgroundColor": "#4CAF50", "textColor": "#FFFFFF", "borderRadius": 4, "fontSize": 10, "lineHeight": 14}},
+    {"name": "badge-warning", "style": {"backgroundColor": "#FF9800", "textColor": "#FFFFFF", "borderRadius": 4, "fontSize": 10, "lineHeight": 14}}
+  ],
+  "variables": {
+    "userName": "Alexandra Johnson",
+    "userEmail": "alex.johnson@example.com",
+    "memberSince": "2023",
+    "totalOrders": 47,
+    "pendingOrders": 3,
+    "totalSpent": "$2,847.50",
+    "rewardPoints": 12500,
+    "isPremium": true,
+    "notificationCount": 5,
+    "cartItems": 2,
+    "shippingAddress": "123 Main St, Springfield",
+    "lastLogin": "Today",
+    "profileCompletion": 85,
+    "favoriteCategory": "Electronics",
+    "currency": "$",
+    "taxRate": "8.5%",
+    "promoCode": "SAVE20",
+    "promoDiscount": "20%",
+    "appVersion": "3.2.1",
+    "supportHours": "9AM - 6PM EST"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "arrangement": {"strategy": "spaced", "spacing": 0}
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "app-bar",
+        "containerType": "horizontal",
+        "layout": {
+          "padding": {"horizontal": 16, "vertical": 12},
+          "arrangement": {"strategy": "space_between"}
+        },
+        "style": {"backgroundColor": "#1976D2"},
+        "children": [
+          {"type": "element", "id": "app-title", "elementType": "text", "bindings": {"text": "Dashboard"}, "style": {"textColor": "#FFFFFF", "fontSize": 20, "fontWeight": "bold", "lineHeight": 28}},
+          {
+            "type": "container", "id": "app-bar-actions", "containerType": "horizontal",
+            "layout": {"arrangement": {"strategy": "spaced", "spacing": 12}},
+            "children": [
+              {"type": "element", "id": "notif-badge", "elementType": "text", "bindings": {"text": "{{notificationCount}}"}, "styleClass": "badge-warning", "layout": {"padding": {"horizontal": 6, "vertical": 2}}},
+              {"type": "element", "id": "cart-badge", "elementType": "text", "bindings": {"text": "{{cartItems}}"}, "styleClass": "badge-success", "layout": {"padding": {"horizontal": 6, "vertical": 2}}}
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "profile-section",
+        "containerType": "horizontal",
+        "layout": {"padding": {"all": 16}, "arrangement": {"strategy": "spaced", "spacing": 12}},
+        "style": {"backgroundColor": "#E3F2FD"},
+        "children": [
+          {
+            "type": "container", "id": "avatar-box", "containerType": "box",
+            "layout": {"width": {"value": 64, "unit": "dp"}, "height": {"value": 64, "unit": "dp"}},
+            "style": {"backgroundColor": "#1976D2", "borderRadius": 32},
+            "children": [
+              {"type": "element", "id": "avatar-text", "elementType": "text", "bindings": {"text": "AJ"}, "style": {"textColor": "#FFFFFF", "fontSize": 24, "fontWeight": "bold", "lineHeight": 32}}
+            ]
+          },
+          {
+            "type": "container", "id": "profile-info", "containerType": "vertical",
+            "layout": {"arrangement": {"strategy": "spaced", "spacing": 4}},
+            "children": [
+              {"type": "element", "id": "user-name", "elementType": "text", "bindings": {"text": "{{userName}}"}, "styleClass": "h3"},
+              {"type": "element", "id": "user-email", "elementType": "text", "bindings": {"text": "{{userEmail}}"}, "styleClass": "caption"},
+              {
+                "type": "container", "id": "member-row", "containerType": "horizontal",
+                "layout": {"arrangement": {"strategy": "spaced", "spacing": 8}},
+                "children": [
+                  {"type": "element", "id": "member-badge", "elementType": "text", "bindings": {"text": "{{isPremium ? 'PREMIUM' : 'BASIC'}}"}, "styleClass": "chip", "layout": {"padding": {"horizontal": 8, "vertical": 2}}},
+                  {"type": "element", "id": "member-since", "elementType": "text", "bindings": {"text": "Since {{memberSince}}"}, "styleClass": "caption"}
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "stats-grid",
+        "containerType": "vertical",
+        "layout": {"padding": {"all": 16}, "arrangement": {"strategy": "spaced", "spacing": 12}},
+        "children": [
+          {"type": "element", "id": "stats-heading", "elementType": "text", "bindings": {"text": "Overview"}, "styleClass": "h2"},
+          {
+            "type": "container", "id": "stats-row-1", "containerType": "horizontal",
+            "layout": {"arrangement": {"strategy": "spaced", "spacing": 12}},
+            "children": [
+              {
+                "type": "container", "id": "stat-orders", "containerType": "vertical", "styleClass": "card",
+                "layout": {"width": {"value": 50, "unit": "percent"}, "padding": {"all": 16}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+                "children": [
+                  {"type": "element", "id": "orders-label", "elementType": "text", "bindings": {"text": "Total Orders"}, "styleClass": "caption"},
+                  {"type": "element", "id": "orders-value", "elementType": "text", "bindings": {"text": "{{totalOrders}}"}, "style": {"fontSize": 32, "fontWeight": "bold", "lineHeight": 40, "textColor": "#1976D2"}},
+                  {"type": "element", "id": "orders-pending", "elementType": "text", "bindings": {"text": "{{pendingOrders}} pending"}, "styleClass": "badge-warning", "layout": {"padding": {"horizontal": 6, "vertical": 2}}}
+                ]
+              },
+              {
+                "type": "container", "id": "stat-spent", "containerType": "vertical", "styleClass": "card",
+                "layout": {"width": {"value": 50, "unit": "percent"}, "padding": {"all": 16}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+                "children": [
+                  {"type": "element", "id": "spent-label", "elementType": "text", "bindings": {"text": "Total Spent"}, "styleClass": "caption"},
+                  {"type": "element", "id": "spent-value", "elementType": "text", "bindings": {"text": "{{totalSpent}}"}, "style": {"fontSize": 32, "fontWeight": "bold", "lineHeight": 40, "textColor": "#4CAF50"}},
+                  {"type": "element", "id": "tax-info", "elementType": "text", "bindings": {"text": "Tax: {{taxRate}}"}, "styleClass": "caption"}
+                ]
+              }
+            ]
+          },
+          {
+            "type": "container", "id": "stats-row-2", "containerType": "horizontal",
+            "layout": {"arrangement": {"strategy": "spaced", "spacing": 12}},
+            "children": [
+              {
+                "type": "container", "id": "stat-points", "containerType": "vertical", "styleClass": "card",
+                "layout": {"width": {"value": 50, "unit": "percent"}, "padding": {"all": 16}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+                "children": [
+                  {"type": "element", "id": "points-label", "elementType": "text", "bindings": {"text": "Reward Points"}, "styleClass": "caption"},
+                  {"type": "element", "id": "points-value", "elementType": "text", "bindings": {"text": "{{rewardPoints}}"}, "style": {"fontSize": 32, "fontWeight": "bold", "lineHeight": 40, "textColor": "#FF9800"}},
+                  {"type": "element", "id": "points-info", "elementType": "text", "bindings": {"text": "Redeem now"}, "styleClass": "chip", "layout": {"padding": {"horizontal": 8, "vertical": 2}}}
+                ]
+              },
+              {
+                "type": "container", "id": "stat-profile", "containerType": "vertical", "styleClass": "card",
+                "layout": {"width": {"value": 50, "unit": "percent"}, "padding": {"all": 16}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+                "children": [
+                  {"type": "element", "id": "profile-label", "elementType": "text", "bindings": {"text": "Profile"}, "styleClass": "caption"},
+                  {"type": "element", "id": "profile-pct", "elementType": "text", "bindings": {"text": "{{profileCompletion}}%"}, "style": {"fontSize": 32, "fontWeight": "bold", "lineHeight": 40, "textColor": "#9C27B0"}},
+                  {"type": "element", "id": "profile-info", "elementType": "text", "bindings": {"text": "Complete"}, "styleClass": "badge-success", "layout": {"padding": {"horizontal": 6, "vertical": 2}}}
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "element", "id": "divider-main", "elementType": "divider", "bindings": {},
+        "dividerConfig": {"orientation": "horizontal", "thickness": 1, "color": "#E0E0E0"}
+      },
+      {
+        "type": "container",
+        "id": "promo-section",
+        "containerType": "vertical",
+        "layout": {"padding": {"all": 16}, "arrangement": {"strategy": "spaced", "spacing": 12}},
+        "children": [
+          {"type": "element", "id": "promo-heading", "elementType": "text", "bindings": {"text": "Special Offer"}, "styleClass": "h2"},
+          {
+            "type": "container", "id": "promo-card", "containerType": "vertical",
+            "style": {"backgroundColor": "#FFF3E0", "borderRadius": 12, "borderWidth": 1, "borderColor": "#FFE0B2"},
+            "layout": {"padding": {"all": 16}, "arrangement": {"strategy": "spaced", "spacing": 8}},
+            "children": [
+              {
+                "type": "container", "id": "promo-header", "containerType": "horizontal",
+                "layout": {"arrangement": {"strategy": "space_between"}},
+                "children": [
+                  {"type": "element", "id": "promo-title", "elementType": "text", "bindings": {"text": "Use code {{promoCode}}"}, "styleClass": "h3"},
+                  {"type": "element", "id": "promo-discount", "elementType": "text", "bindings": {"text": "{{promoDiscount}} OFF"}, "style": {"backgroundColor": "#FF5722", "textColor": "#FFFFFF", "fontSize": 14, "fontWeight": "bold", "lineHeight": 20, "borderRadius": 4}, "layout": {"padding": {"horizontal": 8, "vertical": 4}}}
+                ]
+              },
+              {"type": "element", "id": "promo-desc", "elementType": "text", "bindings": {"text": "Exclusive discount for {{isPremium ? 'premium' : 'all'}} members. Valid on {{favoriteCategory}} and more."}, "styleClass": "body"},
+              {
+                "type": "container", "id": "promo-actions", "containerType": "horizontal",
+                "layout": {"arrangement": {"strategy": "spaced", "spacing": 8}},
+                "children": [
+                  {"type": "element", "id": "btn-apply", "elementType": "button", "bindings": {"text": "Apply Code"}, "style": {"backgroundColor": "#FF5722", "textColor": "#FFFFFF", "borderRadius": 8}, "layout": {"padding": {"horizontal": 16, "vertical": 10}}},
+                  {"type": "element", "id": "btn-terms", "elementType": "button", "bindings": {"text": "Terms"}, "style": {"textColor": "#FF5722", "borderWidth": 1, "borderColor": "#FF5722", "borderRadius": 8}, "layout": {"padding": {"horizontal": 16, "vertical": 10}}}
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "quick-actions",
+        "containerType": "vertical",
+        "layout": {"padding": {"all": 16}, "arrangement": {"strategy": "spaced", "spacing": 12}},
+        "children": [
+          {"type": "element", "id": "actions-heading", "elementType": "text", "bindings": {"text": "Quick Actions"}, "styleClass": "h2"},
+          {
+            "type": "container", "id": "actions-grid", "containerType": "vertical",
+            "layout": {"arrangement": {"strategy": "spaced", "spacing": 8}},
+            "children": [
+              {
+                "type": "container", "id": "action-row-1", "containerType": "horizontal",
+                "layout": {"arrangement": {"strategy": "spaced", "spacing": 8}},
+                "children": [
+                  {
+                    "type": "container", "id": "action-orders", "containerType": "vertical", "styleClass": "card-flat",
+                    "layout": {"width": {"value": 50, "unit": "percent"}, "padding": {"all": 12}, "arrangement": {"strategy": "center"}},
+                    "children": [
+                      {"type": "element", "id": "action-orders-icon", "elementType": "text", "bindings": {"text": "Orders"}, "style": {"fontSize": 16, "fontWeight": "medium", "lineHeight": 22}},
+                      {"type": "element", "id": "action-orders-sub", "elementType": "text", "bindings": {"text": "{{totalOrders}} total"}, "styleClass": "caption"}
+                    ]
+                  },
+                  {
+                    "type": "container", "id": "action-shipping", "containerType": "vertical", "styleClass": "card-flat",
+                    "layout": {"width": {"value": 50, "unit": "percent"}, "padding": {"all": 12}, "arrangement": {"strategy": "center"}},
+                    "children": [
+                      {"type": "element", "id": "action-shipping-icon", "elementType": "text", "bindings": {"text": "Shipping"}, "style": {"fontSize": 16, "fontWeight": "medium", "lineHeight": 22}},
+                      {"type": "element", "id": "action-shipping-sub", "elementType": "text", "bindings": {"text": "{{shippingAddress}}"}, "styleClass": "caption"}
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "container", "id": "action-row-2", "containerType": "horizontal",
+                "layout": {"arrangement": {"strategy": "spaced", "spacing": 8}},
+                "children": [
+                  {
+                    "type": "container", "id": "action-rewards", "containerType": "vertical", "styleClass": "card-flat",
+                    "layout": {"width": {"value": 50, "unit": "percent"}, "padding": {"all": 12}, "arrangement": {"strategy": "center"}},
+                    "children": [
+                      {"type": "element", "id": "action-rewards-icon", "elementType": "text", "bindings": {"text": "Rewards"}, "style": {"fontSize": 16, "fontWeight": "medium", "lineHeight": 22}},
+                      {"type": "element", "id": "action-rewards-sub", "elementType": "text", "bindings": {"text": "{{rewardPoints}} pts"}, "styleClass": "caption"}
+                    ]
+                  },
+                  {
+                    "type": "container", "id": "action-support", "containerType": "vertical", "styleClass": "card-flat",
+                    "layout": {"width": {"value": 50, "unit": "percent"}, "padding": {"all": 12}, "arrangement": {"strategy": "center"}},
+                    "children": [
+                      {"type": "element", "id": "action-support-icon", "elementType": "text", "bindings": {"text": "Support"}, "style": {"fontSize": 16, "fontWeight": "medium", "lineHeight": 22}},
+                      {"type": "element", "id": "action-support-sub", "elementType": "text", "bindings": {"text": "{{supportHours}}"}, "styleClass": "caption"}
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "recent-activity",
+        "containerType": "vertical",
+        "layout": {"padding": {"all": 16}, "arrangement": {"strategy": "spaced", "spacing": 12}},
+        "children": [
+          {"type": "element", "id": "activity-heading", "elementType": "text", "bindings": {"text": "Recent Activity"}, "styleClass": "h2"},
+          {
+            "type": "container", "id": "activity-list", "containerType": "vertical",
+            "layout": {"arrangement": {"strategy": "spaced", "spacing": 0}},
+            "children": [
+              {
+                "type": "container", "id": "activity-1", "containerType": "horizontal", "styleClass": "card-flat",
+                "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 12}},
+                "children": [
+                  {
+                    "type": "container", "id": "activity-1-icon-box", "containerType": "box",
+                    "layout": {"width": {"value": 40, "unit": "dp"}, "height": {"value": 40, "unit": "dp"}},
+                    "style": {"backgroundColor": "#E3F2FD", "borderRadius": 20},
+                    "children": [
+                      {"type": "element", "id": "activity-1-icon", "elementType": "text", "bindings": {"text": "O"}, "style": {"textColor": "#1976D2", "fontSize": 18, "fontWeight": "bold", "lineHeight": 24}}
+                    ]
+                  },
+                  {
+                    "type": "container", "id": "activity-1-info", "containerType": "vertical",
+                    "layout": {"arrangement": {"strategy": "spaced", "spacing": 2}},
+                    "children": [
+                      {"type": "element", "id": "activity-1-title", "elementType": "text", "bindings": {"text": "Order #{{totalOrders}} placed"}, "style": {"fontWeight": "medium", "fontSize": 14, "lineHeight": 20}},
+                      {"type": "element", "id": "activity-1-time", "elementType": "text", "bindings": {"text": "{{lastLogin}}"}, "styleClass": "caption"}
+                    ]
+                  }
+                ]
+              },
+              {"type": "element", "id": "divider-act-1", "elementType": "divider", "bindings": {}, "dividerConfig": {"thickness": 1, "color": "#F5F5F5"}},
+              {
+                "type": "container", "id": "activity-2", "containerType": "horizontal", "styleClass": "card-flat",
+                "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 12}},
+                "children": [
+                  {
+                    "type": "container", "id": "activity-2-icon-box", "containerType": "box",
+                    "layout": {"width": {"value": 40, "unit": "dp"}, "height": {"value": 40, "unit": "dp"}},
+                    "style": {"backgroundColor": "#FFF3E0", "borderRadius": 20},
+                    "children": [
+                      {"type": "element", "id": "activity-2-icon", "elementType": "text", "bindings": {"text": "R"}, "style": {"textColor": "#FF9800", "fontSize": 18, "fontWeight": "bold", "lineHeight": 24}}
+                    ]
+                  },
+                  {
+                    "type": "container", "id": "activity-2-info", "containerType": "vertical",
+                    "layout": {"arrangement": {"strategy": "spaced", "spacing": 2}},
+                    "children": [
+                      {"type": "element", "id": "activity-2-title", "elementType": "text", "bindings": {"text": "{{rewardPoints}} points earned"}, "style": {"fontWeight": "medium", "fontSize": 14, "lineHeight": 20}},
+                      {"type": "element", "id": "activity-2-time", "elementType": "text", "bindings": {"text": "Yesterday"}, "styleClass": "caption"}
+                    ]
+                  }
+                ]
+              },
+              {"type": "element", "id": "divider-act-2", "elementType": "divider", "bindings": {}, "dividerConfig": {"thickness": 1, "color": "#F5F5F5"}},
+              {
+                "type": "container", "id": "activity-3", "containerType": "horizontal", "styleClass": "card-flat",
+                "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 12}},
+                "children": [
+                  {
+                    "type": "container", "id": "activity-3-icon-box", "containerType": "box",
+                    "layout": {"width": {"value": 40, "unit": "dp"}, "height": {"value": 40, "unit": "dp"}},
+                    "style": {"backgroundColor": "#E8F5E9", "borderRadius": 20},
+                    "children": [
+                      {"type": "element", "id": "activity-3-icon", "elementType": "text", "bindings": {"text": "P"}, "style": {"textColor": "#4CAF50", "fontSize": 18, "fontWeight": "bold", "lineHeight": 24}}
+                    ]
+                  },
+                  {
+                    "type": "container", "id": "activity-3-info", "containerType": "vertical",
+                    "layout": {"arrangement": {"strategy": "spaced", "spacing": 2}},
+                    "children": [
+                      {"type": "element", "id": "activity-3-title", "elementType": "text", "bindings": {"text": "Promo {{promoCode}} applied"}, "style": {"fontWeight": "medium", "fontSize": 14, "lineHeight": 20}},
+                      {"type": "element", "id": "activity-3-time", "elementType": "text", "bindings": {"text": "2 days ago"}, "styleClass": "caption"}
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "footer",
+        "containerType": "vertical",
+        "layout": {"padding": {"all": 16}, "arrangement": {"strategy": "center"}},
+        "style": {"backgroundColor": "#F5F5F5"},
+        "children": [
+          {"type": "element", "id": "footer-version", "elementType": "text", "bindings": {"text": "App v{{appVersion}}"}, "styleClass": "caption"},
+          {"type": "element", "id": "footer-login", "elementType": "text", "bindings": {"text": "Last login: {{lastLogin}}"}, "styleClass": "caption"}
+        ]
+      }
+    ]
+  }
+}

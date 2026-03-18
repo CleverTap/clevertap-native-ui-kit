@@ -1,6 +1,7 @@
 package com.clevertap.android.nativedisplay.view
 
 import android.content.Context
+import android.os.Trace
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ViewConfiguration
@@ -184,14 +185,19 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
         actionListener: NativeDisplayActionListener? = null,
         componentListener: NativeDisplayComponentListener? = null
     ) {
-        isRecycled = false
-        // Pre-resolve all node styles once — composables get O(1) lookup, no recomputation
-        val resolver = StyleResolver(config.theme, config.styleClasses)
-        resolvedStylesState.value = resolver.resolveAll(config.root)
-        configState.value = config
-        actionListenerState.value = actionListener
-        componentListenerState.value = componentListener
-        requestLayout()
+        Trace.beginSection("SDUI:setConfig")
+        try {
+            isRecycled = false
+            // Pre-resolve all node styles once — composables get O(1) lookup, no recomputation
+            val resolver = StyleResolver(config.theme, config.styleClasses)
+            resolvedStylesState.value = resolver.resolveAll(config.root)
+            configState.value = config
+            actionListenerState.value = actionListener
+            componentListenerState.value = componentListener
+            requestLayout()
+        } finally {
+            Trace.endSection()
+        }
     }
 
     /**

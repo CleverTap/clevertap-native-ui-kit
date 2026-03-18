@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NativeDisplaySample"
         android:usesCleartextTraffic="true">
+        <profileable android:shell="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -29,8 +29,13 @@
 		B011 /* VariableEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F011 /* VariableEvaluator.swift */; };
 		B012 /* StyleResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F012 /* StyleResolver.swift */; };
 		B013 /* CleverTapNativeDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F013 /* CleverTapNativeDisplay.swift */; };
+		B014 /* PerformanceSignposts.swift in Sources */ = {isa = PBXBuildFile; fileRef = F014 /* PerformanceSignposts.swift */; };
+		B015 /* GIFImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F015 /* GIFImage.swift */; };
+		B016 /* AnimationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = F016 /* AnimationModifier.swift */; };
 		BT01 /* CleverTapNativeDisplayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FT01 /* CleverTapNativeDisplayTests.swift */; };
 		BT02 /* CleverTapNativeDisplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = P001 /* CleverTapNativeDisplay.framework */; };
+		BT03 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FT02 /* PerformanceTests.swift */; };
+		BT04 /* BenchmarkConfigs in Resources */ = {isa = PBXBuildFile; fileRef = FT03 /* BenchmarkConfigs */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,7 +71,12 @@
 		F011 /* VariableEvaluator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableEvaluator.swift; sourceTree = "<group>"; };
 		F012 /* StyleResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleResolver.swift; sourceTree = "<group>"; };
 		F013 /* CleverTapNativeDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleverTapNativeDisplay.swift; sourceTree = "<group>"; };
+		F014 /* PerformanceSignposts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceSignposts.swift; sourceTree = "<group>"; };
+		F015 /* GIFImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFImage.swift; sourceTree = "<group>"; };
+		F016 /* AnimationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationModifier.swift; sourceTree = "<group>"; };
 		FT01 /* CleverTapNativeDisplayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleverTapNativeDisplayTests.swift; sourceTree = "<group>"; };
+		FT02 /* PerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTests.swift; sourceTree = "<group>"; };
+		FT03 /* BenchmarkConfigs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = BenchmarkConfigs; sourceTree = "<group>"; };
 		P001 /* CleverTapNativeDisplay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CleverTapNativeDisplay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		P002 /* CleverTapNativeDisplayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CleverTapNativeDisplayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -173,6 +183,7 @@
 				F008 /* NativeDisplayRenderer.swift */,
 				F009 /* GalleryRenderer.swift */,
 				F010 /* BackgroundRenderer.swift */,
+				F016 /* AnimationModifier.swift */,
 			);
 			path = Renderer;
 			sourceTree = "<group>";
@@ -189,6 +200,7 @@
 				GRP_RND /* Renderer */,
 				GRP_EVL /* Evaluator */,
 				GRP_STY /* Style */,
+				GRP_UTL /* Utilities */,
 			);
 			path = CleverTapNativeDisplay;
 			sourceTree = "<group>";
@@ -209,6 +221,15 @@
 			path = Style;
 			sourceTree = "<group>";
 		};
+		GRP_UTL /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				F014 /* PerformanceSignposts.swift */,
+				F015 /* GIFImage.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		GRP_TST /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -221,6 +242,8 @@
 			isa = PBXGroup;
 			children = (
 				FT01 /* CleverTapNativeDisplayTests.swift */,
+				FT02 /* PerformanceTests.swift */,
+				FT03 /* BenchmarkConfigs */,
 			);
 			path = CleverTapNativeDisplayTests;
 			sourceTree = "<group>";
@@ -325,6 +348,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BT04 /* BenchmarkConfigs in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -357,6 +381,9 @@
 				41969A6F2F0BDB420050EB83 /* TappableModifier.swift in Sources */,
 				41969A6C2F0BCA390050EB83 /* ActionHandler.swift in Sources */,
 				B013 /* CleverTapNativeDisplay.swift in Sources */,
+				B014 /* PerformanceSignposts.swift in Sources */,
+				B015 /* GIFImage.swift in Sources */,
+				B016 /* AnimationModifier.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,6 +392,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BT01 /* CleverTapNativeDisplayTests.swift in Sources */,
+				BT03 /* PerformanceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

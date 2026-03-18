@@ -2,6 +2,7 @@
 // Main configuration models for the Native Display System
 
 import Foundation
+import os
 
 /// Main configuration for native display rendering.
 /// Supports both Phase 1 (monolithic) and Phase 2+ (split APIs).
@@ -150,6 +151,8 @@ public struct ResolvedConfig: Codable, Equatable {
 public extension ResolvedConfig {
     /// Parse a ResolvedConfig from JSON data.
     static func from(jsonData: Data) throws -> ResolvedConfig {
+        let signpostID = PerformanceSignposts.jsonParsing.begin("parseResolvedConfig")
+        defer { PerformanceSignposts.jsonParsing.end("parseResolvedConfig", signpostID) }
         let decoder = JSONDecoder()
         return try decoder.decode(ResolvedConfig.self, from: jsonData)
     }
@@ -170,6 +173,8 @@ public extension ResolvedConfig {
 public extension NativeDisplayConfig {
     /// Parse a NativeDisplayConfig from JSON data.
     static func from(jsonData: Data) throws -> NativeDisplayConfig {
+        let signpostID = PerformanceSignposts.jsonParsing.begin("parseConfig")
+        defer { PerformanceSignposts.jsonParsing.end("parseConfig", signpostID) }
         let decoder = JSONDecoder()
         return try decoder.decode(NativeDisplayConfig.self, from: jsonData)
     }

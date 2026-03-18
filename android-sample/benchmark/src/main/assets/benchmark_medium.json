@@ -1,0 +1,271 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {
+      "textColor": "#333333",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "styleClasses": [
+    {
+      "name": "heading",
+      "style": {
+        "fontSize": 22,
+        "lineHeight": 30,
+        "fontWeight": "bold",
+        "textColor": "#000000"
+      }
+    },
+    {
+      "name": "subheading",
+      "style": {
+        "fontSize": 16,
+        "lineHeight": 22,
+        "fontWeight": "medium",
+        "textColor": "#555555"
+      }
+    },
+    {
+      "name": "card",
+      "style": {
+        "backgroundColor": "#FFFFFF",
+        "borderRadius": 12,
+        "shadowRadius": 4,
+        "shadowColor": "#40000000",
+        "shadowOffsetY": 2
+      }
+    }
+  ],
+  "variables": {
+    "userName": "John Doe",
+    "userEmail": "john@example.com",
+    "memberSince": "2023",
+    "orderCount": "42",
+    "totalSpent": "$1,234.56"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {"special": "match_parent"},
+      "padding": {"all": 16},
+      "arrangement": {"strategy": "spaced", "spacing": 16}
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "page_title",
+        "elementType": "text",
+        "bindings": {"text": "Profile"},
+        "styleClass": "heading"
+      },
+      {
+        "type": "container",
+        "id": "profile_card",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {"special": "match_parent"},
+          "padding": {"all": 16},
+          "arrangement": {"strategy": "spaced", "spacing": 16}
+        },
+        "styleClass": "card",
+        "children": [
+          {
+            "type": "element",
+            "id": "avatar",
+            "elementType": "image",
+            "bindings": {"url": "https://picsum.photos/80/80"},
+            "layout": {
+              "width": {"value": 64, "unit": "dp"},
+              "height": {"value": 64, "unit": "dp"}
+            },
+            "style": {
+              "borderRadius": 32
+            }
+          },
+          {
+            "type": "container",
+            "id": "user_info",
+            "containerType": "vertical",
+            "layout": {
+              "arrangement": {"strategy": "spaced", "spacing": 4}
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "user_name",
+                "elementType": "text",
+                "bindings": {"text": "{{userName}}"},
+                "styleClass": "subheading"
+              },
+              {
+                "type": "element",
+                "id": "user_email",
+                "elementType": "text",
+                "bindings": {"text": "{{userEmail}}"},
+                "style": {
+                  "fontSize": 12,
+                  "lineHeight": 16,
+                  "textColor": "#888888"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "stats_card",
+        "containerType": "vertical",
+        "layout": {
+          "width": {"special": "match_parent"},
+          "padding": {"all": 16},
+          "arrangement": {"strategy": "spaced", "spacing": 12}
+        },
+        "styleClass": "card",
+        "children": [
+          {
+            "type": "element",
+            "id": "stats_title",
+            "elementType": "text",
+            "bindings": {"text": "Statistics"},
+            "styleClass": "subheading"
+          },
+          {
+            "type": "element",
+            "id": "divider_1",
+            "elementType": "divider",
+            "bindings": {},
+            "dividerConfig": {
+              "orientation": "horizontal",
+              "thickness": 1,
+              "color": "#E0E0E0"
+            }
+          },
+          {
+            "type": "container",
+            "id": "stat_row_1",
+            "containerType": "horizontal",
+            "layout": {
+              "width": {"special": "match_parent"},
+              "arrangement": {"strategy": "space_between"}
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "stat_label_1",
+                "elementType": "text",
+                "bindings": {"text": "Member since"}
+              },
+              {
+                "type": "element",
+                "id": "stat_value_1",
+                "elementType": "text",
+                "bindings": {"text": "{{memberSince}}"},
+                "style": {"fontWeight": "bold"}
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "stat_row_2",
+            "containerType": "horizontal",
+            "layout": {
+              "width": {"special": "match_parent"},
+              "arrangement": {"strategy": "space_between"}
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "stat_label_2",
+                "elementType": "text",
+                "bindings": {"text": "Orders"}
+              },
+              {
+                "type": "element",
+                "id": "stat_value_2",
+                "elementType": "text",
+                "bindings": {"text": "{{orderCount}}"},
+                "style": {"fontWeight": "bold"}
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "stat_row_3",
+            "containerType": "horizontal",
+            "layout": {
+              "width": {"special": "match_parent"},
+              "arrangement": {"strategy": "space_between"}
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "stat_label_3",
+                "elementType": "text",
+                "bindings": {"text": "Total spent"}
+              },
+              {
+                "type": "element",
+                "id": "stat_value_3",
+                "elementType": "text",
+                "bindings": {"text": "{{totalSpent}}"},
+                "style": {"fontWeight": "bold", "textColor": "#4CAF50"}
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "actions_card",
+        "containerType": "vertical",
+        "layout": {
+          "width": {"special": "match_parent"},
+          "padding": {"all": 16},
+          "arrangement": {"strategy": "spaced", "spacing": 8}
+        },
+        "styleClass": "card",
+        "children": [
+          {
+            "type": "element",
+            "id": "btn_edit",
+            "elementType": "button",
+            "bindings": {"text": "Edit Profile"},
+            "layout": {
+              "width": {"special": "match_parent"},
+              "padding": {"vertical": 12}
+            },
+            "style": {
+              "backgroundColor": "#2196F3",
+              "textColor": "#FFFFFF",
+              "borderRadius": 8,
+              "textAlign": "center"
+            }
+          },
+          {
+            "type": "element",
+            "id": "btn_settings",
+            "elementType": "button",
+            "bindings": {"text": "Settings"},
+            "layout": {
+              "width": {"special": "match_parent"},
+              "padding": {"vertical": 12}
+            },
+            "style": {
+              "backgroundColor": "#E0E0E0",
+              "textColor": "#333333",
+              "borderRadius": 8,
+              "textAlign": "center"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

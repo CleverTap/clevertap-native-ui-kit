@@ -1,0 +1,166 @@
+{
+  "theme": {
+    "id": "gallery-theme",
+    "defaultStyle": {
+      "textColor": "#212121",
+      "fontSize": 14,
+      "lineHeight": 20
+    },
+    "colors": {
+      "primary": "#6200EE",
+      "surface": "#FFFFFF",
+      "onSurface": "#212121",
+      "subtle": "#757575",
+      "divider": "#E0E0E0"
+    }
+  },
+  "styleClasses": [
+    {"name": "card", "style": {"backgroundColor": "#FFFFFF", "borderRadius": 12, "shadowColor": "#00000020", "shadowRadius": 8, "shadowOffsetY": 2}},
+    {"name": "title", "style": {"fontSize": 18, "fontWeight": "bold", "lineHeight": 24}},
+    {"name": "caption", "style": {"fontSize": 12, "lineHeight": 16, "textColor": "#757575"}},
+    {"name": "price-tag", "style": {"fontSize": 16, "fontWeight": "bold", "lineHeight": 22, "textColor": "#6200EE"}},
+    {"name": "badge", "style": {"fontSize": 10, "lineHeight": 14, "textColor": "#FFFFFF", "backgroundColor": "#FF5722", "borderRadius": 4}}
+  ],
+  "variables": {
+    "sectionTitle": "Featured Products",
+    "promoText": "Up to 50% off",
+    "itemCount": 8,
+    "currency": "$",
+    "userName": "Alex"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "arrangement": {"strategy": "spaced", "spacing": 16}
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "header-section",
+        "containerType": "vertical",
+        "layout": {"padding": {"horizontal": 16, "top": 16}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+        "children": [
+          {
+            "type": "element",
+            "id": "section-title",
+            "elementType": "text",
+            "bindings": {"text": "{{sectionTitle}}"},
+            "styleClass": "title"
+          },
+          {
+            "type": "element",
+            "id": "promo-text",
+            "elementType": "text",
+            "bindings": {"text": "{{promoText}} | {{itemCount}} items"},
+            "styleClass": "caption"
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "product-gallery",
+        "containerType": "gallery",
+        "galleryConfig": {
+          "mode": "snapping",
+          "orientation": "horizontal",
+          "snapBehavior": "center",
+          "peek": {"before": 16, "after": 16},
+          "spacing": 12,
+          "showIndicators": true
+        },
+        "layout": {
+          "height": {"value": 320, "unit": "dp"}
+        },
+        "children": [
+          {
+            "type": "container", "id": "product-1", "containerType": "vertical", "styleClass": "card",
+            "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 8}},
+            "children": [
+              {"type": "element", "id": "img-1", "elementType": "image", "bindings": {"url": "https://picsum.photos/300/200?1"}, "layout": {"width": {"special": "match_parent"}, "height": {"value": 160, "unit": "dp"}}, "style": {"borderRadius": 8}},
+              {"type": "element", "id": "name-1", "elementType": "text", "bindings": {"text": "Wireless Headphones"}, "styleClass": "title"},
+              {"type": "element", "id": "price-1", "elementType": "text", "bindings": {"text": "{{currency}}29.99"}, "styleClass": "price-tag"},
+              {"type": "element", "id": "rating-1", "elementType": "text", "bindings": {"text": "4.8 stars"}, "styleClass": "caption"}
+            ]
+          },
+          {
+            "type": "container", "id": "product-2", "containerType": "vertical", "styleClass": "card",
+            "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 8}},
+            "children": [
+              {"type": "element", "id": "img-2", "elementType": "image", "bindings": {"url": "https://picsum.photos/300/200?2"}, "layout": {"width": {"special": "match_parent"}, "height": {"value": 160, "unit": "dp"}}, "style": {"borderRadius": 8}},
+              {"type": "element", "id": "name-2", "elementType": "text", "bindings": {"text": "Smart Watch"}, "styleClass": "title"},
+              {"type": "element", "id": "price-2", "elementType": "text", "bindings": {"text": "{{currency}}149.00"}, "styleClass": "price-tag"},
+              {"type": "element", "id": "rating-2", "elementType": "text", "bindings": {"text": "4.5 stars"}, "styleClass": "caption"}
+            ]
+          },
+          {
+            "type": "container", "id": "product-3", "containerType": "vertical", "styleClass": "card",
+            "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 8}},
+            "children": [
+              {"type": "element", "id": "img-3", "elementType": "image", "bindings": {"url": "https://picsum.photos/300/200?3"}, "layout": {"width": {"special": "match_parent"}, "height": {"value": 160, "unit": "dp"}}, "style": {"borderRadius": 8}},
+              {"type": "element", "id": "name-3", "elementType": "text", "bindings": {"text": "Bluetooth Speaker"}, "styleClass": "title"},
+              {"type": "element", "id": "price-3", "elementType": "text", "bindings": {"text": "{{currency}}39.50"}, "styleClass": "price-tag"},
+              {"type": "element", "id": "rating-3", "elementType": "text", "bindings": {"text": "4.2 stars"}, "styleClass": "caption"}
+            ]
+          },
+          {
+            "type": "container", "id": "product-4", "containerType": "vertical", "styleClass": "card",
+            "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 8}},
+            "children": [
+              {"type": "element", "id": "img-4", "elementType": "image", "bindings": {"url": "https://picsum.photos/300/200?4"}, "layout": {"width": {"special": "match_parent"}, "height": {"value": 160, "unit": "dp"}}, "style": {"borderRadius": 8}},
+              {"type": "element", "id": "name-4", "elementType": "text", "bindings": {"text": "USB-C Hub"}, "styleClass": "title"},
+              {"type": "element", "id": "price-4", "elementType": "text", "bindings": {"text": "{{currency}}24.99"}, "styleClass": "price-tag"},
+              {"type": "element", "id": "rating-4", "elementType": "text", "bindings": {"text": "4.6 stars"}, "styleClass": "caption"}
+            ]
+          },
+          {
+            "type": "container", "id": "product-5", "containerType": "vertical", "styleClass": "card",
+            "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 8}},
+            "children": [
+              {"type": "element", "id": "img-5", "elementType": "image", "bindings": {"url": "https://picsum.photos/300/200?5"}, "layout": {"width": {"special": "match_parent"}, "height": {"value": 160, "unit": "dp"}}, "style": {"borderRadius": 8}},
+              {"type": "element", "id": "name-5", "elementType": "text", "bindings": {"text": "Laptop Stand"}, "styleClass": "title"},
+              {"type": "element", "id": "price-5", "elementType": "text", "bindings": {"text": "{{currency}}59.00"}, "styleClass": "price-tag"},
+              {"type": "element", "id": "rating-5", "elementType": "text", "bindings": {"text": "4.7 stars"}, "styleClass": "caption"}
+            ]
+          },
+          {
+            "type": "container", "id": "product-6", "containerType": "vertical", "styleClass": "card",
+            "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 8}},
+            "children": [
+              {"type": "element", "id": "img-6", "elementType": "image", "bindings": {"url": "https://picsum.photos/300/200?6"}, "layout": {"width": {"special": "match_parent"}, "height": {"value": 160, "unit": "dp"}}, "style": {"borderRadius": 8}},
+              {"type": "element", "id": "name-6", "elementType": "text", "bindings": {"text": "Phone Case"}, "styleClass": "title"},
+              {"type": "element", "id": "price-6", "elementType": "text", "bindings": {"text": "{{currency}}12.99"}, "styleClass": "price-tag"},
+              {"type": "element", "id": "rating-6", "elementType": "text", "bindings": {"text": "4.3 stars"}, "styleClass": "caption"}
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "footer-actions",
+        "containerType": "horizontal",
+        "layout": {"padding": {"horizontal": 16, "bottom": 16}, "arrangement": {"strategy": "space_between"}},
+        "children": [
+          {
+            "type": "element",
+            "id": "btn-browse",
+            "elementType": "button",
+            "bindings": {"text": "Browse All"},
+            "style": {"backgroundColor": "#6200EE", "textColor": "#FFFFFF", "borderRadius": 8},
+            "layout": {"padding": {"horizontal": 24, "vertical": 12}}
+          },
+          {
+            "type": "element",
+            "id": "btn-wishlist",
+            "elementType": "button",
+            "bindings": {"text": "Wishlist"},
+            "style": {"backgroundColor": "#F5F5F5", "textColor": "#6200EE", "borderRadius": 8, "borderWidth": 1, "borderColor": "#6200EE"},
+            "layout": {"padding": {"horizontal": 24, "vertical": 12}}
+          }
+        ]
+      }
+    ]
+  }
+}

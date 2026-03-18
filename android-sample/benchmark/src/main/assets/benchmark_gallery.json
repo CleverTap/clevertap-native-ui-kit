@@ -1,0 +1,452 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {
+      "textColor": "#333333",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "styleClasses": [
+    {
+      "name": "heading",
+      "style": {
+        "fontSize": 22,
+        "lineHeight": 30,
+        "fontWeight": "bold",
+        "textColor": "#000000"
+      }
+    },
+    {
+      "name": "card",
+      "style": {
+        "backgroundColor": "#FFFFFF",
+        "borderRadius": 12,
+        "shadowRadius": 4,
+        "shadowColor": "#40000000",
+        "shadowOffsetY": 2
+      }
+    },
+    {
+      "name": "badge",
+      "style": {
+        "backgroundColor": "#FF5722",
+        "textColor": "#FFFFFF",
+        "fontSize": 11,
+        "lineHeight": 14,
+        "borderRadius": 4
+      }
+    },
+    {
+      "name": "price",
+      "style": {
+        "fontSize": 18,
+        "lineHeight": 24,
+        "fontWeight": "bold",
+        "textColor": "#4CAF50"
+      }
+    },
+    {
+      "name": "caption",
+      "style": {
+        "fontSize": 12,
+        "lineHeight": 16,
+        "textColor": "#888888"
+      }
+    }
+  ],
+  "variables": {
+    "currency": "$",
+    "discountLabel": "SALE",
+    "ratingPrefix": "Rating:",
+    "reviewSuffix": "reviews"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {"special": "match_parent"},
+      "padding": {"vertical": 16},
+      "arrangement": {"strategy": "spaced", "spacing": 16}
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "section_title",
+        "elementType": "text",
+        "bindings": {"text": "Featured Products"},
+        "styleClass": "heading",
+        "layout": {
+          "padding": {"horizontal": 16}
+        }
+      },
+      {
+        "type": "container",
+        "id": "gallery_snapping",
+        "containerType": "gallery",
+        "galleryConfig": {
+          "mode": "snapping",
+          "orientation": "horizontal",
+          "snapBehavior": "center",
+          "peek": {"before": 24, "after": 24},
+          "itemsPerView": 1.1
+        },
+        "layout": {
+          "width": {"special": "match_parent"},
+          "height": {"value": 320, "unit": "dp"}
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "product_1",
+            "containerType": "vertical",
+            "styleClass": "card",
+            "layout": {
+              "padding": {"all": 12},
+              "arrangement": {"strategy": "spaced", "spacing": 8}
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "img_1",
+                "elementType": "image",
+                "bindings": {"url": "https://picsum.photos/seed/p1/400/200"},
+                "layout": {
+                  "width": {"special": "match_parent"},
+                  "aspectRatio": 2.0
+                },
+                "style": {"borderRadius": 8}
+              },
+              {
+                "type": "element",
+                "id": "name_1",
+                "elementType": "text",
+                "bindings": {"text": "Wireless Headphones"},
+                "style": {"fontSize": 16, "lineHeight": 22, "fontWeight": "bold"}
+              },
+              {
+                "type": "element",
+                "id": "price_1",
+                "elementType": "text",
+                "bindings": {"text": "{{currency}}79.99"},
+                "styleClass": "price"
+              },
+              {
+                "type": "element",
+                "id": "rating_1",
+                "elementType": "text",
+                "bindings": {"text": "{{ratingPrefix}} 4.5 (128 {{reviewSuffix}})"},
+                "styleClass": "caption"
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "product_2",
+            "containerType": "vertical",
+            "styleClass": "card",
+            "layout": {
+              "padding": {"all": 12},
+              "arrangement": {"strategy": "spaced", "spacing": 8}
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "img_2",
+                "elementType": "image",
+                "bindings": {"url": "https://picsum.photos/seed/p2/400/200"},
+                "layout": {
+                  "width": {"special": "match_parent"},
+                  "aspectRatio": 2.0
+                },
+                "style": {"borderRadius": 8}
+              },
+              {
+                "type": "element",
+                "id": "name_2",
+                "elementType": "text",
+                "bindings": {"text": "Smart Watch Pro"},
+                "style": {"fontSize": 16, "lineHeight": 22, "fontWeight": "bold"}
+              },
+              {
+                "type": "element",
+                "id": "price_2",
+                "elementType": "text",
+                "bindings": {"text": "{{currency}}199.99"},
+                "styleClass": "price"
+              },
+              {
+                "type": "element",
+                "id": "rating_2",
+                "elementType": "text",
+                "bindings": {"text": "{{ratingPrefix}} 4.8 (256 {{reviewSuffix}})"},
+                "styleClass": "caption"
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "product_3",
+            "containerType": "vertical",
+            "styleClass": "card",
+            "layout": {
+              "padding": {"all": 12},
+              "arrangement": {"strategy": "spaced", "spacing": 8}
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "img_3",
+                "elementType": "image",
+                "bindings": {"url": "https://picsum.photos/seed/p3/400/200"},
+                "layout": {
+                  "width": {"special": "match_parent"},
+                  "aspectRatio": 2.0
+                },
+                "style": {"borderRadius": 8}
+              },
+              {
+                "type": "element",
+                "id": "name_3",
+                "elementType": "text",
+                "bindings": {"text": "Laptop Stand"},
+                "style": {"fontSize": 16, "lineHeight": 22, "fontWeight": "bold"}
+              },
+              {
+                "type": "element",
+                "id": "price_3",
+                "elementType": "text",
+                "bindings": {"text": "{{currency}}49.99"},
+                "styleClass": "price"
+              },
+              {
+                "type": "element",
+                "id": "rating_3",
+                "elementType": "text",
+                "bindings": {"text": "{{ratingPrefix}} 4.2 (64 {{reviewSuffix}})"},
+                "styleClass": "caption"
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "product_4",
+            "containerType": "vertical",
+            "styleClass": "card",
+            "layout": {
+              "padding": {"all": 12},
+              "arrangement": {"strategy": "spaced", "spacing": 8}
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "img_4",
+                "elementType": "image",
+                "bindings": {"url": "https://picsum.photos/seed/p4/400/200"},
+                "layout": {
+                  "width": {"special": "match_parent"},
+                  "aspectRatio": 2.0
+                },
+                "style": {"borderRadius": 8}
+              },
+              {
+                "type": "element",
+                "id": "name_4",
+                "elementType": "text",
+                "bindings": {"text": "USB-C Hub"},
+                "style": {"fontSize": 16, "lineHeight": 22, "fontWeight": "bold"}
+              },
+              {
+                "type": "element",
+                "id": "price_4",
+                "elementType": "text",
+                "bindings": {"text": "{{currency}}34.99"},
+                "styleClass": "price"
+              },
+              {
+                "type": "element",
+                "id": "rating_4",
+                "elementType": "text",
+                "bindings": {"text": "{{ratingPrefix}} 4.6 (92 {{reviewSuffix}})"},
+                "styleClass": "caption"
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "product_5",
+            "containerType": "vertical",
+            "styleClass": "card",
+            "layout": {
+              "padding": {"all": 12},
+              "arrangement": {"strategy": "spaced", "spacing": 8}
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "img_5",
+                "elementType": "image",
+                "bindings": {"url": "https://picsum.photos/seed/p5/400/200"},
+                "layout": {
+                  "width": {"special": "match_parent"},
+                  "aspectRatio": 2.0
+                },
+                "style": {"borderRadius": 8}
+              },
+              {
+                "type": "element",
+                "id": "name_5",
+                "elementType": "text",
+                "bindings": {"text": "Mechanical Keyboard"},
+                "style": {"fontSize": 16, "lineHeight": 22, "fontWeight": "bold"}
+              },
+              {
+                "type": "element",
+                "id": "price_5",
+                "elementType": "text",
+                "bindings": {"text": "{{currency}}129.99"},
+                "styleClass": "price"
+              },
+              {
+                "type": "element",
+                "id": "rating_5",
+                "elementType": "text",
+                "bindings": {"text": "{{ratingPrefix}} 4.7 (184 {{reviewSuffix}})"},
+                "styleClass": "caption"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "element",
+        "id": "section_title_2",
+        "elementType": "text",
+        "bindings": {"text": "Categories"},
+        "styleClass": "heading",
+        "layout": {
+          "padding": {"horizontal": 16}
+        }
+      },
+      {
+        "type": "container",
+        "id": "gallery_freeflow",
+        "containerType": "gallery",
+        "galleryConfig": {
+          "mode": "free_flow",
+          "orientation": "horizontal"
+        },
+        "layout": {
+          "width": {"special": "match_parent"},
+          "height": {"value": 100, "unit": "dp"}
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "cat_1",
+            "containerType": "box",
+            "layout": {
+              "width": {"value": 100, "unit": "dp"},
+              "height": {"value": 80, "unit": "dp"},
+              "padding": {"all": 8}
+            },
+            "style": {"backgroundColor": "#E3F2FD", "borderRadius": 12},
+            "children": [
+              {
+                "type": "element",
+                "id": "cat_text_1",
+                "elementType": "text",
+                "bindings": {"text": "Audio"},
+                "style": {"textAlign": "center", "fontSize": 13, "lineHeight": 18}
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "cat_2",
+            "containerType": "box",
+            "layout": {
+              "width": {"value": 100, "unit": "dp"},
+              "height": {"value": 80, "unit": "dp"},
+              "padding": {"all": 8}
+            },
+            "style": {"backgroundColor": "#E8F5E9", "borderRadius": 12},
+            "children": [
+              {
+                "type": "element",
+                "id": "cat_text_2",
+                "elementType": "text",
+                "bindings": {"text": "Wearables"},
+                "style": {"textAlign": "center", "fontSize": 13, "lineHeight": 18}
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "cat_3",
+            "containerType": "box",
+            "layout": {
+              "width": {"value": 100, "unit": "dp"},
+              "height": {"value": 80, "unit": "dp"},
+              "padding": {"all": 8}
+            },
+            "style": {"backgroundColor": "#FFF3E0", "borderRadius": 12},
+            "children": [
+              {
+                "type": "element",
+                "id": "cat_text_3",
+                "elementType": "text",
+                "bindings": {"text": "Keyboards"},
+                "style": {"textAlign": "center", "fontSize": 13, "lineHeight": 18}
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "cat_4",
+            "containerType": "box",
+            "layout": {
+              "width": {"value": 100, "unit": "dp"},
+              "height": {"value": 80, "unit": "dp"},
+              "padding": {"all": 8}
+            },
+            "style": {"backgroundColor": "#FCE4EC", "borderRadius": 12},
+            "children": [
+              {
+                "type": "element",
+                "id": "cat_text_4",
+                "elementType": "text",
+                "bindings": {"text": "Accessories"},
+                "style": {"textAlign": "center", "fontSize": 13, "lineHeight": 18}
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "cat_5",
+            "containerType": "box",
+            "layout": {
+              "width": {"value": 100, "unit": "dp"},
+              "height": {"value": 80, "unit": "dp"},
+              "padding": {"all": 8}
+            },
+            "style": {"backgroundColor": "#EDE7F6", "borderRadius": 12},
+            "children": [
+              {
+                "type": "element",
+                "id": "cat_text_5",
+                "elementType": "text",
+                "bindings": {"text": "Cables"},
+                "style": {"textAlign": "center", "fontSize": 13, "lineHeight": 18}
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

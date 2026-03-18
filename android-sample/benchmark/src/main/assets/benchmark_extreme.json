@@ -1,0 +1,1225 @@
+{
+  "theme": {
+    "id": "extreme",
+    "defaultStyle": {
+      "textColor": "#333333",
+      "fontSize": 14,
+      "lineHeight": 20,
+      "fontWeight": "normal",
+      "letterSpacing": 0.2,
+      "opacity": 1.0
+    },
+    "colors": {
+      "primary": "#6200EE",
+      "secondary": "#03DAC6",
+      "success": "#00C853",
+      "warning": "#FFD600",
+      "error": "#FF1744"
+    }
+  },
+  "styleClasses": [
+    {
+      "name": "animated-card",
+      "style": {
+        "backgroundColor": "#FFFFFF",
+        "borderRadius": 16,
+        "borderWidth": 1,
+        "borderColor": "#E0E0E0",
+        "shadowColor": "#40000000",
+        "shadowRadius": 8,
+        "shadowOffsetY": 4
+      }
+    },
+    {
+      "name": "shimmer-bg",
+      "style": {
+        "borderRadius": 8,
+        "opacity": 0.6
+      }
+    },
+    {
+      "name": "particle-bg",
+      "style": {
+        "borderRadius": 12
+      }
+    },
+    {
+      "name": "gradient-text",
+      "style": {
+        "fontSize": 18,
+        "lineHeight": 24,
+        "fontWeight": "bold",
+        "textDecoration": "underline",
+        "textShadow": {
+          "color": "#40000000",
+          "offsetX": 1,
+          "offsetY": 2,
+          "blur": 3
+        },
+        "textGradient": {
+          "type": "linear",
+          "colors": ["#FF6F00", "#FF1744", "#D500F9"],
+          "angle": 90
+        }
+      }
+    },
+    {
+      "name": "pulse-badge",
+      "style": {
+        "fontSize": 11,
+        "lineHeight": 14,
+        "fontWeight": "bold",
+        "textColor": "#FFFFFF",
+        "borderRadius": 12
+      }
+    },
+    {
+      "name": "overlay-dark",
+      "style": {
+        "backgroundColor": "#80000000",
+        "opacity": 0.9
+      }
+    },
+    {
+      "name": "heading-xl",
+      "style": {
+        "fontSize": 28,
+        "lineHeight": 36,
+        "fontWeight": "bold",
+        "letterSpacing": 1.0,
+        "textColor": "#FFFFFF"
+      }
+    },
+    {
+      "name": "image-rounded",
+      "style": {
+        "borderRadius": 12,
+        "borderWidth": 2,
+        "borderColor": "#FFFFFF",
+        "shadowColor": "#60000000",
+        "shadowRadius": 6,
+        "shadowOffsetY": 3
+      }
+    },
+    {
+      "name": "divider-styled",
+      "style": {
+        "opacity": 0.4
+      }
+    },
+    {
+      "name": "button-primary",
+      "style": {
+        "textColor": "#FFFFFF",
+        "fontSize": 16,
+        "lineHeight": 22,
+        "fontWeight": "bold",
+        "borderRadius": 12,
+        "shadowColor": "#406200EE",
+        "shadowRadius": 6,
+        "shadowOffsetY": 3
+      }
+    },
+    {
+      "name": "animated-gradient-bg",
+      "style": {
+        "borderRadius": 16
+      }
+    },
+    {
+      "name": "pattern-bg",
+      "style": {
+        "borderRadius": 20,
+        "borderWidth": 1,
+        "borderColor": "#E0E0E0"
+      }
+    }
+  ],
+  "variables": {
+    "appTitle": "Extreme Benchmark",
+    "heroTitle": "Summer Collection 2025",
+    "heroSubtitle": "Discover the latest trends in fashion",
+    "discountLabel": "30% OFF",
+    "currency": "$",
+    "user": {
+      "name": "Alexandra Johnson",
+      "email": "alex@example.com",
+      "avatar": "https://picsum.photos/seed/avatar/100/100",
+      "memberSince": "2022",
+      "tier": "Premium Gold"
+    },
+    "product": {
+      "name": "Wireless Pro Headphones",
+      "price": "299.99",
+      "originalPrice": "429.99",
+      "rating": "4.8",
+      "reviews": "2,847"
+    },
+    "stats": {
+      "orders": "156",
+      "wishlist": "43",
+      "points": "12,500"
+    },
+    "isPremium": "true",
+    "showBanner": "true",
+    "hasDiscount": "true",
+    "isLoading": "false",
+    "copyrightYear": "2025",
+    "supportHours": "24/7",
+    "version": "3.2.1"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {"special": "match_parent"},
+      "arrangement": {"strategy": "spaced", "spacing": 0}
+    },
+    "style": {"backgroundColor": "#F5F5F5"},
+    "animation": {"type": "fade_in", "duration": 300},
+    "children": [
+      {
+        "type": "container",
+        "id": "hero-section",
+        "containerType": "box",
+        "layout": {
+          "width": {"special": "match_parent"},
+          "height": {"value": 300, "unit": "dp"}
+        },
+        "style": {
+          "background": {
+            "type": "layered",
+            "layers": [
+              {
+                "type": "image",
+                "url": "https://picsum.photos/seed/hero/800/600",
+                "fit": "crop",
+                "opacity": 1.0
+              },
+              {
+                "type": "linear_gradient",
+                "angle": 180,
+                "colors": ["#00000000", "#CC000000"],
+                "stops": [0.3, 1.0]
+              }
+            ]
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "hero-img",
+            "elementType": "image",
+            "bindings": {"url": "https://picsum.photos/seed/hero-main/800/600"},
+            "layout": {
+              "width": {"special": "match_parent"},
+              "height": {"special": "match_parent"}
+            },
+            "style": {"opacity": 0.3}
+          },
+          {
+            "type": "container",
+            "id": "hero-overlay",
+            "containerType": "vertical",
+            "layout": {
+              "width": {"special": "match_parent"},
+              "padding": {"horizontal": 24, "bottom": 24},
+              "offset": {"x": 0, "y": 120, "unit": "dp"},
+              "arrangement": {"strategy": "spaced", "spacing": 8}
+            },
+            "style": {
+              "background": {
+                "type": "linear_gradient",
+                "angle": 0,
+                "colors": ["#00000000", "#80000000"],
+                "stops": [0.0, 1.0]
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "hero-title",
+                "elementType": "text",
+                "bindings": {"text": "{{heroTitle}}"},
+                "styleClass": "heading-xl",
+                "style": {
+                  "textGradient": {
+                    "type": "linear",
+                    "colors": ["#FFFFFF", "#FFD600"],
+                    "angle": 45
+                  },
+                  "textShadow": {
+                    "color": "#80000000",
+                    "offsetX": 2,
+                    "offsetY": 3,
+                    "blur": 6
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "hero-subtitle",
+                "elementType": "text",
+                "bindings": {"text": "{{heroSubtitle}}"},
+                "style": {
+                  "textColor": "#CCFFFFFF",
+                  "fontSize": 15,
+                  "lineHeight": 20,
+                  "fontStyle": "italic",
+                  "letterSpacing": 0.5
+                }
+              },
+              {
+                "type": "element",
+                "id": "hero-cta",
+                "elementType": "button",
+                "bindings": {"text": "Shop Now"},
+                "styleClass": "button-primary",
+                "layout": {
+                  "width": {"value": 160, "unit": "dp"},
+                  "padding": {"vertical": 12, "horizontal": 24}
+                },
+                "style": {
+                  "background": {
+                    "type": "pulse",
+                    "color": "#6200EE",
+                    "min_opacity": 0.7,
+                    "max_opacity": 1.0,
+                    "duration": 1500,
+                    "loop": true
+                  }
+                },
+                "actions": {
+                  "onClick": {
+                    "type": "composite",
+                    "executionMode": "sequential",
+                    "actions": [
+                      {"type": "event", "eventName": "hero_cta_click", "properties": {"source": "hero"}},
+                      {"type": "navigate", "destination": "ShopScreen", "params": {"category": "summer"}}
+                    ]
+                  }
+                },
+                "animation": {"type": "fade_scale_in", "duration": 500, "delay": 300}
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "discount-badge",
+            "containerType": "box",
+            "layout": {
+              "offset": {"x": -16, "y": 16, "unit": "dp"},
+              "padding": {"horizontal": 12, "vertical": 6}
+            },
+            "styleClass": "pulse-badge",
+            "style": {
+              "background": {
+                "type": "pulse",
+                "color": "#FF1744",
+                "min_opacity": 0.8,
+                "max_opacity": 1.0,
+                "duration": 800,
+                "loop": true
+              }
+            },
+            "animation": {"type": "scale_in", "duration": 400, "delay": 200, "easing": "ease_out_back"},
+            "visible": "{{hasDiscount}}",
+            "children": [
+              {
+                "type": "element",
+                "id": "discount-text",
+                "elementType": "text",
+                "bindings": {"text": "{{discountLabel}}"},
+                "styleClass": "pulse-badge"
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "type": "container",
+        "id": "stats-row",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {"special": "match_parent"},
+          "padding": {"horizontal": 16, "vertical": 16},
+          "arrangement": {"strategy": "space_evenly"}
+        },
+        "style": {"backgroundColor": "#FFFFFF"},
+        "children": [
+          {
+            "type": "container",
+            "id": "stat-orders",
+            "containerType": "vertical",
+            "layout": {"arrangement": {"strategy": "center"}},
+            "animation": {"type": "fade_in", "duration": 400, "delay": 100},
+            "children": [
+              {
+                "type": "element",
+                "id": "stat-orders-val",
+                "elementType": "text",
+                "bindings": {"text": "{{stats.orders}}"},
+                "style": {
+                  "fontSize": 24,
+                  "lineHeight": 32,
+                  "fontWeight": "bold",
+                  "textAlign": "center",
+                  "textGradient": {
+                    "type": "linear",
+                    "colors": ["#6200EE", "#03DAC6"],
+                    "angle": 90
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "stat-orders-lbl",
+                "elementType": "text",
+                "bindings": {"text": "Orders"},
+                "style": {"fontSize": 12, "lineHeight": 16, "textColor": "#888888", "textAlign": "center", "opacity": 0.7}
+              }
+            ]
+          },
+          {
+            "type": "element",
+            "id": "stat-div-1",
+            "elementType": "divider",
+            "bindings": {},
+            "dividerConfig": {"orientation": "vertical", "thickness": 1, "color": "#E0E0E0"}
+          },
+          {
+            "type": "container",
+            "id": "stat-wishlist",
+            "containerType": "vertical",
+            "layout": {"arrangement": {"strategy": "center"}},
+            "animation": {"type": "fade_in", "duration": 400, "delay": 200},
+            "children": [
+              {
+                "type": "element",
+                "id": "stat-wish-val",
+                "elementType": "text",
+                "bindings": {"text": "{{stats.wishlist}}"},
+                "style": {
+                  "fontSize": 24,
+                  "lineHeight": 32,
+                  "fontWeight": "bold",
+                  "textAlign": "center",
+                  "textGradient": {
+                    "type": "linear",
+                    "colors": ["#FF6F00", "#FF1744"],
+                    "angle": 45
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "stat-wish-lbl",
+                "elementType": "text",
+                "bindings": {"text": "Wishlist"},
+                "style": {"fontSize": 12, "lineHeight": 16, "textColor": "#888888", "textAlign": "center", "opacity": 0.7}
+              }
+            ]
+          },
+          {
+            "type": "element",
+            "id": "stat-div-2",
+            "elementType": "divider",
+            "bindings": {},
+            "dividerConfig": {"orientation": "vertical", "thickness": 1, "color": "#E0E0E0"}
+          },
+          {
+            "type": "container",
+            "id": "stat-points",
+            "containerType": "vertical",
+            "layout": {"arrangement": {"strategy": "center"}},
+            "animation": {"type": "fade_in", "duration": 400, "delay": 300},
+            "children": [
+              {
+                "type": "element",
+                "id": "stat-points-val",
+                "elementType": "text",
+                "bindings": {"text": "{{stats.points}}"},
+                "style": {
+                  "fontSize": 24,
+                  "lineHeight": 32,
+                  "fontWeight": "bold",
+                  "textAlign": "center",
+                  "textGradient": {
+                    "type": "linear",
+                    "colors": ["#00C853", "#69F0AE"],
+                    "angle": 135
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "stat-points-lbl",
+                "elementType": "text",
+                "bindings": {"text": "Points"},
+                "style": {"fontSize": 12, "lineHeight": 16, "textColor": "#888888", "textAlign": "center", "opacity": 0.7}
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "type": "container",
+        "id": "product-carousel",
+        "containerType": "gallery",
+        "galleryConfig": {
+          "mode": "snapping",
+          "orientation": "horizontal",
+          "snapBehavior": "center",
+          "peek": {"before": 20, "after": 20},
+          "spacing": 12,
+          "showIndicators": true,
+          "showArrows": true,
+          "autoScrollInterval": 3000,
+          "infiniteScroll": true
+        },
+        "layout": {
+          "width": {"special": "match_parent"},
+          "height": {"value": 340, "unit": "dp"},
+          "padding": {"vertical": 8}
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "prod-card-1",
+            "containerType": "vertical",
+            "styleClass": "animated-card",
+            "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 6}},
+            "animation": {"type": "slide_in_bottom", "duration": 400, "delay": 0},
+            "children": [
+              {
+                "type": "container",
+                "id": "prod-img-box-1",
+                "containerType": "box",
+                "layout": {"width": {"special": "match_parent"}, "aspectRatio": 1.2},
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "prod-img-1",
+                    "elementType": "image",
+                    "bindings": {"url": "https://picsum.photos/seed/p1/300/250"},
+                    "layout": {"width": {"special": "match_parent"}, "height": {"special": "match_parent"}},
+                    "style": {"borderRadius": 10}
+                  },
+                  {
+                    "type": "container",
+                    "id": "prod-shimmer-1",
+                    "containerType": "box",
+                    "styleClass": "shimmer-bg",
+                    "layout": {"width": {"special": "match_parent"}, "height": {"special": "match_parent"}},
+                    "style": {
+                      "background": {
+                        "type": "shimmer",
+                        "base_color": "#E0E0E0",
+                        "highlight_color": "#F5F5F5",
+                        "angle": 30,
+                        "duration": 1200,
+                        "loop": true
+                      }
+                    },
+                    "visible": "{{isLoading}}",
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "prod-info-1",
+                "containerType": "horizontal",
+                "layout": {"width": {"special": "match_parent"}, "arrangement": {"strategy": "space_between"}},
+                "children": [
+                  {"type": "element", "id": "prod-name-1", "elementType": "text", "bindings": {"text": "{{product.name}}"}, "style": {"fontSize": 14, "lineHeight": 18, "fontWeight": "bold"}},
+                  {
+                    "type": "element",
+                    "id": "prod-price-1",
+                    "elementType": "text",
+                    "bindings": {"text": "{{currency}}{{product.price}}"},
+                    "style": {
+                      "fontSize": 16,
+                      "lineHeight": 20,
+                      "fontWeight": "bold",
+                      "textGradient": {"type": "linear", "colors": ["#00C853", "#69F0AE"], "angle": 90}
+                    }
+                  }
+                ]
+              },
+              {"type": "element", "id": "prod-desc-1", "elementType": "text", "bindings": {"text": "Premium noise-cancelling headphones with 40hr battery"}, "style": {"fontSize": 12, "lineHeight": 16, "textColor": "#888888", "maxLines": 2, "overflow": "ellipsis", "opacity": 0.6}},
+              {
+                "type": "element",
+                "id": "prod-btn-1",
+                "elementType": "button",
+                "bindings": {"text": "Add to Cart"},
+                "styleClass": "button-primary",
+                "layout": {"width": {"special": "match_parent"}, "padding": {"vertical": 10}},
+                "style": {
+                  "textAlign": "center",
+                  "background": {"type": "linear_gradient", "angle": 90, "colors": ["#6200EE", "#BB86FC"]}
+                },
+                "actions": {"onClick": {"type": "open_url", "url": "https://example.com/cart/add/1"}}
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "prod-card-2",
+            "containerType": "vertical",
+            "styleClass": "animated-card",
+            "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 6}},
+            "animation": {"type": "slide_in_bottom", "duration": 400, "delay": 50},
+            "children": [
+              {
+                "type": "container", "id": "prod-img-box-2", "containerType": "box",
+                "layout": {"width": {"special": "match_parent"}, "aspectRatio": 1.2},
+                "children": [
+                  {"type": "element", "id": "prod-img-2", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/p2/300/250"}, "layout": {"width": {"special": "match_parent"}, "height": {"special": "match_parent"}}, "style": {"borderRadius": 10}}
+                ]
+              },
+              {
+                "type": "container", "id": "prod-info-2", "containerType": "horizontal",
+                "layout": {"width": {"special": "match_parent"}, "arrangement": {"strategy": "space_between"}},
+                "children": [
+                  {"type": "element", "id": "prod-name-2", "elementType": "text", "bindings": {"text": "Smart Watch Ultra"}, "style": {"fontSize": 14, "lineHeight": 18, "fontWeight": "bold"}},
+                  {"type": "element", "id": "prod-price-2", "elementType": "text", "bindings": {"text": "{{currency}}449.99"}, "style": {"fontSize": 16, "lineHeight": 20, "fontWeight": "bold", "textGradient": {"type": "linear", "colors": ["#00C853", "#69F0AE"], "angle": 90}}}
+                ]
+              },
+              {"type": "element", "id": "prod-desc-2", "elementType": "text", "bindings": {"text": "Advanced health tracking with AMOLED display"}, "style": {"fontSize": 12, "lineHeight": 16, "textColor": "#888888", "maxLines": 2, "overflow": "ellipsis", "opacity": 0.6}},
+              {"type": "element", "id": "prod-btn-2", "elementType": "button", "bindings": {"text": "Add to Cart"}, "styleClass": "button-primary", "layout": {"width": {"special": "match_parent"}, "padding": {"vertical": 10}}, "style": {"textAlign": "center", "background": {"type": "linear_gradient", "angle": 90, "colors": ["#6200EE", "#BB86FC"]}}, "actions": {"onClick": {"type": "open_url", "url": "https://example.com/cart/add/2"}}}
+            ]
+          },
+          {
+            "type": "container",
+            "id": "prod-card-3",
+            "containerType": "vertical",
+            "styleClass": "animated-card",
+            "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 6}},
+            "animation": {"type": "slide_in_bottom", "duration": 400, "delay": 100},
+            "children": [
+              {"type": "container", "id": "prod-img-box-3", "containerType": "box", "layout": {"width": {"special": "match_parent"}, "aspectRatio": 1.2}, "children": [{"type": "element", "id": "prod-img-3", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/p3/300/250"}, "layout": {"width": {"special": "match_parent"}, "height": {"special": "match_parent"}}, "style": {"borderRadius": 10}}]},
+              {"type": "container", "id": "prod-info-3", "containerType": "horizontal", "layout": {"width": {"special": "match_parent"}, "arrangement": {"strategy": "space_between"}}, "children": [{"type": "element", "id": "prod-name-3", "elementType": "text", "bindings": {"text": "Laptop Pro 16"}, "style": {"fontSize": 14, "lineHeight": 18, "fontWeight": "bold"}}, {"type": "element", "id": "prod-price-3", "elementType": "text", "bindings": {"text": "{{currency}}1,999.00"}, "style": {"fontSize": 16, "lineHeight": 20, "fontWeight": "bold", "textGradient": {"type": "linear", "colors": ["#00C853", "#69F0AE"], "angle": 90}}}]},
+              {"type": "element", "id": "prod-desc-3", "elementType": "text", "bindings": {"text": "M4 chip, 32GB RAM, 1TB SSD with Liquid Retina"}, "style": {"fontSize": 12, "lineHeight": 16, "textColor": "#888888", "maxLines": 2, "overflow": "ellipsis", "opacity": 0.6}},
+              {"type": "element", "id": "prod-btn-3", "elementType": "button", "bindings": {"text": "Add to Cart"}, "styleClass": "button-primary", "layout": {"width": {"special": "match_parent"}, "padding": {"vertical": 10}}, "style": {"textAlign": "center", "background": {"type": "linear_gradient", "angle": 90, "colors": ["#6200EE", "#BB86FC"]}}, "actions": {"onClick": {"type": "open_url", "url": "https://example.com/cart/add/3"}}}
+            ]
+          },
+          {
+            "type": "container",
+            "id": "prod-card-4",
+            "containerType": "vertical",
+            "styleClass": "animated-card",
+            "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 6}},
+            "animation": {"type": "slide_in_bottom", "duration": 400, "delay": 150},
+            "children": [
+              {"type": "container", "id": "prod-img-box-4", "containerType": "box", "layout": {"width": {"special": "match_parent"}, "aspectRatio": 1.2}, "children": [{"type": "element", "id": "prod-img-4", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/p4/300/250"}, "layout": {"width": {"special": "match_parent"}, "height": {"special": "match_parent"}}, "style": {"borderRadius": 10}}]},
+              {"type": "container", "id": "prod-info-4", "containerType": "horizontal", "layout": {"width": {"special": "match_parent"}, "arrangement": {"strategy": "space_between"}}, "children": [{"type": "element", "id": "prod-name-4", "elementType": "text", "bindings": {"text": "Camera DSLR Kit"}, "style": {"fontSize": 14, "lineHeight": 18, "fontWeight": "bold"}}, {"type": "element", "id": "prod-price-4", "elementType": "text", "bindings": {"text": "{{currency}}2,499.00"}, "style": {"fontSize": 16, "lineHeight": 20, "fontWeight": "bold", "textGradient": {"type": "linear", "colors": ["#00C853", "#69F0AE"], "angle": 90}}}]},
+              {"type": "element", "id": "prod-desc-4", "elementType": "text", "bindings": {"text": "Full-frame mirrorless with 50mm f/1.4 lens"}, "style": {"fontSize": 12, "lineHeight": 16, "textColor": "#888888", "maxLines": 2, "overflow": "ellipsis", "opacity": 0.6}},
+              {"type": "element", "id": "prod-btn-4", "elementType": "button", "bindings": {"text": "Add to Cart"}, "styleClass": "button-primary", "layout": {"width": {"special": "match_parent"}, "padding": {"vertical": 10}}, "style": {"textAlign": "center", "background": {"type": "linear_gradient", "angle": 90, "colors": ["#6200EE", "#BB86FC"]}}, "actions": {"onClick": {"type": "open_url", "url": "https://example.com/cart/add/4"}}}
+            ]
+          },
+          {
+            "type": "container",
+            "id": "prod-card-5",
+            "containerType": "vertical",
+            "styleClass": "animated-card",
+            "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 6}},
+            "animation": {"type": "slide_in_bottom", "duration": 400, "delay": 200},
+            "children": [
+              {"type": "container", "id": "prod-img-box-5", "containerType": "box", "layout": {"width": {"special": "match_parent"}, "aspectRatio": 1.2}, "children": [{"type": "element", "id": "prod-img-5", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/p5/300/250"}, "layout": {"width": {"special": "match_parent"}, "height": {"special": "match_parent"}}, "style": {"borderRadius": 10}}]},
+              {"type": "container", "id": "prod-info-5", "containerType": "horizontal", "layout": {"width": {"special": "match_parent"}, "arrangement": {"strategy": "space_between"}}, "children": [{"type": "element", "id": "prod-name-5", "elementType": "text", "bindings": {"text": "Tablet Air"}, "style": {"fontSize": 14, "lineHeight": 18, "fontWeight": "bold"}}, {"type": "element", "id": "prod-price-5", "elementType": "text", "bindings": {"text": "{{currency}}799.00"}, "style": {"fontSize": 16, "lineHeight": 20, "fontWeight": "bold", "textGradient": {"type": "linear", "colors": ["#00C853", "#69F0AE"], "angle": 90}}}]},
+              {"type": "element", "id": "prod-desc-5", "elementType": "text", "bindings": {"text": "11-inch Liquid Retina with Apple Pencil support"}, "style": {"fontSize": 12, "lineHeight": 16, "textColor": "#888888", "maxLines": 2, "overflow": "ellipsis", "opacity": 0.6}},
+              {"type": "element", "id": "prod-btn-5", "elementType": "button", "bindings": {"text": "Add to Cart"}, "styleClass": "button-primary", "layout": {"width": {"special": "match_parent"}, "padding": {"vertical": 10}}, "style": {"textAlign": "center", "background": {"type": "linear_gradient", "angle": 90, "colors": ["#6200EE", "#BB86FC"]}}, "actions": {"onClick": {"type": "open_url", "url": "https://example.com/cart/add/5"}}}
+            ]
+          },
+          {
+            "type": "container",
+            "id": "prod-card-6",
+            "containerType": "vertical",
+            "styleClass": "animated-card",
+            "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 6}},
+            "animation": {"type": "slide_in_bottom", "duration": 400, "delay": 250},
+            "children": [
+              {"type": "container", "id": "prod-img-box-6", "containerType": "box", "layout": {"width": {"special": "match_parent"}, "aspectRatio": 1.2}, "children": [{"type": "element", "id": "prod-img-6", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/p6/300/250"}, "layout": {"width": {"special": "match_parent"}, "height": {"special": "match_parent"}}, "style": {"borderRadius": 10}}]},
+              {"type": "container", "id": "prod-info-6", "containerType": "horizontal", "layout": {"width": {"special": "match_parent"}, "arrangement": {"strategy": "space_between"}}, "children": [{"type": "element", "id": "prod-name-6", "elementType": "text", "bindings": {"text": "Drone Explorer"}, "style": {"fontSize": 14, "lineHeight": 18, "fontWeight": "bold"}}, {"type": "element", "id": "prod-price-6", "elementType": "text", "bindings": {"text": "{{currency}}1,299.00"}, "style": {"fontSize": 16, "lineHeight": 20, "fontWeight": "bold", "textGradient": {"type": "linear", "colors": ["#00C853", "#69F0AE"], "angle": 90}}}]},
+              {"type": "element", "id": "prod-desc-6", "elementType": "text", "bindings": {"text": "4K camera with 45-min flight time and obstacle avoidance"}, "style": {"fontSize": 12, "lineHeight": 16, "textColor": "#888888", "maxLines": 2, "overflow": "ellipsis", "opacity": 0.6}},
+              {"type": "element", "id": "prod-btn-6", "elementType": "button", "bindings": {"text": "Add to Cart"}, "styleClass": "button-primary", "layout": {"width": {"special": "match_parent"}, "padding": {"vertical": 10}}, "style": {"textAlign": "center", "background": {"type": "linear_gradient", "angle": 90, "colors": ["#6200EE", "#BB86FC"]}}, "actions": {"onClick": {"type": "open_url", "url": "https://example.com/cart/add/6"}}}
+            ]
+          },
+          {
+            "type": "container",
+            "id": "prod-card-7",
+            "containerType": "vertical",
+            "styleClass": "animated-card",
+            "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 6}},
+            "animation": {"type": "slide_in_bottom", "duration": 400, "delay": 300},
+            "children": [
+              {"type": "container", "id": "prod-img-box-7", "containerType": "box", "layout": {"width": {"special": "match_parent"}, "aspectRatio": 1.2}, "children": [{"type": "element", "id": "prod-img-7", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/p7/300/250"}, "layout": {"width": {"special": "match_parent"}, "height": {"special": "match_parent"}}, "style": {"borderRadius": 10}}]},
+              {"type": "container", "id": "prod-info-7", "containerType": "horizontal", "layout": {"width": {"special": "match_parent"}, "arrangement": {"strategy": "space_between"}}, "children": [{"type": "element", "id": "prod-name-7", "elementType": "text", "bindings": {"text": "Gaming Console"}, "style": {"fontSize": 14, "lineHeight": 18, "fontWeight": "bold"}}, {"type": "element", "id": "prod-price-7", "elementType": "text", "bindings": {"text": "{{currency}}599.00"}, "style": {"fontSize": 16, "lineHeight": 20, "fontWeight": "bold", "textGradient": {"type": "linear", "colors": ["#00C853", "#69F0AE"], "angle": 90}}}]},
+              {"type": "element", "id": "prod-desc-7", "elementType": "text", "bindings": {"text": "Next-gen gaming with 8K output and 2TB storage"}, "style": {"fontSize": 12, "lineHeight": 16, "textColor": "#888888", "maxLines": 2, "overflow": "ellipsis", "opacity": 0.6}},
+              {"type": "element", "id": "prod-btn-7", "elementType": "button", "bindings": {"text": "Add to Cart"}, "styleClass": "button-primary", "layout": {"width": {"special": "match_parent"}, "padding": {"vertical": 10}}, "style": {"textAlign": "center", "background": {"type": "linear_gradient", "angle": 90, "colors": ["#6200EE", "#BB86FC"]}}, "actions": {"onClick": {"type": "open_url", "url": "https://example.com/cart/add/7"}}}
+            ]
+          },
+          {
+            "type": "container",
+            "id": "prod-card-8",
+            "containerType": "vertical",
+            "styleClass": "animated-card",
+            "layout": {"padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 6}},
+            "animation": {"type": "slide_in_bottom", "duration": 400, "delay": 350},
+            "children": [
+              {"type": "container", "id": "prod-img-box-8", "containerType": "box", "layout": {"width": {"special": "match_parent"}, "aspectRatio": 1.2}, "children": [{"type": "element", "id": "prod-img-8", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/p8/300/250"}, "layout": {"width": {"special": "match_parent"}, "height": {"special": "match_parent"}}, "style": {"borderRadius": 10}}]},
+              {"type": "container", "id": "prod-info-8", "containerType": "horizontal", "layout": {"width": {"special": "match_parent"}, "arrangement": {"strategy": "space_between"}}, "children": [{"type": "element", "id": "prod-name-8", "elementType": "text", "bindings": {"text": "VR Headset Pro"}, "style": {"fontSize": 14, "lineHeight": 18, "fontWeight": "bold"}}, {"type": "element", "id": "prod-price-8", "elementType": "text", "bindings": {"text": "{{currency}}499.00"}, "style": {"fontSize": 16, "lineHeight": 20, "fontWeight": "bold", "textGradient": {"type": "linear", "colors": ["#00C853", "#69F0AE"], "angle": 90}}}]},
+              {"type": "element", "id": "prod-desc-8", "elementType": "text", "bindings": {"text": "Mixed reality headset with spatial audio and hand tracking"}, "style": {"fontSize": 12, "lineHeight": 16, "textColor": "#888888", "maxLines": 2, "overflow": "ellipsis", "opacity": 0.6}},
+              {"type": "element", "id": "prod-btn-8", "elementType": "button", "bindings": {"text": "Add to Cart"}, "styleClass": "button-primary", "layout": {"width": {"special": "match_parent"}, "padding": {"vertical": 10}}, "style": {"textAlign": "center", "background": {"type": "linear_gradient", "angle": 90, "colors": ["#6200EE", "#BB86FC"]}}, "actions": {"onClick": {"type": "open_url", "url": "https://example.com/cart/add/8"}}}
+            ]
+          }
+        ]
+      },
+
+      {
+        "type": "container",
+        "id": "category-strip",
+        "containerType": "gallery",
+        "galleryConfig": {
+          "mode": "free_flow",
+          "orientation": "horizontal",
+          "spacing": 12,
+          "showIndicators": true
+        },
+        "layout": {
+          "width": {"special": "match_parent"},
+          "height": {"value": 120, "unit": "dp"},
+          "padding": {"horizontal": 16, "vertical": 8}
+        },
+        "children": [
+          {
+            "type": "container", "id": "cat-1", "containerType": "box",
+            "styleClass": "pattern-bg",
+            "layout": {"width": {"value": 90, "unit": "dp"}, "height": {"value": 90, "unit": "dp"}},
+            "style": {"background": {"type": "pattern", "pattern_type": "dots", "primary_color": "#E8EAF6", "secondary_color": "#5C6BC0", "size": 4, "spacing": 12, "opacity": 0.8}},
+            "animation": {"type": "scale_in", "duration": 300, "delay": 0},
+            "children": [
+              {"type": "container", "id": "cat-inner-1", "containerType": "vertical", "layout": {"arrangement": {"strategy": "center"}, "padding": {"all": 8}}, "children": [
+                {"type": "element", "id": "cat-img-1", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/cat1/40/40"}, "layout": {"width": {"value": 36, "unit": "dp"}, "height": {"value": 36, "unit": "dp"}}, "styleClass": "image-rounded"},
+                {"type": "element", "id": "cat-txt-1", "elementType": "text", "bindings": {"text": "Audio"}, "style": {"fontSize": 11, "lineHeight": 14, "textAlign": "center"}}
+              ]}
+            ]
+          },
+          {
+            "type": "container", "id": "cat-2", "containerType": "box",
+            "styleClass": "pattern-bg",
+            "layout": {"width": {"value": 90, "unit": "dp"}, "height": {"value": 90, "unit": "dp"}},
+            "style": {"background": {"type": "pattern", "pattern_type": "stripes_diagonal", "primary_color": "#E0F2F1", "secondary_color": "#00897B", "size": 6, "spacing": 16, "opacity": 0.7}},
+            "animation": {"type": "scale_in", "duration": 300, "delay": 50},
+            "children": [
+              {"type": "container", "id": "cat-inner-2", "containerType": "vertical", "layout": {"arrangement": {"strategy": "center"}, "padding": {"all": 8}}, "children": [
+                {"type": "element", "id": "cat-img-2", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/cat2/40/40"}, "layout": {"width": {"value": 36, "unit": "dp"}, "height": {"value": 36, "unit": "dp"}}, "styleClass": "image-rounded"},
+                {"type": "element", "id": "cat-txt-2", "elementType": "text", "bindings": {"text": "Wearables"}, "style": {"fontSize": 11, "lineHeight": 14, "textAlign": "center"}}
+              ]}
+            ]
+          },
+          {
+            "type": "container", "id": "cat-3", "containerType": "box",
+            "styleClass": "pattern-bg",
+            "layout": {"width": {"value": 90, "unit": "dp"}, "height": {"value": 90, "unit": "dp"}},
+            "style": {"background": {"type": "pattern", "pattern_type": "polka_dots", "primary_color": "#FFF3E0", "secondary_color": "#FF8F00", "size": 5, "spacing": 14, "opacity": 0.8}},
+            "animation": {"type": "scale_in", "duration": 300, "delay": 100},
+            "children": [
+              {"type": "container", "id": "cat-inner-3", "containerType": "vertical", "layout": {"arrangement": {"strategy": "center"}, "padding": {"all": 8}}, "children": [
+                {"type": "element", "id": "cat-img-3", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/cat3/40/40"}, "layout": {"width": {"value": 36, "unit": "dp"}, "height": {"value": 36, "unit": "dp"}}, "styleClass": "image-rounded"},
+                {"type": "element", "id": "cat-txt-3", "elementType": "text", "bindings": {"text": "Laptops"}, "style": {"fontSize": 11, "lineHeight": 14, "textAlign": "center"}}
+              ]}
+            ]
+          },
+          {
+            "type": "container", "id": "cat-4", "containerType": "box",
+            "styleClass": "pattern-bg",
+            "layout": {"width": {"value": 90, "unit": "dp"}, "height": {"value": 90, "unit": "dp"}},
+            "style": {"background": {"type": "pattern", "pattern_type": "grid", "primary_color": "#FCE4EC", "secondary_color": "#E91E63", "size": 8, "spacing": 20, "opacity": 0.6}},
+            "animation": {"type": "scale_in", "duration": 300, "delay": 150},
+            "children": [
+              {"type": "container", "id": "cat-inner-4", "containerType": "vertical", "layout": {"arrangement": {"strategy": "center"}, "padding": {"all": 8}}, "children": [
+                {"type": "element", "id": "cat-img-4", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/cat4/40/40"}, "layout": {"width": {"value": 36, "unit": "dp"}, "height": {"value": 36, "unit": "dp"}}, "styleClass": "image-rounded"},
+                {"type": "element", "id": "cat-txt-4", "elementType": "text", "bindings": {"text": "Cameras"}, "style": {"fontSize": 11, "lineHeight": 14, "textAlign": "center"}}
+              ]}
+            ]
+          },
+          {
+            "type": "container", "id": "cat-5", "containerType": "box",
+            "styleClass": "pattern-bg",
+            "layout": {"width": {"value": 90, "unit": "dp"}, "height": {"value": 90, "unit": "dp"}},
+            "style": {"background": {"type": "pattern", "pattern_type": "checkerboard", "primary_color": "#E8F5E9", "secondary_color": "#43A047", "size": 10, "spacing": 10, "opacity": 0.5}},
+            "animation": {"type": "scale_in", "duration": 300, "delay": 200},
+            "children": [
+              {"type": "container", "id": "cat-inner-5", "containerType": "vertical", "layout": {"arrangement": {"strategy": "center"}, "padding": {"all": 8}}, "children": [
+                {"type": "element", "id": "cat-img-5", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/cat5/40/40"}, "layout": {"width": {"value": 36, "unit": "dp"}, "height": {"value": 36, "unit": "dp"}}, "styleClass": "image-rounded"},
+                {"type": "element", "id": "cat-txt-5", "elementType": "text", "bindings": {"text": "Gaming"}, "style": {"fontSize": 11, "lineHeight": 14, "textAlign": "center"}}
+              ]}
+            ]
+          },
+          {
+            "type": "container", "id": "cat-6", "containerType": "box",
+            "styleClass": "pattern-bg",
+            "layout": {"width": {"value": 90, "unit": "dp"}, "height": {"value": 90, "unit": "dp"}},
+            "style": {"background": {"type": "pattern", "pattern_type": "stripes_horizontal", "primary_color": "#F3E5F5", "secondary_color": "#8E24AA", "size": 4, "spacing": 10, "opacity": 0.6}},
+            "animation": {"type": "scale_in", "duration": 300, "delay": 250},
+            "children": [
+              {"type": "container", "id": "cat-inner-6", "containerType": "vertical", "layout": {"arrangement": {"strategy": "center"}, "padding": {"all": 8}}, "children": [
+                {"type": "element", "id": "cat-img-6", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/cat6/40/40"}, "layout": {"width": {"value": 36, "unit": "dp"}, "height": {"value": 36, "unit": "dp"}}, "styleClass": "image-rounded"},
+                {"type": "element", "id": "cat-txt-6", "elementType": "text", "bindings": {"text": "VR/AR"}, "style": {"fontSize": 11, "lineHeight": 14, "textAlign": "center"}}
+              ]}
+            ]
+          }
+        ]
+      },
+
+      {
+        "type": "container",
+        "id": "animated-banner",
+        "containerType": "box",
+        "layout": {
+          "width": {"special": "match_parent"},
+          "height": {"value": 160, "unit": "dp"},
+          "padding": {"all": 0}
+        },
+        "styleClass": "animated-gradient-bg",
+        "style": {
+          "background": {
+            "type": "animated_gradient",
+            "gradient_type": "linear",
+            "angle": 45,
+            "colors": ["#6200EE", "#03DAC6", "#FF6F00", "#6200EE"],
+            "duration": 4000,
+            "loop": true,
+            "animation_style": "smooth"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "banner-content",
+            "containerType": "vertical",
+            "layout": {
+              "width": {"special": "match_parent"},
+              "padding": {"all": 24},
+              "arrangement": {"strategy": "center"}
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "banner-title",
+                "elementType": "text",
+                "bindings": {"text": "Welcome back, {{user.name}}!"},
+                "style": {
+                  "fontSize": 22,
+                  "lineHeight": 30,
+                  "fontWeight": "bold",
+                  "textColor": "#FFFFFF",
+                  "textGradient": {"type": "linear", "colors": ["#FFFFFF", "#FFD600"], "angle": 0},
+                  "textShadow": {"color": "#60000000", "offsetX": 1, "offsetY": 2, "blur": 4}
+                },
+                "animation": {"type": "slide_in_left", "duration": 500, "delay": 0}
+              },
+              {
+                "type": "element",
+                "id": "banner-spacer",
+                "elementType": "spacer",
+                "bindings": {},
+                "layout": {"height": {"value": 12, "unit": "dp"}}
+              },
+              {
+                "type": "element",
+                "id": "banner-btn",
+                "elementType": "button",
+                "bindings": {"text": "Claim Rewards"},
+                "layout": {"width": {"value": 180, "unit": "dp"}, "padding": {"vertical": 12}},
+                "style": {
+                  "textColor": "#FFFFFF",
+                  "fontWeight": "bold",
+                  "textAlign": "center",
+                  "borderRadius": 24,
+                  "background": {
+                    "type": "radial_gradient",
+                    "center_x": 0.5,
+                    "center_y": 0.5,
+                    "radius": 1.2,
+                    "colors": ["#FF6F00", "#FF1744"]
+                  }
+                },
+                "actions": {
+                  "onClick": {
+                    "type": "composite",
+                    "executionMode": "parallel",
+                    "actions": [
+                      {"type": "event", "eventName": "claim_rewards_click"},
+                      {"type": "custom", "key": "showRewardsSheet", "value": true}
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "particles-overlay",
+            "containerType": "box",
+            "layout": {
+              "width": {"special": "match_parent"},
+              "height": {"special": "match_parent"}
+            },
+            "style": {
+              "background": {
+                "type": "particles",
+                "particle_color": "#FFFFFF",
+                "particle_count": 30,
+                "particle_size": 3,
+                "speed": 1.5,
+                "direction": "up",
+                "opacity": 0.4
+              }
+            },
+            "children": []
+          }
+        ]
+      },
+
+      {
+        "type": "container",
+        "id": "features-grid",
+        "containerType": "vertical",
+        "layout": {
+          "width": {"special": "match_parent"},
+          "padding": {"horizontal": 16, "vertical": 8}
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "features-title",
+            "elementType": "text",
+            "bindings": {"text": "Featured Categories"},
+            "styleClass": "gradient-text",
+            "layout": {"padding": {"bottom": 8}}
+          },
+          {
+            "type": "container",
+            "id": "features-gallery",
+            "containerType": "gallery",
+            "galleryConfig": {
+              "mode": "free_flow_grid",
+              "orientation": "horizontal",
+              "itemsPerView": 2.2,
+              "spacing": 10
+            },
+            "layout": {
+              "width": {"special": "match_parent"},
+              "height": {"value": 200, "unit": "dp"}
+            },
+            "children": [
+              {
+                "type": "container", "id": "feat-1", "containerType": "vertical",
+                "layout": {"padding": {"all": 10}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+                "style": {"background": {"type": "sweep_gradient", "colors": ["#E8EAF6", "#C5CAE9", "#9FA8DA", "#E8EAF6"]}},
+                "animation": {"type": "fade_scale_in", "duration": 400, "delay": 0},
+                "children": [
+                  {"type": "element", "id": "feat-img-1", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/f1/80/80"}, "layout": {"width": {"value": 50, "unit": "dp"}, "height": {"value": 50, "unit": "dp"}}, "style": {"borderRadius": 8}},
+                  {"type": "element", "id": "feat-name-1", "elementType": "text", "bindings": {"text": "Best Sellers"}, "style": {"fontSize": 13, "lineHeight": 18, "fontWeight": "bold", "letterSpacing": 0.5}},
+                  {"type": "element", "id": "feat-desc-1", "elementType": "text", "bindings": {"text": "{{product.reviews}} ratings"}, "style": {"fontSize": 11, "lineHeight": 14, "textColor": "#888888"}},
+                  {"type": "element", "id": "feat-div-1", "elementType": "divider", "bindings": {}, "dividerConfig": {"orientation": "horizontal", "thickness": 1, "color": "#C5CAE9"}}
+                ]
+              },
+              {
+                "type": "container", "id": "feat-2", "containerType": "vertical",
+                "layout": {"padding": {"all": 10}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+                "style": {"background": {"type": "sweep_gradient", "colors": ["#E0F7FA", "#B2EBF2", "#80DEEA", "#E0F7FA"]}},
+                "animation": {"type": "fade_scale_in", "duration": 400, "delay": 100},
+                "children": [
+                  {"type": "element", "id": "feat-img-2", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/f2/80/80"}, "layout": {"width": {"value": 50, "unit": "dp"}, "height": {"value": 50, "unit": "dp"}}, "style": {"borderRadius": 8}},
+                  {"type": "element", "id": "feat-name-2", "elementType": "text", "bindings": {"text": "New Arrivals"}, "style": {"fontSize": 13, "lineHeight": 18, "fontWeight": "bold", "letterSpacing": 0.5}},
+                  {"type": "element", "id": "feat-desc-2", "elementType": "text", "bindings": {"text": "Updated weekly"}, "style": {"fontSize": 11, "lineHeight": 14, "textColor": "#888888"}},
+                  {"type": "element", "id": "feat-div-2", "elementType": "divider", "bindings": {}, "dividerConfig": {"orientation": "horizontal", "thickness": 1, "color": "#B2EBF2"}}
+                ]
+              },
+              {
+                "type": "container", "id": "feat-3", "containerType": "vertical",
+                "layout": {"padding": {"all": 10}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+                "style": {"background": {"type": "sweep_gradient", "colors": ["#FFF8E1", "#FFECB3", "#FFE082", "#FFF8E1"]}},
+                "animation": {"type": "fade_scale_in", "duration": 400, "delay": 200},
+                "children": [
+                  {"type": "element", "id": "feat-img-3", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/f3/80/80"}, "layout": {"width": {"value": 50, "unit": "dp"}, "height": {"value": 50, "unit": "dp"}}, "style": {"borderRadius": 8}},
+                  {"type": "element", "id": "feat-name-3", "elementType": "text", "bindings": {"text": "Flash Deals"}, "style": {"fontSize": 13, "lineHeight": 18, "fontWeight": "bold", "letterSpacing": 0.5}},
+                  {"type": "element", "id": "feat-desc-3", "elementType": "text", "bindings": {"text": "{{discountLabel}} today"}, "style": {"fontSize": 11, "lineHeight": 14, "textColor": "#888888"}},
+                  {"type": "element", "id": "feat-div-3", "elementType": "divider", "bindings": {}, "dividerConfig": {"orientation": "horizontal", "thickness": 1, "color": "#FFECB3"}}
+                ]
+              },
+              {
+                "type": "container", "id": "feat-4", "containerType": "vertical",
+                "layout": {"padding": {"all": 10}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+                "style": {"background": {"type": "sweep_gradient", "colors": ["#F3E5F5", "#E1BEE7", "#CE93D8", "#F3E5F5"]}},
+                "animation": {"type": "fade_scale_in", "duration": 400, "delay": 300},
+                "children": [
+                  {"type": "element", "id": "feat-img-4", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/f4/80/80"}, "layout": {"width": {"value": 50, "unit": "dp"}, "height": {"value": 50, "unit": "dp"}}, "style": {"borderRadius": 8}},
+                  {"type": "element", "id": "feat-name-4", "elementType": "text", "bindings": {"text": "Premium"}, "style": {"fontSize": 13, "lineHeight": 18, "fontWeight": "bold", "letterSpacing": 0.5}},
+                  {"type": "element", "id": "feat-desc-4", "elementType": "text", "bindings": {"text": "{{user.tier}} picks"}, "style": {"fontSize": 11, "lineHeight": 14, "textColor": "#888888"}},
+                  {"type": "element", "id": "feat-div-4", "elementType": "divider", "bindings": {}, "dividerConfig": {"orientation": "horizontal", "thickness": 1, "color": "#E1BEE7"}}
+                ]
+              },
+              {
+                "type": "container", "id": "feat-5", "containerType": "vertical",
+                "layout": {"padding": {"all": 10}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+                "style": {"background": {"type": "sweep_gradient", "colors": ["#E8F5E9", "#C8E6C9", "#A5D6A7", "#E8F5E9"]}},
+                "animation": {"type": "fade_scale_in", "duration": 400, "delay": 400},
+                "children": [
+                  {"type": "element", "id": "feat-img-5", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/f5/80/80"}, "layout": {"width": {"value": 50, "unit": "dp"}, "height": {"value": 50, "unit": "dp"}}, "style": {"borderRadius": 8}},
+                  {"type": "element", "id": "feat-name-5", "elementType": "text", "bindings": {"text": "Eco-Friendly"}, "style": {"fontSize": 13, "lineHeight": 18, "fontWeight": "bold", "letterSpacing": 0.5}},
+                  {"type": "element", "id": "feat-desc-5", "elementType": "text", "bindings": {"text": "Sustainable tech"}, "style": {"fontSize": 11, "lineHeight": 14, "textColor": "#888888"}},
+                  {"type": "element", "id": "feat-div-5", "elementType": "divider", "bindings": {}, "dividerConfig": {"orientation": "horizontal", "thickness": 1, "color": "#C8E6C9"}}
+                ]
+              },
+              {
+                "type": "container", "id": "feat-6", "containerType": "vertical",
+                "layout": {"padding": {"all": 10}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+                "style": {"background": {"type": "sweep_gradient", "colors": ["#FBE9E7", "#FFCCBC", "#FFAB91", "#FBE9E7"]}},
+                "animation": {"type": "fade_scale_in", "duration": 400, "delay": 500},
+                "children": [
+                  {"type": "element", "id": "feat-img-6", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/f6/80/80"}, "layout": {"width": {"value": 50, "unit": "dp"}, "height": {"value": 50, "unit": "dp"}}, "style": {"borderRadius": 8}},
+                  {"type": "element", "id": "feat-name-6", "elementType": "text", "bindings": {"text": "Bundles"}, "style": {"fontSize": 13, "lineHeight": 18, "fontWeight": "bold", "letterSpacing": 0.5}},
+                  {"type": "element", "id": "feat-desc-6", "elementType": "text", "bindings": {"text": "Save {{discountLabel}}"}, "style": {"fontSize": 11, "lineHeight": 14, "textColor": "#888888"}},
+                  {"type": "element", "id": "feat-div-6", "elementType": "divider", "bindings": {}, "dividerConfig": {"orientation": "horizontal", "thickness": 1, "color": "#FFCCBC"}}
+                ]
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "type": "container",
+        "id": "video-section",
+        "containerType": "box",
+        "layout": {
+          "width": {"special": "match_parent"},
+          "height": {"value": 220, "unit": "dp"}
+        },
+        "style": {
+          "background": {
+            "type": "image",
+            "url": "https://picsum.photos/seed/vidbg/800/400",
+            "fit": "crop",
+            "blur": 8,
+            "tint": "#000000",
+            "tint_opacity": 0.5
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "video-player",
+            "elementType": "video",
+            "bindings": {
+              "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+              "autoPlay": "true",
+              "loop": "true",
+              "muted": "true",
+              "showControls": "true",
+              "showFullscreen": "true"
+            },
+            "layout": {
+              "width": {"value": 90, "unit": "percent"},
+              "height": {"value": 180, "unit": "dp"},
+              "offset": {"x": 0, "y": 20, "unit": "dp"}
+            },
+            "style": {"borderRadius": 12, "backgroundColor": "#000000"}
+          },
+          {
+            "type": "container",
+            "id": "video-overlay",
+            "containerType": "box",
+            "layout": {
+              "width": {"special": "match_parent"},
+              "offset": {"x": 20, "y": 8, "unit": "dp"}
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "video-label",
+                "elementType": "text",
+                "bindings": {"text": "Featured Video"},
+                "style": {
+                  "fontSize": 11,
+                  "lineHeight": 14,
+                  "fontWeight": "bold",
+                  "textColor": "#FFFFFF",
+                  "textShadow": {"color": "#80000000", "offsetX": 1, "offsetY": 1, "blur": 3}
+                }
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "type": "container",
+        "id": "deep-nesting",
+        "containerType": "vertical",
+        "layout": {
+          "width": {"special": "match_parent"},
+          "padding": {"all": 16}
+        },
+        "style": {"backgroundColor": "#FFFFFF"},
+        "children": [
+          {
+            "type": "container",
+            "id": "deep-h1",
+            "containerType": "horizontal",
+            "layout": {"width": {"special": "match_parent"}, "arrangement": {"strategy": "start"}},
+            "children": [
+              {
+                "type": "container",
+                "id": "deep-b1",
+                "containerType": "box",
+                "layout": {"width": {"value": 90, "unit": "percent"}},
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "deep-v2",
+                    "containerType": "vertical",
+                    "layout": {"padding": {"all": 8}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+                    "style": {"borderRadius": 8, "borderWidth": 1, "borderColor": "#E0E0E0"},
+                    "children": [
+                      {
+                        "type": "container",
+                        "id": "deep-h2",
+                        "containerType": "horizontal",
+                        "layout": {"arrangement": {"strategy": "space_around"}},
+                        "children": [
+                          {
+                            "type": "container",
+                            "id": "deep-b2",
+                            "containerType": "box",
+                            "layout": {"padding": {"all": 6}},
+                            "style": {"borderRadius": 6, "backgroundColor": "#F5F5F5"},
+                            "children": [
+                              {
+                                "type": "container",
+                                "id": "deep-v3",
+                                "containerType": "vertical",
+                                "layout": {"arrangement": {"strategy": "end"}},
+                                "children": [
+                                  {
+                                    "type": "element",
+                                    "id": "deep-text",
+                                    "elementType": "text",
+                                    "bindings": {"text": "Depth 8 — Member: {{user.name}} ({{user.tier}})"},
+                                    "style": {
+                                      "fontSize": 12,
+                                      "lineHeight": 16,
+                                      "fontWeight": "bold",
+                                      "textColor": "#6200EE",
+                                      "letterSpacing": 0.8,
+                                      "textDecoration": "underline",
+                                      "textAlign": "center",
+                                      "opacity": 0.9,
+                                      "textShadow": {"color": "#20000000", "offsetX": 1, "offsetY": 1, "blur": 2},
+                                      "textGradient": {"type": "linear", "colors": ["#6200EE", "#03DAC6", "#FF6F00"], "angle": 120}
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "type": "container",
+        "id": "footer",
+        "containerType": "vertical",
+        "layout": {
+          "width": {"special": "match_parent"},
+          "padding": {"all": 20},
+          "arrangement": {"strategy": "spaced", "spacing": 12}
+        },
+        "style": {
+          "background": {
+            "type": "radial_gradient",
+            "center_x": 0.5,
+            "center_y": 0.0,
+            "radius": 1.5,
+            "colors": ["#1A237E", "#000000"]
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "footer-btns",
+            "containerType": "horizontal",
+            "layout": {
+              "width": {"special": "match_parent"},
+              "arrangement": {"strategy": "space_around"}
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "footer-btn-1",
+                "elementType": "button",
+                "bindings": {"text": "Help"},
+                "layout": {"padding": {"horizontal": 16, "vertical": 10}},
+                "style": {"textColor": "#FFFFFF", "borderRadius": 8, "borderWidth": 1, "borderColor": "#FFFFFF40", "textAlign": "center"},
+                "actions": {
+                  "onClick": {"type": "custom", "key": "showHelp", "value": true},
+                  "onLongPress": {"type": "event", "eventName": "help_long_press"},
+                  "onDoubleTap": {"type": "navigate", "destination": "DebugScreen"}
+                }
+              },
+              {
+                "type": "element",
+                "id": "footer-btn-2",
+                "elementType": "button",
+                "bindings": {"text": "Account"},
+                "layout": {"padding": {"horizontal": 16, "vertical": 10}},
+                "style": {"textColor": "#FFFFFF", "borderRadius": 8, "borderWidth": 1, "borderColor": "#FFFFFF40", "textAlign": "center"},
+                "actions": {"onClick": {"type": "navigate", "destination": "AccountScreen", "params": {"userId": "{{user.email}}"}}}
+              },
+              {
+                "type": "element",
+                "id": "footer-btn-3",
+                "elementType": "button",
+                "bindings": {"text": "Settings"},
+                "layout": {"padding": {"horizontal": 16, "vertical": 10}},
+                "style": {"textColor": "#FFFFFF", "borderRadius": 8, "borderWidth": 1, "borderColor": "#FFFFFF40", "textAlign": "center"},
+                "actions": {"onClick": {"type": "custom", "key": "openSettings", "value": true, "metadata": {"section": "preferences"}}}
+              }
+            ]
+          },
+          {
+            "type": "element",
+            "id": "footer-div",
+            "elementType": "divider",
+            "bindings": {},
+            "styleClass": "divider-styled",
+            "dividerConfig": {"orientation": "horizontal", "thickness": 1, "color": "#FFFFFF30"}
+          },
+          {
+            "type": "element",
+            "id": "footer-copyright",
+            "elementType": "text",
+            "bindings": {"text": "{{appTitle}} v{{version}} — {{copyrightYear}} All rights reserved. Support: {{supportHours}}"},
+            "style": {"fontSize": 11, "lineHeight": 14, "textColor": "#FFFFFF", "textAlign": "center", "opacity": 0.5}
+          }
+        ]
+      }
+    ]
+  }
+}

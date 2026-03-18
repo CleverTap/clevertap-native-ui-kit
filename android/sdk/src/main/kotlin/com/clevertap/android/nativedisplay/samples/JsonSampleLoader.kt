@@ -1,6 +1,7 @@
 package com.clevertap.android.nativedisplay.samples
 
 import android.content.Context
+import android.os.Trace
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
 import kotlinx.serialization.json.Json
 import java.io.IOException
@@ -27,7 +28,12 @@ object JsonSampleLoader {
     fun loadFromAssets(context: Context, fileName: String): ResolvedConfig? {
         return try {
             val jsonString = context.assets.open(fileName).bufferedReader().use { it.readText() }
-            json.decodeFromString<ResolvedConfig>(jsonString)
+            Trace.beginSection("SDUI:parseConfig")
+            try {
+                json.decodeFromString<ResolvedConfig>(jsonString)
+            } finally {
+                Trace.endSection()
+            }
         } catch (e: IOException) {
             e.printStackTrace()
             null

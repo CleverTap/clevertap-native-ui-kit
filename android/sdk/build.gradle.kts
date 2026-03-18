@@ -6,6 +6,11 @@ plugins {
     id("maven-publish")
 }
 
+composeCompiler {
+    metricsDestination = layout.buildDirectory.dir("compose-metrics")
+    reportsDestination = layout.buildDirectory.dir("compose-reports")
+}
+
 android {
     namespace = "com.clevertap.android.nativeui"
     compileSdk = 36
@@ -85,6 +90,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     
+    // Tracing
+    implementation(libs.androidx.tracing.ktx)
+
     // Image Loading
     implementation(libs.io.coil.compose)
     implementation(libs.io.coil.gif)  // GIF animation support

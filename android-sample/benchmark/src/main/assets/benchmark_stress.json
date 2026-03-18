@@ -1,0 +1,439 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {
+      "textColor": "#333333",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "styleClasses": [
+    {"name": "heading", "style": {"fontSize": 22, "lineHeight": 30, "fontWeight": "bold", "textColor": "#000000"}},
+    {"name": "subheading", "style": {"fontSize": 16, "lineHeight": 22, "fontWeight": "medium", "textColor": "#555555"}},
+    {"name": "card", "style": {"backgroundColor": "#FFFFFF", "borderRadius": 12, "shadowRadius": 4, "shadowColor": "#40000000", "shadowOffsetY": 2}},
+    {"name": "badge", "style": {"backgroundColor": "#FF5722", "textColor": "#FFFFFF", "fontSize": 11, "lineHeight": 14, "borderRadius": 4}},
+    {"name": "price", "style": {"fontSize": 18, "lineHeight": 24, "fontWeight": "bold", "textColor": "#4CAF50"}},
+    {"name": "caption", "style": {"fontSize": 12, "lineHeight": 16, "textColor": "#888888"}},
+    {"name": "tag", "style": {"backgroundColor": "#E3F2FD", "textColor": "#1565C0", "fontSize": 11, "lineHeight": 14, "borderRadius": 10}},
+    {"name": "divider_style", "style": {"backgroundColor": "#E0E0E0"}},
+    {"name": "accent_btn", "style": {"backgroundColor": "#2196F3", "textColor": "#FFFFFF", "borderRadius": 8}},
+    {"name": "outline_btn", "style": {"borderColor": "#2196F3", "borderWidth": 1, "borderRadius": 8, "textColor": "#2196F3"}}
+  ],
+  "variables": {
+    "appName": "Benchmark App",
+    "userName": "John Doe",
+    "userEmail": "john@example.com",
+    "memberSince": "2023",
+    "orderCount": "42",
+    "totalSpent": "$1,234.56",
+    "currency": "$",
+    "discountLabel": "SALE",
+    "ratingPrefix": "Rating:",
+    "reviewSuffix": "reviews",
+    "freeShipping": "Free Shipping",
+    "returnPolicy": "30-day returns",
+    "supportHours": "24/7",
+    "version": "2.1.0",
+    "lastUpdated": "2024-01-15",
+    "notifCount": "3",
+    "cartCount": "5",
+    "wishlistCount": "12",
+    "browsingHistory": "Recently viewed",
+    "recommendation": "Recommended for you"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {"special": "match_parent"},
+      "arrangement": {"strategy": "spaced", "spacing": 0}
+    },
+    "style": {"backgroundColor": "#F5F5F5"},
+    "children": [
+      {
+        "type": "container",
+        "id": "header",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {"special": "match_parent"},
+          "padding": {"horizontal": 16, "vertical": 12},
+          "arrangement": {"strategy": "space_between"}
+        },
+        "style": {"backgroundColor": "#2196F3"},
+        "children": [
+          {
+            "type": "element",
+            "id": "app_title",
+            "elementType": "text",
+            "bindings": {"text": "{{appName}}"},
+            "style": {"fontSize": 20, "lineHeight": 28, "fontWeight": "bold", "textColor": "#FFFFFF"}
+          },
+          {
+            "type": "container",
+            "id": "header_actions",
+            "containerType": "horizontal",
+            "layout": {"arrangement": {"strategy": "spaced", "spacing": 12}},
+            "children": [
+              {
+                "type": "element",
+                "id": "notif_badge",
+                "elementType": "text",
+                "bindings": {"text": "{{notifCount}}"},
+                "styleClass": "badge",
+                "layout": {"padding": {"horizontal": 6, "vertical": 2}}
+              },
+              {
+                "type": "element",
+                "id": "cart_badge",
+                "elementType": "text",
+                "bindings": {"text": "{{cartCount}}"},
+                "styleClass": "badge",
+                "layout": {"padding": {"horizontal": 6, "vertical": 2}}
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "profile_section",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {"special": "match_parent"},
+          "padding": {"all": 16},
+          "arrangement": {"strategy": "spaced", "spacing": 12}
+        },
+        "styleClass": "card",
+        "children": [
+          {
+            "type": "element",
+            "id": "avatar",
+            "elementType": "image",
+            "bindings": {"url": "https://picsum.photos/seed/avatar/80/80"},
+            "layout": {"width": {"value": 56, "unit": "dp"}, "height": {"value": 56, "unit": "dp"}},
+            "style": {"borderRadius": 28}
+          },
+          {
+            "type": "container",
+            "id": "profile_info",
+            "containerType": "vertical",
+            "layout": {"arrangement": {"strategy": "spaced", "spacing": 2}},
+            "children": [
+              {"type": "element", "id": "uname", "elementType": "text", "bindings": {"text": "{{userName}}"}, "styleClass": "subheading"},
+              {"type": "element", "id": "uemail", "elementType": "text", "bindings": {"text": "{{userEmail}}"}, "styleClass": "caption"},
+              {"type": "element", "id": "umember", "elementType": "text", "bindings": {"text": "Member since {{memberSince}}"}, "styleClass": "caption"}
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "stats_row",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {"special": "match_parent"},
+          "padding": {"horizontal": 16, "vertical": 8},
+          "arrangement": {"strategy": "space_evenly"}
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "stat_orders",
+            "containerType": "vertical",
+            "layout": {"arrangement": {"strategy": "center"}},
+            "children": [
+              {"type": "element", "id": "stat_orders_val", "elementType": "text", "bindings": {"text": "{{orderCount}}"}, "style": {"fontSize": 20, "lineHeight": 28, "fontWeight": "bold", "textAlign": "center"}},
+              {"type": "element", "id": "stat_orders_lbl", "elementType": "text", "bindings": {"text": "Orders"}, "styleClass": "caption", "style": {"textAlign": "center"}}
+            ]
+          },
+          {
+            "type": "container",
+            "id": "stat_wishlist",
+            "containerType": "vertical",
+            "layout": {"arrangement": {"strategy": "center"}},
+            "children": [
+              {"type": "element", "id": "stat_wish_val", "elementType": "text", "bindings": {"text": "{{wishlistCount}}"}, "style": {"fontSize": 20, "lineHeight": 28, "fontWeight": "bold", "textAlign": "center"}},
+              {"type": "element", "id": "stat_wish_lbl", "elementType": "text", "bindings": {"text": "Wishlist"}, "styleClass": "caption", "style": {"textAlign": "center"}}
+            ]
+          },
+          {
+            "type": "container",
+            "id": "stat_spent",
+            "containerType": "vertical",
+            "layout": {"arrangement": {"strategy": "center"}},
+            "children": [
+              {"type": "element", "id": "stat_spent_val", "elementType": "text", "bindings": {"text": "{{totalSpent}}"}, "style": {"fontSize": 20, "lineHeight": 28, "fontWeight": "bold", "textAlign": "center", "textColor": "#4CAF50"}},
+              {"type": "element", "id": "stat_spent_lbl", "elementType": "text", "bindings": {"text": "Spent"}, "styleClass": "caption", "style": {"textAlign": "center"}}
+            ]
+          }
+        ]
+      },
+      {
+        "type": "element",
+        "id": "div_1",
+        "elementType": "divider",
+        "bindings": {},
+        "dividerConfig": {"orientation": "horizontal", "thickness": 1, "color": "#E0E0E0"}
+      },
+      {
+        "type": "element",
+        "id": "rec_title",
+        "elementType": "text",
+        "bindings": {"text": "{{recommendation}}"},
+        "styleClass": "heading",
+        "layout": {"padding": {"horizontal": 16, "top": 16}}
+      },
+      {
+        "type": "container",
+        "id": "rec_gallery",
+        "containerType": "gallery",
+        "galleryConfig": {"mode": "free_flow", "orientation": "horizontal"},
+        "layout": {
+          "width": {"special": "match_parent"},
+          "height": {"value": 220, "unit": "dp"},
+          "padding": {"vertical": 8}
+        },
+        "children": [
+          {
+            "type": "container", "id": "rec_1", "containerType": "vertical", "styleClass": "card",
+            "layout": {"width": {"value": 160, "unit": "dp"}, "padding": {"all": 8}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+            "children": [
+              {"type": "element", "id": "rec_img_1", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/r1/160/120"}, "layout": {"width": {"special": "match_parent"}, "aspectRatio": 1.33}, "style": {"borderRadius": 6}},
+              {"type": "element", "id": "rec_name_1", "elementType": "text", "bindings": {"text": "Bluetooth Speaker"}, "style": {"fontSize": 13, "lineHeight": 18, "fontWeight": "medium"}},
+              {"type": "element", "id": "rec_price_1", "elementType": "text", "bindings": {"text": "{{currency}}29.99"}, "styleClass": "price", "style": {"fontSize": 14, "lineHeight": 18}}
+            ]
+          },
+          {
+            "type": "container", "id": "rec_2", "containerType": "vertical", "styleClass": "card",
+            "layout": {"width": {"value": 160, "unit": "dp"}, "padding": {"all": 8}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+            "children": [
+              {"type": "element", "id": "rec_img_2", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/r2/160/120"}, "layout": {"width": {"special": "match_parent"}, "aspectRatio": 1.33}, "style": {"borderRadius": 6}},
+              {"type": "element", "id": "rec_name_2", "elementType": "text", "bindings": {"text": "Wireless Mouse"}, "style": {"fontSize": 13, "lineHeight": 18, "fontWeight": "medium"}},
+              {"type": "element", "id": "rec_price_2", "elementType": "text", "bindings": {"text": "{{currency}}24.99"}, "styleClass": "price", "style": {"fontSize": 14, "lineHeight": 18}}
+            ]
+          },
+          {
+            "type": "container", "id": "rec_3", "containerType": "vertical", "styleClass": "card",
+            "layout": {"width": {"value": 160, "unit": "dp"}, "padding": {"all": 8}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+            "children": [
+              {"type": "element", "id": "rec_img_3", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/r3/160/120"}, "layout": {"width": {"special": "match_parent"}, "aspectRatio": 1.33}, "style": {"borderRadius": 6}},
+              {"type": "element", "id": "rec_name_3", "elementType": "text", "bindings": {"text": "Phone Stand"}, "style": {"fontSize": 13, "lineHeight": 18, "fontWeight": "medium"}},
+              {"type": "element", "id": "rec_price_3", "elementType": "text", "bindings": {"text": "{{currency}}14.99"}, "styleClass": "price", "style": {"fontSize": 14, "lineHeight": 18}}
+            ]
+          },
+          {
+            "type": "container", "id": "rec_4", "containerType": "vertical", "styleClass": "card",
+            "layout": {"width": {"value": 160, "unit": "dp"}, "padding": {"all": 8}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+            "children": [
+              {"type": "element", "id": "rec_img_4", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/r4/160/120"}, "layout": {"width": {"special": "match_parent"}, "aspectRatio": 1.33}, "style": {"borderRadius": 6}},
+              {"type": "element", "id": "rec_name_4", "elementType": "text", "bindings": {"text": "Webcam HD"}, "style": {"fontSize": 13, "lineHeight": 18, "fontWeight": "medium"}},
+              {"type": "element", "id": "rec_price_4", "elementType": "text", "bindings": {"text": "{{currency}}59.99"}, "styleClass": "price", "style": {"fontSize": 14, "lineHeight": 18}}
+            ]
+          },
+          {
+            "type": "container", "id": "rec_5", "containerType": "vertical", "styleClass": "card",
+            "layout": {"width": {"value": 160, "unit": "dp"}, "padding": {"all": 8}, "arrangement": {"strategy": "spaced", "spacing": 4}},
+            "children": [
+              {"type": "element", "id": "rec_img_5", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/r5/160/120"}, "layout": {"width": {"special": "match_parent"}, "aspectRatio": 1.33}, "style": {"borderRadius": 6}},
+              {"type": "element", "id": "rec_name_5", "elementType": "text", "bindings": {"text": "USB Cable Set"}, "style": {"fontSize": 13, "lineHeight": 18, "fontWeight": "medium"}},
+              {"type": "element", "id": "rec_price_5", "elementType": "text", "bindings": {"text": "{{currency}}9.99"}, "styleClass": "price", "style": {"fontSize": 14, "lineHeight": 18}}
+            ]
+          }
+        ]
+      },
+      {
+        "type": "element",
+        "id": "div_2",
+        "elementType": "divider",
+        "bindings": {},
+        "dividerConfig": {"orientation": "horizontal", "thickness": 1, "color": "#E0E0E0"}
+      },
+      {
+        "type": "element",
+        "id": "history_title",
+        "elementType": "text",
+        "bindings": {"text": "{{browsingHistory}}"},
+        "styleClass": "heading",
+        "layout": {"padding": {"horizontal": 16, "top": 16}}
+      },
+      {
+        "type": "container",
+        "id": "history_list",
+        "containerType": "vertical",
+        "layout": {
+          "width": {"special": "match_parent"},
+          "padding": {"horizontal": 16, "vertical": 8},
+          "arrangement": {"strategy": "spaced", "spacing": 8}
+        },
+        "children": [
+          {
+            "type": "container", "id": "hist_1", "containerType": "horizontal", "styleClass": "card",
+            "layout": {"width": {"special": "match_parent"}, "padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 12}},
+            "children": [
+              {"type": "element", "id": "hist_img_1", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/h1/60/60"}, "layout": {"width": {"value": 48, "unit": "dp"}, "height": {"value": 48, "unit": "dp"}}, "style": {"borderRadius": 8}},
+              {
+                "type": "container", "id": "hist_info_1", "containerType": "vertical",
+                "layout": {"arrangement": {"strategy": "spaced", "spacing": 2}},
+                "children": [
+                  {"type": "element", "id": "hist_name_1", "elementType": "text", "bindings": {"text": "Noise Cancelling Earbuds"}, "style": {"fontSize": 14, "lineHeight": 18, "fontWeight": "medium"}},
+                  {"type": "element", "id": "hist_price_1", "elementType": "text", "bindings": {"text": "{{currency}}89.99"}, "styleClass": "caption"},
+                  {
+                    "type": "container", "id": "hist_tags_1", "containerType": "horizontal",
+                    "layout": {"arrangement": {"strategy": "spaced", "spacing": 4}},
+                    "children": [
+                      {"type": "element", "id": "hist_tag_1a", "elementType": "text", "bindings": {"text": "{{discountLabel}}"}, "styleClass": "tag", "layout": {"padding": {"horizontal": 6, "vertical": 2}}},
+                      {"type": "element", "id": "hist_tag_1b", "elementType": "text", "bindings": {"text": "{{freeShipping}}"}, "styleClass": "tag", "layout": {"padding": {"horizontal": 6, "vertical": 2}}}
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "container", "id": "hist_2", "containerType": "horizontal", "styleClass": "card",
+            "layout": {"width": {"special": "match_parent"}, "padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 12}},
+            "children": [
+              {"type": "element", "id": "hist_img_2", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/h2/60/60"}, "layout": {"width": {"value": 48, "unit": "dp"}, "height": {"value": 48, "unit": "dp"}}, "style": {"borderRadius": 8}},
+              {
+                "type": "container", "id": "hist_info_2", "containerType": "vertical",
+                "layout": {"arrangement": {"strategy": "spaced", "spacing": 2}},
+                "children": [
+                  {"type": "element", "id": "hist_name_2", "elementType": "text", "bindings": {"text": "Portable Charger 20000mAh"}, "style": {"fontSize": 14, "lineHeight": 18, "fontWeight": "medium"}},
+                  {"type": "element", "id": "hist_price_2", "elementType": "text", "bindings": {"text": "{{currency}}39.99"}, "styleClass": "caption"},
+                  {
+                    "type": "container", "id": "hist_tags_2", "containerType": "horizontal",
+                    "layout": {"arrangement": {"strategy": "spaced", "spacing": 4}},
+                    "children": [
+                      {"type": "element", "id": "hist_tag_2a", "elementType": "text", "bindings": {"text": "{{freeShipping}}"}, "styleClass": "tag", "layout": {"padding": {"horizontal": 6, "vertical": 2}}}
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "container", "id": "hist_3", "containerType": "horizontal", "styleClass": "card",
+            "layout": {"width": {"special": "match_parent"}, "padding": {"all": 12}, "arrangement": {"strategy": "spaced", "spacing": 12}},
+            "children": [
+              {"type": "element", "id": "hist_img_3", "elementType": "image", "bindings": {"url": "https://picsum.photos/seed/h3/60/60"}, "layout": {"width": {"value": 48, "unit": "dp"}, "height": {"value": 48, "unit": "dp"}}, "style": {"borderRadius": 8}},
+              {
+                "type": "container", "id": "hist_info_3", "containerType": "vertical",
+                "layout": {"arrangement": {"strategy": "spaced", "spacing": 2}},
+                "children": [
+                  {"type": "element", "id": "hist_name_3", "elementType": "text", "bindings": {"text": "Gaming Mouse RGB"}, "style": {"fontSize": 14, "lineHeight": 18, "fontWeight": "medium"}},
+                  {"type": "element", "id": "hist_price_3", "elementType": "text", "bindings": {"text": "{{currency}}54.99"}, "styleClass": "caption"},
+                  {
+                    "type": "container", "id": "hist_tags_3", "containerType": "horizontal",
+                    "layout": {"arrangement": {"strategy": "spaced", "spacing": 4}},
+                    "children": [
+                      {"type": "element", "id": "hist_tag_3a", "elementType": "text", "bindings": {"text": "{{discountLabel}}"}, "styleClass": "tag", "layout": {"padding": {"horizontal": 6, "vertical": 2}}},
+                      {"type": "element", "id": "hist_tag_3b", "elementType": "text", "bindings": {"text": "{{returnPolicy}}"}, "styleClass": "tag", "layout": {"padding": {"horizontal": 6, "vertical": 2}}}
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "element",
+        "id": "div_3",
+        "elementType": "divider",
+        "bindings": {},
+        "dividerConfig": {"orientation": "horizontal", "thickness": 1, "color": "#E0E0E0"}
+      },
+      {
+        "type": "container",
+        "id": "info_section",
+        "containerType": "vertical",
+        "layout": {
+          "width": {"special": "match_parent"},
+          "padding": {"all": 16},
+          "arrangement": {"strategy": "spaced", "spacing": 12}
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "info_title",
+            "elementType": "text",
+            "bindings": {"text": "Quick Info"},
+            "styleClass": "subheading"
+          },
+          {
+            "type": "container", "id": "info_row_1", "containerType": "horizontal",
+            "layout": {"width": {"special": "match_parent"}, "arrangement": {"strategy": "space_between"}},
+            "children": [
+              {"type": "element", "id": "info_lbl_1", "elementType": "text", "bindings": {"text": "Shipping"}},
+              {"type": "element", "id": "info_val_1", "elementType": "text", "bindings": {"text": "{{freeShipping}}"}, "style": {"fontWeight": "bold", "textColor": "#4CAF50"}}
+            ]
+          },
+          {
+            "type": "container", "id": "info_row_2", "containerType": "horizontal",
+            "layout": {"width": {"special": "match_parent"}, "arrangement": {"strategy": "space_between"}},
+            "children": [
+              {"type": "element", "id": "info_lbl_2", "elementType": "text", "bindings": {"text": "Returns"}},
+              {"type": "element", "id": "info_val_2", "elementType": "text", "bindings": {"text": "{{returnPolicy}}"}, "style": {"fontWeight": "bold"}}
+            ]
+          },
+          {
+            "type": "container", "id": "info_row_3", "containerType": "horizontal",
+            "layout": {"width": {"special": "match_parent"}, "arrangement": {"strategy": "space_between"}},
+            "children": [
+              {"type": "element", "id": "info_lbl_3", "elementType": "text", "bindings": {"text": "Support"}},
+              {"type": "element", "id": "info_val_3", "elementType": "text", "bindings": {"text": "{{supportHours}}"}, "style": {"fontWeight": "bold"}}
+            ]
+          },
+          {
+            "type": "container", "id": "info_row_4", "containerType": "horizontal",
+            "layout": {"width": {"special": "match_parent"}, "arrangement": {"strategy": "space_between"}},
+            "children": [
+              {"type": "element", "id": "info_lbl_4", "elementType": "text", "bindings": {"text": "App Version"}},
+              {"type": "element", "id": "info_val_4", "elementType": "text", "bindings": {"text": "v{{version}}"}, "styleClass": "caption"}
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "footer_actions",
+        "containerType": "vertical",
+        "layout": {
+          "width": {"special": "match_parent"},
+          "padding": {"horizontal": 16, "vertical": 12},
+          "arrangement": {"strategy": "spaced", "spacing": 8}
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "btn_browse",
+            "elementType": "button",
+            "bindings": {"text": "Browse All Products"},
+            "styleClass": "accent_btn",
+            "layout": {"width": {"special": "match_parent"}, "padding": {"vertical": 14}},
+            "style": {"textAlign": "center"}
+          },
+          {
+            "type": "element",
+            "id": "btn_support",
+            "elementType": "button",
+            "bindings": {"text": "Contact Support"},
+            "styleClass": "outline_btn",
+            "layout": {"width": {"special": "match_parent"}, "padding": {"vertical": 14}},
+            "style": {"textAlign": "center"}
+          }
+        ]
+      },
+      {
+        "type": "element",
+        "id": "footer_text",
+        "elementType": "text",
+        "bindings": {"text": "Last updated: {{lastUpdated}}"},
+        "styleClass": "caption",
+        "layout": {"padding": {"all": 16}},
+        "style": {"textAlign": "center"}
+      }
+    ]
+  }
+}

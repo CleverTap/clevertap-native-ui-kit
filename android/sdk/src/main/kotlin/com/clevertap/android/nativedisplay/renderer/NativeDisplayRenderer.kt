@@ -121,6 +121,7 @@ import com.clevertap.android.nativedisplay.style.StyleResolver
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import android.os.Trace
 import androidx.compose.ui.text.font.FontStyle as ComposeFontStyle
 import androidx.compose.ui.text.font.FontWeight as ComposeFontWeight
 import androidx.compose.ui.text.style.TextOverflow as ComposeTextOverflow
@@ -136,6 +137,7 @@ fun NativeDisplayView(
     actionListener: NativeDisplayActionListener? = null,
     componentListener: NativeDisplayComponentListener? = null,
 ) {
+    Trace.beginSection("SDUI:NativeDisplayView")
     val resolvedStyles = remember(config) {
         StyleResolver(config.theme, config.styleClasses).resolveAll(config.root)
     }
@@ -146,6 +148,7 @@ fun NativeDisplayView(
         actionListener = actionListener,
         componentListener = componentListener,
     )
+    Trace.endSection()
 }
 
 /**
@@ -159,6 +162,7 @@ fun NativeDisplayView(
     actionListener: NativeDisplayActionListener? = null,
     componentListener: NativeDisplayComponentListener? = null,
 ) {
+    Trace.beginSection("SDUI:NativeDisplayView")
     val context = LocalContext.current
 
     val actionHandler = remember(actionListener, componentListener) {
@@ -187,6 +191,7 @@ fun NativeDisplayView(
         actionHandler = actionHandler,
         componentListener = componentListener,
     )
+    Trace.endSection()
 }
 
 /**
@@ -272,6 +277,7 @@ private fun RenderContainer(
     actionHandler: ActionHandler? = null,
     componentListener: NativeDisplayComponentListener? = null,
 ) {
+    Trace.beginSection("SDUI:Container:${container.containerType.name}")
     val containerModifier = modifier.applyPadding(layout)
 
     when (container.containerType) {
@@ -325,7 +331,7 @@ private fun RenderContainer(
                 }
             }
         }
-        
+
         ContainerType.GALLERY -> {
             RenderGallery(
                 container = container,
@@ -337,6 +343,7 @@ private fun RenderContainer(
             )
         }
     }
+    Trace.endSection()
 }
 
 /**
@@ -352,6 +359,7 @@ fun RenderGallery(
     componentListener: NativeDisplayComponentListener? = null,
 ) {
     val config = container.galleryConfig ?: GalleryConfig()
+    Trace.beginSection("SDUI:Gallery:${config.mode.name}")
 
     when (config.mode) {
         GalleryMode.SNAPPING -> {
@@ -390,6 +398,7 @@ fun RenderGallery(
             )
         }
     }
+    Trace.endSection()
 }
 
 /**

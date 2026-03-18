@@ -6,6 +6,7 @@ import AVKit
 import AVFoundation
 import UIKit
 import ImageIO
+import os
 
 // MARK: - Environment Key for Parent Size
 
@@ -40,6 +41,8 @@ public struct NativeDisplayView: View {
         actionListener: NativeDisplayActionListener? = nil,
         componentListener: NativeDisplayComponentListener? = nil
     ) {
+        let signpostID = PerformanceSignposts.rendering.begin("NativeDisplayView.init")
+        defer { PerformanceSignposts.rendering.end("NativeDisplayView.init", signpostID) }
         self.config = config
         // Pre-resolve all node styles once — views get O(1) lookup, no resolution at render time
         let resolver = StyleResolver(theme: config.theme, styleClasses: config.styleClasses)

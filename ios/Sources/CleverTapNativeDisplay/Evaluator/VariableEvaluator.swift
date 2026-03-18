@@ -2,6 +2,7 @@
 // Evaluates variable expressions in templates
 
 import Foundation
+import os
 
 /// Evaluates variable expressions in templates (Phase 1 - static variables).
 ///
@@ -29,6 +30,8 @@ public class VariableEvaluator {
     /// - "Hello {{userName}}" → "Hello John"
     /// - "{{itemCount}} items" → "5 items"
     public func evaluateString(_ template: String) -> String {
+        let signpostID = PerformanceSignposts.variableEvaluation.begin("evaluateString")
+        defer { PerformanceSignposts.variableEvaluation.end("evaluateString", signpostID) }
         var result = template
         let range = NSRange(template.startIndex..., in: template)
         

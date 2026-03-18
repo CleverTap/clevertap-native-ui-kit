@@ -1,0 +1,20 @@
+{
+  "theme": {
+    "id": "default"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "children": [
+      {
+        "type": "element",
+        "id": "text-1",
+        "elementType": "text",
+        "bindings": {
+          "text": "Hello World"
+        }
+      }
+    ]
+  }
+}

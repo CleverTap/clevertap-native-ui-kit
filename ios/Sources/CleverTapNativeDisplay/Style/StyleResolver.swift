@@ -2,6 +2,7 @@
 // Resolves styles with proper inheritance and priority
 
 import Foundation
+import os
 
 /// Resolves styles with proper cascading and priority.
 ///
@@ -82,6 +83,8 @@ public class StyleResolver {
         node: NativeDisplayNode,
         parentCascadingStyle: Style? = nil
     ) -> [String: Style] {
+        let signpostID = PerformanceSignposts.styleResolution.begin("resolveAll")
+        defer { PerformanceSignposts.styleResolution.end("resolveAll", signpostID) }
         var result = [String: Style]()
         resolveAllInto(node: node, parentCascadingStyle: parentCascadingStyle, result: &result)
         return result

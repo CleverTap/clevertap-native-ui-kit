@@ -1,5 +1,6 @@
 package com.clevertap.android.nativedisplay.style
 
+import android.os.Trace
 import com.clevertap.android.nativedisplay.models.*
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.toPersistentMap
@@ -17,7 +18,7 @@ class StyleResolver(
     private val styleClasses: List<StyleClass>
 ) {
     private val styleClassMap = styleClasses.associateBy { it.name }
-    
+
     /**
      * Resolve the final style for a node.
      *
@@ -46,7 +47,7 @@ class StyleResolver(
 
         return resolvedStyle
     }
-    
+
     /**
      * Resolve style for an element with color palette support.
      * Replaces color names with actual color values from theme.
@@ -55,7 +56,7 @@ class StyleResolver(
         node: NativeDisplayNode
     ): Style {
         val style = resolve(node)
-        
+
         return style.copy(
             textColor = resolveColor(style.textColor),
             backgroundColor = resolveColor(style.backgroundColor),
@@ -63,7 +64,7 @@ class StyleResolver(
             shadowColor = resolveColor(style.shadowColor)
         )
     }
-    
+
     /**
      * Pre-resolve styles for an entire node tree in a single pass.
      * Call this once at config-set time; pass the result into composables instead of StyleResolver.
@@ -79,9 +80,14 @@ class StyleResolver(
         node: NativeDisplayNode,
         parentCascadingStyle: Style = Style.EMPTY
     ): PersistentMap<String, Style> {
-        val result = mutableMapOf<String, Style>()
-        resolveAllInto(node, parentCascadingStyle, result)
-        return result.toPersistentMap()
+        Trace.beginSection("SDUI:resolveStyles")
+        try {
+            val result = mutableMapOf<String, Style>()
+            resolveAllInto(node, parentCascadingStyle, result)
+            return result.toPersistentMap()
+        } finally {
+            Trace.endSection()
+        }
     }
 
     private fun resolveAllInto(
@@ -109,10 +115,10 @@ class StyleResolver(
      */
     private fun resolveColor(color: String?): String? {
         if (color == null) return null
-        
+
         // If starts with #, it's already a hex color
         if (color.startsWith("#")) return color
-        
+
         // Otherwise, try to get from theme palette
         return theme.getColor(color) ?: color
     }

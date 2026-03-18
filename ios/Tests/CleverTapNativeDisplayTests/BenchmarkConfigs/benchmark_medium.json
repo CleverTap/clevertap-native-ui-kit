@@ -1,0 +1,223 @@
+{
+  "theme": {
+    "id": "medium-theme",
+    "defaultStyle": {
+      "textColor": "#212121",
+      "fontSize": 14,
+      "lineHeight": 20,
+      "fontWeight": "normal"
+    },
+    "colors": {
+      "primary": "#1976D2",
+      "accent": "#FF5722"
+    }
+  },
+  "styleClasses": [
+    {
+      "name": "heading",
+      "style": {"fontSize": 24, "fontWeight": "bold", "lineHeight": 32}
+    },
+    {
+      "name": "subheading",
+      "style": {"fontSize": 16, "fontWeight": "medium", "lineHeight": 22, "textColor": "#757575"}
+    },
+    {
+      "name": "card",
+      "style": {"backgroundColor": "#FFFFFF", "borderRadius": 12, "shadowColor": "#00000040", "shadowRadius": 4, "shadowOffsetY": 2}
+    }
+  ],
+  "variables": {
+    "userName": "Jane Doe",
+    "itemCount": 12,
+    "price": "$49.99",
+    "rating": "4.5",
+    "isPremium": true
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {"value": 100, "unit": "percent"},
+      "padding": {"all": 16},
+      "arrangement": {"strategy": "spaced", "spacing": 12}
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "header",
+        "containerType": "horizontal",
+        "layout": {
+          "arrangement": {"strategy": "space_between"}
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "greeting",
+            "elementType": "text",
+            "bindings": {"text": "Hello, {{userName}}"},
+            "styleClass": "heading"
+          },
+          {
+            "type": "element",
+            "id": "badge",
+            "elementType": "text",
+            "bindings": {"text": "{{isPremium ? 'PRO' : 'FREE'}}"},
+            "style": {
+              "backgroundColor": "#FF5722",
+              "textColor": "#FFFFFF",
+              "fontSize": 12,
+              "lineHeight": 16,
+              "borderRadius": 4
+            },
+            "layout": {
+              "padding": {"horizontal": 8, "vertical": 4}
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "stats-card",
+        "containerType": "vertical",
+        "styleClass": "card",
+        "layout": {
+          "padding": {"all": 16},
+          "arrangement": {"strategy": "spaced", "spacing": 8}
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "stats-title",
+            "elementType": "text",
+            "bindings": {"text": "Your Stats"},
+            "styleClass": "subheading"
+          },
+          {
+            "type": "element",
+            "id": "divider-1",
+            "elementType": "divider",
+            "bindings": {},
+            "dividerConfig": {"orientation": "horizontal", "thickness": 1, "color": "#E0E0E0"}
+          },
+          {
+            "type": "container",
+            "id": "stats-row",
+            "containerType": "horizontal",
+            "layout": {
+              "arrangement": {"strategy": "space_evenly"}
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "stat-items",
+                "containerType": "vertical",
+                "layout": {"arrangement": {"strategy": "center"}},
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "item-count-value",
+                    "elementType": "text",
+                    "bindings": {"text": "{{itemCount}}"},
+                    "style": {"fontSize": 28, "fontWeight": "bold", "lineHeight": 36}
+                  },
+                  {
+                    "type": "element",
+                    "id": "item-count-label",
+                    "elementType": "text",
+                    "bindings": {"text": "Items"},
+                    "style": {"textColor": "#9E9E9E", "fontSize": 12, "lineHeight": 16}
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "stat-rating",
+                "containerType": "vertical",
+                "layout": {"arrangement": {"strategy": "center"}},
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "rating-value",
+                    "elementType": "text",
+                    "bindings": {"text": "{{rating}}"},
+                    "style": {"fontSize": 28, "fontWeight": "bold", "lineHeight": 36}
+                  },
+                  {
+                    "type": "element",
+                    "id": "rating-label",
+                    "elementType": "text",
+                    "bindings": {"text": "Rating"},
+                    "style": {"textColor": "#9E9E9E", "fontSize": 12, "lineHeight": 16}
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "stat-price",
+                "containerType": "vertical",
+                "layout": {"arrangement": {"strategy": "center"}},
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "price-value",
+                    "elementType": "text",
+                    "bindings": {"text": "{{price}}"},
+                    "style": {"fontSize": 28, "fontWeight": "bold", "lineHeight": 36}
+                  },
+                  {
+                    "type": "element",
+                    "id": "price-label",
+                    "elementType": "text",
+                    "bindings": {"text": "Total"},
+                    "style": {"textColor": "#9E9E9E", "fontSize": 12, "lineHeight": 16}
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "action-row",
+        "containerType": "horizontal",
+        "layout": {
+          "arrangement": {"strategy": "spaced", "spacing": 12}
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "btn-secondary",
+            "elementType": "button",
+            "bindings": {"text": "Details"},
+            "style": {
+              "backgroundColor": "#E3F2FD",
+              "textColor": "#1976D2",
+              "borderRadius": 8
+            },
+            "layout": {
+              "width": {"value": 50, "unit": "percent"},
+              "padding": {"vertical": 12}
+            }
+          },
+          {
+            "type": "element",
+            "id": "btn-primary",
+            "elementType": "button",
+            "bindings": {"text": "Buy Now"},
+            "style": {
+              "backgroundColor": "#1976D2",
+              "textColor": "#FFFFFF",
+              "borderRadius": 8
+            },
+            "layout": {
+              "width": {"value": 50, "unit": "percent"},
+              "padding": {"vertical": 12}
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

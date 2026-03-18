@@ -1,0 +1,31 @@
+{
+  "theme": {
+    "id": "default"
+  },
+  "styleClasses": [],
+  "variables": {},
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {"special": "match_parent"},
+      "height": {"special": "match_parent"}
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "text_1",
+        "elementType": "text",
+        "bindings": {
+          "text": "Benchmark Minimal"
+        },
+        "style": {
+          "fontSize": 16,
+          "lineHeight": 22,
+          "textColor": "#000000"
+        }
+      }
+    ]
+  }
+}

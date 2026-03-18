@@ -16,6 +16,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "NativeDisplayComposeSample"
 include(":app")
+include(":benchmark")
 
 // Include the SDK from parent android project
 includeBuild("../android") {

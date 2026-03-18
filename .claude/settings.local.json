@@ -23,7 +23,18 @@
       "Bash(./gradlew assembleDebug:*)",
       "Bash(./gradlew:*)",
       "Bash(xargs cat:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "WebFetch(domain:kt.academy)",
+      "WebFetch(domain:medium.com)",
+      "WebFetch(domain:www.donnywals.com)",
+      "Bash(git:*)",
+      "Bash(../android/gradlew :app:compileDebugKotlin:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:coil-kt.github.io)",
+      "Bash(xcrun xcresulttool:*)",
+      "Bash(bash \"/Users/lalitkumar/StudioProjects/clevertap-native-ui-kit/ios-sample/pull_screenshots.sh\" \\\\\n  \"/Users/lalitkumar/Library/Developer/Xcode/DerivedData/NativeDisplaySample-bjrqjiskyjhkjqaktgknjfoxdvvp/Logs/Test/Test-NativeDisplaySample-2026.03.11_12-59-20-+0530.xcresult\" 2>&1)",
+      "Bash(echo -n \"$f: \")",
+      "Read(//Users/lalitkumar/StudioProjects/clevertap-native-ui-kit/**)"
     ]
   }
 }
