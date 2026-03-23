@@ -46,11 +46,16 @@ internal object CleverTapAutoWire {
      *
      * @param cleverTapApi The CleverTapAPI instance to wire to
      * @param bridge The bridge to forward display units to
+     * @param clientListener Optional client listener to also forward raw units to
      * @return true if binding succeeded
      */
-    fun bindToInstance(cleverTapApi: CleverTapAPI, bridge: NativeDisplayBridge): Boolean {
+    fun bindToInstance(
+        cleverTapApi: CleverTapAPI,
+        bridge: NativeDisplayBridge,
+        clientListener: DisplayUnitListener? = null
+    ): Boolean {
         return try {
-            wireListener(cleverTapApi, bridge)
+            wireListener(cleverTapApi, bridge, clientListener)
         } catch (e: NoClassDefFoundError) {
             Log.w(TAG, "CleverTap Core SDK classes not available at runtime")
             false
@@ -61,11 +66,30 @@ internal object CleverTapAutoWire {
     }
 
     /**
-     * Register a [DisplayUnitListener] that extracts JSON and forwards to the bridge.
+     * Register a composite [DisplayUnitListener] that:
+     * 1. Extracts JSON and forwards to the bridge
+     * 2. Forwards the raw units to the optional client listener
+     *
+     * This avoids replacing the client's listener since the Core SDK
+     * only supports a single [DisplayUnitListener].
      */
-    private fun wireListener(ctApi: CleverTapAPI, bridge: NativeDisplayBridge): Boolean {
+    private fun wireListener(
+        ctApi: CleverTapAPI,
+        bridge: NativeDisplayBridge,
+        clientListener: DisplayUnitListener? = null
+    ): Boolean {
         ctApi.setDisplayUnitListener(object : DisplayUnitListener {
             override fun onDisplayUnitsLoaded(units: ArrayList<CleverTapDisplayUnit>?) {
+                // Forward to client's listener first
+                if (clientListener != null) {
+                    try {
+                        clientListener.onDisplayUnitsLoaded(units)
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Client listener threw exception: ${e.message}")
+                    }
+                }
+
+                // Then process for bridge
                 if (units.isNullOrEmpty()) return
                 val jsonStrings = units.mapNotNull { unit ->
                     try {
@@ -80,7 +104,7 @@ internal object CleverTapAutoWire {
                 }
             }
         })
-        Log.d(TAG, "Wired to CleverTap instance")
+        Log.d(TAG, "Wired to CleverTap instance${if (clientListener != null) " (with client listener forwarding)" else ""}")
         return true
     }
 }

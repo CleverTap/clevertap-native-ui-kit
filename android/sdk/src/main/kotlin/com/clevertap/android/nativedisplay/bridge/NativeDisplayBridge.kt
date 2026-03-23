@@ -200,20 +200,29 @@ class NativeDisplayBridge private constructor() {
     /**
      * Bind the bridge to a CleverTap API instance.
      *
-     * Registers as a display unit listener on the provided [CleverTapAPI] instance.
-     * Uses `compileOnly` dependency — the Core SDK must be present at runtime
-     * (provided by the host app). If not present, this returns false gracefully.
+     * Registers a composite display unit listener that forwards to both the bridge
+     * and an optional client listener. This avoids replacing the client's existing
+     * listener, since the Core SDK only supports a single `DisplayUnitListener`.
      *
      * ```kotlin
-     * val bridge = NativeDisplayBridge.create()
+     * // Without client listener
      * bridge.bind(CleverTapAPI.getDefaultInstance(context)!!)
+     *
+     * // With client listener (both receive callbacks)
+     * bridge.bind(CleverTapAPI.getDefaultInstance(context)!!, forwardTo = myListener)
      * ```
      *
      * @param cleverTapApi The [CleverTapAPI] instance to wire to.
+     * @param forwardTo Optional client [DisplayUnitListener] to forward raw display units to.
+     *                  If provided, it receives the same callback the Core SDK would normally
+     *                  deliver, preserving the client's existing display unit handling.
      * @return true if binding succeeded, false otherwise
      */
-    fun bind(cleverTapApi: CleverTapAPI): Boolean {
-        return CleverTapAutoWire.bindToInstance(cleverTapApi, this)
+    fun bind(
+        cleverTapApi: CleverTapAPI,
+        forwardTo: com.clevertap.android.sdk.displayunits.DisplayUnitListener? = null
+    ): Boolean {
+        return CleverTapAutoWire.bindToInstance(cleverTapApi, this, forwardTo)
     }
 
     /**

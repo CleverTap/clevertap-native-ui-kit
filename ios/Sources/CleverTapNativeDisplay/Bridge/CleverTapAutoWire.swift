@@ -17,6 +17,9 @@ internal class CleverTapAutoWire: NSObject {
     /// The bridge instance to forward display units to.
     private weak var bridge: NativeDisplayBridge?
 
+    /// Optional client handler to forward raw display units to.
+    private var clientHandler: (([AnyObject]) -> Void)?
+
     /// Shared observer instance kept alive while auto-wire is active.
     private static var activeObserver: CleverTapAutoWire?
 
@@ -82,8 +85,19 @@ internal class CleverTapAutoWire: NSObject {
     ///   - cleverTap: The CleverTap instance (as NSObject to avoid compile dependency).
     ///   - bridge: The bridge to forward display units to.
     /// - Returns: `true` if binding succeeded.
+    /// Bind the bridge to a specific CleverTap instance.
+    ///
+    /// - Parameters:
+    ///   - cleverTap: The CleverTap instance (as NSObject).
+    ///   - bridge: The bridge to forward display units to.
+    ///   - clientHandler: Optional closure to forward raw display units to the client.
+    /// - Returns: `true` if binding succeeded.
     @discardableResult
-    static func bindToInstance(_ cleverTap: NSObject, bridge: NativeDisplayBridge) -> Bool {
+    static func bindToInstance(
+        _ cleverTap: NSObject,
+        bridge: NativeDisplayBridge,
+        clientHandler: (([AnyObject]) -> Void)? = nil
+    ) -> Bool {
         // Verify this looks like a CleverTap instance
         let className = String(describing: type(of: cleverTap))
         guard className.contains("CleverTap") else {
@@ -100,13 +114,15 @@ internal class CleverTapAutoWire: NSObject {
         // Create observer and register as delegate
         let observer = CleverTapAutoWire()
         observer.bridge = bridge
+        observer.clientHandler = clientHandler
 
         cleverTap.perform(setDelegateSelector, with: observer)
 
         // Keep observer alive
         activeObserver = observer
 
-        print("[NativeDisplayBridge] Bound to CleverTap instance")
+        let suffix = clientHandler != nil ? " (with client handler forwarding)" : ""
+        print("[NativeDisplayBridge] Bound to CleverTap instance\(suffix)")
         return true
     }
 
@@ -124,6 +140,9 @@ internal class CleverTapAutoWire: NSObject {
     /// Method signature matches `CleverTapDisplayUnitDelegate.displayUnitsUpdated(_:)`.
     @objc func displayUnitsUpdated(_ displayUnits: [AnyObject]) {
         guard let bridge = bridge else { return }
+
+        // Forward to client handler first
+        clientHandler?(displayUnits)
 
         let jsonStrings: [String] = displayUnits.compactMap { unit in
             // CleverTapDisplayUnit has a `json` property returning [String: Any]?
