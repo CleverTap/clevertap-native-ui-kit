@@ -2,6 +2,7 @@ package com.clevertap.android.nativedisplay.bridge
 
 import android.content.Context
 import android.util.Log
+import com.clevertap.android.sdk.CleverTapAPI
 import java.lang.ref.WeakReference
 
 /**
@@ -102,7 +103,7 @@ class NativeDisplayBridge private constructor() {
      * @param displayUnitJsonStrings List of raw JSON strings from display unit payloads
      */
     fun processDisplayUnits(displayUnitJsonStrings: List<String>) {
-        val parsedUnits = displayUnitJsonStrings.mapNotNull { jsonString ->
+        val parsedUnits: List<NativeDisplayUnit> = displayUnitJsonStrings.mapNotNull { jsonString ->
             parser.tryParse(jsonString)
         }
 
@@ -199,23 +200,19 @@ class NativeDisplayBridge private constructor() {
     /**
      * Bind the bridge to a CleverTap API instance.
      *
-     * Accepts the CleverTapAPI object and registers as a display unit listener
-     * via reflection — no compile-time dependency on the Core SDK.
+     * Registers as a display unit listener on the provided [CleverTapAPI] instance.
+     * Uses `compileOnly` dependency — the Core SDK must be present at runtime
+     * (provided by the host app). If not present, this returns false gracefully.
      *
      * ```kotlin
      * val bridge = NativeDisplayBridge.create()
-     * bridge.bind(CleverTapAPI.getDefaultInstance(context))
+     * bridge.bind(CleverTapAPI.getDefaultInstance(context)!!)
      * ```
      *
-     * @param cleverTapApi A `CleverTapAPI` instance (passed as [Any] to avoid compile dependency).
-     *                     If null or not a valid CleverTapAPI instance, this is a no-op.
+     * @param cleverTapApi The [CleverTapAPI] instance to wire to.
      * @return true if binding succeeded, false otherwise
      */
-    fun bind(cleverTapApi: Any?): Boolean {
-        if (cleverTapApi == null) {
-            Log.w(TAG, "bind() called with null, ignoring")
-            return false
-        }
+    fun bind(cleverTapApi: CleverTapAPI): Boolean {
         return CleverTapAutoWire.bindToInstance(cleverTapApi, this)
     }
 
