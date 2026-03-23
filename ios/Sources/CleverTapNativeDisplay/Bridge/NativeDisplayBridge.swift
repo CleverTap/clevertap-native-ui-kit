@@ -90,23 +90,33 @@ public class NativeDisplayBridge {
 
     /// Bind the bridge to a CleverTap instance directly.
     ///
-    /// Accepts the CleverTap object and registers as a display unit delegate
-    /// via Obj-C runtime — no compile-time dependency on the Core SDK.
+    /// Registers a composite display unit delegate that forwards to both the bridge
+    /// and an optional client callback. This avoids replacing the client's existing
+    /// delegate, since the Core SDK only supports a single display unit delegate.
     ///
     /// ```swift
+    /// // Without client callback
     /// NativeDisplayBridge.shared.bind(CleverTap.sharedInstance())
+    ///
+    /// // With client callback (both receive display units)
+    /// NativeDisplayBridge.shared.bind(CleverTap.sharedInstance()) { displayUnits in
+    ///     // Client's own display unit handling
+    /// }
     /// ```
     ///
-    /// - Parameter cleverTap: A `CleverTap` instance (passed as `Any?` to avoid compile dependency).
-    ///   If nil or not a valid CleverTap instance, this is a no-op.
+    /// - Parameters:
+    ///   - cleverTap: A `CleverTap` instance (passed as `Any?` to avoid compile dependency).
+    ///     If nil or not a valid CleverTap instance, this is a no-op.
+    ///   - forwardTo: Optional closure that receives raw display unit objects from the Core SDK.
+    ///     Called before the bridge processes units, preserving the client's existing handling.
     /// - Returns: `true` if binding succeeded, `false` otherwise.
     @discardableResult
-    public func bind(_ cleverTap: Any?) -> Bool {
+    public func bind(_ cleverTap: Any?, forwardTo clientHandler: (([AnyObject]) -> Void)? = nil) -> Bool {
         guard let instance = cleverTap as? NSObject else {
             print("[NativeDisplayBridge] bind() called with nil or non-NSObject, ignoring")
             return false
         }
-        return CleverTapAutoWire.bindToInstance(instance, bridge: self)
+        return CleverTapAutoWire.bindToInstance(instance, bridge: self, clientHandler: clientHandler)
     }
 
     // MARK: - Manual Mode: Process JSON

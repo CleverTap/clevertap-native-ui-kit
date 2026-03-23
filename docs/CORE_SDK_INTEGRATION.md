@@ -111,7 +111,30 @@ bridge.addListener(self)
 bridge.bind(CleverTap.sharedInstance())
 ```
 
-The bridge registers itself as a `DisplayUnitListener` (Android) or display unit delegate (iOS) on the Core SDK instance. When display units arrive, they are automatically parsed and forwarded to your listener.
+The bridge registers a composite listener on the Core SDK instance. When display units arrive, they are automatically parsed and forwarded to your bridge listener.
+
+> **Important: Preserving your existing DisplayUnitListener**
+>
+> The Core SDK only supports a single `DisplayUnitListener` / display unit delegate.
+> Calling `bind()` replaces any previously set listener. If you have your own listener
+> for handling old-style display units, pass it to `bind()` via `forwardTo` so both
+> the bridge and your listener receive callbacks:
+>
+> **Android:**
+> ```kotlin
+> bridge.bind(
+>     CleverTapAPI.getDefaultInstance(applicationContext)!!,
+>     forwardTo = myExistingDisplayUnitListener
+> )
+> ```
+>
+> **iOS:**
+> ```swift
+> bridge.bind(CleverTap.sharedInstance()) { displayUnits in
+>     // Your existing display unit handling
+>     self.handleLegacyDisplayUnits(displayUnits)
+> }
+> ```
 
 ### Option 2: `initialize()` (Auto-Detection)
 
