@@ -64,9 +64,6 @@ public class NativeDisplayBridge {
     /// Whether auto-wire has been attempted.
     private var isInitialized = false
 
-    /// Weak reference to the bound CleverTap instance (for fetch calls).
-    private weak var cleverTapInstance: NSObject?
-
     /// Event name for server fetch requests.
     static let wzrkFetch = "wzrk_fetch"
 
@@ -92,9 +89,7 @@ public class NativeDisplayBridge {
         }
         isInitialized = true
 
-        if let ctInstance = CleverTapAutoWire.tryAutoWire(bridge: self) {
-            cleverTapInstance = ctInstance
-        }
+        CleverTapAutoWire.tryAutoWire(bridge: self)
     }
 
     // MARK: - Bind to CleverTap Instance
@@ -127,30 +122,27 @@ public class NativeDisplayBridge {
             print("[NativeDisplayBridge] bind() called with nil or non-NSObject, ignoring")
             return false
         }
-        cleverTapInstance = instance
         return CleverTapAutoWire.bindToInstance(instance, bridge: self, clientHandler: clientHandler)
     }
 
     /// Request the CleverTap server to fetch Native Display units.
     ///
     /// Sends a `wzrk_fetch` event with fetch type `9` (Native Display) via the
-    /// bound CleverTap instance. The server will respond with display units
+    /// provided CleverTap instance. The server will respond with display units
     /// through the normal `adUnit_notifs` pipeline, which the bridge listener
     /// will pick up automatically.
     ///
-    /// Requires a prior call to `bind()` or `initialize()`. Returns `false` if no
-    /// CleverTap instance is available.
-    ///
     /// ```swift
-    /// NativeDisplayBridge.shared.fetchNativeDisplays()
+    /// NativeDisplayBridge.shared.fetchNativeDisplays(CleverTap.sharedInstance())
     /// // Response arrives via NativeDisplayBridgeListener.onNativeDisplaysLoaded()
     /// ```
     ///
-    /// - Returns: `true` if the fetch event was sent, `false` if no CleverTap instance is bound.
+    /// - Parameter cleverTap: A `CleverTap` instance (passed as `Any?` to avoid compile dependency).
+    /// - Returns: `true` if the fetch event was sent, `false` otherwise.
     @discardableResult
-    public func fetchNativeDisplays() -> Bool {
-        guard let ct = cleverTapInstance else {
-            print("[NativeDisplayBridge] fetchNativeDisplays() called but no CleverTap instance is bound. Call bind() first.")
+    public func fetchNativeDisplays(_ cleverTap: Any?) -> Bool {
+        guard let ct = cleverTap as? NSObject else {
+            print("[NativeDisplayBridge] fetchNativeDisplays() called with nil or non-NSObject")
             return false
         }
 

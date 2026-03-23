@@ -207,8 +207,7 @@ by the bridge listener automatically.
 **Android:**
 
 ```kotlin
-// Requires a prior bind() or initialize() call
-bridge.fetchNativeDisplays()
+bridge.fetchNativeDisplays(CleverTapAPI.getDefaultInstance(context)!!)
 
 // Response arrives via your NativeDisplayBridgeListener
 override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
@@ -219,8 +218,7 @@ override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
 **iOS:**
 
 ```swift
-// Requires a prior bind() or initialize() call
-NativeDisplayBridge.shared.fetchNativeDisplays()
+NativeDisplayBridge.shared.fetchNativeDisplays(CleverTap.sharedInstance())
 
 // Response arrives via your NativeDisplayBridgeListener
 func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
@@ -228,8 +226,7 @@ func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
 }
 ```
 
-Returns `false` if no CleverTap instance is bound (i.e., `bind()` or `initialize()` was
-not called, or the Core SDK is not present).
+The CleverTap instance is passed directly — the bridge does not store it.
 
 ---
 

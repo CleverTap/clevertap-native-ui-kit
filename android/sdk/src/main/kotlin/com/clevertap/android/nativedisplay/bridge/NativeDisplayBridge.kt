@@ -38,8 +38,6 @@ class NativeDisplayBridge private constructor() {
     private val listeners = mutableListOf<WeakReference<NativeDisplayBridgeListener>>()
     private val listenersLock = Any()
 
-    // Weak reference to the bound CleverTapAPI instance (for fetch calls)
-    private var cleverTapApiRef: WeakReference<CleverTapAPI>? = null
 
     companion object {
         private const val TAG = "NativeDisplayBridge"
@@ -69,10 +67,7 @@ class NativeDisplayBridge private constructor() {
             return instance ?: synchronized(this) {
                 instance ?: NativeDisplayBridge().also { bridge ->
                     instance = bridge
-                    val ctApi = CleverTapAutoWire.tryAutoWire(context.applicationContext, bridge)
-                    if (ctApi != null) {
-                        bridge.cleverTapApiRef = WeakReference(ctApi)
-                    }
+                    CleverTapAutoWire.tryAutoWire(context.applicationContext, bridge)
                 }
             }
         }
@@ -234,7 +229,6 @@ class NativeDisplayBridge private constructor() {
         cleverTapApi: CleverTapAPI,
         forwardTo: com.clevertap.android.sdk.displayunits.DisplayUnitListener? = null
     ): Boolean {
-        cleverTapApiRef = WeakReference(cleverTapApi)
         return CleverTapAutoWire.bindToInstance(cleverTapApi, this, forwardTo)
     }
 
@@ -242,29 +236,22 @@ class NativeDisplayBridge private constructor() {
      * Request the CleverTap server to fetch Native Display units.
      *
      * Sends a `wzrk_fetch` event with fetch type `9` (Native Display) via the
-     * bound [CleverTapAPI] instance. The server will respond with display units
+     * provided [CleverTapAPI] instance. The server will respond with display units
      * through the normal `adUnit_notifs` pipeline, which the bridge listener
      * will pick up automatically.
      *
-     * Requires a prior call to [bind] or [initialize]. Returns false if no
-     * CleverTapAPI instance is available.
-     *
      * ```kotlin
-     * bridge.fetchNativeDisplays()
+     * bridge.fetchNativeDisplays(CleverTapAPI.getDefaultInstance(context)!!)
      * // Response arrives via NativeDisplayBridgeListener.onNativeDisplaysLoaded()
      * ```
      *
-     * @return true if the fetch event was sent, false if no CleverTapAPI is bound
+     * @param cleverTapApi The [CleverTapAPI] instance to send the fetch event through.
+     * @return true if the fetch event was sent successfully
      */
-    fun fetchNativeDisplays(): Boolean {
+    fun fetchNativeDisplays(cleverTapApi: CleverTapAPI): Boolean {
         return try {
-            val ctApi = cleverTapApiRef?.get()
-            if (ctApi == null) {
-                Log.w(TAG, "fetchNativeDisplays() called but no CleverTapAPI is bound. Call bind() first.")
-                return false
-            }
             val eventData = mapOf("t" to FETCH_TYPE_NATIVE_DISPLAY)
-            ctApi.pushEvent(WZRK_FETCH, eventData)
+            cleverTapApi.pushEvent(WZRK_FETCH, eventData)
             Log.d(TAG, "Sent wzrk_fetch request for Native Display (type=$FETCH_TYPE_NATIVE_DISPLAY)")
             true
         } catch (e: NoClassDefFoundError) {
