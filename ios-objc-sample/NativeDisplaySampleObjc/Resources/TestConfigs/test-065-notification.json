@@ -1,0 +1,251 @@
+{
+  "theme": {
+    "id": "notification",
+    "defaultStyle": {
+      "textColor": "#FF1F2937",
+      "fontSize": 14,
+      "fontFamily": "System"
+    }
+  },
+  "variables": {
+    "senderName": "Sarah Johnson",
+    "messageTitle": "New Message",
+    "messageBody": "Hey! Just wanted to check in about our meeting tomorrow at 3 PM. Looking forward to discussing the project updates.",
+    "timestamp": "2 minutes ago",
+    "avatarUrl": "https://yavuzceliker.github.io/sample-images/image-750.jpg",
+    "replyText": "Reply"
+  },
+  "root": {
+    "id": "notification-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFF9FAFB"
+    },
+    "children": [
+      {
+        "id": "notification-card",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "spacing": 16,
+            "strategy": "spaced"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFFFF",
+          "borderRadius": 16,
+          "shadowRadius": 12,
+          "shadowColor": "#FF000000",
+          "shadowOpacity": 0.1,
+          "shadowOffsetY": 4,
+          "borderWidth": 1,
+          "borderColor": "#FFE5E7EB"
+        },
+        "children": [
+          {
+            "id": "avatar-container",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 56,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 56,
+                "unit": "dp"
+              }
+            },
+            "children": [
+              {
+                "id": "avatar",
+                "elementType": "image",
+                "bindings": {
+                  "url": "{{avatarUrl}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 56,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 56,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "borderRadius": 28,
+                  "borderWidth": 2,
+                  "borderColor": "#FF3B82F6"
+                },
+                "type": "element"
+              }
+            ],
+            "type": "container"
+          },
+          {
+            "id": "content-container",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": -1,
+                "unit": "dp"
+              },
+              "arrangement": {
+                "spacing": 8,
+                "strategy": "spaced"
+              }
+            },
+            "children": [
+              {
+                "id": "header-row",
+                "containerType": "horizontal",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "arrangement": {
+                    "strategy": "space_between"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "sender-name",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "{{senderName}}"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": -2,
+                        "unit": "dp"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 16,
+                      "fontWeight": "bold",
+                      "textColor": "#FF111827"
+                    },
+                    "type": "element"
+                  },
+                  {
+                    "id": "timestamp",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "{{timestamp}}"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": -2,
+                        "unit": "dp"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "textColor": "#FF9CA3AF"
+                    },
+                    "type": "element"
+                  }
+                ],
+                "type": "container"
+              },
+              {
+                "id": "message-title",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{messageTitle}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 15,
+                  "fontWeight": "medium",
+                  "textColor": "#FF374151"
+                },
+                "type": "element"
+              },
+              {
+                "id": "message-body",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{messageBody}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "normal",
+                  "textColor": "#FF6B7280",
+                  "lineHeight": 20
+                },
+                "type": "element"
+              },
+              {
+                "id": "reply-button",
+                "elementType": "button",
+                "bindings": {
+                  "text": "{{replyText}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 40,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#FF3B82F6",
+                  "borderRadius": 10,
+                  "textColor": "#FFFFFFFF",
+                  "fontSize": 14,
+                  "fontWeight": "medium",
+                  "shadowRadius": 8,
+                  "shadowColor": "#FF3B82F6",
+                  "shadowOpacity": 0.3,
+                  "shadowOffsetY": 2
+                },
+                "type": "element"
+              }
+            ],
+            "type": "container"
+          }
+        ],
+        "type": "container"
+      }
+    ],
+    "type": "container"
+  },
+  "styleClasses": []
+}

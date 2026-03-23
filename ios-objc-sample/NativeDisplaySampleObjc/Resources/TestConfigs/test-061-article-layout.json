@@ -1,0 +1,240 @@
+{
+  "theme": {
+    "id": "article-layout",
+    "defaultStyle": {
+      "textColor": "#FF374151",
+      "fontSize": 16,
+      "lineHeight": 24,
+      "fontFamily": "System"
+    }
+  },
+  "variables": {
+    "articleTitle": "The Future of Mobile Design",
+    "articleAuthor": "Sarah Johnson",
+    "publishDate": "February 17, 2026",
+    "heroImage": "https://yavuzceliker.github.io/sample-images/image-1001.jpg",
+    "intro": "In the rapidly evolving world of mobile technology, design principles are constantly being redefined. This article explores the latest trends and innovations shaping the future of mobile user interfaces.",
+    "body": "Mobile design has come a long way from simple static screens. Today's interfaces are dynamic, responsive, and increasingly intelligent. They adapt to user behavior, context, and preferences in ways that were unimaginable just a few years ago.\n\nAs we look to the future, we see exciting possibilities emerging in areas such as augmented reality, voice interfaces, and personalized experiences. The challenge for designers is to harness these technologies while maintaining simplicity and usability."
+  },
+  "root": {
+    "id": "article-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 24
+      },
+      "arrangement": {
+        "spacing": 20,
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFFFFFFF"
+    },
+    "children": [
+      {
+        "id": "article-header",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "arrangement": {
+            "spacing": 12,
+            "strategy": "spaced"
+          }
+        },
+        "children": [
+          {
+            "id": "article-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "{{articleTitle}}"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 32,
+              "fontWeight": "bold",
+              "textColor": "#FF111827",
+              "lineHeight": 40
+            },
+            "type": "element"
+          },
+          {
+            "id": "article-meta",
+            "containerType": "horizontal",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "arrangement": {
+                "spacing": 8,
+                "strategy": "spaced"
+              }
+            },
+            "children": [
+              {
+                "id": "author",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{articleAuthor}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": -2,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "medium",
+                  "textColor": "#FF6B7280"
+                },
+                "type": "element"
+              },
+              {
+                "id": "separator",
+                "elementType": "text",
+                "bindings": {
+                  "text": "\u2022"
+                },
+                "layout": {
+                  "width": {
+                    "value": -2,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "textColor": "#FF9CA3AF"
+                },
+                "type": "element"
+              },
+              {
+                "id": "date",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{publishDate}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": -2,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "normal",
+                  "textColor": "#FF6B7280"
+                },
+                "type": "element"
+              }
+            ],
+            "type": "container"
+          }
+        ],
+        "type": "container"
+      },
+      {
+        "id": "hero-image",
+        "elementType": "image",
+        "bindings": {
+          "url": "{{heroImage}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 220,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 16,
+          "shadowRadius": 12,
+          "shadowColor": "#FF000000",
+          "shadowOpacity": 0.1,
+          "shadowOffsetY": 4
+        },
+        "type": "element"
+      },
+      {
+        "id": "article-intro",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{intro}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "medium",
+          "textColor": "#FF4B5563",
+          "lineHeight": 28
+        },
+        "type": "element"
+      },
+      {
+        "id": "divider",
+        "elementType": "divider",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 2,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFE5E7EB"
+        },
+        "type": "element"
+      },
+      {
+        "id": "article-body",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{body}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 16,
+          "fontWeight": "normal",
+          "textColor": "#FF374151",
+          "lineHeight": 26
+        },
+        "type": "element"
+      }
+    ],
+    "type": "container"
+  },
+  "styleClasses": []
+}

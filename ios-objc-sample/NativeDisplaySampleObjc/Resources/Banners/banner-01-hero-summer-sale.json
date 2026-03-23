@@ -1,0 +1,583 @@
+{
+  "theme": {
+    "id": "instagram-home",
+    "defaultStyle": {
+      "textColor": "#FFFFFF",
+      "fontSize": 14,
+      "fontFamily": "System"
+    }
+  },
+
+  "variables": {
+    "username_1": "Your story",
+    "username_2": "utkarshakamthe",
+    "username_3": "snehal.shinde_21",
+    "username_4": "_harshad0...",
+    "post_user": "instantbollywood",
+    "post_music": "Sachin-Jigar, Vishal Mishra, Amitabh Bhattacharya, S...",
+    "overlay_text_1": "\"If You Don't Save It At The Right Time\"\ud83d\ude33",
+    "overlay_text_2": "Actors Need To Invest And Manage Their Money Smartly, Says Tamannaah Bhatia"
+  },
+
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "aspectRatio": 1.35,
+    },
+    "style": {
+      "backgroundColor": "#000000"
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "top-bar",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "padding": { "horizontal": 16, "vertical": 12 },
+          "arrangement": { "strategy": "space_between" }
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "add-icon",
+            "elementType": "text",
+            "bindings": { "text": "+" },
+            "style": {
+              "fontSize": 28,
+              "textColor": "#FFFFFF"
+            }
+          },
+          {
+            "type": "element",
+            "id": "app-title",
+            "elementType": "text",
+            "bindings": { "text": "Instagram " },
+            "style": {
+              "fontSize": 24,
+              "textColor":"#FF0000",
+              "fontFamily": "Arial",
+              "fontWeight": "light",
+              "fontStyle": "italic",
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF00",
+              "maxLines": 1,
+              "letterSpacing": 10,
+              "textAlign": "left",
+              "textShadow": {
+                "color": "#FF000000",
+                "radius": 8,
+                "offsetX": 0,
+                "offsetY": 4,
+                "blur": 5
+              },
+              "textGradient": {
+                  "colors": ["#FF000000", "#FFFF0000"],
+                  "type": "linear",
+                  "angle": 0,
+                  "stops": [0.2, 0.6]
+              }
+            }
+          },
+          {
+            "type": "element",
+            "id": "heart-icon",
+            "elementType": "text",
+            "bindings": { "text": "\u2661" },
+            "style": {
+              "fontSize": 24,
+              "textColor": "#FFFFFF"
+            }
+          }
+        ]
+      },
+
+      {
+        "type": "element",
+        "id": "divider-top",
+        "elementType": "divider",
+        "bindings": {},
+        "dividerConfig": {
+          "orientation": "horizontal",
+          "thickness": 0.5,
+          "color": "#333333"
+        }
+      },
+
+      {
+        "type": "container",
+        "id": "stories-section",
+        "containerType": "gallery",
+        "galleryConfig": {
+          "mode": "free_flow",
+          "orientation": "horizontal"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "padding": { "vertical": 10, "horizontal": 8 }
+        },
+        "children": [
+
+          {
+            "type": "container",
+            "id": "story-1",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": 80, "unit": "dp" },
+              "padding": { "horizontal": 4 },
+              "arrangement": { "strategy": "spaced", "spacing": 4 }
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "story-1-ring",
+                "containerType": "box",
+                "layout": {
+                  "width": { "value": 68, "unit": "dp" },
+                  "height": { "value": 68, "unit": "dp" }
+                },
+                "style": {
+                  "borderRadius": 34,
+                  "borderWidth": 2,
+                  "borderColor": "#444444"
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "story-1-avatar",
+                    "elementType": "image",
+                    "bindings": { "url": "https://i.pravatar.cc/150?img=1" },
+                    "layout": {
+                      "width": { "value": 62, "unit": "dp" },
+                      "height": { "value": 62, "unit": "dp" }
+                    },
+                    "style": {
+                      "borderRadius": 31
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "story-1-name",
+                "elementType": "text",
+                "bindings": { "text": "{{username_1}}" },
+                "style": {
+                  "fontSize": 11,
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center",
+                  "maxLines": 1
+                }
+              }
+            ]
+          },
+
+          {
+            "type": "container",
+            "id": "story-2",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": 80, "unit": "dp" },
+              "padding": { "horizontal": 4 },
+              "arrangement": { "strategy": "spaced", "spacing": 4 }
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "story-2-ring",
+                "containerType": "box",
+                "layout": {
+                  "width": { "value": 68, "unit": "dp" },
+                  "height": { "value": 68, "unit": "dp" }
+                },
+                "style": {
+                  "borderRadius": 34,
+                  "borderWidth": 3,
+                  "borderColor": "#DD2A7B"
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "story-2-avatar",
+                    "elementType": "image",
+                    "bindings": { "url": "https://i.pravatar.cc/150?img=5" },
+                    "layout": {
+                      "width": { "value": 62, "unit": "dp" },
+                      "height": { "value": 62, "unit": "dp" }
+                    },
+                    "style": {
+                      "borderRadius": 31
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "story-2-name",
+                "elementType": "text",
+                "bindings": { "text": "{{username_2}}" },
+                "style": {
+                  "fontSize": 11,
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center",
+                  "maxLines": 1
+                },
+                "layout": {
+                  "width": { "value": 80, "unit": "dp" }
+                }
+              }
+            ]
+          },
+
+          {
+            "type": "container",
+            "id": "story-3",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": 80, "unit": "dp" },
+              "padding": { "horizontal": 4 },
+              "arrangement": { "strategy": "spaced", "spacing": 4 }
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "story-3-ring",
+                "containerType": "box",
+                "layout": {
+                  "width": { "value": 68, "unit": "dp" },
+                  "height": { "value": 68, "unit": "dp" }
+                },
+                "style": {
+                  "borderRadius": 34,
+                  "borderWidth": 3,
+                  "borderColor": "#DD2A7B"
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "story-3-avatar",
+                    "elementType": "image",
+                    "bindings": { "url": "https://i.pravatar.cc/150?img=9" },
+                    "layout": {
+                      "width": { "value": 62, "unit": "dp" },
+                      "height": { "value": 62, "unit": "dp" }
+                    },
+                    "style": {
+                      "borderRadius": 31
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "story-3-name",
+                "elementType": "text",
+                "bindings": { "text": "{{username_3}}" },
+                "style": {
+                  "fontSize": 11,
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center",
+                  "maxLines": 1
+                },
+                "layout": {
+                  "width": { "value": 80, "unit": "dp" }
+                }
+              }
+            ]
+          },
+
+          {
+            "type": "container",
+            "id": "story-4",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": 80, "unit": "dp" },
+              "padding": { "horizontal": 4 },
+              "arrangement": { "strategy": "spaced", "spacing": 4 }
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "story-4-ring",
+                "containerType": "box",
+                "layout": {
+                  "width": { "value": 68, "unit": "dp" },
+                  "height": { "value": 68, "unit": "dp" }
+                },
+                "style": {
+                  "borderRadius": 34,
+                  "borderWidth": 3,
+                  "borderColor": "#F77737"
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "story-4-avatar",
+                    "elementType": "image",
+                    "bindings": { "url": "https://i.pravatar.cc/150?img=12" },
+                    "layout": {
+                      "width": { "value": 62, "unit": "dp" },
+                      "height": { "value": 62, "unit": "dp" }
+                    },
+                    "style": {
+                      "borderRadius": 31
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "story-4-name",
+                "elementType": "text",
+                "bindings": { "text": "{{username_4}}" },
+                "style": {
+                  "fontSize": 11,
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                },
+                "layout": {
+                  "width": { "value": 80, "unit": "dp" }
+                }
+              }
+            ]
+          }
+
+        ]
+      },
+
+      {
+        "type": "element",
+        "id": "divider-stories",
+        "elementType": "divider",
+        "bindings": {},
+        "dividerConfig": {
+          "orientation": "horizontal",
+          "thickness": 0.5,
+          "color": "#333333"
+        }
+      },
+
+      {
+        "type": "container",
+        "id": "post-header",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "padding": { "horizontal": 10, "vertical": 10 },
+          "arrangement": { "strategy": "spaced", "spacing": 10 }
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "post-avatar",
+            "elementType": "image",
+            "bindings": { "url": "https://i.pravatar.cc/150?img=20" },
+            "layout": {
+              "width": { "value": 32, "unit": "dp" },
+              "height": { "value": 32, "unit": "dp" }
+            },
+            "style": {
+              "borderRadius": 16
+            }
+          },
+          {
+            "type": "container",
+            "id": "post-user-info",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": 75, "unit": "percent" }
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "post-username",
+                "elementType": "text",
+                "bindings": { "text": "{{post_user}}" },
+                "style": {
+                  "fontSize": 13,
+                  "fontWeight": "bold",
+                  "textColor": "#FFFFFF"
+                }
+              },
+              {
+                "type": "element",
+                "id": "post-music-info",
+                "elementType": "text",
+                "bindings": { "text": "{{post_music}}" },
+                "style": {
+                  "fontSize": 11,
+                  "textColor": "#AAAAAA"
+                }
+              }
+            ]
+          },
+          {
+            "type": "element",
+            "id": "post-menu",
+            "elementType": "text",
+            "bindings": { "text": "\u2022\u2022\u2022" },
+            "style": {
+              "fontSize": 16,
+              "textColor": "#FFFFFF",
+              "fontWeight": "bold"
+            }
+          }
+        ]
+      },
+
+      {
+        "type": "container",
+        "id": "post-content",
+        "containerType": "box",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "aspectRatio": 0.56
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "post-image",
+            "elementType": "image",
+            "bindings": { "url": "https://picsum.photos/400/700" },
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "height": { "value": 100, "unit": "percent" }
+            }
+          },
+
+          {
+            "type": "container",
+            "id": "post-overlay",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "value": 100, "unit": "percent" },
+              "padding": { "horizontal": 20, "bottom": 16, "top": 280 }
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "overlay-text-box",
+                "containerType": "vertical",
+                "layout": {
+                  "padding": { "horizontal": 12, "vertical": 8 }
+                },
+                "style": {
+                  "backgroundColor": "#CC000000",
+                  "borderRadius": 8
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "overlay-title",
+                    "elementType": "text",
+                    "bindings": { "text": "{{overlay_text_1}}" },
+                    "style": {
+                      "fontSize": 16,
+                      "fontWeight": "bold",
+                      "textColor": "#FFFFFF",
+                      "textAlign": "center"
+                    }
+                  },
+                  {
+                    "type": "element",
+                    "id": "overlay-spacer",
+                    "elementType": "spacer",
+                    "bindings": {},
+                    "layout": {
+                      "height": { "value": 4, "unit": "dp" }
+                    }
+                  },
+                  {
+                    "type": "element",
+                    "id": "overlay-subtitle",
+                    "elementType": "text",
+                    "bindings": { "text": "{{overlay_text_2}}" },
+                    "style": {
+                      "fontSize": 12,
+                      "textColor": "#FFFFFF",
+                      "textAlign": "center",
+                      "backgroundColor": "#CCDD2A7B"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "type": "element",
+        "id": "divider-post",
+        "elementType": "divider",
+        "bindings": {},
+        "dividerConfig": {
+          "orientation": "horizontal",
+          "thickness": 0.5,
+          "color": "#333333"
+        }
+      },
+
+      {
+        "type": "container",
+        "id": "bottom-tab-bar",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "padding": { "horizontal": 24, "vertical": 12 },
+          "arrangement": { "strategy": "space_between" }
+        },
+        "style": {
+          "backgroundColor": "#000000"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "tab-home",
+            "elementType": "text",
+            "bindings": { "text": "\u2302" },
+            "style": { "fontSize": 24, "textColor": "#FFFFFF", "fontWeight": "bold" }
+          },
+          {
+            "type": "element",
+            "id": "tab-reels",
+            "elementType": "text",
+            "bindings": { "text": "\u25b6" },
+            "style": { "fontSize": 24, "textColor": "#888888" }
+          },
+          {
+            "type": "element",
+            "id": "tab-create",
+            "elementType": "text",
+            "bindings": { "text": "\u2295" },
+            "style": { "fontSize": 24, "textColor": "#888888" }
+          },
+          {
+            "type": "element",
+            "id": "tab-search",
+            "elementType": "text",
+            "bindings": { "text": "\u2315" },
+            "style": { "fontSize": 24, "textColor": "#888888" }
+          },
+          {
+            "type": "element",
+            "id": "tab-profile",
+            "elementType": "image",
+            "bindings": { "url": "https://i.pravatar.cc/150?img=1" },
+            "layout": {
+              "width": { "value": 24, "unit": "dp" },
+              "height": { "value": 24, "unit": "dp" }
+            },
+            "style": {
+              "borderRadius": 12
+            }
+          }
+        ]
+      }
+
+    ]
+  }
+}

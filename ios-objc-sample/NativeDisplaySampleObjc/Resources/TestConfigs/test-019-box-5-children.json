@@ -1,0 +1,194 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#01579B",
+      "fontSize": 12
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "box-5-children",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 600,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "backgroundColor": "#E1F5FE"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "background-image",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://picsum.photos/800/600"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "unit": "dp"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "top-badge",
+        "elementType": "text",
+        "bindings": {
+          "text": "NEW"
+        },
+        "layout": {
+          "width": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "top": 6,
+            "bottom": 6,
+            "left": 12,
+            "right": 12
+          },
+          "offset": {
+            "x": 16,
+            "y": 16,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FF5722",
+          "textColor": "#FFFFFF",
+          "fontSize": 14,
+          "fontWeight": "bold",
+          "borderRadius": 4
+        }
+      },
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Overlay Title"
+        },
+        "layout": {
+          "width": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          },
+          "offset": {
+            "x": 50,
+            "y": 30,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "backgroundColor": "#000000AA",
+          "textColor": "#FFFFFF",
+          "fontSize": 28,
+          "fontWeight": "bold",
+          "borderRadius": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "subtitle",
+        "elementType": "text",
+        "bindings": {
+          "text": "Additional Information"
+        },
+        "layout": {
+          "width": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 12
+          },
+          "offset": {
+            "x": 50,
+            "y": 50,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "textColor": "#01579B",
+          "fontSize": 16,
+          "borderRadius": 6
+        }
+      },
+      {
+        "type": "element",
+        "id": "bottom-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Learn More"
+        },
+        "layout": {
+          "width": {
+            "value": 200,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 50,
+            "unit": "dp"
+          },
+          "offset": {
+            "x": 50,
+            "y": 32,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "backgroundColor": "#0288D1",
+          "textColor": "#FFFFFF",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "borderRadius": 25
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

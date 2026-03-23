@@ -1,0 +1,209 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#004D40",
+      "fontSize": 12
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "horizontal-5-children",
+    "containerType": "horizontal",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 12
+      },
+      "arrangement": {
+        "strategy": "space_between"
+      }
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "angle": 180,
+        "colors": [
+          "#B2DFDB",
+          "#4DB6AC"
+        ]
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "tag-1",
+        "elementType": "text",
+        "bindings": {
+          "text": "New"
+        },
+        "layout": {
+          "width": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "top": 8,
+            "bottom": 8,
+            "left": 16,
+            "right": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#00897B",
+          "textColor": "#FFFFFF",
+          "fontSize": 14,
+          "fontWeight": "bold",
+          "borderRadius": 16
+        }
+      },
+      {
+        "type": "element",
+        "id": "tag-2",
+        "elementType": "text",
+        "bindings": {
+          "text": "Featured"
+        },
+        "layout": {
+          "width": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "top": 8,
+            "bottom": 8,
+            "left": 16,
+            "right": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#00796B",
+          "textColor": "#FFFFFF",
+          "fontSize": 14,
+          "fontWeight": "bold",
+          "borderRadius": 16
+        }
+      },
+      {
+        "type": "element",
+        "id": "tag-3",
+        "elementType": "text",
+        "bindings": {
+          "text": "Popular"
+        },
+        "layout": {
+          "width": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "top": 8,
+            "bottom": 8,
+            "left": 16,
+            "right": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#00695C",
+          "textColor": "#FFFFFF",
+          "fontSize": 14,
+          "fontWeight": "bold",
+          "borderRadius": 16
+        }
+      },
+      {
+        "type": "element",
+        "id": "tag-4",
+        "elementType": "text",
+        "bindings": {
+          "text": "Sale"
+        },
+        "layout": {
+          "width": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "top": 8,
+            "bottom": 8,
+            "left": 16,
+            "right": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#00695C",
+          "textColor": "#FFFFFF",
+          "fontSize": 14,
+          "fontWeight": "bold",
+          "borderRadius": 16
+        }
+      },
+      {
+        "type": "element",
+        "id": "tag-5",
+        "elementType": "text",
+        "bindings": {
+          "text": "Trending"
+        },
+        "layout": {
+          "width": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "top": 8,
+            "bottom": 8,
+            "left": 16,
+            "right": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#004D40",
+          "textColor": "#FFFFFF",
+          "fontSize": 14,
+          "fontWeight": "bold",
+          "borderRadius": 16
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

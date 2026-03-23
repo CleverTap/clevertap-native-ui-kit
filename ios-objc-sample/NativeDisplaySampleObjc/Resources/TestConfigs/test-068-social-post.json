@@ -1,0 +1,385 @@
+{
+  "theme": {
+    "id": "social-post",
+    "defaultStyle": {
+      "textColor": "#FF1F2937",
+      "fontSize": 14,
+      "fontFamily": "System"
+    }
+  },
+  "variables": {
+    "userName": "Alex Thompson",
+    "userHandle": "@alexthompson",
+    "avatarUrl": "https://yavuzceliker.github.io/sample-images/image-890.jpg",
+    "postTime": "2 hours ago",
+    "postText": "Just finished an amazing hike! The views from the summit were absolutely breathtaking. Nature never fails to inspire and rejuvenate the soul. \ud83c\udfd4\ufe0f\u2728",
+    "postImage": "https://yavuzceliker.github.io/sample-images/image-1350.jpg",
+    "likes": "342",
+    "comments": "28",
+    "shares": "15",
+    "commentButtonText": "Add Comment"
+  },
+  "root": {
+    "id": "social-post-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFF9FAFB"
+    },
+    "children": [
+      {
+        "id": "post-card",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "spacing": 16,
+            "strategy": "spaced"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFFFF",
+          "borderRadius": 16,
+          "shadowRadius": 12,
+          "shadowColor": "#FF000000",
+          "shadowOpacity": 0.08,
+          "shadowOffsetY": 4
+        },
+        "children": [
+          {
+            "id": "post-header",
+            "containerType": "horizontal",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "arrangement": {
+                "spacing": 12,
+                "strategy": "spaced"
+              }
+            },
+            "children": [
+              {
+                "id": "avatar",
+                "elementType": "image",
+                "bindings": {
+                  "url": "{{avatarUrl}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 48,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 48,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "borderRadius": 24,
+                  "borderWidth": 2,
+                  "borderColor": "#FF3B82F6"
+                },
+                "type": "element"
+              },
+              {
+                "id": "user-info",
+                "containerType": "vertical",
+                "layout": {
+                  "width": {
+                    "value": -1,
+                    "unit": "dp"
+                  },
+                  "arrangement": {
+                    "spacing": 4,
+                    "strategy": "spaced"
+                  }
+                },
+                "children": [
+                  {
+                    "id": "user-name",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "{{userName}}"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 16,
+                      "fontWeight": "bold",
+                      "textColor": "#FF111827"
+                    },
+                    "type": "element"
+                  },
+                  {
+                    "id": "user-handle-row",
+                    "containerType": "horizontal",
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      },
+                      "arrangement": {
+                        "spacing": 8,
+                        "strategy": "spaced"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "user-handle",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "{{userHandle}}"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": -2,
+                            "unit": "dp"
+                          }
+                        },
+                        "style": {
+                          "fontSize": 13,
+                          "fontWeight": "normal",
+                          "textColor": "#FF6B7280"
+                        },
+                        "type": "element"
+                      },
+                      {
+                        "id": "separator",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "\u2022"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": -2,
+                            "unit": "dp"
+                          }
+                        },
+                        "style": {
+                          "fontSize": 13,
+                          "textColor": "#FF9CA3AF"
+                        },
+                        "type": "element"
+                      },
+                      {
+                        "id": "post-time",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "{{postTime}}"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": -2,
+                            "unit": "dp"
+                          }
+                        },
+                        "style": {
+                          "fontSize": 13,
+                          "fontWeight": "normal",
+                          "textColor": "#FF9CA3AF"
+                        },
+                        "type": "element"
+                      }
+                    ],
+                    "type": "container"
+                  }
+                ],
+                "type": "container"
+              }
+            ],
+            "type": "container"
+          },
+          {
+            "id": "post-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "{{postText}}"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 15,
+              "fontWeight": "normal",
+              "textColor": "#FF374151",
+              "lineHeight": 22
+            },
+            "type": "element"
+          },
+          {
+            "id": "post-image",
+            "elementType": "image",
+            "bindings": {
+              "url": "{{postImage}}"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 240,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 12
+            },
+            "type": "element"
+          },
+          {
+            "id": "engagement-stats",
+            "containerType": "horizontal",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "arrangement": {
+                "spacing": 20,
+                "strategy": "spaced"
+              }
+            },
+            "children": [
+              {
+                "id": "likes-stat",
+                "elementType": "text",
+                "bindings": {
+                  "text": "\u2764\ufe0f {{likes}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": -2,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "medium",
+                  "textColor": "#FF6B7280"
+                },
+                "type": "element"
+              },
+              {
+                "id": "comments-stat",
+                "elementType": "text",
+                "bindings": {
+                  "text": "\ud83d\udcac {{comments}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": -2,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "medium",
+                  "textColor": "#FF6B7280"
+                },
+                "type": "element"
+              },
+              {
+                "id": "shares-stat",
+                "elementType": "text",
+                "bindings": {
+                  "text": "\ud83d\udd04 {{shares}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": -2,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "medium",
+                  "textColor": "#FF6B7280"
+                },
+                "type": "element"
+              }
+            ],
+            "type": "container"
+          },
+          {
+            "id": "divider",
+            "elementType": "divider",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 1,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFE5E7EB"
+            },
+            "type": "element"
+          },
+          {
+            "id": "comment-button",
+            "elementType": "button",
+            "bindings": {
+              "text": "{{commentButtonText}}"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 44,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FF3B82F6",
+              "borderRadius": 10,
+              "textColor": "#FFFFFFFF",
+              "fontSize": 15,
+              "fontWeight": "medium",
+              "shadowRadius": 8,
+              "shadowColor": "#FF3B82F6",
+              "shadowOpacity": 0.3,
+              "shadowOffsetY": 2
+            },
+            "type": "element"
+          }
+        ],
+        "type": "container"
+      }
+    ],
+    "type": "container"
+  },
+  "styleClasses": []
+}
