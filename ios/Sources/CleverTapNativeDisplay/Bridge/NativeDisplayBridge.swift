@@ -64,6 +64,15 @@ public class NativeDisplayBridge {
     /// Whether auto-wire has been attempted.
     private var isInitialized = false
 
+    /// Weak reference to the bound CleverTap instance (for fetch calls).
+    private weak var cleverTapInstance: NSObject?
+
+    /// Event name for server fetch requests.
+    static let wzrkFetch = "wzrk_fetch"
+
+    /// Fetch type constant for Native Display units.
+    static let fetchTypeNativeDisplay = 9
+
     // MARK: - Init
 
     private init() {}
@@ -83,7 +92,9 @@ public class NativeDisplayBridge {
         }
         isInitialized = true
 
-        CleverTapAutoWire.tryAutoWire(bridge: self)
+        if let ctInstance = CleverTapAutoWire.tryAutoWire(bridge: self) {
+            cleverTapInstance = ctInstance
+        }
     }
 
     // MARK: - Bind to CleverTap Instance
@@ -116,7 +127,44 @@ public class NativeDisplayBridge {
             print("[NativeDisplayBridge] bind() called with nil or non-NSObject, ignoring")
             return false
         }
+        cleverTapInstance = instance
         return CleverTapAutoWire.bindToInstance(instance, bridge: self, clientHandler: clientHandler)
+    }
+
+    /// Request the CleverTap server to fetch Native Display units.
+    ///
+    /// Sends a `wzrk_fetch` event with fetch type `9` (Native Display) via the
+    /// bound CleverTap instance. The server will respond with display units
+    /// through the normal `adUnit_notifs` pipeline, which the bridge listener
+    /// will pick up automatically.
+    ///
+    /// Requires a prior call to `bind()` or `initialize()`. Returns `false` if no
+    /// CleverTap instance is available.
+    ///
+    /// ```swift
+    /// NativeDisplayBridge.shared.fetchNativeDisplays()
+    /// // Response arrives via NativeDisplayBridgeListener.onNativeDisplaysLoaded()
+    /// ```
+    ///
+    /// - Returns: `true` if the fetch event was sent, `false` if no CleverTap instance is bound.
+    @discardableResult
+    public func fetchNativeDisplays() -> Bool {
+        guard let ct = cleverTapInstance else {
+            print("[NativeDisplayBridge] fetchNativeDisplays() called but no CleverTap instance is bound. Call bind() first.")
+            return false
+        }
+
+        let recordEventSelector = NSSelectorFromString("recordEvent:withProps:")
+        guard ct.responds(to: recordEventSelector) else {
+            print("[NativeDisplayBridge] CleverTap instance does not support recordEvent:withProps:")
+            return false
+        }
+
+        let props: [String: Any] = ["t": NativeDisplayBridge.fetchTypeNativeDisplay]
+        ct.perform(recordEventSelector, with: NativeDisplayBridge.wzrkFetch, with: props)
+
+        print("[NativeDisplayBridge] Sent wzrk_fetch request for Native Display (type=\(NativeDisplayBridge.fetchTypeNativeDisplay))")
+        return true
     }
 
     // MARK: - Manual Mode: Process JSON
