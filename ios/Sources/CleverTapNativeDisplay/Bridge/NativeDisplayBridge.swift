@@ -1,0 +1,239 @@
+//
+//  NativeDisplayBridge.swift
+//  CleverTapNativeDisplay
+//
+
+// MARK: - Native Display Bridge
+// Main entry point for integrating Native Display SDK with CleverTap Core SDK.
+// Supports both auto-wire (runtime Core SDK detection) and manual JSON input modes.
+
+import Foundation
+
+/// Bridge between CleverTap Core SDK and the Native Display SDK.
+///
+/// Provides two integration modes:
+/// - **Auto-wire**: Detects CleverTap Core SDK at runtime and registers as a display unit
+///   delegate automatically. Call `initialize()` once at app startup.
+/// - **Manual**: Feed raw JSON strings directly via `processDisplayUnits(_:)`.
+///   Works with any JSON source — no Core SDK required.
+///
+/// ## Usage
+///
+/// ### Auto-wire (recommended)
+/// ```swift
+/// // In AppDelegate or app startup
+/// NativeDisplayBridge.shared.initialize()
+/// NativeDisplayBridge.shared.addListener(self)
+/// ```
+///
+/// ### Manual
+/// ```swift
+/// let bridge = NativeDisplayBridge.shared
+/// bridge.addListener(self)
+/// bridge.processDisplayUnits(jsonStrings)
+/// ```
+///
+/// ### Rendering
+/// ```swift
+/// func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
+///     for unit in units {
+///         // unit.config is a ResolvedConfig ready for NativeDisplayView
+///         NativeDisplayView(config: unit.config)
+///     }
+/// }
+/// ```
+public class NativeDisplayBridge {
+
+    /// Shared singleton instance.
+    public static let shared = NativeDisplayBridge()
+
+    // MARK: - Private State
+
+    /// Cache of parsed display units keyed by unitId. Access synchronized via `lock`.
+    private var cache: [String: NativeDisplayUnit] = [:]
+
+    /// Thread-safety lock for cache and listener access.
+    private let lock = NSLock()
+
+    /// Weak listener references.
+    private var listeners = NSHashTable<AnyObject>.weakObjects()
+
+    /// Parser instance.
+    private let parser = NativeDisplayConfigParser()
+
+    /// Whether auto-wire has been attempted.
+    private var isInitialized = false
+
+    // MARK: - Init
+
+    private init() {}
+
+    // MARK: - Auto-Wire
+
+    /// Initialize the bridge with auto-wire support.
+    /// Detects CleverTap Core SDK at runtime via `NSClassFromString`.
+    /// Safe to call even without Core SDK — silently logs and continues in manual mode.
+    public func initialize() {
+        lock.lock()
+        defer { lock.unlock() }
+
+        guard !isInitialized else {
+            print("[NativeDisplayBridge] Already initialized")
+            return
+        }
+        isInitialized = true
+
+        CleverTapAutoWire.tryAutoWire(bridge: self)
+    }
+
+    // MARK: - Bind to CleverTap Instance
+
+    /// Bind the bridge to a CleverTap instance directly.
+    ///
+    /// Accepts the CleverTap object and registers as a display unit delegate
+    /// via Obj-C runtime — no compile-time dependency on the Core SDK.
+    ///
+    /// ```swift
+    /// NativeDisplayBridge.shared.bind(CleverTap.sharedInstance())
+    /// ```
+    ///
+    /// - Parameter cleverTap: A `CleverTap` instance (passed as `Any?` to avoid compile dependency).
+    ///   If nil or not a valid CleverTap instance, this is a no-op.
+    /// - Returns: `true` if binding succeeded, `false` otherwise.
+    @discardableResult
+    public func bind(_ cleverTap: Any?) -> Bool {
+        guard let instance = cleverTap as? NSObject else {
+            print("[NativeDisplayBridge] bind() called with nil or non-NSObject, ignoring")
+            return false
+        }
+        return CleverTapAutoWire.bindToInstance(instance, bridge: self)
+    }
+
+    // MARK: - Manual Mode: Process JSON
+
+    /// Process multiple display unit JSON strings. Replaces the entire cache.
+    /// - Parameter displayUnitJsonStrings: Array of raw JSON strings from display unit payloads.
+    public func processDisplayUnits(_ displayUnitJsonStrings: [String]) {
+        var newCache: [String: NativeDisplayUnit] = [:]
+
+        for jsonString in displayUnitJsonStrings {
+            if let unit = parser.tryParse(jsonString) {
+                newCache[unit.unitId] = unit
+            }
+        }
+
+        let units: [NativeDisplayUnit]
+        lock.lock()
+        cache = newCache
+        units = Array(cache.values)
+        lock.unlock()
+
+        notifyListeners(units)
+    }
+
+    /// Process a single display unit JSON string. Adds or updates the unit in cache.
+    /// - Parameter displayUnitJsonString: Raw JSON string from a display unit payload.
+    public func processDisplayUnit(_ displayUnitJsonString: String) {
+        guard let unit = parser.tryParse(displayUnitJsonString) else {
+            return
+        }
+
+        let allUnits: [NativeDisplayUnit]
+        lock.lock()
+        cache[unit.unitId] = unit
+        allUnits = Array(cache.values)
+        lock.unlock()
+
+        notifyListeners(allUnits)
+    }
+
+    /// Process multiple display unit JSON data objects. Replaces the entire cache.
+    /// - Parameter data: Array of raw JSON data from display unit payloads.
+    public func processDisplayUnits(data: [Data]) {
+        var newCache: [String: NativeDisplayUnit] = [:]
+
+        for jsonData in data {
+            let rawJson = String(data: jsonData, encoding: .utf8)
+            if let unit = parser.tryParse(data: jsonData, rawJson: rawJson) {
+                newCache[unit.unitId] = unit
+            }
+        }
+
+        let units: [NativeDisplayUnit]
+        lock.lock()
+        cache = newCache
+        units = Array(cache.values)
+        lock.unlock()
+
+        notifyListeners(units)
+    }
+
+    // MARK: - Pull API
+
+    /// Get all currently cached native display units.
+    /// - Returns: Array of all parsed native display units.
+    public func getAllNativeDisplays() -> [NativeDisplayUnit] {
+        lock.lock()
+        defer { lock.unlock() }
+        return Array(cache.values)
+    }
+
+    /// Get a specific native display unit by its ID.
+    /// - Parameter unitId: The `wzrk_id` of the display unit.
+    /// - Returns: The matching `NativeDisplayUnit`, or `nil` if not found.
+    public func getNativeDisplayForId(_ unitId: String) -> NativeDisplayUnit? {
+        lock.lock()
+        defer { lock.unlock() }
+        return cache[unitId]
+    }
+
+    // MARK: - Push API (Listeners)
+
+    /// Add a listener to receive native display unit updates.
+    /// Listeners are held as weak references — no need to remove on deallocation.
+    /// - Parameter listener: The listener to add.
+    public func addListener(_ listener: NativeDisplayBridgeListener) {
+        lock.lock()
+        defer { lock.unlock() }
+        listeners.add(listener)
+    }
+
+    /// Remove a previously added listener.
+    /// - Parameter listener: The listener to remove.
+    public func removeListener(_ listener: NativeDisplayBridgeListener) {
+        lock.lock()
+        defer { lock.unlock() }
+        listeners.remove(listener)
+    }
+
+    // MARK: - Clear
+
+    /// Clear all cached display units, tear down auto-wire, and reset state.
+    public func clear() {
+        lock.lock()
+        cache.removeAll()
+        listeners.removeAllObjects()
+        isInitialized = false
+        lock.unlock()
+
+        CleverTapAutoWire.tearDown()
+        print("[NativeDisplayBridge] Cleared all cached units and listeners")
+    }
+
+    // MARK: - Private
+
+    /// Notify all registered listeners on the main thread.
+    private func notifyListeners(_ units: [NativeDisplayUnit]) {
+        lock.lock()
+        let currentListeners = listeners.allObjects.compactMap { $0 as? NativeDisplayBridgeListener }
+        lock.unlock()
+
+        if currentListeners.isEmpty { return }
+
+        DispatchQueue.main.async {
+            for listener in currentListeners {
+                listener.onNativeDisplaysLoaded(units)
+            }
+        }
+    }
+}
