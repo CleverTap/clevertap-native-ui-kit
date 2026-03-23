@@ -22,22 +22,22 @@ internal object CleverTapAutoWire {
      *
      * @param context Application context for instance lookup
      * @param bridge The bridge to forward display units to
-     * @return The [CleverTapAPI] instance if wiring succeeded, null otherwise
+     * @return true if wiring succeeded
      */
-    fun tryAutoWire(context: Context, bridge: NativeDisplayBridge): CleverTapAPI? {
+    fun tryAutoWire(context: Context, bridge: NativeDisplayBridge): Boolean {
         return try {
             val ctApi = CleverTapAPI.getDefaultInstance(context.applicationContext)
             if (ctApi == null) {
                 Log.w(TAG, "CleverTapAPI.getDefaultInstance() returned null")
-                return null
+                return false
             }
-            if (wireListener(ctApi, bridge)) ctApi else null
+            wireListener(ctApi, bridge)
         } catch (e: NoClassDefFoundError) {
             Log.d(TAG, "CleverTap Core SDK not found, manual mode only")
-            null
+            false
         } catch (e: Exception) {
             Log.w(TAG, "Auto-wire failed: ${e.message}")
-            null
+            false
         }
     }
 
