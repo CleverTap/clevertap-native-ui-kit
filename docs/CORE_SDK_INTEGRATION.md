@@ -195,6 +195,44 @@ func displayUnitsUpdated(_ displayUnits: [CleverTapDisplayUnit]) {
 
 ---
 
+## Fetching Native Displays from Server
+
+In addition to listening for server-pushed display units, you can explicitly request
+the server to send Native Display units using `fetchNativeDisplays()`.
+
+This sends a `wzrk_fetch` event with fetch type `9` (Native Display) to the CleverTap
+server. The response arrives through the normal display unit pipeline and is picked up
+by the bridge listener automatically.
+
+**Android:**
+
+```kotlin
+// Requires a prior bind() or initialize() call
+bridge.fetchNativeDisplays()
+
+// Response arrives via your NativeDisplayBridgeListener
+override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
+    // Handle the fetched units
+}
+```
+
+**iOS:**
+
+```swift
+// Requires a prior bind() or initialize() call
+NativeDisplayBridge.shared.fetchNativeDisplays()
+
+// Response arrives via your NativeDisplayBridgeListener
+func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
+    // Handle the fetched units
+}
+```
+
+Returns `false` if no CleverTap instance is bound (i.e., `bind()` or `initialize()` was
+not called, or the Core SDK is not present).
+
+---
+
 ## Listening for Native Display Updates
 
 ### Push API (Listener)

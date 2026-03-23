@@ -27,26 +27,26 @@ internal class CleverTapAutoWire: NSObject {
 
     /// Attempt to auto-wire the bridge to the CleverTap Core SDK.
     /// - Parameter bridge: The bridge instance to receive display unit callbacks.
-    /// - Returns: `true` if auto-wire succeeded, `false` if Core SDK not found or wiring failed.
+    /// - Returns: The CleverTap shared instance if auto-wire succeeded, `nil` otherwise.
     @discardableResult
-    static func tryAutoWire(bridge: NativeDisplayBridge) -> Bool {
+    static func tryAutoWire(bridge: NativeDisplayBridge) -> NSObject? {
         // 1. Check if CleverTap class exists
         guard let ctClass = NSClassFromString("CleverTap") as? NSObject.Type else {
             print("[NativeDisplayBridge] CleverTap SDK not found, manual mode only")
-            return false
+            return nil
         }
 
         // 2. Get shared instance
         let sharedSelector = NSSelectorFromString("sharedInstance")
         guard ctClass.responds(to: sharedSelector) else {
             print("[NativeDisplayBridge] CleverTap class does not respond to sharedInstance")
-            return false
+            return nil
         }
 
         guard let result = ctClass.perform(sharedSelector),
               let sharedInstance = result.takeUnretainedValue() as? NSObject else {
             print("[NativeDisplayBridge] Failed to get CleverTap shared instance")
-            return false
+            return nil
         }
 
         // 3. Create observer and register as display unit delegate
@@ -56,7 +56,7 @@ internal class CleverTapAutoWire: NSObject {
         let setDelegateSelector = NSSelectorFromString("setDisplayUnitDelegate:")
         guard sharedInstance.responds(to: setDelegateSelector) else {
             print("[NativeDisplayBridge] CleverTap instance does not support setDisplayUnitDelegate:")
-            return false
+            return nil
         }
 
         sharedInstance.perform(setDelegateSelector, with: observer)
@@ -73,7 +73,7 @@ internal class CleverTapAutoWire: NSObject {
         )
 
         print("[NativeDisplayBridge] Auto-wired to CleverTap Core SDK")
-        return true
+        return sharedInstance
     }
 
     /// Bind the bridge to a specific CleverTap instance.
