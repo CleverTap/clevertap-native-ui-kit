@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -13,7 +14,6 @@ import com.clevertap.android.nativedisplay.handler.ActionHandler
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener
 import com.clevertap.android.nativedisplay.models.ContainerType
-import com.clevertap.android.nativedisplay.models.Layout
 import com.clevertap.android.nativedisplay.models.NativeDisplayContainer
 import com.clevertap.android.nativedisplay.models.NativeDisplayElement
 import com.clevertap.android.nativedisplay.models.NativeDisplayNode
@@ -99,10 +99,8 @@ fun RenderNode(
     componentListener: NativeDisplayComponentListener? = null,
 ) {
     // Check visibility condition
-    if (node.visible != null) {
-        val isVisible = evaluator.evaluateBoolean(node.visible!!)
-        if (!isVisible) return
-    }
+    val isVisible = node.visible?.let { evaluator.evaluateBoolean(it) } ?: true
+    if (!isVisible) return
 
     // Resolve style
     val resolvedStyle = resolvedStyles[node.id] ?: Style.EMPTY
@@ -116,22 +114,21 @@ fun RenderNode(
     // Apply modifiers in correct order
     // IMPORTANT: Offset must be applied BEFORE sizing so percentage calculations
     // use the parent's constraints, not the element's constrained size
-    var finalModifier = modifier
-    finalModifier = finalModifier.applyOffset(node.layout)  // First: sees parent size
-    finalModifier = finalModifier.applySizing(node.layout)  // Second: constrains size
-    finalModifier = finalModifier.applyEntranceAnimation(node.animation)
-
-    // Apply clickable only when needed (server actions exist OR client is interested)
-    if (actionHandler != null && shouldApplyClickable) {
-        finalModifier = finalModifier.applyClickable(
-            nodeId = node.id,
-            actions = node.actions,
-            actionHandler = actionHandler,
-            componentListener = componentListener
-        )
-    }
-
-    finalModifier = finalModifier.applyDecorations(resolvedStyle)
+    val finalModifier = modifier
+        .applyOffset(node.layout)
+        .applySizing(node.layout)
+        .applyEntranceAnimation(node.animation)
+        .let { mod ->
+            if (actionHandler != null && shouldApplyClickable) {
+                mod.applyClickable(
+                    nodeId = node.id,
+                    actions = node.actions,
+                    actionHandler = actionHandler,
+                    componentListener = componentListener
+                )
+            } else mod
+        }
+        .applyDecorations(resolvedStyle)
 
     // Render based on node type
     when (node) {
@@ -139,7 +136,6 @@ fun RenderNode(
             container = node,
             resolvedStyles = resolvedStyles,
             evaluator = evaluator,
-            layout = node.layout,
             modifier = finalModifier,
             actionHandler = actionHandler,
             componentListener = componentListener,
@@ -149,7 +145,6 @@ fun RenderNode(
             element = node,
             evaluator = evaluator,
             resolvedStyle = resolvedStyle,
-            layout = node.layout,
             modifier = finalModifier,
             actionHandler = actionHandler,
         )
@@ -164,12 +159,11 @@ private fun RenderContainer(
     container: NativeDisplayContainer,
     resolvedStyles: PersistentMap<String, Style>,
     evaluator: VariableEvaluator,
-    layout: Layout?,
     modifier: Modifier = Modifier,
     actionHandler: ActionHandler? = null,
     componentListener: NativeDisplayComponentListener? = null,
 ) {
-    val containerModifier = modifier.applyPadding(layout)
+    val containerModifier = modifier.applyPadding(container.layout)
 
     when (container.containerType) {
         ContainerType.VERTICAL -> {
@@ -178,14 +172,16 @@ private fun RenderContainer(
                 verticalArrangement = resolveVerticalArrangement(container.layout?.arrangement)
             ) {
                 container.children.forEach { child ->
-                    RenderNode(
-                        node = child,
-                        resolvedStyles = resolvedStyles,
-                        evaluator = evaluator,
-                        modifier = Modifier,
-                        actionHandler = actionHandler,
-                        componentListener = componentListener
-                    )
+                    key(child.id) {
+                        RenderNode(
+                            node = child,
+                            resolvedStyles = resolvedStyles,
+                            evaluator = evaluator,
+                            modifier = Modifier,
+                            actionHandler = actionHandler,
+                            componentListener = componentListener
+                        )
+                    }
                 }
             }
         }
@@ -196,14 +192,16 @@ private fun RenderContainer(
                 horizontalArrangement = resolveHorizontalArrangement(container.layout?.arrangement)
             ) {
                 container.children.forEach { child ->
-                    RenderNode(
-                        node = child,
-                        resolvedStyles = resolvedStyles,
-                        evaluator = evaluator,
-                        modifier = Modifier,
-                        actionHandler = actionHandler,
-                        componentListener = componentListener
-                    )
+                    key(child.id) {
+                        RenderNode(
+                            node = child,
+                            resolvedStyles = resolvedStyles,
+                            evaluator = evaluator,
+                            modifier = Modifier,
+                            actionHandler = actionHandler,
+                            componentListener = componentListener
+                        )
+                    }
                 }
             }
         }
@@ -211,14 +209,16 @@ private fun RenderContainer(
         ContainerType.BOX -> {
             Box(modifier = containerModifier) {
                 container.children.forEach { child ->
-                    RenderNode(
-                        node = child,
-                        resolvedStyles = resolvedStyles,
-                        evaluator = evaluator,
-                        modifier = Modifier,
-                        actionHandler = actionHandler,
-                        componentListener = componentListener
-                    )
+                    key(child.id) {
+                        RenderNode(
+                            node = child,
+                            resolvedStyles = resolvedStyles,
+                            evaluator = evaluator,
+                            modifier = Modifier,
+                            actionHandler = actionHandler,
+                            componentListener = componentListener
+                        )
+                    }
                 }
             }
         }
