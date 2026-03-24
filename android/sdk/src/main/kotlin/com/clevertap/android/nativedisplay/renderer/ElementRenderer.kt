@@ -23,7 +23,6 @@ import com.clevertap.android.nativedisplay.internal.ImageLoaderProvider
 import com.clevertap.android.nativedisplay.models.DividerConfig
 import com.clevertap.android.nativedisplay.models.ElementType
 import com.clevertap.android.nativedisplay.models.ImageFit
-import com.clevertap.android.nativedisplay.models.Layout
 import com.clevertap.android.nativedisplay.models.NativeDisplayElement
 import com.clevertap.android.nativedisplay.models.Orientation
 import com.clevertap.android.nativedisplay.models.Style
@@ -36,11 +35,10 @@ internal fun RenderElement(
     element: NativeDisplayElement,
     evaluator: VariableEvaluator,
     resolvedStyle: Style,
-    layout: Layout?,
     modifier: Modifier = Modifier,
     actionHandler: ActionHandler? = null
 ) {
-    val elementModifier = modifier.applyPadding(layout)
+    val elementModifier = modifier.applyPadding(element.layout)
 
     when (element.elementType) {
         ElementType.TEXT -> {
