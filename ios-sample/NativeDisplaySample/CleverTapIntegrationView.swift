@@ -12,7 +12,6 @@ struct CleverTapIntegrationView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                bridgeStatusSection
                 fireEventSection
                 displayCanvasSection
                 eventLogSection
@@ -24,30 +23,6 @@ struct CleverTapIntegrationView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onDisappear {
             viewModel.tearDown()
-        }
-    }
-
-    // MARK: - Bridge Status
-
-    private var bridgeStatusSection: some View {
-        SectionCard(title: "Bridge Status", icon: "link") {
-            VStack(alignment: .leading, spacing: 8) {
-                StatusRow(
-                    label: "CleverTap",
-                    connected: viewModel.cleverTapAvailable,
-                    detail: viewModel.cleverTapAvailable ? "Connected" : "Not configured"
-                )
-                StatusRow(
-                    label: "Bridge",
-                    connected: viewModel.bridgeBound,
-                    detail: viewModel.bridgeBound ? "Bound" : "Not bound"
-                )
-                StatusRow(
-                    label: "Listener",
-                    connected: true,
-                    detail: "Registered"
-                )
-            }
         }
     }
 
@@ -292,27 +267,6 @@ private struct SectionCard<Content: View>: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(.systemBackground))
         .cornerRadius(12)
-    }
-}
-
-private struct StatusRow: View {
-    let label: String
-    let connected: Bool
-    let detail: String
-
-    var body: some View {
-        HStack(spacing: 8) {
-            Circle()
-                .fill(connected ? Color.green : Color.red)
-                .frame(width: 8, height: 8)
-            Text(label)
-                .font(.subheadline)
-                .fontWeight(.medium)
-            Spacer()
-            Text(detail)
-                .font(.system(size: 12))
-                .foregroundColor(.secondary)
-        }
     }
 }
 
