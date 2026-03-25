@@ -1,34 +1,20 @@
 import SwiftUI
 import CleverTapNativeDisplay
+import CleverTapSDK
 
-// MARK: - CleverTap Integration Demo
+// MARK: - CleverTap Integration
 
-/// Demonstrates how a real CleverTap Core SDK integration would work
-/// with the Native Display SDK, including system event tracking.
-///
-/// Since the sample app has no real CleverTap Core SDK, this demo uses
-/// `processDisplayUnits(_:)` with hardcoded JSON and implements
-/// `NativeDisplayActionListener` to show how system events (Notification Viewed,
-/// Notification Clicked) flow through the action handler.
+/// Real CleverTap integration screen. Binds the Native Display bridge to a live
+/// CleverTap instance and renders server-driven units as they arrive.
 struct CleverTapIntegrationView: View {
     @StateObject private var viewModel = CleverTapIntegrationViewModel()
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                // Section 1: CleverTap Setup
-                setupSection
-
-                // Section 2: Fetch & Render
-                fetchRenderSection
-
-                // Section 3: System Events
-                systemEventsSection
-
-                // Section 4: Rendered Units
-                renderedUnitsSection
-
-                // Section 5: Event Log
+                bridgeStatusSection
+                fireEventSection
+                displayCanvasSection
                 eventLogSection
             }
             .padding(16)
@@ -41,134 +27,75 @@ struct CleverTapIntegrationView: View {
         }
     }
 
-    // MARK: - Setup Section
+    // MARK: - Bridge Status
 
-    private var setupSection: some View {
-        SectionCard(title: "CleverTap Setup", icon: "gearshape.2") {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Initialize CleverTap and bind the Native Display bridge in your AppDelegate or app startup.")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-
-                CodeSnippetView(
-                    label: "Step 1: Initialize CleverTap",
-                    code: """
-                    // In AppDelegate
-                    CleverTap.autoIntegrate()
-                    let clevertap = CleverTap.sharedInstance()
-                    """
+    private var bridgeStatusSection: some View {
+        SectionCard(title: "Bridge Status", icon: "link") {
+            VStack(alignment: .leading, spacing: 8) {
+                StatusRow(
+                    label: "CleverTap",
+                    connected: viewModel.cleverTapAvailable,
+                    detail: viewModel.cleverTapAvailable ? "Connected" : "Not configured"
                 )
-
-                CodeSnippetView(
-                    label: "Step 2: Bind the bridge",
-                    code: """
-                    let bridge = NativeDisplayBridge.shared
-                    bridge.addListener(self)
-                    bridge.bind(clevertap)
-                    """
+                StatusRow(
+                    label: "Bridge",
+                    connected: viewModel.bridgeBound,
+                    detail: viewModel.bridgeBound ? "Bound" : "Not bound"
                 )
-
-                CodeSnippetView(
-                    label: "Step 3: Set action listener for events",
-                    code: """
-                    // In your ViewController or ViewModel
-                    NativeDisplayView(
-                        config: unit.config,
-                        actionListener: self
-                    )
-                    """
+                StatusRow(
+                    label: "Listener",
+                    connected: true,
+                    detail: "Registered"
                 )
             }
         }
     }
 
-    // MARK: - Fetch & Render Section
+    // MARK: - Fire Event
 
-    private var fetchRenderSection: some View {
-        SectionCard(title: "Fetch & Render", icon: "arrow.triangle.2.circlepath") {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Simulate fetching Native Displays from the server via the bridge. Units arrive through the listener callback.")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+    private var fireEventSection: some View {
+        SectionCard(title: "Fire Event", icon: "paperplane") {
+            HStack(spacing: 12) {
+                TextField("Enter event name", text: $viewModel.eventName)
+                    .textFieldStyle(.roundedBorder)
 
-                Button(action: { viewModel.fetchAndRender() }) {
-                    Label("Fetch Native Displays", systemImage: "arrow.down.circle.fill")
-                        .frame(maxWidth: .infinity)
+                Button("Send Event") {
+                    viewModel.sendEvent()
                 }
                 .buttonStyle(.borderedProminent)
-
-                Button(action: { viewModel.clearAll() }) {
-                    Label("Clear All", systemImage: "trash")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
-                .tint(.red)
+                .disabled(viewModel.eventName.trimmingCharacters(in: .whitespaces).isEmpty
+                          || !viewModel.cleverTapAvailable)
             }
         }
     }
 
-    // MARK: - System Events Section
+    // MARK: - Display Canvas
 
-    private var systemEventsSection: some View {
-        SectionCard(title: "System Events", icon: "bell.badge") {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("When the SDK renders a unit, it fires system events via `NativeDisplayActionListener.onTrackEvent`. Tap a rendered unit's button to see \"Notification Clicked\" events in the log below.")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-
-                CodeSnippetView(
-                    label: "Action listener receives system events",
-                    code: """
-                    func onTrackEvent(
-                        eventName: String,
-                        properties: [String: Any]?
-                    ) {
-                        // Forward to CleverTap
-                        clevertap.recordEvent(
-                            eventName,
-                            withProps: properties
-                        )
-                    }
-                    """
-                )
-
-                HStack(spacing: 8) {
-                    Circle()
-                        .fill(viewModel.displayUnits.isEmpty ? Color.gray : Color.green)
-                        .frame(width: 8, height: 8)
-                    Text(viewModel.displayUnits.isEmpty
-                         ? "Fetch units first, then interact to see events"
-                         : "Action listener active - interact with rendered units")
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
-                }
-            }
-        }
-    }
-
-    // MARK: - Rendered Units Section
-
-    private var renderedUnitsSection: some View {
-        SectionCard(title: "Rendered Units (\(viewModel.displayUnits.count))", icon: "rectangle.on.rectangle") {
+    private var displayCanvasSection: some View {
+        SectionCard(title: "Native Displays (\(viewModel.displayUnits.count))", icon: "rectangle.on.rectangle") {
             if viewModel.displayUnits.isEmpty {
                 HStack {
-                    Image(systemName: "tray")
-                        .foregroundColor(.secondary)
-                    Text("No units yet. Tap \"Fetch Native Displays\" above.")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                    Spacer()
+                    VStack(spacing: 8) {
+                        Image(systemName: "tray")
+                            .font(.title2)
+                            .foregroundColor(.secondary)
+                        Text("Waiting for Native Display response...")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 24)
+                .padding(.vertical, 32)
             } else {
                 VStack(spacing: 16) {
                     ForEach(viewModel.displayUnits, id: \.unitId) { unit in
                         VStack(alignment: .leading, spacing: 8) {
-                            // Unit metadata header
                             HStack {
                                 Label(unit.unitId, systemImage: "tag")
                                     .font(.system(size: 12, weight: .medium, design: .monospaced))
                                     .foregroundColor(.blue)
+                                    .lineLimit(1)
                                 Spacer()
                                 if !unit.customExtras.isEmpty {
                                     Text("\(unit.customExtras.count) extras")
@@ -181,13 +108,11 @@ struct CleverTapIntegrationView: View {
                                 }
                             }
 
-                            // Rendered NativeDisplayView with action listener
                             NativeDisplayView(
                                 config: unit.config,
                                 actionListener: viewModel
                             )
                             .frame(maxWidth: .infinity)
-                            .frame(height: 380)
                             .cornerRadius(12)
                             .clipped()
                         }
@@ -201,18 +126,18 @@ struct CleverTapIntegrationView: View {
         }
     }
 
-    // MARK: - Event Log Section
+    // MARK: - Event Log
 
     private var eventLogSection: some View {
         SectionCard(title: "Event Log", icon: "doc.text") {
-            VStack(alignment: .leading, spacing: 4) {
-                if viewModel.eventLog.isEmpty {
-                    Text("Events will appear here as you interact with units.")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                } else {
+            if viewModel.eventLog.isEmpty {
+                Text("Events will appear here.")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+            } else {
+                VStack(alignment: .leading, spacing: 2) {
                     ForEach(viewModel.eventLog.indices, id: \.self) { index in
                         Text(viewModel.eventLog[index])
                             .font(.system(size: 11, design: .monospaced))
@@ -226,29 +151,52 @@ struct CleverTapIntegrationView: View {
 
 // MARK: - View Model
 
-/// Manages bridge interaction and action listener state for the CleverTap integration demo.
-/// Implements both NativeDisplayBridgeListener (to receive units) and
-/// NativeDisplayActionListener (to capture system events like Notification Viewed/Clicked).
 class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBridgeListener, NativeDisplayActionListener {
     @Published var displayUnits: [NativeDisplayUnit] = []
     @Published var eventLog: [String] = []
+    @Published var eventName: String = ""
+    @Published private(set) var cleverTapAvailable = false
+    @Published private(set) var bridgeBound = false
 
     private let bridge = NativeDisplayBridge.shared
+    private var cleverTapInstance: CleverTap?
 
     override init() {
         super.init()
+
+        // Get CleverTap shared instance
+        cleverTapInstance = CleverTap.sharedInstance()
+        cleverTapAvailable = cleverTapInstance != nil
+
+        if cleverTapAvailable {
+            log("CleverTap instance found")
+        } else {
+            log("CleverTap not configured — check Info.plist credentials")
+        }
+
+        // Register bridge listener
         bridge.addListener(self)
         log("Bridge listener registered")
-        log("Action listener ready for system events")
+
+        // Bind bridge to CleverTap
+        if let ct = cleverTapInstance {
+            let didBind = bridge.bind(ct)
+            bridgeBound = didBind
+            log(didBind ? "Bridge bound to CleverTap" : "Bridge bind failed")
+
+            // Fetch Native Displays from server
+            let didFetch = bridge.fetchNativeDisplays(ct)
+            log(didFetch ? "Fetch request sent" : "Fetch request failed")
+        }
     }
 
     // MARK: - NativeDisplayBridgeListener
 
     func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
         displayUnits = units
-        log("onNativeDisplaysLoaded: received \(units.count) unit(s)")
+        log("Received \(units.count) display unit(s)")
         for unit in units {
-            log("  - unitId: \(unit.unitId)")
+            log("  unit: \(unit.unitId)")
         }
     }
 
@@ -256,52 +204,45 @@ class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBr
 
     @discardableResult
     func onOpenUrl(url: String, openInBrowser: Bool) -> Bool {
-        log("ACTION onOpenUrl: \(url) (browser: \(openInBrowser))")
-        // In a real app, you might open in SFSafariViewController or UIApplication.open
-        return true // Consumed
+        log("ACTION openUrl: \(url)")
+        if let parsedUrl = URL(string: url) {
+            UIApplication.shared.open(parsedUrl)
+        }
+        return true
     }
 
     func onCustomAction(key: String, value: Any?, metadata: [String: String]?) {
         let valueStr = value.map { "\($0)" } ?? "nil"
-        let metaStr = metadata.map { "\($0)" } ?? "nil"
-        log("ACTION onCustomAction: key=\(key), value=\(valueStr), meta=\(metaStr)")
+        log("ACTION custom: \(key) = \(valueStr)")
     }
 
     func onNavigate(destination: String, params: [String: String]?) {
-        let paramsStr = params.map { "\($0)" } ?? "nil"
-        log("ACTION onNavigate: destination=\(destination), params=\(paramsStr)")
+        log("ACTION navigate: \(destination)")
     }
 
     func onTrackEvent(eventName: String, properties: [String: Any]?) {
         let propsStr = properties.map { dict in
             dict.map { "\($0.key)=\($0.value)" }.joined(separator: ", ")
-        } ?? "none"
-        log("EVENT \(eventName): [\(propsStr)]")
-        // In a real app: CleverTap.sharedInstance()?.recordEvent(eventName, withProps: properties)
+        } ?? ""
+        log("EVENT \(eventName)\(propsStr.isEmpty ? "" : " [\(propsStr)]")")
+
+        // Forward system events to CleverTap
+        cleverTapInstance?.recordEvent(eventName, withProps: properties)
     }
 
     func onActionError(action: Action, error: Error) {
-        log("ERROR action failed: \(error.localizedDescription)")
+        log("ERROR: \(error.localizedDescription)")
     }
 
     // MARK: - Actions
 
-    func fetchAndRender() {
-        log("Simulating fetch from CleverTap server...")
-        bridge.processDisplayUnits([
-            CTMockDisplayUnits.productCard,
-            CTMockDisplayUnits.notification
-        ])
+    func sendEvent() {
+        let name = eventName.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { return }
+        cleverTapInstance?.recordEvent(name)
+        log("Sent event: \(name)")
+        eventName = ""
     }
-
-    func clearAll() {
-        bridge.clear()
-        displayUnits = []
-        log("Cleared all units. Re-registering listener...")
-        bridge.addListener(self)
-    }
-
-    // MARK: - Teardown
 
     func tearDown() {
         bridge.removeListener(self)
@@ -329,229 +270,7 @@ class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBr
     }()
 }
 
-// MARK: - Mock Display Unit JSON (CleverTap format)
-
-/// Hardcoded display unit JSON strings matching the CleverTap server format.
-/// Reuses the same structure as BridgeIntegrationView's mocks.
-private enum CTMockDisplayUnits {
-
-    static let productCard: String = """
-    {
-      "wzrk_id": "ct_campaign_1",
-      "type": "native_display",
-      "native_display_config": {
-        "theme": {
-          "id": "product-card",
-          "defaultStyle": {
-            "textColor": "#1F2937",
-            "fontSize": 14,
-            "lineHeight": 20
-          }
-        },
-        "root": {
-          "type": "container",
-          "id": "card",
-          "containerType": "vertical",
-          "layout": {
-            "width": { "value": 100, "unit": "percent" },
-            "height": { "value": -2, "unit": "dp" },
-            "padding": { "all": 16 },
-            "arrangement": { "type": "spaced", "spacing": 8 }
-          },
-          "style": {
-            "backgroundColor": "#FFFFFF",
-            "borderRadius": 16,
-            "shadowRadius": 8,
-            "shadowColor": "#000000",
-            "shadowOpacity": 0.1,
-            "shadowOffsetY": 4
-          },
-          "children": [
-            {
-              "type": "element",
-              "id": "product-image",
-              "elementType": "image",
-              "bindings": {
-                "url": "https://yavuzceliker.github.io/sample-images/image-83.jpg"
-              },
-              "layout": {
-                "width": { "value": 100, "unit": "percent" },
-                "height": { "value": 180, "unit": "dp" }
-              },
-              "style": { "borderRadius": 12 }
-            },
-            {
-              "type": "element",
-              "id": "product-name",
-              "elementType": "text",
-              "bindings": { "text": "Premium Wireless Headphones" },
-              "layout": {
-                "width": { "value": 100, "unit": "percent" },
-                "height": { "value": -2, "unit": "dp" }
-              },
-              "style": {
-                "fontSize": 18,
-                "fontWeight": "bold",
-                "textColor": "#111827",
-                "lineHeight": 24
-              }
-            },
-            {
-              "type": "element",
-              "id": "product-price",
-              "elementType": "text",
-              "bindings": { "text": "$299.99" },
-              "layout": {
-                "width": { "value": 100, "unit": "percent" },
-                "height": { "value": -2, "unit": "dp" }
-              },
-              "style": {
-                "fontSize": 22,
-                "fontWeight": "bold",
-                "textColor": "#10B981",
-                "lineHeight": 30
-              }
-            },
-            {
-              "type": "element",
-              "id": "buy-button",
-              "elementType": "button",
-              "bindings": { "text": "Add to Cart" },
-              "layout": {
-                "width": { "value": 100, "unit": "percent" },
-                "height": { "value": 48, "unit": "dp" }
-              },
-              "style": {
-                "backgroundColor": "#3B82F6",
-                "borderRadius": 12,
-                "textColor": "#FFFFFF",
-                "fontSize": 16,
-                "fontWeight": "bold",
-                "lineHeight": 22
-              },
-              "actions": {
-                "onClick": {
-                  "type": "custom",
-                  "key": "add_to_cart",
-                  "value": "headphones_001"
-                }
-              }
-            }
-          ]
-        },
-        "styleClasses": [],
-        "variables": {}
-      },
-      "custom_kv": {
-        "campaign": "summer_sale",
-        "category": "electronics"
-      }
-    }
-    """
-
-    static let notification: String = """
-    {
-      "wzrk_id": "ct_campaign_2",
-      "type": "native_display",
-      "native_display_config": {
-        "theme": {
-          "id": "notification",
-          "defaultStyle": {
-            "textColor": "#1F2937",
-            "fontSize": 14,
-            "lineHeight": 20
-          }
-        },
-        "root": {
-          "type": "container",
-          "id": "notif-card",
-          "containerType": "horizontal",
-          "layout": {
-            "width": { "value": 100, "unit": "percent" },
-            "height": { "value": -2, "unit": "dp" },
-            "padding": { "all": 16 },
-            "arrangement": { "type": "spaced", "spacing": 12 }
-          },
-          "style": {
-            "backgroundColor": "#EFF6FF",
-            "borderRadius": 12,
-            "borderWidth": 1,
-            "borderColor": "#BFDBFE"
-          },
-          "children": [
-            {
-              "type": "element",
-              "id": "notif-icon",
-              "elementType": "image",
-              "bindings": {
-                "url": "https://yavuzceliker.github.io/sample-images/image-10.jpg"
-              },
-              "layout": {
-                "width": { "value": 48, "unit": "dp" },
-                "height": { "value": 48, "unit": "dp" }
-              },
-              "style": { "borderRadius": 24 }
-            },
-            {
-              "type": "container",
-              "id": "notif-text-group",
-              "containerType": "vertical",
-              "layout": {
-                "width": { "value": -1, "unit": "dp" },
-                "height": { "value": -2, "unit": "dp" },
-                "arrangement": { "type": "spaced", "spacing": 4 }
-              },
-              "children": [
-                {
-                  "type": "element",
-                  "id": "notif-title",
-                  "elementType": "text",
-                  "bindings": { "text": "New offer available!" },
-                  "layout": {
-                    "width": { "value": 100, "unit": "percent" },
-                    "height": { "value": -2, "unit": "dp" }
-                  },
-                  "style": {
-                    "fontSize": 16,
-                    "fontWeight": "semibold",
-                    "textColor": "#1E40AF",
-                    "lineHeight": 22
-                  }
-                },
-                {
-                  "type": "element",
-                  "id": "notif-body",
-                  "elementType": "text",
-                  "bindings": { "text": "Get 20% off your next purchase. Limited time only." },
-                  "layout": {
-                    "width": { "value": 100, "unit": "percent" },
-                    "height": { "value": -2, "unit": "dp" }
-                  },
-                  "style": {
-                    "fontSize": 14,
-                    "textColor": "#3B82F6",
-                    "lineHeight": 20
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        "styleClasses": [],
-        "variables": {}
-      },
-      "custom_kv": {
-        "campaign": "retention_offer",
-        "discount": "20"
-      }
-    }
-    """
-}
-
-// MARK: - Supporting Views (reuse SectionCard and CodeSnippetView from BridgeIntegrationView)
-// Note: SectionCard and CodeSnippetView are defined as private in BridgeIntegrationView.swift,
-// so we redefine them here with the same appearance. If these were shared across multiple screens,
-// they should be extracted to a shared file.
+// MARK: - Supporting Views
 
 private struct SectionCard<Content: View>: View {
     let title: String
@@ -567,7 +286,6 @@ private struct SectionCard<Content: View>: View {
                 Text(title)
                     .font(.headline)
             }
-
             content
         }
         .padding(16)
@@ -577,23 +295,23 @@ private struct SectionCard<Content: View>: View {
     }
 }
 
-private struct CodeSnippetView: View {
+private struct StatusRow: View {
     let label: String
-    let code: String
+    let connected: Bool
+    let detail: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        HStack(spacing: 8) {
+            Circle()
+                .fill(connected ? Color.green : Color.red)
+                .frame(width: 8, height: 8)
             Text(label)
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(.blue)
-
-            Text(code)
-                .font(.system(size: 11, design: .monospaced))
-                .foregroundColor(.primary)
-                .padding(10)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(.systemGray6))
-                .cornerRadius(8)
+                .font(.subheadline)
+                .fontWeight(.medium)
+            Spacer()
+            Text(detail)
+                .font(.system(size: 12))
+                .foregroundColor(.secondary)
         }
     }
 }
