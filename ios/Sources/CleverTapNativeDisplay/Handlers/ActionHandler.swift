@@ -18,6 +18,10 @@ public class ActionHandler {
     
     private weak var actionListener: NativeDisplayActionListener?
     private weak var componentListener: NativeDisplayComponentListener?
+    private var firedSystemEvents = Set<String>()
+
+    /// Whether an action listener is attached (for callers to skip unnecessary work)
+    public var hasActionListener: Bool { actionListener != nil }
     
     public init(
         actionListener: NativeDisplayActionListener?,
@@ -76,6 +80,56 @@ public class ActionHandler {
         }
     }
     
+    /// Execute a lifecycle action (onAppear/onDisappear).
+    /// These bypass the component listener since they are not user interactions.
+    /// - Parameters:
+    ///   - action: The action to execute
+    ///   - nodeId: The ID of the node that triggered this action
+    public func handleLifecycleAction(
+        _ action: Action,
+        nodeId: String
+    ) {
+        Task { @MainActor in
+            do {
+                print("ActionHandler: Handling lifecycle action for node: \(nodeId)")
+                switch action {
+                case .openUrl(let openUrlAction):
+                    try await handleOpenUrl(openUrlAction, nodeId: nodeId)
+                case .custom(let customAction):
+                    handleCustomAction(customAction, nodeId: nodeId)
+                case .navigate(let navigateAction):
+                    handleNavigate(navigateAction, nodeId: nodeId)
+                case .trackEvent(let trackEventAction):
+                    handleTrackEvent(trackEventAction, nodeId: nodeId)
+                case .composite(let compositeAction):
+                    try await handleCompositeAction(compositeAction, nodeId: nodeId)
+                }
+            } catch {
+                print("ActionHandler: Error handling lifecycle action for node: \(nodeId) - \(error)")
+                actionListener?.onActionError(action: action, error: error)
+            }
+        }
+    }
+
+    /// Fire a hardcoded system event through the action listener.
+    /// System events are SDK-level events that always fire (not server-driven).
+    /// - Parameters:
+    ///   - eventName: The system event name (e.g., "Notification Viewed")
+    ///   - properties: Optional event properties
+    public func fireSystemEvent(eventName: String, properties: [String: Any]? = nil, deduplicate: Bool = false) {
+        guard hasActionListener else { return }
+        if deduplicate {
+            guard firedSystemEvents.insert(eventName).inserted else {
+                print("ActionHandler: System event already fired, skipping: \(eventName)")
+                return
+            }
+        }
+        Task { @MainActor in
+            print("ActionHandler: Firing system event: \(eventName)")
+            actionListener?.onTrackEvent(eventName: eventName, properties: properties)
+        }
+    }
+
     /// Handle interaction for components without server actions.
     /// - Parameters:
     ///   - nodeId: The ID of the component

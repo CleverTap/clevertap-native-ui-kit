@@ -49,10 +49,11 @@ fun Modifier.applyClickable(
     nodeId: String,
     actions: Map<String, Action>?,
     actionHandler: ActionHandler,
-    componentListener: NativeDisplayComponentListener? = null
+    componentListener: NativeDisplayComponentListener? = null,
+    onSystemClick: (() -> Unit)? = null
 ): Modifier {
     // Early exit if no interactions are enabled from server or client.
-    if (actions.isNullOrEmpty() && componentListener == null) return this
+    if (actions.isNullOrEmpty() && componentListener == null && onSystemClick == null) return this
 
     val onClickAction = actions?.get(ActionTriggers.ON_CLICK)
     val onLongPressAction = actions?.get(ActionTriggers.ON_LONG_PRESS)
@@ -60,6 +61,7 @@ fun Modifier.applyClickable(
 
     // Resolve callbacks: prioritize specific actions, fallback to component listener notification
     val onClick = {
+        onSystemClick?.invoke()
         onClickAction?.let { actionHandler.handleAction(it, nodeId, InteractionType.CLICK) }
             ?: actionHandler.handleInteractionWithoutAction(nodeId, InteractionType.CLICK)
     }

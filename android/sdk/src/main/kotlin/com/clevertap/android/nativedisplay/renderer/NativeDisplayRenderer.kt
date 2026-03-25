@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -13,7 +14,9 @@ import com.clevertap.android.nativedisplay.evaluator.VariableEvaluator
 import com.clevertap.android.nativedisplay.handler.ActionHandler
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener
+import com.clevertap.android.nativedisplay.models.ActionTriggers
 import com.clevertap.android.nativedisplay.models.ContainerType
+import com.clevertap.android.nativedisplay.models.ElementType
 import com.clevertap.android.nativedisplay.models.NativeDisplayContainer
 import com.clevertap.android.nativedisplay.models.NativeDisplayElement
 import com.clevertap.android.nativedisplay.models.NativeDisplayNode
@@ -83,6 +86,7 @@ fun NativeDisplayView(
         modifier = modifier,
         actionHandler = actionHandler,
         componentListener = componentListener,
+        isRoot = true,
     )
 }
 
@@ -97,6 +101,7 @@ fun RenderNode(
     modifier: Modifier = Modifier,
     actionHandler: ActionHandler? = null,
     componentListener: NativeDisplayComponentListener? = null,
+    isRoot: Boolean = false,
 ) {
     // Check visibility condition
     val isVisible = node.visible?.let { evaluator.evaluateBoolean(it) } ?: true
@@ -109,7 +114,10 @@ fun RenderNode(
     val hasServerActions = node.actions?.isNotEmpty() == true
     val isClientInterested = componentListener?.getInterestedNodeIds()?.contains(node.id) ?: (componentListener != null)  // If getInterestedNodeIds returns null, listen to all
 
-    val shouldApplyClickable = hasServerActions || isClientInterested
+    val isButton = node is NativeDisplayElement && node.elementType == ElementType.BUTTON
+
+    // Buttons are always clickable (for "Notification Clicked" system event)
+    val shouldApplyClickable = hasServerActions || isClientInterested || isButton
 
     // Apply modifiers in correct order
     // IMPORTANT: Offset must be applied BEFORE sizing so percentage calculations
@@ -124,11 +132,41 @@ fun RenderNode(
                     nodeId = node.id,
                     actions = node.actions,
                     actionHandler = actionHandler,
-                    componentListener = componentListener
+                    componentListener = componentListener,
+                    onSystemClick = if (isButton) {
+                        { actionHandler.fireSystemEvent("Notification Clicked", mapOf("nodeId" to node.id)) }
+                    } else {
+                        null
+                    }
                 )
             } else mod
         }
         .applyDecorations(resolvedStyle)
+
+    // Wire lifecycle action triggers (onAppear / onDisappear)
+    val onAppearAction = node.actions?.get(ActionTriggers.ON_APPEAR)
+    val onDisappearAction = node.actions?.get(ActionTriggers.ON_DISAPPEAR)
+
+    if (actionHandler != null && (onAppearAction != null || isRoot)) {
+        LaunchedEffect(node.id) {
+            // Fire "Notification Viewed" system event once for the root node
+            if (isRoot) {
+                actionHandler.fireSystemEvent("Notification Viewed", deduplicate = true)
+            }
+            // Fire server-driven onAppear action if present
+            if (onAppearAction != null) {
+                actionHandler.handleLifecycleAction(onAppearAction, node.id)
+            }
+        }
+    }
+
+    if (actionHandler != null && onDisappearAction != null) {
+        DisposableEffect(node.id) {
+            onDispose {
+                actionHandler.handleLifecycleAction(onDisappearAction, node.id)
+            }
+        }
+    }
 
     // Render based on node type
     when (node) {
