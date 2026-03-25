@@ -45,7 +45,6 @@ fun CleverTapIntegrationScreen() {
     val context = LocalContext.current
 
     // --- State ---
-    var statusText by remember { mutableStateOf("Initializing...") }
     var receivedUnits by remember { mutableStateOf<List<NativeDisplayUnit>>(emptyList()) }
     var logMessages by remember { mutableStateOf(listOf<String>()) }
     var eventName by remember { mutableStateOf("") }
@@ -112,10 +111,8 @@ fun CleverTapIntegrationScreen() {
         if (cleverTapApi != null) {
             bridge.bind(cleverTapApi)
             bridge.fetchNativeDisplays(cleverTapApi)
-            statusText = "Connected to CleverTap"
             Log.d("CleverTapIntegration", "Bridge bound and fetch requested")
         } else {
-            statusText = "CleverTap not available (default instance is null)"
             Log.w("CleverTapIntegration", "CleverTapAPI.getDefaultInstance() returned null")
         }
 
@@ -127,33 +124,13 @@ fun CleverTapIntegrationScreen() {
     // --- UI ---
     Column(modifier = Modifier.fillMaxSize()) {
 
-        // -- Header area (non-scrollable) --
+        // -- Fire Event (non-scrollable header) --
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Status
-            Text(
-                text = "CleverTap Integration",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = statusText,
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (cleverTapApi != null) Color(0xFF2E7D32) else Color(0xFFD32F2F)
-            )
-
-            HorizontalDivider()
-
-            // Fire Event Section
-            Text(
-                text = "Fire Event",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.SemiBold
-            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
