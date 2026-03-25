@@ -65,6 +65,14 @@ struct DemoMenuView: View {
                         description: "Core SDK bridge demo with mock data"
                     )
                 }
+
+                NavigationLink(destination: CleverTapIntegrationView()) {
+                    DemoMenuItem(
+                        icon: "antenna.radiowaves.left.and.right",
+                        title: "CleverTap Integration",
+                        description: "Core SDK integration with system events"
+                    )
+                }
             }
         }
         .navigationTitle("Other Demos")

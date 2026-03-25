@@ -62,7 +62,8 @@ android {
 dependencies {
     // Local SDK
     implementation("com.clevertap.android:native-display-sdk")
-    
+    implementation("com.clevertap.android:clevertap-android-sdk:8.0.0")
+
     // AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
