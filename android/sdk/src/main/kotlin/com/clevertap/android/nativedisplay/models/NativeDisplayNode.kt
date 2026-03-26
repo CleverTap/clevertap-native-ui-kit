@@ -67,7 +67,10 @@ data class NativeDisplayElement(
     val dividerConfig: DividerConfig? = null,
 
     // Image configuration (only used when elementType = IMAGE)
-    val imageConfig: ImageConfig? = null
+    val imageConfig: ImageConfig? = null,
+
+    // HTML configuration (only used when elementType = HTML)
+    val htmlConfig: HtmlConfig? = null
 ) : NativeDisplayNode()
 
 /**
@@ -90,6 +93,19 @@ data class DividerConfig(
 data class ImageConfig(
     val fit: ImageFit = ImageFit.CROP,  // How to fit image within bounds
     val animated: Boolean? = null  // null=auto-detect, true=force, false=disable
+)
+
+/**
+ * HTML configuration.
+ * Controls WebView behavior for HTML elements.
+ */
+@Immutable
+@Serializable
+data class HtmlConfig(
+    val javascriptEnabled: Boolean = false,
+    val scrollEnabled: Boolean = false,
+    val baseUrl: String? = null,
+    val transparentBackground: Boolean = true
 )
 
 /**

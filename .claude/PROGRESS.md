@@ -53,6 +53,7 @@ The Native Display SDK is fully implemented for both Android and iOS platforms.
 | IMAGE | ✅ | ✅ | reference/COMPONENTS_GUIDE.md |
 | BUTTON | ✅ | ✅ | reference/COMPONENTS_GUIDE.md |
 | VIDEO | ✅ | ✅ | reference/COMPONENTS_GUIDE.md |
+| HTML | ✅ | ✅ | reference/COMPONENTS_GUIDE.md |
 | SPACER | ✅ | ✅ | reference/COMPONENTS_GUIDE.md |
 | DIVIDER | ✅ | ✅ | reference/COMPONENTS_GUIDE.md |
 

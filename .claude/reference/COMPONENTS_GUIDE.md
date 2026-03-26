@@ -225,7 +225,58 @@ GIF animation is **auto-detected** from the URL in most cases (`.gif` extension,
 
 ---
 
-### 5. SPACER
+### 5. HTML
+
+**Bindings**: `html` (inline HTML string, primary) or `url` (load a URL). If both present, `html` wins.
+
+**Platform Requirements**:
+- **Android**: Uses `android.webkit.WebView` (built-in, no extra dependencies)
+- **iOS**: Uses `WKWebView` (iOS only — tvOS gets a placeholder fallback)
+
+**Performance Warning**: WebView is heavyweight. Avoid placing many HTML elements in scrollable containers (e.g., GALLERY). Each creates a separate WebView instance.
+
+**Sizing**: HTML element requires explicit `layout.width`/`height` — no `wrap_content` auto-sizing (WebView content size is unknowable without JS measurement).
+
+```json
+{
+  "id": "rich-content",
+  "elementType": "html",
+  "bindings": {
+    "html": "<div style='color:white; padding:16px;'><h2>Welcome</h2><p>Rich HTML content here.</p></div>"
+  },
+  "htmlConfig": {
+    "javascriptEnabled": false,
+    "scrollEnabled": false,
+    "baseUrl": "https://cdn.example.com",
+    "transparentBackground": true
+  },
+  "layout": {
+    "width": { "special": "match_parent" },
+    "height": { "value": 200, "unit": "dp" }
+  }
+}
+```
+
+#### htmlConfig Options
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `javascriptEnabled` | boolean | `false` | Enable JavaScript execution |
+| `scrollEnabled` | boolean | `false` | Allow scrolling within WebView |
+| `baseUrl` | string | `null` | Base URL for resolving relative paths in inline HTML |
+| `transparentBackground` | boolean | `true` | Transparent WebView background (allows container bg to show through) |
+
+#### Hardcoded Behavior (not configurable)
+- **No in-view navigation**: Link taps open in external browser
+- **No file/universal access**: Security hardening
+- **No zoom**: Pinch-to-zoom disabled
+- **No text zoom scaling**: System font size changes don't affect HTML layout
+- **Inline media playback**: On iOS (no fullscreen takeover)
+- **CleverTap JS Bridge**: Injected automatically via reflection when CleverTap Core SDK is present at runtime. When absent, HTML renders without bridge — pure HTML still works.
+
+---
+
+### 6. SPACER
 
 **Purpose**: Add spacing between elements
 
@@ -242,7 +293,7 @@ GIF animation is **auto-detected** from the URL in most cases (`.gif` extension,
 
 ---
 
-### 6. DIVIDER
+### 7. DIVIDER
 
 **Purpose**: Visual divider/separator
 

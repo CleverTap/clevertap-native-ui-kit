@@ -659,6 +659,21 @@ struct RenderElement: View {
         case .divider:
             renderDivider()
                 .padding(paddingInsets)
+
+        case .html:
+            #if os(iOS)
+            renderHtml()
+                .padding(paddingInsets)
+            #else
+            Rectangle()
+                .fill(Color.gray.opacity(0.3))
+                .overlay(
+                    Text("HTML not supported on this platform")
+                        .foregroundColor(.gray)
+                        .font(.caption)
+                )
+                .padding(paddingInsets)
+            #endif
         }
     }
     
@@ -882,6 +897,31 @@ struct RenderElement: View {
         }
     }
     
+    #if os(iOS)
+    @ViewBuilder
+    private func renderHtml() -> some View {
+        let html = element.bindings["html"].map { evaluator.evaluateString($0) }
+        let url = element.bindings["url"].map { evaluator.evaluateString($0) }
+        let config = element.htmlConfig ?? HtmlConfig()
+
+        if (html != nil && !html!.isEmpty) || (url != nil && !url!.isEmpty) {
+            HtmlWebView(
+                html: html,
+                url: url,
+                config: config
+            )
+        } else {
+            Rectangle()
+                .fill(Color.gray.opacity(0.3))
+                .overlay(
+                    Text("No HTML Content")
+                        .foregroundColor(.gray)
+                        .font(.caption)
+                )
+        }
+    }
+    #endif
+
     private func resolveFontWeight(_ weight: FontWeight?) -> Font.Weight {
         switch weight {
         case .light: return .light
