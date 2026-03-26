@@ -215,6 +215,9 @@ public struct NativeDisplayElement: Codable, Equatable {
     // Image configuration (only used when elementType = IMAGE)
     public let imageConfig: ImageConfig?
 
+    // HTML configuration (only used when elementType = HTML)
+    public let htmlConfig: HtmlConfig?
+
     private enum CodingKeys: String, CodingKey {
         case type
         case id
@@ -228,6 +231,7 @@ public struct NativeDisplayElement: Codable, Equatable {
         case animation
         case dividerConfig
         case imageConfig
+        case htmlConfig
     }
     
     public init(
@@ -241,7 +245,8 @@ public struct NativeDisplayElement: Codable, Equatable {
         actions: [String: Action]? = nil,
         animation: Animation? = nil,
         dividerConfig: DividerConfig? = nil,
-        imageConfig: ImageConfig? = nil
+        imageConfig: ImageConfig? = nil,
+        htmlConfig: HtmlConfig? = nil
     ) {
         self.id = id
         self.elementType = elementType
@@ -254,6 +259,7 @@ public struct NativeDisplayElement: Codable, Equatable {
         self.animation = animation
         self.dividerConfig = dividerConfig
         self.imageConfig = imageConfig
+        self.htmlConfig = htmlConfig
     }
     
     public init(from decoder: Decoder) throws {
@@ -269,6 +275,7 @@ public struct NativeDisplayElement: Codable, Equatable {
         animation = try container.decodeIfPresent(Animation.self, forKey: .animation)
         dividerConfig = try container.decodeIfPresent(DividerConfig.self, forKey: .dividerConfig)
         imageConfig = try container.decodeIfPresent(ImageConfig.self, forKey: .imageConfig)
+        htmlConfig = try container.decodeIfPresent(HtmlConfig.self, forKey: .htmlConfig)
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -285,6 +292,7 @@ public struct NativeDisplayElement: Codable, Equatable {
         try container.encodeIfPresent(animation, forKey: .animation)
         try container.encodeIfPresent(dividerConfig, forKey: .dividerConfig)
         try container.encodeIfPresent(imageConfig, forKey: .imageConfig)
+        try container.encodeIfPresent(htmlConfig, forKey: .htmlConfig)
     }
 }
 
@@ -337,6 +345,40 @@ public struct ImageConfig: Codable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case fit, animated
+    }
+}
+
+/// HTML configuration.
+/// Controls WebView behavior for HTML elements.
+public struct HtmlConfig: Codable, Equatable {
+    public let javascriptEnabled: Bool
+    public let scrollEnabled: Bool
+    public let baseUrl: String?
+    public let transparentBackground: Bool
+
+    public init(
+        javascriptEnabled: Bool = false,
+        scrollEnabled: Bool = false,
+        baseUrl: String? = nil,
+        transparentBackground: Bool = true
+    ) {
+        self.javascriptEnabled = javascriptEnabled
+        self.scrollEnabled = scrollEnabled
+        self.baseUrl = baseUrl
+        self.transparentBackground = transparentBackground
+    }
+
+    // Custom decoder to handle defaults
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.javascriptEnabled = try container.decodeIfPresent(Bool.self, forKey: .javascriptEnabled) ?? false
+        self.scrollEnabled = try container.decodeIfPresent(Bool.self, forKey: .scrollEnabled) ?? false
+        self.baseUrl = try container.decodeIfPresent(String.self, forKey: .baseUrl)
+        self.transparentBackground = try container.decodeIfPresent(Bool.self, forKey: .transparentBackground) ?? true
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case javascriptEnabled, scrollEnabled, baseUrl, transparentBackground
     }
 }
 

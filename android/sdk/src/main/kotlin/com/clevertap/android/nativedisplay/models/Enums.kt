@@ -44,7 +44,10 @@ enum class ElementType {
     SPACER,
     
     @SerialName("divider")
-    DIVIDER
+    DIVIDER,
+
+    @SerialName("html")
+    HTML
 }
 
 /**

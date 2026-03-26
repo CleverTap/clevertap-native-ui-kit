@@ -52,6 +52,7 @@ This is the COMPLETE specification for generating valid Native Display JSON conf
 - `"image"` ✅
 - `"button"` ✅
 - `"video"` ✅
+- `"html"` ✅
 - `"spacer"` ✅
 - `"divider"` ✅
 
@@ -161,6 +162,10 @@ For `vertical` and `horizontal` containers:
 
 // Image/Video
 {"bindings": {"url": "https://..."}}
+
+// HTML (inline html or url, html takes priority)
+{"bindings": {"html": "<div>Content</div>"}}
+{"bindings": {"url": "https://example.com/page.html"}}
 
 // Spacer/Divider (empty but required!)
 {"bindings": {}}
