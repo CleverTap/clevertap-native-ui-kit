@@ -20,6 +20,7 @@ class SampleApplication : Application() {
     }
 
     override fun onCreate() {
+        // aarrggbb vs rrggbbaa -> #12341256
         CleverTapAPI.setDebugLevel(VERBOSE)
         ActivityLifecycleCallback.register(this)
         super.onCreate()

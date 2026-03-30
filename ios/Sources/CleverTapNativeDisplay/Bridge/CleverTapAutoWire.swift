@@ -9,6 +9,7 @@
 // and performSelector.
 
 import Foundation
+import ObjectiveC
 
 /// Handles runtime detection of the CleverTap Core SDK and automatic registration
 /// as a display unit delegate. If the Core SDK is not present, this is a silent no-op.
@@ -23,6 +24,27 @@ internal class CleverTapAutoWire: NSObject {
     /// Shared observer instance kept alive while auto-wire is active.
     private static var activeObserver: CleverTapAutoWire?
 
+    /// Whether we've already adopted the CleverTapDisplayUnitDelegate protocol at runtime.
+    private static var protocolAdopted = false
+
+    // MARK: - Protocol Adoption
+
+    /// Dynamically adopt the `CleverTapDisplayUnitDelegate` protocol at runtime.
+    ///
+    /// The Core SDK's `setDisplayUnitDelegate:` checks `conformsToProtocol:` before
+    /// accepting the delegate. Since we don't have a compile-time dependency on the
+    /// CleverTap SDK, we use `class_addProtocol` to register conformance at runtime.
+    private static func adoptProtocolIfNeeded() {
+        guard !protocolAdopted else { return }
+        if let proto = objc_getProtocol("CleverTapDisplayUnitDelegate") {
+            class_addProtocol(CleverTapAutoWire.self, proto)
+            protocolAdopted = true
+            print("[NativeDisplayBridge] Adopted CleverTapDisplayUnitDelegate protocol")
+        } else {
+            print("[NativeDisplayBridge] CleverTapDisplayUnitDelegate protocol not found at runtime")
+        }
+    }
+
     // MARK: - Public API
 
     /// Attempt to auto-wire the bridge to the CleverTap Core SDK.
@@ -30,6 +52,8 @@ internal class CleverTapAutoWire: NSObject {
     /// - Returns: `true` if auto-wire succeeded, `false` if Core SDK not found or wiring failed.
     @discardableResult
     static func tryAutoWire(bridge: NativeDisplayBridge) -> Bool {
+        adoptProtocolIfNeeded()
+
         // 1. Check if CleverTap class exists
         guard let ctClass = NSClassFromString("CleverTap") as? NSObject.Type else {
             print("[NativeDisplayBridge] CleverTap SDK not found, manual mode only")
@@ -98,6 +122,8 @@ internal class CleverTapAutoWire: NSObject {
         bridge: NativeDisplayBridge,
         clientHandler: (([AnyObject]) -> Void)? = nil
     ) -> Bool {
+        adoptProtocolIfNeeded()
+
         // Verify this looks like a CleverTap instance
         let className = String(describing: type(of: cleverTap))
         guard className.contains("CleverTap") else {

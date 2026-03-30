@@ -21,7 +21,7 @@
             android:value="012-b64" />
         <meta-data
             android:name="CLEVERTAP_REGION"
-            android:value="sk1-staging-21"/>
+            android:value="sk1-staging-25"/>
 
         <activity
             android:name=".MainActivity"
