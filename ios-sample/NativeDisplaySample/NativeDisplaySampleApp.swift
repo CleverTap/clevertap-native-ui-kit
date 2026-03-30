@@ -1,5 +1,6 @@
 import SwiftUI
 import CleverTapNativeDisplay
+import CleverTapSDK
 
 @main
 struct NativeDisplaySampleApp: App {
@@ -10,6 +11,18 @@ struct NativeDisplaySampleApp: App {
         ProcessInfo.processInfo.environment["PRELOAD_IMAGES"] == "1"
     }
 #endif
+
+    init() {
+        // Initialize NativeDisplayBridge and bind to CleverTap at app launch
+        let bridge = NativeDisplayBridge.shared
+        if let ct = CleverTap.sharedInstance() {
+            bridge.bind(ct)
+            bridge.fetchNativeDisplays(ct)
+            print("[NativeDisplaySampleApp] Bridge bound and fetch requested")
+        } else {
+            print("[NativeDisplaySampleApp] CleverTap not configured — check Info.plist credentials")
+        }
+    }
 
     var body: some Scene {
         WindowGroup {

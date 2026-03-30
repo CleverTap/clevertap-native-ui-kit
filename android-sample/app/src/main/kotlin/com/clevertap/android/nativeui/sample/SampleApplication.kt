@@ -1,13 +1,43 @@
 package com.clevertap.android.nativeui.sample
 
 import android.app.Application
+import android.util.Log
+import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge
+import com.clevertap.android.sdk.ActivityLifecycleCallback
+import com.clevertap.android.sdk.CleverTapAPI
+import com.clevertap.android.sdk.CleverTapAPI.LogLevel.VERBOSE
 
 /**
  * Sample application.
  *
- * Note: Image loading (including GIF support) is handled internally by the
- * Native Display SDK. No Coil configuration needed in the host app.
+ * Initializes CleverTap and the NativeDisplayBridge at app startup so that
+ * any screen can observe display units without repeating setup.
  */
 class SampleApplication : Application() {
-    // No custom ImageLoader needed - SDK provides its own with GIF support
+
+    companion object {
+        private const val TAG = "SampleApplication"
+    }
+
+    override fun onCreate() {
+        CleverTapAPI.setDebugLevel(VERBOSE)
+        ActivityLifecycleCallback.register(this)
+        super.onCreate()
+
+        // 1. Initialize NativeDisplayBridge (auto-wire mode)
+        val bridge = NativeDisplayBridge.initialize(this)
+
+        // 2. Get CleverTap default instance (auto-created from manifest metadata)
+        val cleverTapApi = CleverTapAPI.getDefaultInstance(this)
+
+        if (cleverTapApi != null) {
+            // 3. Bind bridge to CleverTap — wires display unit callbacks
+            bridge.bind(cleverTapApi)
+            // 4. Request Native Display units from server
+            bridge.fetchNativeDisplays(cleverTapApi)
+            Log.d(TAG, "Bridge initialized, bound, and fetch requested")
+        } else {
+            Log.w(TAG, "CleverTapAPI.getDefaultInstance() returned null — check manifest metadata")
+        }
+    }
 }

@@ -15,13 +15,13 @@
 
         <meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"
-            android:value="449-RW6-794Z" />
+            android:value="468-RZW-ZK6Z" />
         <meta-data
             android:name="CLEVERTAP_TOKEN"
-            android:value="602-c44" />
+            android:value="012-b64" />
         <meta-data
             android:name="CLEVERTAP_REGION"
-            android:value="eu1"/>
+            android:value="sk1-staging-21"/>
 
         <activity
             android:name=".MainActivity"
