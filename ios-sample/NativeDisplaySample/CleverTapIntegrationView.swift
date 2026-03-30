@@ -10,13 +10,10 @@ struct CleverTapIntegrationView: View {
     @StateObject private var viewModel = CleverTapIntegrationViewModel()
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                fireEventSection
-                displayCanvasSection
-                eventLogSection
-            }
-            .padding(16)
+        VStack(alignment: .leading, spacing: 20) {
+            fireEventSection
+            displayCanvasSection
+            eventLogSection
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle("CleverTap Integration")
