@@ -138,31 +138,20 @@ class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBr
     
     override init() {
         super.init()
-        
-        // Get CleverTap shared instance
+
+        // Bridge is initialized, bound, and fetch requested in NativeDisplaySampleApp.
+        // This view model only registers its listener to observe display units.
         cleverTapInstance = CleverTap.sharedInstance()
         cleverTapAvailable = cleverTapInstance != nil
-        
+
         if cleverTapAvailable {
             log("CleverTap instance found")
         } else {
             log("CleverTap not configured — check Info.plist credentials")
         }
-        
-        // Register bridge listener
+
         bridge.addListener(self)
         log("Bridge listener registered")
-        
-        // Bind bridge to CleverTap
-        if let ct = cleverTapInstance {
-            let didBind = bridge.bind(ct)
-            bridgeBound = didBind
-            log(didBind ? "Bridge bound to CleverTap" : "Bridge bind failed")
-            
-            // Fetch Native Displays from server
-            let didFetch = bridge.fetchNativeDisplays(ct)
-            log(didFetch ? "Fetch request sent" : "Fetch request failed")
-        }
     }
     
     // MARK: - NativeDisplayBridgeListener

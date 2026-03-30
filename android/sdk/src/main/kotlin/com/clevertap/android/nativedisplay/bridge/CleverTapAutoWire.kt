@@ -18,6 +18,15 @@ internal object CleverTapAutoWire {
     private const val TAG = "NativeDisplayBridge"
 
     /**
+     * Strong reference to the listener we register with the Core SDK.
+     *
+     * The Core SDK's CallbackManager stores the DisplayUnitListener as a WeakReference.
+     * Without a strong reference here, the anonymous listener object would be garbage
+     * collected and the Core SDK would log "No registered listener, failed to notify".
+     */
+    private var activeListener: DisplayUnitListener? = null
+
+    /**
      * Auto-wire using the default CleverTapAPI instance.
      *
      * @param context Application context for instance lookup
@@ -72,13 +81,16 @@ internal object CleverTapAutoWire {
      *
      * This avoids replacing the client's listener since the Core SDK
      * only supports a single [DisplayUnitListener].
+     *
+     * The listener is stored in [activeListener] to prevent GC, since the
+     * Core SDK holds it via a WeakReference.
      */
     private fun wireListener(
         ctApi: CleverTapAPI,
         bridge: NativeDisplayBridge,
         clientListener: DisplayUnitListener? = null
     ): Boolean {
-        ctApi.setDisplayUnitListener(object : DisplayUnitListener {
+        val listener = object : DisplayUnitListener {
             override fun onDisplayUnitsLoaded(units: ArrayList<CleverTapDisplayUnit>?) {
                 // Forward to client's listener first
                 if (clientListener != null) {
@@ -103,7 +115,12 @@ internal object CleverTapAutoWire {
                     bridge.processDisplayUnits(jsonStrings)
                 }
             }
-        })
+        }
+
+        // Keep a strong reference so the Core SDK's WeakReference doesn't lose it
+        activeListener = listener
+        ctApi.setDisplayUnitListener(listener)
+
         Log.d(TAG, "Wired to CleverTap instance${if (clientListener != null) " (with client listener forwarding)" else ""}")
         return true
     }
