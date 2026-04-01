@@ -28,124 +28,53 @@ struct TappableModifier: ViewModifier {
             return AnyView(content)
         }
         
-        // Apply gestures based on what's defined
-        if onClick != nil && onLongPress == nil && onDoubleTap == nil {
-            // Simple tap only - use exclusive gesture to block propagation
-            return AnyView(
-                content
-                    .contentShape(Rectangle())
-                    .gesture(
-                        TapGesture()
-                            .onEnded { _ in
-                                handleTap(action: onClick, interactionType: .click)
+        let base = content.contentShape(Rectangle())
+        
+        if let longPress = onLongPress {
+            if onClick != nil || componentListener != nil {
+                return AnyView(
+                    base
+                        .onLongPressGesture(minimumDuration: 0.5) {
+                            handleTap(action: longPress, interactionType: .longPress)
+                        }
+                        .ifLet(onDoubleTap) { v, action in
+                            v.onTapGesture(count: 2) {
+                                handleTap(action: action, interactionType: .doubleTap)
                             }
-                    )
-            )
-        } else if onDoubleTap != nil && onClick == nil && onLongPress == nil {
-            // Only double tap
-            return AnyView(
-                content
-                    .contentShape(Rectangle())
-                    .gesture(
-                        TapGesture(count: 2)
-                            .onEnded { _ in
-                                handleTap(action: onDoubleTap, interactionType: .doubleTap)
+                        }
+                        .onTapGesture {
+                            handleTap(action: onClick, interactionType: .click)
+                        }
+                )
+            } else {
+                return AnyView(
+                    base
+                        .onLongPressGesture(minimumDuration: 0.5) {
+                            handleTap(action: longPress, interactionType: .longPress)
+                        }
+                        .ifLet(onDoubleTap) { v, action in
+                            v.onTapGesture(count: 2) {
+                                handleTap(action: action, interactionType: .doubleTap)
                             }
-                    )
-            )
-        } else if onLongPress != nil && onClick == nil && onDoubleTap == nil {
-            // Only long press
-            return AnyView(
-                content
-                    .contentShape(Rectangle())
-                    .gesture(
-                        LongPressGesture(minimumDuration: 0.5)
-                            .onEnded { _ in
-                                handleTap(action: onLongPress, interactionType: .longPress)
-                            }
-                    )
-            )
-        } else if onClick != nil && onDoubleTap != nil && onLongPress == nil {
-            // Single + Double tap
-            return AnyView(
-                content
-                    .contentShape(Rectangle())
-                    .simultaneousGesture(
-                        TapGesture(count: 2)
-                            .onEnded { _ in
-                                handleTap(action: onDoubleTap, interactionType: .doubleTap)
-                            }
-                    )
-                    .gesture(
-                        TapGesture()
-                            .onEnded { _ in
-                                handleTap(action: onClick, interactionType: .click)
-                            }
-                    )
-            )
-        } else if onClick != nil && onLongPress != nil && onDoubleTap == nil {
-            // Single + Long press
-            return AnyView(
-                content
-                    .contentShape(Rectangle())
-                    .simultaneousGesture(
-                        LongPressGesture(minimumDuration: 0.5)
-                            .onEnded { _ in
-                                handleTap(action: onLongPress, interactionType: .longPress)
-                            }
-                    )
-                    .gesture(
-                        TapGesture()
-                            .onEnded { _ in
-                                handleTap(action: onClick, interactionType: .click)
-                            }
-                    )
-            )
-        } else if componentListener != nil && onClick == nil && onLongPress == nil && onDoubleTap == nil {
-            // Only component listener (no server actions)
-            return AnyView(
-                content
-                    .contentShape(Rectangle())
-                    .gesture(
-                        TapGesture()
-                            .onEnded { _ in
-                                handleTap(action: nil, interactionType: .click)
-                            }
-                    )
-            )
-        } else {
-            // Multiple gestures
-            return AnyView(
-                content
-                    .contentShape(Rectangle())
-                    .simultaneousGesture(
-                        TapGesture(count: 2)
-                            .onEnded { _ in
-                                if let action = onDoubleTap {
-                                    handleTap(action: action, interactionType: .doubleTap)
-                                }
-                            }
-                    )
-                    .simultaneousGesture(
-                        LongPressGesture(minimumDuration: 0.5)
-                            .onEnded { _ in
-                                if let action = onLongPress {
-                                    handleTap(action: action, interactionType: .longPress)
-                                }
-                            }
-                    )
-                    .gesture(
-                        TapGesture()
-                            .onEnded { _ in
-                                if let action = onClick {
-                                    handleTap(action: action, interactionType: .click)
-                                } else if componentListener != nil {
-                                    handleTap(action: nil, interactionType: .click)
-                                }
-                            }
-                    )
-            )
+                        }
+                )
+            }
         }
+        
+        // No long press — tap and/or double tap
+        return AnyView(
+            base
+                .ifLet(onDoubleTap) { v, action in
+                    v.onTapGesture(count: 2) {
+                        handleTap(action: action, interactionType: .doubleTap)
+                    }
+                }
+                .gesture(
+                    TapGesture().onEnded { _ in
+                        handleTap(action: onClick, interactionType: .click)
+                    }
+                )
+        )
     }
     
     /// Handle tap gesture with component listener and action execution
@@ -188,6 +117,17 @@ struct TappableModifier: ViewModifier {
         )
 
         return !consumed
+    }
+}
+/// Conditionally applies a modifier only when an optional value is present.
+extension View {
+    @ViewBuilder
+    func ifLet<T, Content: View>(_ value: T?, @ViewBuilder transform: (Self, T) -> Content) -> some View {
+        if let value = value {
+            transform(self, value)
+        } else {
+            self
+        }
     }
 }
 

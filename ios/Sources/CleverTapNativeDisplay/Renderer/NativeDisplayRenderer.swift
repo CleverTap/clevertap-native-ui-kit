@@ -184,6 +184,8 @@ struct RenderNode: View {
             .applyEntranceAnimation(node.animation)
             .applyTappable(
                 nodeId: node.id,
+                // Buttons handle gestures explicitly inside renderButton() via simultaneousGesture.
+                // Skip applyTappable for buttons to prevent double-firing of onClick.
                 actions: !isButton && shouldApplyTappable ? node.actions : nil,
                 actionHandler: actionHandler,
                 componentListener: !isButton ? componentListener : nil
@@ -773,16 +775,16 @@ struct RenderElement: View {
     @ViewBuilder
     private func renderButton() -> some View {
         let buttonText = element.bindings["text"].map { evaluator.evaluateString($0) } ?? "Button"
-
         let textProps = resolvedStyle.extractTextProperties()
+
+        let onLongPress = element.actions?[ActionTriggers.onLongPress]
+        let onDoubleTap = element.actions?[ActionTriggers.onDoubleTap]
 
         Button(action: {
             if let onClick = element.actions?[ActionTriggers.onClick] {
                 actionHandler?.handleAction(onClick, nodeId: element.id, interactionType: .click)
             }
         }) {
-            // Fill the allocated frame so the tappable area covers the full element bounds.
-            // Text is centered within the button — center alignment is the conventional default for buttons.
             Text(buttonText)
                 .foregroundColor(ColorParser.parse(textProps.color) ?? .white)
                 .font(.system(size: textProps.size ?? 16))
@@ -793,6 +795,22 @@ struct RenderElement: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
         .buttonStyle(.plain)
+        .ifLet(onLongPress) { view, action in
+            view.simultaneousGesture(
+                LongPressGesture(minimumDuration: 0.5)
+                    .onEnded { _ in
+                        actionHandler?.handleAction(action, nodeId: element.id, interactionType: .longPress)
+                    }
+            )
+        }
+        .ifLet(onDoubleTap) { view, action in
+            view.simultaneousGesture(
+                TapGesture(count: 2)
+                    .onEnded { _ in
+                        actionHandler?.handleAction(action, nodeId: element.id, interactionType: .doubleTap)
+                    }
+            )
+        }
     }
 
     @ViewBuilder
