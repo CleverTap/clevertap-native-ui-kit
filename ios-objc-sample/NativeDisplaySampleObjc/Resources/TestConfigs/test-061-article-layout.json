@@ -103,7 +103,8 @@
                 "style": {
                   "fontSize": 14,
                   "fontWeight": "medium",
-                  "textColor": "#FF6B7280"
+                  "textColor": "#FF6B7280",
+                  "lineHeight": 20
                 },
                 "type": "element"
               },
@@ -111,7 +112,7 @@
                 "id": "separator",
                 "elementType": "text",
                 "bindings": {
-                  "text": "\u2022"
+                  "text": "•"
                 },
                 "layout": {
                   "width": {
@@ -121,7 +122,8 @@
                 },
                 "style": {
                   "fontSize": 14,
-                  "textColor": "#FF9CA3AF"
+                  "textColor": "#FF9CA3AF",
+                  "lineHeight": 20
                 },
                 "type": "element"
               },
@@ -140,7 +142,8 @@
                 "style": {
                   "fontSize": 14,
                   "fontWeight": "normal",
-                  "textColor": "#FF6B7280"
+                  "textColor": "#FF6B7280",
+                  "lineHeight": 20
                 },
                 "type": "element"
               }

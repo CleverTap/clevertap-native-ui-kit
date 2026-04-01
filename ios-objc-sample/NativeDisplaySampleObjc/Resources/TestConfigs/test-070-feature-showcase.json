@@ -4,7 +4,8 @@
     "defaultStyle": {
       "textColor": "#FF1F2937",
       "fontSize": 16,
-      "fontFamily": "System"
+      "fontFamily": "System",
+      "lineHeight": 22
     }
   },
   "variables": {
@@ -12,10 +13,10 @@
     "featureTitle": "Advanced Analytics",
     "featureSubtitle": "Real-time Insights",
     "featureDescription": "Get deep insights into your data with our powerful analytics engine. Track metrics, visualize trends, and make informed decisions with real-time reporting and customizable dashboards.",
-    "benefit1": "\ud83d\udcca Real-time Data Processing",
-    "benefit2": "\ud83d\udcc8 Custom Dashboards",
-    "benefit3": "\ud83c\udfaf Predictive Analytics",
-    "benefit4": "\ud83d\udd14 Smart Alerts",
+    "benefit1": "📊 Real-time Data Processing",
+    "benefit2": "📈 Custom Dashboards",
+    "benefit3": "🎯 Predictive Analytics",
+    "benefit4": "🔔 Smart Alerts",
     "ctaButton": "Explore Features"
   },
   "root": {
@@ -141,7 +142,8 @@
                   "fontSize": 32,
                   "fontWeight": "bold",
                   "textColor": "#FF111827",
-                  "textAlign": "center"
+                  "textAlign": "center",
+                  "lineHeight": 45
                 },
                 "type": "element"
               },
@@ -161,7 +163,8 @@
                   "fontSize": 16,
                   "fontWeight": "medium",
                   "textColor": "#FF3B82F6",
-                  "textAlign": "center"
+                  "textAlign": "center",
+                  "lineHeight": 22
                 },
                 "type": "element"
               }
@@ -347,7 +350,8 @@
               "shadowRadius": 16,
               "shadowColor": "#FF3B82F6",
               "shadowOpacity": 0.4,
-              "shadowOffsetY": 6
+              "shadowOffsetY": 6,
+              "lineHeight": 25
             },
             "type": "element"
           }

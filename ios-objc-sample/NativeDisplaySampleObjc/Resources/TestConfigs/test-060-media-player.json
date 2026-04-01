@@ -4,7 +4,8 @@
     "defaultStyle": {
       "textColor": "#FFFFFFFF",
       "fontSize": 14,
-      "fontFamily": "System"
+      "fontFamily": "System",
+      "lineHeight": 20
     }
   },
   "variables": {
@@ -103,7 +104,8 @@
                 "style": {
                   "fontSize": 20,
                   "fontWeight": "bold",
-                  "textColor": "#FFFFFFFF"
+                  "textColor": "#FFFFFFFF",
+                  "lineHeight": 28
                 },
                 "type": "element"
               },
@@ -122,7 +124,8 @@
                 "style": {
                   "fontSize": 14,
                   "fontWeight": "normal",
-                  "textColor": "#FFB3B3B3"
+                  "textColor": "#FFB3B3B3",
+                  "lineHeight": 20
                 },
                 "type": "element"
               }
@@ -169,7 +172,7 @@
                 "id": "rewind-button",
                 "elementType": "button",
                 "bindings": {
-                  "text": "\u23ea"
+                  "text": "⏪"
                 },
                 "layout": {
                   "width": {
@@ -189,7 +192,8 @@
                   "shadowRadius": 8,
                   "shadowColor": "#FF000000",
                   "shadowOpacity": 0.3,
-                  "shadowOffsetY": 4
+                  "shadowOffsetY": 4,
+                  "lineHeight": 39
                 },
                 "type": "element"
               },
@@ -197,7 +201,7 @@
                 "id": "play-button",
                 "elementType": "button",
                 "bindings": {
-                  "text": "\u25b6\ufe0f"
+                  "text": "▶️"
                 },
                 "layout": {
                   "width": {
@@ -217,7 +221,8 @@
                   "shadowRadius": 12,
                   "shadowColor": "#FFEF4444",
                   "shadowOpacity": 0.5,
-                  "shadowOffsetY": 6
+                  "shadowOffsetY": 6,
+                  "lineHeight": 45
                 },
                 "type": "element"
               },
@@ -225,7 +230,7 @@
                 "id": "forward-button",
                 "elementType": "button",
                 "bindings": {
-                  "text": "\u23e9"
+                  "text": "⏩"
                 },
                 "layout": {
                   "width": {
@@ -245,7 +250,8 @@
                   "shadowRadius": 8,
                   "shadowColor": "#FF000000",
                   "shadowOpacity": 0.3,
-                  "shadowOffsetY": 4
+                  "shadowOffsetY": 4,
+                  "lineHeight": 39
                 },
                 "type": "element"
               }

@@ -4,7 +4,8 @@
     "defaultStyle": {
       "textColor": "#FF1F2937",
       "fontSize": 14,
-      "fontFamily": "System"
+      "fontFamily": "System",
+      "lineHeight": 20
     }
   },
   "variables": {
@@ -12,7 +13,7 @@
     "userHandle": "@alexthompson",
     "avatarUrl": "https://yavuzceliker.github.io/sample-images/image-890.jpg",
     "postTime": "2 hours ago",
-    "postText": "Just finished an amazing hike! The views from the summit were absolutely breathtaking. Nature never fails to inspire and rejuvenate the soul. \ud83c\udfd4\ufe0f\u2728",
+    "postText": "Just finished an amazing hike! The views from the summit were absolutely breathtaking. Nature never fails to inspire and rejuvenate the soul. 🏔️✨",
     "postImage": "https://yavuzceliker.github.io/sample-images/image-1350.jpg",
     "likes": "342",
     "comments": "28",
@@ -130,7 +131,8 @@
                     "style": {
                       "fontSize": 16,
                       "fontWeight": "bold",
-                      "textColor": "#FF111827"
+                      "textColor": "#FF111827",
+                      "lineHeight": 22
                     },
                     "type": "element"
                   },
@@ -163,7 +165,8 @@
                         "style": {
                           "fontSize": 13,
                           "fontWeight": "normal",
-                          "textColor": "#FF6B7280"
+                          "textColor": "#FF6B7280",
+                          "lineHeight": 18
                         },
                         "type": "element"
                       },
@@ -171,7 +174,7 @@
                         "id": "separator",
                         "elementType": "text",
                         "bindings": {
-                          "text": "\u2022"
+                          "text": "•"
                         },
                         "layout": {
                           "width": {
@@ -181,7 +184,8 @@
                         },
                         "style": {
                           "fontSize": 13,
-                          "textColor": "#FF9CA3AF"
+                          "textColor": "#FF9CA3AF",
+                          "lineHeight": 18
                         },
                         "type": "element"
                       },
@@ -200,7 +204,8 @@
                         "style": {
                           "fontSize": 13,
                           "fontWeight": "normal",
-                          "textColor": "#FF9CA3AF"
+                          "textColor": "#FF9CA3AF",
+                          "lineHeight": 18
                         },
                         "type": "element"
                       }
@@ -272,7 +277,7 @@
                 "id": "likes-stat",
                 "elementType": "text",
                 "bindings": {
-                  "text": "\u2764\ufe0f {{likes}}"
+                  "text": "❤️ {{likes}}"
                 },
                 "layout": {
                   "width": {
@@ -283,7 +288,8 @@
                 "style": {
                   "fontSize": 14,
                   "fontWeight": "medium",
-                  "textColor": "#FF6B7280"
+                  "textColor": "#FF6B7280",
+                  "lineHeight": 20
                 },
                 "type": "element"
               },
@@ -291,7 +297,7 @@
                 "id": "comments-stat",
                 "elementType": "text",
                 "bindings": {
-                  "text": "\ud83d\udcac {{comments}}"
+                  "text": "💬 {{comments}}"
                 },
                 "layout": {
                   "width": {
@@ -302,7 +308,8 @@
                 "style": {
                   "fontSize": 14,
                   "fontWeight": "medium",
-                  "textColor": "#FF6B7280"
+                  "textColor": "#FF6B7280",
+                  "lineHeight": 20
                 },
                 "type": "element"
               },
@@ -310,7 +317,7 @@
                 "id": "shares-stat",
                 "elementType": "text",
                 "bindings": {
-                  "text": "\ud83d\udd04 {{shares}}"
+                  "text": "🔄 {{shares}}"
                 },
                 "layout": {
                   "width": {
@@ -321,7 +328,8 @@
                 "style": {
                   "fontSize": 14,
                   "fontWeight": "medium",
-                  "textColor": "#FF6B7280"
+                  "textColor": "#FF6B7280",
+                  "lineHeight": 20
                 },
                 "type": "element"
               }
@@ -371,7 +379,8 @@
               "shadowRadius": 8,
               "shadowColor": "#FF3B82F6",
               "shadowOpacity": 0.3,
-              "shadowOffsetY": 2
+              "shadowOffsetY": 2,
+              "lineHeight": 21
             },
             "type": "element"
           }

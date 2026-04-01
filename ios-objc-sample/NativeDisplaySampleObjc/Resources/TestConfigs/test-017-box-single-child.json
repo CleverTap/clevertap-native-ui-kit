@@ -3,7 +3,8 @@
     "id": "test-theme",
     "defaultStyle": {
       "textColor": "#FFFFFF",
-      "fontSize": 16
+      "fontSize": 16,
+      "lineHeight": 22
     }
   },
   "root": {
@@ -54,7 +55,8 @@
         "style": {
           "fontSize": 32,
           "fontWeight": "bold",
-          "textColor": "#FFEB3B"
+          "textColor": "#FFEB3B",
+          "lineHeight": 45
         }
       }
     ]

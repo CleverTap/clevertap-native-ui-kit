@@ -4,7 +4,8 @@
     "defaultStyle": {
       "textColor": "#FF1F2937",
       "fontSize": 16,
-      "fontFamily": "System"
+      "fontFamily": "System",
+      "lineHeight": 22
     }
   },
   "variables": {
@@ -88,7 +89,8 @@
                   "fontSize": 18,
                   "fontWeight": "bold",
                   "textColor": "#FF111827",
-                  "textAlign": "center"
+                  "textAlign": "center",
+                  "lineHeight": 25
                 },
                 "type": "element"
               },
@@ -164,7 +166,8 @@
                   "backgroundColor": "#00000000",
                   "textColor": "#FF3B82F6",
                   "fontSize": 17,
-                  "fontWeight": "medium"
+                  "fontWeight": "medium",
+                  "lineHeight": 24
                 },
                 "type": "element"
               },
@@ -188,7 +191,8 @@
                   "backgroundColor": "#00000000",
                   "textColor": "#FF3B82F6",
                   "fontSize": 17,
-                  "fontWeight": "medium"
+                  "fontWeight": "medium",
+                  "lineHeight": 24
                 },
                 "type": "element"
               },
@@ -212,7 +216,8 @@
                   "backgroundColor": "#00000000",
                   "textColor": "#FF3B82F6",
                   "fontSize": 17,
-                  "fontWeight": "medium"
+                  "fontWeight": "medium",
+                  "lineHeight": 24
                 },
                 "type": "element"
               },
@@ -236,7 +241,8 @@
                   "backgroundColor": "#00000000",
                   "textColor": "#FFEF4444",
                   "fontSize": 17,
-                  "fontWeight": "medium"
+                  "fontWeight": "medium",
+                  "lineHeight": 24
                 },
                 "type": "element"
               }
@@ -282,7 +288,8 @@
               "textColor": "#FF6B7280",
               "fontSize": 17,
               "fontWeight": "bold",
-              "borderRadius": 16
+              "borderRadius": 16,
+              "lineHeight": 24
             },
             "type": "element"
           }
