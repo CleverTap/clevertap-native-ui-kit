@@ -159,6 +159,15 @@ public struct RadialGradientBackground: Codable, Equatable {
         self.colors = colors
         self.stops = stops
     }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        centerX = try c.decodeIfPresent(CGFloat.self, forKey: .centerX) ?? 0.5
+        centerY = try c.decodeIfPresent(CGFloat.self, forKey: .centerY) ?? 0.5
+        radius = try c.decodeIfPresent(CGFloat.self, forKey: .radius) ?? 1.0
+        colors = try c.decode([String].self, forKey: .colors)
+        stops = try c.decodeIfPresent([CGFloat].self, forKey: .stops)
+    }
 }
 
 public struct SweepGradientBackground: Codable, Equatable {
@@ -188,6 +197,15 @@ public struct SweepGradientBackground: Codable, Equatable {
         self.startAngle = startAngle
         self.colors = colors
         self.stops = stops
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        centerX = try c.decodeIfPresent(CGFloat.self, forKey: .centerX) ?? 0.5
+        centerY = try c.decodeIfPresent(CGFloat.self, forKey: .centerY) ?? 0.5
+        startAngle = try c.decodeIfPresent(CGFloat.self, forKey: .startAngle) ?? 0
+        colors = try c.decode([String].self, forKey: .colors)
+        stops = try c.decodeIfPresent([CGFloat].self, forKey: .stops)
     }
 }
 
@@ -223,6 +241,16 @@ public struct ImageBackground: Codable, Equatable {
         self.tint = tint
         self.tintOpacity = tintOpacity
     }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        url = try c.decode(String.self, forKey: .url)
+        fit = try c.decodeIfPresent(ImageFit.self, forKey: .fit) ?? .crop
+        opacity = try c.decodeIfPresent(CGFloat.self, forKey: .opacity) ?? 1.0
+        blur = try c.decodeIfPresent(CGFloat.self, forKey: .blur) ?? 0
+        tint = try c.decodeIfPresent(String.self, forKey: .tint)
+        tintOpacity = try c.decodeIfPresent(CGFloat.self, forKey: .tintOpacity) ?? 0
+    }
 }
 
 public struct ShimmerBackground: Codable, Equatable {
@@ -252,6 +280,15 @@ public struct ShimmerBackground: Codable, Equatable {
         self.angle = angle
         self.duration = duration
         self.loop = loop
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        baseColor = try c.decode(String.self, forKey: .baseColor)
+        highlightColor = try c.decode(String.self, forKey: .highlightColor)
+        angle = try c.decodeIfPresent(CGFloat.self, forKey: .angle) ?? 45
+        duration = try c.decodeIfPresent(Int.self, forKey: .duration) ?? 1500
+        loop = try c.decodeIfPresent(Bool.self, forKey: .loop) ?? true
     }
 }
 
@@ -287,6 +324,16 @@ public struct AnimatedGradientBackground: Codable, Equatable {
         self.loop = loop
         self.animationStyle = animationStyle
     }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        gradientType = try c.decode(GradientType.self, forKey: .gradientType)
+        angle = try c.decodeIfPresent(CGFloat.self, forKey: .angle) ?? 0
+        colors = try c.decode([String].self, forKey: .colors)
+        duration = try c.decodeIfPresent(Int.self, forKey: .duration) ?? 3000
+        loop = try c.decodeIfPresent(Bool.self, forKey: .loop) ?? true
+        animationStyle = try c.decodeIfPresent(AnimationStyle.self, forKey: .animationStyle) ?? .smooth
+    }
 }
 
 public struct PulseBackground: Codable, Equatable {
@@ -316,6 +363,15 @@ public struct PulseBackground: Codable, Equatable {
         self.maxOpacity = maxOpacity
         self.duration = duration
         self.loop = loop
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        color = try c.decode(String.self, forKey: .color)
+        minOpacity = try c.decodeIfPresent(CGFloat.self, forKey: .minOpacity) ?? 0.3
+        maxOpacity = try c.decodeIfPresent(CGFloat.self, forKey: .maxOpacity) ?? 1.0
+        duration = try c.decodeIfPresent(Int.self, forKey: .duration) ?? 1000
+        loop = try c.decodeIfPresent(Bool.self, forKey: .loop) ?? true
     }
 }
 
@@ -351,6 +407,16 @@ public struct PatternBackground: Codable, Equatable {
         self.spacing = spacing
         self.opacity = opacity
     }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        patternType = try c.decode(PatternType.self, forKey: .patternType)
+        primaryColor = try c.decode(String.self, forKey: .primaryColor)
+        secondaryColor = try c.decode(String.self, forKey: .secondaryColor)
+        size = try c.decodeIfPresent(CGFloat.self, forKey: .size) ?? 20
+        spacing = try c.decodeIfPresent(CGFloat.self, forKey: .spacing) ?? 30
+        opacity = try c.decodeIfPresent(CGFloat.self, forKey: .opacity) ?? 1.0
+    }
 }
 
 public struct ParticlesBackground: Codable, Equatable {
@@ -384,6 +450,16 @@ public struct ParticlesBackground: Codable, Equatable {
         self.speed = speed
         self.direction = direction
         self.opacity = opacity
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        particleColor = try c.decode(String.self, forKey: .particleColor)
+        particleCount = try c.decodeIfPresent(Int.self, forKey: .particleCount) ?? 50
+        particleSize = try c.decodeIfPresent(CGFloat.self, forKey: .particleSize) ?? 4
+        speed = try c.decodeIfPresent(CGFloat.self, forKey: .speed) ?? 2
+        direction = try c.decodeIfPresent(ParticleDirection.self, forKey: .direction) ?? .up
+        opacity = try c.decodeIfPresent(CGFloat.self, forKey: .opacity) ?? 0.7
     }
 }
 

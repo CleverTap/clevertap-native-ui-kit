@@ -1212,6 +1212,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5704F3412F7BF135006D88A7 /* ImagePreloader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1219,6 +1220,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5704F3402F7BF135006D88A7 /* ImagePreloader.swift in Sources */,
 				41C5EB1E2F34E6FC0066BE34 /* JSONViewerView.swift in Sources */,
 				41F1AD612F2B7D420018C5EA /* JsonLoader.swift in Sources */,
 				B001 /* NativeDisplaySampleApp.swift in Sources */,
