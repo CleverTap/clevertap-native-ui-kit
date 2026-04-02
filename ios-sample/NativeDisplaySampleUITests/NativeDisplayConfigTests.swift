@@ -262,6 +262,10 @@ final class NativeDisplayConfigTests: XCTestCase {
             .matching(identifier: "content-settled").firstMatch
         let renderView = app.descendants(matching: .any)
             .matching(identifier: "native-display-view").firstMatch
+        // content-area is the ZStack below the title bar, nav row, and chip strip.
+        // Screenshotting it crops out all test-browser chrome, leaving only the rendered content.
+        let contentArea = app.descendants(matching: .any)
+            .matching(identifier: "content-area").firstMatch
         let nextButton = app.buttons["nav-next"]
         let failedLoadPredicate = NSPredicate(format: "label BEGINSWITH 'Failed to load'")
 
@@ -279,10 +283,11 @@ final class NativeDisplayConfigTests: XCTestCase {
                 failedConfigs.append((name: filename, reason: reason))
             }
 
-            // Capture element-level screenshot of NativeDisplayView (no chrome, no padding)
-            let renderView = app.descendants(matching: .any)
-                .matching(identifier: "native-display-view").firstMatch
-            let screenshot = XCTAttachment(screenshot: renderView.exists ? renderView.screenshot() : app.screenshot())
+            // Screenshot only the content-area element — excludes title bar, nav row, and chip strip.
+            // Falls back to app.screenshot() if the element is not yet in the accessibility tree.
+            let screenshot = XCTAttachment(screenshot: contentArea.exists
+                ? contentArea.screenshot()
+                : app.screenshot())
             screenshot.name = filename
             screenshot.lifetime = .keepAlways
             add(screenshot)
