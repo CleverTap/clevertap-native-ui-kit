@@ -1205,24 +1205,24 @@ struct DecorationModifier: ViewModifier {
 // MARK: - Color Parser
 
 /// Utility to parse hex color strings to SwiftUI Color.
-/// Supports #RRGGBB (6 chars) and #AARRGGBB (8 chars, ARGB format).
+/// Supports #RRGGBB (6 chars) and #RRGGBBAA (8 chars, RGBA format).
 public struct ColorParser {
     /// Parse hex color string to SwiftUI Color.
     /// - #RRGGBB: 6-character RGB (full opacity)
-    /// - #AARRGGBB: 8-character ARGB (alpha in first byte)
+    /// - #RRGGBBAA: 8-character RGBA (alpha in last byte)
     public static func parse(_ colorString: String?) -> Color? {
         guard let colorString = colorString else { return nil }
-        
+
         var hex = colorString.trimmingCharacters(in: .whitespacesAndNewlines)
         if hex.hasPrefix("#") {
             hex.removeFirst()
         }
-        
+
         guard hex.count == 6 || hex.count == 8 else { return nil }
-        
+
         var rgbValue: UInt64 = 0
         guard Scanner(string: hex).scanHexInt64(&rgbValue) else { return nil }
-        
+
         if hex.count == 6 {
             return Color(
                 red: Double((rgbValue & 0xFF0000) >> 16) / 255.0,
@@ -1230,12 +1230,12 @@ public struct ColorParser {
                 blue: Double(rgbValue & 0x0000FF) / 255.0
             )
         } else {
-            // Format: #AARRGGBB (alpha in highest byte, ARGB standard)
+            // Format: #RRGGBBAA (alpha in lowest byte, RGBA web standard)
             return Color(
-                red: Double((rgbValue & 0x00FF0000) >> 16) / 255.0,      // RR byte
-                green: Double((rgbValue & 0x0000FF00) >> 8) / 255.0,     // GG byte
-                blue: Double((rgbValue & 0x000000FF)) / 255.0,           // BB byte
-                opacity: Double((rgbValue & 0xFF000000) >> 24) / 255.0   // AA byte
+                red: Double((rgbValue & 0xFF000000) >> 24) / 255.0,      // RR byte
+                green: Double((rgbValue & 0x00FF0000) >> 16) / 255.0,    // GG byte
+                blue: Double((rgbValue & 0x0000FF00) >> 8) / 255.0,     // BB byte
+                opacity: Double((rgbValue & 0x000000FF)) / 255.0         // AA byte
             )
         }
     }

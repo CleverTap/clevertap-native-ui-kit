@@ -172,7 +172,7 @@ ForEach(children, id: \.id) { child in RenderNode(node: child, resolvedStyles: r
 - **Gallery sizing**: uses container dimensions, NOT screen dimensions
 - **iOS 14 shadow**: rendering differs from iOS 15+
 - **decodeIfPresent**: use `??` fallbacks for all optional layout fields to avoid parse failures
-- **Color format**: SDK uses ARGB (`#AARRGGBB`); parse accordingly
+- **Color format**: SDK uses RGBA (`#RRGGBBAA`), matching web standard; parse accordingly
 
 ## Cross-Platform Parity
 When implementing features:
