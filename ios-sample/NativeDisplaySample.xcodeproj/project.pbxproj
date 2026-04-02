@@ -181,6 +181,7 @@
 		41BD00022F8F000000714978 /* BridgeIntegrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41BD00012F8F000000714978 /* BridgeIntegrationView.swift */; };
 		41BD00062F8F000200714978 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41BD00052F8F000200714978 /* AppDelegate.swift */; };
 		41BD00042F8F000100714978 /* CleverTapIntegrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41BD00032F8F000100714978 /* CleverTapIntegrationView.swift */; };
+		41BD00082F9A000300714978 /* SlotDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41BD00072F9A000300714978 /* SlotDemoView.swift */; };
 		41C5EB1E2F34E6FC0066BE34 /* JSONViewerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41C5EB1D2F34E6FC0066BE34 /* JSONViewerView.swift */; };
 		41C5EB1F2F3B40460066BE34 /* banner-01-hero-summer-sale.json in Resources */ = {isa = PBXBuildFile; fileRef = 411302922F34AC72004B6254 /* banner-01-hero-summer-sale.json */; };
 		41C5EB202F3B40460066BE34 /* banner-02-product-iphone.json in Resources */ = {isa = PBXBuildFile; fileRef = 411302932F34AC72004B6254 /* banner-02-product-iphone.json */; };
@@ -407,6 +408,7 @@
 		41BD00012F8F000000714978 /* BridgeIntegrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeIntegrationView.swift; sourceTree = "<group>"; };
 		41BD00052F8F000200714978 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		41BD00032F8F000100714978 /* CleverTapIntegrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleverTapIntegrationView.swift; sourceTree = "<group>"; };
+		41BD00072F9A000300714978 /* SlotDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotDemoView.swift; sourceTree = "<group>"; };
 		41C5EB1D2F34E6FC0066BE34 /* JSONViewerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONViewerView.swift; sourceTree = "<group>"; };
 		41E6E6DB2F7A50940004B077 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		41F1AD512F2B6E250018C5EA /* NativeDisplaySampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NativeDisplaySampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -669,6 +671,7 @@
 				41BD00052F8F000200714978 /* AppDelegate.swift */,
 				41BD00012F8F000000714978 /* BridgeIntegrationView.swift */,
 				41BD00032F8F000100714978 /* CleverTapIntegrationView.swift */,
+				41BD00072F9A000300714978 /* SlotDemoView.swift */,
 				411302792F33E757004B6254 /* BannerDetailView.swift */,
 				4113027A2F33E757004B6254 /* BannerShowcaseView.swift */,
 				41F1AD602F2B7D420018C5EA /* JsonLoader.swift */,
@@ -1031,6 +1034,7 @@
 				41BD00062F8F000200714978 /* AppDelegate.swift in Sources */,
 				41BD00022F8F000000714978 /* BridgeIntegrationView.swift in Sources */,
 				41BD00042F8F000100714978 /* CleverTapIntegrationView.swift in Sources */,
+				41BD00082F9A000300714978 /* SlotDemoView.swift in Sources */,
 				4113027B2F33E757004B6254 /* BannerDetailView.swift in Sources */,
 				4113027C2F33E757004B6254 /* BannerShowcaseView.swift in Sources */,
 				B002 /* ContentView.swift in Sources */,

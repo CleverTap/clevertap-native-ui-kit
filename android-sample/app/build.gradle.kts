@@ -97,7 +97,8 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
 
-    // Coil (explicit test dep: SDK uses implementation, not api, so not exposed to consumers)
+    // Coil – runtime dep for sample app image loading (SDK uses implementation, not api)
+    implementation(libs.io.coil.compose)
     testImplementation(libs.io.coil.compose)
 
     // Screenshot Testing

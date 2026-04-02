@@ -73,6 +73,14 @@ struct DemoMenuView: View {
                         description: "Core SDK integration with system events"
                     )
                 }
+
+                NavigationLink(destination: SlotDemoView()) {
+                    DemoMenuItem(
+                        icon: "pin.circle",
+                        title: "Slot Demo",
+                        description: "Slot-based placement with mixed content feed"
+                    )
+                }
             }
         }
         .navigationTitle("Other Demos")
