@@ -95,7 +95,7 @@ theme (optional) | styleClasses (optional) | variables (optional) | root (requir
 Theme default → Style class → Inline node style → Parent style (text properties only)
 ```
 
-**Color format**: `#RRGGBB` (opaque) or `#AARRGGBB` (with alpha)
+**Color format**: `#RRGGBB` (opaque) or `#RRGGBBAA` (with alpha, RGBA web standard)
 
 **⚠️ Always specify `lineHeight`** for cross-platform consistency — Android default is `fontSize × 1.5`, iOS is `fontSize × 1.176`.
 

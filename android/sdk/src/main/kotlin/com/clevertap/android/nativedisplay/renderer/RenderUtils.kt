@@ -39,8 +39,14 @@ fun parseColor(colorString: String?): Color? {
                 )
             }
             8 -> {
-                // Compose Color(Long) expects 0xAARRGGBB format (ARGB)
-                Color(hex.toLong(16))
+                // Server sends RGBA format (#RRGGBBAA), convert to Compose Color
+                val rgba = hex.toLong(16)
+                Color(
+                    red = ((rgba shr 24) and 0xFF) / 255f,
+                    green = ((rgba shr 16) and 0xFF) / 255f,
+                    blue = ((rgba shr 8) and 0xFF) / 255f,
+                    alpha = (rgba and 0xFF) / 255f
+                )
             }
             else -> null
         }

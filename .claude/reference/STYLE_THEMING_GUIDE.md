@@ -19,7 +19,7 @@ The Native Display System supports comprehensive styling through:
 Applied to text elements and inherited by child elements:
 
 ```kotlin
-textColor: String        // Hex color (#RRGGBB or #AARRGGBB)
+textColor: String        // Hex color (#RRGGBB or #RRGGBBAA)
 fontSize: Float          // Size in sp (scale-independent pixels)
 fontFamily: String       // Font family name
 fontWeight: FontWeight   // LIGHT, NORMAL, MEDIUM, BOLD
@@ -308,7 +308,7 @@ Colors are specified in hexadecimal format:
 
 ```
 #RRGGBB      // RGB with full opacity
-#AARRGGBB    // ARGB with alpha channel (AA = 00 transparent to FF opaque)
+#RRGGBBAA    // RGBA with alpha channel (AA = 00 transparent to FF opaque)
 ```
 
 **Examples**:
@@ -316,7 +316,7 @@ Colors are specified in hexadecimal format:
 #FFFFFF      // White
 #000000      // Black
 #FF0000      // Red
-#80FF0000    // Red with 50% opacity
+#FF000080    // Red with 50% opacity
 #007AFF      // iOS Blue
 ```
 

@@ -77,11 +77,10 @@ fun String.parseColor(): Color {
 Android uses ARGB format, but many web tools use RGBA:
 
 ```
-Web (RGBA): #FF0000FF (red with full alpha)
-Android (ARGB): #FFFF0000 (red with full alpha)
+Web/JSON (RGBA): #FF0000FF (red with full alpha)
 ```
 
-**Always verify**: Color format in JSON should be ARGB (#AARRGGBB).
+**Always verify**: Color format in JSON should be RGBA (#RRGGBBAA).
 
 ## RTL Layout Issues
 
