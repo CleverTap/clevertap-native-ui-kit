@@ -49,11 +49,11 @@ class VariableEvaluator(
         val cleaned = expression.trim().removePrefix("{{").removeSuffix("}}").trim()
         
         return when {
-            // Comparison operators
-            cleaned.contains(">") -> evaluateComparison(cleaned, ">")
-            cleaned.contains("<") -> evaluateComparison(cleaned, "<")
+            // Comparison operators (check >= and <= before > and <)
             cleaned.contains(">=") -> evaluateComparison(cleaned, ">=")
             cleaned.contains("<=") -> evaluateComparison(cleaned, "<=")
+            cleaned.contains(">") -> evaluateComparison(cleaned, ">")
+            cleaned.contains("<") -> evaluateComparison(cleaned, "<")
             cleaned.contains("==") -> evaluateEquality(cleaned, "==")
             cleaned.contains("!=") -> evaluateEquality(cleaned, "!=")
             
@@ -141,7 +141,16 @@ class VariableEvaluator(
      * Get a variable from the map.
      */
     private fun getVariable(name: String): JsonElement? {
-        return variables[name]
+        // Handle nested paths like "user.name"
+        val parts = name.split(".")
+        var current: JsonElement? = variables[parts.first()] ?: return null
+
+        for (part in parts.drop(1)) {
+            val obj = current as? JsonObject ?: return null
+            current = obj[part]
+        }
+
+        return current
     }
     
     /**
