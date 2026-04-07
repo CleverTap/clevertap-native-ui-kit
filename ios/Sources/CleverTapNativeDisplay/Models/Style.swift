@@ -488,7 +488,7 @@ public struct TextShadow: Codable, Equatable {
     public let color: String              // Hex color (e.g., "#00000040" for semi-transparent black)
     public let offsetX: CGFloat           // Horizontal offset in points
     public let offsetY: CGFloat           // Vertical offset in points
-    public let blur: CGFloat              // Blur radius in points
+    public let blur: CGFloat?             // Blur radius in points
 
     public init(
         color: String,
@@ -526,11 +526,11 @@ public struct TextGradient: Codable, Equatable {
 
 /// Named style class that can be referenced by elements.
 public struct StyleClass: Codable, Equatable {
-    public let name: String
+    public let id: String
     public let style: Style
 
-    public init(name: String, style: Style) {
-        self.name = name
+    public init(id: String, style: Style) {
+        self.id = id
         self.style = style
     }
 }

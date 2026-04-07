@@ -1,6 +1,6 @@
 {
   "theme": {
-    "id": "product-theme",
+    "name": "product-theme",
     "defaultStyle": {
       "fontSize": 14,
       "textColor": "#333333",
@@ -14,7 +14,7 @@
       "style": {
         "fontSize": 16,
         "textColor": "#999999",
-        "textDecoration": "line-through",
+        "textDecoration": "strikethrough",
         "lineHeight": 22
       }
     },

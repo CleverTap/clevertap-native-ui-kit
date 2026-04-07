@@ -1,0 +1,51 @@
+{
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "special": "match_parent" },
+      "height": { "special": "wrap_content" }
+    },
+    "style": {
+      "backgroundColor": "#1A1A2E"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "HTML Element — Inline"
+        },
+        "layout": {
+          "width": { "special": "match_parent" },
+          "height": { "special": "wrap_content" },
+          "padding": { "all": 16 }
+        },
+        "style": {
+          "textColor": "#FFFFFF",
+          "fontSize": 20,
+          "fontWeight": "bold"
+        }
+      },
+      {
+        "type": "element",
+        "id": "html-inline",
+        "elementType": "html",
+        "bindings": {
+          "html": "<div style='font-family: -apple-system, sans-serif; color: #E0E0E0; padding: 16px;'><h2 style='color: #00D4AA; margin: 0 0 8px 0;'>Welcome!</h2><p style='margin: 0; line-height: 1.6;'>This is <strong>inline HTML</strong> rendered in a WebView. It supports <em>rich formatting</em>, links, and more.</p></div>"
+        },
+        "htmlConfig": {
+          "javascriptEnabled": false,
+          "scrollEnabled": false,
+          "transparentBackground": true
+        },
+        "layout": {
+          "width": { "special": "match_parent" },
+          "height": { "value": 150, "unit": "dp" }
+        }
+      }
+    ]
+  }
+}

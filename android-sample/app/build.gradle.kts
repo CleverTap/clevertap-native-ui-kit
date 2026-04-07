@@ -62,7 +62,8 @@ android {
 dependencies {
     // Local SDK
     implementation("com.clevertap.android:native-display-sdk")
-    
+    implementation("com.clevertap.android:clevertap-android-sdk:8.0.0")
+
     // AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -96,7 +97,8 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
 
-    // Coil (explicit test dep: SDK uses implementation, not api, so not exposed to consumers)
+    // Coil – runtime dep for sample app image loading (SDK uses implementation, not api)
+    implementation(libs.io.coil.compose)
     testImplementation(libs.io.coil.compose)
 
     // Screenshot Testing

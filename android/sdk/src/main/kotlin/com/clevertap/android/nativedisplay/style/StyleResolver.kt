@@ -16,7 +16,7 @@ class StyleResolver(
     private val theme: Theme,
     private val styleClasses: List<StyleClass>
 ) {
-    private val styleClassMap = styleClasses.associateBy { it.name }
+    private val styleClassMap = styleClasses.associateBy { it.id }
     
     /**
      * Resolve the final style for a node.

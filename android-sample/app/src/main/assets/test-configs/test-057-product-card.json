@@ -38,7 +38,7 @@
             "unit": "percent"
           },
           "height": {
-            "value": -2,
+            "value": 200,
             "unit": "dp"
           },
           "padding": {

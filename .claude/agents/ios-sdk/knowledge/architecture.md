@@ -58,6 +58,7 @@ struct NativeDisplayConfig: Codable {
 - IMAGE → AsyncImage
 - BUTTON → Button
 - VIDEO → VideoPlayer
+- HTML → HtmlWebView (UIViewRepresentable + WKWebView, iOS only)
 - SPACER → Spacer
 - DIVIDER → Divider
 

@@ -52,6 +52,7 @@ This is the COMPLETE specification for generating valid Native Display JSON conf
 - `"image"` ✅
 - `"button"` ✅
 - `"video"` ✅
+- `"html"` ✅
 - `"spacer"` ✅
 - `"divider"` ✅
 
@@ -125,7 +126,7 @@ Automatically calculates one dimension from the other:
 
 ```json
 "#RRGGBB"      // RGB (e.g., "#FF5722")
-"#AARRGGBB"    // ARGB with alpha (e.g., "#80FF5722")
+"#RRGGBBAA"    // RGBA with alpha (e.g., "#FF572280")
 ```
 
 ### 8. Arrangement Strategies
@@ -161,6 +162,10 @@ For `vertical` and `horizontal` containers:
 
 // Image/Video
 {"bindings": {"url": "https://..."}}
+
+// HTML (inline html or url, html takes priority)
+{"bindings": {"html": "<div>Content</div>"}}
+{"bindings": {"url": "https://example.com/page.html"}}
 
 // Spacer/Divider (empty but required!)
 {"bindings": {}}

@@ -88,7 +88,7 @@ The JSON rules in this system prompt cover the most common cases. Reach for thes
 ### Rule 6: Color format
 ```
 #RRGGBB        // RGB (opaque)
-#AARRGGBB      // ARGB with alpha (A=00 is transparent, A=FF is opaque)
+#RRGGBBAA      // RGBA with alpha (AA=00 is transparent, AA=FF is opaque)
 ```
 
 ### Rule 7: Percentages

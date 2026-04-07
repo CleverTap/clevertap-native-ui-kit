@@ -304,7 +304,7 @@ data class TextGradient(
 @Immutable
 @Serializable
 data class StyleClass(
-    val name: String,
+    val id: String,
     val style: Style
 )
 

@@ -16,6 +16,13 @@ public struct GIFImage: UIViewRepresentable {
         let imageView = UIImageView()
         imageView.contentMode = contentMode == .fit ? .scaleAspectFit : .scaleAspectFill
         imageView.clipsToBounds = true
+        // Lower hugging/compression priorities so SwiftUI's layout system can freely
+        // resize the UIImageView to fill the bounds set by .frame(maxWidth/Height: .infinity).
+        // Without this the UIImageView fights to keep its intrinsic image pixel size.
+        imageView.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        imageView.setContentHuggingPriority(.defaultLow, for: .vertical)
+        imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         return imageView
     }
 

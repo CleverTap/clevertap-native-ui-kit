@@ -105,7 +105,7 @@ object NativeDisplayParser {
             
             is NativeDisplayElement -> {
                 // Element validation
-                if (node.elementType !in listOf("text", "image", "button", "spacer", "video", "input", "webview")) {
+                if (node.elementType !in listOf("text", "image", "button", "video", "html", "spacer", "divider")) {
                     errors.add("Invalid element type: ${node.elementType}")
                 }
                 
@@ -673,12 +673,12 @@ object ConfigUtilities {
 object ColorUtils {
     
     /**
-     * Parse hex color to ARGB
-     * Supports: #RGB, #RRGGBB, #AARRGGBB (ARGB format)
+     * Parse hex color to RGBA
+     * Supports: #RGB, #RRGGBB, #RRGGBBAA (RGBA format)
      */
     fun parseHexColor(hex: String): Int {
         val cleanHex = hex.removePrefix("#")
-        
+
         return when (cleanHex.length) {
             3 -> {
                 // RGB format: expand to RRGGBB
@@ -692,7 +692,7 @@ object ColorUtils {
                 0xFF000000.toInt() or cleanHex.toInt(16)
             }
             8 -> {
-                // AARRGGBB format (ARGB - alpha first)
+                // RRGGBBAA format (RGBA - alpha last)
                 val rrggbb = cleanHex.substring(0, 6).toInt(16)
                 val aa = cleanHex.substring(6, 8).toInt(16)
                 ((aa shl 24) or rrggbb)

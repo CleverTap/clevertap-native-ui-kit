@@ -83,7 +83,7 @@ object SampleConfigs {
             ),
             styleClasses = listOf(
                 StyleClass(
-                    name = "card",
+                    id = "card",
                     style = Style(
                         backgroundColor = "#FFFFFF",
                         borderRadius = 16f,
@@ -92,7 +92,7 @@ object SampleConfigs {
                     )
                 ),
                 StyleClass(
-                    name = "price-old",
+                    id = "price-old",
                     style = Style(
                         fontSize = 16f,
                         textColor = "#999999",
@@ -100,7 +100,7 @@ object SampleConfigs {
                     )
                 ),
                 StyleClass(
-                    name = "price-new",
+                    id = "price-new",
                     style = Style(
                         fontSize = 24f,
                         fontWeight = FontWeight.BOLD,

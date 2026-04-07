@@ -244,8 +244,19 @@ data class NativeDisplayElement(
     override val styleClass: String? = null,
     override val visible: String? = null,
     override val animation: Animation? = null,
-    val background: Background? = null
+    val background: Background? = null,
+    val dividerConfig: DividerConfig? = null,
+    val imageConfig: ImageConfig? = null,
+    val htmlConfig: HtmlConfig? = null
 ) : NativeDisplayNode()
+
+@Serializable
+data class HtmlConfig(
+    val javascriptEnabled: Boolean = false,
+    val scrollEnabled: Boolean = false,
+    val baseUrl: String? = null,
+    val transparentBackground: Boolean = true
+)
 
 // ============ ACTIONS ============
 
@@ -506,6 +517,16 @@ struct NativeDisplayElement: Codable {
     let style: Style?
     let styleClass: String?
     let visible: String?
+    let dividerConfig: DividerConfig?
+    let imageConfig: ImageConfig?
+    let htmlConfig: HtmlConfig?
+}
+
+struct HtmlConfig: Codable {
+    let javascriptEnabled: Bool  // Default: false
+    let scrollEnabled: Bool  // Default: false
+    let baseUrl: String?  // Default: nil
+    let transparentBackground: Bool  // Default: true
 }
 
 struct Action: Codable {
@@ -628,13 +649,23 @@ interface NativeDisplayContainer {
 
 interface NativeDisplayElement {
   id: string;
-  elementType: 'text' | 'image' | 'button' | 'spacer' | 'video' | 'divider';
+  elementType: 'text' | 'image' | 'button' | 'video' | 'html' | 'spacer' | 'divider';
   bindings?: Record<string, string>;
   actions?: Record<string, Action>;
   layout?: Layout;
   style?: Style;
   styleClass?: string;
   visible?: string;
+  dividerConfig?: DividerConfig;
+  imageConfig?: ImageConfig;
+  htmlConfig?: HtmlConfig;
+}
+
+interface HtmlConfig {
+  javascriptEnabled?: boolean;  // default: false
+  scrollEnabled?: boolean;  // default: false
+  baseUrl?: string;  // default: null
+  transparentBackground?: boolean;  // default: true
 }
 
 interface Action {

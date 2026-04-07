@@ -16,7 +16,7 @@ public class StyleResolver {
     
     public init(theme: Theme, styleClasses: [StyleClass]) {
         self.theme = theme
-        self.styleClassMap = Dictionary(uniqueKeysWithValues: styleClasses.map { ($0.name, $0) })
+        self.styleClassMap = Dictionary(uniqueKeysWithValues: styleClasses.map { ($0.id, $0) })
     }
     
     /// Resolve the final style for a node.

@@ -28,7 +28,6 @@ extension EnvironmentValues {
 /// Main entry point for rendering native display UI.
 public struct NativeDisplayView: View {
     @Environment(\.nativeDisplayParentSize) private var environmentParentSize
-
     private let config: ResolvedConfig
     private let resolvedStyles: [String: Style]   // Pre-resolved, computed once in init
     private let evaluator: VariableEvaluator
@@ -103,7 +102,8 @@ public struct NativeDisplayView: View {
             evaluator: evaluator,
             parentSize: parentSize,
             actionHandler: actionHandler,
-            componentListener: componentListener
+            componentListener: componentListener,
+            isRoot: true
         )
     }
 }
@@ -116,6 +116,7 @@ struct RenderNode: View {
     let parentSize: CGSize
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
+    var isRoot: Bool = false
     
     var body: some View {
         // Check visibility condition
@@ -165,6 +166,19 @@ struct RenderNode: View {
                 actionHandler: actionHandler,
                 componentListener: componentListener
             )
+            .onAppear {
+                if isRoot {
+                    actionHandler?.fireSystemEvent(eventName: "Notification Viewed", deduplicate: true)
+                }
+                if let action = node.actions?[ActionTriggers.onAppear] {
+                    actionHandler?.handleLifecycleAction(action, nodeId: node.id)
+                }
+            }
+            .onDisappear {
+                if let action = node.actions?[ActionTriggers.onDisappear] {
+                    actionHandler?.handleLifecycleAction(action, nodeId: node.id)
+                }
+            }
             .id(node.id)
 
         case .element(let element):
@@ -179,7 +193,10 @@ struct RenderNode: View {
                 actionHandler: actionHandler
             )
             .modifier(layoutMod)
-            .modifier(DecorationModifier(style: resolvedStyle))
+            // Text elements must not be clipped by the decoration layer — text that
+            // overflows its layout height should remain visible (matching Android's
+            // TextView default). Truncation is managed via maxLines/overflow in JSON.
+            .modifier(DecorationModifier(style: resolvedStyle, clipsContent: element.elementType != .text))
             .offset(x: offsetValue.width, y: offsetValue.height)
             .applyEntranceAnimation(node.animation)
             .applyTappable(
@@ -190,6 +207,19 @@ struct RenderNode: View {
                 actionHandler: actionHandler,
                 componentListener: !isButton ? componentListener : nil
             )
+            .onAppear {
+                if isRoot {
+                    actionHandler?.fireSystemEvent(eventName: "Notification Viewed", deduplicate: true)
+                }
+                if let action = node.actions?[ActionTriggers.onAppear] {
+                    actionHandler?.handleLifecycleAction(action, nodeId: node.id)
+                }
+            }
+            .onDisappear {
+                if let action = node.actions?[ActionTriggers.onDisappear] {
+                    actionHandler?.handleLifecycleAction(action, nodeId: node.id)
+                }
+            }
         }
     }
 }
@@ -232,10 +262,18 @@ struct RenderContainer: View {
                 containerHeight: containerSize.height,
                 heightIsWrap: heightIsWrap
             )
+            // Clip children to the content area BEFORE adding padding.
+            // Without this, SwiftUI VStack children that overflow the content frame
+            // render into the padding space, visually eating the bottom (and trailing)
+            // padding. Android LinearLayout clips children by default (clipChildren=true),
+            // so .clipped() here restores parity with that behaviour.
+            .clipped()
             .padding(paddingInsets)
 
         case .horizontal:
             renderHorizontalContainer(availableSize: availableSize)
+                // Same reason as vertical — clip before padding to preserve trailing padding.
+                .clipped()
                 .padding(paddingInsets)
 
         case .box:
@@ -276,61 +314,74 @@ struct RenderContainer: View {
     /// Calculate the final container size.
     /// Uses explicit layout dimensions if specified, otherwise uses parentSize.
     /// This is used as availableSize for children and for percentage-based offset calculations.
+    ///
+    /// When an aspect ratio is specified and dimensions are not both truly fixed (DP/PX/SP),
+    /// the aspect ratio constrains the result — matching `LayoutModifier.resolvedDimensions()`
+    /// and Android's behavior where aspect ratio is applied before sizing.
     private func calculateContainerSize(parentSize: CGSize, padding: EdgeInsets) -> CGSize {
         let layout = container.layout
 
-        // Calculate width
-        let width: CGFloat
+        // Calculate raw width
+        let rawWidth: CGFloat
         if let w = layout?.width {
             if w.special != nil {
-                // matchParent or wrap_content: both use parentSize so percent-based children
-                // resolve correctly. The actual frame constraint is omitted at the call site
-                // for wrap_content axes.
-                width = parentSize.width
+                rawWidth = parentSize.width
             } else {
                 switch w.unit {
                 case .dp, .px, .sp:
-                    width = w.value
+                    rawWidth = w.value
                 case .percent:
-                    width = parentSize.width * w.value / 100
+                    rawWidth = parentSize.width * w.value / 100
                 }
             }
         } else {
-            width = parentSize.width
+            rawWidth = parentSize.width
         }
 
-        // Calculate height
-        let height: CGFloat
+        // Calculate raw height
+        let rawHeight: CGFloat
         if let h = layout?.height {
             if h.special != nil {
-                // matchParent or wrap_content: both use parentSize so percent-based children
-                // resolve correctly. The actual frame constraint is omitted at the call site
-                // for wrap_content axes.
-                height = parentSize.height
+                rawHeight = parentSize.height
             } else {
                 switch h.unit {
                 case .dp, .px, .sp:
-                    height = h.value
+                    rawHeight = h.value
                 case .percent:
-                    height = parentSize.height * h.value / 100
+                    rawHeight = parentSize.height * h.value / 100
                 }
             }
-        } else if let aspectRatio = layout?.aspectRatio, aspectRatio > 0 {
-            // No explicit height — derive from aspect ratio using the already-resolved width.
-            // This mirrors LayoutModifier.resolvedDimensions() so children receive a
-            // parentSize that matches the container's actual rendered height.
-            height = width / aspectRatio
         } else {
-            height = parentSize.height
+            rawHeight = parentSize.height
+        }
+
+        // Apply aspect ratio constraint — must match LayoutModifier.resolvedDimensions() logic.
+        // Only skip when both dimensions are truly fixed (DP/PX/SP, not percent).
+        let width: CGFloat
+        let height: CGFloat
+        if let aspectRatio = layout?.aspectRatio, aspectRatio > 0 {
+            let widthIsFixed = layout?.width.map { $0.special == nil && $0.unit != .percent } ?? false
+            let heightIsFixed = layout?.height.map { $0.special == nil && $0.unit != .percent } ?? false
+
+            if widthIsFixed && heightIsFixed {
+                // Both absolute — aspect ratio ignored
+                width = rawWidth
+                height = rawHeight
+            } else {
+                // Aspect ratio constrains: width is primary, derive height
+                width = rawWidth
+                height = rawWidth / aspectRatio
+            }
+        } else {
+            width = rawWidth
+            height = rawHeight
         }
 
         // Return size after accounting for padding
-        let finalSize = CGSize(
+        return CGSize(
             width: max(0, width - padding.leading - padding.trailing),
             height: max(0, height - padding.top - padding.bottom)
         )
-
-        return finalSize
     }
     
 
@@ -634,6 +685,21 @@ struct RenderElement: View {
         case .divider:
             renderDivider()
                 .padding(paddingInsets)
+
+        case .html:
+            #if os(iOS)
+            renderHtml()
+                .padding(paddingInsets)
+            #else
+            Rectangle()
+                .fill(Color.gray.opacity(0.3))
+                .overlay(
+                    Text("HTML not supported on this platform")
+                        .foregroundColor(.gray)
+                        .font(.caption)
+                )
+                .padding(paddingInsets)
+            #endif
         }
     }
     
@@ -666,6 +732,8 @@ struct RenderElement: View {
             .foregroundColor(ColorParser.parse(textProps.color) ?? .primary)
             .font(.system(size: textProps.size ?? 14))
             .fontWeight(resolveFontWeight(textProps.weight))
+            .strikethrough(textProps.decoration == .strikethrough)
+            .underline(textProps.decoration == .underline)
             .multilineTextAlignment(textAlignment)
             .lineSpacing(max(0, (textProps.lineHeight ?? 0) - (textProps.size ?? 14)))
 
@@ -698,8 +766,12 @@ struct RenderElement: View {
             let isGIF = isAnimatedGIF(url: url, config: element.imageConfig)
 
             if isGIF {
-                // Use custom GIF renderer
+                // Use custom GIF renderer.
+                // .frame(maxWidth/maxHeight: .infinity) is required so the UIViewRepresentable
+                // expands to fill the space allocated by LayoutModifier — without it the
+                // UIImageView uses its intrinsic pixel size instead of the layout bounds.
                 GIFImage(url: url, contentMode: contentMode)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .clipped()
             } else {
                 // Use standard AsyncImage for static images
@@ -781,6 +853,11 @@ struct RenderElement: View {
         let onDoubleTap = element.actions?[ActionTriggers.onDoubleTap]
 
         Button(action: {
+            // Fire system event for button click
+            actionHandler?.fireSystemEvent(
+                eventName: "Notification Clicked",
+                properties: ["nodeId": element.id]
+            )
             if let onClick = element.actions?[ActionTriggers.onClick] {
                 actionHandler?.handleAction(onClick, nodeId: element.id, interactionType: .click)
             }
@@ -789,6 +866,8 @@ struct RenderElement: View {
                 .foregroundColor(ColorParser.parse(textProps.color) ?? .white)
                 .font(.system(size: textProps.size ?? 16))
                 .fontWeight(resolveFontWeight(textProps.weight))
+                .strikethrough(textProps.decoration == .strikethrough)
+                .underline(textProps.decoration == .underline)
                 .multilineTextAlignment(resolveTextAlign(textProps.align))
                 .lineSpacing(max(0, (textProps.lineHeight ?? 0) - (textProps.size ?? 16)))
                 .lineLimit(textProps.maxLines)
@@ -868,6 +947,31 @@ struct RenderElement: View {
         }
     }
     
+    #if os(iOS)
+    @ViewBuilder
+    private func renderHtml() -> some View {
+        let html = element.bindings["html"].map { evaluator.evaluateString($0) }
+        let url = element.bindings["url"].map { evaluator.evaluateString($0) }
+        let config = element.htmlConfig ?? HtmlConfig()
+
+        if (html != nil && !html!.isEmpty) || (url != nil && !url!.isEmpty) {
+            HtmlWebView(
+                html: html,
+                url: url,
+                config: config
+            )
+        } else {
+            Rectangle()
+                .fill(Color.gray.opacity(0.3))
+                .overlay(
+                    Text("No HTML Content")
+                        .foregroundColor(.gray)
+                        .font(.caption)
+                )
+        }
+    }
+    #endif
+
     private func resolveFontWeight(_ weight: FontWeight?) -> Font.Weight {
         switch weight {
         case .light: return .light
@@ -922,28 +1026,39 @@ struct LayoutModifier: ViewModifier {
     }
 
     /// Resolves the final width and height, deriving the missing dimension from aspect ratio
-    /// when the other dimension is a known value. This matches Android's behavior where
-    /// Modifier.aspectRatio with a fixed-width constraint gives height = width / ratio.
-    /// Only uses the .aspectRatio() SwiftUI modifier as a last resort when both dimensions
-    /// are unresolved (match_parent), since pixel size is unknown at calculation time.
+    /// when the other dimension is a known value. Matches Android's behavior where
+    /// Modifier.aspectRatio is applied BEFORE sizing constraints, so it wins over
+    /// percentage-based dimensions.
+    ///
+    /// Aspect ratio is only skipped when both dimensions are truly fixed (DP/PX/SP),
+    /// matching Android's `doesNotHaveFixedWidth = !(hasFixedWidth && hasFixedHeight)`.
     private func resolvedDimensions() -> (width: CGFloat?, height: CGFloat?, useAspectRatioModifier: Bool) {
         let explicitWidth = calculateWidth()
         let explicitHeight = calculateHeight()
         guard let ratio = calculateAspectRatio() else {
             return (explicitWidth, explicitHeight, false)
         }
-        if let w = explicitWidth, explicitHeight == nil {
-            // Width known → height = width / ratio (common case: percent width + aspectRatio)
+
+        // Check if both dimensions use truly fixed units (DP/PX/SP, not percent).
+        // Matches Android: hasFixedWidth = unit in [DP, PX] && special == null
+        let widthIsFixed = layout?.width.map { $0.special == nil && $0.unit != .percent } ?? false
+        let heightIsFixed = layout?.height.map { $0.special == nil && $0.unit != .percent } ?? false
+
+        if widthIsFixed && heightIsFixed {
+            // Both dimensions are absolute — aspect ratio is ignored (matches Android)
+            return (explicitWidth, explicitHeight, false)
+        }
+
+        if let w = explicitWidth {
+            // Width known → derive height from aspect ratio
             return (w, w / ratio, false)
         }
-        if let h = explicitHeight, explicitWidth == nil {
-            // Height known → width = height * ratio
+        if let h = explicitHeight {
+            // Height known → derive width from aspect ratio
             return (h * ratio, h, false)
         }
-        // Both unresolved (match_parent) → fall back to SwiftUI modifier
-        // Both explicit → aspect ratio ignored (matches Android behaviour)
-        let useModifier = explicitWidth == nil && explicitHeight == nil
-        return (explicitWidth, explicitHeight, useModifier)
+        // Both unresolved (match_parent/wrap_content) → fall back to SwiftUI modifier
+        return (nil, nil, true)
     }
 
     private func calculateWidth() -> CGFloat? {
@@ -1059,29 +1174,49 @@ struct LayoutModifier: ViewModifier {
             return nil
         }
 
-        // If both width and height are explicitly set (not WRAP_CONTENT or MATCH_PARENT),
-        // aspect ratio is ignored to honor explicit dimensions
-        let hasExplicitWidth = hasExplicitDimension(layout?.width)
-        let hasExplicitHeight = hasExplicitDimension(layout?.height)
+        // Only ignore aspect ratio when both dimensions are truly fixed (DP/PX/SP).
+        // Percentage dimensions are flexible and should be constrained by aspect ratio.
+        // Matches Android: doesNotHaveFixedWidth = !(hasFixedWidth && hasFixedHeight)
+        // where hasFixed = special == nil && unit in [DP, PX]
+        let widthIsFixed = hasFixedDimension(layout?.width)
+        let heightIsFixed = hasFixedDimension(layout?.height)
 
-        if hasExplicitWidth && hasExplicitHeight {
-            return nil  // Both dimensions explicit, ignore aspect ratio
+        if widthIsFixed && heightIsFixed {
+            return nil  // Both dimensions are absolute fixed values, ignore aspect ratio
         }
         
         // If height was already derived from aspect ratio in calculateHeight(),
         // don't apply the SwiftUI .aspectRatio() modifier (it would constrain
         // to the parent's proposed size which may be wrong, e.g. in ScrollView)
-        if layout?.height == nil, hasExplicitWidth, calculateWidth() ?? 0 > 0 {
+        if layout?.height == nil, widthIsFixed, calculateWidth() ?? 0 > 0 {
             return nil  // Height already computed from width * aspectRatio
         }
 
         return aspectRatio
     }
 
-    /// Check if a dimension is explicitly set (not WRAP_CONTENT or MATCH_PARENT).
-    private func hasExplicitDimension(_ dimension: Dimension?) -> Bool {
+    /// Check if a dimension uses a truly fixed unit (DP/PX/SP, not percent or special).
+    private func hasFixedDimension(_ dimension: Dimension?) -> Bool {
         guard let dimension = dimension else { return false }
-        return dimension.special == nil  // Has value, not special dimension
+        return dimension.special == nil && dimension.unit != .percent
+    }
+}
+
+// MARK: - Clip If Needed
+
+/// Conditionally applies `clipShape(RoundedRectangle(cornerRadius:))`.
+/// Extracted as a separate ViewModifier so that `DecorationModifier.body` can
+/// branch on `enabled` without violating `@ViewBuilder` result-type constraints.
+private struct ClipIfNeeded: ViewModifier {
+    let cornerRadius: CGFloat
+    let enabled: Bool
+
+    func body(content: Content) -> some View {
+        if enabled {
+            content.clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+        } else {
+            content
+        }
     }
 }
 
@@ -1089,6 +1224,11 @@ struct LayoutModifier: ViewModifier {
 
 struct DecorationModifier: ViewModifier {
     let style: Style
+    /// Whether to clip the content to its frame using `cornerRadius`.
+    /// Pass `false` for TEXT elements so that text can overflow its layout bounds
+    /// naturally (matching Android's TextView default behaviour, where clip is opt-in
+    /// via `maxLines` / `overflow`, not forced by the decoration layer).
+    var clipsContent: Bool = true
 
     func body(content: Content) -> some View {
         // Extract property groups for better code organization
@@ -1111,8 +1251,9 @@ struct DecorationModifier: ViewModifier {
                     }
                 }
             )
-            // Apply clip
-            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+            // Apply clip — skipped for text elements so text is not hard-clipped to
+            // its frame height. Truncation is controlled by maxLines/overflow instead.
+            .modifier(ClipIfNeeded(cornerRadius: cornerRadius, enabled: clipsContent))
             // Apply border
             .overlay(
                 Group {
@@ -1142,24 +1283,24 @@ struct DecorationModifier: ViewModifier {
 // MARK: - Color Parser
 
 /// Utility to parse hex color strings to SwiftUI Color.
-/// Supports #RRGGBB (6 chars) and #AARRGGBB (8 chars, ARGB format).
+/// Supports #RRGGBB (6 chars) and #RRGGBBAA (8 chars, RGBA format).
 public struct ColorParser {
     /// Parse hex color string to SwiftUI Color.
     /// - #RRGGBB: 6-character RGB (full opacity)
-    /// - #AARRGGBB: 8-character ARGB (alpha in first byte)
+    /// - #RRGGBBAA: 8-character RGBA (alpha in last byte)
     public static func parse(_ colorString: String?) -> Color? {
         guard let colorString = colorString else { return nil }
-        
+
         var hex = colorString.trimmingCharacters(in: .whitespacesAndNewlines)
         if hex.hasPrefix("#") {
             hex.removeFirst()
         }
-        
+
         guard hex.count == 6 || hex.count == 8 else { return nil }
-        
+
         var rgbValue: UInt64 = 0
         guard Scanner(string: hex).scanHexInt64(&rgbValue) else { return nil }
-        
+
         if hex.count == 6 {
             return Color(
                 red: Double((rgbValue & 0xFF0000) >> 16) / 255.0,
@@ -1167,12 +1308,12 @@ public struct ColorParser {
                 blue: Double(rgbValue & 0x0000FF) / 255.0
             )
         } else {
-            // Format: #AARRGGBB (alpha in highest byte, ARGB standard)
+            // Format: #RRGGBBAA (alpha in lowest byte, RGBA web standard)
             return Color(
-                red: Double((rgbValue & 0x00FF0000) >> 16) / 255.0,      // RR byte
-                green: Double((rgbValue & 0x0000FF00) >> 8) / 255.0,     // GG byte
-                blue: Double((rgbValue & 0x000000FF)) / 255.0,           // BB byte
-                opacity: Double((rgbValue & 0xFF000000) >> 24) / 255.0   // AA byte
+                red: Double((rgbValue & 0xFF000000) >> 24) / 255.0,      // RR byte
+                green: Double((rgbValue & 0x00FF0000) >> 16) / 255.0,    // GG byte
+                blue: Double((rgbValue & 0x0000FF00) >> 8) / 255.0,     // BB byte
+                opacity: Double((rgbValue & 0x000000FF)) / 255.0         // AA byte
             )
         }
     }

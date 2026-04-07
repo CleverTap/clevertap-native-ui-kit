@@ -30,7 +30,7 @@ NativeDisplayConfig {
 
 ---
 
-## Element Types (6 Total)
+## Element Types (7 Total)
 
 | Type | Binding | Purpose |
 |------|---------|---------|
@@ -38,6 +38,7 @@ NativeDisplayConfig {
 | IMAGE | `url` | Display image |
 | BUTTON | `text` | Clickable button |
 | VIDEO | `url` (+ autoPlay, loop, muted, showControls, showFullscreen) | Display video with custom controls |
+| HTML | `html` or `url` (`html` wins if both present) | Render rich HTML in WebView |
 | SPACER | N/A | Spacing element |
 | DIVIDER | N/A | Visual divider |
 
@@ -246,6 +247,25 @@ Used by both containers and elements.
 
 ---
 
+## HTML Configuration
+
+```kotlin
+HtmlConfig {
+  javascriptEnabled: Boolean = false
+  scrollEnabled: Boolean = false
+  baseUrl: String? = null
+  transparentBackground: Boolean = true
+}
+```
+
+**Platform implementation**: Android `WebView` via `AndroidView`, iOS `WKWebView` via `UIViewRepresentable`.
+
+**JS Bridge**: CleverTap Core SDK JS bridge injected via reflection when Core SDK is present. Silent no-op when absent.
+
+**Hardcoded security**: No file access, no zoom, no in-view navigation (links open externally), `textZoom=100` (Android), viewport meta injection (iOS).
+
+---
+
 ## Style Resolution
 
 1. Theme default style
@@ -272,7 +292,7 @@ Variables are in `variables: Map<String, JsonElement>` at root level.
 ```kotlin
 bindings: Map<String, String> {
   "text": "{{variableName}}",      // TEXT, BUTTON
-  "url": "{{imageUrl}}",           // IMAGE, VIDEO (required)
+  "url": "{{imageUrl}}",           // IMAGE, VIDEO (required), HTML (alternative)
 
   // VIDEO-specific bindings (optional)
   "autoPlay": "{{autoPlayFlag}}",  // Boolean: auto-start playback
@@ -280,10 +300,15 @@ bindings: Map<String, String> {
   "muted": "{{mutedFlag}}",        // Boolean: start with audio muted
   "showControls": "true",          // Boolean: show custom controls (default: true)
   "showFullscreen": "true"         // Boolean: show fullscreen button (default: true)
+
+  // HTML-specific bindings
+  "html": "<div>...</div>",        // Inline HTML string (takes priority over url)
+  "url": "https://..."             // Load remote page (fallback if html not present)
 }
 ```
 
 **Note**: VIDEO element requires `androidx.media3:media3-exoplayer` on Android (host app dependency)
+**Note**: HTML element requires explicit `layout.height` — `wrap_content` is not supported
 
 ---
 
@@ -469,7 +494,7 @@ TextGradient {
 - All nodes must have layout defined
 - Container can have zero or more children
 - Elements must have elementType
-- Colors must be hex format (#RRGGBB or #AARRGGBB - ARGB format)
+- Colors must be hex format (#RRGGBB or #RRGGBBAA - RGBA format)
 - Opacity must be 0.0 to 1.0
 - fontSize must be > 0
 - Dimensions must have value and unit

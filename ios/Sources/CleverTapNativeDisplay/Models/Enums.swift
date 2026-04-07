@@ -21,6 +21,7 @@ public enum ElementType: String, Codable, CaseIterable {
     case video
     case spacer
     case divider
+    case html
 }
 
 /// Units for dimension values.

@@ -34,11 +34,48 @@ public enum Action: Codable, Equatable {
         public let url: String
         public let openInBrowser: Bool
         public let customTabsEnabled: Bool
-        
+
         public init(url: String, openInBrowser: Bool = false, customTabsEnabled: Bool = true) {
             self.url = url
             self.openInBrowser = openInBrowser
             self.customTabsEnabled = customTabsEnabled
+        }
+
+        private enum CodingKeys: String, CodingKey {
+            case url
+            case openInBrowser
+            case customTabsEnabled
+        }
+
+        /// Platform-specific URL object keys
+        private enum PlatformUrlKeys: String, CodingKey {
+            case ios
+        }
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+
+            // url can be a plain string or an object with platform keys
+            if let urlString = try? container.decode(String.self, forKey: .url) {
+                // Old format: "url": "www.google.com"
+                self.url = urlString
+            } else if let platformContainer = try? container.nestedContainer(
+                keyedBy: PlatformUrlKeys.self, forKey: .url
+            ) {
+                // New format: "url": {"android": "...", "ios": "..."}
+                self.url = try platformContainer.decode(String.self, forKey: .ios)
+            } else {
+                throw DecodingError.typeMismatch(
+                    String.self,
+                    DecodingError.Context(
+                        codingPath: container.codingPath + [CodingKeys.url],
+                        debugDescription: "Expected url to be a String or an object with an 'ios' key"
+                    )
+                )
+            }
+
+            self.openInBrowser = try container.decodeIfPresent(Bool.self, forKey: .openInBrowser) ?? false
+            self.customTabsEnabled = try container.decodeIfPresent(Bool.self, forKey: .customTabsEnabled) ?? true
         }
     }
     

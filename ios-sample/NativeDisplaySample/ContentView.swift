@@ -57,6 +57,30 @@ struct DemoMenuView: View {
                         description: "Example home screen layout"
                     )
                 }
+
+                NavigationLink(destination: BridgeIntegrationView()) {
+                    DemoMenuItem(
+                        icon: "link.circle",
+                        title: "Bridge Integration",
+                        description: "Core SDK bridge demo with mock data"
+                    )
+                }
+
+                NavigationLink(destination: CleverTapIntegrationView()) {
+                    DemoMenuItem(
+                        icon: "antenna.radiowaves.left.and.right",
+                        title: "CleverTap Integration",
+                        description: "Core SDK integration with system events"
+                    )
+                }
+
+                NavigationLink(destination: SlotDemoView()) {
+                    DemoMenuItem(
+                        icon: "pin.circle",
+                        title: "Slot Demo",
+                        description: "Slot-based placement with mixed content feed"
+                    )
+                }
             }
         }
         .navigationTitle("Other Demos")
