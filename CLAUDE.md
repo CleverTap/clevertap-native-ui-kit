@@ -99,6 +99,8 @@ Theme default → Style class → Inline node style → Parent style (text prope
 
 **⚠️ Always specify `lineHeight`** for cross-platform consistency — Android default is `fontSize × 1.5`, iOS is `fontSize × 1.176`.
 
+**TextDimension** — `fontSize` and `lineHeight` support two JSON formats: raw number (platform units: SP/points) or `{"value": N, "unit": "percent"}` which resolves as `rootContainerHeight × value / 1000`. The `/1000` divisor matches FE/dashboard behavior.
+
 ---
 
 ## Development Workflow
@@ -186,7 +188,9 @@ iOS test:       cd ios && swift test
 
 **Arrangement**: `spaced` `space_between` `space_evenly` `space_around` `start` `center` `end`
 
-**Text styles**: `textColor` `fontSize` `fontFamily` `fontWeight` `fontStyle` `lineHeight` `letterSpacing` `textDecoration` `textAlign` `maxLines` `overflow` `textShadow` `textGradient` `opacity`
+**Text styles**: `textColor` `fontSize` (TextDimension) `fontFamily` `fontWeight` `fontStyle` `lineHeight` (TextDimension) `letterSpacing` `textDecoration` `textAlign` `maxLines` `overflow` `textShadow` `textGradient` `opacity`
+
+**TextDimension**: `fontSize` and `lineHeight` accept raw number (platform units) or `{"value": N, "unit": "percent"}` (rootContainerHeight × N / 1000)
 
 **Visual styles**: `backgroundColor` `borderRadius` `borderWidth` `borderColor` `shadow*` `background`
 

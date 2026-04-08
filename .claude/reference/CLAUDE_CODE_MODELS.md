@@ -77,15 +77,27 @@ data class StyleClass(
 
 // ============ STYLE SYSTEM ============
 
+@Serializable(with = TextDimensionSerializer::class)
+data class TextDimension(
+    val value: Float,
+    val unit: TextDimensionUnit = TextDimensionUnit.PLATFORM  // PLATFORM or PERCENT
+) {
+    fun resolve(rootHeightPx: Float): Float = when (unit) {
+        TextDimensionUnit.PLATFORM -> value
+        TextDimensionUnit.PERCENT -> rootHeightPx * value / 1000f
+    }
+}
+// JSON: number → TextDimension(value, PLATFORM), {"value":40,"unit":"percent"} → TextDimension(40, PERCENT)
+
 @Serializable
 data class Style(
     // Text properties (inherit to children)
     val textColor: String? = null,
-    val fontSize: Float? = null,
+    val fontSize: TextDimension? = null,    // TextDimension: number or {"value","unit"}
     val fontFamily: String? = null,
     val fontWeight: FontWeight? = null,
     val fontStyle: FontStyle? = null,
-    val lineHeight: Float? = null,
+    val lineHeight: TextDimension? = null,  // TextDimension: number or {"value","unit"}
     val letterSpacing: Float? = null,
     val textDecoration: TextDecoration? = null,
     val textAlign: String? = null,
@@ -352,13 +364,25 @@ struct StyleClass: Codable {
     let style: Style
 }
 
+struct TextDimension: Codable, Equatable {
+    let value: CGFloat
+    let unit: TextDimensionUnit  // .platform or .percent
+    func resolve(containerHeight rootHeight: CGFloat) -> CGFloat {
+        switch unit {
+        case .platform: return value
+        case .percent:  return rootHeight * value / 1000
+        }
+    }
+    // Custom Codable: number → .platform, {"value","unit":"percent"} → .percent
+}
+
 struct Style: Codable {
     let textColor: String?
-    let fontSize: CGFloat?
+    let fontSize: TextDimension?     // TextDimension: number or {"value","unit"}
     let fontFamily: String?
     let fontWeight: FontWeight?
     let fontStyle: FontStyle?
-    let lineHeight: CGFloat?
+    let lineHeight: TextDimension?   // TextDimension: number or {"value","unit"}
     let letterSpacing: CGFloat?
     let textDecoration: TextDecoration?
     let textAlign: String?
@@ -570,13 +594,16 @@ interface StyleClass {
   style: Style;
 }
 
+// TextDimension: number → platform units, or object → percentage
+type TextDimension = number | { value: number; unit: 'platform' | 'percent' };
+
 interface Style {
   textColor?: string;
-  fontSize?: number;
+  fontSize?: TextDimension;   // number (platform units) or {"value", "unit":"percent"}
   fontFamily?: string;
   fontWeight?: 'normal' | 'medium' | 'bold' | 'light';
   fontStyle?: 'normal' | 'italic';
-  lineHeight?: number;
+  lineHeight?: TextDimension; // number (platform units) or {"value", "unit":"percent"}
   letterSpacing?: number;
   textDecoration?: 'none' | 'underline' | 'strikethrough';
   textAlign?: 'left' | 'center' | 'right' | 'justify';

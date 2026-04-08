@@ -118,11 +118,11 @@ ChildArrangement {
 ### Text Properties (Cascading - inherited by children)
 ```kotlin
 textColor: String? (hex)
-fontSize: Float?
+fontSize: TextDimension?    // number → platform units, {"value", "unit":"percent"} → rootContainerHeight*value/1000
 fontFamily: String?
 fontWeight: FontWeight? (NORMAL, MEDIUM, BOLD, LIGHT)
 fontStyle: FontStyle? (NORMAL, ITALIC)
-lineHeight: Float?
+lineHeight: TextDimension?  // same as fontSize
 letterSpacing: Float?
 textDecoration: TextDecoration? (NONE, UNDERLINE, STRIKETHROUGH)
 textAlign: String? ("left", "center", "right", "justify")

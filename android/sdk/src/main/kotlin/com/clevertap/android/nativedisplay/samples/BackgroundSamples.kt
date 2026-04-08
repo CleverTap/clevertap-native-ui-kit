@@ -42,7 +42,7 @@ object BackgroundSamples {
                             bindings = mapOf("text" to "Diagonal Gradient (45°)"),
                             style = Style(
                                 textColor = "#FFFFFF",
-                                fontSize = 18f,
+                                fontSize = TextDimension(18f),
                                 fontWeight = FontWeight.BOLD
                             )
                         )
@@ -72,7 +72,7 @@ object BackgroundSamples {
                             bindings = mapOf("text" to "Vertical Gradient (180°)"),
                             style = Style(
                                 textColor = "#FFFFFF",
-                                fontSize = 18f,
+                                fontSize = TextDimension(18f),
                                 fontWeight = FontWeight.BOLD
                             )
                         )
@@ -102,7 +102,7 @@ object BackgroundSamples {
                             bindings = mapOf("text" to "Multi-Color Gradient"),
                             style = Style(
                                 textColor = "#FFFFFF",
-                                fontSize = 18f,
+                                fontSize = TextDimension(18f),
                                 fontWeight = FontWeight.BOLD
                             )
                         )
@@ -152,7 +152,7 @@ object BackgroundSamples {
                             bindings = mapOf("text" to "Radial Gradient (Center)"),
                             style = Style(
                                 textColor = "#FFFFFF",
-                                fontSize = 18f,
+                                fontSize = TextDimension(18f),
                                 fontWeight = FontWeight.BOLD
                             )
                         )
@@ -183,7 +183,7 @@ object BackgroundSamples {
                             bindings = mapOf("text" to "Sweep Gradient (Conic)"),
                             style = Style(
                                 textColor = "#FFFFFF",
-                                fontSize = 18f,
+                                fontSize = TextDimension(18f),
                                 fontWeight = FontWeight.BOLD
                             )
                         )
@@ -233,7 +233,7 @@ object BackgroundSamples {
                             bindings = mapOf("text" to "Shimmer Loading Effect"),
                             style = Style(
                                 textColor = "#666666",
-                                fontSize = 18f
+                                fontSize = TextDimension(18f)
                             )
                         )
                     )
@@ -266,7 +266,7 @@ object BackgroundSamples {
                             bindings = mapOf("text" to "Animated Gradient (Premium)"),
                             style = Style(
                                 textColor = "#FFFFFF",
-                                fontSize = 18f,
+                                fontSize = TextDimension(18f),
                                 fontWeight = FontWeight.BOLD
                             )
                         )
@@ -299,7 +299,7 @@ object BackgroundSamples {
                             bindings = mapOf("text" to "Pulse Effect (Live Status)"),
                             style = Style(
                                 textColor = "#FFFFFF",
-                                fontSize = 18f,
+                                fontSize = TextDimension(18f),
                                 fontWeight = FontWeight.BOLD
                             )
                         )
@@ -334,7 +334,7 @@ object BackgroundSamples {
                             bindings = mapOf("text" to "Particles Effect (Celebration)"),
                             style = Style(
                                 textColor = "#FFFFFF",
-                                fontSize = 18f,
+                                fontSize = TextDimension(18f),
                                 fontWeight = FontWeight.BOLD
                             )
                         )
@@ -385,7 +385,7 @@ object BackgroundSamples {
                             bindings = mapOf("text" to "Dots Pattern"),
                             style = Style(
                                 textColor = "#333333",
-                                fontSize = 18f,
+                                fontSize = TextDimension(18f),
                                 fontWeight = FontWeight.BOLD
                             )
                         )
@@ -418,7 +418,7 @@ object BackgroundSamples {
                             bindings = mapOf("text" to "Horizontal Stripes"),
                             style = Style(
                                 textColor = "#333333",
-                                fontSize = 18f,
+                                fontSize = TextDimension(18f),
                                 fontWeight = FontWeight.BOLD
                             )
                         )
@@ -451,7 +451,7 @@ object BackgroundSamples {
                             bindings = mapOf("text" to "Grid Pattern"),
                             style = Style(
                                 textColor = "#333333",
-                                fontSize = 18f,
+                                fontSize = TextDimension(18f),
                                 fontWeight = FontWeight.BOLD
                             )
                         )
@@ -484,7 +484,7 @@ object BackgroundSamples {
                             bindings = mapOf("text" to "Checkerboard"),
                             style = Style(
                                 textColor = "#333333",
-                                fontSize = 18f,
+                                fontSize = TextDimension(18f),
                                 fontWeight = FontWeight.BOLD
                             )
                         )
@@ -543,7 +543,7 @@ object BackgroundSamples {
                             bindings = mapOf("text" to "Gradient + Pattern Overlay"),
                             style = Style(
                                 textColor = "#FFFFFF",
-                                fontSize = 18f,
+                                fontSize = TextDimension(18f),
                                 fontWeight = FontWeight.BOLD
                             )
                         )
@@ -592,7 +592,7 @@ object BackgroundSamples {
                                     bindings = mapOf("text" to "Premium Card"),
                                     style = Style(
                                         textColor = "#FFFFFF",
-                                        fontSize = 24f,
+                                        fontSize = TextDimension(24f),
                                         fontWeight = FontWeight.BOLD
                                     )
                                 ),
@@ -602,7 +602,7 @@ object BackgroundSamples {
                                     bindings = mapOf("text" to "Radial gradient with grid overlay"),
                                     style = Style(
                                         textColor = "#FFFFFFCC",
-                                        fontSize = 14f
+                                        fontSize = TextDimension(14f)
                                     )
                                 )
                             )

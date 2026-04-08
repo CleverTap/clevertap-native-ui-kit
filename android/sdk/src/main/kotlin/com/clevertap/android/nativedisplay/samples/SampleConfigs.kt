@@ -45,7 +45,7 @@ object SampleConfigs {
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Hello {{userName}}!"),
                         style = Style(
-                            fontSize = 24f,
+                            fontSize = TextDimension(24f),
                             fontWeight = FontWeight.BOLD,
                             textColor = "#000000"
                         )
@@ -55,7 +55,7 @@ object SampleConfigs {
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Welcome to Native Display Kit"),
                         style = Style(
-                            fontSize = 16f,
+                            fontSize = TextDimension(16f),
                             textColor = "#666666"
                         )
                     )
@@ -73,7 +73,7 @@ object SampleConfigs {
                 id = "default",
                 defaultStyle = Style(
                     textColor = "#000000",
-                    fontSize = 14f
+                    fontSize = TextDimension(14f)
                 ),
                 colors = mapOf(
                     "primary" to "#007AFF",
@@ -94,7 +94,7 @@ object SampleConfigs {
                 StyleClass(
                     name = "price-old",
                     style = Style(
-                        fontSize = 16f,
+                        fontSize = TextDimension(16f),
                         textColor = "#999999",
                         textDecoration = TextDecoration.STRIKETHROUGH
                     )
@@ -102,7 +102,7 @@ object SampleConfigs {
                 StyleClass(
                     name = "price-new",
                     style = Style(
-                        fontSize = 24f,
+                        fontSize = TextDimension(24f),
                         fontWeight = FontWeight.BOLD,
                         textColor = "danger"
                     )
@@ -147,7 +147,7 @@ object SampleConfigs {
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "{{productName}}"),
                         style = Style(
-                            fontSize = 20f,
+                            fontSize = TextDimension(20f),
                             fontWeight = FontWeight.BOLD
                         ),
                         layout = Layout(
@@ -160,7 +160,7 @@ object SampleConfigs {
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Save 25% Today!"),
                         style = Style(
-                            fontSize = 16f,
+                            fontSize = TextDimension(16f),
                             fontWeight = FontWeight.BOLD,
                             textColor = "success"
                         ),
@@ -200,7 +200,7 @@ object SampleConfigs {
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Only {{stockLevel}} left in stock!"),
                         style = Style(
-                            fontSize = 14f,
+                            fontSize = TextDimension(14f),
                             fontWeight = FontWeight.MEDIUM,
                             textColor = "#FF9500"
                         ),
@@ -221,7 +221,7 @@ object SampleConfigs {
                         style = Style(
                             backgroundColor = "primary",
                             textColor = "#FFFFFF",
-                            fontSize = 18f,
+                            fontSize = TextDimension(18f),
                             fontWeight = FontWeight.BOLD,
                             borderRadius = 12f
                         )
@@ -240,7 +240,7 @@ object SampleConfigs {
                 id = "default",
                 defaultStyle = Style(
                     textColor = "#000000",
-                    fontSize = 14f
+                    fontSize = TextDimension(14f)
                 )
             ),
             styleClasses = emptyList(),
@@ -258,7 +258,7 @@ object SampleConfigs {
                 ),
                 style = Style(
                     backgroundColor = "#F5F5F5",
-                    fontSize = 18f
+                    fontSize = TextDimension(18f)
                 ),
                 children = listOf(
                     NativeDisplayContainer(
@@ -319,7 +319,7 @@ object SampleConfigs {
                                                 elementType = ElementType.TEXT,
                                                 bindings = mapOf("text" to "Level 3"),
                                                 style = Style(
-                                                    fontSize = 12f
+                                                    fontSize = TextDimension(12f)
                                                 )
                                             ),
                                             Spacer(layout = Layout(width = Dimension.dp(8f))),
@@ -328,7 +328,7 @@ object SampleConfigs {
                                                 elementType = ElementType.TEXT,
                                                 bindings = mapOf("text" to "Deep Nesting!"),
                                                 style = Style(
-                                                    fontSize = 12f,
+                                                    fontSize = TextDimension(12f),
                                                     fontWeight = FontWeight.BOLD
                                                 )
                                             )
@@ -368,7 +368,7 @@ object SampleConfigs {
                         id = "text-demo",
                         elementType = ElementType.TEXT,
                         bindings = mapOf("text" to "Text Element: {{userName}}"),
-                        style = Style(fontSize = 20f, fontWeight = FontWeight.BOLD),
+                        style = Style(fontSize = TextDimension(20f), fontWeight = FontWeight.BOLD),
                     ),
                     
                     // IMAGE - REAL IMAGE

@@ -86,13 +86,29 @@ element.style.lineHeight = `${lineHeight}px`;
 
 ### JSON Property
 
+`fontSize` and `lineHeight` now use the `TextDimension` type, which supports two formats:
+
+**Format 1 — Platform units (backward compatible):**
 ```json
 {
   "style": {
-    "lineHeight": 20  // Type: number, Unit: dp/pt/sp
+    "fontSize": 16,
+    "lineHeight": 20
   }
 }
 ```
+
+**Format 2 — Percentage of container height (matches FE behavior):**
+```json
+{
+  "style": {
+    "fontSize": { "value": 40, "unit": "percent" },
+    "lineHeight": { "value": 56, "unit": "percent" }
+  }
+}
+```
+
+Percentage formula: `rootContainerHeight × value / 1000` (divisor = 1000, matching FE). Always relative to the root container height, regardless of nesting depth.
 
 ### Platform Behavior
 
