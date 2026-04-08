@@ -3,6 +3,66 @@
 
 import Foundation
 
+/// Unit for text dimension values (fontSize, lineHeight).
+public enum TextDimensionUnit: String, Codable, Equatable {
+    case platform
+    case percent
+}
+
+/// A text dimension that supports both platform units (points) and percentage-based sizing.
+///
+/// JSON format (backward compatible):
+/// - Raw number → TextDimension(value, .platform): `"fontSize": 28`
+/// - Object → decoded normally: `"fontSize": {"value": 28, "unit": "percent"}`
+///
+/// Percentage mode: `rootHeight * value / 1000` (always relative to root container)
+public struct TextDimension: Codable, Equatable {
+    public let value: CGFloat
+    public let unit: TextDimensionUnit
+
+    public init(value: CGFloat, unit: TextDimensionUnit = .platform) {
+        self.value = value
+        self.unit = unit
+    }
+
+    public func resolve(containerHeight rootHeight: CGFloat) -> CGFloat {
+        switch unit {
+        case .platform: return value
+        case .percent:  return rootHeight * value / 1000
+        }
+    }
+
+    // Custom decoder: handle both raw number and object
+    public init(from decoder: Decoder) throws {
+        // Try single value (raw number) first
+        if let container = try? decoder.singleValueContainer(),
+           let number = try? container.decode(CGFloat.self) {
+            self.value = number
+            self.unit = .platform
+            return
+        }
+        // Otherwise decode as object
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.value = try container.decode(CGFloat.self, forKey: .value)
+        self.unit = try container.decodeIfPresent(TextDimensionUnit.self, forKey: .unit) ?? .platform
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        if unit == .platform {
+            var container = encoder.singleValueContainer()
+            try container.encode(value)
+        } else {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(value, forKey: .value)
+            try container.encode(unit, forKey: .unit)
+        }
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case value, unit
+    }
+}
+
 /// Style properties for visual appearance.
 ///
 /// ## Internal SDK Usage
@@ -46,11 +106,11 @@ public struct Style: Codable, Equatable {
     // ==================== TEXT PROPERTIES (Cascading) ====================
 
     public let textColor: String?
-    public let fontSize: CGFloat?
+    public let fontSize: TextDimension?
     public let fontFamily: String?
     public let fontWeight: FontWeight?
     public let fontStyle: FontStyle?
-    public let lineHeight: CGFloat?
+    public let lineHeight: TextDimension?
     public let letterSpacing: CGFloat?
     public let textDecoration: TextDecoration?
     public let textAlign: String?  // "left", "center", "right", "justify"
@@ -83,11 +143,11 @@ public struct Style: Codable, Equatable {
     
     public init(
         textColor: String? = nil,
-        fontSize: CGFloat? = nil,
+        fontSize: TextDimension? = nil,
         fontFamily: String? = nil,
         fontWeight: FontWeight? = nil,
         fontStyle: FontStyle? = nil,
-        lineHeight: CGFloat? = nil,
+        lineHeight: TextDimension? = nil,
         letterSpacing: CGFloat? = nil,
         textDecoration: TextDecoration? = nil,
         textAlign: String? = nil,
@@ -321,11 +381,11 @@ public struct Style: Codable, Equatable {
 /// - opacity: Text opacity (0.0 to 1.0)
 public struct TextProperties {
     public let color: String?
-    public let size: CGFloat?
+    public let size: TextDimension?
     public let family: String?
     public let weight: FontWeight?
     public let style: FontStyle?
-    public let lineHeight: CGFloat?
+    public let lineHeight: TextDimension?
     public let letterSpacing: CGFloat?
     public let decoration: TextDecoration?
     public let align: String?
@@ -337,11 +397,11 @@ public struct TextProperties {
 
     public init(
         color: String?,
-        size: CGFloat?,
+        size: TextDimension?,
         family: String?,
         weight: FontWeight?,
         style: FontStyle?,
-        lineHeight: CGFloat?,
+        lineHeight: TextDimension?,
         letterSpacing: CGFloat?,
         decoration: TextDecoration?,
         align: String?,
@@ -371,7 +431,7 @@ public struct TextProperties {
     /// Used as fallback when properties are not specified.
     public static let `default` = TextProperties(
         color: nil,
-        size: 14,
+        size: TextDimension(value: 14),
         family: nil,
         weight: nil,
         style: nil,
@@ -572,7 +632,7 @@ public struct Theme: Codable, Equatable {
         id: "default",
         defaultStyle: Style(
             textColor: "#000000",
-            fontSize: 14,
+            fontSize: TextDimension(value: 14),
             fontWeight: .normal
         )
     )

@@ -91,20 +91,69 @@ public struct NativeDisplayView: View {
             // → MUST use GeometryReader to measure parent constraints
             GeometryReader { geometry in
                 renderContent(parentSize: geometry.size)
+                    .frame(width: geometry.size.width, alignment: .center)
             }
         }
     }
 
     private func renderContent(parentSize: CGSize) -> some View {
-        RenderNode(
+        let rootHeight = Self.resolveRootHeight(layout: config.root.layout, parentSize: parentSize)
+        return RenderNode(
             node: config.root,
             resolvedStyles: resolvedStyles,
             evaluator: evaluator,
             parentSize: parentSize,
+            rootHeight: rootHeight,
             actionHandler: actionHandler,
             componentListener: componentListener,
             isRoot: true
         )
+    }
+
+    /// Resolve the root container's height for TextDimension percentage calculations.
+    ///
+    /// Priority:
+    /// 1. Fixed height (dp/sp/px) → use directly
+    /// 2. Aspect ratio + resolvable width → height = width / aspectRatio
+    /// 3. Percent height → compute from parent
+    /// 4. Fallback → parent height (or screen height if 0)
+    private static func resolveRootHeight(layout: Layout?, parentSize: CGSize) -> CGFloat {
+        guard let layout = layout else { return parentSize.height > 0 ? parentSize.height : UIScreen.main.bounds.height }
+
+        let height = layout.height
+
+        // 1. Fixed height
+        if let h = height, h.special == nil {
+            switch h.unit {
+            case .dp, .sp, .px:
+                if h.value > 0 { return h.value }
+            case .percent:
+                break // handled in step 3
+            }
+        }
+
+        // 2. Aspect ratio + known width
+        if let ar = layout.aspectRatio, ar > 0 {
+            let rootWidth = resolveRootWidth(layout: layout, parentWidth: parentSize.width)
+            if rootWidth > 0 { return rootWidth / ar }
+        }
+
+        // 3. Percent height
+        if let h = height, h.special == nil, h.unit == .percent, parentSize.height > 0 {
+            return parentSize.height * h.value / 100
+        }
+
+        // 4. Fallback
+        return parentSize.height > 0 ? parentSize.height : UIScreen.main.bounds.height
+    }
+
+    private static func resolveRootWidth(layout: Layout?, parentWidth: CGFloat) -> CGFloat {
+        guard let w = layout?.width else { return parentWidth }
+        if w.special != nil { return parentWidth } // match_parent / wrap_content
+        switch w.unit {
+        case .dp, .sp, .px: return w.value
+        case .percent: return parentWidth > 0 ? parentWidth * w.value / 100 : 0
+        }
     }
 }
 
@@ -114,6 +163,7 @@ struct RenderNode: View {
     let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let parentSize: CGSize
+    let rootHeight: CGFloat
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
     var isRoot: Bool = false
@@ -153,6 +203,7 @@ struct RenderNode: View {
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
                 parentSize: parentSize,
+                rootHeight: rootHeight,
                 actionHandler: actionHandler,
                 componentListener: componentListener
             )
@@ -190,6 +241,7 @@ struct RenderNode: View {
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
                 parentSize: parentSize,
+                rootHeight: rootHeight,
                 actionHandler: actionHandler
             )
             .modifier(layoutMod)
@@ -231,6 +283,7 @@ struct RenderContainer: View {
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
     let parentSize: CGSize
+    let rootHeight: CGFloat
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
 
@@ -286,6 +339,7 @@ struct RenderContainer: View {
                         resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: containerSize,
+                        rootHeight: rootHeight,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
@@ -304,6 +358,7 @@ struct RenderContainer: View {
                 resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
+                rootHeight: rootHeight,
                 actionHandler: actionHandler,
                 componentListener: componentListener
             )
@@ -398,6 +453,7 @@ struct RenderContainer: View {
                         resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
+                        rootHeight: rootHeight,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
@@ -414,6 +470,7 @@ struct RenderContainer: View {
                         resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
+                        rootHeight: rootHeight,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
@@ -435,6 +492,7 @@ struct RenderContainer: View {
                         resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
+                        rootHeight: rootHeight,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
@@ -453,6 +511,7 @@ struct RenderContainer: View {
                         resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
+                        rootHeight: rootHeight,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
@@ -475,6 +534,7 @@ struct RenderContainer: View {
                         resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
+                        rootHeight: rootHeight,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
@@ -493,6 +553,7 @@ struct RenderContainer: View {
                         resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
+                        rootHeight: rootHeight,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
@@ -511,6 +572,7 @@ struct RenderContainer: View {
                         resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
+                        rootHeight: rootHeight,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
@@ -534,6 +596,7 @@ struct RenderContainer: View {
                         resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
+                        rootHeight: rootHeight,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
@@ -548,6 +611,7 @@ struct RenderContainer: View {
                         resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
+                        rootHeight: rootHeight,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
@@ -567,6 +631,7 @@ struct RenderContainer: View {
                         resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
+                        rootHeight: rootHeight,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
@@ -583,6 +648,7 @@ struct RenderContainer: View {
                         resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
+                        rootHeight: rootHeight,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
@@ -603,6 +669,7 @@ struct RenderContainer: View {
                         resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
+                        rootHeight: rootHeight,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
@@ -619,6 +686,7 @@ struct RenderContainer: View {
                         resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
+                        rootHeight: rootHeight,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
@@ -635,6 +703,7 @@ struct RenderContainer: View {
                         resolvedStyles: resolvedStyles,
                         evaluator: evaluator,
                         parentSize: availableSize,
+                        rootHeight: rootHeight,
                         actionHandler: actionHandler,
                         componentListener: componentListener
                     )
@@ -650,6 +719,7 @@ struct RenderElement: View {
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
     let parentSize: CGSize
+    let rootHeight: CGFloat
     let actionHandler: ActionHandler?
     
     var body: some View {
@@ -727,21 +797,45 @@ struct RenderElement: View {
             }
         }()
 
+        // Build font with weight and italic baked in (iOS 15 compatible).
+        let isPercentMode = textProps.size?.unit == .percent
+        let resolvedSize = textProps.size?.resolve(containerHeight: rootHeight) ?? 14
+        let baseFont = Font.system(size: resolvedSize, weight: resolveFontWeight(textProps.weight))
+        let font: Font = textProps.style == .italic ? baseFont.italic() : baseFont
+
+        // Compute line spacing:
+        // - If lineHeight is explicitly set: use (lineHeight - fontSize) as inter-line spacing
+        // - If percentage mode with no lineHeight: fontSize * 0.2 (matches CSS line-height:normal ~1.2×)
+        // - If platform mode with no lineHeight: legacy default (fontSize * 1.5)
+        let lineSpacingValue: CGFloat = {
+            if let lh = textProps.lineHeight {
+                return max(0, lh.resolve(containerHeight: rootHeight) - resolvedSize)
+            } else if isPercentMode {
+                return resolvedSize * 0.2  // lineHeight = fontSize * 1.2, spacing = 0.2× fontSize
+            } else {
+                return max(0, resolvedSize * 1.5 - resolvedSize)  // Platform mode: legacy default
+            }
+        }()
+
         // Build the styled Text as a Text value (all Text modifiers return Text).
         let coreText = Text(text)
-            .foregroundColor(ColorParser.parse(textProps.color) ?? .primary)
-            .font(.system(size: textProps.size ?? 14))
-            .fontWeight(resolveFontWeight(textProps.weight))
-            .strikethrough(textProps.decoration == .strikethrough)
-            .underline(textProps.decoration == .underline)
+            .foregroundColor(ColorParser.parse(textProps.color) ?? .black)
+            .font(font)
+            .kerning(textProps.letterSpacing ?? 0)
+            .underline(textProps.decoration == .underline, color: nil)
+            .strikethrough(textProps.decoration == .strikethrough, color: nil)
             .multilineTextAlignment(textAlignment)
-            .lineSpacing(max(0, (textProps.lineHeight ?? 0) - (textProps.size ?? 14)))
+            .lineSpacing(lineSpacingValue)
 
         if isWrapContent {
             coreText
+                .lineLimit(textProps.maxLines)
+                .truncationMode(resolveTextOverflow(textProps.overflow))
                 .fixedSize(horizontal: false, vertical: true)
         } else {
             coreText
+                .lineLimit(textProps.maxLines)
+                .truncationMode(resolveTextOverflow(textProps.overflow))
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: frameAlignment)
         }
@@ -851,6 +945,18 @@ struct RenderElement: View {
 
         let onLongPress = element.actions?[ActionTriggers.onLongPress]
         let onDoubleTap = element.actions?[ActionTriggers.onDoubleTap]
+        let isPercentMode = textProps.size?.unit == .percent
+        let resolvedSize = textProps.size?.resolve(containerHeight: rootHeight) ?? 16
+
+        let btnLineSpacing: CGFloat = {
+            if let lh = textProps.lineHeight {
+                return max(0, lh.resolve(containerHeight: rootHeight) - resolvedSize)
+            } else if isPercentMode {
+                return resolvedSize * 0.2  // lineHeight = fontSize * 1.2, spacing = 0.2× fontSize
+            } else {
+                return max(0, resolvedSize * 1.5 - resolvedSize)
+            }
+        }()
 
         Button(action: {
             // Fire system event for button click
@@ -864,13 +970,17 @@ struct RenderElement: View {
         }) {
             Text(buttonText)
                 .foregroundColor(ColorParser.parse(textProps.color) ?? .white)
-                .font(.system(size: textProps.size ?? 16))
-                .fontWeight(resolveFontWeight(textProps.weight))
-                .strikethrough(textProps.decoration == .strikethrough)
-                .underline(textProps.decoration == .underline)
+                .font({
+                    let base = Font.system(size: resolvedSize, weight: resolveFontWeight(textProps.weight))
+                    return textProps.style == .italic ? base.italic() : base
+                }())
+                .kerning(textProps.letterSpacing ?? 0)
+                .underline(textProps.decoration == .underline, color: nil)
+                .strikethrough(textProps.decoration == .strikethrough, color: nil)
                 .multilineTextAlignment(resolveTextAlign(textProps.align))
-                .lineSpacing(max(0, (textProps.lineHeight ?? 0) - (textProps.size ?? 16)))
+                .lineSpacing(btnLineSpacing)
                 .lineLimit(textProps.maxLines)
+                .truncationMode(resolveTextOverflow(textProps.overflow))
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
         .buttonStyle(.plain)
@@ -988,6 +1098,15 @@ struct RenderElement: View {
         case "center": return .center
         case "right": return .trailing
         default: return .leading
+        }
+    }
+
+    private func resolveTextOverflow(_ overflow: TextOverflow?) -> Text.TruncationMode {
+        switch overflow {
+        case .ellipsis: return .tail
+        case .clip: return .tail
+        case .visible: return .tail
+        case .none: return .tail
         }
     }
 }

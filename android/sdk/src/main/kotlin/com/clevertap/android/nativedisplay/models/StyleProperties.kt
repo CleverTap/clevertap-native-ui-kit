@@ -25,11 +25,11 @@ import androidx.compose.runtime.Immutable
 @Immutable
 data class TextProperties(
     val color: String?,
-    val size: Float?,
+    val size: TextDimension?,
     val family: String?,
     val weight: FontWeight?,
     val style: FontStyle?,
-    val lineHeight: Float?,
+    val lineHeight: TextDimension?,
     val letterSpacing: Float?,
     val decoration: TextDecoration?,
     val align: String?,
@@ -46,7 +46,7 @@ data class TextProperties(
          */
         val DEFAULT = TextProperties(
             color = null,
-            size = 14f,
+            size = TextDimension(14f),
             family = null,
             weight = null,
             style = null,

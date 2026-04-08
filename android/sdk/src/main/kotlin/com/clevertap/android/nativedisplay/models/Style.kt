@@ -50,11 +50,11 @@ data class Style(
     // ==================== TEXT PROPERTIES (Cascading) ====================
 
     val textColor: String? = null,
-    val fontSize: Float? = null,
+    val fontSize: TextDimension? = null,
     val fontFamily: String? = null,
     val fontWeight: FontWeight? = null,
     val fontStyle: FontStyle? = null,
-    val lineHeight: Float? = null,
+    val lineHeight: TextDimension? = null,
     val letterSpacing: Float? = null,
     val textDecoration: TextDecoration? = null,
     val textAlign: String? = null,  // "left", "center", "right", "justify"
