@@ -112,12 +112,12 @@ final class CleverTapNativeDisplayTests: XCTestCase {
     func testStyleResolution() {
         let theme = Theme(
             id: "test",
-            defaultStyle: Style(textColor: "#000000", fontSize: 14),
+            defaultStyle: Style(textColor: "#000000", fontSize: TextDimension(value: 14)),
             colors: ["primary": "#FF0000"]
         )
-        
+
         let styleClasses = [
-            StyleClass(name: "title", style: Style(fontSize: 24, fontWeight: .bold))
+            StyleClass(name: "title", style: Style(fontSize: TextDimension(value: 24), fontWeight: .bold))
         ]
         
         let resolver = StyleResolver(theme: theme, styleClasses: styleClasses)
@@ -132,18 +132,18 @@ final class CleverTapNativeDisplayTests: XCTestCase {
         let resolvedStyle = resolver.resolve(node: .element(element))
         
         XCTAssertEqual(resolvedStyle.textColor, "#000000") // From theme
-        XCTAssertEqual(resolvedStyle.fontSize, 24) // From style class
+        XCTAssertEqual(resolvedStyle.fontSize, TextDimension(value: 24)) // From style class
         XCTAssertEqual(resolvedStyle.fontWeight, .bold) // From style class
     }
     
     func testInlineStyleOverride() {
         let theme = Theme(
             id: "test",
-            defaultStyle: Style(textColor: "#000000", fontSize: 14)
+            defaultStyle: Style(textColor: "#000000", fontSize: TextDimension(value: 14))
         )
-        
+
         let resolver = StyleResolver(theme: theme, styleClasses: [])
-        
+
         let element = NativeDisplayElement(
             id: "test",
             elementType: .text,

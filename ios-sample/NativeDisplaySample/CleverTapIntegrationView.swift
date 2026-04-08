@@ -78,7 +78,6 @@ struct CleverTapIntegrationView: View {
                                 config: unit.config,
                                 actionListener: viewModel
                             )
-                            .environment(\.nativeDisplayParentSize, UIScreen.main.bounds.size)
                             .frame(maxWidth: .infinity)
                         }
                     }

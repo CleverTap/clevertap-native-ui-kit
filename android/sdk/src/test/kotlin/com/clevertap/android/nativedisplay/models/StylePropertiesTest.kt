@@ -9,10 +9,10 @@ class StylePropertiesTest {
     fun `extractTextProperties returns correct properties`() {
         val style = Style(
             textColor = "#000000",
-            fontSize = 16f,
+            fontSize = TextDimension(16f),
             fontWeight = FontWeight.BOLD,
             fontFamily = "Arial",
-            lineHeight = 24f,
+            lineHeight = TextDimension(24f),
             textDecoration = TextDecoration.UNDERLINE,
             textAlign = "center",
             opacity = 0.9f,
@@ -24,10 +24,10 @@ class StylePropertiesTest {
         val textProps = style.extractTextProperties()
 
         assertEquals("#000000", textProps.color)
-        assertEquals(16f, textProps.size)
+        assertEquals(TextDimension(16f), textProps.size)
         assertEquals(FontWeight.BOLD, textProps.weight)
         assertEquals("Arial", textProps.family)
-        assertEquals(24f, textProps.lineHeight)
+        assertEquals(TextDimension(24f), textProps.lineHeight)
         assertEquals(TextDecoration.UNDERLINE, textProps.decoration)
         assertEquals("center", textProps.align)
         assertEquals(0.9f, textProps.opacity)
@@ -57,7 +57,7 @@ class StylePropertiesTest {
             backgroundColor = "#FFFFFF",
             opacity = 0.8f,
             // Non-visual properties (should not appear in visual props)
-            fontSize = 16f,
+            fontSize = TextDimension(16f),
             borderRadius = 8f
         )
 
@@ -86,7 +86,7 @@ class StylePropertiesTest {
             borderWidth = 2f,
             borderColor = "#CCCCCC",
             // Non-border properties (should not appear in border props)
-            fontSize = 16f,
+            fontSize = TextDimension(16f),
             backgroundColor = "#FFFFFF"
         )
 
@@ -116,7 +116,7 @@ class StylePropertiesTest {
             shadowOffsetX = 2f,
             shadowOffsetY = 3f,
             // Non-shadow properties (should not appear in shadow props)
-            fontSize = 16f,
+            fontSize = TextDimension(16f),
             backgroundColor = "#FFFFFF"
         )
 
@@ -145,7 +145,7 @@ class StylePropertiesTest {
         val style = Style(
             // Text properties
             textColor = "#000000",
-            fontSize = 16f,
+            fontSize = TextDimension(16f),
             // Visual properties
             backgroundColor = "#FFFFFF",
             opacity = 0.9f,
@@ -167,7 +167,7 @@ class StylePropertiesTest {
 
         // Verify text properties are isolated
         assertEquals("#000000", textProps.color)
-        assertEquals(16f, textProps.size)
+        assertEquals(TextDimension(16f), textProps.size)
         assertEquals(0.9f, textProps.opacity) // opacity is universal
 
         // Verify visual properties are isolated
@@ -192,7 +192,7 @@ class StylePropertiesTest {
         val defaults = TextProperties.DEFAULT
 
         assertNull(defaults.color)
-        assertEquals(14f, defaults.size)
+        assertEquals(TextDimension(14f), defaults.size)
         assertNull(defaults.family)
         assertNull(defaults.weight)
         assertNull(defaults.lineHeight)

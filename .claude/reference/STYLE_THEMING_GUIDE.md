@@ -19,23 +19,34 @@ The Native Display System supports comprehensive styling through:
 Applied to text elements and inherited by child elements:
 
 ```kotlin
-textColor: String        // Hex color (#RRGGBB or #RRGGBBAA)
-fontSize: Float          // Size in sp (scale-independent pixels)
-fontFamily: String       // Font family name
-fontWeight: FontWeight   // LIGHT, NORMAL, MEDIUM, BOLD
-fontStyle: FontStyle     // NORMAL, ITALIC
-lineHeight: Float        // Line height in sp
-letterSpacing: Float     // Letter spacing in sp
+textColor: String            // Hex color (#RRGGBB or #RRGGBBAA)
+fontSize: TextDimension      // Font size — number (platform units) or {"value", "unit"} object
+fontFamily: String           // Font family name
+fontWeight: FontWeight       // LIGHT, NORMAL, MEDIUM, BOLD
+fontStyle: FontStyle         // NORMAL, ITALIC
+lineHeight: TextDimension    // Line height — number (platform units) or {"value", "unit"} object
+letterSpacing: Float         // Letter spacing in sp/pt
 textDecoration: TextDecoration  // NONE, UNDERLINE, STRIKETHROUGH
-textAlign: String        // "left", "center", "right", "justify"
-maxLines: Int            // Maximum lines before truncation
-overflow: TextOverflow   // CLIP, ELLIPSIS, VISIBLE
-textShadow: TextShadow   // Drop shadow effect on text
-textGradient: TextGradient  // Gradient effect on text
-opacity: Float           // 0.0 to 1.0
+textAlign: String            // "left", "center", "right", "justify"
+maxLines: Int                // Maximum lines before truncation
+overflow: TextOverflow       // CLIP, ELLIPSIS, VISIBLE
+textShadow: TextShadow      // Drop shadow effect on text
+textGradient: TextGradient   // Gradient effect on text
+opacity: Float               // 0.0 to 1.0
 ```
 
-**Example**:
+#### TextDimension
+
+`fontSize` and `lineHeight` accept two JSON formats (backward compatible):
+
+| Format | Example | Meaning |
+|--------|---------|---------|
+| Raw number | `"fontSize": 16` | Platform units (SP on Android, points on iOS) |
+| Object | `"fontSize": {"value": 40, "unit": "percent"}` | Percentage of root container height: `rootHeight × value / 1000` |
+
+The divisor is **1000** (matching FE/dashboard behavior). For example, in a 400dp container, `{"value": 40, "unit": "percent"}` resolves to `400 × 40 / 1000 = 16` platform units.
+
+**Example — platform units (legacy)**:
 ```json
 {
   "style": {
@@ -54,6 +65,18 @@ opacity: Float           // 0.0 to 1.0
       "offsetY": 2,
       "blur": 4
     }
+  }
+}
+```
+
+**Example — percentage-based font sizing**:
+```json
+{
+  "style": {
+    "textColor": "#212121",
+    "fontSize": { "value": 40, "unit": "percent" },
+    "lineHeight": { "value": 56, "unit": "percent" },
+    "fontWeight": "bold"
   }
 }
 ```
@@ -146,8 +169,8 @@ For SDK developers working on the renderer, style properties are organized into 
 ### Property Groups
 
 **Text Properties** - Used by TEXT and BUTTON elements:
-- `textColor`, `fontSize`, `fontFamily`, `fontWeight`
-- `lineHeight`, `textDecoration`, `textAlign`
+- `textColor`, `fontSize` (TextDimension), `fontFamily`, `fontWeight`
+- `lineHeight` (TextDimension), `textDecoration`, `textAlign`
 - `opacity` (universal)
 
 **Visual Properties** - Used by all elements for backgrounds:
@@ -170,7 +193,7 @@ val textProps = resolvedStyle.extractTextProperties()
 Text(
     text = text,
     color = parseColor(textProps.color) ?: Color.Black,
-    fontSize = (textProps.size ?: 14f).sp,
+    fontSize = (textProps.size?.resolve(rootHeightPx) ?: 14f).sp,
     fontWeight = resolveFontWeight(textProps.weight)
 )
 
@@ -193,9 +216,10 @@ if (shadowProps.radius != null && shadowProps.radius > 0f) {
 ```swift
 // In renderer code
 let textProps = resolvedStyle.extractTextProperties()
+let resolvedSize = textProps.size?.resolve(containerHeight: rootHeight) ?? 14
 Text(text)
     .foregroundColor(ColorParser.parse(textProps.color) ?? .primary)
-    .font(.system(size: textProps.size ?? 14))
+    .font(.system(size: resolvedSize))
     .fontWeight(resolveFontWeight(textProps.weight))
 
 let visualProps = resolvedStyle.extractVisualProperties()

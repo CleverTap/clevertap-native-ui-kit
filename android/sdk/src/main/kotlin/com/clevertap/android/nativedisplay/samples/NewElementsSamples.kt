@@ -43,7 +43,7 @@ object NewElementsSamples {
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.WRAP_CONTENT
                         ),
-                        style = Style(fontSize = 24f, fontWeight = FontWeight.BOLD)
+                        style = Style(fontSize = TextDimension(24f), fontWeight = FontWeight.BOLD)
                     ),
                     
                     // Horizontal divider (default)
@@ -70,7 +70,7 @@ object NewElementsSamples {
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.WRAP_CONTENT
                         ),
-                        style = Style(fontSize = 24f, fontWeight = FontWeight.BOLD)
+                        style = Style(fontSize = TextDimension(24f), fontWeight = FontWeight.BOLD)
                     ),
                     
                     // Thick colored divider
@@ -97,7 +97,7 @@ object NewElementsSamples {
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.WRAP_CONTENT
                         ),
-                        style = Style(fontSize = 24f, fontWeight = FontWeight.BOLD)
+                        style = Style(fontSize = TextDimension(24f), fontWeight = FontWeight.BOLD)
                     ),
 
                     // Purple divider with alpha
@@ -137,7 +137,7 @@ object NewElementsSamples {
                                     width = Dimension.WRAP_CONTENT,
                                     height = Dimension.WRAP_CONTENT
                                 ),
-                                style = Style(fontSize = 16f)
+                                style = Style(fontSize = TextDimension(16f))
                             ),
                             
                             // Vertical divider
@@ -163,7 +163,7 @@ object NewElementsSamples {
                                     width = Dimension.WRAP_CONTENT,
                                     height = Dimension.WRAP_CONTENT
                                 ),
-                                style = Style(fontSize = 16f)
+                                style = Style(fontSize = TextDimension(16f))
                             )
                         )
                     )
@@ -197,7 +197,7 @@ object NewElementsSamples {
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.WRAP_CONTENT
                         ),
-                        style = Style(fontSize = 24f, fontWeight = FontWeight.BOLD)
+                        style = Style(fontSize = TextDimension(24f), fontWeight = FontWeight.BOLD)
                     ),
                     
                     NativeDisplayContainer(
@@ -247,7 +247,7 @@ object NewElementsSamples {
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.WRAP_CONTENT
                         ),
-                        style = Style(fontSize = 24f, fontWeight = FontWeight.BOLD)
+                        style = Style(fontSize = TextDimension(24f), fontWeight = FontWeight.BOLD)
                     ),
                     
                     NativeDisplayElement(
@@ -258,7 +258,7 @@ object NewElementsSamples {
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.WRAP_CONTENT,
                         ),
-                        style = Style(fontSize = 12f, textColor = "#666666")
+                        style = Style(fontSize = TextDimension(12f), textColor = "#666666")
                     ),
                     
                     NativeDisplayContainer(
@@ -323,7 +323,7 @@ object NewElementsSamples {
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.WRAP_CONTENT
                         ),
-                        style = Style(fontSize = 24f, fontWeight = FontWeight.BOLD)
+                        style = Style(fontSize = TextDimension(24f), fontWeight = FontWeight.BOLD)
                     ),
                     
                     NativeDisplayElement(
@@ -334,7 +334,7 @@ object NewElementsSamples {
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.WRAP_CONTENT,
                         ),
-                        style = Style(fontSize = 12f, textColor = "#666666")
+                        style = Style(fontSize = TextDimension(12f), textColor = "#666666")
                     ),
                     
                     NativeDisplayContainer(
@@ -385,7 +385,7 @@ object NewElementsSamples {
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.WRAP_CONTENT
                         ),
-                        style = Style(fontSize = 28f, fontWeight = FontWeight.BOLD)
+                        style = Style(fontSize = TextDimension(28f), fontWeight = FontWeight.BOLD)
                     ),
                     
                     // Subtitle
@@ -397,7 +397,7 @@ object NewElementsSamples {
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.WRAP_CONTENT,
                         ),
-                        style = Style(fontSize = 14f, textColor = "#666666")
+                        style = Style(fontSize = TextDimension(14f), textColor = "#666666")
                     ),
                     
                     // Divider
@@ -473,7 +473,7 @@ object NewElementsSamples {
                             height = Dimension.WRAP_CONTENT
                         ),
                         style = Style(
-                            fontSize = 16f,
+                            fontSize = TextDimension(16f),
                             textColor = "#999999",
                             textAlign = "center"
                         )
@@ -510,7 +510,7 @@ object NewElementsSamples {
                             height = Dimension.WRAP_CONTENT
                         ),
                         style = Style(
-                            fontSize = 24f,
+                            fontSize = TextDimension(24f),
                             fontWeight = FontWeight.BOLD,
                             textColor = "#FFFFFF",
                             textAlign = "center"
@@ -525,7 +525,7 @@ object NewElementsSamples {
                             height = Dimension.WRAP_CONTENT
                         ),
                         style = Style(
-                            fontSize = 14f,
+                            fontSize = TextDimension(14f),
                             textColor = "#FFFFFF",
                             textAlign = "center"
                         )
@@ -561,7 +561,7 @@ object NewElementsSamples {
                             height = Dimension.WRAP_CONTENT
                         ),
                         style = Style(
-                            fontSize = 14f,
+                            fontSize = TextDimension(14f),
                             fontWeight = FontWeight.BOLD,
                             textColor = "#FFFFFF"
                         )
@@ -620,7 +620,7 @@ object NewElementsSamples {
                             height = Dimension.WRAP_CONTENT,
                         ),
                         style = Style(
-                            fontSize = 18f,
+                            fontSize = TextDimension(18f),
                             fontWeight = FontWeight.BOLD,
                             textColor = "#1A1A1A"
                         )
@@ -636,7 +636,7 @@ object NewElementsSamples {
                             height = Dimension.WRAP_CONTENT
                         ),
                         style = Style(
-                            fontSize = 20f,
+                            fontSize = TextDimension(20f),
                             fontWeight = FontWeight.BOLD,
                             textColor = "#007AFF"
                         )

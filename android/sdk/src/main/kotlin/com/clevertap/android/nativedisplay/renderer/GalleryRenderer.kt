@@ -62,6 +62,7 @@ fun RenderGallery(
     modifier: Modifier = Modifier,
     actionHandler: ActionHandler? = null,
     componentListener: NativeDisplayComponentListener? = null,
+    rootHeightPx: Float = 0f,
 ) {
     val config = container.galleryConfig ?: GalleryConfig()
 
@@ -75,6 +76,7 @@ fun RenderGallery(
                 modifier = modifier,
                 actionHandler = actionHandler,
                 componentListener = componentListener,
+                rootHeightPx = rootHeightPx,
             )
         }
 
@@ -87,6 +89,7 @@ fun RenderGallery(
                 modifier = modifier,
                 actionHandler = actionHandler,
                 componentListener = componentListener,
+                rootHeightPx = rootHeightPx,
             )
         }
 
@@ -99,6 +102,7 @@ fun RenderGallery(
                 modifier = modifier,
                 actionHandler = actionHandler,
                 componentListener = componentListener,
+                rootHeightPx = rootHeightPx,
             )
         }
     }
@@ -119,6 +123,7 @@ internal fun RenderSnappingGallery(
     modifier: Modifier = Modifier,
     actionHandler: ActionHandler? = null,
     componentListener: NativeDisplayComponentListener? = null,
+    rootHeightPx: Float = 0f,
 ) {
     if (container.children.isEmpty()) return
 
@@ -171,6 +176,7 @@ internal fun RenderSnappingGallery(
                             modifier = Modifier.fillMaxWidth(),
                             actionHandler = actionHandler,
                             componentListener = componentListener,
+                            rootHeightPx = rootHeightPx,
                         )
                     }
                 }
@@ -191,6 +197,7 @@ internal fun RenderSnappingGallery(
                             modifier = Modifier.fillMaxHeight(),
                             actionHandler = actionHandler,
                             componentListener = componentListener,
+                            rootHeightPx = rootHeightPx,
                         )
                     }
                 }
@@ -260,6 +267,7 @@ internal fun RenderFreeFlowGallery(
     modifier: Modifier = Modifier,
     actionHandler: ActionHandler? = null,
     componentListener: NativeDisplayComponentListener? = null,
+    rootHeightPx: Float = 0f,
 ) {
     if (container.children.isEmpty()) return
 
@@ -276,6 +284,7 @@ internal fun RenderFreeFlowGallery(
                     modifier = Modifier,
                     actionHandler = actionHandler,
                     componentListener = componentListener,
+                    rootHeightPx = rootHeightPx,
                 )
             }
         }
@@ -292,6 +301,7 @@ internal fun RenderFreeFlowGallery(
                     modifier = Modifier,
                     actionHandler = actionHandler,
                     componentListener = componentListener,
+                    rootHeightPx = rootHeightPx,
                 )
             }
         }
@@ -314,6 +324,7 @@ internal fun RenderFreeFlowGridGallery(
     modifier: Modifier = Modifier,
     actionHandler: ActionHandler? = null,
     componentListener: NativeDisplayComponentListener? = null,
+    rootHeightPx: Float = 0f,
 ) {
     if (container.children.isEmpty()) return
 
@@ -350,6 +361,7 @@ internal fun RenderFreeFlowGridGallery(
                             modifier = Modifier.fillMaxWidth(),
                             actionHandler = actionHandler,
                             componentListener = componentListener,
+                            rootHeightPx = rootHeightPx,
                         )
                     }
                 }
@@ -383,6 +395,7 @@ internal fun RenderFreeFlowGridGallery(
                             modifier = Modifier.fillMaxHeight(),
                             actionHandler = actionHandler,
                             componentListener = componentListener,
+                            rootHeightPx = rootHeightPx,
                         )
                     }
                 }

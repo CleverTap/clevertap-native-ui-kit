@@ -9,6 +9,7 @@ struct RenderGallery: View {
     let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
+    let rootHeight: CGFloat
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
 
@@ -23,6 +24,7 @@ struct RenderGallery: View {
                 resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
+                rootHeight: rootHeight,
                 actionHandler: actionHandler,
                 componentListener: componentListener
             )
@@ -34,6 +36,7 @@ struct RenderGallery: View {
                 resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
+                rootHeight: rootHeight,
                 actionHandler: actionHandler,
                 componentListener: componentListener
             )
@@ -45,6 +48,7 @@ struct RenderGallery: View {
                 resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
+                rootHeight: rootHeight,
                 actionHandler: actionHandler,
                 componentListener: componentListener
             )
@@ -64,6 +68,7 @@ struct SnappingGalleryView: View {
     let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
+    let rootHeight: CGFloat
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
     
@@ -88,6 +93,7 @@ struct SnappingGalleryView: View {
                                 resolvedStyles: resolvedStyles,
                                 evaluator: evaluator,
                                 parentSize: CGSize(width: effectiveWidth, height: containerSize.height),
+                                rootHeight: rootHeight,
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
                             )
@@ -107,6 +113,7 @@ struct SnappingGalleryView: View {
                                 resolvedStyles: resolvedStyles,
                                 evaluator: evaluator,
                                 parentSize: CGSize(width: containerSize.width, height: effectiveHeight),
+                                rootHeight: rootHeight,
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
                             )
@@ -175,6 +182,7 @@ struct FreeFlowGalleryView: View {
     let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
+    let rootHeight: CGFloat
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
     
@@ -191,6 +199,7 @@ struct FreeFlowGalleryView: View {
                                 resolvedStyles: resolvedStyles,
                                 evaluator: evaluator,
                                 parentSize: containerSize,
+                                rootHeight: rootHeight,
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
                             )
@@ -206,6 +215,7 @@ struct FreeFlowGalleryView: View {
                                 resolvedStyles: resolvedStyles,
                                 evaluator: evaluator,
                                 parentSize: containerSize,
+                                rootHeight: rootHeight,
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
                             )
@@ -230,6 +240,7 @@ struct FreeFlowGridGalleryView: View {
     let resolvedStyles: [String: Style]
     let evaluator: VariableEvaluator
     let resolvedStyle: Style
+    let rootHeight: CGFloat
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
     
@@ -255,6 +266,7 @@ struct FreeFlowGridGalleryView: View {
                                 resolvedStyles: resolvedStyles,
                                 evaluator: evaluator,
                                 parentSize: CGSize(width: itemWidth, height: containerSize.height),
+                                rootHeight: rootHeight,
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
                             )
@@ -281,6 +293,7 @@ struct FreeFlowGridGalleryView: View {
                                 resolvedStyles: resolvedStyles,
                                 evaluator: evaluator,
                                 parentSize: CGSize(width: containerSize.width, height: itemHeight),
+                                rootHeight: rootHeight,
                                 actionHandler: actionHandler,
                                 componentListener: componentListener
                             )
