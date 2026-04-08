@@ -91,6 +91,7 @@ public struct NativeDisplayView: View {
             // → MUST use GeometryReader to measure parent constraints
             GeometryReader { geometry in
                 renderContent(parentSize: geometry.size)
+                    .frame(width: geometry.size.width, alignment: .center)
             }
         }
     }
