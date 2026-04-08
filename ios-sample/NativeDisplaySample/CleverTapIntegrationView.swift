@@ -53,7 +53,7 @@ struct CleverTapIntegrationView: View {
                 .font(.subheadline)
                 .fontWeight(.semibold)
         }
-        .padding(16)
+        .padding(10)
     }
 
     // MARK: - Display Canvas
@@ -81,9 +81,8 @@ struct CleverTapIntegrationView: View {
                             .frame(maxWidth: .infinity)
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
                 }
+                .frame(maxWidth: .infinity)
             }
         }
     }
