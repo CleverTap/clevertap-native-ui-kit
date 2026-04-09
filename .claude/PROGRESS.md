@@ -91,6 +91,7 @@ The Native Display SDK is fully implemented for both Android and iOS platforms.
 | Solid | ✅ | ✅ | reference/STYLE_THEMING_GUIDE.md |
 | Linear Gradient | ✅ | ✅ | reference/STYLE_THEMING_GUIDE.md |
 | Radial Gradient | ✅ | ✅ | reference/STYLE_THEMING_GUIDE.md |
+| Image | ✅ | ✅ | reference/STYLE_THEMING_GUIDE.md |
 | Patterns | ✅ | ✅ | reference/STYLE_THEMING_GUIDE.md |
 | Shimmer | ✅ | ✅ | reference/STYLE_THEMING_GUIDE.md |
 | Pulse | ✅ | ✅ | reference/STYLE_THEMING_GUIDE.md |
