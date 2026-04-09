@@ -1,5 +1,7 @@
 package com.clevertap.android.nativeui.sample
 
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -63,6 +65,14 @@ fun CleverTapIntegrationScreen() {
         object : NativeDisplayActionListener {
             override fun onOpenUrl(url: String, openInBrowser: Boolean): Boolean {
                 log("ACTION openUrl: $url")
+                try {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    context.startActivity(intent)
+                } catch (e: Exception) {
+                    log("ERROR opening URL: ${e.message}")
+                }
                 return true
             }
 

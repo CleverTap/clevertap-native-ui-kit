@@ -305,22 +305,10 @@ class ActionHandler(
     /**
      * Open URL in Chrome Custom Tab.
      * Provides in-app browser experience with better UX.
+     * Falls back to external browser until Custom Tabs dependency is added.
      */
     private fun openInCustomTab(url: String) {
-        /*try {
-            val builder = CustomTabsIntent.Builder()
-            val customTabsIntent = builder.build()
-
-            // Use FLAG_ACTIVITY_NEW_TASK since we might not have activity context
-            customTabsIntent.intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-            customTabsIntent.launchUrl(context, Uri.parse(url))
-            Log.d(TAG, "Opened URL in Chrome Custom Tab: $url")
-        } catch (e: Exception) {
-            Log.w(TAG, "Chrome Custom Tab failed, falling back to browser", e)
-            // Fallback to external browser
-            openInExternalBrowser(url)
-        }*/
+        openInExternalBrowser(url)
     }
 
     /**
