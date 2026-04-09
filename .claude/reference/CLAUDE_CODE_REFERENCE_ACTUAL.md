@@ -119,7 +119,7 @@ ChildArrangement {
 ```kotlin
 textColor: String? (hex)
 fontSize: TextDimension?    // number → platform units, {"value", "unit":"percent"} → rootContainerHeight*value/1000
-fontFamily: String?
+fontFamily: String?         // JSON name; resolved via 3-layer system (see STYLE_THEMING_GUIDE.md § Font Family)
 fontWeight: FontWeight? (NORMAL, MEDIUM, BOLD, LIGHT)
 fontStyle: FontStyle? (NORMAL, ITALIC)
 lineHeight: TextDimension?  // same as fontSize

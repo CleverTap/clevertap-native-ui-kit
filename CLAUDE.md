@@ -101,6 +101,11 @@ Theme default → Style class → Inline node style → Parent style (text prope
 
 **TextDimension** — `fontSize` and `lineHeight` support two JSON formats: raw number (platform units: SP/points) or `{"value": N, "unit": "percent"}` which resolves as `rootContainerHeight × value / 1000`. The `/1000` divisor matches FE/dashboard behavior.
 
+**Font family resolution** — 3-layer priority at render time:
+1. Client-provided font (`fontFamily` param / `LocalFontFamily` / `\.nativeDisplayFontFamily`) — HIGHEST
+2. JSON `fontFamily` string resolved via `LocalFontFamilyResolver` / `\.nativeDisplayFontResolver`
+3. Platform system default (Roboto / San Francisco) — respects Android FontManager user settings
+
 ---
 
 ## Development Workflow
@@ -205,6 +210,7 @@ iOS test:       cd ios && swift test
 5. Use `{{variables}}` for dynamic content
 6. Always specify `lineHeight` to avoid cross-platform differences
 7. Test on multiple screen sizes
+8. If cross-platform font parity matters, enforce a shared font via the client font API — Roboto and San Francisco have different character widths and will wrap text differently
 
 ---
 

@@ -5,12 +5,14 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Constraints
 import com.clevertap.android.nativedisplay.evaluator.VariableEvaluator
 import com.clevertap.android.nativedisplay.handler.ActionHandler
@@ -38,6 +40,7 @@ import kotlinx.collections.immutable.PersistentMap
 fun NativeDisplayView(
     config: ResolvedConfig,
     modifier: Modifier = Modifier,
+    fontFamily: FontFamily? = null,
     actionListener: NativeDisplayActionListener? = null,
     componentListener: NativeDisplayComponentListener? = null,
 ) {
@@ -48,6 +51,7 @@ fun NativeDisplayView(
         config = config,
         resolvedStyles = resolvedStyles,
         modifier = modifier,
+        fontFamily = fontFamily,
         actionListener = actionListener,
         componentListener = componentListener,
     )
@@ -61,6 +65,7 @@ fun NativeDisplayView(
     config: ResolvedConfig,
     resolvedStyles: PersistentMap<String, Style>,
     modifier: Modifier = Modifier,
+    fontFamily: FontFamily? = null,
     actionListener: NativeDisplayActionListener? = null,
     componentListener: NativeDisplayComponentListener? = null,
 ) {
@@ -84,20 +89,28 @@ fun NativeDisplayView(
         VariableEvaluator(variables = config.variables)
     }
 
-    BoxWithConstraints(modifier = modifier) {
-        val parentWidthPx = if (constraints.maxWidth != Constraints.Infinity) constraints.maxWidth.toFloat() else 0f
-        val parentHeightPx = if (constraints.maxHeight != Constraints.Infinity) constraints.maxHeight.toFloat() else 0f
-        val rootHeightPx = resolveRootHeightPx(config.root.layout, parentWidthPx, parentHeightPx, context)
-        RenderNode(
-            node = config.root,
-            resolvedStyles = resolvedStyles,
-            evaluator = evaluator,
-            modifier = Modifier,
-            actionHandler = actionHandler,
-            componentListener = componentListener,
-            isRoot = true,
-            rootHeightPx = rootHeightPx,
-        )
+    val content = @Composable {
+        BoxWithConstraints(modifier = modifier) {
+            val parentWidthPx = if (constraints.maxWidth != Constraints.Infinity) constraints.maxWidth.toFloat() else 0f
+            val parentHeightPx = if (constraints.maxHeight != Constraints.Infinity) constraints.maxHeight.toFloat() else 0f
+            val rootHeightPx = resolveRootHeightPx(config.root.layout, parentWidthPx, parentHeightPx, context)
+            RenderNode(
+                node = config.root,
+                resolvedStyles = resolvedStyles,
+                evaluator = evaluator,
+                modifier = Modifier,
+                actionHandler = actionHandler,
+                componentListener = componentListener,
+                isRoot = true,
+                rootHeightPx = rootHeightPx,
+            )
+        }
+    }
+
+    if (fontFamily != null) {
+        CompositionLocalProvider(LocalFontFamily provides fontFamily) { content() }
+    } else {
+        content()
     }
 }
 

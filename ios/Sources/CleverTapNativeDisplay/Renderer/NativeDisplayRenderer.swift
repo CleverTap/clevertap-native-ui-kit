@@ -23,6 +23,36 @@ extension EnvironmentValues {
     }
 }
 
+// MARK: - Environment Keys for Font Customization
+
+/// Environment key for client-provided default font family name (HIGHEST priority).
+public struct DefaultFontFamilyKey: EnvironmentKey {
+    public static let defaultValue: String? = nil
+}
+
+/// Environment key for a custom font resolver closure.
+/// Called when JSON specifies a fontFamily and no client default overrides it.
+public struct FontFamilyResolverKey: EnvironmentKey {
+    public static let defaultValue: ((String, CGFloat, Font.Weight) -> Font)? = nil
+}
+
+extension EnvironmentValues {
+    /// Client-provided default font family. When set, ALL text in the SDK uses this font,
+    /// overriding any fontFamily specified in JSON.
+    public var nativeDisplayFontFamily: String? {
+        get { self[DefaultFontFamilyKey.self] }
+        set { self[DefaultFontFamilyKey.self] = newValue }
+    }
+
+    /// Custom font resolver for JSON-specified font families.
+    /// Called with (familyName, size, weight) when JSON specifies a fontFamily
+    /// and no client default font is set.
+    public var nativeDisplayFontResolver: ((String, CGFloat, Font.Weight) -> Font)? {
+        get { self[FontFamilyResolverKey.self] }
+        set { self[FontFamilyResolverKey.self] = newValue }
+    }
+}
+
 // MARK: - Native Display View
 
 /// Main entry point for rendering native display UI.
@@ -708,7 +738,10 @@ struct RenderElement: View {
     let parentSize: CGSize
     let rootHeight: CGFloat
     let actionHandler: ActionHandler?
-    
+
+    @Environment(\.nativeDisplayFontFamily) private var clientFontFamily
+    @Environment(\.nativeDisplayFontResolver) private var fontResolver
+
     var body: some View {
         let padding = element.layout?.padding
         let paddingInsets = EdgeInsets(
@@ -787,18 +820,24 @@ struct RenderElement: View {
         // Build font with weight and italic baked in (iOS 15 compatible).
         let isPercentMode = textProps.size?.unit == .percent
         let resolvedSize = textProps.size?.resolve(containerHeight: rootHeight) ?? 14
-        let baseFont = Font.system(size: resolvedSize, weight: resolveFontWeight(textProps.weight))
-        let font: Font = textProps.style == .italic ? baseFont.italic() : baseFont
+        let font = resolveFont(
+            family: textProps.family,
+            size: resolvedSize,
+            weight: resolveFontWeight(textProps.weight),
+            isItalic: textProps.style == .italic
+        )
 
-        // Compute line spacing:
-        // - If lineHeight is explicitly set: use (lineHeight - fontSize) as inter-line spacing
-        // - If percentage mode with no lineHeight: fontSize * 0.2 (matches CSS line-height:normal ~1.2×)
+        // Compute line spacing (SwiftUI .lineSpacing = EXTRA space between lines, not total line height):
+        // - If lineHeight is explicitly set: extra = totalLineHeight - fontSize (approximate)
+        // - If percentage mode with no lineHeight: 0 (SwiftUI's natural ~1.2× already matches CSS)
         // - If platform mode with no lineHeight: legacy default (fontSize * 1.5)
         let lineSpacingValue: CGFloat = {
             if let lh = textProps.lineHeight {
-                return max(0, lh.resolve(containerHeight: rootHeight) - resolvedSize)
+                // Subtract natural line height (~1.2× fontSize) since SwiftUI adds this automatically
+                let resolvedLH = lh.resolve(containerHeight: rootHeight)
+                return max(0, resolvedLH - resolvedSize * 1.2)
             } else if isPercentMode {
-                return resolvedSize * 0.2  // lineHeight = fontSize * 1.2, spacing = 0.2× fontSize
+                return 0  // SwiftUI natural line height ≈ 1.2× already matches CSS line-height:1.2
             } else {
                 return max(0, resolvedSize * 1.5 - resolvedSize)  // Platform mode: legacy default
             }
@@ -932,9 +971,10 @@ struct RenderElement: View {
 
         let btnLineSpacing: CGFloat = {
             if let lh = textProps.lineHeight {
-                return max(0, lh.resolve(containerHeight: rootHeight) - resolvedSize)
+                let resolvedLH = lh.resolve(containerHeight: rootHeight)
+                return max(0, resolvedLH - resolvedSize * 1.2)
             } else if isPercentMode {
-                return resolvedSize * 0.2  // lineHeight = fontSize * 1.2, spacing = 0.2× fontSize
+                return 0  // SwiftUI natural line height ≈ 1.2× already matches CSS line-height:1.2
             } else {
                 return max(0, resolvedSize * 1.5 - resolvedSize)
             }
@@ -954,10 +994,12 @@ struct RenderElement: View {
             // Text is centered within the button — center alignment is the conventional default for buttons.
             Text(buttonText)
                 .foregroundColor(ColorParser.parse(textProps.color) ?? .white)
-                .font({
-                    let base = Font.system(size: resolvedSize, weight: resolveFontWeight(textProps.weight))
-                    return textProps.style == .italic ? base.italic() : base
-                }())
+                .font(resolveFont(
+                    family: textProps.family,
+                    size: resolvedSize,
+                    weight: resolveFontWeight(textProps.weight),
+                    isItalic: textProps.style == .italic
+                ))
                 .kerning(textProps.letterSpacing ?? 0)
                 .underline(textProps.decoration == .underline, color: nil)
                 .strikethrough(textProps.decoration == .strikethrough, color: nil)
@@ -1049,6 +1091,29 @@ struct RenderElement: View {
         }
     }
     #endif
+
+    /// 3-layer font resolution:
+    /// 1. Client default font family (environment) — HIGHEST priority
+    /// 2. JSON fontFamily from server config — MEDIUM priority
+    /// 3. Platform system font — LOWEST priority (fallback)
+    private func resolveFont(family: String?, size: CGFloat, weight: Font.Weight, isItalic: Bool) -> Font {
+        // Layer 1: Client default (HIGHEST)
+        if let clientFamily = clientFontFamily {
+            let font = Font.custom(clientFamily, size: size).weight(weight)
+            return isItalic ? font.italic() : font
+        }
+        // Layer 2: JSON fontFamily
+        if let family = family {
+            if let resolver = fontResolver {
+                return isItalic ? resolver(family, size, weight).italic() : resolver(family, size, weight)
+            }
+            let font = Font.custom(family, size: size).weight(weight)
+            return isItalic ? font.italic() : font
+        }
+        // Layer 3: System default
+        let font = Font.system(size: size, weight: weight)
+        return isItalic ? font.italic() : font
+    }
 
     private func resolveFontWeight(_ weight: FontWeight?) -> Font.Weight {
         switch weight {

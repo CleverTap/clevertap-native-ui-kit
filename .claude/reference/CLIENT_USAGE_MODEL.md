@@ -144,6 +144,48 @@ NativeDisplayView(
 )
 ```
 
+### ✅ Customize Font Families (Client Font API)
+
+Font resolution follows a 3-layer priority: client default → JSON fontFamily → platform system font.
+
+**Android — simple: pass a font directly**
+```kotlin
+NativeDisplayView(config = config, fontFamily = InterFontFamily)
+```
+
+**Android — advanced: resolver maps JSON fontFamily names to font objects**
+```kotlin
+CompositionLocalProvider(
+    LocalFontFamily provides InterFontFamily,          // brand default
+    LocalFontFamilyResolver provides { name ->         // JSON name resolver
+        when (name.lowercase()) {
+            "inter" -> InterFontFamily
+            "mono"  -> FontFamily.Monospace
+            else    -> null  // falls through to system default
+        }
+    }
+) {
+    NativeDisplayView(config = config)
+}
+```
+
+**iOS — set font family via environment**
+```swift
+NativeDisplayView(config: config)
+    .environment(\.nativeDisplayFontFamily, "Inter")
+
+// Or use a resolver for JSON fontFamily names:
+NativeDisplayView(config: config)
+    .environment(\.nativeDisplayFontResolver, { name, size, weight in
+        switch name.lowercased() {
+        case "inter": return Font.custom("Inter", size: size).weight(weight)
+        default:      return nil
+        }
+    })
+```
+
+> When no font is provided, Compose/SwiftUI defers to the system default (Roboto/SF Pro). On Android 12+, this means user-selected fonts from device Settings are automatically respected.
+
 ---
 
 ## SDK Internal Implementation (What We Build)

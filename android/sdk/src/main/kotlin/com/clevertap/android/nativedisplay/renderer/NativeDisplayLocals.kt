@@ -4,10 +4,17 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
 import coil.ImageLoader
 
 /** Overrides the Coil ImageLoader for IMAGE elements. Null = production singleton (no-op). */
 val LocalImageLoader = compositionLocalOf<((Context) -> ImageLoader)?> { null }
+
+/** Client-provided default FontFamily. Null = system default. */
+val LocalFontFamily = compositionLocalOf<FontFamily?> { null }
+
+/** Client-provided resolver for JSON fontFamily strings. Null = no custom resolution. */
+val LocalFontFamilyResolver = compositionLocalOf<((String) -> FontFamily?)?> { null }
 
 /** Overrides the video player composable for VIDEO elements. Null = real VideoPlayer (no-op). */
 val LocalVideoPlayerFactory = compositionLocalOf<

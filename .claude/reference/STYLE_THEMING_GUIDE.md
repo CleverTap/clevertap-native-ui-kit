@@ -127,6 +127,77 @@ This ensures WYSIWYG (What You See Is What You Get) behavior between preview and
 
 ---
 
+### Font Family — 3-Layer Resolution
+
+`fontFamily` in JSON specifies a font name string. At render time both platforms resolve the final font through a priority chain:
+
+```
+1. Client-provided font  (CompositionLocal / Environment)  — HIGHEST
+2. JSON fontFamily       (resolved via client resolver)     — MEDIUM
+3. Platform system font  (Roboto / San Francisco)           — LOWEST
+```
+
+**Layer 1 — Client default (highest priority)**
+
+Overrides every JSON value. Useful for brand-wide font enforcement.
+
+```kotlin
+// Android: parameter shorthand
+NativeDisplayView(config = config, fontFamily = InterFontFamily)
+
+// Android: CompositionLocal (useful when wrapping multiple views)
+CompositionLocalProvider(LocalFontFamily provides InterFontFamily) {
+    NativeDisplayView(config = config)
+}
+```
+
+```swift
+// iOS: environment value
+NativeDisplayView(config: config)
+    .environment(\.nativeDisplayFontFamily, "Inter")
+```
+
+**Layer 2 — JSON fontFamily + client resolver (medium priority)**
+
+The JSON `fontFamily` string is passed to a client-provided resolver closure. If the resolver returns a font, that font is used. If no resolver is registered but a `fontFamily` string exists, `Font.custom(name)` / `Font.custom(name, size:)` is called directly.
+
+```kotlin
+// Android: register a resolver alongside (or instead of) the default font
+CompositionLocalProvider(
+    LocalFontFamilyResolver provides { name ->
+        when (name.lowercase()) {
+            "inter" -> InterFontFamily
+            "mono"  -> FontFamily.Monospace
+            else    -> null   // null → fall through to layer 3
+        }
+    }
+) {
+    NativeDisplayView(config = config)
+}
+```
+
+```swift
+// iOS: resolver closure receives (fontName, size, weight)
+NativeDisplayView(config: config)
+    .environment(\.nativeDisplayFontResolver, { name, size, weight in
+        switch name.lowercased() {
+        case "inter": return Font.custom("Inter", size: size).weight(weight)
+        case "mono":  return Font.custom("CourierNewPSMT", size: size).weight(weight)
+        default:      return nil   // nil → fall through to layer 3
+        }
+    })
+```
+
+**Layer 3 — System default (lowest priority)**
+
+When both layers above produce no font (all return `null`/`nil`), Compose's `Text(fontFamily = null)` / SwiftUI's `Font.system(size:weight:)` is used. This means **Android FontManager user-selected fonts are fully respected** — if the user has changed the system font in Settings, layer 3 picks it up automatically. Layer 1 and 2 override it by design.
+
+**⚠️ Cross-platform note**
+
+Android system default is Roboto; iOS system default is San Francisco (SF Pro). Character widths differ, which can cause text to wrap at different points. If pixel-perfect cross-platform parity matters, enforce a shared font via Layer 1.
+
+---
+
 ### Visual Properties (Non-cascading)
 
 Applied to individual elements, not inherited:
