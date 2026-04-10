@@ -804,7 +804,7 @@ Combine percentages with aspect ratios for responsive, proportional layouts:
   "background": { /* Background object */ },
   "backgroundColor": "#FFFFFF",
   
-  "borderRadius": 8,
+  "borderRadius": 8,             // Dimension: number (dp) OR {"value": 50, "unit": "percent"}
   "borderWidth": 1,
   "borderColor": "#E0E0E0",
   
@@ -901,6 +901,38 @@ This matches the FE/dashboard rendering behavior where font sizes are relative t
 ```
 
 In a 400dp **root** container: `fontSize = 400 × 40 / 1000 = 16`, `lineHeight = 400 × 56 / 1000 = 22.4`. The root container height is always used, regardless of nesting depth.
+
+---
+
+### borderRadius: Dual-Format Support
+
+`borderRadius` accepts two JSON formats:
+
+**Format 1 — Raw number (dp):**
+```json
+"borderRadius": 12
+```
+Applies a 12dp corner radius on all corners.
+
+**Format 2 — Percentage object:**
+```json
+"borderRadius": {"value": 50, "unit": "percent"}
+```
+Resolves as `min(elementWidth, elementHeight) * value / 100`. A value of `50` on a square produces a circle; `100` gives maximum rounding.
+
+**Examples:**
+```json
+// Fixed radius
+{ "style": { "borderRadius": 8 } }
+
+// Fully circular (pill/circle)
+{ "style": { "borderRadius": {"value": 100, "unit": "percent"} } }
+
+// Half-rounded
+{ "style": { "borderRadius": {"value": 50, "unit": "percent"} } }
+```
+
+> Note: `special` values (`wrap_content`, `match_parent`) are not applicable to `borderRadius`.
 
 ---
 

@@ -1343,12 +1343,33 @@ struct DecorationModifier: ViewModifier {
     let style: Style
 
     func body(content: Content) -> some View {
-        // Extract property groups for better code organization
+        DecorationView(style: style, content: content)
+    }
+}
+
+/// Internal view that applies visual decoration (background, border, shadow, clip, opacity).
+///
+/// Separated from `DecorationModifier` as a dedicated `View` struct so that `@State` can
+/// be stored properly. SwiftUI's `ViewModifier.body` does not own state the same way a
+/// `View.body` does, and complex chaining on `@ViewBuilder` results causes type-checker
+/// failures in some Xcode/Swift versions.
+///
+/// Percent-based `borderRadius` requires knowing the element's rendered size. We measure it
+/// via `.background(GeometryReader)` which is non-greedy (does NOT affect the parent's
+/// layout), unlike wrapping content directly in `GeometryReader` which expands to fill all
+/// available space and returns wrong sizes inside `ScrollView` / `LazyVStack` / `LazyHStack`.
+private struct DecorationView<Content: View>: View {
+    let style: Style
+    let content: Content
+
+    /// Tracks the element's rendered size for percent-based cornerRadius resolution.
+    @State private var elementSize: CGSize = .zero
+
+    var body: some View {
         let borderProps = style.extractBorderProperties()
         let shadowProps = style.extractShadowProperties()
         let visualProps = style.extractVisualProperties()
-
-        let cornerRadius = borderProps.radius ?? 0
+        let cornerRadius = resolvedCornerRadius(for: elementSize, borderProps: borderProps)
 
         content
             // Apply background
@@ -1388,6 +1409,32 @@ struct DecorationModifier: ViewModifier {
             )
             // Apply opacity
             .opacity(Double(visualProps.opacity ?? 1))
+            // Measure the element's true rendered size using a non-layout-affecting background.
+            // GeometryReader in .background() reports the size of the parent view — i.e. the
+            // decorated content — without expanding it. This is correct and stable inside
+            // ScrollView and LazyVStack/LazyHStack, where a top-level GeometryReader wrapper
+            // would greedily fill the scroll container and report the wrong size.
+            .background(
+                GeometryReader { geo in
+                    Color.clear
+                        .onAppear { elementSize = geo.size }
+                        .onChange(of: geo.size) { newSize in elementSize = newSize }
+                }
+            )
+    }
+
+    /// Resolves the corner radius to a concrete CGFloat.
+    /// - For `.percent` units: `min(width, height) * (value / 100)`
+    /// - For all other units (dp, sp, px): use the raw value directly as points
+    private func resolvedCornerRadius(for size: CGSize, borderProps: BorderProperties) -> CGFloat {
+        guard let dim = borderProps.radius else { return 0 }
+        switch dim.unit {
+        case .percent:
+            let minSide = min(size.width, size.height)
+            return minSide * (CGFloat(dim.value) / 100.0)
+        default:
+            return CGFloat(dim.value)
+        }
     }
 }
 

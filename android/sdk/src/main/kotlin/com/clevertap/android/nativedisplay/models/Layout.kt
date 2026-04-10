@@ -1,7 +1,19 @@
 package com.clevertap.android.nativedisplay.models
 
 import androidx.compose.runtime.Immutable
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.nullable
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.JsonEncoder
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.float
+import kotlinx.serialization.json.jsonPrimitive
 
 /**
  * Represents a dimension value that can be either a specific value or a special dimension.
@@ -18,10 +30,76 @@ data class Dimension(
         fun sp(value: Float) = Dimension(value, DimensionUnit.SP)
         fun percent(value: Float) = Dimension(value, DimensionUnit.PERCENT)
         fun px(value: Float) = Dimension(value, DimensionUnit.PX)
-        
+
         val WRAP_CONTENT = Dimension(0f, DimensionUnit.DP, SpecialDimension.WRAP_CONTENT)
         val MATCH_PARENT = Dimension(0f, DimensionUnit.DP, SpecialDimension.MATCH_PARENT)
     }
+}
+
+/**
+ * Serializer for Dimension that accepts both raw numbers (treated as DP) and
+ * object format `{"value": N, "unit": "percent"}`.
+ *
+ * Used by `borderRadius` in Style so that:
+ * - `"borderRadius": 12` → `Dimension(12f, DimensionUnit.DP)`
+ * - `"borderRadius": {"value": 50, "unit": "percent"}` → `Dimension(50f, DimensionUnit.PERCENT)`
+ */
+object DimensionAsNumberSerializer : KSerializer<Dimension> {
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("DimensionAsNumber")
+
+    override fun deserialize(decoder: Decoder): Dimension {
+        val jsonDecoder = decoder as JsonDecoder
+        val element = jsonDecoder.decodeJsonElement()
+        return when {
+            element is JsonPrimitive && !element.isString -> {
+                // Raw number → DP (backward compatible)
+                Dimension(value = element.float, unit = DimensionUnit.DP)
+            }
+            element is JsonObject -> {
+                // Object format: {"value": N, "unit": "percent"|"dp"|...}
+                val value = element["value"]?.jsonPrimitive?.float ?: 0f
+                val unitStr = element["unit"]?.jsonPrimitive?.content ?: "dp"
+                val unit = when (unitStr.lowercase()) {
+                    "percent" -> DimensionUnit.PERCENT
+                    "sp" -> DimensionUnit.SP
+                    "px" -> DimensionUnit.PX
+                    else -> DimensionUnit.DP
+                }
+                Dimension(value = value, unit = unit)
+            }
+            else -> Dimension(value = 0f, unit = DimensionUnit.DP)
+        }
+    }
+
+    override fun serialize(encoder: Encoder, value: Dimension) {
+        val jsonEncoder = encoder as JsonEncoder
+        if (value.unit == DimensionUnit.DP && value.special == null) {
+            // Serialize simple DP values as raw numbers for compact JSON output
+            jsonEncoder.encodeJsonElement(JsonPrimitive(value.value))
+        } else {
+            jsonEncoder.encodeJsonElement(
+                JsonObject(
+                    mapOf(
+                        "value" to JsonPrimitive(value.value),
+                        "unit" to JsonPrimitive(value.unit.name.lowercase())
+                    )
+                )
+            )
+        }
+    }
+}
+
+/**
+ * Nullable wrapper around [DimensionAsNumberSerializer].
+ * Used by `Style.borderRadius` so that a JSON `null` deserializes to Kotlin `null`.
+ */
+object DimensionAsNumberSerializerNullable : KSerializer<Dimension?> {
+    private val inner = DimensionAsNumberSerializer.nullable
+    override val descriptor: SerialDescriptor = inner.descriptor
+
+    override fun deserialize(decoder: Decoder): Dimension? = inner.deserialize(decoder)
+
+    override fun serialize(encoder: Encoder, value: Dimension?) = inner.serialize(encoder, value)
 }
 
 /**

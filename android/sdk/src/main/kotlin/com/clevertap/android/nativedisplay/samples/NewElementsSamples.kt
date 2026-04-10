@@ -126,7 +126,7 @@ object NewElementsSamples {
                         ),
                         style = Style(
                             backgroundColor = "#F5F5F5",
-                            borderRadius = 8f
+                            borderRadius = Dimension.dp(8f)
                         ),
                         children = listOf(
                             NativeDisplayElement(
@@ -498,7 +498,7 @@ object NewElementsSamples {
                 ),
                 style = Style(
                     backgroundColor = colors[index % colors.size],
-                    borderRadius = 16f
+                    borderRadius = Dimension.dp(16f)
                 ),
                 children = listOf(
                     NativeDisplayElement(
@@ -549,7 +549,7 @@ object NewElementsSamples {
                 ),
                 style = Style(
                     backgroundColor = colors[index % colors.size],
-                    borderRadius = 20f
+                    borderRadius = Dimension.dp(20f)
                 ),
                 children = listOf(
                     NativeDisplayElement(
@@ -591,7 +591,7 @@ object NewElementsSamples {
                 ),
                 style = Style(
                     backgroundColor = "#FFFFFF",
-                    borderRadius = 12f,
+                    borderRadius = Dimension.dp(12f),
                     shadowRadius = 8f,
                     shadowColor = "#00000020"
                 ),
@@ -606,7 +606,7 @@ object NewElementsSamples {
                         ),
                         style = Style(
                             backgroundColor = color,
-                            borderRadius = 8f
+                            borderRadius = Dimension.dp(8f)
                         )
                     ),
                     

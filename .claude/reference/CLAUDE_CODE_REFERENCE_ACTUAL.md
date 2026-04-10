@@ -137,7 +137,7 @@ opacity: Float?
 ```kotlin
 background: Background? (Rich background support)
 backgroundColor: String? (Legacy, backward compatible)
-borderRadius: Float?
+borderRadius: Dimension?   // dp number or {"value","unit":"percent"} — resolves as min(w,h) * value/100
 borderWidth: Float?
 borderColor: String?
 shadowColor: String?

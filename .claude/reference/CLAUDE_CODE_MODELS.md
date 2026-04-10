@@ -111,7 +111,7 @@ data class Style(
     val backgroundColor: String? = null,
 
     // Border properties (do NOT inherit)
-    val borderRadius: Float? = null,
+    val borderRadius: Dimension? = null,  // Dimension: number (dp) or {"value","unit":"percent"}
     val borderWidth: Float? = null,
     val borderColor: String? = null,
 
@@ -392,7 +392,7 @@ struct Style: Codable {
     let textGradient: TextGradient?
     let background: Background?
     let backgroundColor: String?
-    let borderRadius: CGFloat?
+    let borderRadius: Dimension?  // Dimension: number (dp) or {"value","unit":"percent"}
     let borderWidth: CGFloat?
     let borderColor: String?
     let shadowColor: String?
@@ -613,7 +613,7 @@ interface Style {
   textGradient?: TextGradient;
   background?: Background;
   backgroundColor?: string;
-  borderRadius?: number;
+  borderRadius?: number | { value: number; unit: 'dp' | 'percent' };
   borderWidth?: number;
   borderColor?: string;
   shadowColor?: string;

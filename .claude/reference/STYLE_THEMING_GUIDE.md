@@ -205,7 +205,7 @@ Applied to individual elements, not inherited:
 ```kotlin
 background: Background          // Complex background support
 backgroundColor: String         // Simple background color (hex)
-borderRadius: Float            // Corner radius in dp
+borderRadius: Dimension        // Corner radius — see formats below
 borderWidth: Float             // Border thickness in dp
 borderColor: String            // Border color (hex)
 shadowColor: String            // Shadow color (hex with alpha)
@@ -213,6 +213,19 @@ shadowRadius: Float            // Shadow blur radius in dp
 shadowOffsetX: Float           // Shadow X offset in dp
 shadowOffsetY: Float           // Shadow Y offset in dp
 ```
+
+#### borderRadius Formats
+
+`borderRadius` accepts two JSON formats:
+
+| Format | Example | Meaning |
+|--------|---------|---------|
+| Raw number | `"borderRadius": 12` | 12dp corner radius |
+| Object | `"borderRadius": {"value": 50, "unit": "percent"}` | `min(width, height) * 50 / 100` |
+
+- Raw number: `"borderRadius": 12` → 12dp
+- Object: `"borderRadius": {"value": 50, "unit": "percent"}` → `min(w,h) * 50/100`
+- Note: `special` (`wrap_content`/`match_parent`) is not applicable to borderRadius
 
 **Example**:
 ```json

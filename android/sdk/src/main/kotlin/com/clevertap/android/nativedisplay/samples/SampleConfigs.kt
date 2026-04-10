@@ -35,7 +35,7 @@ object SampleConfigs {
                 ),
                 style = Style(
                     backgroundColor = "#FFFFFF",
-                    borderRadius = 16f,
+                    borderRadius = Dimension.dp(16f),
                     shadowRadius = 8f,
                     shadowColor = "#00000040"
                 ),
@@ -86,7 +86,7 @@ object SampleConfigs {
                     name = "card",
                     style = Style(
                         backgroundColor = "#FFFFFF",
-                        borderRadius = 16f,
+                        borderRadius = Dimension.dp(16f),
                         shadowRadius = 12f,
                         shadowColor = "#00000020"
                     )
@@ -137,7 +137,7 @@ object SampleConfigs {
                         ),
                         style = Style(
                             backgroundColor = "#F0F0F0",
-                            borderRadius = 12f
+                            borderRadius = Dimension.dp(12f)
                         )
                     ),
                     
@@ -223,7 +223,7 @@ object SampleConfigs {
                             textColor = "#FFFFFF",
                             fontSize = TextDimension(18f),
                             fontWeight = FontWeight.BOLD,
-                            borderRadius = 12f
+                            borderRadius = Dimension.dp(12f)
                         )
                     )
                 )
@@ -270,7 +270,7 @@ object SampleConfigs {
                         ),
                         style = Style(
                             backgroundColor = "#FFFFFF",
-                            borderRadius = 12f,
+                            borderRadius = Dimension.dp(12f),
                             shadowRadius = 4f
                         ),
                         children = listOf(
@@ -291,7 +291,7 @@ object SampleConfigs {
                                 ),
                                 style = Style(
                                     backgroundColor = "#E8F4FD",
-                                    borderRadius = 8f
+                                    borderRadius = Dimension.dp(8f)
                                 ),
                                 children = listOf(
                                     NativeDisplayElement(
@@ -311,7 +311,7 @@ object SampleConfigs {
                                         ),
                                         style = Style(
                                             backgroundColor = "#D0E8FA",
-                                            borderRadius = 6f
+                                            borderRadius = Dimension.dp(6f)
                                         ),
                                         children = listOf(
                                             NativeDisplayElement(
@@ -381,7 +381,7 @@ object SampleConfigs {
                             height = Dimension.dp(150f),
                         ),
                         style = Style(
-                            borderRadius = 75f,
+                            borderRadius = Dimension.dp(75f),
                             backgroundColor = "#F0F0F0"
                         )
                     ),
@@ -416,7 +416,7 @@ object SampleConfigs {
                             height = Dimension.dp(200f)
                         ),
                         style = Style(
-                            borderRadius = 12f
+                            borderRadius = Dimension.dp(12f)
                         )
                     )
                 )

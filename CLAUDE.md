@@ -197,7 +197,7 @@ iOS test:       cd ios && swift test
 
 **TextDimension**: `fontSize` and `lineHeight` accept raw number (platform units) or `{"value": N, "unit": "percent"}` (rootContainerHeight × N / 1000)
 
-**Visual styles**: `backgroundColor` `borderRadius` `borderWidth` `borderColor` `shadow*` `background`
+**Visual styles**: `backgroundColor` `borderRadius` (Dimension: number dp or `{"value","unit":"percent"}`) `borderWidth` `borderColor` `shadow*` `background`
 
 ---
 
