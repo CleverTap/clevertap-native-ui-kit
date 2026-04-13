@@ -71,7 +71,8 @@ fun NativeDisplaySlot(
             config = currentUnit.config,
             modifier = modifier,
             actionListener = actionListener,
-            componentListener = componentListener
+            componentListener = componentListener,
+            unitId = currentUnit.unitId
         )
     } else {
         loading()

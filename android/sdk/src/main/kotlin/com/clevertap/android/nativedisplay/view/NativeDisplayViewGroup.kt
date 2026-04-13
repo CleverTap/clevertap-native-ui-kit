@@ -85,6 +85,7 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
     private var actionListenerState = mutableStateOf<NativeDisplayActionListener?>(null)
     private var componentListenerState = mutableStateOf<NativeDisplayComponentListener?>(null)
     private var resolvedStylesState = mutableStateOf<PersistentMap<String, Style>>(persistentMapOf())
+    private var unitIdState = mutableStateOf<String?>(null)
 
     // State tracking
     private var isRecycled = false
@@ -122,6 +123,7 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
                 val actionListener by remember { actionListenerState }
                 val componentListener by remember { componentListenerState }
                 val resolvedStyles by remember { resolvedStylesState }
+                val unitId by remember { unitIdState }
 
                 config?.let { resolvedConfig ->
                     MaterialTheme {
@@ -130,7 +132,8 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
                             resolvedStyles = resolvedStyles,
                             modifier = Modifier,
                             actionListener = actionListener,
-                            componentListener = componentListener
+                            componentListener = componentListener,
+                            unitId = unitId
                         )
                     }
                 }
@@ -182,7 +185,8 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
     fun setConfig(
         config: ResolvedConfig,
         actionListener: NativeDisplayActionListener? = null,
-        componentListener: NativeDisplayComponentListener? = null
+        componentListener: NativeDisplayComponentListener? = null,
+        unitId: String? = null
     ) {
         isRecycled = false
         // Pre-resolve all node styles once — composables get O(1) lookup, no recomputation
@@ -191,6 +195,7 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
         configState.value = config
         actionListenerState.value = actionListener
         componentListenerState.value = componentListener
+        unitIdState.value = unitId
         requestLayout()
     }
 
@@ -202,6 +207,7 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
         actionListenerState.value = null
         componentListenerState.value = null
         resolvedStylesState.value = persistentMapOf()
+        unitIdState.value = null
     }
 
     /**
@@ -214,6 +220,7 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
         componentListenerState.value = null
         configState.value = null
         resolvedStylesState.value = persistentMapOf()
+        unitIdState.value = null
     }
 
     /**

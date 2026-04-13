@@ -19,16 +19,19 @@ public class ActionHandler {
     private weak var actionListener: NativeDisplayActionListener?
     private weak var componentListener: NativeDisplayComponentListener?
     private var firedSystemEvents = Set<String>()
+    private let unitId: String?
 
     /// Whether an action listener is attached (for callers to skip unnecessary work)
     public var hasActionListener: Bool { actionListener != nil }
-    
+
     public init(
         actionListener: NativeDisplayActionListener?,
-        componentListener: NativeDisplayComponentListener?
+        componentListener: NativeDisplayComponentListener?,
+        unitId: String? = nil
     ) {
         self.actionListener = actionListener
         self.componentListener = componentListener
+        self.unitId = unitId
     }
     
     // MARK: - Public Methods
@@ -127,6 +130,16 @@ public class ActionHandler {
         Task { @MainActor in
             print("ActionHandler: Firing system event: \(eventName)")
             actionListener?.onTrackEvent(eventName: eventName, properties: properties)
+            if let unitId = unitId {
+                switch eventName {
+                case "Notification Viewed":
+                    actionListener?.onDisplayUnitViewed?(unitId: unitId)
+                case "Notification Clicked":
+                    actionListener?.onDisplayUnitClicked?(unitId: unitId)
+                default:
+                    break
+                }
+            }
         }
     }
 

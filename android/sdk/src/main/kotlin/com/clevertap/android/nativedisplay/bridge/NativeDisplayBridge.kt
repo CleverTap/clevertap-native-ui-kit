@@ -3,6 +3,7 @@ package com.clevertap.android.nativedisplay.bridge
 import android.content.Context
 import android.util.Log
 import com.clevertap.android.sdk.CleverTapAPI
+import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import java.lang.ref.WeakReference
 
 /**
@@ -37,6 +38,9 @@ class NativeDisplayBridge private constructor() {
     // Listeners stored as weak references to avoid leaking activities/fragments
     private val listeners = mutableListOf<WeakReference<NativeDisplayBridgeListener>>()
     private val listenersLock = Any()
+
+    /** CleverTapAPI instance used to push display unit attribution events. */
+    internal var cleverTapApi: CleverTapAPI? = null
 
 
     companion object {
@@ -260,6 +264,87 @@ class NativeDisplayBridge private constructor() {
         } catch (e: Exception) {
             Log.w(TAG, "fetchNativeDisplays() failed: ${e.message}")
             false
+        }
+    }
+
+    /**
+     * Push a display unit viewed (impression) attribution event to the CleverTap Core SDK.
+     *
+     * Calls `CleverTapAPI.pushDisplayUnitViewedEventForID(unitId)` if a [CleverTapAPI]
+     * instance has been stored (set automatically when using auto-wire or [bind]).
+     *
+     * @param unitId The ID of the display unit that was viewed
+     * @return true if the event was pushed successfully, false if no CleverTapAPI is available
+     */
+    fun pushViewedEvent(unitId: String): Boolean {
+        return try {
+            cleverTapApi?.pushDisplayUnitViewedEventForID(unitId)
+            cleverTapApi != null
+        } catch (e: Exception) {
+            Log.w(TAG, "pushViewedEvent failed: ${e.message}")
+            false
+        }
+    }
+
+    /**
+     * Push a display unit clicked attribution event to the CleverTap Core SDK.
+     *
+     * Calls `CleverTapAPI.pushDisplayUnitClickedEventForID(unitId)` if a [CleverTapAPI]
+     * instance has been stored (set automatically when using auto-wire or [bind]).
+     *
+     * @param unitId The ID of the display unit that was clicked
+     * @return true if the event was pushed successfully, false if no CleverTapAPI is available
+     */
+    fun pushClickedEvent(unitId: String): Boolean {
+        return try {
+            cleverTapApi?.pushDisplayUnitClickedEventForID(unitId)
+            cleverTapApi != null
+        } catch (e: Exception) {
+            Log.w(TAG, "pushClickedEvent failed: ${e.message}")
+            false
+        }
+    }
+
+    /**
+     * Create a [NativeDisplayActionListener] that automatically forwards display unit
+     * attribution events to the CleverTap Core SDK via [pushViewedEvent] and [pushClickedEvent].
+     *
+     * An optional [base] listener is invoked first so that the client's own handling
+     * is preserved. This listener can be passed as the `actionListener` parameter to
+     * [NativeDisplayView] or [NativeDisplayViewGroup.setConfig].
+     *
+     * ```kotlin
+     * val listener = bridge.createEventForwardingListener(base = myListener)
+     * NativeDisplayView(config = config, actionListener = listener, unitId = unit.unitId)
+     * ```
+     *
+     * @param base Optional client listener to delegate all callbacks to first
+     * @return A [NativeDisplayActionListener] that forwards attribution events to the Core SDK
+     */
+    fun createEventForwardingListener(
+        base: NativeDisplayActionListener? = null
+    ): NativeDisplayActionListener {
+        return object : NativeDisplayActionListener {
+            override fun onCustomAction(key: String, value: Any?, metadata: Map<String, String>?) {
+                base?.onCustomAction(key, value, metadata)
+            }
+            override fun onNavigate(destination: String, params: Map<String, String>?) {
+                base?.onNavigate(destination, params)
+            }
+            override fun onTrackEvent(eventName: String, properties: Map<String, Any?>?) {
+                base?.onTrackEvent(eventName, properties)
+            }
+            override fun onOpenUrl(url: String, openInBrowser: Boolean): Boolean {
+                return base?.onOpenUrl(url, openInBrowser) ?: false
+            }
+            override fun onDisplayUnitViewed(unitId: String) {
+                base?.onDisplayUnitViewed(unitId)
+                pushViewedEvent(unitId)
+            }
+            override fun onDisplayUnitClicked(unitId: String) {
+                base?.onDisplayUnitClicked(unitId)
+                pushClickedEvent(unitId)
+            }
         }
     }
 

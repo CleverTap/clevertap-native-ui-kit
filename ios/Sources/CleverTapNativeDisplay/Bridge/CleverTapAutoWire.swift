@@ -84,6 +84,7 @@ internal class CleverTapAutoWire: NSObject {
         }
 
         sharedInstance.perform(setDelegateSelector, with: observer)
+        bridge.cleverTapInstance = sharedInstance
 
         // 4. Keep observer alive
         activeObserver = observer
@@ -143,6 +144,7 @@ internal class CleverTapAutoWire: NSObject {
         observer.clientHandler = clientHandler
 
         cleverTap.perform(setDelegateSelector, with: observer)
+        bridge.cleverTapInstance = cleverTap
 
         // Keep observer alive
         activeObserver = observer

@@ -103,7 +103,8 @@ public struct NativeDisplaySlot<Loading: View>: View {
             NativeDisplayView(
                 config: unit.config,
                 actionListener: actionListener,
-                componentListener: componentListener
+                componentListener: componentListener,
+                unitId: unit.unitId
             )
         } else {
             loading()

@@ -63,20 +63,24 @@ public struct NativeDisplayView: View {
     private let evaluator: VariableEvaluator
     private let actionHandler: ActionHandler?
     private let componentListener: NativeDisplayComponentListener?
+    private let unitId: String?
 
     public init(
         config: ResolvedConfig,
         actionListener: NativeDisplayActionListener? = nil,
-        componentListener: NativeDisplayComponentListener? = nil
+        componentListener: NativeDisplayComponentListener? = nil,
+        unitId: String? = nil
     ) {
         self.config = config
+        self.unitId = unitId
         // Pre-resolve all node styles once — views get O(1) lookup, no resolution at render time
         let resolver = StyleResolver(theme: config.theme, styleClasses: config.styleClasses)
         self.resolvedStyles = resolver.resolveAll(node: config.root)
         self.evaluator = VariableEvaluator(variables: config.variables)
         self.actionHandler = ActionHandler(
             actionListener: actionListener,
-            componentListener: componentListener
+            componentListener: componentListener,
+            unitId: unitId
         )
         self.componentListener = componentListener
     }

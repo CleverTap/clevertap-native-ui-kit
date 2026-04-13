@@ -42,6 +42,16 @@ import Foundation
     ///   - eventName: The name of the event to track
     ///   - properties: Optional event properties
     @objc func onTrackEvent(eventName: String, properties: [String: Any]?)
+
+    /// Called when a display unit is viewed (Notification Viewed system event).
+    /// Use this to call `pushDisplayUnitViewedEventForID` on the CleverTap Core SDK.
+    /// - Parameter unitId: The `wzrk_id` of the display unit that was viewed.
+    @objc optional func onDisplayUnitViewed(unitId: String)
+
+    /// Called when a display unit is clicked (Notification Clicked system event).
+    /// Use this to call `pushDisplayUnitClickedEventForID` on the CleverTap Core SDK.
+    /// - Parameter unitId: The `wzrk_id` of the display unit that was clicked.
+    @objc optional func onDisplayUnitClicked(unitId: String)
 }
 
 /// Default implementations for optional methods.
