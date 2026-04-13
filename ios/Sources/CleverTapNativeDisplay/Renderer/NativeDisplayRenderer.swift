@@ -238,7 +238,7 @@ struct RenderNode: View {
                 componentListener: componentListener
             )
             .modifier(layoutMod)
-            .modifier(DecorationModifier(style: resolvedStyle))
+            .modifier(DecorationModifier(style: resolvedStyle, rootHeight: rootHeight))
             .offset(x: offsetValue.width, y: offsetValue.height)
             .applyEntranceAnimation(node.animation)
             .applyTappable(
@@ -275,7 +275,7 @@ struct RenderNode: View {
                 actionHandler: actionHandler
             )
             .modifier(layoutMod)
-            .modifier(DecorationModifier(style: resolvedStyle))
+            .modifier(DecorationModifier(style: resolvedStyle, rootHeight: rootHeight))
             .offset(x: offsetValue.width, y: offsetValue.height)
             .applyEntranceAnimation(node.animation)
             .applyTappable(
@@ -1341,9 +1341,10 @@ struct LayoutModifier: ViewModifier {
 
 struct DecorationModifier: ViewModifier {
     let style: Style
+    let rootHeight: CGFloat
 
     func body(content: Content) -> some View {
-        DecorationView(style: style, content: content)
+        DecorationView(style: style, rootHeight: rootHeight, content: content)
     }
 }
 
@@ -1360,16 +1361,19 @@ struct DecorationModifier: ViewModifier {
 /// available space and returns wrong sizes inside `ScrollView` / `LazyVStack` / `LazyHStack`.
 private struct DecorationView<Content: View>: View {
     let style: Style
+    let rootHeight: CGFloat
     let content: Content
-
-    /// Tracks the element's rendered size for percent-based cornerRadius resolution.
-    @State private var elementSize: CGSize = .zero
 
     var body: some View {
         let borderProps = style.extractBorderProperties()
         let shadowProps = style.extractShadowProperties()
         let visualProps = style.extractVisualProperties()
-        let cornerRadius = resolvedCornerRadius(for: elementSize, borderProps: borderProps)
+        let cornerRadius = resolvedCornerRadius(borderProps: borderProps)
+        // FE formula: containerHeight * borderWidth / 1000
+        let effectiveBorderWidth: CGFloat = {
+            guard let w = borderProps.width, w > 0, rootHeight > 0 else { return borderProps.width ?? 0 }
+            return rootHeight * CGFloat(w) / 1000
+        }()
 
         content
             // Apply background
@@ -1389,11 +1393,11 @@ private struct DecorationView<Content: View>: View {
             // Apply border
             .overlay(
                 Group {
-                    if let borderWidth = borderProps.width, borderWidth > 0 {
+                    if effectiveBorderWidth > 0 {
                         RoundedRectangle(cornerRadius: cornerRadius)
                             .stroke(
                                 ColorParser.parse(borderProps.color) ?? .gray,
-                                lineWidth: borderWidth
+                                lineWidth: effectiveBorderWidth
                             )
                     }
                 }
@@ -1409,29 +1413,16 @@ private struct DecorationView<Content: View>: View {
             )
             // Apply opacity
             .opacity(Double(visualProps.opacity ?? 1))
-            // Measure the element's true rendered size using a non-layout-affecting background.
-            // GeometryReader in .background() reports the size of the parent view — i.e. the
-            // decorated content — without expanding it. This is correct and stable inside
-            // ScrollView and LazyVStack/LazyHStack, where a top-level GeometryReader wrapper
-            // would greedily fill the scroll container and report the wrong size.
-            .background(
-                GeometryReader { geo in
-                    Color.clear
-                        .onAppear { elementSize = geo.size }
-                        .onChange(of: geo.size) { newSize in elementSize = newSize }
-                }
-            )
     }
 
     /// Resolves the corner radius to a concrete CGFloat.
-    /// - For `.percent` units: `min(width, height) * (value / 100)`
+    /// - For `.percent` units: FE formula `rootHeight * value / 100`
     /// - For all other units (dp, sp, px): use the raw value directly as points
-    private func resolvedCornerRadius(for size: CGSize, borderProps: BorderProperties) -> CGFloat {
+    private func resolvedCornerRadius(borderProps: BorderProperties) -> CGFloat {
         guard let dim = borderProps.radius else { return 0 }
         switch dim.unit {
         case .percent:
-            let minSide = min(size.width, size.height)
-            return minSide * (CGFloat(dim.value) / 100.0)
+            return rootHeight * (CGFloat(dim.value) / 100.0)
         default:
             return CGFloat(dim.value)
         }

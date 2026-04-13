@@ -804,8 +804,8 @@ Combine percentages with aspect ratios for responsive, proportional layouts:
   "background": { /* Background object */ },
   "backgroundColor": "#FFFFFF",
   
-  "borderRadius": 8,             // Dimension: number (dp) OR {"value": 50, "unit": "percent"}
-  "borderWidth": 1,
+  "borderRadius": 8,             // Dimension: number (dp) OR {"value": 30, "unit": "percent"} → rootContainerHeight*value/100
+  "borderWidth": 1,              // rendered as rootContainerHeight*value/1000 (FE formula)
   "borderColor": "#E0E0E0",
   
   "shadowColor": "#000000",
@@ -904,33 +904,58 @@ In a 400dp **root** container: `fontSize = 400 × 40 / 1000 = 16`, `lineHeight =
 
 ---
 
-### borderRadius: Dual-Format Support
+### borderRadius and borderWidth: FE-Relative Formulas
 
-`borderRadius` accepts two JSON formats:
+Both `borderRadius` (percent) and `borderWidth` are resolved relative to the **root container height**, matching FE/dashboard rendering exactly.
+
+#### borderRadius
+
+Accepts two JSON formats:
 
 **Format 1 — Raw number (dp):**
 ```json
 "borderRadius": 12
 ```
-Applies a 12dp corner radius on all corners.
+Applies a fixed 12dp corner radius.
 
 **Format 2 — Percentage object:**
 ```json
-"borderRadius": {"value": 50, "unit": "percent"}
+"borderRadius": {"value": 30, "unit": "percent"}
 ```
-Resolves as `min(elementWidth, elementHeight) * value / 100`. A value of `50` on a square produces a circle; `100` gives maximum rounding.
+Resolves as: **`rootContainerHeight × value / 100`**
 
-**Examples:**
+| Example | Root height 200dp | Root height 400dp |
+|---------|-------------------|-------------------|
+| `{"value": 20, "unit": "percent"}` | 40dp | 80dp |
+| `{"value": 50, "unit": "percent"}` | 100dp | 200dp |
+
+A value of `50` typically produces a pill/circle shape. Values are not capped — they clip naturally per platform (RoundedCornerShape / RoundedRectangle).
+
+#### borderWidth
+
+`borderWidth` is always a raw number but is resolved at render time as:
+
+**`rootContainerHeight × value / 1000`**
+
+| JSON value | Root height 200dp | Root height 400dp |
+|------------|-------------------|-------------------|
+| `20` | 4dp | 8dp |
+| `10` | 2dp | 4dp |
+
+This matches the FE formula: `containerHeight * (borderWidth / 1000)`.
+
+**Example — percentage-based styling (FE-style):**
 ```json
-// Fixed radius
-{ "style": { "borderRadius": 8 } }
-
-// Fully circular (pill/circle)
-{ "style": { "borderRadius": {"value": 100, "unit": "percent"} } }
-
-// Half-rounded
-{ "style": { "borderRadius": {"value": 50, "unit": "percent"} } }
+{
+  "style": {
+    "backgroundColor": "#191919",
+    "borderRadius": {"value": 20, "unit": "percent"},
+    "borderWidth": 20,
+    "borderColor": "#CE2626"
+  }
+}
 ```
+In a 210dp-tall root: `borderRadius = 42dp`, `borderWidth = 4.2dp`.
 
 > Note: `special` values (`wrap_content`, `match_parent`) are not applicable to `borderRadius`.
 

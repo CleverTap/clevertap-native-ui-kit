@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -307,43 +308,52 @@ internal fun Modifier.applyPadding(layout: Layout?): Modifier {
  * Resolve a border-radius [Dimension] to a DP float value.
  *
  * - [DimensionUnit.DP] (and SP/PX): returned as-is (treated as DP).
- * - [DimensionUnit.PERCENT]: `min(w, h) * (value / 100)`.
- *   At `50%` this produces a perfect circle/pill shape.
+ * - [DimensionUnit.PERCENT]: `rootContainerHeightDp * (value / 100)`.
+ *   Matches FE formula: `containerHeight * value / 100`.
  *
- * [elementWidthDp] and [elementHeightDp] are only used for the percent case.
+ * [rootContainerHeightDp] is only used for the percent case.
  */
 internal fun Dimension.resolveRadiusDp(
-    elementWidthDp: Float = 0f,
-    elementHeightDp: Float = 0f
+    rootContainerHeightDp: Float = 0f,
 ): Float = when (unit) {
-    DimensionUnit.PERCENT -> minOf(elementWidthDp, elementHeightDp) * (value / 100f)
+    DimensionUnit.PERCENT -> rootContainerHeightDp * (value / 100f)
     else -> value  // DP, SP, PX — all treated as dp
 }
 
 /**
  * Apply visual decorations (shadow, background, border).
  *
- * Supports both fixed DP and percentage-based border radius.
- * For percent radius, the corner radius is resolved at draw time via [graphicsLayer]
- * so that the element's own rendered pixel size is available.
+ * Border radius and border width are resolved using FE-matching formulas:
+ * - borderRadius percent: `rootContainerHeight * value / 100`
+ * - borderWidth: `rootContainerHeight * value / 1000`
+ *
+ * [rootHeightPx] must be passed from the root container's measured height in pixels.
  */
 @Composable
-internal fun Modifier.applyDecorations(style: Style): Modifier {
+internal fun Modifier.applyDecorations(style: Style, rootHeightPx: Float = 0f): Modifier {
     var modifier = this
+    val densityValue = LocalDensity.current.density
+    val rootHeightDp = if (densityValue > 0f) rootHeightPx / densityValue else 0f
 
     val borderProps = style.extractBorderProperties()
     val shadowProps = style.extractShadowProperties()
     val visualProps = style.extractVisualProperties()
 
+    // Resolve borderWidth using FE formula: containerHeight * value / 1000
+    val effectiveBorderWidthDp: Float = when {
+        borderProps.width != null && borderProps.width > 0f && rootHeightDp > 0f ->
+            rootHeightDp * borderProps.width / 1000f
+        borderProps.width != null -> borderProps.width  // fallback: treat as dp when no rootHeight
+        else -> 0f
+    }
+
     val radiusDim = borderProps.radius
     val hasRadius = radiusDim != null && radiusDim.value > 0f
     if (radiusDim != null && radiusDim.unit == DimensionUnit.PERCENT) {
-        // Percent radius path: resolve corner radius at draw time using element pixel size.
-        // graphicsLayer scope provides `size` (pixels) and `density` (px/dp ratio).
+        // Percent radius path: FE formula = containerHeight * value / 100
+        // rootHeightDp is captured from the enclosing @Composable scope.
         modifier = modifier.graphicsLayer {
-            val widthDp = size.width / density
-            val heightDp = size.height / density
-            val resolvedRadiusDp = radiusDim.resolveRadiusDp(widthDp, heightDp)
+            val resolvedRadiusDp = radiusDim.resolveRadiusDp(rootHeightDp)
             shape = RoundedCornerShape(resolvedRadiusDp.dp)
             clip = true
             if (shadowProps.radius != null && shadowProps.radius > 0f) {
@@ -362,16 +372,13 @@ internal fun Modifier.applyDecorations(style: Style): Modifier {
         }
 
         // Border drawn via canvas so it respects the percent-resolved radius
-        if (borderProps.width != null && borderProps.width > 0f) {
+        if (effectiveBorderWidthDp > 0f) {
             val borderColor = parseColor(borderProps.color) ?: Color.Gray
-            val borderWidthDp = borderProps.width
             modifier = modifier.drawWithContent {
                 drawContent()
-                val widthDp = size.width / density
-                val heightDp = size.height / density
-                val resolvedRadiusDp = radiusDim.resolveRadiusDp(widthDp, heightDp)
+                val resolvedRadiusDp = radiusDim.resolveRadiusDp(rootHeightDp)
                 val radiusPx = resolvedRadiusDp * density
-                val strokePx = borderWidthDp * density
+                val strokePx = effectiveBorderWidthDp * density
                 drawRoundRect(
                     color = borderColor,
                     style = Stroke(width = strokePx),
@@ -381,7 +388,7 @@ internal fun Modifier.applyDecorations(style: Style): Modifier {
         }
     } else {
         // Fixed DP radius path (fast path, no extra draw passes)
-        val radiusDp = radiusDim?.resolveRadiusDp() ?: 0f
+        val radiusDp = radiusDim?.resolveRadiusDp(rootHeightDp) ?: 0f
         val shape = RoundedCornerShape(radiusDp.dp)
 
         // Apply shadow
@@ -409,9 +416,9 @@ internal fun Modifier.applyDecorations(style: Style): Modifier {
         }
 
         // Apply border
-        if (borderProps.width != null && borderProps.width > 0f) {
+        if (effectiveBorderWidthDp > 0f) {
             modifier = modifier.border(
-                width = borderProps.width.dp,
+                width = effectiveBorderWidthDp.dp,
                 color = parseColor(borderProps.color) ?: Color.Gray,
                 shape = shape
             )
