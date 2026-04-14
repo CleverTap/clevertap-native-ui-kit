@@ -7,7 +7,9 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -181,4 +183,28 @@ internal fun resolveEasing(easing: Easing): androidx.compose.animation.core.Easi
         Easing.EASE_OUT_BACK -> EaseOutBack
         Easing.SPRING -> LinearEasing  // Spring handled differently
     }
+}
+
+/**
+ * Resolve the effective FontFamily using a 3-layer priority system:
+ * 1. Client-provided default (LocalFontFamily) — HIGHEST priority
+ * 2. JSON fontFamily resolved via client resolver (LocalFontFamilyResolver)
+ * 3. System default (null) — LOWEST priority
+ */
+@Composable
+internal fun resolveEffectiveFontFamily(jsonFontFamily: String?): FontFamily? {
+    val clientDefault = LocalFontFamily.current
+    val clientResolver = LocalFontFamilyResolver.current
+
+    // Layer 1: Client-provided default (HIGHEST)
+    if (clientDefault != null) return clientDefault
+
+    // Layer 2: JSON fontFamily
+    if (jsonFontFamily != null) {
+        val resolved = clientResolver?.invoke(jsonFontFamily)
+        if (resolved != null) return resolved
+    }
+
+    // Layer 3: System default
+    return null
 }

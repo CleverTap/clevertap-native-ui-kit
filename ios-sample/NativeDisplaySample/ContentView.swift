@@ -81,6 +81,14 @@ struct DemoMenuView: View {
                         description: "Slot-based placement with mixed content feed"
                     )
                 }
+
+                NavigationLink(destination: FontDemoView()) {
+                    DemoMenuItem(
+                        icon: "textformat",
+                        title: "Font Customization",
+                        description: "Client font override and custom font resolver"
+                    )
+                }
             }
         }
         .navigationTitle("Other Demos")

@@ -23,6 +23,36 @@ extension EnvironmentValues {
     }
 }
 
+// MARK: - Environment Keys for Font Customization
+
+/// Environment key for client-provided default font family name (HIGHEST priority).
+public struct DefaultFontFamilyKey: EnvironmentKey {
+    public static let defaultValue: String? = nil
+}
+
+/// Environment key for a custom font resolver closure.
+/// Called when JSON specifies a fontFamily and no client default overrides it.
+public struct FontFamilyResolverKey: EnvironmentKey {
+    public static let defaultValue: ((String, CGFloat, Font.Weight) -> Font)? = nil
+}
+
+extension EnvironmentValues {
+    /// Client-provided default font family. When set, ALL text in the SDK uses this font,
+    /// overriding any fontFamily specified in JSON.
+    public var nativeDisplayFontFamily: String? {
+        get { self[DefaultFontFamilyKey.self] }
+        set { self[DefaultFontFamilyKey.self] = newValue }
+    }
+
+    /// Custom font resolver for JSON-specified font families.
+    /// Called with (familyName, size, weight) when JSON specifies a fontFamily
+    /// and no client default font is set.
+    public var nativeDisplayFontResolver: ((String, CGFloat, Font.Weight) -> Font)? {
+        get { self[FontFamilyResolverKey.self] }
+        set { self[FontFamilyResolverKey.self] = newValue }
+    }
+}
+
 // MARK: - Native Display View
 
 /// Main entry point for rendering native display UI.
@@ -152,7 +182,11 @@ public struct NativeDisplayView: View {
         if w.special != nil { return parentWidth } // match_parent / wrap_content
         switch w.unit {
         case .dp, .sp, .px: return w.value
-        case .percent: return parentWidth > 0 ? parentWidth * w.value / 100 : 0
+        case .percent:
+            // Aspect ratio present → percent is ignored, width fills parent.
+            // Keeps rootHeight (used for TextDimension %) consistent with the frame.
+            guard (layout?.aspectRatio ?? 0) <= 0 else { return parentWidth }
+            return parentWidth > 0 ? parentWidth * w.value / 100 : 0
         }
     }
 }
@@ -208,7 +242,7 @@ struct RenderNode: View {
                 componentListener: componentListener
             )
             .modifier(layoutMod)
-            .modifier(DecorationModifier(style: resolvedStyle))
+            .modifier(DecorationModifier(style: resolvedStyle, rootHeight: rootHeight))
             .offset(x: offsetValue.width, y: offsetValue.height)
             .applyEntranceAnimation(node.animation)
             .applyTappable(
@@ -245,10 +279,7 @@ struct RenderNode: View {
                 actionHandler: actionHandler
             )
             .modifier(layoutMod)
-            // Text elements must not be clipped by the decoration layer — text that
-            // overflows its layout height should remain visible (matching Android's
-            // TextView default). Truncation is managed via maxLines/overflow in JSON.
-            .modifier(DecorationModifier(style: resolvedStyle, clipsContent: element.elementType != .text))
+            .modifier(DecorationModifier(style: resolvedStyle, rootHeight: rootHeight))
             .offset(x: offsetValue.width, y: offsetValue.height)
             .applyEntranceAnimation(node.animation)
             .applyTappable(
@@ -376,60 +407,31 @@ struct RenderContainer: View {
     private func calculateContainerSize(parentSize: CGSize, padding: EdgeInsets) -> CGSize {
         let layout = container.layout
 
-        // Calculate raw width
-        let rawWidth: CGFloat
-        if let w = layout?.width {
-            if w.special != nil {
-                rawWidth = parentSize.width
-            } else {
-                switch w.unit {
-                case .dp, .px, .sp:
-                    rawWidth = w.value
-                case .percent:
-                    rawWidth = parentSize.width * w.value / 100
-                }
-            }
-        } else {
-            rawWidth = parentSize.width
-        }
+        let widthIsFixed = layout?.width.map { $0.special == nil && $0.unit != .percent } ?? false
+        let heightIsFixed = layout?.height.map { $0.special == nil && $0.unit != .percent } ?? false
 
-        // Calculate raw height
-        let rawHeight: CGFloat
-        if let h = layout?.height {
-            if h.special != nil {
-                rawHeight = parentSize.height
-            } else {
-                switch h.unit {
-                case .dp, .px, .sp:
-                    rawHeight = h.value
-                case .percent:
-                    rawHeight = parentSize.height * h.value / 100
-                }
-            }
-        } else {
-            rawHeight = parentSize.height
-        }
-
-        // Apply aspect ratio constraint — must match LayoutModifier.resolvedDimensions() logic.
-        // Only skip when both dimensions are truly fixed (DP/PX/SP, not percent).
+        // Aspect ratio present: percentage dimensions are ignored entirely.
+        // Matches LayoutModifier.resolvedDimensions() exactly so children receive
+        // the same parentSize that the frame modifier applies to the container.
         let width: CGFloat
         let height: CGFloat
-        if let aspectRatio = layout?.aspectRatio, aspectRatio > 0 {
-            let widthIsFixed = layout?.width.map { $0.special == nil && $0.unit != .percent } ?? false
-            let heightIsFixed = layout?.height.map { $0.special == nil && $0.unit != .percent } ?? false
-
+        if let ar = layout?.aspectRatio, ar > 0 {
             if widthIsFixed && heightIsFixed {
-                // Both absolute — aspect ratio ignored
-                width = rawWidth
-                height = rawHeight
+                // Both absolute (dp/px) — aspect ratio is skipped
+                width = resolveFixedWidth(layout: layout, fallback: parentSize.width)
+                height = resolveFixedHeight(layout: layout, fallback: parentSize.height)
             } else {
-                // Aspect ratio constrains: width is primary, derive height
-                width = rawWidth
-                height = rawWidth / aspectRatio
+                // Percent/match_parent width → fill parent; height = width / ratio
+                let effectiveWidth = widthIsFixed
+                    ? resolveFixedWidth(layout: layout, fallback: parentSize.width)
+                    : parentSize.width
+                width = effectiveWidth
+                height = effectiveWidth / ar
             }
         } else {
-            width = rawWidth
-            height = rawHeight
+            // No aspect ratio — compute each dimension from its layout value
+            width = resolveRawDimension(layout?.width, parentDimension: parentSize.width)
+            height = resolveRawDimension(layout?.height, parentDimension: parentSize.height)
         }
 
         // Return size after accounting for padding
@@ -438,7 +440,29 @@ struct RenderContainer: View {
             height: max(0, height - padding.top - padding.bottom)
         )
     }
-    
+
+    /// Resolve a fixed (dp/px/sp) width from the layout, falling back to `fallback`.
+    private func resolveFixedWidth(layout: Layout?, fallback: CGFloat) -> CGFloat {
+        guard let w = layout?.width, w.special == nil else { return fallback }
+        return (w.unit == .dp || w.unit == .px || w.unit == .sp) ? w.value : fallback
+    }
+
+    /// Resolve a fixed (dp/px/sp) height from the layout, falling back to `fallback`.
+    private func resolveFixedHeight(layout: Layout?, fallback: CGFloat) -> CGFloat {
+        guard let h = layout?.height, h.special == nil else { return fallback }
+        return (h.unit == .dp || h.unit == .px || h.unit == .sp) ? h.value : fallback
+    }
+
+    /// Resolve a single dimension (width or height) from its `Dimension` value.
+    /// Used when no aspect ratio is present.
+    private func resolveRawDimension(_ dim: Dimension?, parentDimension: CGFloat) -> CGFloat {
+        guard let dim else { return parentDimension }
+        if dim.special != nil { return parentDimension }
+        switch dim.unit {
+        case .dp, .px, .sp: return dim.value
+        case .percent: return parentDimension * dim.value / 100
+        }
+    }
 
     @ViewBuilder
     private func renderVerticalContainer(availableSize: CGSize, containerHeight: CGFloat, heightIsWrap: Bool) -> some View {
@@ -721,7 +745,10 @@ struct RenderElement: View {
     let parentSize: CGSize
     let rootHeight: CGFloat
     let actionHandler: ActionHandler?
-    
+
+    @Environment(\.nativeDisplayFontFamily) private var clientFontFamily
+    @Environment(\.nativeDisplayFontResolver) private var fontResolver
+
     var body: some View {
         let padding = element.layout?.padding
         let paddingInsets = EdgeInsets(
@@ -800,18 +827,24 @@ struct RenderElement: View {
         // Build font with weight and italic baked in (iOS 15 compatible).
         let isPercentMode = textProps.size?.unit == .percent
         let resolvedSize = textProps.size?.resolve(containerHeight: rootHeight) ?? 14
-        let baseFont = Font.system(size: resolvedSize, weight: resolveFontWeight(textProps.weight))
-        let font: Font = textProps.style == .italic ? baseFont.italic() : baseFont
+        let font = resolveFont(
+            family: textProps.family,
+            size: resolvedSize,
+            weight: resolveFontWeight(textProps.weight),
+            isItalic: textProps.style == .italic
+        )
 
-        // Compute line spacing:
-        // - If lineHeight is explicitly set: use (lineHeight - fontSize) as inter-line spacing
-        // - If percentage mode with no lineHeight: fontSize * 0.2 (matches CSS line-height:normal ~1.2×)
+        // Compute line spacing (SwiftUI .lineSpacing = EXTRA space between lines, not total line height):
+        // - If lineHeight is explicitly set: extra = totalLineHeight - fontSize (approximate)
+        // - If percentage mode with no lineHeight: 0 (SwiftUI's natural ~1.2× already matches CSS)
         // - If platform mode with no lineHeight: legacy default (fontSize * 1.5)
         let lineSpacingValue: CGFloat = {
             if let lh = textProps.lineHeight {
-                return max(0, lh.resolve(containerHeight: rootHeight) - resolvedSize)
+                // Subtract natural line height (~1.2× fontSize) since SwiftUI adds this automatically
+                let resolvedLH = lh.resolve(containerHeight: rootHeight)
+                return max(0, resolvedLH - resolvedSize * 1.2)
             } else if isPercentMode {
-                return resolvedSize * 0.2  // lineHeight = fontSize * 1.2, spacing = 0.2× fontSize
+                return 0  // SwiftUI natural line height ≈ 1.2× already matches CSS line-height:1.2
             } else {
                 return max(0, resolvedSize * 1.5 - resolvedSize)  // Platform mode: legacy default
             }
@@ -950,9 +983,10 @@ struct RenderElement: View {
 
         let btnLineSpacing: CGFloat = {
             if let lh = textProps.lineHeight {
-                return max(0, lh.resolve(containerHeight: rootHeight) - resolvedSize)
+                let resolvedLH = lh.resolve(containerHeight: rootHeight)
+                return max(0, resolvedLH - resolvedSize * 1.2)
             } else if isPercentMode {
-                return resolvedSize * 0.2  // lineHeight = fontSize * 1.2, spacing = 0.2× fontSize
+                return 0  // SwiftUI natural line height ≈ 1.2× already matches CSS line-height:1.2
             } else {
                 return max(0, resolvedSize * 1.5 - resolvedSize)
             }
@@ -970,10 +1004,12 @@ struct RenderElement: View {
         }) {
             Text(buttonText)
                 .foregroundColor(ColorParser.parse(textProps.color) ?? .white)
-                .font({
-                    let base = Font.system(size: resolvedSize, weight: resolveFontWeight(textProps.weight))
-                    return textProps.style == .italic ? base.italic() : base
-                }())
+                .font(resolveFont(
+                    family: textProps.family,
+                    size: resolvedSize,
+                    weight: resolveFontWeight(textProps.weight),
+                    isItalic: textProps.style == .italic
+                ))
                 .kerning(textProps.letterSpacing ?? 0)
                 .underline(textProps.decoration == .underline, color: nil)
                 .strikethrough(textProps.decoration == .strikethrough, color: nil)
@@ -1082,6 +1118,29 @@ struct RenderElement: View {
     }
     #endif
 
+    /// 3-layer font resolution:
+    /// 1. Client default font family (environment) — HIGHEST priority
+    /// 2. JSON fontFamily from server config — MEDIUM priority
+    /// 3. Platform system font — LOWEST priority (fallback)
+    private func resolveFont(family: String?, size: CGFloat, weight: Font.Weight, isItalic: Bool) -> Font {
+        // Layer 1: Client default (HIGHEST)
+        if let clientFamily = clientFontFamily {
+            let font = Font.custom(clientFamily, size: size).weight(weight)
+            return isItalic ? font.italic() : font
+        }
+        // Layer 2: JSON fontFamily
+        if let family = family {
+            if let resolver = fontResolver {
+                return isItalic ? resolver(family, size, weight).italic() : resolver(family, size, weight)
+            }
+            let font = Font.custom(family, size: size).weight(weight)
+            return isItalic ? font.italic() : font
+        }
+        // Layer 3: System default
+        let font = Font.system(size: size, weight: weight)
+        return isItalic ? font.italic() : font
+    }
+
     private func resolveFontWeight(_ weight: FontWeight?) -> Font.Weight {
         switch weight {
         case .light: return .light
@@ -1152,32 +1211,23 @@ struct LayoutModifier: ViewModifier {
     /// Aspect ratio is only skipped when both dimensions are truly fixed (DP/PX/SP),
     /// matching Android's `doesNotHaveFixedWidth = !(hasFixedWidth && hasFixedHeight)`.
     private func resolvedDimensions() -> (width: CGFloat?, height: CGFloat?, useAspectRatioModifier: Bool) {
-        let explicitWidth = calculateWidth()
-        let explicitHeight = calculateHeight()
-        guard let ratio = calculateAspectRatio() else {
-            return (explicitWidth, explicitHeight, false)
-        }
-
-        // Check if both dimensions use truly fixed units (DP/PX/SP, not percent).
-        // Matches Android: hasFixedWidth = unit in [DP, PX] && special == null
         let widthIsFixed = layout?.width.map { $0.special == nil && $0.unit != .percent } ?? false
         let heightIsFixed = layout?.height.map { $0.special == nil && $0.unit != .percent } ?? false
 
-        if widthIsFixed && heightIsFixed {
-            // Both dimensions are absolute — aspect ratio is ignored (matches Android)
-            return (explicitWidth, explicitHeight, false)
+        // Aspect ratio present: percentage dimensions are ignored entirely.
+        // Width = fixed dp/px (if set), otherwise fill parent.
+        // Height is always derived as width / ratio — percent height is never used.
+        if let ratio = layout?.aspectRatio, ratio > 0 {
+            if widthIsFixed && heightIsFixed {
+                // Both absolute (dp/px) — aspect ratio is skipped, matches Android
+                return (calculateWidth(), calculateHeight(), false)
+            }
+            let effectiveWidth: CGFloat = widthIsFixed ? (calculateWidth() ?? parentSize.width) : parentSize.width
+            return (effectiveWidth, effectiveWidth / ratio, false)
         }
 
-        if let w = explicitWidth {
-            // Width known → derive height from aspect ratio
-            return (w, w / ratio, false)
-        }
-        if let h = explicitHeight {
-            // Height known → derive width from aspect ratio
-            return (h * ratio, h, false)
-        }
-        // Both unresolved (match_parent/wrap_content) → fall back to SwiftUI modifier
-        return (nil, nil, true)
+        // No aspect ratio — resolve each dimension from its layout value normally
+        return (calculateWidth(), calculateHeight(), false)
     }
 
     private func calculateWidth() -> CGFloat? {
@@ -1343,19 +1393,39 @@ private struct ClipIfNeeded: ViewModifier {
 
 struct DecorationModifier: ViewModifier {
     let style: Style
-    /// Whether to clip the content to its frame using `cornerRadius`.
-    /// Pass `false` for TEXT elements so that text can overflow its layout bounds
-    /// naturally (matching Android's TextView default behaviour, where clip is opt-in
-    /// via `maxLines` / `overflow`, not forced by the decoration layer).
-    var clipsContent: Bool = true
+    let rootHeight: CGFloat
 
     func body(content: Content) -> some View {
-        // Extract property groups for better code organization
+        DecorationView(style: style, rootHeight: rootHeight, content: content)
+    }
+}
+
+/// Internal view that applies visual decoration (background, border, shadow, clip, opacity).
+///
+/// Separated from `DecorationModifier` as a dedicated `View` struct so that `@State` can
+/// be stored properly. SwiftUI's `ViewModifier.body` does not own state the same way a
+/// `View.body` does, and complex chaining on `@ViewBuilder` results causes type-checker
+/// failures in some Xcode/Swift versions.
+///
+/// Percent-based `borderRadius` requires knowing the element's rendered size. We measure it
+/// via `.background(GeometryReader)` which is non-greedy (does NOT affect the parent's
+/// layout), unlike wrapping content directly in `GeometryReader` which expands to fill all
+/// available space and returns wrong sizes inside `ScrollView` / `LazyVStack` / `LazyHStack`.
+private struct DecorationView<Content: View>: View {
+    let style: Style
+    let rootHeight: CGFloat
+    let content: Content
+
+    var body: some View {
         let borderProps = style.extractBorderProperties()
         let shadowProps = style.extractShadowProperties()
         let visualProps = style.extractVisualProperties()
-
-        let cornerRadius = borderProps.radius ?? 0
+        let cornerRadius = resolvedCornerRadius(borderProps: borderProps)
+        // FE formula: containerHeight * borderWidth / 1000
+        let effectiveBorderWidth: CGFloat = {
+            guard let w = borderProps.width, w > 0, rootHeight > 0 else { return borderProps.width ?? 0 }
+            return rootHeight * CGFloat(w) / 1000
+        }()
 
         content
             // Apply background
@@ -1372,15 +1442,15 @@ struct DecorationModifier: ViewModifier {
             )
             // Apply clip — skipped for text elements so text is not hard-clipped to
             // its frame height. Truncation is controlled by maxLines/overflow instead.
-            .modifier(ClipIfNeeded(cornerRadius: cornerRadius, enabled: clipsContent))
+//            .modifier(ClipIfNeeded(cornerRadius: cornerRadius, enabled: clipsContent))
             // Apply border
             .overlay(
                 Group {
-                    if let borderWidth = borderProps.width, borderWidth > 0 {
+                    if effectiveBorderWidth > 0 {
                         RoundedRectangle(cornerRadius: cornerRadius)
                             .stroke(
                                 ColorParser.parse(borderProps.color) ?? .gray,
-                                lineWidth: borderWidth
+                                lineWidth: effectiveBorderWidth
                             )
                     }
                 }
@@ -1396,6 +1466,19 @@ struct DecorationModifier: ViewModifier {
             )
             // Apply opacity
             .opacity(Double(visualProps.opacity ?? 1))
+    }
+
+    /// Resolves the corner radius to a concrete CGFloat.
+    /// - For `.percent` units: FE formula `rootHeight * value / 100`
+    /// - For all other units (dp, sp, px): use the raw value directly as points
+    private func resolvedCornerRadius(borderProps: BorderProperties) -> CGFloat {
+        guard let dim = borderProps.radius else { return 0 }
+        switch dim.unit {
+        case .percent:
+            return rootHeight * (CGFloat(dim.value) / 100.0)
+        default:
+            return CGFloat(dim.value)
+        }
     }
 }
 

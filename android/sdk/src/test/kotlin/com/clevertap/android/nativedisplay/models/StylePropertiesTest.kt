@@ -17,7 +17,7 @@ class StylePropertiesTest {
             textAlign = "center",
             opacity = 0.9f,
             // Non-text properties (should not appear in text props)
-            borderRadius = 8f,
+            borderRadius = Dimension.dp(8f),
             backgroundColor = "#FFFFFF"
         )
 
@@ -58,7 +58,7 @@ class StylePropertiesTest {
             opacity = 0.8f,
             // Non-visual properties (should not appear in visual props)
             fontSize = TextDimension(16f),
-            borderRadius = 8f
+            borderRadius = Dimension.dp(8f)
         )
 
         val visualProps = style.extractVisualProperties()
@@ -82,7 +82,7 @@ class StylePropertiesTest {
     @Test
     fun `extractBorderProperties returns correct properties`() {
         val style = Style(
-            borderRadius = 12f,
+            borderRadius = Dimension.dp(12f),
             borderWidth = 2f,
             borderColor = "#CCCCCC",
             // Non-border properties (should not appear in border props)
@@ -92,7 +92,7 @@ class StylePropertiesTest {
 
         val borderProps = style.extractBorderProperties()
 
-        assertEquals(12f, borderProps.radius)
+        assertEquals(Dimension.dp(12f), borderProps.radius)
         assertEquals(2f, borderProps.width)
         assertEquals("#CCCCCC", borderProps.color)
     }
@@ -150,7 +150,7 @@ class StylePropertiesTest {
             backgroundColor = "#FFFFFF",
             opacity = 0.9f,
             // Border properties
-            borderRadius = 8f,
+            borderRadius = Dimension.dp(8f),
             borderWidth = 2f,
             borderColor = "#CCCCCC",
             // Shadow properties
@@ -176,7 +176,7 @@ class StylePropertiesTest {
         assertNull(visualProps.background)
 
         // Verify border properties are isolated
-        assertEquals(8f, borderProps.radius)
+        assertEquals(Dimension.dp(8f), borderProps.radius)
         assertEquals(2f, borderProps.width)
         assertEquals("#CCCCCC", borderProps.color)
 

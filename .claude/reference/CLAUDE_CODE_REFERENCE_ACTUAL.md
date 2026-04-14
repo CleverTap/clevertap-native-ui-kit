@@ -119,7 +119,7 @@ ChildArrangement {
 ```kotlin
 textColor: String? (hex)
 fontSize: TextDimension?    // number → platform units, {"value", "unit":"percent"} → rootContainerHeight*value/1000
-fontFamily: String?
+fontFamily: String?         // JSON name; resolved via 3-layer system (see STYLE_THEMING_GUIDE.md § Font Family)
 fontWeight: FontWeight? (NORMAL, MEDIUM, BOLD, LIGHT)
 fontStyle: FontStyle? (NORMAL, ITALIC)
 lineHeight: TextDimension?  // same as fontSize
@@ -137,8 +137,8 @@ opacity: Float?
 ```kotlin
 background: Background? (Rich background support)
 backgroundColor: String? (Legacy, backward compatible)
-borderRadius: Float?
-borderWidth: Float?
+borderRadius: Dimension?   // dp number or {"value","unit":"percent"} — percent resolves as rootContainerHeight * value/100
+borderWidth: Float?        // resolved at render time as rootContainerHeight * value/1000 (FE formula)
 borderColor: String?
 shadowColor: String?
 shadowRadius: Float?

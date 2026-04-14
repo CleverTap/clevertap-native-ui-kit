@@ -56,6 +56,7 @@ internal fun RenderElement(
             val textProps: TextProperties = resolvedStyle.extractTextProperties()
             val isPercentMode = textProps.size?.unit == TextDimensionUnit.PERCENT
             val resolvedFontSize = textProps.size?.resolve(rootHeightPx) ?: 14f
+            val fontFamily = resolveEffectiveFontFamily(textProps.family)
             // In percentage mode: all values are in px, convert via toSp() at use site
             // In platform mode: values are already in sp-compatible units, use .sp
             if (isPercentMode) {
@@ -67,6 +68,7 @@ internal fun RenderElement(
                     color = parseColor(textProps.color) ?: Color.Black,
                     fontSize = with(LocalDensity.current) { resolvedFontSize.toSp() },
                     fontWeight = resolveFontWeight(textProps.weight),
+                    fontFamily = fontFamily,
                     fontStyle = resolveFontStyle(textProps.style),
                     letterSpacing = 0.sp,
                     textDecoration = resolveTextDecoration(textProps.decoration),
@@ -83,6 +85,7 @@ internal fun RenderElement(
                     color = parseColor(textProps.color) ?: Color.Black,
                     fontSize = resolvedFontSize.sp,
                     fontWeight = resolveFontWeight(textProps.weight),
+                    fontFamily = fontFamily,
                     fontStyle = resolveFontStyle(textProps.style),
                     letterSpacing = (textProps.letterSpacing ?: 0f).sp,
                     textDecoration = resolveTextDecoration(textProps.decoration),
@@ -151,6 +154,7 @@ internal fun RenderElement(
             val textProps = resolvedStyle.extractTextProperties()
             val isPercentMode = textProps.size?.unit == TextDimensionUnit.PERCENT
             val resolvedFontSize = textProps.size?.resolve(rootHeightPx) ?: 16f
+            val fontFamily = resolveEffectiveFontFamily(textProps.family)
 
             Box(
                 modifier = elementModifier,
@@ -163,6 +167,7 @@ internal fun RenderElement(
                         color = parseColor(textProps.color) ?: Color.White,
                         fontSize = with(LocalDensity.current) { resolvedFontSize.toSp() },
                         fontWeight = resolveFontWeight(textProps.weight),
+                        fontFamily = fontFamily,
                         fontStyle = resolveFontStyle(textProps.style),
                         letterSpacing = 0.sp,
                         textDecoration = resolveTextDecoration(textProps.decoration),
@@ -178,6 +183,7 @@ internal fun RenderElement(
                         color = parseColor(textProps.color) ?: Color.White,
                         fontSize = resolvedFontSize.sp,
                         fontWeight = resolveFontWeight(textProps.weight),
+                        fontFamily = fontFamily,
                         fontStyle = resolveFontStyle(textProps.style),
                         letterSpacing = (textProps.letterSpacing ?: 0f).sp,
                         textDecoration = resolveTextDecoration(textProps.decoration),

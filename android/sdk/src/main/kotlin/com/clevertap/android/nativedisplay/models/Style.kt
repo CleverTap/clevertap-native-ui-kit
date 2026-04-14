@@ -70,7 +70,8 @@ data class Style(
 
     // ==================== BORDER PROPERTIES (Non-cascading) ====================
 
-    val borderRadius: Float? = null,
+    @Serializable(with = DimensionAsNumberSerializerNullable::class)
+    val borderRadius: Dimension? = null,
     val borderWidth: Float? = null,
     val borderColor: String? = null,
 
@@ -218,7 +219,8 @@ data class Style(
      * Example:
      * ```kotlin
      * val borderProps = style.extractBorderProperties()
-     * val shape = RoundedCornerShape((borderProps.radius ?: 0f).dp)
+     * val radiusDp = borderProps.radius?.resolveRadiusDp() ?: 0f
+     * val shape = RoundedCornerShape(radiusDp.dp)
      * if (borderProps.width != null && borderProps.width > 0f) {
      *     modifier = modifier.border(
      *         width = borderProps.width.dp,

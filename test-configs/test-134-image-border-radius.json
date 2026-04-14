@@ -5,88 +5,205 @@
   "root": {
     "type": "container",
     "id": "root",
-    "containerType": "box",
+    "containerType": "vertical",
     "layout": {
-      "width": {
-        "value": 100,
-        "unit": "percent"
-      },
-      "aspectRatio": 1.333
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "special": "wrap_content" },
+      "padding": { "top": 16, "bottom": 16, "start": 16, "end": 16, "unit": "dp" }
     },
     "style": {
       "backgroundColor": "#F0F0F0"
     },
+    "arrangement": { "strategy": "spaced", "spacing": 20, "spacingUnit": "dp" },
     "children": [
       {
-        "type": "container",
-        "id": "rounded_frame",
-        "containerType": "box",
-        "layout": {
-          "width": {
-            "value": 80,
-            "unit": "percent"
-          },
-          "height": {
-            "value": 70,
-            "unit": "percent"
-          },
-          "offset": {
-            "x": 10,
-            "y": 10,
-            "unit": "percent"
-          }
-        },
+        "type": "element",
+        "id": "section_label_raw",
+        "elementType": "text",
+        "bindings": { "text": "Raw dp borderRadius (backward compat)" },
+        "layout": { "width": { "special": "match_parent" } },
         "style": {
-          "borderRadius": 20,
-          "backgroundColor": "#FFFFFF"
+          "fontSize": 12,
+          "fontWeight": "bold",
+          "lineHeight": 16,
+          "textColor": "#333333"
+        }
+      },
+      {
+        "type": "container",
+        "id": "row_raw",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "special": "match_parent" },
+          "height": { "special": "wrap_content" }
         },
+        "arrangement": { "strategy": "spaced", "spacing": 16, "spacingUnit": "dp" },
         "children": [
           {
-            "type": "element",
-            "id": "rounded_image",
-            "elementType": "image",
-            "bindings": {
-              "url": "https://yavuzceliker.github.io/sample-images/image-106.jpg"
-            },
+            "type": "container",
+            "id": "rounded_frame",
+            "containerType": "box",
             "layout": {
-              "width": {
-                "value": 100,
-                "unit": "percent"
-              },
-              "height": {
-                "value": 100,
-                "unit": "percent"
+              "width": { "value": 130, "unit": "dp" },
+              "height": { "value": 100, "unit": "dp" }
+            },
+            "style": {
+              "borderRadius": 20,
+              "backgroundColor": "#FFFFFF"
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "rounded_image",
+                "elementType": "image",
+                "bindings": {
+                  "url": "https://yavuzceliker.github.io/sample-images/image-106.jpg"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": 100, "unit": "percent" }
+                }
               }
+            ]
+          },
+          {
+            "type": "element",
+            "id": "label_raw",
+            "elementType": "text",
+            "bindings": { "text": "borderRadius: 20 (dp)" },
+            "layout": {
+              "width": { "value": 120, "unit": "dp" },
+              "height": { "special": "wrap_content" }
+            },
+            "style": {
+              "fontSize": 11,
+              "fontWeight": "bold",
+              "lineHeight": 15,
+              "textColor": "#FFFFFF",
+              "backgroundColor": "#333333AA",
+              "borderRadius": 4
             }
           }
         ]
       },
       {
         "type": "element",
-        "id": "label",
+        "id": "section_label_percent",
         "elementType": "text",
-        "bindings": {
-          "text": "Rounded Image"
-        },
-        "layout": {
-          "width": {
-            "value": 40,
-            "unit": "percent"
-          },
-          "offset": {
-            "x": 5,
-            "y": 5,
-            "unit": "percent"
-          }
-        },
+        "bindings": { "text": "Percent-based borderRadius" },
+        "layout": { "width": { "special": "match_parent" } },
         "style": {
-          "fontSize": 11,
+          "fontSize": 12,
           "fontWeight": "bold",
-          "lineHeight": 15,
-          "textColor": "#FFFFFF",
-          "backgroundColor": "#333333AA",
-          "borderRadius": 4
+          "lineHeight": 16,
+          "textColor": "#333333"
         }
+      },
+      {
+        "type": "container",
+        "id": "row_percent",
+        "containerType": "horizontal",
+        "layout": {
+          "width": { "special": "match_parent" },
+          "height": { "special": "wrap_content" }
+        },
+        "arrangement": { "strategy": "spaced", "spacing": 24, "spacingUnit": "dp" },
+        "children": [
+          {
+            "type": "container",
+            "id": "pill_frame",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 140, "unit": "dp" },
+              "height": { "value": 60, "unit": "dp" }
+            },
+            "style": {
+              "borderRadius": { "value": 50, "unit": "percent" },
+              "backgroundColor": "#4A90E2"
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "pill_label",
+                "elementType": "text",
+                "bindings": { "text": "Pill Shape\n50% radius" },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": 100, "unit": "percent" }
+                },
+                "style": {
+                  "fontSize": 12,
+                  "lineHeight": 16,
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "circle_frame",
+            "containerType": "box",
+            "layout": {
+              "width": { "value": 80, "unit": "dp" },
+              "height": { "value": 80, "unit": "dp" }
+            },
+            "style": {
+              "borderRadius": { "value": 100, "unit": "percent" },
+              "backgroundColor": "#E24A4A"
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "circle_image",
+                "elementType": "image",
+                "bindings": {
+                  "url": "https://yavuzceliker.github.io/sample-images/image-106.jpg"
+                },
+                "layout": {
+                  "width": { "value": 100, "unit": "percent" },
+                  "height": { "value": 100, "unit": "percent" }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "circle_label_frame",
+            "containerType": "vertical",
+            "layout": {
+              "width": { "special": "wrap_content" },
+              "height": { "special": "wrap_content" }
+            },
+            "arrangement": { "strategy": "spaced", "spacing": 4, "spacingUnit": "dp" },
+            "children": [
+              {
+                "type": "element",
+                "id": "pill_desc",
+                "elementType": "text",
+                "bindings": { "text": "50% = pill" },
+                "layout": { "width": { "special": "wrap_content" } },
+                "style": {
+                  "fontSize": 11,
+                  "lineHeight": 15,
+                  "textColor": "#555555"
+                }
+              },
+              {
+                "type": "element",
+                "id": "circle_desc",
+                "elementType": "text",
+                "bindings": { "text": "100% = circle" },
+                "layout": { "width": { "special": "wrap_content" } },
+                "style": {
+                  "fontSize": 11,
+                  "lineHeight": 15,
+                  "textColor": "#555555"
+                }
+              }
+            ]
+          }
+        ]
       }
     ]
   }
