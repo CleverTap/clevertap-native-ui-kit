@@ -14,8 +14,8 @@ android {
         applicationId = "com.clevertap.android.nativeui.sample"
         minSdk = 23
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 4
+        versionName = "1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -44,6 +44,7 @@ android {
     
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     
     packaging {
@@ -100,6 +101,19 @@ dependencies {
     // Coil – runtime dep for sample app image loading (SDK uses implementation, not api)
     implementation(libs.io.coil.compose)
     testImplementation(libs.io.coil.compose)
+
+    // Fragment + RecyclerView + AppCompat (for XML Feed tab)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.recyclerview)
+
+    // Material + ConstraintLayout (for XML Feed layouts)
+    implementation(libs.material)
+    implementation(libs.androidx.constraintlayout)
+
+    // Retrofit (for DummyJSON API in XML Feed)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
 
     // Screenshot Testing
     testImplementation(libs.robolectric)

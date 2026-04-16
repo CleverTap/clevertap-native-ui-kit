@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5">
+
+    <!-- Event fire row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical"
+        android:background="@android:color/white">
+
+        <EditText
+            android:id="@+id/eventNameInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Enter event name"
+            android:inputType="text"
+            android:imeOptions="actionSend"
+            android:singleLine="true"
+            android:padding="10dp"
+            android:background="@android:color/white" />
+
+        <Button
+            android:id="@+id/sendEventButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Send Event"
+            android:enabled="false" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0" />
+
+    <!-- Canvas section (weight=1, takes remaining space) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Native Display Canvas"
+            android:textStyle="bold"
+            android:textSize="13sp"
+            android:textColor="#333333"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="10dp"
+            android:background="@android:color/white" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/emptyCanvasText"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:gravity="center"
+                    android:text="Waiting for Native Display response..."
+                    android:textColor="#999999"
+                    android:textSize="14sp"
+                    android:visibility="visible" />
+
+                <androidx.compose.ui.platform.ComposeView
+                    android:id="@+id/displayCanvas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E0E0E0" />
+
+    <!-- Log section (fixed at bottom) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="8dp"
+        android:paddingTop="6dp"
+        android:background="@android:color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Event Log"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:textColor="#333333" />
+
+            <Button
+                android:id="@+id/clearLogButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Clear"
+                android:textSize="12sp"
+                style="?android:attr/borderlessButtonStyle" />
+
+        </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/logScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:background="#263238"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/logTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No events yet"
+                android:textSize="11sp"
+                android:textColor="#607D8B"
+                android:fontFamily="monospace"
+                android:lineSpacingExtra="2dp" />
+
+        </ScrollView>
+
+    </LinearLayout>
+
+</LinearLayout>

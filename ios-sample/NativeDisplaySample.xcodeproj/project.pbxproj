@@ -181,6 +181,10 @@
 		41BD00022F8F000000714978 /* BridgeIntegrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41BD00012F8F000000714978 /* BridgeIntegrationView.swift */; };
 		41BD00062F8F000200714978 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41BD00052F8F000200714978 /* AppDelegate.swift */; };
 		41BD00042F8F000100714978 /* CleverTapIntegrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41BD00032F8F000100714978 /* CleverTapIntegrationView.swift */; };
+		5314047399FD46588D2A203F /* MoreMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8377811EF07E4E86844D4D7E /* MoreMenuView.swift */; };
+		A9E240D7AB6C4AC49AB33B78 /* UITabHostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2A02B97CEB476F914EB18F /* UITabHostView.swift */; };
+		C71E089EFA7A411E9AB2C2D0 /* RootTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 101EC9E0C1884FBF8FFB4BF9 /* RootTabBarController.swift */; };
+		036107E9AD234ED9BB5EEAAC /* UIKitTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92256EDB1A19444DA4496980 /* UIKitTestViewController.swift */; };
 		41BD00082F9A000300714978 /* SlotDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41BD00072F9A000300714978 /* SlotDemoView.swift */; };
 		41BD000A2F9C000300714978 /* FontDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41BD00092F9C000300714978 /* FontDemoView.swift */; };
 		41C5EB1E2F34E6FC0066BE34 /* JSONViewerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41C5EB1D2F34E6FC0066BE34 /* JSONViewerView.swift */; };
@@ -411,6 +415,10 @@
 		41BD00032F8F000100714978 /* CleverTapIntegrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleverTapIntegrationView.swift; sourceTree = "<group>"; };
 		41BD00072F9A000300714978 /* SlotDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotDemoView.swift; sourceTree = "<group>"; };
 		41BD00092F9C000300714978 /* FontDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontDemoView.swift; sourceTree = "<group>"; };
+		8377811EF07E4E86844D4D7E /* MoreMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreMenuView.swift; sourceTree = "<group>"; };
+		CD2A02B97CEB476F914EB18F /* UITabHostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITabHostView.swift; sourceTree = "<group>"; };
+		101EC9E0C1884FBF8FFB4BF9 /* RootTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabBarController.swift; sourceTree = "<group>"; };
+		92256EDB1A19444DA4496980 /* UIKitTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKitTestViewController.swift; sourceTree = "<group>"; };
 		41C5EB1D2F34E6FC0066BE34 /* JSONViewerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONViewerView.swift; sourceTree = "<group>"; };
 		41E6E6DB2F7A50940004B077 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		41F1AD512F2B6E250018C5EA /* NativeDisplaySampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NativeDisplaySampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -463,6 +471,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D9DD9E59A6374481B1F68347 /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				CD2A02B97CEB476F914EB18F /* UITabHostView.swift */,
+				101EC9E0C1884FBF8FFB4BF9 /* RootTabBarController.swift */,
+				92256EDB1A19444DA4496980 /* UIKitTestViewController.swift */,
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
 		4113029C2F34AC72004B6254 /* Banners */ = {
 			isa = PBXGroup;
 			children = (
@@ -677,6 +695,8 @@
 				41BD00092F9C000300714978 /* FontDemoView.swift */,
 				411302792F33E757004B6254 /* BannerDetailView.swift */,
 				4113027A2F33E757004B6254 /* BannerShowcaseView.swift */,
+				8377811EF07E4E86844D4D7E /* MoreMenuView.swift */,
+				D9DD9E59A6374481B1F68347 /* UIKit */,
 				41F1AD602F2B7D420018C5EA /* JsonLoader.swift */,
 				41F1AD5E2F2B7D330018C5EA /* TestConfigBrowserView.swift */,
 				F001 /* NativeDisplaySampleApp.swift */,
@@ -1041,6 +1061,10 @@
 				41BD000A2F9C000300714978 /* FontDemoView.swift in Sources */,
 				4113027B2F33E757004B6254 /* BannerDetailView.swift in Sources */,
 				4113027C2F33E757004B6254 /* BannerShowcaseView.swift in Sources */,
+				5314047399FD46588D2A203F /* MoreMenuView.swift in Sources */,
+				A9E240D7AB6C4AC49AB33B78 /* UITabHostView.swift in Sources */,
+				C71E089EFA7A411E9AB2C2D0 /* RootTabBarController.swift in Sources */,
+				036107E9AD234ED9BB5EEAAC /* UIKitTestViewController.swift in Sources */,
 				B002 /* ContentView.swift in Sources */,
 				41F1AD5F2F2B7D330018C5EA /* TestConfigBrowserView.swift in Sources */,
 			);
