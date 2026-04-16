@@ -119,9 +119,22 @@ public struct NativeDisplayView: View {
             // - Root uses percentages/match_parent/wrap_content AND
             // - Config contains percentages somewhere
             // → MUST use GeometryReader to measure parent constraints
-            GeometryReader { geometry in
-                renderContent(parentSize: geometry.size)
-                    .frame(width: geometry.size.width, alignment: .center)
+            //
+            // When the root has an aspectRatio, apply .aspectRatio() to the GeometryReader
+            // so SwiftUI knows the view's natural height. Without this, GeometryReader reports
+            // height=0 inside a ScrollView and greedily expands, causing views to overlap.
+            let rootAspectRatio = config.root.layout?.aspectRatio
+            if let ar = rootAspectRatio, ar > 0 {
+                GeometryReader { geometry in
+                    renderContent(parentSize: geometry.size)
+                        .frame(width: geometry.size.width, alignment: .center)
+                }
+                .aspectRatio(ar, contentMode: .fit)
+            } else {
+                GeometryReader { geometry in
+                    renderContent(parentSize: geometry.size)
+                        .frame(width: geometry.size.width, alignment: .center)
+                }
             }
         }
     }
