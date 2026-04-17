@@ -1,9 +1,9 @@
 import XCTest
 
-/// Screenshot capture for all 177 Native Display test configurations.
+/// Screenshot capture for all 178 Native Display test configurations.
 ///
 /// A single test method navigates through every config sequentially using the
-/// in-app "next" arrow — one app launch, one navigation, 177 screenshots.
+/// in-app "next" arrow — one app launch, one navigation, 178 screenshots.
 ///
 /// Run:
 ///   xcodebuild test -scheme NativeDisplaySample \
@@ -68,7 +68,7 @@ final class NativeDisplayConfigTests: XCTestCase {
 
     // MARK: - Single Sequential Run
 
-    /// Captures screenshots for all 177 test configs in one pass.
+    /// Captures screenshots for all 178 test configs in one pass.
     ///
     /// Uses the "nav-next" arrow button to advance through configs without relaunching
     /// the app. `native-display-view` is waited on before each screenshot so the
@@ -249,6 +249,7 @@ final class NativeDisplayConfigTests: XCTestCase {
             "test-170-gallery-box-grid3col-navbtns",
             "test-171-gallery-box-grid2col-video",
             "test-172-gallery-box-grid2col-vertical",
+            "test-172-video-fullscreen-openurl",
             "test-173-gallery-box-snapping-indicators-navbtns",
             "test-174-gallery-box-snapping-indicators-only",
             "test-175-gallery-box-snapping-navbtns-only",
