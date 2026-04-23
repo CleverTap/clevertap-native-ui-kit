@@ -23,7 +23,11 @@
       "Bash(./gradlew assembleDebug:*)",
       "Bash(./gradlew:*)",
       "Bash(xargs cat:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "mcp__claude_ai_Atlassian__getAccessibleAtlassianResources",
+      "mcp__claude_ai_Atlassian__getConfluencePage",
+      "mcp__claude_ai_Atlassian__getConfluenceSpaces",
+      "mcp__claude_ai_Atlassian__createConfluencePage"
     ]
   }
 }

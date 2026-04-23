@@ -77,6 +77,7 @@ struct CleverTapIntegrationView: View {
             HStack(spacing: 8) {
                 TextField("Enter event name", text: $viewModel.eventName)
                     .textFieldStyle(.roundedBorder)
+                    .accessibilityIdentifier("ct-event-input")
 
                 Button("Send Event") {
                     viewModel.sendEvent()
@@ -84,6 +85,7 @@ struct CleverTapIntegrationView: View {
                 .buttonStyle(.borderedProminent)
                 .disabled(viewModel.eventName.trimmingCharacters(in: .whitespaces).isEmpty
                           || !viewModel.cleverTapAvailable)
+                .accessibilityIdentifier("ct-send-event-btn")
             }
 
             if verticalSizeClass != .compact {
@@ -109,6 +111,7 @@ struct CleverTapIntegrationView: View {
                         .foregroundColor(.secondary)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .accessibilityIdentifier("ct-waiting-canvas")
             } else {
                 ScrollView {
                     VStack(spacing: 12) {
@@ -123,6 +126,7 @@ struct CleverTapIntegrationView: View {
                     .frame(maxWidth: .infinity)
                 }
                 .frame(maxWidth: .infinity)
+                .accessibilityIdentifier("ct-display-canvas")
             }
         }
     }
