@@ -72,7 +72,7 @@ private fun Modifier.applyStaticLinearGradient(bg: Background.LinearGradient): M
     if (colors.isEmpty()) return this
 
     return this.drawWithContent {
-        val angleRadians = Math.toRadians(bg.angle.toDouble())
+        val angleRadians = Math.toRadians((bg.angle - 90.0))
         val start = Offset(
             x = (0.5f - cos(angleRadians).toFloat() * 0.5f) * size.width,
             y = (0.5f - sin(angleRadians).toFloat() * 0.5f) * size.height
@@ -247,7 +247,7 @@ private fun Modifier.applyAnimatedShimmer(bg: Background.Shimmer): Modifier {
     val highlightColor = parseColor(bg.highlightColor) ?: Color.White
     
     return this.drawWithContent {
-        val angleRadians = Math.toRadians(bg.angle.toDouble())
+        val angleRadians = Math.toRadians((bg.angle - 90.0))
         // Offset pans the gradient across the component; scale by component dimension so
         // the sweep covers the full component regardless of its size.
         val panX = offset * size.width
@@ -301,7 +301,7 @@ private fun Modifier.applyAnimatedGradient(bg: Background.AnimatedGradient): Mod
             AnimationStyle.PULSE -> colors  // Same as smooth for now
         }
         
-        val angleRadians = Math.toRadians(bg.angle.toDouble())
+        val angleRadians = Math.toRadians((bg.angle - 90.0))
         val gradStart = Offset(
             x = (0.5f - cos(angleRadians).toFloat() * 0.5f) * size.width,
             y = (0.5f - sin(angleRadians).toFloat() * 0.5f) * size.height
