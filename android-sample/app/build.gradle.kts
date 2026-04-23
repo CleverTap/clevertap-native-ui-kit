@@ -14,8 +14,8 @@ android {
         applicationId = "com.clevertap.android.nativeui.sample"
         minSdk = 23
         targetSdk = 36
-        versionCode = 7
-        versionName = "1.6"
+        versionCode = 8
+        versionName = "1.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
