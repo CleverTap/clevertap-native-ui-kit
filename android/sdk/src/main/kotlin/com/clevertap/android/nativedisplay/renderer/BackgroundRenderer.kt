@@ -64,30 +64,43 @@ private fun Modifier.applyStaticSolid(bg: Background.Solid): Modifier {
 
 /**
  * Apply linear gradient background (non-composable).
+ * Uses drawWithContent so gradient start/end are computed from the actual component
+ * size at draw time — fixes solid-color appearance on small elements like buttons.
  */
 private fun Modifier.applyStaticLinearGradient(bg: Background.LinearGradient): Modifier {
     val colors = bg.colors.mapNotNull { parseColor(it) }
     if (colors.isEmpty()) return this
-    
-    val brush = if (bg.stops != null && bg.stops.isNotEmpty()) {
-        val colorStops = colors.mapIndexed { index, color ->
-            val stop = bg.stops.getOrNull(index) ?: (index.toFloat() / (colors.size - 1))
-            stop to color
+
+    return this.drawWithContent {
+        val angleRadians = Math.toRadians(bg.angle.toDouble())
+        val start = Offset(
+            x = (0.5f - cos(angleRadians).toFloat() * 0.5f) * size.width,
+            y = (0.5f - sin(angleRadians).toFloat() * 0.5f) * size.height
+        )
+        val end = Offset(
+            x = (0.5f + cos(angleRadians).toFloat() * 0.5f) * size.width,
+            y = (0.5f + sin(angleRadians).toFloat() * 0.5f) * size.height
+        )
+        val brush = if (bg.stops != null && bg.stops.isNotEmpty()) {
+            val colorStops = colors.mapIndexed { index, color ->
+                val stop = bg.stops.getOrNull(index) ?: (index.toFloat() / (colors.size - 1))
+                stop to color
+            }
+            Brush.linearGradient(
+                colorStops = colorStops.toTypedArray(),
+                start = start,
+                end = end
+            )
+        } else {
+            Brush.linearGradient(
+                colors = colors,
+                start = start,
+                end = end
+            )
         }
-        Brush.linearGradient(
-            colorStops = colorStops.toTypedArray(),
-            start = calculateGradientStart(bg.angle),
-            end = calculateGradientEnd(bg.angle)
-        )
-    } else {
-        Brush.linearGradient(
-            colors = colors,
-            start = calculateGradientStart(bg.angle),
-            end = calculateGradientEnd(bg.angle)
-        )
+        drawRect(brush)
+        drawContent()
     }
-    
-    return this.background(brush)
 }
 
 /**
@@ -234,14 +247,23 @@ private fun Modifier.applyAnimatedShimmer(bg: Background.Shimmer): Modifier {
     val highlightColor = parseColor(bg.highlightColor) ?: Color.White
     
     return this.drawWithContent {
+        val angleRadians = Math.toRadians(bg.angle.toDouble())
+        // Offset pans the gradient across the component; scale by component dimension so
+        // the sweep covers the full component regardless of its size.
+        val panX = offset * size.width
+        val panY = offset * size.height
+        val shimmerStart = Offset(
+            x = (0.5f - cos(angleRadians).toFloat() * 0.5f) * size.width + panX,
+            y = (0.5f - sin(angleRadians).toFloat() * 0.5f) * size.height + panY
+        )
+        val shimmerEnd = Offset(
+            x = (0.5f + cos(angleRadians).toFloat() * 0.5f) * size.width + panX,
+            y = (0.5f + sin(angleRadians).toFloat() * 0.5f) * size.height + panY
+        )
         val brush = Brush.linearGradient(
-            colors = listOf(
-                baseColor,
-                highlightColor,
-                baseColor
-            ),
-            start = calculateGradientStart(bg.angle, offset),
-            end = calculateGradientEnd(bg.angle, offset)
+            colors = listOf(baseColor, highlightColor, baseColor),
+            start = shimmerStart,
+            end = shimmerEnd
         )
         drawRect(brush)
         drawContent()
@@ -279,11 +301,20 @@ private fun Modifier.applyAnimatedGradient(bg: Background.AnimatedGradient): Mod
             AnimationStyle.PULSE -> colors  // Same as smooth for now
         }
         
+        val angleRadians = Math.toRadians(bg.angle.toDouble())
+        val gradStart = Offset(
+            x = (0.5f - cos(angleRadians).toFloat() * 0.5f) * size.width,
+            y = (0.5f - sin(angleRadians).toFloat() * 0.5f) * size.height
+        )
+        val gradEnd = Offset(
+            x = (0.5f + cos(angleRadians).toFloat() * 0.5f) * size.width,
+            y = (0.5f + sin(angleRadians).toFloat() * 0.5f) * size.height
+        )
         val brush = when (bg.gradientType) {
             GradientType.LINEAR -> Brush.linearGradient(
                 colors = rotatedColors,
-                start = calculateGradientStart(bg.angle),
-                end = calculateGradientEnd(bg.angle)
+                start = gradStart,
+                end = gradEnd
             )
             GradientType.RADIAL -> Brush.radialGradient(
                 colors = rotatedColors,
@@ -388,31 +419,6 @@ private fun Modifier.applyLayeredBackground(bg: Background.Layered): Modifier {
 // HELPER FUNCTIONS (Non-Composable)
 // ============================================================================
 
-/**
- * Calculate gradient start offset based on angle.
- * Pure function - no composition needed.
- */
-private fun calculateGradientStart(angleDegrees: Float, offset: Float = 0f): Offset {
-    val angleRadians = Math.toRadians(angleDegrees.toDouble())
-    val adjustedOffset = offset * 1000f
-    return Offset(
-        x = (0.5f - cos(angleRadians).toFloat() * 0.5f) * 1000f + adjustedOffset,
-        y = (0.5f - sin(angleRadians).toFloat() * 0.5f) * 1000f + adjustedOffset
-    )
-}
-
-/**
- * Calculate gradient end offset based on angle.
- * Pure function - no composition needed.
- */
-private fun calculateGradientEnd(angleDegrees: Float, offset: Float = 0f): Offset {
-    val angleRadians = Math.toRadians(angleDegrees.toDouble())
-    val adjustedOffset = offset * 1000f
-    return Offset(
-        x = (0.5f + cos(angleRadians).toFloat() * 0.5f) * 1000f + adjustedOffset,
-        y = (0.5f + sin(angleRadians).toFloat() * 0.5f) * 1000f + adjustedOffset
-    )
-}
 
 /**
  * Draw dots pattern.
