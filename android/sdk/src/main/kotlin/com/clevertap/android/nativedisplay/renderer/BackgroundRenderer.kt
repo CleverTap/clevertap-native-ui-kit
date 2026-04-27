@@ -8,6 +8,11 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import com.clevertap.android.nativedisplay.internal.ImageLoaderProvider
 import com.clevertap.android.nativedisplay.models.*
 import kotlin.math.cos
 import kotlin.math.sin
@@ -170,13 +175,39 @@ private fun Modifier.applyStaticPattern(bg: Background.Pattern): Modifier {
 }
 
 /**
- * Apply image background (non-composable).
- * Note: This is a simplified implementation. Full image rendering would require 
- * additional handling for loading, caching, and effects.
+ * Apply image background.
+ * Loads asynchronously via Coil and paints behind content using drawWithContent.
  */
+@Composable
 private fun Modifier.applyStaticImage(bg: Background.Image): Modifier {
-    // Placeholder implementation - images typically need async loading
-    return this.background(Color.Transparent)
+    val context = LocalContext.current
+    val imageLoaderFactory = LocalImageLoader.current
+    val imageLoader = remember(context, imageLoaderFactory) {
+        imageLoaderFactory?.invoke(context) ?: ImageLoaderProvider.getImageLoader(context)
+    }
+
+    val contentScale = when (bg.fit) {
+        ImageFit.CROP -> ContentScale.Crop
+        ImageFit.CONTAIN -> ContentScale.Fit
+        ImageFit.FILL -> ContentScale.FillBounds
+        ImageFit.TILE -> ContentScale.Crop
+    }
+
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(context)
+            .data(bg.url)
+            .crossfade(true)
+            .build(),
+        imageLoader = imageLoader,
+        contentScale = contentScale
+    )
+
+    return this.drawWithContent {
+        with(painter) {
+            draw(size = this@drawWithContent.size, alpha = bg.opacity)
+        }
+        drawContent()
+    }
 }
 
 // ============================================================================

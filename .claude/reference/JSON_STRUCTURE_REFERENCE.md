@@ -959,7 +959,7 @@ Examples:
 {
   "type": "image",
   "url": "https://example.com/bg.jpg",
-  "fit": "cover",           // "cover" | "contain" | "fill" | "tile"
+  "fit": "crop",            // "crop" | "contain" | "fill" | "tile"
   "opacity": 1.0,
   "blur": 0,
   "tint": "#000000",

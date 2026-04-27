@@ -207,7 +207,17 @@ public struct ImageBackground: Codable, Equatable {
         case tint
         case tintOpacity = "tint_opacity"
     }
-    
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        url = try container.decode(String.self, forKey: .url)
+        fit = try container.decodeIfPresent(ImageFit.self, forKey: .fit) ?? .crop
+        opacity = try container.decodeIfPresent(CGFloat.self, forKey: .opacity) ?? 1.0
+        blur = try container.decodeIfPresent(CGFloat.self, forKey: .blur) ?? 0
+        tint = try container.decodeIfPresent(String.self, forKey: .tint)
+        tintOpacity = try container.decodeIfPresent(CGFloat.self, forKey: .tintOpacity) ?? 0
+    }
+
     public init(
         url: String,
         fit: ImageFit = .crop,
