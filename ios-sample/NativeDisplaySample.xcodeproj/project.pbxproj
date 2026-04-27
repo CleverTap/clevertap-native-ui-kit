@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		41BD00022F8F000000714978 /* BridgeIntegrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41BD00012F8F000000714978 /* BridgeIntegrationView.swift */; };
 		4113027B2F33E757004B6254 /* BannerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 411302792F33E757004B6254 /* BannerDetailView.swift */; };
 		4113027C2F33E757004B6254 /* BannerShowcaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4113027A2F33E757004B6254 /* BannerShowcaseView.swift */; };
 		414DA8B12F59B35E00714978 /* test-092-offset-percent-stack-layers.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA86E2F59B35E00714978 /* test-092-offset-percent-stack-layers.json */; };
@@ -222,6 +223,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		41BD00012F8F000000714978 /* BridgeIntegrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeIntegrationView.swift; sourceTree = "<group>"; };
 		411302792F33E757004B6254 /* BannerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerDetailView.swift; sourceTree = "<group>"; };
 		4113027A2F33E757004B6254 /* BannerShowcaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerShowcaseView.swift; sourceTree = "<group>"; };
 		411302922F34AC72004B6254 /* banner-01-hero-summer-sale.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "banner-01-hero-summer-sale.json"; sourceTree = "<group>"; };
@@ -656,6 +658,7 @@
 			children = (
 				414DA94E2F6001EC00714978 /* ImagePreloader.swift */,
 				41C5EB1D2F34E6FC0066BE34 /* JSONViewerView.swift */,
+				41BD00012F8F000000714978 /* BridgeIntegrationView.swift */,
 				411302792F33E757004B6254 /* BannerDetailView.swift */,
 				4113027A2F33E757004B6254 /* BannerShowcaseView.swift */,
 				41F1AD602F2B7D420018C5EA /* JsonLoader.swift */,
@@ -1013,6 +1016,7 @@
 				41C5EB1E2F34E6FC0066BE34 /* JSONViewerView.swift in Sources */,
 				41F1AD612F2B7D420018C5EA /* JsonLoader.swift in Sources */,
 				B001 /* NativeDisplaySampleApp.swift in Sources */,
+				41BD00022F8F000000714978 /* BridgeIntegrationView.swift in Sources */,
 				4113027B2F33E757004B6254 /* BannerDetailView.swift in Sources */,
 				4113027C2F33E757004B6254 /* BannerShowcaseView.swift in Sources */,
 				B002 /* ContentView.swift in Sources */,

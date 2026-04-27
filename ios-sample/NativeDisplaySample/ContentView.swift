@@ -57,6 +57,14 @@ struct DemoMenuView: View {
                         description: "Example home screen layout"
                     )
                 }
+
+                NavigationLink(destination: BridgeIntegrationView()) {
+                    DemoMenuItem(
+                        icon: "link.circle",
+                        title: "Bridge Integration",
+                        description: "Core SDK bridge demo with mock data"
+                    )
+                }
             }
         }
         .navigationTitle("Other Demos")
