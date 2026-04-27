@@ -179,6 +179,7 @@ Each element type maps to Compose components:
 | IMAGE | AsyncImage | Loading states |
 | BUTTON | Button | Click handling |
 | VIDEO | AndroidView | Player lifecycle |
+| HTML | AndroidView (WebView) | JS bridge, security hardening |
 | SPACER | Spacer | Fixed/flexible |
 | DIVIDER | Divider | Orientation support |
 

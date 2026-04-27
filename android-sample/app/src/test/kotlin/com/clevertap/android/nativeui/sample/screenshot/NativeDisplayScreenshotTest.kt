@@ -408,6 +408,15 @@ class NativeDisplayScreenshotTest {
     @Test fun test176GalleryBoxSnappingMinimal() = captureConfig("test-176-gallery-box-snapping-minimal.json")
 
     // ============================================================================
+    // HTML Element Tests
+    // ============================================================================
+
+    @Test fun test177HtmlInlineBasic() = captureConfig("test-177-html-inline-basic.json")
+    @Test fun test178HtmlWithJavascript() = captureConfig("test-178-html-with-javascript.json")
+    @Test fun test179HtmlTransparentBg() = captureConfig("test-179-html-transparent-bg.json")
+    @Test fun test180HtmlScrollableContent() = captureConfig("test-180-html-scrollable-content.json")
+
+    // ============================================================================
     // Verification Test
     // ============================================================================
 

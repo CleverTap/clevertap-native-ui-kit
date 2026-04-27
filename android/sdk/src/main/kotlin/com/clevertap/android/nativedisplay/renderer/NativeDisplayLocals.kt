@@ -14,3 +14,9 @@ val LocalVideoPlayerFactory = compositionLocalOf<
     (@Composable (videoUrl: String, autoPlay: Boolean, loop: Boolean, muted: Boolean,
                   showControls: Boolean, showFullscreen: Boolean, modifier: Modifier) -> Unit)?
 > { null }
+
+/** Overrides the HTML WebView composable for HTML elements. Null = real HtmlElementView (no-op). */
+val LocalHtmlViewFactory = compositionLocalOf<
+    (@Composable (html: String?, url: String?, config: com.clevertap.android.nativedisplay.models.HtmlConfig,
+                  modifier: Modifier) -> Unit)?
+> { null }

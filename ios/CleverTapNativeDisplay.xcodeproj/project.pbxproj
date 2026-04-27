@@ -29,6 +29,8 @@
 		B011 /* VariableEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F011 /* VariableEvaluator.swift */; };
 		B012 /* StyleResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F012 /* StyleResolver.swift */; };
 		B013 /* CleverTapNativeDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F013 /* CleverTapNativeDisplay.swift */; };
+		B014 /* HtmlJsBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F014 /* HtmlJsBridge.swift */; };
+		B015 /* HtmlWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F015 /* HtmlWebView.swift */; };
 		BT01 /* CleverTapNativeDisplayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FT01 /* CleverTapNativeDisplayTests.swift */; };
 		BT02 /* CleverTapNativeDisplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = P001 /* CleverTapNativeDisplay.framework */; };
 /* End PBXBuildFile section */
@@ -66,6 +68,8 @@
 		F011 /* VariableEvaluator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableEvaluator.swift; sourceTree = "<group>"; };
 		F012 /* StyleResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleResolver.swift; sourceTree = "<group>"; };
 		F013 /* CleverTapNativeDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleverTapNativeDisplay.swift; sourceTree = "<group>"; };
+		F014 /* HtmlJsBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HtmlJsBridge.swift; sourceTree = "<group>"; };
+		F015 /* HtmlWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HtmlWebView.swift; sourceTree = "<group>"; };
 		FT01 /* CleverTapNativeDisplayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleverTapNativeDisplayTests.swift; sourceTree = "<group>"; };
 		P001 /* CleverTapNativeDisplay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CleverTapNativeDisplay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		P002 /* CleverTapNativeDisplayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CleverTapNativeDisplayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -167,12 +171,21 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		GRP_BRG /* Bridge */ = {
+			isa = PBXGroup;
+			children = (
+				F014 /* HtmlJsBridge.swift */,
+			);
+			path = Bridge;
+			sourceTree = "<group>";
+		};
 		GRP_RND /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
 				F008 /* NativeDisplayRenderer.swift */,
 				F009 /* GalleryRenderer.swift */,
 				F010 /* BackgroundRenderer.swift */,
+				F015 /* HtmlWebView.swift */,
 			);
 			path = Renderer;
 			sourceTree = "<group>";
@@ -189,6 +202,7 @@
 				GRP_RND /* Renderer */,
 				GRP_EVL /* Evaluator */,
 				GRP_STY /* Style */,
+				GRP_BRG /* Bridge */,
 			);
 			path = CleverTapNativeDisplay;
 			sourceTree = "<group>";
@@ -357,6 +371,8 @@
 				41969A6F2F0BDB420050EB83 /* TappableModifier.swift in Sources */,
 				41969A6C2F0BCA390050EB83 /* ActionHandler.swift in Sources */,
 				B013 /* CleverTapNativeDisplay.swift in Sources */,
+				B014 /* HtmlJsBridge.swift in Sources */,
+				B015 /* HtmlWebView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
