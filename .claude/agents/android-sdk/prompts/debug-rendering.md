@@ -90,8 +90,8 @@ Modifier
 - Look for padding applied in wrong order
 
 ### Wrong Color
-- Verify ARGB format (#AARRGGBB not #RRGGBB)
-- Check color parsing (RGB → ARGB conversion)
+- Verify RGBA format (#RRGGBBAA not #RRGGBB)
+- Check color parsing (RGB → RGBA conversion)
 - Verify opacity applied correctly
 
 ### Style Not Applied

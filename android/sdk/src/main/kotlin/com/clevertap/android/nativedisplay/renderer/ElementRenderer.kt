@@ -145,23 +145,23 @@ internal fun RenderElement(
             } ?: ""
 
             val autoPlay = element.bindings["autoPlay"]?.let {
-                evaluator.evaluateString(it).toBoolean()
+                evaluator.evaluateBoolean(it)
             } ?: false
 
             val loop = element.bindings["loop"]?.let {
-                evaluator.evaluateString(it).toBoolean()
+                evaluator.evaluateBoolean(it)
             } ?: false
 
             val muted = element.bindings["muted"]?.let {
-                evaluator.evaluateString(it).toBoolean()
+                evaluator.evaluateBoolean(it)
             } ?: false
 
             val showControls = element.bindings["showControls"]?.let {
-                evaluator.evaluateString(it).toBoolean()
+                evaluator.evaluateBoolean(it)
             } ?: true
 
             val showFullscreen = element.bindings["showFullscreen"]?.let {
-                evaluator.evaluateString(it).toBoolean()
+                evaluator.evaluateBoolean(it)
             } ?: true
 
             if (videoUrl.isNotEmpty()) {

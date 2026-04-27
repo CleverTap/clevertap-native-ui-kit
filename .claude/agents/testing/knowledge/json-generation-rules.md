@@ -126,7 +126,7 @@ Automatically calculates one dimension from the other:
 
 ```json
 "#RRGGBB"      // RGB (e.g., "#FF5722")
-"#AARRGGBB"    // ARGB with alpha (e.g., "#80FF5722")
+"#RRGGBBAA"    // RGBA with alpha (e.g., "#FF572280")
 ```
 
 ### 8. Arrangement Strategies
