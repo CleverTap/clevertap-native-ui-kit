@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -198,13 +199,16 @@ private fun FireEventHeader(
                 value = eventName,
                 onValueChange = onEventNameChange,
                 placeholder = { Text("Enter event name") },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("ct-event-input"),
                 singleLine = true,
                 textStyle = MaterialTheme.typography.bodyMedium
             )
             Button(
                 onClick = onSendEvent,
-                enabled = isSendEnabled
+                enabled = isSendEnabled,
+                modifier = Modifier.testTag("ct-send-event-btn")
             ) {
                 Text("Send Event")
             }
@@ -229,7 +233,7 @@ private fun CanvasContent(
 ) {
     if (receivedUnits.isEmpty()) {
         Box(
-            modifier = modifier,
+            modifier = modifier.testTag("ct-waiting-canvas"),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -240,7 +244,9 @@ private fun CanvasContent(
         }
     } else {
         LazyColumn(
-            modifier = modifier.padding(horizontal = 16.dp),
+            modifier = modifier
+                .testTag("ct-display-canvas")
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(vertical = 8.dp)
         ) {

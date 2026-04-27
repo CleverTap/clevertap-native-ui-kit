@@ -60,6 +60,44 @@ android {
     }
 }
 
+// ── Campaign Screenshot Integration Test ─────────────────────────────────────
+// Single task that runs the test AND pulls results to ~/Desktop before cleanup.
+//
+// Usage: cd android-sample && ./gradlew :app:campaignScreenshots
+// ─────────────────────────────────────────────────────────────────────────────
+val desktopPath = "${System.getProperty("user.home")}/Desktop/campaign-screenshots"
+
+// Restrict connectedDebugAndroidTest to only CampaignScreenshotTest when this task is in the graph
+gradle.taskGraph.whenReady {
+    if (hasTask(":app:campaignScreenshots")) {
+        android.defaultConfig.testInstrumentationRunnerArguments["class"] =
+            "com.clevertap.android.nativeui.sample.CampaignScreenshotTest"
+    }
+}
+
+tasks.register("campaignScreenshots") {
+    group = "verification"
+    description = "Run CampaignScreenshotTest and pull results to ~/Desktop/campaign-screenshots/"
+    dependsOn("connectedDebugAndroidTest")
+    doLast {
+        // AGP pulls additionalTestOutputDir to build/outputs/connected_android_test_additional_output/
+        // automatically. We just copy campaign-screenshots/ from there to the Desktop.
+        val buildOutput = File(projectDir,
+            "build/outputs/connected_android_test_additional_output")
+        val campaignDir = buildOutput.walkTopDown()
+            .firstOrNull { it.isDirectory && it.name == "campaign-screenshots" }
+
+        if (campaignDir != null) {
+            val dest = File(desktopPath)
+            dest.mkdirs()
+            campaignDir.copyRecursively(dest, overwrite = true)
+            println("Screenshots copied to: $desktopPath")
+        } else {
+            println("Warning: campaign-screenshots not found in $buildOutput")
+        }
+    }
+}
+
 dependencies {
     // Local SDK
     implementation("com.clevertap.android:native-display-sdk")
