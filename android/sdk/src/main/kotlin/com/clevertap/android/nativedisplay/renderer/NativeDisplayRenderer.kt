@@ -166,7 +166,7 @@ fun RenderNode(
                 )
             } else mod
         }
-        .applyDecorations(resolvedStyle)
+        .applyDecorations(resolvedStyle, rootHeightPx)
 
     // Wire lifecycle action triggers (onAppear / onDisappear)
     val onAppearAction = node.actions?.get(ActionTriggers.ON_APPEAR)

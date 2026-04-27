@@ -804,8 +804,8 @@ Combine percentages with aspect ratios for responsive, proportional layouts:
   "background": { /* Background object */ },
   "backgroundColor": "#FFFFFF",
   
-  "borderRadius": 8,
-  "borderWidth": 1,
+  "borderRadius": 8,             // Dimension: number (dp) OR {"value": 30, "unit": "percent"} → rootContainerHeight*value/100
+  "borderWidth": 1,              // rendered as rootContainerHeight*value/1000 (FE formula)
   "borderColor": "#E0E0E0",
   
   "shadowColor": "#000000",
@@ -901,6 +901,63 @@ This matches the FE/dashboard rendering behavior where font sizes are relative t
 ```
 
 In a 400dp **root** container: `fontSize = 400 × 40 / 1000 = 16`, `lineHeight = 400 × 56 / 1000 = 22.4`. The root container height is always used, regardless of nesting depth.
+
+---
+
+### borderRadius and borderWidth: FE-Relative Formulas
+
+Both `borderRadius` (percent) and `borderWidth` are resolved relative to the **root container height**, matching FE/dashboard rendering exactly.
+
+#### borderRadius
+
+Accepts two JSON formats:
+
+**Format 1 — Raw number (dp):**
+```json
+"borderRadius": 12
+```
+Applies a fixed 12dp corner radius.
+
+**Format 2 — Percentage object:**
+```json
+"borderRadius": {"value": 30, "unit": "percent"}
+```
+Resolves as: **`rootContainerHeight × value / 100`**
+
+| Example | Root height 200dp | Root height 400dp |
+|---------|-------------------|-------------------|
+| `{"value": 20, "unit": "percent"}` | 40dp | 80dp |
+| `{"value": 50, "unit": "percent"}` | 100dp | 200dp |
+
+A value of `50` typically produces a pill/circle shape. Values are not capped — they clip naturally per platform (RoundedCornerShape / RoundedRectangle).
+
+#### borderWidth
+
+`borderWidth` is always a raw number but is resolved at render time as:
+
+**`rootContainerHeight × value / 1000`**
+
+| JSON value | Root height 200dp | Root height 400dp |
+|------------|-------------------|-------------------|
+| `20` | 4dp | 8dp |
+| `10` | 2dp | 4dp |
+
+This matches the FE formula: `containerHeight * (borderWidth / 1000)`.
+
+**Example — percentage-based styling (FE-style):**
+```json
+{
+  "style": {
+    "backgroundColor": "#191919",
+    "borderRadius": {"value": 20, "unit": "percent"},
+    "borderWidth": 20,
+    "borderColor": "#CE2626"
+  }
+}
+```
+In a 210dp-tall root: `borderRadius = 42dp`, `borderWidth = 4.2dp`.
+
+> Note: `special` values (`wrap_content`, `match_parent`) are not applicable to `borderRadius`.
 
 ---
 

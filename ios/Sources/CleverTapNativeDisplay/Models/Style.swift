@@ -126,7 +126,7 @@ public struct Style: Codable, Equatable {
 
     // ==================== BORDER PROPERTIES (Non-cascading) ====================
 
-    public let borderRadius: CGFloat?
+    public let borderRadius: Dimension?
     public let borderWidth: CGFloat?
     public let borderColor: String?
 
@@ -157,7 +157,7 @@ public struct Style: Codable, Equatable {
         textGradient: TextGradient? = nil,
         background: Background? = nil,
         backgroundColor: String? = nil,
-        borderRadius: CGFloat? = nil,
+        borderRadius: Dimension? = nil,
         borderWidth: CGFloat? = nil,
         borderColor: String? = nil,
         shadowColor: String? = nil,
@@ -356,6 +356,53 @@ public struct Style: Codable, Equatable {
         )
     }
 
+    // Custom Decodable init for backward-compatible borderRadius parsing.
+    // Accepts both raw number ("borderRadius": 12) and Dimension object
+    // ("borderRadius": {"value": 50, "unit": "percent"}).
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        textColor      = try container.decodeIfPresent(String.self,          forKey: .textColor)
+        fontSize       = try container.decodeIfPresent(TextDimension.self,   forKey: .fontSize)
+        fontFamily     = try container.decodeIfPresent(String.self,          forKey: .fontFamily)
+        fontWeight     = try container.decodeIfPresent(FontWeight.self,      forKey: .fontWeight)
+        fontStyle      = try container.decodeIfPresent(FontStyle.self,       forKey: .fontStyle)
+        lineHeight     = try container.decodeIfPresent(TextDimension.self,   forKey: .lineHeight)
+        letterSpacing  = try container.decodeIfPresent(CGFloat.self,         forKey: .letterSpacing)
+        textDecoration = try container.decodeIfPresent(TextDecoration.self,  forKey: .textDecoration)
+        textAlign      = try container.decodeIfPresent(String.self,          forKey: .textAlign)
+        maxLines       = try container.decodeIfPresent(Int.self,             forKey: .maxLines)
+        overflow       = try container.decodeIfPresent(TextOverflow.self,    forKey: .overflow)
+        textShadow     = try container.decodeIfPresent(TextShadow.self,      forKey: .textShadow)
+        textGradient   = try container.decodeIfPresent(TextGradient.self,    forKey: .textGradient)
+        background     = try container.decodeIfPresent(Background.self,      forKey: .background)
+        backgroundColor = try container.decodeIfPresent(String.self,         forKey: .backgroundColor)
+
+        // Backward-compatible borderRadius: raw number → Dimension(.dp), object → Dimension
+        if let raw = try? container.decode(CGFloat.self, forKey: .borderRadius) {
+            borderRadius = Dimension(value: raw, unit: .dp)
+        } else {
+            borderRadius = try? container.decode(Dimension.self, forKey: .borderRadius)
+        }
+
+        borderWidth    = try container.decodeIfPresent(CGFloat.self,         forKey: .borderWidth)
+        borderColor    = try container.decodeIfPresent(String.self,          forKey: .borderColor)
+        shadowColor    = try container.decodeIfPresent(String.self,          forKey: .shadowColor)
+        shadowRadius   = try container.decodeIfPresent(CGFloat.self,         forKey: .shadowRadius)
+        shadowOffsetX  = try container.decodeIfPresent(CGFloat.self,         forKey: .shadowOffsetX)
+        shadowOffsetY  = try container.decodeIfPresent(CGFloat.self,         forKey: .shadowOffsetY)
+        opacity        = try container.decodeIfPresent(CGFloat.self,         forKey: .opacity)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case textColor, fontSize, fontFamily, fontWeight, fontStyle
+        case lineHeight, letterSpacing, textDecoration, textAlign
+        case maxLines, overflow, textShadow, textGradient
+        case background, backgroundColor
+        case borderRadius, borderWidth, borderColor
+        case shadowColor, shadowRadius, shadowOffsetX, shadowOffsetY
+        case opacity
+    }
+
     public static let empty = Style()
 }
 
@@ -481,16 +528,16 @@ public struct VisualProperties {
 /// Used internally by decoration application for rendering borders.
 ///
 /// Contains border-related properties:
-/// - radius: Border radius in points (rounded corners)
+/// - radius: Border radius as a Dimension (supports dp or percent units)
 /// - width: Border width in points (stroke thickness)
 /// - color: Border color in hex format
 public struct BorderProperties {
-    public let radius: CGFloat?
+    public let radius: Dimension?
     public let width: CGFloat?
     public let color: String?
 
     public init(
-        radius: CGFloat?,
+        radius: Dimension?,
         width: CGFloat?,
         color: String?
     ) {

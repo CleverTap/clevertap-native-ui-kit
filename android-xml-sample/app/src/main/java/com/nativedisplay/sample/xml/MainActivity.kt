@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity() {
                 name = "gallery_item_card",
                 style = Style(
                     backgroundColor = "#FFFFFF",
-                    borderRadius = 12f,
+                    borderRadius = Dimension.dp(\1f),
                     shadowColor = "#000000",
                     shadowRadius = 3f,
                     shadowOffsetY = 2f
@@ -179,7 +179,7 @@ class MainActivity : AppCompatActivity() {
                             height = Dimension.dp(140f)
                         ),
                         style = Style(
-                            borderRadius = 8f
+                            borderRadius = Dimension.dp(\1f)
                         )
                     ),
                     
@@ -322,7 +322,7 @@ class MainActivity : AppCompatActivity() {
                 name = "card",
                 style = Style(
                     backgroundColor = "#FFFFFF",
-                    borderRadius = 12f,
+                    borderRadius = Dimension.dp(\1f),
                     shadowColor = "#000000",
                     shadowRadius = 4f,
                     shadowOffsetY = 2f
@@ -351,7 +351,7 @@ class MainActivity : AppCompatActivity() {
                     textColor = "#FFFFFF",
                     fontSize = 16f,
                     fontWeight = FontWeight.MEDIUM,
-                    borderRadius = 8f
+                    borderRadius = Dimension.dp(\1f)
                 )
             )
         )
@@ -375,7 +375,7 @@ class MainActivity : AppCompatActivity() {
                         height = Dimension.dp(200f)
                     ),
                     style = Style(
-                        borderRadius = 8f
+                        borderRadius = Dimension.dp(\1f)
                     )
                 ),
                 

@@ -95,13 +95,13 @@ data class VisualProperties(
  * Used internally by applyDecorations for rendering borders.
  *
  * Contains border-related properties:
- * - radius: Border radius in DP (rounded corners)
+ * - radius: Border radius as a Dimension (supports DP and percent of min(width, height) / 2)
  * - width: Border width in DP (stroke thickness)
  * - color: Border color in hex format
  */
 @Immutable
 data class BorderProperties(
-    val radius: Float?,
+    val radius: Dimension?,
     val width: Float?,
     val color: String?
 ) {

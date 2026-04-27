@@ -238,7 +238,7 @@ struct RenderNode: View {
                 componentListener: componentListener
             )
             .modifier(layoutMod)
-            .modifier(DecorationModifier(style: resolvedStyle))
+            .modifier(DecorationModifier(style: resolvedStyle, rootHeight: rootHeight))
             .offset(x: offsetValue.width, y: offsetValue.height)
             .applyEntranceAnimation(node.animation)
             .applyTappable(
@@ -275,7 +275,7 @@ struct RenderNode: View {
                 actionHandler: actionHandler
             )
             .modifier(layoutMod)
-            .modifier(DecorationModifier(style: resolvedStyle))
+            .modifier(DecorationModifier(style: resolvedStyle, rootHeight: rootHeight))
             .offset(x: offsetValue.width, y: offsetValue.height)
             .applyEntranceAnimation(node.animation)
             .applyTappable(
@@ -1341,14 +1341,39 @@ struct LayoutModifier: ViewModifier {
 
 struct DecorationModifier: ViewModifier {
     let style: Style
+    let rootHeight: CGFloat
 
     func body(content: Content) -> some View {
-        // Extract property groups for better code organization
+        DecorationView(style: style, rootHeight: rootHeight, content: content)
+    }
+}
+
+/// Internal view that applies visual decoration (background, border, shadow, clip, opacity).
+///
+/// Separated from `DecorationModifier` as a dedicated `View` struct so that `@State` can
+/// be stored properly. SwiftUI's `ViewModifier.body` does not own state the same way a
+/// `View.body` does, and complex chaining on `@ViewBuilder` results causes type-checker
+/// failures in some Xcode/Swift versions.
+///
+/// Percent-based `borderRadius` requires knowing the element's rendered size. We measure it
+/// via `.background(GeometryReader)` which is non-greedy (does NOT affect the parent's
+/// layout), unlike wrapping content directly in `GeometryReader` which expands to fill all
+/// available space and returns wrong sizes inside `ScrollView` / `LazyVStack` / `LazyHStack`.
+private struct DecorationView<Content: View>: View {
+    let style: Style
+    let rootHeight: CGFloat
+    let content: Content
+
+    var body: some View {
         let borderProps = style.extractBorderProperties()
         let shadowProps = style.extractShadowProperties()
         let visualProps = style.extractVisualProperties()
-
-        let cornerRadius = borderProps.radius ?? 0
+        let cornerRadius = resolvedCornerRadius(borderProps: borderProps)
+        // FE formula: containerHeight * borderWidth / 1000
+        let effectiveBorderWidth: CGFloat = {
+            guard let w = borderProps.width, w > 0, rootHeight > 0 else { return borderProps.width ?? 0 }
+            return rootHeight * CGFloat(w) / 1000
+        }()
 
         content
             // Apply background
@@ -1368,11 +1393,11 @@ struct DecorationModifier: ViewModifier {
             // Apply border
             .overlay(
                 Group {
-                    if let borderWidth = borderProps.width, borderWidth > 0 {
+                    if effectiveBorderWidth > 0 {
                         RoundedRectangle(cornerRadius: cornerRadius)
                             .stroke(
                                 ColorParser.parse(borderProps.color) ?? .gray,
-                                lineWidth: borderWidth
+                                lineWidth: effectiveBorderWidth
                             )
                     }
                 }
@@ -1388,6 +1413,19 @@ struct DecorationModifier: ViewModifier {
             )
             // Apply opacity
             .opacity(Double(visualProps.opacity ?? 1))
+    }
+
+    /// Resolves the corner radius to a concrete CGFloat.
+    /// - For `.percent` units: FE formula `rootHeight * value / 100`
+    /// - For all other units (dp, sp, px): use the raw value directly as points
+    private func resolvedCornerRadius(borderProps: BorderProperties) -> CGFloat {
+        guard let dim = borderProps.radius else { return 0 }
+        switch dim.unit {
+        case .percent:
+            return rootHeight * (CGFloat(dim.value) / 100.0)
+        default:
+            return CGFloat(dim.value)
+        }
     }
 }
 

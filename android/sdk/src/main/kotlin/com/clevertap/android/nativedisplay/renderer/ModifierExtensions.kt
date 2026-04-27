@@ -5,7 +5,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -19,6 +18,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,8 +26,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
@@ -38,6 +41,7 @@ import com.clevertap.android.nativedisplay.models.Action
 import com.clevertap.android.nativedisplay.models.ActionTriggers
 import com.clevertap.android.nativedisplay.models.Animation
 import com.clevertap.android.nativedisplay.models.AnimationType
+import com.clevertap.android.nativedisplay.models.Dimension
 import com.clevertap.android.nativedisplay.models.DimensionUnit
 import com.clevertap.android.nativedisplay.models.Layout
 import com.clevertap.android.nativedisplay.models.SpecialDimension
@@ -301,53 +305,127 @@ internal fun Modifier.applyPadding(layout: Layout?): Modifier {
 }
 
 /**
+ * Resolve a border-radius [Dimension] to a DP float value.
+ *
+ * - [DimensionUnit.DP] (and SP/PX): returned as-is (treated as DP).
+ * - [DimensionUnit.PERCENT]: `rootContainerHeightDp * (value / 100)`.
+ *   Matches FE formula: `containerHeight * value / 100`.
+ *
+ * [rootContainerHeightDp] is only used for the percent case.
+ */
+internal fun Dimension.resolveRadiusDp(
+    rootContainerHeightDp: Float = 0f,
+): Float = when (unit) {
+    DimensionUnit.PERCENT -> rootContainerHeightDp * (value / 100f)
+    else -> value  // DP, SP, PX — all treated as dp
+}
+
+/**
  * Apply visual decorations (shadow, background, border).
+ *
+ * Border radius and border width are resolved using FE-matching formulas:
+ * - borderRadius percent: `rootContainerHeight * value / 100`
+ * - borderWidth: `rootContainerHeight * value / 1000`
+ *
+ * [rootHeightPx] must be passed from the root container's measured height in pixels.
  */
 @Composable
-internal fun Modifier.applyDecorations(style: Style): Modifier {
+internal fun Modifier.applyDecorations(style: Style, rootHeightPx: Float = 0f): Modifier {
     var modifier = this
+    val densityValue = LocalDensity.current.density
+    val rootHeightDp = if (densityValue > 0f) rootHeightPx / densityValue else 0f
 
-    // Extract property groups for better code organization
     val borderProps = style.extractBorderProperties()
     val shadowProps = style.extractShadowProperties()
     val visualProps = style.extractVisualProperties()
 
-    val shape = RoundedCornerShape((borderProps.radius ?: 0f).dp)
-
-    // Apply shadow
-    if (shadowProps.radius != null && shadowProps.radius > 0f) {
-        modifier = modifier.shadow(
-            elevation = shadowProps.radius.dp,
-            shape = shape,
-            spotColor = parseColor(shadowProps.color) ?: Color.Black.copy(alpha = 0.25f)
-        )
+    // Resolve borderWidth using FE formula: containerHeight * value / 1000
+    val effectiveBorderWidthDp: Float = when {
+        borderProps.width != null && borderProps.width > 0f && rootHeightDp > 0f ->
+            rootHeightDp * borderProps.width / 1000f
+        borderProps.width != null -> borderProps.width  // fallback: treat as dp when no rootHeight
+        else -> 0f
     }
 
-    // Apply clip
-    if (borderProps.radius != null && borderProps.radius > 0f) {
-        modifier = modifier.clip(shape)
+    val radiusDim = borderProps.radius
+    val hasRadius = radiusDim != null && radiusDim.value > 0f
+    if (radiusDim != null && radiusDim.unit == DimensionUnit.PERCENT) {
+        // Percent radius path: FE formula = containerHeight * value / 100
+        // rootHeightDp is captured from the enclosing @Composable scope.
+        modifier = modifier.graphicsLayer {
+            val resolvedRadiusDp = radiusDim.resolveRadiusDp(rootHeightDp)
+            shape = RoundedCornerShape(resolvedRadiusDp.dp)
+            clip = true
+            if (shadowProps.radius != null && shadowProps.radius > 0f) {
+                shadowElevation = shadowProps.radius
+                spotShadowColor = parseColor(shadowProps.color) ?: Color.Black.copy(alpha = 0.25f)
+            }
+        }
+
+        // Background — no shape needed here; graphicsLayer clip handles rounding
+        if (visualProps.background != null) {
+            modifier = modifier.applyBackground(visualProps.background)
+        } else if (visualProps.backgroundColor != null) {
+            modifier = modifier.background(
+                color = parseColor(visualProps.backgroundColor) ?: Color.Transparent
+            )
+        }
+
+        // Border drawn via canvas so it respects the percent-resolved radius
+        if (effectiveBorderWidthDp > 0f) {
+            val borderColor = parseColor(borderProps.color) ?: Color.Gray
+            modifier = modifier.drawWithContent {
+                drawContent()
+                val resolvedRadiusDp = radiusDim.resolveRadiusDp(rootHeightDp)
+                val radiusPx = resolvedRadiusDp * density
+                val strokePx = effectiveBorderWidthDp * density
+                drawRoundRect(
+                    color = borderColor,
+                    style = Stroke(width = strokePx),
+                    cornerRadius = CornerRadius(radiusPx)
+                )
+            }
+        }
+    } else {
+        // Fixed DP radius path (fast path, no extra draw passes)
+        val radiusDp = radiusDim?.resolveRadiusDp(rootHeightDp) ?: 0f
+        val shape = RoundedCornerShape(radiusDp.dp)
+
+        // Apply shadow
+        if (shadowProps.radius != null && shadowProps.radius > 0f) {
+            modifier = modifier.shadow(
+                elevation = shadowProps.radius.dp,
+                shape = shape,
+                spotColor = parseColor(shadowProps.color) ?: Color.Black.copy(alpha = 0.25f)
+            )
+        }
+
+        // Apply clip
+        if (hasRadius) {
+            modifier = modifier.clip(shape)
+        }
+
+        // Apply background (new system takes precedence over old backgroundColor)
+        if (visualProps.background != null) {
+            modifier = modifier.applyBackground(visualProps.background)
+        } else if (visualProps.backgroundColor != null) {
+            modifier = modifier.background(
+                color = parseColor(visualProps.backgroundColor) ?: Color.Transparent,
+                shape = shape
+            )
+        }
+
+        // Apply border
+        if (effectiveBorderWidthDp > 0f) {
+            modifier = modifier.border(
+                width = effectiveBorderWidthDp.dp,
+                color = parseColor(borderProps.color) ?: Color.Gray,
+                shape = shape
+            )
+        }
     }
 
-    // Apply background (new system takes precedence over old backgroundColor)
-    if (visualProps.background != null) {
-        modifier = modifier.applyBackground(visualProps.background)
-    } else if (visualProps.backgroundColor != null) {
-        modifier = modifier.background(
-            color = parseColor(visualProps.backgroundColor) ?: Color.Transparent,
-            shape = shape
-        )
-    }
-
-    // Apply border
-    if (borderProps.width != null && borderProps.width > 0f) {
-        modifier = modifier.border(
-            width = borderProps.width.dp,
-            color = parseColor(borderProps.color) ?: Color.Gray,
-            shape = shape
-        )
-    }
-
-    // Apply opacity
+    // Apply opacity (both paths)
     visualProps.opacity?.let { opacity ->
         modifier = modifier.alpha(opacity.coerceIn(0f, 1f))
     }

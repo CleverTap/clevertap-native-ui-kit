@@ -32,7 +32,7 @@ object BackgroundSamples {
                             angle = 45f,
                             colors = listOf("#FF6B6B", "#4ECDC4")
                         ),
-                        borderRadius = 16f
+                        borderRadius = Dimension.dp(16f)
                     ),
                     children = listOf(
                         NativeDisplayElement(
@@ -62,7 +62,7 @@ object BackgroundSamples {
                             angle = 180f,
                             colors = listOf("#667eea", "#764ba2")
                         ),
-                        borderRadius = 16f
+                        borderRadius = Dimension.dp(16f)
                     ),
                     children = listOf(
                         NativeDisplayElement(
@@ -92,7 +92,7 @@ object BackgroundSamples {
                             angle = 90f,
                             colors = listOf("#FA709A", "#FEE140", "#30CFD0")
                         ),
-                        borderRadius = 16f
+                        borderRadius = Dimension.dp(16f)
                     ),
                     children = listOf(
                         NativeDisplayElement(
@@ -142,7 +142,7 @@ object BackgroundSamples {
                             radius = 1.0f,
                             colors = listOf("#FFD700", "#FF6B6B")
                         ),
-                        borderRadius = 16f
+                        borderRadius = Dimension.dp(16f)
                     ),
                     children = listOf(
                         NativeDisplayElement(
@@ -173,7 +173,7 @@ object BackgroundSamples {
                             centerY = 0.5f,
                             colors = listOf("#FF0000", "#00FF00", "#0000FF", "#FF0000")
                         ),
-                        borderRadius = 16f
+                        borderRadius = Dimension.dp(16f)
                     ),
                     children = listOf(
                         NativeDisplayElement(
@@ -223,7 +223,7 @@ object BackgroundSamples {
                             angle = 45f,
                             duration = 1500
                         ),
-                        borderRadius = 16f
+                        borderRadius = Dimension.dp(16f)
                     ),
                     children = listOf(
                         NativeDisplayElement(
@@ -256,7 +256,7 @@ object BackgroundSamples {
                             loop = true,
                             animationStyle = AnimationStyle.SMOOTH
                         ),
-                        borderRadius = 16f
+                        borderRadius = Dimension.dp(16f)
                     ),
                     children = listOf(
                         NativeDisplayElement(
@@ -289,7 +289,7 @@ object BackgroundSamples {
                             duration = 1000,
                             loop = true
                         ),
-                        borderRadius = 16f
+                        borderRadius = Dimension.dp(16f)
                     ),
                     children = listOf(
                         NativeDisplayElement(
@@ -324,7 +324,7 @@ object BackgroundSamples {
                             opacity = 0.7f
                         ),
                         backgroundColor = "#1A1A2E",
-                        borderRadius = 16f
+                        borderRadius = Dimension.dp(16f)
                     ),
                     children = listOf(
                         NativeDisplayElement(
@@ -375,7 +375,7 @@ object BackgroundSamples {
                             size = 8f,
                             spacing = 20f
                         ),
-                        borderRadius = 16f
+                        borderRadius = Dimension.dp(16f)
                     ),
                     children = listOf(
                         NativeDisplayElement(
@@ -408,7 +408,7 @@ object BackgroundSamples {
                             size = 10f,
                             spacing = 15f
                         ),
-                        borderRadius = 16f
+                        borderRadius = Dimension.dp(16f)
                     ),
                     children = listOf(
                         NativeDisplayElement(
@@ -441,7 +441,7 @@ object BackgroundSamples {
                             size = 2f,
                             spacing = 30f
                         ),
-                        borderRadius = 16f
+                        borderRadius = Dimension.dp(16f)
                     ),
                     children = listOf(
                         NativeDisplayElement(
@@ -474,7 +474,7 @@ object BackgroundSamples {
                             size = 20f,
                             spacing = 0f
                         ),
-                        borderRadius = 16f
+                        borderRadius = Dimension.dp(16f)
                     ),
                     children = listOf(
                         NativeDisplayElement(
@@ -533,7 +533,7 @@ object BackgroundSamples {
                                 )
                             )
                         ),
-                        borderRadius = 16f
+                        borderRadius = Dimension.dp(16f)
                     ),
                     children = listOf(
                         NativeDisplayElement(
@@ -576,7 +576,7 @@ object BackgroundSamples {
                                 )
                             )
                         ),
-                        borderRadius = 16f,
+                        borderRadius = Dimension.dp(16f),
                         shadowRadius = 8f,
                         shadowColor = "#00000040"
                     ),

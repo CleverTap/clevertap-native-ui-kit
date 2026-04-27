@@ -205,8 +205,8 @@ Applied to individual elements, not inherited:
 ```kotlin
 background: Background          // Complex background support
 backgroundColor: String         // Simple background color (hex)
-borderRadius: Float            // Corner radius in dp
-borderWidth: Float             // Border thickness in dp
+borderRadius: Dimension        // Corner radius — see formats below
+borderWidth: Float             // Border thickness — resolved as rootContainerHeight * value / 1000
 borderColor: String            // Border color (hex)
 shadowColor: String            // Shadow color (hex with alpha)
 shadowRadius: Float            // Shadow blur radius in dp
@@ -214,20 +214,49 @@ shadowOffsetX: Float           // Shadow X offset in dp
 shadowOffsetY: Float           // Shadow Y offset in dp
 ```
 
-**Example**:
+#### borderRadius Formats
+
+`borderRadius` accepts two JSON formats:
+
+| Format | Example | Resolution |
+|--------|---------|------------|
+| Raw number | `"borderRadius": 12` | 12dp corner radius |
+| Object | `"borderRadius": {"value": 30, "unit": "percent"}` | `rootContainerHeight * 30 / 100` |
+
+**FE formulas (both platforms match these exactly):**
+- `borderRadius` percent: `rootContainerHeight × value / 100`
+- `borderWidth` (raw number): `rootContainerHeight × value / 1000`
+
+Both reference the **root container height**, not the element's own size. This matches FE/dashboard rendering behavior.
+
+**Example — fixed dp radius:**
 ```json
 {
   "style": {
     "backgroundColor": "#FFFFFF",
     "borderRadius": 12,
     "borderWidth": 1,
-    "borderColor": "#E0E0E0",
-    "shadowColor": "#00000020",
-    "shadowRadius": 8,
-    "shadowOffsetY": 4
+    "borderColor": "#E0E0E0"
   }
 }
 ```
+
+**Example — percentage radius (FE-style):**
+```json
+{
+  "style": {
+    "backgroundColor": "#191919",
+    "borderRadius": {"value": 20, "unit": "percent"},
+    "borderWidth": 20,
+    "borderColor": "#CE2626"
+  }
+}
+```
+In a root container with height 210dp:
+- `borderRadius 20%` → `210 × 20/100 = 42dp` (pill-shaped)
+- `borderWidth 20` → `210 × 20/1000 = 4.2dp`
+
+> Note: `special` (`wrap_content`/`match_parent`) is not applicable to `borderRadius`.
 
 ---
 
