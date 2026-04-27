@@ -1,0 +1,742 @@
+{
+  "theme": {
+    "id": "test-118",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14,
+      "fontWeight": "normal",
+      "lineHeight": 20
+    }
+  },
+  "variables": {
+    "testName": "Mixed Special Dimensions Test",
+    "testDescription": "Demonstrates mixed special dimensions (MATCH_PARENT + WRAP_CONTENT) in practical layouts",
+    "userName": "John Doe",
+    "userEmail": "john@example.com",
+    "cardTitle": "Product Card",
+    "cardPrice": "$29.99"
+  },
+  "root": {
+    "id": "root-container",
+    "type": "container",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 600,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 0
+      },
+      "arrangement": {
+        "spacing": 12,
+        "strategy": "spaced",
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFFFFF"
+    },
+    "children": [
+      {
+        "id": "card-example",
+        "type": "container",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 0,
+            "unit": "dp",
+            "special": "match_parent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 12
+          },
+          "arrangement": {
+            "spacing": 8,
+            "strategy": "spaced",
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "borderWidth": 1,
+          "borderColor": "#E0E0E0",
+          "shadowRadius": 4,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 2,
+          "shadowColor": "#00000033"
+        },
+        "children": [
+          {
+            "id": "card-image",
+            "type": "element",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-104.jpg"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 150,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 4
+            }
+          },
+          {
+            "id": "card-title",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "{{cardTitle}}"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "all": 0
+              }
+            },
+            "style": {
+              "textColor": "#212121",
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "lineHeight": 25
+            }
+          },
+          {
+            "id": "card-description",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "High-quality product with excellent features. Perfect for everyday use."
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "all": 0
+              }
+            },
+            "style": {
+              "textColor": "#757575",
+              "fontSize": 14,
+              "lineHeight": 20
+            }
+          },
+          {
+            "id": "card-footer",
+            "type": "container",
+            "containerType": "horizontal",
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "top": 8,
+                "right": 0,
+                "bottom": 0,
+                "left": 0
+              },
+              "arrangement": {
+                "strategy": "space_between"
+              }
+            },
+            "style": {},
+            "children": [
+              {
+                "id": "card-price",
+                "type": "element",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{cardPrice}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "padding": {
+                    "all": 0
+                  }
+                },
+                "style": {
+                  "textColor": "#4CAF50",
+                  "fontSize": 20,
+                  "fontWeight": "bold",
+                  "lineHeight": 28
+                }
+              },
+              {
+                "id": "card-button",
+                "type": "element",
+                "elementType": "button",
+                "bindings": {
+                  "text": "Add to Cart"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "padding": {
+                    "top": 8,
+                    "right": 16,
+                    "bottom": 8,
+                    "left": 16
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#2196F3",
+                  "textColor": "#FFFFFF",
+                  "fontSize": 13,
+                  "fontWeight": "bold",
+                  "borderRadius": 4,
+                  "lineHeight": 18
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "form-example",
+        "type": "container",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 0,
+            "unit": "dp",
+            "special": "match_parent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "spacing": 12,
+            "strategy": "spaced",
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#F5F5F5",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "id": "form-title",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "User Profile"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "all": 0
+              }
+            },
+            "style": {
+              "textColor": "#212121",
+              "fontSize": 16,
+              "fontWeight": "bold",
+              "lineHeight": 22
+            }
+          },
+          {
+            "id": "form-field-name",
+            "type": "container",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "all": 0
+              },
+              "arrangement": {
+                "spacing": 4,
+                "strategy": "spaced",
+                "spacingUnit": "dp"
+              }
+            },
+            "style": {},
+            "children": [
+              {
+                "id": "label-name",
+                "type": "element",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Name"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "match_parent"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "padding": {
+                    "all": 0
+                  }
+                },
+                "style": {
+                  "textColor": "#616161",
+                  "fontSize": 12,
+                  "fontWeight": "bold",
+                  "lineHeight": 17
+                }
+              },
+              {
+                "id": "value-name",
+                "type": "element",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{userName}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "match_parent"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "padding": {
+                    "all": 12
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#FFFFFF",
+                  "textColor": "#212121",
+                  "fontSize": 14,
+                  "borderRadius": 4,
+                  "borderWidth": 1,
+                  "borderColor": "#E0E0E0",
+                  "lineHeight": 20
+                }
+              }
+            ]
+          },
+          {
+            "id": "form-field-email",
+            "type": "container",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "all": 0
+              },
+              "arrangement": {
+                "spacing": 4,
+                "strategy": "spaced",
+                "spacingUnit": "dp"
+              }
+            },
+            "style": {},
+            "children": [
+              {
+                "id": "label-email",
+                "type": "element",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Email"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "match_parent"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "padding": {
+                    "all": 0
+                  }
+                },
+                "style": {
+                  "textColor": "#616161",
+                  "fontSize": 12,
+                  "fontWeight": "bold",
+                  "lineHeight": 17
+                }
+              },
+              {
+                "id": "value-email",
+                "type": "element",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{userEmail}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "match_parent"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "padding": {
+                    "all": 12
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#FFFFFF",
+                  "textColor": "#212121",
+                  "fontSize": 14,
+                  "borderRadius": 4,
+                  "borderWidth": 1,
+                  "borderColor": "#E0E0E0",
+                  "lineHeight": 20
+                }
+              }
+            ]
+          },
+          {
+            "id": "form-actions",
+            "type": "container",
+            "containerType": "horizontal",
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "match_parent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "top": 8,
+                "right": 0,
+                "bottom": 0,
+                "left": 0
+              },
+              "arrangement": {
+                "strategy": "space_evenly"
+              }
+            },
+            "style": {},
+            "children": [
+              {
+                "id": "btn-cancel",
+                "type": "element",
+                "elementType": "button",
+                "bindings": {
+                  "text": "Cancel"
+                },
+                "layout": {
+                  "width": {
+                    "value": 120,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "padding": {
+                    "top": 10,
+                    "right": 16,
+                    "bottom": 10,
+                    "left": 16
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#9E9E9E",
+                  "textColor": "#FFFFFF",
+                  "fontSize": 13,
+                  "fontWeight": "bold",
+                  "borderRadius": 4,
+                  "lineHeight": 18
+                }
+              },
+              {
+                "id": "btn-save",
+                "type": "element",
+                "elementType": "button",
+                "bindings": {
+                  "text": "Save"
+                },
+                "layout": {
+                  "width": {
+                    "value": 120,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "padding": {
+                    "top": 10,
+                    "right": 16,
+                    "bottom": 10,
+                    "left": 16
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#4CAF50",
+                  "textColor": "#FFFFFF",
+                  "fontSize": 13,
+                  "fontWeight": "bold",
+                  "borderRadius": 4,
+                  "lineHeight": 18
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "navigation-example",
+        "type": "container",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {
+            "value": 0,
+            "unit": "dp",
+            "special": "match_parent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 8
+          },
+          "arrangement": {
+            "strategy": "space_evenly"
+          }
+        },
+        "style": {
+          "backgroundColor": "#263238",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "id": "nav-home",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "Home"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "top": 8,
+                "right": 16,
+                "bottom": 8,
+                "left": 16
+              }
+            },
+            "style": {
+              "textColor": "#FFFFFF",
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "lineHeight": 20
+            }
+          },
+          {
+            "id": "nav-search",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "Search"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "top": 8,
+                "right": 16,
+                "bottom": 8,
+                "left": 16
+              }
+            },
+            "style": {
+              "textColor": "#FFFFFF",
+              "fontSize": 14,
+              "lineHeight": 20
+            }
+          },
+          {
+            "id": "nav-profile",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "Profile"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "top": 8,
+                "right": 16,
+                "bottom": 8,
+                "left": 16
+              }
+            },
+            "style": {
+              "textColor": "#FFFFFF",
+              "fontSize": 14,
+              "lineHeight": 20
+            }
+          },
+          {
+            "id": "nav-settings",
+            "type": "element",
+            "elementType": "text",
+            "bindings": {
+              "text": "Settings"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "top": 8,
+                "right": 16,
+                "bottom": 8,
+                "left": 16
+              }
+            },
+            "style": {
+              "textColor": "#FFFFFF",
+              "fontSize": 14,
+              "lineHeight": 20
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,275 @@
+{
+  "theme": {
+    "id": "font-weights-theme",
+    "defaultStyle": {
+      "fontSize": 18,
+      "textColor": "#222222",
+      "lineHeight": 25
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "font-weights-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 20
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 20,
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F8F8F8"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Font Weight Variations"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 28,
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "textColor": "#000000",
+          "lineHeight": 39
+        }
+      },
+      {
+        "type": "element",
+        "id": "weight-normal",
+        "elementType": "text",
+        "bindings": {
+          "text": "Normal weight - Regular readable text for body content"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontWeight": "normal"
+        }
+      },
+      {
+        "type": "element",
+        "id": "weight-medium",
+        "elementType": "text",
+        "bindings": {
+          "text": "Medium weight - Slightly emphasized text for labels"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontWeight": "medium"
+        }
+      },
+      {
+        "type": "element",
+        "id": "weight-semibold",
+        "elementType": "text",
+        "bindings": {
+          "text": "Bold weight (semibold) - Strong emphasis for subheadings"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontWeight": "bold"
+        }
+      },
+      {
+        "type": "element",
+        "id": "weight-bold",
+        "elementType": "text",
+        "bindings": {
+          "text": "Bold weight - Maximum emphasis for headings"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontWeight": "bold"
+        }
+      },
+      {
+        "type": "container",
+        "id": "comparison-container",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "arrangement": {
+            "strategy": "space_between"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "comp-normal",
+            "elementType": "text",
+            "bindings": {
+              "text": "Normal"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontWeight": "normal",
+              "fontSize": 16,
+              "lineHeight": 22
+            }
+          },
+          {
+            "type": "element",
+            "id": "comp-medium",
+            "elementType": "text",
+            "bindings": {
+              "text": "Medium"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontWeight": "medium",
+              "fontSize": 16,
+              "lineHeight": 22
+            }
+          },
+          {
+            "type": "element",
+            "id": "comp-semibold",
+            "elementType": "text",
+            "bindings": {
+              "text": "Semibold"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontWeight": "bold",
+              "fontSize": 16,
+              "lineHeight": 22
+            }
+          },
+          {
+            "type": "element",
+            "id": "comp-bold",
+            "elementType": "text",
+            "bindings": {
+              "text": "Bold"
+            },
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontWeight": "bold",
+              "fontSize": 16,
+              "lineHeight": 22
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

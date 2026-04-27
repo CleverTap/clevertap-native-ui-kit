@@ -1,0 +1,741 @@
+{
+  "theme": {
+    "id": "gallery-175"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "special": "match_parent"
+      },
+      "height": {
+        "special": "wrap_content"
+      },
+      "padding": {
+        "all": 12,
+        "unit": "dp"
+      }
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "outer-card",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "aspectRatio": 1.3
+        },
+        "style": {
+          "backgroundColor": "#FFFFFFFF",
+          "borderRadius": 20,
+          "shadowColor": "#40000000",
+          "shadowRadius": 16,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 6
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "card-content",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "special": "match_parent"
+              }
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "title-section",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 22,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "left": 16,
+                    "right": 16,
+                    "top": 14,
+                    "bottom": 10,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#FF0F766E"
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "title-content",
+                    "containerType": "vertical",
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      },
+                      "height": {
+                        "special": "match_parent"
+                      }
+                    },
+                    "arrangement": {
+                      "spacing": 6,
+                      "spacingUnit": "dp",
+                      "strategy": "spaced"
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "category-tag",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "STREAMING"
+                        },
+                        "style": {
+                          "fontSize": 11,
+                          "fontWeight": "bold",
+                          "textColor": "#CCFFFFFF",
+                          "lineHeight": 16
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "big-title",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Now Playing"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": 100,
+                            "unit": "percent"
+                          },
+                          "height": {
+                            "special": "wrap_content"
+                          }
+                        },
+                        "style": {
+                          "fontSize": 22,
+                          "fontWeight": "bold",
+                          "textColor": "#FFFFFFFF",
+                          "lineHeight": 30
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "element",
+                    "id": "see-all",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "All →"
+                    },
+                    "layout": {
+                      "width": {
+                        "special": "wrap_content"
+                      },
+                      "height": {
+                        "special": "wrap_content"
+                      },
+                      "offset": {
+                        "x": 76,
+                        "y": 10,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 13,
+                      "textColor": "#DDFFFFFF",
+                      "lineHeight": 18,
+                      "maxLines": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "gallery-wrapper",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 58,
+                    "unit": "percent"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "gallery",
+                    "containerType": "gallery",
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      },
+                      "height": {
+                        "special": "match_parent"
+                      }
+                    },
+                    "galleryConfig": {
+                      "mode": "snapping",
+                      "orientation": "horizontal",
+                      "snapBehavior": "center",
+                      "peek": {
+                        "before": 16,
+                        "after": 16
+                      },
+                      "spacing": 12,
+                      "showIndicators": false
+                    },
+                    "children": [
+                      {
+                        "type": "container",
+                        "id": "item-1",
+                        "containerType": "vertical",
+                        "layout": {
+                          "width": {
+                            "value": 80,
+                            "unit": "percent"
+                          },
+                          "height": {
+                            "special": "match_parent"
+                          }
+                        },
+                        "style": {
+                          "backgroundColor": "#FFFFFFFF",
+                          "borderRadius": 14,
+                          "shadowColor": "#1A000000",
+                          "shadowRadius": 6,
+                          "shadowOffsetX": 0,
+                          "shadowOffsetY": 3
+                        },
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "item-1-video",
+                            "elementType": "video",
+                            "bindings": {
+                              "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                              "autoPlay": "false",
+                              "loop": "false",
+                              "muted": "false",
+                              "showControls": "true"
+                            },
+                            "layout": {
+                              "width": {
+                                "value": 100,
+                                "unit": "percent"
+                              },
+                              "height": {
+                                "value": 65,
+                                "unit": "percent"
+                              }
+                            }
+                          },
+                          {
+                            "type": "container",
+                            "id": "item-1-info",
+                            "containerType": "vertical",
+                            "layout": {
+                              "width": {
+                                "value": 100,
+                                "unit": "percent"
+                              },
+                              "height": {
+                                "value": 35,
+                                "unit": "percent"
+                              },
+                              "padding": {
+                                "left": 12,
+                                "right": 12,
+                                "top": 10,
+                                "bottom": 8,
+                                "unit": "dp"
+                              }
+                            },
+                            "arrangement": {
+                              "spacing": 4,
+                              "spacingUnit": "dp",
+                              "strategy": "spaced"
+                            },
+                            "children": [
+                              {
+                                "type": "element",
+                                "id": "item-1-title",
+                                "elementType": "text",
+                                "bindings": {
+                                  "text": "Action Thriller"
+                                },
+                                "layout": {
+                                  "width": {
+                                    "value": 100,
+                                    "unit": "percent"
+                                  },
+                                  "height": {
+                                    "special": "wrap_content"
+                                  }
+                                },
+                                "style": {
+                                  "fontSize": 15,
+                                  "fontWeight": "bold",
+                                  "textColor": "#FF1A1A2E",
+                                  "lineHeight": 22,
+                                  "maxLines": 1,
+                                  "overflow": "ellipsis"
+                                }
+                              },
+                              {
+                                "type": "element",
+                                "id": "item-1-subtitle",
+                                "elementType": "text",
+                                "bindings": {
+                                  "text": "Ep 1 · 45 min"
+                                },
+                                "layout": {
+                                  "width": {
+                                    "value": 100,
+                                    "unit": "percent"
+                                  },
+                                  "height": {
+                                    "special": "wrap_content"
+                                  }
+                                },
+                                "style": {
+                                  "fontSize": 12,
+                                  "textColor": "#FF6B7280",
+                                  "lineHeight": 17,
+                                  "maxLines": 1,
+                                  "overflow": "ellipsis"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "container",
+                        "id": "item-2",
+                        "containerType": "vertical",
+                        "layout": {
+                          "width": {
+                            "value": 80,
+                            "unit": "percent"
+                          },
+                          "height": {
+                            "special": "match_parent"
+                          }
+                        },
+                        "style": {
+                          "backgroundColor": "#FFFFFFFF",
+                          "borderRadius": 14,
+                          "shadowColor": "#1A000000",
+                          "shadowRadius": 6,
+                          "shadowOffsetX": 0,
+                          "shadowOffsetY": 3
+                        },
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "item-2-video",
+                            "elementType": "video",
+                            "bindings": {
+                              "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                              "autoPlay": "false",
+                              "loop": "false",
+                              "muted": "false",
+                              "showControls": "true"
+                            },
+                            "layout": {
+                              "width": {
+                                "value": 100,
+                                "unit": "percent"
+                              },
+                              "height": {
+                                "value": 65,
+                                "unit": "percent"
+                              }
+                            }
+                          },
+                          {
+                            "type": "container",
+                            "id": "item-2-info",
+                            "containerType": "vertical",
+                            "layout": {
+                              "width": {
+                                "value": 100,
+                                "unit": "percent"
+                              },
+                              "height": {
+                                "value": 35,
+                                "unit": "percent"
+                              },
+                              "padding": {
+                                "left": 12,
+                                "right": 12,
+                                "top": 10,
+                                "bottom": 8,
+                                "unit": "dp"
+                              }
+                            },
+                            "arrangement": {
+                              "spacing": 4,
+                              "spacingUnit": "dp",
+                              "strategy": "spaced"
+                            },
+                            "children": [
+                              {
+                                "type": "element",
+                                "id": "item-2-title",
+                                "elementType": "text",
+                                "bindings": {
+                                  "text": "Romance Drama"
+                                },
+                                "layout": {
+                                  "width": {
+                                    "value": 100,
+                                    "unit": "percent"
+                                  },
+                                  "height": {
+                                    "special": "wrap_content"
+                                  }
+                                },
+                                "style": {
+                                  "fontSize": 15,
+                                  "fontWeight": "bold",
+                                  "textColor": "#FF1A1A2E",
+                                  "lineHeight": 22,
+                                  "maxLines": 1,
+                                  "overflow": "ellipsis"
+                                }
+                              },
+                              {
+                                "type": "element",
+                                "id": "item-2-subtitle",
+                                "elementType": "text",
+                                "bindings": {
+                                  "text": "Ep 3 · 40 min"
+                                },
+                                "layout": {
+                                  "width": {
+                                    "value": 100,
+                                    "unit": "percent"
+                                  },
+                                  "height": {
+                                    "special": "wrap_content"
+                                  }
+                                },
+                                "style": {
+                                  "fontSize": 12,
+                                  "textColor": "#FF6B7280",
+                                  "lineHeight": 17,
+                                  "maxLines": 1,
+                                  "overflow": "ellipsis"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "type": "container",
+                        "id": "item-3",
+                        "containerType": "vertical",
+                        "layout": {
+                          "width": {
+                            "value": 80,
+                            "unit": "percent"
+                          },
+                          "height": {
+                            "special": "match_parent"
+                          }
+                        },
+                        "style": {
+                          "backgroundColor": "#FFFFFFFF",
+                          "borderRadius": 14,
+                          "shadowColor": "#1A000000",
+                          "shadowRadius": 6,
+                          "shadowOffsetX": 0,
+                          "shadowOffsetY": 3
+                        },
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "item-3-video",
+                            "elementType": "video",
+                            "bindings": {
+                              "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                              "autoPlay": "false",
+                              "loop": "false",
+                              "muted": "false",
+                              "showControls": "true"
+                            },
+                            "layout": {
+                              "width": {
+                                "value": 100,
+                                "unit": "percent"
+                              },
+                              "height": {
+                                "value": 65,
+                                "unit": "percent"
+                              }
+                            }
+                          },
+                          {
+                            "type": "container",
+                            "id": "item-3-info",
+                            "containerType": "vertical",
+                            "layout": {
+                              "width": {
+                                "value": 100,
+                                "unit": "percent"
+                              },
+                              "height": {
+                                "value": 35,
+                                "unit": "percent"
+                              },
+                              "padding": {
+                                "left": 12,
+                                "right": 12,
+                                "top": 10,
+                                "bottom": 8,
+                                "unit": "dp"
+                              }
+                            },
+                            "arrangement": {
+                              "spacing": 4,
+                              "spacingUnit": "dp",
+                              "strategy": "spaced"
+                            },
+                            "children": [
+                              {
+                                "type": "element",
+                                "id": "item-3-title",
+                                "elementType": "text",
+                                "bindings": {
+                                  "text": "Sci-Fi Series"
+                                },
+                                "layout": {
+                                  "width": {
+                                    "value": 100,
+                                    "unit": "percent"
+                                  },
+                                  "height": {
+                                    "special": "wrap_content"
+                                  }
+                                },
+                                "style": {
+                                  "fontSize": 15,
+                                  "fontWeight": "bold",
+                                  "textColor": "#FF1A1A2E",
+                                  "lineHeight": 22,
+                                  "maxLines": 1,
+                                  "overflow": "ellipsis"
+                                }
+                              },
+                              {
+                                "type": "element",
+                                "id": "item-3-subtitle",
+                                "elementType": "text",
+                                "bindings": {
+                                  "text": "Ep 7 · 52 min"
+                                },
+                                "layout": {
+                                  "width": {
+                                    "value": 100,
+                                    "unit": "percent"
+                                  },
+                                  "height": {
+                                    "special": "wrap_content"
+                                  }
+                                },
+                                "style": {
+                                  "fontSize": 12,
+                                  "textColor": "#FF6B7280",
+                                  "lineHeight": 17,
+                                  "maxLines": 1,
+                                  "overflow": "ellipsis"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "nav-overlay",
+                    "containerType": "box",
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      },
+                      "height": {
+                        "special": "match_parent"
+                      }
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "nav-prev",
+                        "elementType": "button",
+                        "bindings": {
+                          "text": "‹"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": 11,
+                            "unit": "percent"
+                          },
+                          "height": {
+                            "value": 44,
+                            "unit": "dp"
+                          },
+                          "offset": {
+                            "x": 2,
+                            "y": 38,
+                            "unit": "percent"
+                          }
+                        },
+                        "style": {
+                          "backgroundColor": "#CC000000",
+                          "textColor": "#FFFFFFFF",
+                          "fontSize": 22,
+                          "borderRadius": 22
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "nav-next",
+                        "elementType": "button",
+                        "bindings": {
+                          "text": "›"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": 11,
+                            "unit": "percent"
+                          },
+                          "height": {
+                            "value": 44,
+                            "unit": "dp"
+                          },
+                          "offset": {
+                            "x": 87,
+                            "y": 38,
+                            "unit": "percent"
+                          }
+                        },
+                        "style": {
+                          "backgroundColor": "#CC000000",
+                          "textColor": "#FFFFFFFF",
+                          "fontSize": 22,
+                          "borderRadius": 22
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "footer",
+                "containerType": "horizontal",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 20,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "left": 16,
+                    "right": 12,
+                    "unit": "dp"
+                  }
+                },
+                "arrangement": {
+                  "strategy": "space_between"
+                },
+                "style": {
+                  "backgroundColor": "#FFFAFAFA"
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "footer-info",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "HD · Offline ready"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 55,
+                        "unit": "percent"
+                      },
+                      "height": {
+                        "special": "wrap_content"
+                      }
+                    },
+                    "style": {
+                      "fontSize": 14,
+                      "textColor": "#FF6B7280",
+                      "lineHeight": 22,
+                      "maxLines": 1,
+                      "overflow": "ellipsis"
+                    }
+                  },
+                  {
+                    "type": "element",
+                    "id": "footer-cta",
+                    "elementType": "button",
+                    "bindings": {
+                      "text": "Play Now"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 38,
+                        "unit": "percent"
+                      },
+                      "height": {
+                        "value": 44,
+                        "unit": "dp"
+                      }
+                    },
+                    "style": {
+                      "backgroundColor": "#FF0F766E",
+                      "textColor": "#FFFFFFFF",
+                      "fontSize": 14,
+                      "fontWeight": "bold",
+                      "borderRadius": 18
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

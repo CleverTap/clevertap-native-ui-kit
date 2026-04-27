@@ -1,0 +1,162 @@
+{
+  "theme": {
+    "id": "image-grid",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "image-grid-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16
+      },
+      "arrangement": {
+        "type": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#000000"
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "row-1",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 180,
+            "unit": "dp"
+          },
+          "arrangement": {
+            "type": "spaced"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "image-1",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-79.jpg"
+            },
+            "layout": {
+              "width": {
+                "value": 50,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "type": "element",
+            "id": "image-2",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-80.jpg"
+            },
+            "layout": {
+              "width": {
+                "value": 50,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "row-2",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 180,
+            "unit": "dp"
+          },
+          "arrangement": {
+            "type": "spaced"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "image-3",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-81.jpg"
+            },
+            "layout": {
+              "width": {
+                "value": 50,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "type": "element",
+            "id": "image-4",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-82.jpg"
+            },
+            "layout": {
+              "width": {
+                "value": 50,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

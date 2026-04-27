@@ -1,0 +1,519 @@
+{
+  "theme": {
+    "id": "border-theme",
+    "defaultStyle": {
+      "fontSize": 16,
+      "textColor": "#333333",
+      "fontWeight": "medium",
+      "lineHeight": 22
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "border-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 20
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 20,
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#FAFAFA"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Border Width & Color Variations"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "textColor": "#000000",
+          "lineHeight": 34
+        }
+      },
+      {
+        "type": "container",
+        "id": "border-1",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 70,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 12
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderWidth": 1,
+          "borderColor": "#2196F3",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "border-1-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "1dp border - Blue (#2196F3)"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 16,
+              "lineHeight": 22
+            }
+          },
+          {
+            "type": "element",
+            "id": "border-1-desc",
+            "elementType": "text",
+            "bindings": {
+              "text": "Thin border for subtle separation"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 12,
+              "textColor": "#757575",
+              "lineHeight": 17
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "border-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 70,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 12
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderWidth": 2,
+          "borderColor": "#4CAF50",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "border-2-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "2dp border - Green (#4CAF50)"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 16,
+              "lineHeight": 22
+            }
+          },
+          {
+            "type": "element",
+            "id": "border-2-desc",
+            "elementType": "text",
+            "bindings": {
+              "text": "Standard border for cards and containers"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 12,
+              "textColor": "#757575",
+              "lineHeight": 17
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "border-4",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 70,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 12
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderWidth": 4,
+          "borderColor": "#FF9800",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "border-4-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "4dp border - Orange (#FF9800)"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 16,
+              "lineHeight": 22
+            }
+          },
+          {
+            "type": "element",
+            "id": "border-4-desc",
+            "elementType": "text",
+            "bindings": {
+              "text": "Prominent border for emphasis"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 12,
+              "textColor": "#757575",
+              "lineHeight": 17
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "border-8",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 70,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 12
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderWidth": 8,
+          "borderColor": "#F44336",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "border-8-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "8dp border - Red (#F44336)"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 16,
+              "lineHeight": 22
+            }
+          },
+          {
+            "type": "element",
+            "id": "border-8-desc",
+            "elementType": "text",
+            "bindings": {
+              "text": "Thick border for maximum attention"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 12,
+              "textColor": "#757575",
+              "lineHeight": 17
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "color-variations",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 60,
+            "unit": "dp"
+          },
+          "arrangement": {
+            "strategy": "space_evenly"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "black-border",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 50,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 50,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderWidth": 2,
+              "borderColor": "#000000",
+              "borderRadius": 8
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "purple-border",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 50,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 50,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderWidth": 2,
+              "borderColor": "#9C27B0",
+              "borderRadius": 8
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "cyan-border",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 50,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 50,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderWidth": 2,
+              "borderColor": "#00BCD4",
+              "borderRadius": 8
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "pink-border",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 50,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 50,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderWidth": 2,
+              "borderColor": "#E91E63",
+              "borderRadius": 8
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "combined-example",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFF9C4",
+          "borderWidth": 3,
+          "borderColor": "#F57F17",
+          "borderRadius": 12
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "combined-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "Combined: 3dp border + 12dp radius + Yellow background"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#F57F17",
+              "lineHeight": 20
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

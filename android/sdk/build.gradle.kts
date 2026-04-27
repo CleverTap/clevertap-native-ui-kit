@@ -77,14 +77,23 @@ dependencies {
     
     // Kotlin Serialization
     implementation(libs.kotlinx.serialization.json)
+
+    // Immutable Collections
+    implementation(libs.kotlinx.collections.immutable)
     
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     
     // Image Loading
-    implementation(libs.coil.compose)
-    
+    implementation(libs.io.coil.compose)
+    implementation(libs.io.coil.gif)  // GIF animation support
+
+    // Video playback (optional - host apps must provide)
+    compileOnly(libs.androidx.media3.exoplayer)
+    compileOnly(libs.androidx.media3.ui)
+    compileOnly(libs.androidx.media3.hls)
+
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
@@ -93,6 +102,9 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // RecyclerView (for NativeDisplayViewGroup)
+    api("androidx.recyclerview:recyclerview:1.3.2")
 }
 
 // Read version from root VERSION file
