@@ -203,78 +203,77 @@ class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBr
         
         // Forward system events to CleverTap
         cleverTapInstance?.recordEvent(eventName, withProps: properties ?? [:])
-        
-        
-        func onActionError(action: Action, error: Error) {
-            log("ERROR: \(error.localizedDescription)")
-        }
-        
-        // MARK: - Actions
-        
-        func sendEvent() {
-            let name = eventName.trimmingCharacters(in: .whitespaces)
-            guard !name.isEmpty else { return }
-            cleverTapInstance?.recordEvent(name)
-            log("Sent event: \(name)")
-            eventName = ""
-        }
-        
-        func tearDown() {
-            bridge.removeListener(self)
-            log("Listener removed")
-        }
-        
-        // MARK: - Private
-        
-        private func log(_ message: String) {
-            let timestamp = Self.timeFormatter.string(from: Date())
-            let entry = "[\(timestamp)] \(message)"
-            if Thread.isMainThread {
-                eventLog.insert(entry, at: 0)
-            } else {
-                DispatchQueue.main.async { [weak self] in
-                    self?.eventLog.insert(entry, at: 0)
-                }
+    }
+
+    func onActionError(action: Action, error: Error) {
+        log("ERROR: \(error.localizedDescription)")
+    }
+
+    // MARK: - Actions
+
+    func sendEvent() {
+        let name = eventName.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { return }
+        cleverTapInstance?.recordEvent(name)
+        log("Sent event: \(name)")
+        eventName = ""
+    }
+
+    func tearDown() {
+        bridge.removeListener(self)
+        log("Listener removed")
+    }
+
+    // MARK: - Private
+
+    private func log(_ message: String) {
+        let timestamp = Self.timeFormatter.string(from: Date())
+        let entry = "[\(timestamp)] \(message)"
+        if Thread.isMainThread {
+            eventLog.insert(entry, at: 0)
+        } else {
+            DispatchQueue.main.async { [weak self] in
+                self?.eventLog.insert(entry, at: 0)
             }
         }
-        
-        private static let timeFormatter: DateFormatter = {
-            let f = DateFormatter()
-            f.dateFormat = "HH:mm:ss.SSS"
-            return f
-        }()
     }
-    
-    // MARK: - Supporting Views
-    
-    private struct SectionCard<Content: View>: View {
-        let title: String
-        let icon: String
-        @ViewBuilder let content: Content
-        
-        var body: some View {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 8) {
-                    Image(systemName: icon)
-                        .foregroundColor(.blue)
-                        .font(.system(size: 16, weight: .semibold))
-                    Text(title)
-                        .font(.headline)
-                }
-                content
+
+    private static let timeFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "HH:mm:ss.SSS"
+        return f
+    }()
+}
+
+// MARK: - Supporting Views
+
+private struct SectionCard<Content: View>: View {
+    let title: String
+    let icon: String
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .foregroundColor(.blue)
+                    .font(.system(size: 16, weight: .semibold))
+                Text(title)
+                    .font(.headline)
             }
-            .padding(16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color(.systemBackground))
-            .cornerRadius(12)
+            content
         }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.systemBackground))
+        .cornerRadius(12)
     }
-    
-    // MARK: - Preview
-    
-    #Preview {
-        NavigationView {
-            CleverTapIntegrationView()
-        }
+}
+
+// MARK: - Preview
+
+#Preview {
+    NavigationView {
+        CleverTapIntegrationView()
     }
 }
