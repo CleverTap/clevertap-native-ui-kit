@@ -301,61 +301,74 @@ struct RenderContainer: View {
     /// Calculate the final container size.
     /// Uses explicit layout dimensions if specified, otherwise uses parentSize.
     /// This is used as availableSize for children and for percentage-based offset calculations.
+    ///
+    /// When an aspect ratio is specified and dimensions are not both truly fixed (DP/PX/SP),
+    /// the aspect ratio constrains the result — matching `LayoutModifier.resolvedDimensions()`
+    /// and Android's behavior where aspect ratio is applied before sizing.
     private func calculateContainerSize(parentSize: CGSize, padding: EdgeInsets) -> CGSize {
         let layout = container.layout
 
-        // Calculate width
-        let width: CGFloat
+        // Calculate raw width
+        let rawWidth: CGFloat
         if let w = layout?.width {
             if w.special != nil {
-                // matchParent or wrap_content: both use parentSize so percent-based children
-                // resolve correctly. The actual frame constraint is omitted at the call site
-                // for wrap_content axes.
-                width = parentSize.width
+                rawWidth = parentSize.width
             } else {
                 switch w.unit {
                 case .dp, .px, .sp:
-                    width = w.value
+                    rawWidth = w.value
                 case .percent:
-                    width = parentSize.width * w.value / 100
+                    rawWidth = parentSize.width * w.value / 100
                 }
             }
         } else {
-            width = parentSize.width
+            rawWidth = parentSize.width
         }
 
-        // Calculate height
-        let height: CGFloat
+        // Calculate raw height
+        let rawHeight: CGFloat
         if let h = layout?.height {
             if h.special != nil {
-                // matchParent or wrap_content: both use parentSize so percent-based children
-                // resolve correctly. The actual frame constraint is omitted at the call site
-                // for wrap_content axes.
-                height = parentSize.height
+                rawHeight = parentSize.height
             } else {
                 switch h.unit {
                 case .dp, .px, .sp:
-                    height = h.value
+                    rawHeight = h.value
                 case .percent:
-                    height = parentSize.height * h.value / 100
+                    rawHeight = parentSize.height * h.value / 100
                 }
             }
-        } else if let aspectRatio = layout?.aspectRatio, aspectRatio > 0 {
-            // No explicit height — derive from aspect ratio using the already-resolved width.
-            // This mirrors LayoutModifier.resolvedDimensions() so children receive a
-            // parentSize that matches the container's actual rendered height.
-            height = width / aspectRatio
         } else {
-            height = parentSize.height
+            rawHeight = parentSize.height
+        }
+
+        // Apply aspect ratio constraint — must match LayoutModifier.resolvedDimensions() logic.
+        // Only skip when both dimensions are truly fixed (DP/PX/SP, not percent).
+        let width: CGFloat
+        let height: CGFloat
+        if let aspectRatio = layout?.aspectRatio, aspectRatio > 0 {
+            let widthIsFixed = layout?.width.map { $0.special == nil && $0.unit != .percent } ?? false
+            let heightIsFixed = layout?.height.map { $0.special == nil && $0.unit != .percent } ?? false
+
+            if widthIsFixed && heightIsFixed {
+                // Both absolute — aspect ratio ignored
+                width = rawWidth
+                height = rawHeight
+            } else {
+                // Aspect ratio constrains: width is primary, derive height
+                width = rawWidth
+                height = rawWidth / aspectRatio
+            }
+        } else {
+            width = rawWidth
+            height = rawHeight
         }
 
         // Return size after accounting for padding
-        let finalSize = CGSize(
+        return CGSize(
             width: max(0, width - padding.leading - padding.trailing),
             height: max(0, height - padding.top - padding.bottom)
         )
-
-        return finalSize
     }
     
 
@@ -976,28 +989,39 @@ struct LayoutModifier: ViewModifier {
     }
 
     /// Resolves the final width and height, deriving the missing dimension from aspect ratio
-    /// when the other dimension is a known value. This matches Android's behavior where
-    /// Modifier.aspectRatio with a fixed-width constraint gives height = width / ratio.
-    /// Only uses the .aspectRatio() SwiftUI modifier as a last resort when both dimensions
-    /// are unresolved (match_parent), since pixel size is unknown at calculation time.
+    /// when the other dimension is a known value. Matches Android's behavior where
+    /// Modifier.aspectRatio is applied BEFORE sizing constraints, so it wins over
+    /// percentage-based dimensions.
+    ///
+    /// Aspect ratio is only skipped when both dimensions are truly fixed (DP/PX/SP),
+    /// matching Android's `doesNotHaveFixedWidth = !(hasFixedWidth && hasFixedHeight)`.
     private func resolvedDimensions() -> (width: CGFloat?, height: CGFloat?, useAspectRatioModifier: Bool) {
         let explicitWidth = calculateWidth()
         let explicitHeight = calculateHeight()
         guard let ratio = calculateAspectRatio() else {
             return (explicitWidth, explicitHeight, false)
         }
-        if let w = explicitWidth, explicitHeight == nil {
-            // Width known → height = width / ratio (common case: percent width + aspectRatio)
+
+        // Check if both dimensions use truly fixed units (DP/PX/SP, not percent).
+        // Matches Android: hasFixedWidth = unit in [DP, PX] && special == null
+        let widthIsFixed = layout?.width.map { $0.special == nil && $0.unit != .percent } ?? false
+        let heightIsFixed = layout?.height.map { $0.special == nil && $0.unit != .percent } ?? false
+
+        if widthIsFixed && heightIsFixed {
+            // Both dimensions are absolute — aspect ratio is ignored (matches Android)
+            return (explicitWidth, explicitHeight, false)
+        }
+
+        if let w = explicitWidth {
+            // Width known → derive height from aspect ratio
             return (w, w / ratio, false)
         }
-        if let h = explicitHeight, explicitWidth == nil {
-            // Height known → width = height * ratio
+        if let h = explicitHeight {
+            // Height known → derive width from aspect ratio
             return (h * ratio, h, false)
         }
-        // Both unresolved (match_parent) → fall back to SwiftUI modifier
-        // Both explicit → aspect ratio ignored (matches Android behaviour)
-        let useModifier = explicitWidth == nil && explicitHeight == nil
-        return (explicitWidth, explicitHeight, useModifier)
+        // Both unresolved (match_parent/wrap_content) → fall back to SwiftUI modifier
+        return (nil, nil, true)
     }
 
     private func calculateWidth() -> CGFloat? {
@@ -1103,22 +1127,24 @@ struct LayoutModifier: ViewModifier {
             return nil
         }
 
-        // If both width and height are explicitly set (not WRAP_CONTENT or MATCH_PARENT),
-        // aspect ratio is ignored to honor explicit dimensions
-        let hasExplicitWidth = hasExplicitDimension(layout?.width)
-        let hasExplicitHeight = hasExplicitDimension(layout?.height)
+        // Only ignore aspect ratio when both dimensions are truly fixed (DP/PX/SP).
+        // Percentage dimensions are flexible and should be constrained by aspect ratio.
+        // Matches Android: doesNotHaveFixedWidth = !(hasFixedWidth && hasFixedHeight)
+        // where hasFixed = special == nil && unit in [DP, PX]
+        let widthIsFixed = hasFixedDimension(layout?.width)
+        let heightIsFixed = hasFixedDimension(layout?.height)
 
-        if hasExplicitWidth && hasExplicitHeight {
-            return nil  // Both dimensions explicit, ignore aspect ratio
+        if widthIsFixed && heightIsFixed {
+            return nil  // Both dimensions are absolute fixed values, ignore aspect ratio
         }
 
         return aspectRatio
     }
 
-    /// Check if a dimension is explicitly set (not WRAP_CONTENT or MATCH_PARENT).
-    private func hasExplicitDimension(_ dimension: Dimension?) -> Bool {
+    /// Check if a dimension uses a truly fixed unit (DP/PX/SP, not percent or special).
+    private func hasFixedDimension(_ dimension: Dimension?) -> Bool {
         guard let dimension = dimension else { return false }
-        return dimension.special == nil  // Has value, not special dimension
+        return dimension.special == nil && dimension.unit != .percent
     }
 }
 

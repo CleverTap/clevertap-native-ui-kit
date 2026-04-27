@@ -3,6 +3,8 @@ import CleverTapNativeDisplay
 
 @main
 struct NativeDisplaySampleApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
 #if DEBUG
     @StateObject private var preloader = ImagePreloader()
 
