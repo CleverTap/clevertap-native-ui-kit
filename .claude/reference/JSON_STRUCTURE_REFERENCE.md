@@ -101,6 +101,7 @@ There are **TWO** node types:
   "actions": {},                 // Optional
   "animation": {},               // Optional
   "dividerConfig": {}            // Optional (only for divider)
+  "htmlConfig": {}               // Optional (only for html)
 }
 ```
 
@@ -357,6 +358,45 @@ Visual separator line.
   }
 }
 ```
+
+---
+
+### 7. HTML
+
+Renders rich HTML content in a platform WebView.
+
+```json
+{
+  "type": "element",
+  "id": "myHtml",
+  "elementType": "html",
+  "bindings": {
+    "html": "<div style='color:white; padding:16px;'><h2>Title</h2><p>Content here</p></div>"
+  },
+  "htmlConfig": {
+    "javascriptEnabled": false,
+    "scrollEnabled": false,
+    "baseUrl": null,
+    "transparentBackground": true
+  },
+  "layout": {
+    "width": { "special": "match_parent" },
+    "height": { "value": 200, "unit": "dp" }
+  }
+}
+```
+
+**Binding keys**: `html` (inline HTML string, primary) or `url` (load a remote page). If both present, `html` takes priority.
+
+**htmlConfig defaults**:
+- `javascriptEnabled`: `false`
+- `scrollEnabled`: `false`
+- `baseUrl`: `null`
+- `transparentBackground`: `true`
+
+**Important**: HTML element requires explicit `layout.height` — `wrap_content` is not supported (WebView content size is unknowable).
+
+**Platform**: Android uses `android.webkit.WebView`, iOS uses `WKWebView` (iOS only, tvOS placeholder).
 
 ---
 
@@ -1135,7 +1175,7 @@ Actions are defined in the `actions` object with trigger keys:
 ### ✅ Type Values
 
 - [ ] `containerType` is one of: `vertical`, `horizontal`, `box`, `gallery`
-- [ ] `elementType` is one of: `text`, `image`, `button`, `video`, `spacer`, `divider`
+- [ ] `elementType` is one of: `text`, `image`, `button`, `video`, `html`, `spacer`, `divider`
 - [ ] `fontWeight` (if used) is one of: `normal`, `medium`, `bold`, `light`
 
 ### ✅ Structure

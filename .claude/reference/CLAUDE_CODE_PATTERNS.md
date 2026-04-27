@@ -105,7 +105,7 @@ object NativeDisplayParser {
             
             is NativeDisplayElement -> {
                 // Element validation
-                if (node.elementType !in listOf("text", "image", "button", "spacer", "video", "input", "webview")) {
+                if (node.elementType !in listOf("text", "image", "button", "video", "html", "spacer", "divider")) {
                     errors.add("Invalid element type: ${node.elementType}")
                 }
                 

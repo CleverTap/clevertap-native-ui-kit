@@ -22,6 +22,7 @@ import com.clevertap.android.nativedisplay.handler.ActionHandler
 import com.clevertap.android.nativedisplay.internal.ImageLoaderProvider
 import com.clevertap.android.nativedisplay.models.DividerConfig
 import com.clevertap.android.nativedisplay.models.ElementType
+import com.clevertap.android.nativedisplay.models.HtmlConfig
 import com.clevertap.android.nativedisplay.models.ImageFit
 import com.clevertap.android.nativedisplay.models.NativeDisplayElement
 import com.clevertap.android.nativedisplay.models.Orientation
@@ -185,6 +186,37 @@ internal fun RenderElement(
                     contentAlignment = Alignment.Center
                 ) {
                     Text("No Video URL", color = Color.Gray, fontSize = 12.sp)
+                }
+            }
+        }
+
+        ElementType.HTML -> {
+            val html = element.bindings["html"]?.let {
+                evaluator.evaluateString(it)
+            }
+            val url = element.bindings["url"]?.let {
+                evaluator.evaluateString(it)
+            }
+            val config = element.htmlConfig ?: HtmlConfig()
+
+            if (!html.isNullOrEmpty() || !url.isNullOrEmpty()) {
+                val htmlFactory = LocalHtmlViewFactory.current
+                if (htmlFactory != null) {
+                    htmlFactory(html, url, config, elementModifier)
+                } else {
+                    HtmlElementView(
+                        html = html,
+                        url = url,
+                        config = config,
+                        modifier = elementModifier
+                    )
+                }
+            } else {
+                Box(
+                    modifier = elementModifier.background(Color.LightGray),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No HTML Content", color = Color.Gray, fontSize = 12.sp)
                 }
             }
         }

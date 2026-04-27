@@ -34,7 +34,7 @@ theme (optional) | styleClasses (optional) | variables (optional) | root (requir
 
 **Two node types:**
 - **Containers** — hold children: `VERTICAL` `HORIZONTAL` `BOX` `GALLERY`
-- **Elements** — leaf nodes: `TEXT` `IMAGE` `BUTTON` `VIDEO` `SPACER` `DIVIDER`
+- **Elements** — leaf nodes: `TEXT` `IMAGE` `BUTTON` `VIDEO` `HTML` `SPACER` `DIVIDER`
 
 **Layout** — every node has a `layout` object with `width`, `height`, `padding`, `offset`, `arrangement`
 
@@ -63,10 +63,12 @@ theme (optional) | styleClasses (optional) | variables (optional) | root (requir
 | `IMAGE` | `url` | Auto-detects GIF; use `imageConfig.animated` to override |
 | `BUTTON` | `text` | |
 | `VIDEO` | `url` | Also: `autoPlay` `loop` `muted` `showControls` `showFullscreen` |
+| `HTML` | `html` or `url` | WebView-rendered rich content; `html` binding takes priority over `url` |
 | `SPACER` | — | Fixed or flexible spacing |
 | `DIVIDER` | — | Visual separator |
 
 > VIDEO requires `androidx.media3:media3-exoplayer` on Android. iOS uses built-in AVKit.
+> HTML uses `android.webkit.WebView` on Android and `WKWebView` on iOS. Requires explicit `layout.height` (no `wrap_content`).
 > GIF details (auto-detection rules, `imageConfig` options) → `.claude/reference/COMPONENTS_GUIDE.md`
 
 ---
@@ -178,7 +180,7 @@ iOS test:       cd ios && swift test
 
 **Containers**: `VERTICAL` `HORIZONTAL` `BOX` `GALLERY`
 
-**Elements**: `TEXT` `IMAGE` `BUTTON` `VIDEO` `SPACER` `DIVIDER`
+**Elements**: `TEXT` `IMAGE` `BUTTON` `VIDEO` `HTML` `SPACER` `DIVIDER`
 
 **Dimensions**: `dp` `sp` `percent` `px` `wrap_content` `match_parent`
 

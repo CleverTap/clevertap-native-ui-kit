@@ -222,7 +222,12 @@ fun TestBrowserScreen() {
             "test-173-gallery-box-snapping-indicators-navbtns.json",
             "test-174-gallery-box-snapping-indicators-only.json",
             "test-175-gallery-box-snapping-navbtns-only.json",
-            "test-176-gallery-box-snapping-minimal.json"
+            "test-176-gallery-box-snapping-minimal.json",
+            // HTML element tests
+            "test-177-html-inline-basic.json",
+            "test-178-html-with-javascript.json",
+            "test-179-html-transparent-bg.json",
+            "test-180-html-scrollable-content.json"
         )
     }
 
