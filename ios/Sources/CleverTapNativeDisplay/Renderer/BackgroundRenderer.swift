@@ -91,7 +91,7 @@ struct LinearGradientBackgroundView: View {
     }
     
     private func calculateGradientPoints(angle: CGFloat) -> (UnitPoint, UnitPoint) {
-        let radians = angle * .pi / 180
+        let radians = (angle - 90) * .pi / 180
         let x = cos(radians)
         let y = sin(radians)
         
@@ -353,7 +353,7 @@ struct ShimmerBackgroundView: View {
     }
     
     private func calculateGradientPoints(angle: CGFloat, offset: CGFloat) -> (UnitPoint, UnitPoint) {
-        let radians = angle * .pi / 180
+        let radians = (angle - 90) * .pi / 180
         let x = cos(radians)
         let y = sin(radians)
         
