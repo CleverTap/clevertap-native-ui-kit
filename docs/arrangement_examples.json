@@ -1,0 +1,628 @@
+{
+  "description": "Demonstrates all arrangement strategies",
+  "examples": [
+    {
+      "name": "Fixed Spacing Example",
+      "config": {
+        "theme": {
+          "defaultStyle": {
+            "backgroundColor": "#FFFFFF"
+          }
+        },
+        "root": {
+          "containerType": "vertical",
+          "layout": {
+            "width": {
+              "special": "match_parent"
+            },
+            "height": {
+              "special": "match_parent"
+            },
+            "padding": {
+              "all": 16
+            },
+            "arrangement": {
+              "spacing": 16,
+              "spacingUnit": "dp",
+              "strategy": "spaced"
+            }
+          },
+          "children": [
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "Item 1"
+              },
+              "style": {
+                "backgroundColor": "#E3F2FD",
+                "textColor": "#1976D2"
+              },
+              "layout": {
+                "width": {
+                  "special": "match_parent"
+                },
+                "height": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "padding": {
+                  "all": 16
+                }
+              }
+            },
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "Item 2"
+              },
+              "style": {
+                "backgroundColor": "#E8F5E9",
+                "textColor": "#388E3C"
+              },
+              "layout": {
+                "width": {
+                  "special": "match_parent"
+                },
+                "height": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "padding": {
+                  "all": 16
+                }
+              }
+            },
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "Item 3"
+              },
+              "style": {
+                "backgroundColor": "#FFF3E0",
+                "textColor": "#F57C00"
+              },
+              "layout": {
+                "width": {
+                  "special": "match_parent"
+                },
+                "height": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "padding": {
+                  "all": 16
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Space Between Example",
+      "config": {
+        "theme": {
+          "defaultStyle": {}
+        },
+        "root": {
+          "containerType": "horizontal",
+          "layout": {
+            "width": {
+              "special": "match_parent"
+            },
+            "height": {
+              "value": 100,
+              "unit": "dp"
+            },
+            "padding": {
+              "all": 16
+            },
+            "arrangement": {
+              "strategy": "space_between"
+            }
+          },
+          "children": [
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "Start"
+              },
+              "style": {
+                "backgroundColor": "#FF5722",
+                "textColor": "#FFFFFF"
+              },
+              "layout": {
+                "width": {
+                  "value": 80,
+                  "unit": "dp"
+                },
+                "height": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "padding": {
+                  "all": 16
+                }
+              }
+            },
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "Middle"
+              },
+              "style": {
+                "backgroundColor": "#4CAF50",
+                "textColor": "#FFFFFF"
+              },
+              "layout": {
+                "width": {
+                  "value": 80,
+                  "unit": "dp"
+                },
+                "height": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "padding": {
+                  "all": 16
+                }
+              }
+            },
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "End"
+              },
+              "style": {
+                "backgroundColor": "#2196F3",
+                "textColor": "#FFFFFF"
+              },
+              "layout": {
+                "width": {
+                  "value": 80,
+                  "unit": "dp"
+                },
+                "height": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "padding": {
+                  "all": 16
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Space Evenly Example",
+      "config": {
+        "theme": {
+          "defaultStyle": {}
+        },
+        "root": {
+          "containerType": "horizontal",
+          "layout": {
+            "width": {
+              "special": "match_parent"
+            },
+            "height": {
+              "value": 100,
+              "unit": "dp"
+            },
+            "padding": {
+              "vertical": 16
+            },
+            "arrangement": {
+              "strategy": "space_evenly"
+            }
+          },
+          "children": [
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "1"
+              },
+              "style": {
+                "backgroundColor": "#9C27B0",
+                "textColor": "#FFFFFF"
+              },
+              "layout": {
+                "width": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "height": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "padding": {
+                  "all": 16
+                }
+              }
+            },
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "2"
+              },
+              "style": {
+                "backgroundColor": "#673AB7",
+                "textColor": "#FFFFFF"
+              },
+              "layout": {
+                "width": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "height": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "padding": {
+                  "all": 16
+                }
+              }
+            },
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "3"
+              },
+              "style": {
+                "backgroundColor": "#3F51B5",
+                "textColor": "#FFFFFF"
+              },
+              "layout": {
+                "width": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "height": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "padding": {
+                  "all": 16
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Space Around Example",
+      "config": {
+        "theme": {
+          "defaultStyle": {}
+        },
+        "root": {
+          "containerType": "horizontal",
+          "layout": {
+            "width": {
+              "special": "match_parent"
+            },
+            "height": {
+              "value": 100,
+              "unit": "dp"
+            },
+            "arrangement": {
+              "strategy": "space_around"
+            }
+          },
+          "children": [
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "A"
+              },
+              "style": {
+                "backgroundColor": "#E91E63",
+                "textColor": "#FFFFFF"
+              },
+              "layout": {
+                "width": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "height": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "padding": {
+                  "all": 16
+                }
+              }
+            },
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "B"
+              },
+              "style": {
+                "backgroundColor": "#F44336",
+                "textColor": "#FFFFFF"
+              },
+              "layout": {
+                "width": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "height": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "padding": {
+                  "all": 16
+                }
+              }
+            },
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "C"
+              },
+              "style": {
+                "backgroundColor": "#FF5722",
+                "textColor": "#FFFFFF"
+              },
+              "layout": {
+                "width": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "height": {
+                  "value": 60,
+                  "unit": "dp"
+                },
+                "padding": {
+                  "all": 16
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Center Alignment Example",
+      "config": {
+        "theme": {
+          "defaultStyle": {}
+        },
+        "root": {
+          "containerType": "vertical",
+          "layout": {
+            "width": {
+              "special": "match_parent"
+            },
+            "height": {
+              "special": "match_parent"
+            },
+            "arrangement": {
+              "strategy": "center"
+            }
+          },
+          "children": [
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "Welcome"
+              },
+              "style": {
+                "fontSize": 32,
+                "fontWeight": "bold",
+                "textColor": "#000000"
+              }
+            },
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "This content is centered"
+              },
+              "style": {
+                "fontSize": 16,
+                "textColor": "#666666"
+              }
+            },
+            {
+              "elementType": "button",
+              "bindings": {
+                "text": "Get Started"
+              },
+              "style": {
+                "backgroundColor": "#2196F3",
+                "textColor": "#FFFFFF",
+                "borderRadius": 8
+              },
+              "layout": {
+                "padding": {
+                  "horizontal": 32,
+                  "vertical": 12
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Absolute Positioning with Offset",
+      "config": {
+        "theme": {
+          "defaultStyle": {}
+        },
+        "root": {
+          "containerType": "stack",
+          "layout": {
+            "width": {
+              "special": "match_parent"
+            },
+            "height": {
+              "value": 400,
+              "unit": "dp"
+            }
+          },
+          "style": {
+            "backgroundColor": "#F5F5F5"
+          },
+          "children": [
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "Top Left"
+              },
+              "style": {
+                "backgroundColor": "#FF5722",
+                "textColor": "#FFFFFF"
+              },
+              "layout": {
+                "offset": {
+                  "x": 16,
+                  "y": 16,
+                  "unit": "dp"
+                },
+                "padding": {
+                  "all": 12
+                }
+              }
+            },
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "Custom Position"
+              },
+              "style": {
+                "backgroundColor": "#4CAF50",
+                "textColor": "#FFFFFF"
+              },
+              "layout": {
+                "offset": {
+                  "x": 100,
+                  "y": 150,
+                  "unit": "dp"
+                },
+                "padding": {
+                  "all": 12
+                }
+              }
+            },
+            {
+              "elementType": "text",
+              "bindings": {
+                "text": "Another Position"
+              },
+              "style": {
+                "backgroundColor": "#2196F3",
+                "textColor": "#FFFFFF"
+              },
+              "layout": {
+                "offset": {
+                  "x": 200,
+                  "y": 280,
+                  "unit": "dp"
+                },
+                "padding": {
+                  "all": 12
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Mixed Arrangement - Vertical Layout",
+      "config": {
+        "theme": {
+          "defaultStyle": {
+            "backgroundColor": "#FAFAFA"
+          }
+        },
+        "root": {
+          "containerType": "vertical",
+          "layout": {
+            "width": {
+              "special": "match_parent"
+            },
+            "height": {
+              "special": "match_parent"
+            },
+            "padding": {
+              "all": 16
+            }
+          },
+          "children": [
+            {
+              "containerType": "horizontal",
+              "layout": {
+                "width": {
+                  "special": "match_parent"
+                },
+                "arrangement": {
+                  "strategy": "space_between"
+                }
+              },
+              "children": [
+                {
+                  "elementType": "text",
+                  "bindings": {
+                    "text": "Title"
+                  },
+                  "style": {
+                    "fontSize": 24,
+                    "fontWeight": "bold"
+                  }
+                },
+                {
+                  "elementType": "button",
+                  "bindings": {
+                    "text": "Action"
+                  },
+                  "style": {
+                    "backgroundColor": "#2196F3",
+                    "textColor": "#FFFFFF"
+                  }
+                }
+              ]
+            },
+            {
+              "containerType": "vertical",
+              "layout": {
+                "width": {
+                  "special": "match_parent"
+                },
+                "arrangement": {
+                  "spacing": 8,
+                  "strategy": "spaced"
+                }
+              },
+              "children": [
+                {
+                  "elementType": "text",
+                  "bindings": {
+                    "text": "Item 1"
+                  }
+                },
+                {
+                  "elementType": "text",
+                  "bindings": {
+                    "text": "Item 2"
+                  }
+                },
+                {
+                  "elementType": "text",
+                  "bindings": {
+                    "text": "Item 3"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

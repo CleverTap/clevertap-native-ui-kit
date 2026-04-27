@@ -1,0 +1,72 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "generated": "2026-01-20",
+    "description": "Index of all test configuration files for Native Display SDK",
+    "totalTests": 5
+  },
+  "categories": {
+    "containers": {
+      "description": "Tests for container types",
+      "tests": [
+        {
+          "id": "test-001",
+          "file": "test-001-vertical-simple.json",
+          "containerType": "VERTICAL",
+          "description": "Basic vertical stacking with text and image elements",
+          "features": ["vertical layout", "spacing", "text", "image"]
+        },
+        {
+          "id": "test-002",
+          "file": "test-002-horizontal-simple.json",
+          "containerType": "HORIZONTAL",
+          "description": "Basic horizontal layout with text and image elements",
+          "features": ["horizontal layout", "spacing", "text", "image"]
+        },
+        {
+          "id": "test-003",
+          "file": "test-003-box-simple.json",
+          "containerType": "BOX",
+          "description": "Absolute positioning with image and overlaid text",
+          "features": ["box layout", "offset positioning", "overlay", "image", "text"]
+        },
+        {
+          "id": "test-004",
+          "file": "test-004-stack-simple.json",
+          "containerType": "STACK",
+          "description": "Layered layout with image and badge text",
+          "features": ["stack layout", "z-index layering", "offset positioning", "badge"]
+        },
+        {
+          "id": "test-005",
+          "file": "test-005-gallery-simple.json",
+          "containerType": "GALLERY",
+          "description": "Scrollable carousel with snapping behavior",
+          "features": ["gallery", "snapping", "carousel", "indicators", "peek"]
+        }
+      ]
+    }
+  },
+  "testsByFeature": {
+    "containers": ["test-001", "test-002", "test-003", "test-004", "test-005"],
+    "elements": {
+      "text": ["test-001", "test-002", "test-003", "test-004", "test-005"],
+      "image": ["test-001", "test-002", "test-003", "test-004", "test-005"]
+    },
+    "layout": {
+      "spacing": ["test-001", "test-002"],
+      "offset": ["test-003", "test-004"],
+      "arrangement": ["test-001", "test-002"]
+    },
+    "gallery": {
+      "snapping": ["test-005"],
+      "indicators": ["test-005"],
+      "peek": ["test-005"]
+    }
+  },
+  "usage": {
+    "android": "Load JSON files via NativeDisplayView or file picker in sample apps",
+    "ios": "Include in bundle or load from URL, render via NativeDisplayView",
+    "testing": "Use with screenshot capture scripts in .claude/agents/testing/scripts/"
+  }
+}

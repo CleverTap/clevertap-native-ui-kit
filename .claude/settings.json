@@ -1,0 +1,36 @@
+{
+  "project": "clevertap-native-ui-kit",
+  "description": "Native Display UI Kit - Server-driven UI framework",
+  
+  "paths": {
+    "android_sdk": "android/sdk",
+    "ios_sdk": "ios/Sources",
+    "android_sample": "android-sample",
+    "ios_sample": "ios-sample",
+    "docs": "docs",
+    "specs": ".claude/specs"
+  },
+  
+  "conventions": {
+    "spec_prefix": "NNN-feature-name.md",
+    "branch_format": "feature/NNN-feature-name"
+  },
+  
+  "commands": {
+    "android_build": "cd android && ./gradlew build",
+    "android_test": "cd android && ./gradlew test",
+    "ios_build": "cd ios && swift build",
+    "ios_test": "cd ios && swift test"
+  },
+  
+  "phases": [
+    "Phase 1: Core Parsing & Models",
+    "Phase 2: Container Rendering",
+    "Phase 3: Element Rendering",
+    "Phase 4: Style System",
+    "Phase 5: Layout System",
+    "Phase 6: Gallery System",
+    "Phase 7: Background System",
+    "Phase 8: Advanced Features"
+  ]
+}

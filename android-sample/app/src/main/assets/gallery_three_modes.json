@@ -1,0 +1,362 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {"textColor": "#000000", "fontSize": 14},
+    "colors": {}
+  },
+  "styleClasses": [],
+  "variables": {},
+  "root": {
+    "type": "container",
+    "id": "gallery_examples_root",
+    "containerType": "vertical",
+    "layout": {"spacing": 24, "padding": {"all": 16}, "height": {"value": 0, "unit": "dp", "special":  "match_parent"}},
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {"text": "Gallery Examples"},
+        "style": {"textColor": "#000000", "fontSize": 24, "fontWeight": "bold"}
+      },
+      
+      {
+        "type": "element",
+        "id": "mode1_label",
+        "elementType": "text",
+        "bindings": {"text": "Mode 1: Snapping with Peek (20%)"},
+        "style": {"textColor": "#666666", "fontSize": 16, "fontWeight": "bold"}
+      },
+      {
+        "type": "container",
+        "id": "snapping_gallery",
+        "containerType": "gallery",
+        "layout": {"height": {"value": 200, "unit": "dp"}},
+        "galleryConfig": {
+          "mode": "snapping",
+          "orientation": "horizontal",
+          "peekPercentage": 20,
+          "snapBehavior": "center",
+          "spacing": 12,
+          "showIndicators": true,
+          "indicatorStyle": {
+            "activeColor": "#2196F3",
+            "inactiveColor": "#BDBDBD"
+          },
+          "autoScrollInterval": 3000
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "snap_item_1",
+            "containerType": "box",
+            "layout": {"height": {"value": 200, "unit": "dp"}},
+            "style": {
+              "background": {
+                "type": "linear_gradient",
+                "angle": 135,
+                "colors": ["#667eea", "#764ba2"]
+              },
+              "borderRadius": 16
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "snap_text_1",
+                "elementType": "text",
+                "bindings": {"text": "Image 1"},
+                "style": {"textColor": "#FFFFFF", "fontSize": 32, "fontWeight": "bold"}
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "snap_item_2",
+            "containerType": "box",
+            "layout": {"height": {"value": 200, "unit": "dp"}},
+            "style": {
+              "background": {
+                "type": "linear_gradient",
+                "angle": 135,
+                "colors": ["#f093fb", "#f5576c"]
+              },
+              "borderRadius": 16
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "snap_text_2",
+                "elementType": "text",
+                "bindings": {"text": "Image 2"},
+                "style": {"textColor": "#FFFFFF", "fontSize": 32, "fontWeight": "bold"}
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "snap_item_3",
+            "containerType": "box",
+            "layout": {"height": {"value": 200, "unit": "dp"}},
+            "style": {
+              "background": {
+                "type": "linear_gradient",
+                "angle": 135,
+                "colors": ["#4facfe", "#00f2fe"]
+              },
+              "borderRadius": 16
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "snap_text_3",
+                "elementType": "text",
+                "bindings": {"text": "Image 3"},
+                "style": {"textColor": "#FFFFFF", "fontSize": 32, "fontWeight": "bold"}
+              }
+            ]
+          }
+        ]
+      },
+      
+      {
+        "type": "element",
+        "id": "mode2_label",
+        "elementType": "text",
+        "bindings": {"text": "Mode 2: Free Flow - Independent Sizing"},
+        "style": {"textColor": "#666666", "fontSize": 16, "fontWeight": "bold"},
+        "layout": {"padding": {"vertical": 16}}
+      },
+      {
+        "type": "container",
+        "id": "freeflow_gallery",
+        "containerType": "gallery",
+        "galleryConfig": {
+          "mode": "free_flow",
+          "orientation": "horizontal",
+          "spacing": 8
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "tag_1",
+            "containerType": "box",
+            "layout": {"padding": {"vertical": 8, "horizontal": 16}},
+            "style": {"backgroundColor": "#E3F2FD", "borderRadius": 16},
+            "children": [
+              {
+                "type": "element",
+                "id": "tag_text_1",
+                "elementType": "text",
+                "bindings": {"text": "Design"},
+                "style": {"textColor": "#1976D2", "fontSize": 14, "fontWeight": "bold"}
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "tag_2",
+            "containerType": "box",
+            "layout": {"padding": {"vertical": 8, "horizontal": 16}},
+            "style": {"backgroundColor": "#F3E5F5", "borderRadius": 16},
+            "children": [
+              {
+                "type": "element",
+                "id": "tag_text_2",
+                "elementType": "text",
+                "bindings": {"text": "Development"},
+                "style": {"textColor": "#7B1FA2", "fontSize": 14, "fontWeight": "bold"}
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "tag_3",
+            "containerType": "box",
+            "layout": {"padding": {"vertical": 8, "horizontal": 16}},
+            "style": {"backgroundColor": "#FFF3E0", "borderRadius": 16},
+            "children": [
+              {
+                "type": "element",
+                "id": "tag_text_3",
+                "elementType": "text",
+                "bindings": {"text": "UI"},
+                "style": {"textColor": "#F57C00", "fontSize": 14, "fontWeight": "bold"}
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "tag_4",
+            "containerType": "box",
+            "layout": {"padding": {"vertical": 8, "horizontal": 16}},
+            "style": {"backgroundColor": "#E8F5E9", "borderRadius": 16},
+            "children": [
+              {
+                "type": "element",
+                "id": "tag_text_4",
+                "elementType": "text",
+                "bindings": {"text": "Mobile"},
+                "style": {"textColor": "#388E3C", "fontSize": 14, "fontWeight": "bold"}
+              }
+            ]
+          }
+        ]
+      },
+      
+      {
+        "type": "element",
+        "id": "mode3_label",
+        "elementType": "text",
+        "bindings": {"text": "Mode 3: Free Flow Grid (2.5 items per view)"},
+        "style": {"textColor": "#666666", "fontSize": 16, "fontWeight": "bold"},
+        "layout": {"margin": {"top": 24}}
+      },
+      {
+        "type": "container",
+        "id": "grid_gallery",
+        "containerType": "gallery",
+        "layout": {"height": {"value": 150, "unit": "dp"}},
+        "galleryConfig": {
+          "mode": "free_flow_grid",
+          "orientation": "horizontal",
+          "itemsPerView": 2.5,
+          "spacing": 12
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "product_1",
+            "containerType": "vertical",
+            "layout": {"padding": {"all": 12}, "spacing": 8},
+            "style": {"backgroundColor": "#FFFFFF", "borderRadius": 12, "shadowRadius": 4, "shadowColor": "#00000015"},
+            "children": [
+              {
+                "type": "container",
+                "id": "product_image_1",
+                "containerType": "box",
+                "layout": {"height": {"value": 80, "unit": "dp"}},
+                "style": {"backgroundColor": "#E0E0E0", "borderRadius": 8},
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "product_emoji_1",
+                    "elementType": "text",
+                    "bindings": {"text": "📱"},
+                    "style": {"textColor": "#666666", "fontSize": 32, "textAlign": "center"},
+                    "layout": {"padding": {"top": 24}}
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "product_name_1",
+                "elementType": "text",
+                "bindings": {"text": "Product 1"},
+                "style": {"textColor": "#000000", "fontSize": 12, "fontWeight": "bold"}
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "product_2",
+            "containerType": "vertical",
+            "layout": {"padding": {"all": 12}, "spacing": 8},
+            "style": {"backgroundColor": "#FFFFFF", "borderRadius": 12, "shadowRadius": 4, "shadowColor": "#00000015"},
+            "children": [
+              {
+                "type": "container",
+                "id": "product_image_2",
+                "containerType": "box",
+                "layout": {"height": {"value": 80, "unit": "dp"}},
+                "style": {"backgroundColor": "#E0E0E0", "borderRadius": 8},
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "product_emoji_2",
+                    "elementType": "text",
+                    "bindings": {"text": "💻"},
+                    "style": {"textColor": "#666666", "fontSize": 32, "textAlign": "center"},
+                    "layout": {"padding": {"top": 24}}
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "product_name_2",
+                "elementType": "text",
+                "bindings": {"text": "Product 2"},
+                "style": {"textColor": "#000000", "fontSize": 12, "fontWeight": "bold"}
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "product_3",
+            "containerType": "vertical",
+            "layout": {"padding": {"all": 12}, "spacing": 8},
+            "style": {"backgroundColor": "#FFFFFF", "borderRadius": 12, "shadowRadius": 4, "shadowColor": "#00000015"},
+            "children": [
+              {
+                "type": "container",
+                "id": "product_image_3",
+                "containerType": "box",
+                "layout": {"height": {"value": 80, "unit": "dp"}},
+                "style": {"backgroundColor": "#E0E0E0", "borderRadius": 8},
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "product_emoji_3",
+                    "elementType": "text",
+                    "bindings": {"text": "⌚"},
+                    "style": {"textColor": "#666666", "fontSize": 32, "textAlign": "center"},
+                    "layout": {"padding": {"top": 24}}
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "product_name_3",
+                "elementType": "text",
+                "bindings": {"text": "Product 3"},
+                "style": {"textColor": "#000000", "fontSize": 12, "fontWeight": "bold"}
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "product_4",
+            "containerType": "vertical",
+            "layout": {"padding": {"all": 12}, "spacing": 8},
+            "style": {"backgroundColor": "#FFFFFF", "borderRadius": 12, "shadowRadius": 4, "shadowColor": "#00000015"},
+            "children": [
+              {
+                "type": "container",
+                "id": "product_image_4",
+                "containerType": "box",
+                "layout": {"height": {"value": 80, "unit": "dp"}},
+                "style": {"backgroundColor": "#E0E0E0", "borderRadius": 8},
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "product_emoji_4",
+                    "elementType": "text",
+                    "bindings": {"text": "🎧"},
+                    "style": {"textColor": "#666666", "fontSize": 32, "textAlign": "center"},
+                    "layout": {"padding": {"top": 24}}
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "product_name_4",
+                "elementType": "text",
+                "bindings": {"text": "Product 4"},
+                "style": {"textColor": "#000000", "fontSize": 12, "fontWeight": "bold"}
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

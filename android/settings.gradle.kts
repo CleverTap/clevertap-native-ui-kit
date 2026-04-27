@@ -17,4 +17,3 @@ dependencyResolutionManagement {
 rootProject.name = "clevertap-native-ui-kit"
 
 include(":sdk")
-include(":sample-app")

@@ -1,0 +1,480 @@
+{
+  "theme": {
+    "id": "test-115",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "variables": {
+    "testName": "Combined - Complete Showcase (Stress Test)"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333",
+          "lineHeight": 25
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Comprehensive stress test combining all features: aspect ratios, percentage offsets, nested layouts, multiple container types, and complex positioning."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666",
+          "lineHeight": 17
+        }
+      },
+      {
+        "type": "container",
+        "id": "hero-section",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "aspectRatio": 2.0
+        },
+        "style": {
+          "backgroundColor": "#2196F3",
+          "borderRadius": 12
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "hero-image",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-102.jpg"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "id": "hero-overlay",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "aspectRatio": 3.0,
+              "offset": {
+                "x": 15,
+                "y": 30,
+                "unit": "percent"
+              },
+              "padding": {
+                "all": 16,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#00000080",
+              "borderRadius": 8
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "hero-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Hero Banner"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 20,
+                  "fontWeight": "bold",
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center",
+                  "lineHeight": 28
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "complex-stack",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 250,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "stack-layer-1",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 60,
+                "unit": "percent"
+              },
+              "aspectRatio": 1.5,
+              "offset": {
+                "x": 5,
+                "y": 10,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "backgroundColor": "#4CAF50",
+              "borderRadius": 8,
+              "opacity": 0.9
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "stack-layer-2",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 50,
+                "unit": "percent"
+              },
+              "aspectRatio": 1.0,
+              "offset": {
+                "x": 35,
+                "y": 25,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FF9800",
+              "borderRadius": 8,
+              "opacity": 0.9
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "stack-layer-3",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 45,
+                "unit": "percent"
+              },
+              "aspectRatio": 0.75,
+              "offset": {
+                "x": 50,
+                "y": 45,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "backgroundColor": "#F44336",
+              "borderRadius": 8,
+              "opacity": 0.9
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "grid-section",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "arrangement": {
+            "spacing": 12,
+            "spacingUnit": "dp",
+            "strategy": "space_evenly"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "grid-item-1",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 28,
+                "unit": "percent"
+              },
+              "aspectRatio": 1.0
+            },
+            "style": {
+              "backgroundColor": "#9C27B0",
+              "borderRadius": 8
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "grid-badge-1",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 30,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 30,
+                    "unit": "dp"
+                  },
+                  "offset": {
+                    "x": -5,
+                    "y": -5,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#F44336",
+                  "borderRadius": 15
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "grid-item-2",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 28,
+                "unit": "percent"
+              },
+              "aspectRatio": 1.0
+            },
+            "style": {
+              "backgroundColor": "#00BCD4",
+              "borderRadius": 8
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "grid-item-3",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 28,
+                "unit": "percent"
+              },
+              "aspectRatio": 1.0
+            },
+            "style": {
+              "backgroundColor": "#FFEB3B",
+              "borderRadius": 8
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "nested-complex",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "aspectRatio": 1.3
+        },
+        "style": {
+          "backgroundColor": "#E0E0E0",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "nested-level-1",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 80,
+                "unit": "percent"
+              },
+              "aspectRatio": 1.5,
+              "offset": {
+                "x": 10,
+                "y": 10,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 6
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "nested-level-2",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 60,
+                    "unit": "percent"
+                  },
+                  "aspectRatio": 1.0,
+                  "offset": {
+                    "x": 20,
+                    "y": 20,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#2196F3",
+                  "borderRadius": 4
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "nested-level-3",
+                    "containerType": "box",
+                    "layout": {
+                      "width": {
+                        "value": 50,
+                        "unit": "percent"
+                      },
+                      "aspectRatio": 1.0,
+                      "offset": {
+                        "x": 25,
+                        "y": 25,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "backgroundColor": "#F44336",
+                      "borderRadius": 2
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "footer-banner",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "aspectRatio": 5.0,
+          "padding": {
+            "vertical": 12,
+            "horizontal": 16,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#607D8B",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "footer-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "Complete Feature Showcase - All Tests Passed"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "lineHeight": 20
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

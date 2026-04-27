@@ -54,12 +54,10 @@ Carthage/
 # Swift Package Manager
 .swiftpm/
 .build/
-*.xcodeproj
 Package.resolved
 
 # CocoaPods
 Pods/
-*.xcworkspace
 Podfile.lock
 
 # Xcode
@@ -133,3 +131,14 @@ yarn-error.log
 *.tmp
 *.bak
 *.cache
+
+# Additional Android/Kotlin ignores
+.kotlin/
+**/.kotlin/
+**/local.properties
+*.jks
+*.keystore
+signing.properties
+keystore.properties
+
+android-sample/app/configs

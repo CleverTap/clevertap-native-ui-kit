@@ -1,0 +1,40 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    },
+    "colors": {}
+  },
+  "styleClasses": [],
+  "variables": {},
+  "root": {
+    "type": "container",
+    "id": "test_root",
+    "containerType": "vertical",
+    "layout": {
+      "padding": {
+        "all": 16
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFFFFF"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "test_text",
+        "elementType": "text",
+        "bindings": {
+          "text": "Hello World"
+        },
+        "style": {
+          "textColor": "#000000",
+          "fontSize": 20,
+          "fontWeight": "bold"
+        }
+      }
+    ]
+  }
+}

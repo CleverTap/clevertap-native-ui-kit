@@ -1,0 +1,185 @@
+{
+  "theme": {
+    "id": "banner-10",
+    "defaultStyle": {
+      "textColor": "#FFFFFF",
+      "fontSize": 16
+    }
+  },
+  "variables": {
+    "appName": "CleverTap"
+  },
+  "root": {
+    "type": "container",
+    "id": "banner-root",
+    "containerType": "box",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "aspectRatio": 0.6
+    },
+    "style": {
+      "backgroundColor": "#000000",
+      "borderRadius": 20
+    },
+    "animation": {
+      "type": "slide_in_bottom",
+      "duration": 800,
+      "easing": "spring"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "background-image",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://cdn.dummyjson.com/products/images/laptops/Apple%20MacBook%20Pro%2014%20Inch%20Space%20Grey/1.png"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 100, "unit": "percent" },
+          "offset": { "x": 0, "y": 0, "unit": "percent" }
+        },
+        "style": {
+          "borderRadius": 20
+        }
+      },
+      {
+        "type": "element",
+        "id": "gradient-overlay",
+        "elementType": "text",
+        "bindings": {
+          "text": ""
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 100, "unit": "percent" },
+          "offset": { "x": 0, "y": 0, "unit": "percent" }
+        },
+        "style": {
+          "backgroundColor": "#00000060",
+          "borderRadius": 20
+        }
+      },
+      {
+        "type": "element",
+        "id": "app-icon",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://cdn.dummyjson.com/products/images/laptops/Apple%20MacBook%20Pro%2014%20Inch%20Space%20Grey/1.png"
+        },
+        "layout": {
+          "width": { "value": 28, "unit": "percent" },
+          "height": { "value": 28, "unit": "percent" },
+          "offset": { "x": 36, "y": 8, "unit": "percent" }
+        },
+        "style": {
+          "borderRadius": 24,
+          "shadowColor": "#00000050",
+          "shadowRadius": 16,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "welcome-title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Welcome to {{appName}}!"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "offset": { "x": 0, "y": 42, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 32,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFF",
+          "textAlign": "center",
+          "shadowColor": "#00000080",
+          "shadowRadius": 6,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3
+        }
+      },
+      {
+        "type": "element",
+        "id": "subtitle",
+        "elementType": "text",
+        "bindings": {
+          "text": "Let's get you started with your journey"
+        },
+        "layout": {
+          "width": { "value": 90, "unit": "percent" },
+          "offset": { "x": 5, "y": 57, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 17,
+          "fontWeight": "normal",
+          "textColor": "#FFFFFFDD",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "tour-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Take Tour"
+        },
+        "layout": {
+          "width": { "value": 42, "unit": "percent" },
+          "height": { "value": 16, "unit": "percent" },
+          "offset": { "x": 7, "y": 76, "unit": "percent" }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "textColor": "#667EEA",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "borderRadius": 28,
+          "shadowColor": "#00000040",
+          "shadowRadius": 12,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 6
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "start_tour",
+            "value": {}
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "skip-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Skip"
+        },
+        "layout": {
+          "width": { "value": 38, "unit": "percent" },
+          "height": { "value": 16, "unit": "percent" },
+          "offset": { "x": 53, "y": 76, "unit": "percent" }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF20",
+          "textColor": "#FFFFFF",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "borderRadius": 28,
+          "borderWidth": 2,
+          "borderColor": "#FFFFFF"
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "dismiss",
+            "value": {}
+          }
+        }
+      }
+    ]
+  }
+}

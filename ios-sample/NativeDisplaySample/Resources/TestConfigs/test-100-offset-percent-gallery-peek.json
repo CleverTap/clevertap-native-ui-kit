@@ -1,0 +1,189 @@
+{
+  "theme": {
+    "id": "test-100",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "variables": {
+    "testName": "Percentage Offset - Gallery Peek"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333",
+          "lineHeight": 25
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests percentage offset for creating gallery peek effect. Use Stack container to layer elements with percentage-based positioning."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666",
+          "lineHeight": 17
+        }
+      },
+      {
+        "type": "container",
+        "id": "gallery-stack",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 300,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF"
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "card-1",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 250,
+                "unit": "dp"
+              },
+              "offset": {
+                "x": 0,
+                "y": 10,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "backgroundColor": "#2196F3",
+              "borderRadius": 8,
+              "shadowColor": "#00000040",
+              "shadowRadius": 8,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 2
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "card-2",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 250,
+                "unit": "dp"
+              },
+              "offset": {
+                "x": 15,
+                "y": 12,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "backgroundColor": "#4CAF50",
+              "borderRadius": 8,
+              "shadowColor": "#00000040",
+              "shadowRadius": 8,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 2
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "card-3",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 250,
+                "unit": "dp"
+              },
+              "offset": {
+                "x": 30,
+                "y": 14,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FF9800",
+              "borderRadius": 8,
+              "shadowColor": "#00000040",
+              "shadowRadius": 8,
+              "shadowOffsetX": 0,
+              "shadowOffsetY": 2
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": []
+}

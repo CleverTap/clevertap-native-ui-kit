@@ -1,0 +1,271 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#E65100",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "gallery-3-free-flow",
+    "containerType": "gallery",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 350,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 16
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFF3E0"
+    },
+    "galleryConfig": {
+      "mode": "free_flow",
+      "orientation": "horizontal",
+      "spacing": 12
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "item-1",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 250,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowRadius": 6,
+          "shadowOffsetY": 3,
+          "shadowColor": "#00000022"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "img-1",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-49.jpg"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 180,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "type": "element",
+            "id": "text-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "Free-flowing gallery allows natural scrolling"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#E65100",
+              "lineHeight": 20
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "item-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 250,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowRadius": 6,
+          "shadowOffsetY": 3,
+          "shadowColor": "#00000022"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "img-2",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-50.jpg"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 180,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "type": "element",
+            "id": "text-2",
+            "elementType": "text",
+            "bindings": {
+              "text": "Smooth scrolling without snapping behavior"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#E65100",
+              "lineHeight": 20
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "item-3",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 250,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowRadius": 6,
+          "shadowOffsetY": 3,
+          "shadowColor": "#00000022"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "img-3",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-51.jpg"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 180,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "type": "element",
+            "id": "text-3",
+            "elementType": "text",
+            "bindings": {
+              "text": "User controls the scroll position precisely"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "textColor": "#E65100",
+              "lineHeight": 20
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

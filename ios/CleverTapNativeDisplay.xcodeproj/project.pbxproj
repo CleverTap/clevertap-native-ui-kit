@@ -1,0 +1,648 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		41969A672F0BC8790050EB83 /* NativeDisplayActionListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A662F0BC8790050EB83 /* NativeDisplayActionListener.swift */; };
+		41969A692F0BC8EC0050EB83 /* InteractionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A682F0BC8EC0050EB83 /* InteractionType.swift */; };
+		41969A6C2F0BCA390050EB83 /* ActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A6B2F0BCA390050EB83 /* ActionHandler.swift */; };
+		41969A6F2F0BDB420050EB83 /* TappableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A6E2F0BDB420050EB83 /* TappableModifier.swift */; };
+		41969A712F0BE6410050EB83 /* ActionTriggers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A702F0BE6410050EB83 /* ActionTriggers.swift */; };
+		41F1ACEA2F18E9DA0018C5EA /* NativeDisplayUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1ACE82F18E9DA0018C5EA /* NativeDisplayUIView.swift */; };
+		41F1ACEB2F18E9DA0018C5EA /* NativeDisplayTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1ACE72F18E9DA0018C5EA /* NativeDisplayTableViewCell.swift */; };
+		41F1ACEC2F18E9DA0018C5EA /* NativeDisplayCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1ACE62F18E9DA0018C5EA /* NativeDisplayCollectionViewCell.swift */; };
+		41F1ACED2F18E9DA0018C5EA /* NativeDisplayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1ACE92F18E9DA0018C5EA /* NativeDisplayViewController.swift */; };
+		B001 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = F001 /* Enums.swift */; };
+		B002 /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F002 /* Layout.swift */; };
+		B003 /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = F003 /* Style.swift */; };
+		B004 /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = F004 /* Background.swift */; };
+		B005 /* GalleryConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F005 /* GalleryConfig.swift */; };
+		B006 /* NativeDisplayNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F006 /* NativeDisplayNode.swift */; };
+		B007 /* NativeDisplayConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F007 /* NativeDisplayConfig.swift */; };
+		B008 /* NativeDisplayRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F008 /* NativeDisplayRenderer.swift */; };
+		B009 /* GalleryRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F009 /* GalleryRenderer.swift */; };
+		B010 /* BackgroundRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F010 /* BackgroundRenderer.swift */; };
+		B011 /* VariableEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F011 /* VariableEvaluator.swift */; };
+		B012 /* StyleResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F012 /* StyleResolver.swift */; };
+		B013 /* CleverTapNativeDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F013 /* CleverTapNativeDisplay.swift */; };
+		BT01 /* CleverTapNativeDisplayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FT01 /* CleverTapNativeDisplayTests.swift */; };
+		BT02 /* CleverTapNativeDisplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = P001 /* CleverTapNativeDisplay.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CIP001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = PRJ001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = TGT001;
+			remoteInfo = CleverTapNativeDisplay;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		41969A662F0BC8790050EB83 /* NativeDisplayActionListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayActionListener.swift; sourceTree = "<group>"; };
+		41969A682F0BC8EC0050EB83 /* InteractionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractionType.swift; sourceTree = "<group>"; };
+		41969A6B2F0BCA390050EB83 /* ActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionHandler.swift; sourceTree = "<group>"; };
+		41969A6E2F0BDB420050EB83 /* TappableModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TappableModifier.swift; sourceTree = "<group>"; };
+		41969A702F0BE6410050EB83 /* ActionTriggers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTriggers.swift; sourceTree = "<group>"; };
+		41F1ACE62F18E9DA0018C5EA /* NativeDisplayCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayCollectionViewCell.swift; sourceTree = "<group>"; };
+		41F1ACE72F18E9DA0018C5EA /* NativeDisplayTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayTableViewCell.swift; sourceTree = "<group>"; };
+		41F1ACE82F18E9DA0018C5EA /* NativeDisplayUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayUIView.swift; sourceTree = "<group>"; };
+		41F1ACE92F18E9DA0018C5EA /* NativeDisplayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayViewController.swift; sourceTree = "<group>"; };
+		F001 /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
+		F002 /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
+		F003 /* Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
+		F004 /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
+		F005 /* GalleryConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryConfig.swift; sourceTree = "<group>"; };
+		F006 /* NativeDisplayNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayNode.swift; sourceTree = "<group>"; };
+		F007 /* NativeDisplayConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayConfig.swift; sourceTree = "<group>"; };
+		F008 /* NativeDisplayRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayRenderer.swift; sourceTree = "<group>"; };
+		F009 /* GalleryRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryRenderer.swift; sourceTree = "<group>"; };
+		F010 /* BackgroundRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundRenderer.swift; sourceTree = "<group>"; };
+		F011 /* VariableEvaluator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableEvaluator.swift; sourceTree = "<group>"; };
+		F012 /* StyleResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleResolver.swift; sourceTree = "<group>"; };
+		F013 /* CleverTapNativeDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleverTapNativeDisplay.swift; sourceTree = "<group>"; };
+		FT01 /* CleverTapNativeDisplayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleverTapNativeDisplayTests.swift; sourceTree = "<group>"; };
+		P001 /* CleverTapNativeDisplay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CleverTapNativeDisplay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		P002 /* CleverTapNativeDisplayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CleverTapNativeDisplayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FBP001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FBP002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BT02 /* CleverTapNativeDisplay.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		41969A652F0BC86B0050EB83 /* Listeners */ = {
+			isa = PBXGroup;
+			children = (
+				41969A682F0BC8EC0050EB83 /* InteractionType.swift */,
+				41969A662F0BC8790050EB83 /* NativeDisplayActionListener.swift */,
+			);
+			path = Listeners;
+			sourceTree = "<group>";
+		};
+		41969A6A2F0BCA2A0050EB83 /* Handlers */ = {
+			isa = PBXGroup;
+			children = (
+				41969A6B2F0BCA390050EB83 /* ActionHandler.swift */,
+			);
+			path = Handlers;
+			sourceTree = "<group>";
+		};
+		41969A6D2F0BDB380050EB83 /* Modifiers */ = {
+			isa = PBXGroup;
+			children = (
+				41969A6E2F0BDB420050EB83 /* TappableModifier.swift */,
+			);
+			path = Modifiers;
+			sourceTree = "<group>";
+		};
+		41F1ACE52F18E9C20018C5EA /* UiKit */ = {
+			isa = PBXGroup;
+			children = (
+				41F1ACE62F18E9DA0018C5EA /* NativeDisplayCollectionViewCell.swift */,
+				41F1ACE72F18E9DA0018C5EA /* NativeDisplayTableViewCell.swift */,
+				41F1ACE82F18E9DA0018C5EA /* NativeDisplayUIView.swift */,
+				41F1ACE92F18E9DA0018C5EA /* NativeDisplayViewController.swift */,
+			);
+			path = UiKit;
+			sourceTree = "<group>";
+		};
+		GRP000 = {
+			isa = PBXGroup;
+			children = (
+				GRP_SRC /* Sources */,
+				GRP_TST /* Tests */,
+				GRP_PRD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		GRP_EVL /* Evaluator */ = {
+			isa = PBXGroup;
+			children = (
+				F011 /* VariableEvaluator.swift */,
+			);
+			path = Evaluator;
+			sourceTree = "<group>";
+		};
+		GRP_MDL /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				41969A702F0BE6410050EB83 /* ActionTriggers.swift */,
+				F001 /* Enums.swift */,
+				F002 /* Layout.swift */,
+				F003 /* Style.swift */,
+				F004 /* Background.swift */,
+				F005 /* GalleryConfig.swift */,
+				F006 /* NativeDisplayNode.swift */,
+				F007 /* NativeDisplayConfig.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		GRP_PRD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				P001 /* CleverTapNativeDisplay.framework */,
+				P002 /* CleverTapNativeDisplayTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		GRP_RND /* Renderer */ = {
+			isa = PBXGroup;
+			children = (
+				F008 /* NativeDisplayRenderer.swift */,
+				F009 /* GalleryRenderer.swift */,
+				F010 /* BackgroundRenderer.swift */,
+			);
+			path = Renderer;
+			sourceTree = "<group>";
+		};
+		GRP_SDK /* CleverTapNativeDisplay */ = {
+			isa = PBXGroup;
+			children = (
+				41F1ACE52F18E9C20018C5EA /* UiKit */,
+				41969A6D2F0BDB380050EB83 /* Modifiers */,
+				41969A6A2F0BCA2A0050EB83 /* Handlers */,
+				41969A652F0BC86B0050EB83 /* Listeners */,
+				F013 /* CleverTapNativeDisplay.swift */,
+				GRP_MDL /* Models */,
+				GRP_RND /* Renderer */,
+				GRP_EVL /* Evaluator */,
+				GRP_STY /* Style */,
+			);
+			path = CleverTapNativeDisplay;
+			sourceTree = "<group>";
+		};
+		GRP_SRC /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				GRP_SDK /* CleverTapNativeDisplay */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		GRP_STY /* Style */ = {
+			isa = PBXGroup;
+			children = (
+				F012 /* StyleResolver.swift */,
+			);
+			path = Style;
+			sourceTree = "<group>";
+		};
+		GRP_TST /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				GRP_TST_SRC /* CleverTapNativeDisplayTests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		GRP_TST_SRC /* CleverTapNativeDisplayTests */ = {
+			isa = PBXGroup;
+			children = (
+				FT01 /* CleverTapNativeDisplayTests.swift */,
+			);
+			path = CleverTapNativeDisplayTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		HBP001 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		TGT001 /* CleverTapNativeDisplay */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BCL001 /* Build configuration list for PBXNativeTarget "CleverTapNativeDisplay" */;
+			buildPhases = (
+				SBP001 /* Sources */,
+				FBP001 /* Frameworks */,
+				HBP001 /* Headers */,
+				RBP001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CleverTapNativeDisplay;
+			productName = CleverTapNativeDisplay;
+			productReference = P001 /* CleverTapNativeDisplay.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		TGT002 /* CleverTapNativeDisplayTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BCL002 /* Build configuration list for PBXNativeTarget "CleverTapNativeDisplayTests" */;
+			buildPhases = (
+				SBP002 /* Sources */,
+				FBP002 /* Frameworks */,
+				RBP002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DEP001 /* PBXTargetDependency */,
+			);
+			name = CleverTapNativeDisplayTests;
+			productName = CleverTapNativeDisplayTests;
+			productReference = P002 /* CleverTapNativeDisplayTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		PRJ001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					TGT001 = {
+						CreatedOnToolsVersion = 15.0;
+						LastSwiftMigration = 1500;
+					};
+					TGT002 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = TGT001;
+					};
+				};
+			};
+			buildConfigurationList = BCL000 /* Build configuration list for PBXProject "CleverTapNativeDisplay" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = GRP000;
+			productRefGroup = GRP_PRD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				TGT001 /* CleverTapNativeDisplay */,
+				TGT002 /* CleverTapNativeDisplayTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		RBP001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		RBP002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		SBP001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B001 /* Enums.swift in Sources */,
+				B002 /* Layout.swift in Sources */,
+				41969A692F0BC8EC0050EB83 /* InteractionType.swift in Sources */,
+				41F1ACEA2F18E9DA0018C5EA /* NativeDisplayUIView.swift in Sources */,
+				41F1ACEB2F18E9DA0018C5EA /* NativeDisplayTableViewCell.swift in Sources */,
+				41F1ACEC2F18E9DA0018C5EA /* NativeDisplayCollectionViewCell.swift in Sources */,
+				41F1ACED2F18E9DA0018C5EA /* NativeDisplayViewController.swift in Sources */,
+				B003 /* Style.swift in Sources */,
+				B004 /* Background.swift in Sources */,
+				B005 /* GalleryConfig.swift in Sources */,
+				B006 /* NativeDisplayNode.swift in Sources */,
+				B007 /* NativeDisplayConfig.swift in Sources */,
+				41969A712F0BE6410050EB83 /* ActionTriggers.swift in Sources */,
+				B008 /* NativeDisplayRenderer.swift in Sources */,
+				41969A672F0BC8790050EB83 /* NativeDisplayActionListener.swift in Sources */,
+				B009 /* GalleryRenderer.swift in Sources */,
+				B010 /* BackgroundRenderer.swift in Sources */,
+				B011 /* VariableEvaluator.swift in Sources */,
+				B012 /* StyleResolver.swift in Sources */,
+				41969A6F2F0BDB420050EB83 /* TappableModifier.swift in Sources */,
+				41969A6C2F0BCA390050EB83 /* ActionHandler.swift in Sources */,
+				B013 /* CleverTapNativeDisplay.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		SBP002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BT01 /* CleverTapNativeDisplayTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DEP001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = TGT001 /* CleverTapNativeDisplay */;
+			targetProxy = CIP001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		BC_FWK_DBG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.clevertap.nativedisplay;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BC_FWK_REL /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.clevertap.nativedisplay;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		BC_PRJ_DBG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		BC_PRJ_REL /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		BC_TST_DBG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.clevertap.nativedisplay.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BC_TST_REL /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.clevertap.nativedisplay.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		BCL000 /* Build configuration list for PBXProject "CleverTapNativeDisplay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC_PRJ_DBG /* Debug */,
+				BC_PRJ_REL /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BCL001 /* Build configuration list for PBXNativeTarget "CleverTapNativeDisplay" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC_FWK_DBG /* Debug */,
+				BC_FWK_REL /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BCL002 /* Build configuration list for PBXNativeTarget "CleverTapNativeDisplayTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC_TST_DBG /* Debug */,
+				BC_TST_REL /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = PRJ001 /* Project object */;
+}

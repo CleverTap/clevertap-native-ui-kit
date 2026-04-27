@@ -1,0 +1,128 @@
+{
+  "theme": {
+    "id": "test-149"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#FFFFFF",
+      "borderRadius": 12
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "avatar",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://yavuzceliker.github.io/sample-images/image-1.jpg"
+        },
+        "layout": {
+          "width": {
+            "value": 15,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 40,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 30,
+            "unit": "percent"
+          }
+        },
+        "imageConfig": {
+          "fit": "crop"
+        }
+      },
+      {
+        "type": "element",
+        "id": "notification_title",
+        "elementType": "text",
+        "bindings": {
+          "text": "New Message"
+        },
+        "layout": {
+          "width": {
+            "value": 50,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 25,
+            "y": 30,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 15,
+          "fontWeight": "bold",
+          "lineHeight": 21,
+          "textColor": "#1A1A2E"
+        }
+      },
+      {
+        "type": "element",
+        "id": "notification_body",
+        "elementType": "text",
+        "bindings": {
+          "text": "Hey! Just checking in..."
+        },
+        "layout": {
+          "width": {
+            "value": 50,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 25,
+            "y": 52,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 13,
+          "lineHeight": 18,
+          "textColor": "#666666"
+        }
+      },
+      {
+        "type": "element",
+        "id": "dismiss_button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Dismiss"
+        },
+        "layout": {
+          "width": {
+            "value": 18,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 20,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 75,
+            "y": 38,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "backgroundColor": "#EEEEEE",
+          "textColor": "#666666",
+          "fontSize": 12,
+          "lineHeight": 17,
+          "borderRadius": 6
+        }
+      }
+    ]
+  }
+}
