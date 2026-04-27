@@ -43,6 +43,7 @@ fun NativeDisplayView(
     fontFamily: FontFamily? = null,
     actionListener: NativeDisplayActionListener? = null,
     componentListener: NativeDisplayComponentListener? = null,
+    unitId: String? = null,
 ) {
     val resolvedStyles = remember(config) {
         StyleResolver(config.theme, config.styleClasses).resolveAll(config.root)
@@ -54,6 +55,7 @@ fun NativeDisplayView(
         fontFamily = fontFamily,
         actionListener = actionListener,
         componentListener = componentListener,
+        unitId = unitId,
     )
 }
 
@@ -68,14 +70,16 @@ fun NativeDisplayView(
     fontFamily: FontFamily? = null,
     actionListener: NativeDisplayActionListener? = null,
     componentListener: NativeDisplayComponentListener? = null,
+    unitId: String? = null,
 ) {
     val context = LocalContext.current
 
-    val actionHandler = remember(actionListener, componentListener) {
+    val actionHandler = remember(actionListener, componentListener, unitId) {
         ActionHandler(
             context = context,
             listener = actionListener,
-            componentListener = componentListener
+            componentListener = componentListener,
+            unitId = unitId
         )
     }
 

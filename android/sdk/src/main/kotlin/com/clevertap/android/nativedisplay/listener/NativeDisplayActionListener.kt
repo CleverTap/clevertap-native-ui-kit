@@ -92,11 +92,33 @@ interface NativeDisplayActionListener {
     /**
      * Called when any action execution fails.
      * Override this to handle errors gracefully.
-     * 
+     *
      * @param action The action that failed
      * @param error The error that occurred
      */
     fun onActionError(action: Action, error: Throwable) {
         // Default: do nothing (client can override to log or show error)
     }
+
+    /**
+     * Called when a Native Display unit has been viewed (impression).
+     * Use this to forward attribution to CleverTap Core SDK via
+     * `pushDisplayUnitViewedEventForID(unitId)`.
+     *
+     * Default implementation is a no-op — existing implementors do not need to override.
+     *
+     * @param unitId The ID of the display unit that was viewed
+     */
+    fun onDisplayUnitViewed(unitId: String) {}
+
+    /**
+     * Called when a Native Display unit has been clicked.
+     * Use this to forward attribution to CleverTap Core SDK via
+     * `pushDisplayUnitClickedEventForID(unitId)`.
+     *
+     * Default implementation is a no-op — existing implementors do not need to override.
+     *
+     * @param unitId The ID of the display unit that was clicked
+     */
+    fun onDisplayUnitClicked(unitId: String) {}
 }

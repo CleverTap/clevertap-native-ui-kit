@@ -64,6 +64,10 @@ public class NativeDisplayBridge {
     /// Whether auto-wire has been attempted.
     private var isInitialized = false
 
+    /// Weak reference to the CleverTap Core SDK instance.
+    /// Stored as NSObject to avoid a compile-time dependency on the CleverTap SDK.
+    internal weak var cleverTapInstance: NSObject?
+
     /// Event name for server fetch requests.
     static let wzrkFetch = "wzrk_fetch"
 
@@ -256,6 +260,60 @@ public class NativeDisplayBridge {
         listeners.remove(listener)
     }
 
+    // MARK: - Attribution Push Methods
+
+    /// Push a display unit viewed event to the CleverTap Core SDK.
+    ///
+    /// Calls `pushDisplayUnitViewedEventForID:` via performSelector to avoid
+    /// a compile-time dependency on the CleverTap SDK.
+    ///
+    /// - Parameter unitId: The `wzrk_id` of the display unit that was viewed.
+    /// - Returns: `true` if the event was sent, `false` if no CleverTap instance is available.
+    @discardableResult
+    public func pushViewedEvent(unitId: String) -> Bool {
+        guard let ct = cleverTapInstance else { return false }
+        let sel = NSSelectorFromString("pushDisplayUnitViewedEventForID:")
+        guard ct.responds(to: sel) else { return false }
+        ct.perform(sel, with: unitId)
+        return true
+    }
+
+    /// Push a display unit clicked event to the CleverTap Core SDK.
+    ///
+    /// Calls `pushDisplayUnitClickedEventForID:` via performSelector to avoid
+    /// a compile-time dependency on the CleverTap SDK.
+    ///
+    /// - Parameter unitId: The `wzrk_id` of the display unit that was clicked.
+    /// - Returns: `true` if the event was sent, `false` if no CleverTap instance is available.
+    @discardableResult
+    public func pushClickedEvent(unitId: String) -> Bool {
+        guard let ct = cleverTapInstance else { return false }
+        let sel = NSSelectorFromString("pushDisplayUnitClickedEventForID:")
+        guard ct.responds(to: sel) else { return false }
+        ct.perform(sel, with: unitId)
+        return true
+    }
+
+    /// Create an action listener that automatically forwards viewed/clicked events to
+    /// the CleverTap Core SDK via `pushDisplayUnitViewedEventForID:` /
+    /// `pushDisplayUnitClickedEventForID:`.
+    ///
+    /// Pass the returned listener as `actionListener` to `NativeDisplayView` or
+    /// `NativeDisplaySlot`. All other callbacks are forwarded to the optional `base` listener.
+    ///
+    /// ```swift
+    /// let listener = NativeDisplayBridge.shared.createEventForwardingListener(base: self)
+    /// NativeDisplayView(config: config, actionListener: listener)
+    /// ```
+    ///
+    /// - Parameter base: An existing action listener whose callbacks should be preserved.
+    /// - Returns: A new listener that forwards attribution events to CleverTap Core SDK.
+    public func createEventForwardingListener(
+        base: NativeDisplayActionListener? = nil
+    ) -> NativeDisplayActionListener {
+        return NativeDisplayEventForwardingListener(bridge: self, base: base)
+    }
+
     // MARK: - Clear
 
     /// Clear all cached display units, tear down auto-wire, and reset state.
@@ -285,5 +343,49 @@ public class NativeDisplayBridge {
                 listener.onNativeDisplaysLoaded(units)
             }
         }
+    }
+}
+
+// MARK: - Event Forwarding Listener
+
+/// Concrete `NativeDisplayActionListener` that forwards `onDisplayUnitViewed` and
+/// `onDisplayUnitClicked` callbacks to the CleverTap Core SDK via
+/// `NativeDisplayBridge.pushViewedEvent` / `pushClickedEvent`.
+///
+/// All other callbacks are forwarded to the optional `base` listener unchanged.
+/// Inherits from `NSObject` because `NativeDisplayActionListener` is an `@objc` protocol.
+private class NativeDisplayEventForwardingListener: NSObject, NativeDisplayActionListener {
+    private weak var bridge: NativeDisplayBridge?
+    private weak var base: NativeDisplayActionListener?
+
+    init(bridge: NativeDisplayBridge, base: NativeDisplayActionListener?) {
+        self.bridge = bridge
+        self.base = base
+    }
+
+    func onOpenUrl(url: String, openInBrowser: Bool) -> Bool {
+        return base?.onOpenUrl(url: url, openInBrowser: openInBrowser) ?? false
+    }
+
+    func onCustomAction(key: String, value: Any?, metadata: [String: String]?) {
+        base?.onCustomAction(key: key, value: value, metadata: metadata)
+    }
+
+    func onNavigate(destination: String, params: [String: String]?) {
+        base?.onNavigate(destination: destination, params: params)
+    }
+
+    func onTrackEvent(eventName: String, properties: [String: Any]?) {
+        base?.onTrackEvent(eventName: eventName, properties: properties)
+    }
+
+    func onDisplayUnitViewed(unitId: String) {
+        base?.onDisplayUnitViewed?(unitId: unitId)
+        bridge?.pushViewedEvent(unitId: unitId)
+    }
+
+    func onDisplayUnitClicked(unitId: String) {
+        base?.onDisplayUnitClicked?(unitId: unitId)
+        bridge?.pushClickedEvent(unitId: unitId)
     }
 }
