@@ -1025,6 +1025,7 @@ struct RenderElement: View {
         let muted = element.bindings["muted"].map { evaluator.evaluateBoolean($0) } ?? false
         let showControls = element.bindings["showControls"].map { evaluator.evaluateBoolean($0) } ?? true
         let showFullscreen = element.bindings["showFullscreen"].map { evaluator.evaluateBoolean($0) } ?? true
+        let openUrl = element.bindings["openUrl"].map { evaluator.evaluateString($0) }.flatMap { $0.isEmpty ? nil : $0 }
 
         if !videoUrl.isEmpty, let url = URL(string: videoUrl) {
             VideoPlayerView(
@@ -1033,7 +1034,8 @@ struct RenderElement: View {
                 loop: loop,
                 muted: muted,
                 showControls: showControls,
-                showFullscreen: showFullscreen
+                showFullscreen: showFullscreen,
+                openUrl: openUrl
             )
         } else {
             // Fallback UI
@@ -1475,9 +1477,10 @@ public struct ColorParser {
 // MARK: - Video Player Components
 
 /// Manages AVPlayer lifecycle and state for video playback
-private class PlayerManager: ObservableObject {
+fileprivate class PlayerManager: ObservableObject {
     @Published var isPlaying: Bool = false
     @Published var isMuted: Bool = false
+    @Published var isEnded: Bool = false
 
     var player: AVPlayer?
     private var playerObserver: NSObjectProtocol?
@@ -1489,15 +1492,17 @@ private class PlayerManager: ObservableObject {
         player?.isMuted = muted
         self.isMuted = muted
 
-        // Setup loop observer (BEST PRACTICE: specify object parameter)
-        if loop {
-            playerObserver = NotificationCenter.default.addObserver(
-                forName: .AVPlayerItemDidPlayToEndTime,
-                object: playerItem,  // IMPORTANT: prevents memory leaks
-                queue: .main
-            ) { [weak self] _ in
+        // Setup end-of-video observer (used for both loop and ended-state tracking)
+        playerObserver = NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemDidPlayToEndTime,
+            object: playerItem,  // IMPORTANT: prevents memory leaks
+            queue: .main
+        ) { [weak self] _ in
+            if loop {
                 self?.player?.seek(to: .zero)
                 self?.player?.play()
+            } else {
+                self?.isEnded = true
             }
         }
 
@@ -1518,6 +1523,10 @@ private class PlayerManager: ObservableObject {
         if isPlaying {
             player?.pause()
         } else {
+            if isEnded {
+                isEnded = false
+                player?.seek(to: .zero)
+            }
             player?.play()
         }
     }
@@ -1587,6 +1596,25 @@ private struct VideoPlayerLayer: UIViewRepresentable {
     }
 }
 
+private struct VideoControlIcon: View {
+    let systemName: String
+    let accessibilityLabel: String
+    var size: CGFloat = 32
+    let action: () -> Void
+
+    var body: some View {
+        Image(systemName: systemName)
+            .font(.system(size: size * 0.45))
+            .foregroundColor(.white)
+            .frame(width: size, height: size)
+            .background(Color.black.opacity(0.4))
+            .clipShape(RoundedRectangle(cornerRadius: size * 0.2))
+            .contentShape(Rectangle())
+            .onTapGesture(perform: action)
+            .accessibilityLabel(accessibilityLabel)
+    }
+}
+
 /// Main video player view with custom controls
 private struct VideoPlayerView: View {
     let url: URL
@@ -1595,15 +1623,18 @@ private struct VideoPlayerView: View {
     let muted: Bool
     let showControls: Bool
     let showFullscreen: Bool
+    let openUrl: String?
 
     @StateObject private var playerManager = PlayerManager()
     @State private var showControlsUI = false
     @State private var controlsOpacity: Double = 0
+    @State private var isFullscreen = false
 
     var body: some View {
         ZStack {
-            // Custom AVPlayerLayer
+            // Custom AVPlayerLayer — hidden when fullscreen (shared AVPlayer instance)
             VideoPlayerLayer(player: playerManager.player)
+                .opacity(isFullscreen ? 0 : 1)
                 .onTapGesture {
                     if showControls {
                         withAnimation(.easeInOut(duration: 0.3)) {
@@ -1617,49 +1648,50 @@ private struct VideoPlayerView: View {
             if showControls && controlsOpacity > 0 {
                 VStack {
                     Spacer()
-
-                    HStack(spacing: 16) {
-                        // Play/Pause button
-                        Button(action: {
+                    HStack(spacing: 12) {
+                        VideoControlIcon(
+                            systemName: playerManager.isPlaying ? "pause.fill" : "play.fill",
+                            accessibilityLabel: playerManager.isPlaying ? "Pause" : "Play"
+                        ) {
                             playerManager.togglePlayPause()
-                        }) {
-                            Image(systemName: playerManager.isPlaying ? "pause.fill" : "play.fill")
-                                .font(.system(size: 24))
-                                .foregroundColor(.white)
-                                .frame(width: 44, height: 44)
                         }
-
-                        // Mute/Unmute button
-                        Button(action: {
-                            playerManager.toggleMute()
-                        }) {
-                            Image(systemName: playerManager.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
-                                .font(.system(size: 24))
-                                .foregroundColor(.white)
-                                .frame(width: 44, height: 44)
-                        }
-
-                        // Fullscreen button (if enabled)
-                        if showFullscreen {
-                            Button(action: {
-                                // TODO: Implement fullscreen functionality
-                            }) {
-                                Image(systemName: "arrow.up.left.and.arrow.down.right")
-                                    .font(.system(size: 24))
-                                    .foregroundColor(.white)
-                                    .frame(width: 44, height: 44)
+                        if let url = openUrl {
+                            VideoControlIcon(
+                                systemName: "arrow.up.right.square",
+                                accessibilityLabel: "Open URL"
+                            ) {
+                                if let u = URL(string: url) {
+                                    UIApplication.shared.open(u)
+                                }
                             }
                         }
-
+                        VideoControlIcon(
+                            systemName: playerManager.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill",
+                            accessibilityLabel: playerManager.isMuted ? "Unmute" : "Mute"
+                        ) {
+                            playerManager.toggleMute()
+                        }
+                        if showFullscreen {
+                            VideoControlIcon(
+                                systemName: "arrow.up.left.and.arrow.down.right",
+                                accessibilityLabel: "Enter fullscreen"
+                            ) {
+                                isFullscreen = true
+                            }
+                        }
                         Spacer()
                     }
-                    .padding()
-                    .background(
-                        Color.black.opacity(0.5 * controlsOpacity)
-                    )
+                    .padding(12)
                 }
                 .opacity(controlsOpacity)
             }
+        }
+        .fullScreenCover(isPresented: $isFullscreen) {
+            VideoFullscreenView(
+                playerManager: playerManager,
+                openUrl: openUrl,
+                isPresented: $isFullscreen
+            )
         }
         .onAppear {
             playerManager.setupPlayer(url: url, autoPlay: autoPlay, loop: loop, muted: muted)
@@ -1675,6 +1707,95 @@ private struct VideoPlayerView: View {
                         showControlsUI = false
                         controlsOpacity = 0
                     }
+                }
+            }
+        }
+    }
+}
+
+private struct VideoFullscreenView: View {
+    @ObservedObject var playerManager: PlayerManager
+    let openUrl: String?
+    @Binding var isPresented: Bool
+    @State private var showControlsUI = true
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            VideoPlayerLayer(player: playerManager.player)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        showControlsUI.toggle()
+                    }
+                }
+
+            if showControlsUI {
+                // Close — top right
+                VStack {
+                    HStack {
+                        Spacer()
+                        VideoControlIcon(systemName: "xmark", accessibilityLabel: "Close fullscreen") {
+                            isPresented = false
+                        }
+                        .padding(12)
+                    }
+                    Spacer()
+                }
+
+                // Center play/pause
+                VideoControlIcon(
+                    systemName: playerManager.isPlaying ? "pause.fill" : "play.fill",
+                    accessibilityLabel: playerManager.isPlaying ? "Pause" : "Play",
+                    size: 40
+                ) {
+                    playerManager.togglePlayPause()
+                }
+
+                // Bottom row
+                VStack {
+                    Spacer()
+                    HStack(spacing: 16) {
+                        if let urlStr = openUrl, let url = URL(string: urlStr) {
+                            VideoControlIcon(
+                                systemName: "arrow.up.right.square",
+                                accessibilityLabel: "Open URL"
+                            ) {
+                                UIApplication.shared.open(url)
+                            }
+                        }
+                        VideoControlIcon(
+                            systemName: playerManager.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill",
+                            accessibilityLabel: playerManager.isMuted ? "Unmute" : "Mute"
+                        ) {
+                            playerManager.toggleMute()
+                        }
+                        VideoControlIcon(
+                            systemName: "arrow.down.right.and.arrow.up.left",
+                            accessibilityLabel: "Exit fullscreen"
+                        ) {
+                            isPresented = false
+                        }
+                    }
+                    .padding(16)
+                }
+            }
+        }
+        .onChange(of: showControlsUI) { isShown in
+            if isShown {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        showControlsUI = false
+                    }
+                }
+            }
+        }
+        .onAppear {
+            // Auto-hide controls after 3 seconds when fullscreen opens
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    showControlsUI = false
                 }
             }
         }

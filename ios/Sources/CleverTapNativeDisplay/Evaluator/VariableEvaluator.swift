@@ -76,11 +76,18 @@ public class VariableEvaluator {
             return evaluateEquality(cleaned, operator: "!=")
         }
         
-        // Direct boolean variable
+        // Handle plain string literals "true" / "false" sent directly in bindings
+        switch cleaned.lowercased() {
+        case "true": return true
+        case "false": return false
+        default: break
+        }
+
+        // Fall back to variable lookup for {{variableName}} expressions
         if let value = getVariable(cleaned) {
             return asBool(value) ?? false
         }
-        
+
         return false
     }
     

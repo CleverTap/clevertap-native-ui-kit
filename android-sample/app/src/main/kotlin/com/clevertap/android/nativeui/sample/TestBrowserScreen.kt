@@ -44,7 +44,7 @@ import androidx.compose.ui.text.withStyle
 fun TestBrowserScreen() {
     val context = LocalContext.current
 
-    // List of all test configuration files (176 tests)
+    // List of all test configuration files (181 tests)
     val testFiles = remember {
         listOf(
             "test-001-vertical-simple.json",
@@ -227,7 +227,9 @@ fun TestBrowserScreen() {
             "test-177-html-inline-basic.json",
             "test-178-html-with-javascript.json",
             "test-179-html-transparent-bg.json",
-            "test-180-html-scrollable-content.json"
+            "test-180-html-scrollable-content.json",
+            // Video fullscreen + openUrl binding
+            "test-172-video-fullscreen-openurl.json"
         )
     }
 
