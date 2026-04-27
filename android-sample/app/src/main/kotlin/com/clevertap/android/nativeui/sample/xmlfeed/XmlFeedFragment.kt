@@ -17,6 +17,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridgeListener
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
@@ -26,9 +30,7 @@ import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
 import com.clevertap.android.nativeui.sample.databinding.FragmentXmlFeedBinding
 import com.clevertap.android.sdk.CleverTapAPI
 import com.google.android.material.R as MaterialR
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import kotlinx.coroutines.launch
 
 /**
  * XML-based integration test screen.
@@ -45,18 +47,15 @@ class XmlFeedFragment : Fragment() {
     private var _binding: FragmentXmlFeedBinding? = null
     private val binding get() = _binding!!
 
-    private val logEntries = mutableListOf<String>()
-    private val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.US)
+    private val viewModel: XmlFeedViewModel by viewModels()
 
     private var bridge: NativeDisplayBridge? = null
     private var cleverTapApi: CleverTapAPI? = null
 
     private val bridgeListener = object : NativeDisplayBridgeListener {
         override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
-            activity?.runOnUiThread {
-                log("Received ${units.size} unit(s): ${units.joinToString { it.unitId }}")
-                renderUnits(units)
-            }
+            log("Received ${units.size} unit(s): ${units.joinToString { it.unitId }}")
+            renderUnits(units)
         }
     }
 
@@ -114,6 +113,14 @@ class XmlFeedFragment : Fragment() {
         setupEventInput()
         setupCanvas()
         setupClearLog()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.logEntries.collect { entries ->
+                    updateLogView(entries)
+                }
+            }
+        }
     }
 
     private fun setupEventInput() {
@@ -148,8 +155,7 @@ class XmlFeedFragment : Fragment() {
 
     private fun setupClearLog() {
         binding.clearLogButton.setOnClickListener {
-            logEntries.clear()
-            updateLogView()
+            viewModel.clearLog()
         }
     }
 
@@ -177,18 +183,16 @@ class XmlFeedFragment : Fragment() {
     }
 
     private fun log(message: String) {
-        val timestamp = timeFormat.format(Date())
-        logEntries.add("[$timestamp] $message")
-        activity?.runOnUiThread { updateLogView() }
+        viewModel.log(message)
     }
 
-    private fun updateLogView() {
-        if (logEntries.isEmpty()) {
+    private fun updateLogView(entries: List<String>) {
+        if (entries.isEmpty()) {
             binding.logTextView.text = "No events yet"
             binding.logTextView.setTextColor(Color.parseColor("#607D8B"))
             return
         }
-        binding.logTextView.text = logEntries.joinToString("\n")
+        binding.logTextView.text = entries.joinToString("\n")
         binding.logTextView.setTextColor(Color.parseColor("#80CBC4"))
         binding.logScrollView.post { binding.logScrollView.fullScroll(View.FOCUS_DOWN) }
     }

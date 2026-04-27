@@ -8,28 +8,65 @@ import CleverTapSDK
 /// CleverTap instance and renders server-driven units as they arrive.
 struct CleverTapIntegrationView: View {
     @StateObject private var viewModel = CleverTapIntegrationViewModel()
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
 
     var body: some View {
-        VStack(spacing: 0) {
-            // -- Fire Event (fixed header) --
-            fireEventSection
-
-            Divider()
-
-            // -- Display Canvas (flexible, takes remaining space) --
-            displayCanvasSection
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-            Divider()
-
-            // -- Event Log (fixed footer) --
-            eventLogSection
+        Group {
+            if verticalSizeClass == .compact {
+                landscapeLayout
+            } else {
+                portraitLayout
+            }
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle("CleverTap Integration")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            viewModel.setUp()
+        }
         .onDisappear {
             viewModel.tearDown()
+        }
+    }
+
+    // MARK: - Layout Variants
+
+    private var portraitLayout: some View {
+        VStack(spacing: 0) {
+            fireEventSection
+            Divider()
+            displayCanvasSection
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            Divider()
+            eventLogSection
+        }
+    }
+
+    private var landscapeLayout: some View {
+        GeometryReader { geo in
+            HStack(spacing: 0) {
+                // Left panel (33%): event input + event log
+                VStack(spacing: 0) {
+                    fireEventSection
+                    Divider()
+                    eventLogSection
+                }
+                .frame(width: geo.size.width * 0.33, height: geo.size.height)
+
+                Divider()
+
+                // Right panel (67%): canvas at full height.
+                // nativeDisplayParentSize is set once here so the SDK skips its
+                // internal GeometryReader — prevents each unit from sizing itself
+                // to the full panel height and appearing to overlap.
+                displayCanvasSection
+                    .environment(\.nativeDisplayParentSize, CGSize(
+                        width: geo.size.width * 0.67,
+                        height: geo.size.height
+                    ))
+                    .frame(width: geo.size.width * 0.67, height: geo.size.height)
+                    .clipped()
+            }
         }
     }
 
@@ -49,9 +86,11 @@ struct CleverTapIntegrationView: View {
                           || !viewModel.cleverTapAvailable)
             }
 
-            Text("Native Display Canvas")
-                .font(.subheadline)
-                .fontWeight(.semibold)
+            if verticalSizeClass != .compact {
+                Text("Native Display Canvas")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+            }
         }
         .padding(10)
     }
@@ -81,6 +120,7 @@ struct CleverTapIntegrationView: View {
                             .frame(maxWidth: .infinity)
                         }
                     }
+                    .frame(maxWidth: .infinity)
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -134,7 +174,7 @@ struct CleverTapIntegrationView: View {
                     }
                 }
             }
-            .frame(minHeight: 80, maxHeight: 160)
+            .frame(minHeight: 80, maxHeight: verticalSizeClass == .compact ? .infinity : 160)
             .background(Color(red: 0.15, green: 0.19, blue: 0.22))
             .cornerRadius(8)
         }
@@ -176,9 +216,6 @@ class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBr
         } else {
             log("CleverTap not configured — check Info.plist credentials")
         }
-
-        bridge.addListener(self)
-        log("Bridge listener registered")
     }
     
     // MARK: - NativeDisplayBridgeListener
@@ -233,6 +270,11 @@ class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBr
         cleverTapInstance?.recordEvent(name)
         log("Sent event: \(name)")
         eventName = ""
+    }
+
+    func setUp() {
+        bridge.addListener(self)
+        log("Bridge listener registered")
     }
 
     func tearDown() {

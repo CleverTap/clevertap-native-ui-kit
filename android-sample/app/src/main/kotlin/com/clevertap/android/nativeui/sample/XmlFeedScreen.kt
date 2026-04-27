@@ -22,11 +22,19 @@ fun XmlFeedScreen(modifier: Modifier = Modifier) {
                 addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
                     override fun onViewAttachedToWindow(v: View) {
                         val fm = activity.supportFragmentManager
-                        if (fm.findFragmentByTag("xml_feed") == null) {
-                            fm.beginTransaction()
-                                .replace(v.id, XmlFeedFragment(), "xml_feed")
-                                .commitNow()
+                        // On Activity recreation (rotation), the system restores the fragment
+                        // into its original container ID which no longer exists in the new
+                        // layout. FragmentManager forbids changing a fragment's container ID,
+                        // so we must remove the stale instance and add a fresh one into the
+                        // current container. The ViewModel (retained via viewModels()) survives
+                        // the recreation, so state is preserved across the remove+add.
+                        val existing = fm.findFragmentByTag("xml_feed")
+                        if (existing != null) {
+                            fm.beginTransaction().remove(existing).commitNow()
                         }
+                        fm.beginTransaction()
+                            .replace(v.id, XmlFeedFragment(), "xml_feed")
+                            .commitNow()
                         removeOnAttachStateChangeListener(this)
                     }
                     override fun onViewDetachedFromWindow(v: View) {}
