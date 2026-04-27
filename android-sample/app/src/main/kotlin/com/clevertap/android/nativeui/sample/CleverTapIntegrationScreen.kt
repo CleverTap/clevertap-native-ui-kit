@@ -98,7 +98,8 @@ fun CleverTapIntegrationScreen() {
         }
     }
 
-    // --- Auto-initialize on screen load ---
+    // Bridge is initialized, bound, and fetch requested in SampleApplication.
+    // This screen only registers its listener to observe display units.
     val cleverTapApi = remember {
         CleverTapAPI.getDefaultInstance(context.applicationContext)
     }
@@ -107,14 +108,6 @@ fun CleverTapIntegrationScreen() {
 
     DisposableEffect(bridge) {
         bridge.addListener(bridgeListener)
-
-        if (cleverTapApi != null) {
-            bridge.bind(cleverTapApi)
-            bridge.fetchNativeDisplays(cleverTapApi)
-            Log.d("CleverTapIntegration", "Bridge bound and fetch requested")
-        } else {
-            Log.w("CleverTapIntegration", "CleverTapAPI.getDefaultInstance() returned null")
-        }
 
         onDispose {
             bridge.removeListener(bridgeListener)

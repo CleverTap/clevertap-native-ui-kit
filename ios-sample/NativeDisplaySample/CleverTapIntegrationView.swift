@@ -10,13 +10,20 @@ struct CleverTapIntegrationView: View {
     @StateObject private var viewModel = CleverTapIntegrationViewModel()
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                fireEventSection
-                displayCanvasSection
-                eventLogSection
-            }
-            .padding(16)
+        VStack(spacing: 0) {
+            // -- Fire Event (fixed header) --
+            fireEventSection
+
+            Divider()
+
+            // -- Display Canvas (flexible, takes remaining space) --
+            displayCanvasSection
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            Divider()
+
+            // -- Event Log (fixed footer) --
+            eventLogSection
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle("CleverTap Integration")
@@ -29,8 +36,8 @@ struct CleverTapIntegrationView: View {
     // MARK: - Fire Event
 
     private var fireEventSection: some View {
-        SectionCard(title: "Fire Event", icon: "paperplane") {
-            HStack(spacing: 12) {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
                 TextField("Enter event name", text: $viewModel.eventName)
                     .textFieldStyle(.roundedBorder)
 
@@ -41,61 +48,42 @@ struct CleverTapIntegrationView: View {
                 .disabled(viewModel.eventName.trimmingCharacters(in: .whitespaces).isEmpty
                           || !viewModel.cleverTapAvailable)
             }
+
+            Text("Native Display Canvas")
+                .font(.subheadline)
+                .fontWeight(.semibold)
         }
+        .padding(16)
     }
 
     // MARK: - Display Canvas
 
     private var displayCanvasSection: some View {
-        SectionCard(title: "Native Displays (\(viewModel.displayUnits.count))", icon: "rectangle.on.rectangle") {
+        Group {
             if viewModel.displayUnits.isEmpty {
-                HStack {
-                    Spacer()
-                    VStack(spacing: 8) {
-                        Image(systemName: "tray")
-                            .font(.title2)
-                            .foregroundColor(.secondary)
-                        Text("Waiting for Native Display response...")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                    Spacer()
+                VStack(spacing: 8) {
+                    Image(systemName: "tray")
+                        .font(.title2)
+                        .foregroundColor(.secondary)
+                    Text("Waiting for Native Display response...")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
                 }
-                .padding(.vertical, 32)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                VStack(spacing: 16) {
-                    ForEach(viewModel.displayUnits, id: \.unitId) { unit in
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Label(unit.unitId, systemImage: "tag")
-                                    .font(.system(size: 12, weight: .medium, design: .monospaced))
-                                    .foregroundColor(.blue)
-                                    .lineLimit(1)
-                                Spacer()
-                                if !unit.customExtras.isEmpty {
-                                    Text("\(unit.customExtras.count) extras")
-                                        .font(.system(size: 11))
-                                        .foregroundColor(.secondary)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 2)
-                                        .background(Color(.systemGray5))
-                                        .cornerRadius(4)
-                                }
-                            }
-
+                ScrollView {
+                    VStack(spacing: 12) {
+                        ForEach(viewModel.displayUnits, id: \.unitId) { unit in
                             NativeDisplayView(
                                 config: unit.config,
                                 actionListener: viewModel
                             )
+                            .environment(\.nativeDisplayParentSize, UIScreen.main.bounds.size)
                             .frame(maxWidth: .infinity)
-                            .cornerRadius(12)
-                            .clipped()
                         }
-                        .padding(12)
-                        .background(Color(.systemBackground))
-                        .cornerRadius(12)
-                        .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
                 }
             }
         }
@@ -104,23 +92,64 @@ struct CleverTapIntegrationView: View {
     // MARK: - Event Log
 
     private var eventLogSection: some View {
-        SectionCard(title: "Event Log", icon: "doc.text") {
-            if viewModel.eventLog.isEmpty {
-                Text("Events will appear here.")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-            } else {
-                VStack(alignment: .leading, spacing: 2) {
-                    ForEach(viewModel.eventLog.indices, id: \.self) { index in
-                        Text(viewModel.eventLog[index])
-                            .font(.system(size: 11, design: .monospaced))
-                            .foregroundColor(.primary)
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                HStack(spacing: 6) {
+                    Image(systemName: "doc.text")
+                        .foregroundColor(.blue)
+                        .font(.system(size: 14, weight: .semibold))
+                    Text("Event Log")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                }
+                Spacer()
+                if !viewModel.eventLog.isEmpty {
+                    Button("Clear") {
+                        viewModel.eventLog.removeAll()
+                    }
+                    .font(.system(size: 12))
+                }
+            }
+
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 2) {
+                        if viewModel.eventLog.isEmpty {
+                            Text("No events yet")
+                                .font(.system(size: 11, design: .monospaced))
+                                .foregroundColor(Color(.systemGray))
+                        } else {
+                            ForEach(viewModel.eventLog.indices, id: \.self) { index in
+                                Text(viewModel.eventLog[index])
+                                    .font(.system(size: 11, design: .monospaced))
+                                    .foregroundColor(logColor(for: viewModel.eventLog[index]))
+                                    .id(index)
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(10)
+                }
+                .onChange(of: viewModel.eventLog.count) { _ in
+                    if let last = viewModel.eventLog.indices.last {
+                        proxy.scrollTo(last)
                     }
                 }
             }
+            .frame(minHeight: 80, maxHeight: 160)
+            .background(Color(red: 0.15, green: 0.19, blue: 0.22))
+            .cornerRadius(8)
         }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 8)
+    }
+
+    private func logColor(for message: String) -> Color {
+        if message.contains("EVENT") { return Color(red: 1, green: 0.84, blue: 0.31) }
+        if message.contains("ACTION") { return Color(red: 0.51, green: 0.83, blue: 0.98) }
+        if message.contains("ERROR") { return Color(red: 0.94, green: 0.6, blue: 0.6) }
+        if message.contains("Received") { return Color(red: 0.65, green: 0.84, blue: 0.65) }
+        return Color(red: 0.5, green: 0.8, blue: 0.77)
     }
 }
 
@@ -138,31 +167,20 @@ class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBr
     
     override init() {
         super.init()
-        
-        // Get CleverTap shared instance
+
+        // Bridge is initialized, bound, and fetch requested in NativeDisplaySampleApp.
+        // This view model only registers its listener to observe display units.
         cleverTapInstance = CleverTap.sharedInstance()
         cleverTapAvailable = cleverTapInstance != nil
-        
+
         if cleverTapAvailable {
             log("CleverTap instance found")
         } else {
             log("CleverTap not configured — check Info.plist credentials")
         }
-        
-        // Register bridge listener
+
         bridge.addListener(self)
         log("Bridge listener registered")
-        
-        // Bind bridge to CleverTap
-        if let ct = cleverTapInstance {
-            let didBind = bridge.bind(ct)
-            bridgeBound = didBind
-            log(didBind ? "Bridge bound to CleverTap" : "Bridge bind failed")
-            
-            // Fetch Native Displays from server
-            let didFetch = bridge.fetchNativeDisplays(ct)
-            log(didFetch ? "Fetch request sent" : "Fetch request failed")
-        }
     }
     
     // MARK: - NativeDisplayBridgeListener
@@ -243,31 +261,6 @@ class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBr
         f.dateFormat = "HH:mm:ss.SSS"
         return f
     }()
-}
-
-// MARK: - Supporting Views
-
-private struct SectionCard<Content: View>: View {
-    let title: String
-    let icon: String
-    @ViewBuilder let content: Content
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 8) {
-                Image(systemName: icon)
-                    .foregroundColor(.blue)
-                    .font(.system(size: 16, weight: .semibold))
-                Text(title)
-                    .font(.headline)
-            }
-            content
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-    }
 }
 
 // MARK: - Preview

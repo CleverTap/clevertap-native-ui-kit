@@ -179,6 +179,7 @@
 		41969A762F0E6A4B0050EB83 /* animation_container_fade.json in Resources */ = {isa = PBXBuildFile; fileRef = 41969A732F0E6A4B0050EB83 /* animation_container_fade.json */; };
 		41969A772F0E6A4B0050EB83 /* animation_staggered_children.json in Resources */ = {isa = PBXBuildFile; fileRef = 41969A742F0E6A4B0050EB83 /* animation_staggered_children.json */; };
 		41BD00022F8F000000714978 /* BridgeIntegrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41BD00012F8F000000714978 /* BridgeIntegrationView.swift */; };
+		41BD00062F8F000200714978 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41BD00052F8F000200714978 /* AppDelegate.swift */; };
 		41BD00042F8F000100714978 /* CleverTapIntegrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41BD00032F8F000100714978 /* CleverTapIntegrationView.swift */; };
 		41C5EB1E2F34E6FC0066BE34 /* JSONViewerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41C5EB1D2F34E6FC0066BE34 /* JSONViewerView.swift */; };
 		41C5EB1F2F3B40460066BE34 /* banner-01-hero-summer-sale.json in Resources */ = {isa = PBXBuildFile; fileRef = 411302922F34AC72004B6254 /* banner-01-hero-summer-sale.json */; };
@@ -404,8 +405,10 @@
 		41969A732F0E6A4B0050EB83 /* animation_container_fade.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = animation_container_fade.json; sourceTree = "<group>"; };
 		41969A742F0E6A4B0050EB83 /* animation_staggered_children.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = animation_staggered_children.json; sourceTree = "<group>"; };
 		41BD00012F8F000000714978 /* BridgeIntegrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeIntegrationView.swift; sourceTree = "<group>"; };
+		41BD00052F8F000200714978 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		41BD00032F8F000100714978 /* CleverTapIntegrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleverTapIntegrationView.swift; sourceTree = "<group>"; };
 		41C5EB1D2F34E6FC0066BE34 /* JSONViewerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONViewerView.swift; sourceTree = "<group>"; };
+		41E6E6DB2F7A50940004B077 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		41F1AD512F2B6E250018C5EA /* NativeDisplaySampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NativeDisplaySampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		41F1AD5E2F2B7D330018C5EA /* TestConfigBrowserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestConfigBrowserView.swift; sourceTree = "<group>"; };
 		41F1AD602F2B7D420018C5EA /* JsonLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonLoader.swift; sourceTree = "<group>"; };
@@ -660,8 +663,10 @@
 		GRP_APP /* NativeDisplaySample */ = {
 			isa = PBXGroup;
 			children = (
+				41E6E6DB2F7A50940004B077 /* Info.plist */,
 				414DA94E2F6001EC00714978 /* ImagePreloader.swift */,
 				41C5EB1D2F34E6FC0066BE34 /* JSONViewerView.swift */,
+				41BD00052F8F000200714978 /* AppDelegate.swift */,
 				41BD00012F8F000000714978 /* BridgeIntegrationView.swift */,
 				41BD00032F8F000100714978 /* CleverTapIntegrationView.swift */,
 				411302792F33E757004B6254 /* BannerDetailView.swift */,
@@ -1023,6 +1028,7 @@
 				41C5EB1E2F34E6FC0066BE34 /* JSONViewerView.swift in Sources */,
 				41F1AD612F2B7D420018C5EA /* JsonLoader.swift in Sources */,
 				B001 /* NativeDisplaySampleApp.swift in Sources */,
+				41BD00062F8F000200714978 /* AppDelegate.swift in Sources */,
 				41BD00022F8F000000714978 /* BridgeIntegrationView.swift in Sources */,
 				41BD00042F8F000100714978 /* CleverTapIntegrationView.swift in Sources */,
 				4113027B2F33E757004B6254 /* BannerDetailView.swift in Sources */,
@@ -1093,6 +1099,7 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NativeDisplaySample/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1123,6 +1130,7 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NativeDisplaySample/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
