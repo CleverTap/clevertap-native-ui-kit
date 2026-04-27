@@ -46,6 +46,10 @@ android {
         compose = true
     }
     
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -93,6 +97,9 @@ dependencies {
     compileOnly(libs.androidx.media3.exoplayer)
     compileOnly(libs.androidx.media3.ui)
     compileOnly(libs.androidx.media3.hls)
+
+    // CleverTap Core SDK (optional - for bridge adapter)
+    compileOnly("com.clevertap.android:clevertap-android-sdk:7.5.0")
 
     // Testing
     testImplementation(libs.junit)

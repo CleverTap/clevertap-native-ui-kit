@@ -108,6 +108,13 @@ fun NativeUIKitSampleApp() {
                                             navController.navigate("demo_screen/test_browser")
                                         }
                                     )
+                                    DropdownMenuItem(
+                                        text = { Text("🔗 Bridge Integration") },
+                                        onClick = {
+                                            showMenu = false
+                                            navController.navigate("demo_screen/bridge")
+                                        }
+                                    )
                                     HorizontalDivider()
                                     DropdownMenuItem(
                                         text = { Text("Other Demos") },
@@ -194,6 +201,7 @@ fun DemoScreenContainer(navController: androidx.navigation.NavController, demoTy
                             "arrangements" -> "📏 Arrangements"
                             "animations" -> "🎬 Animations"
                             "test_browser" -> "🧪 Test Browser"
+                            "bridge" -> "🔗 Bridge Integration"
                             "other" -> "Other Demos"
                             else -> "Demo"
                         },
@@ -223,7 +231,7 @@ fun DemoScreenContainer(navController: androidx.navigation.NavController, demoTy
                 .background(Color(0xFFF5F5F5))
                 .then(
                     // No vertical scroll for Home screen and Test Browser
-                    if (demoType == "home" || demoType == "test_browser") {
+                    if (demoType == "home" || demoType == "test_browser" || demoType == "bridge") {
                         Modifier
                     } else {
                         Modifier.verticalScroll(rememberScrollState())
@@ -231,7 +239,7 @@ fun DemoScreenContainer(navController: androidx.navigation.NavController, demoTy
                 )
                 .padding(
                     // No padding for Home screen and Test Browser to allow edge-to-edge design
-                    if (demoType == "home" || demoType == "test_browser") 0.dp else 16.dp
+                    if (demoType == "home" || demoType == "test_browser" || demoType == "bridge") 0.dp else 16.dp
                 )
         ) {
             when (demoType) {
@@ -239,6 +247,7 @@ fun DemoScreenContainer(navController: androidx.navigation.NavController, demoTy
                 "arrangements" -> ArrangementDemoScreen()
                 "animations" -> AnimationDemoScreen()
                 "test_browser" -> TestBrowserScreen()
+                "bridge" -> BridgeIntegrationScreen()
                 "other" -> OtherDemosScreen()
             }
         }
@@ -335,7 +344,7 @@ fun HomeScreen() {
     val config = remember {
         JsonLoader.loadFromAssets(context, "home_screen.json")
     }
-    
+
     if (config != null) {
         NativeDisplayView(
             config = config,
@@ -343,7 +352,7 @@ fun HomeScreen() {
             componentListener = object : com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener {
                 // Listen to ALL components by returning null
                 override fun getInterestedNodeIds(): Set<String>? = null
-                
+
                 override fun onComponentInteraction(
                     nodeId: String,
                     interactionType: com.clevertap.android.nativedisplay.listener.InteractionType,
@@ -354,7 +363,7 @@ fun HomeScreen() {
                         "HomeScreen_Click",
                         "Component: $nodeId | Type: $interactionType | HasServerAction: $hasServerAction"
                     )
-                    
+
                     // Don't consume, let server actions proceed
                     return false
                 }
@@ -458,7 +467,7 @@ private fun updateRootArrangement(
 @Composable
 fun AnimationDemoScreen() {
     val context = LocalContext.current
-    
+
     // Three demo configurations
     val demos = remember {
         listOf(
@@ -467,12 +476,12 @@ fun AnimationDemoScreen() {
             "Container + Children" to "animation_container_and_children.json"
         )
     }
-    
+
     var selectedDemo by remember { mutableStateOf(0) }
     val currentConfig = remember(selectedDemo) {
         JsonLoader.loadFromAssets(context, demos[selectedDemo].second)
     }
-    
+
     Column(modifier = Modifier.fillMaxSize()) {
         // Demo Selector
         LazyRow(
@@ -490,7 +499,7 @@ fun AnimationDemoScreen() {
                 )
             }
         }
-        
+
         // Info Card
         Card(
             modifier = Modifier
@@ -515,7 +524,7 @@ fun AnimationDemoScreen() {
                 )
             }
         }
-        
+
         // Animation Demo View
         if (currentConfig != null) {
             NativeDisplayView(
@@ -598,7 +607,7 @@ fun JsonTestScreen() {
     val config = remember {
         JsonLoader.loadFromAssets(context, "test_simple.json")
     }
-    
+
     Column(modifier = Modifier.fillMaxWidth()) {
         if (config != null) {
             Text(
@@ -627,7 +636,7 @@ fun EcommerceShowcaseScreen() {
     val config = remember {
         JsonLoader.loadFromAssets(context, "showcase_ecommerce_product.json")
     }
-    
+
     if (config != null) {
         NativeDisplayView(
             config = config,
@@ -648,7 +657,7 @@ fun SocialProfileShowcaseScreen() {
     val config = remember {
         JsonLoader.loadFromAssets(context, "showcase_social_profile.json")
     }
-    
+
     if (config != null) {
         NativeDisplayView(
             config = config,
@@ -669,7 +678,7 @@ fun DashboardShowcaseScreen() {
     val config = remember {
         JsonLoader.loadFromAssets(context, "showcase_dashboard.json")
     }
-    
+
     if (config != null) {
         NativeDisplayView(
             config = config,
