@@ -1,24 +1,31 @@
 package com.clevertap.android.nativedisplay.renderer
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.Constraints
 import com.clevertap.android.nativedisplay.evaluator.VariableEvaluator
 import com.clevertap.android.nativedisplay.handler.ActionHandler
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener
 import com.clevertap.android.nativedisplay.models.ActionTriggers
 import com.clevertap.android.nativedisplay.models.ContainerType
+import com.clevertap.android.nativedisplay.models.DimensionUnit
 import com.clevertap.android.nativedisplay.models.ElementType
 import com.clevertap.android.nativedisplay.models.NativeDisplayContainer
 import com.clevertap.android.nativedisplay.models.NativeDisplayElement
+import android.content.Context
+import com.clevertap.android.nativedisplay.models.Layout
 import com.clevertap.android.nativedisplay.models.NativeDisplayNode
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
 import com.clevertap.android.nativedisplay.models.Style
@@ -33,6 +40,7 @@ import kotlinx.collections.immutable.PersistentMap
 fun NativeDisplayView(
     config: ResolvedConfig,
     modifier: Modifier = Modifier,
+    fontFamily: FontFamily? = null,
     actionListener: NativeDisplayActionListener? = null,
     componentListener: NativeDisplayComponentListener? = null,
 ) {
@@ -43,6 +51,7 @@ fun NativeDisplayView(
         config = config,
         resolvedStyles = resolvedStyles,
         modifier = modifier,
+        fontFamily = fontFamily,
         actionListener = actionListener,
         componentListener = componentListener,
     )
@@ -56,6 +65,7 @@ fun NativeDisplayView(
     config: ResolvedConfig,
     resolvedStyles: PersistentMap<String, Style>,
     modifier: Modifier = Modifier,
+    fontFamily: FontFamily? = null,
     actionListener: NativeDisplayActionListener? = null,
     componentListener: NativeDisplayComponentListener? = null,
 ) {
@@ -79,15 +89,29 @@ fun NativeDisplayView(
         VariableEvaluator(variables = config.variables)
     }
 
-    RenderNode(
-        node = config.root,
-        resolvedStyles = resolvedStyles,
-        evaluator = evaluator,
-        modifier = modifier,
-        actionHandler = actionHandler,
-        componentListener = componentListener,
-        isRoot = true,
-    )
+    val content = @Composable {
+        BoxWithConstraints(modifier = modifier) {
+            val parentWidthPx = if (constraints.maxWidth != Constraints.Infinity) constraints.maxWidth.toFloat() else 0f
+            val parentHeightPx = if (constraints.maxHeight != Constraints.Infinity) constraints.maxHeight.toFloat() else 0f
+            val rootHeightPx = resolveRootHeightPx(config.root.layout, parentWidthPx, parentHeightPx, context)
+            RenderNode(
+                node = config.root,
+                resolvedStyles = resolvedStyles,
+                evaluator = evaluator,
+                modifier = Modifier,
+                actionHandler = actionHandler,
+                componentListener = componentListener,
+                isRoot = true,
+                rootHeightPx = rootHeightPx,
+            )
+        }
+    }
+
+    if (fontFamily != null) {
+        CompositionLocalProvider(LocalFontFamily provides fontFamily) { content() }
+    } else {
+        content()
+    }
 }
 
 /**
@@ -102,6 +126,7 @@ fun RenderNode(
     actionHandler: ActionHandler? = null,
     componentListener: NativeDisplayComponentListener? = null,
     isRoot: Boolean = false,
+    rootHeightPx: Float = 0f,
 ) {
     // Check visibility condition
     val isVisible = node.visible?.let { evaluator.evaluateBoolean(it) } ?: true
@@ -177,6 +202,7 @@ fun RenderNode(
             modifier = finalModifier,
             actionHandler = actionHandler,
             componentListener = componentListener,
+            rootHeightPx = rootHeightPx,
         )
 
         is NativeDisplayElement -> RenderElement(
@@ -185,6 +211,7 @@ fun RenderNode(
             resolvedStyle = resolvedStyle,
             modifier = finalModifier,
             actionHandler = actionHandler,
+            rootHeightPx = rootHeightPx,
         )
     }
 }
@@ -200,6 +227,7 @@ private fun RenderContainer(
     modifier: Modifier = Modifier,
     actionHandler: ActionHandler? = null,
     componentListener: NativeDisplayComponentListener? = null,
+    rootHeightPx: Float = 0f,
 ) {
     val containerModifier = modifier.applyPadding(container.layout)
 
@@ -217,7 +245,8 @@ private fun RenderContainer(
                             evaluator = evaluator,
                             modifier = Modifier,
                             actionHandler = actionHandler,
-                            componentListener = componentListener
+                            componentListener = componentListener,
+                            rootHeightPx = rootHeightPx,
                         )
                     }
                 }
@@ -237,7 +266,8 @@ private fun RenderContainer(
                             evaluator = evaluator,
                             modifier = Modifier,
                             actionHandler = actionHandler,
-                            componentListener = componentListener
+                            componentListener = componentListener,
+                            rootHeightPx = rootHeightPx,
                         )
                     }
                 }
@@ -254,7 +284,8 @@ private fun RenderContainer(
                             evaluator = evaluator,
                             modifier = Modifier,
                             actionHandler = actionHandler,
-                            componentListener = componentListener
+                            componentListener = componentListener,
+                            rootHeightPx = rootHeightPx,
                         )
                     }
                 }
@@ -268,8 +299,74 @@ private fun RenderContainer(
                 evaluator = evaluator,
                 modifier = containerModifier,
                 actionHandler = actionHandler,
-                componentListener = componentListener
+                componentListener = componentListener,
+                rootHeightPx = rootHeightPx,
             )
         }
+    }
+}
+
+/**
+ * Resolve the root container's height in pixels for TextDimension percentage calculations.
+ *
+ * Priority:
+ * 1. Root layout has a fixed height (dp/sp/px) → convert to px
+ * 2. Root layout has aspect ratio + known parent width → compute height from width/aspectRatio
+ * 3. Root layout has percent height + known parent height → compute from parent
+ * 4. Parent height is bounded → use parent height directly
+ * 5. Fallback → screen height
+ */
+private fun resolveRootHeightPx(
+    rootLayout: Layout?,
+    parentWidthPx: Float,
+    parentHeightPx: Float,
+    context: Context,
+): Float {
+    val height = rootLayout?.height
+    val density = context.resources.displayMetrics.density
+
+    // 1. Fixed height in dp/sp/px
+    if (height != null && height.special == null) {
+        when (height.unit) {
+            DimensionUnit.DP, DimensionUnit.SP -> {
+                val px = height.value * density
+                if (px > 0) return px
+            }
+            DimensionUnit.PX -> {
+                if (height.value > 0) return height.value
+            }
+            DimensionUnit.PERCENT -> {
+                // percent needs parent height — handled below
+            }
+        }
+    }
+
+    // 2. Aspect ratio + known width → height = width / aspectRatio
+    val aspectRatio = rootLayout?.aspectRatio
+    if (aspectRatio != null && aspectRatio > 0f) {
+        val rootWidthPx = resolveRootWidthPx(rootLayout, parentWidthPx, density)
+        if (rootWidthPx > 0f) return rootWidthPx / aspectRatio
+    }
+
+    // 3. Percent height + bounded parent
+    if (height != null && height.special == null && height.unit == DimensionUnit.PERCENT && parentHeightPx > 0f) {
+        return parentHeightPx * height.value / 100f
+    }
+
+    // 4. Bounded parent height
+    if (parentHeightPx > 0f) return parentHeightPx
+
+    // 5. Fallback: screen height
+    return context.resources.displayMetrics.heightPixels.toFloat()
+}
+
+/** Resolve root width in px for aspect-ratio height calculation. */
+private fun resolveRootWidthPx(rootLayout: Layout?, parentWidthPx: Float, density: Float): Float {
+    val width = rootLayout?.width ?: return parentWidthPx
+    if (width.special != null) return parentWidthPx  // match_parent / wrap_content → use parent
+    return when (width.unit) {
+        DimensionUnit.DP, DimensionUnit.SP -> width.value * density
+        DimensionUnit.PX -> width.value
+        DimensionUnit.PERCENT -> if (parentWidthPx > 0f) parentWidthPx * width.value / 100f else 0f
     }
 }

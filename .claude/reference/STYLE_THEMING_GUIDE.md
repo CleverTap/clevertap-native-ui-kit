@@ -19,23 +19,34 @@ The Native Display System supports comprehensive styling through:
 Applied to text elements and inherited by child elements:
 
 ```kotlin
-textColor: String        // Hex color (#RRGGBB or #RRGGBBAA)
-fontSize: Float          // Size in sp (scale-independent pixels)
-fontFamily: String       // Font family name
-fontWeight: FontWeight   // LIGHT, NORMAL, MEDIUM, BOLD
-fontStyle: FontStyle     // NORMAL, ITALIC
-lineHeight: Float        // Line height in sp
-letterSpacing: Float     // Letter spacing in sp
+textColor: String            // Hex color (#RRGGBB or #RRGGBBAA)
+fontSize: TextDimension      // Font size — number (platform units) or {"value", "unit"} object
+fontFamily: String           // Font family name
+fontWeight: FontWeight       // LIGHT, NORMAL, MEDIUM, BOLD
+fontStyle: FontStyle         // NORMAL, ITALIC
+lineHeight: TextDimension    // Line height — number (platform units) or {"value", "unit"} object
+letterSpacing: Float         // Letter spacing in sp/pt
 textDecoration: TextDecoration  // NONE, UNDERLINE, STRIKETHROUGH
-textAlign: String        // "left", "center", "right", "justify"
-maxLines: Int            // Maximum lines before truncation
-overflow: TextOverflow   // CLIP, ELLIPSIS, VISIBLE
-textShadow: TextShadow   // Drop shadow effect on text
-textGradient: TextGradient  // Gradient effect on text
-opacity: Float           // 0.0 to 1.0
+textAlign: String            // "left", "center", "right", "justify"
+maxLines: Int                // Maximum lines before truncation
+overflow: TextOverflow       // CLIP, ELLIPSIS, VISIBLE
+textShadow: TextShadow      // Drop shadow effect on text
+textGradient: TextGradient   // Gradient effect on text
+opacity: Float               // 0.0 to 1.0
 ```
 
-**Example**:
+#### TextDimension
+
+`fontSize` and `lineHeight` accept two JSON formats (backward compatible):
+
+| Format | Example | Meaning |
+|--------|---------|---------|
+| Raw number | `"fontSize": 16` | Platform units (SP on Android, points on iOS) |
+| Object | `"fontSize": {"value": 40, "unit": "percent"}` | Percentage of root container height: `rootHeight × value / 1000` |
+
+The divisor is **1000** (matching FE/dashboard behavior). For example, in a 400dp container, `{"value": 40, "unit": "percent"}` resolves to `400 × 40 / 1000 = 16` platform units.
+
+**Example — platform units (legacy)**:
 ```json
 {
   "style": {
@@ -54,6 +65,18 @@ opacity: Float           // 0.0 to 1.0
       "offsetY": 2,
       "blur": 4
     }
+  }
+}
+```
+
+**Example — percentage-based font sizing**:
+```json
+{
+  "style": {
+    "textColor": "#212121",
+    "fontSize": { "value": 40, "unit": "percent" },
+    "lineHeight": { "value": 56, "unit": "percent" },
+    "fontWeight": "bold"
   }
 }
 ```
@@ -104,6 +127,77 @@ This ensures WYSIWYG (What You See Is What You Get) behavior between preview and
 
 ---
 
+### Font Family — 3-Layer Resolution
+
+`fontFamily` in JSON specifies a font name string. At render time both platforms resolve the final font through a priority chain:
+
+```
+1. Client-provided font  (CompositionLocal / Environment)  — HIGHEST
+2. JSON fontFamily       (resolved via client resolver)     — MEDIUM
+3. Platform system font  (Roboto / San Francisco)           — LOWEST
+```
+
+**Layer 1 — Client default (highest priority)**
+
+Overrides every JSON value. Useful for brand-wide font enforcement.
+
+```kotlin
+// Android: parameter shorthand
+NativeDisplayView(config = config, fontFamily = InterFontFamily)
+
+// Android: CompositionLocal (useful when wrapping multiple views)
+CompositionLocalProvider(LocalFontFamily provides InterFontFamily) {
+    NativeDisplayView(config = config)
+}
+```
+
+```swift
+// iOS: environment value
+NativeDisplayView(config: config)
+    .environment(\.nativeDisplayFontFamily, "Inter")
+```
+
+**Layer 2 — JSON fontFamily + client resolver (medium priority)**
+
+The JSON `fontFamily` string is passed to a client-provided resolver closure. If the resolver returns a font, that font is used. If no resolver is registered but a `fontFamily` string exists, `Font.custom(name)` / `Font.custom(name, size:)` is called directly.
+
+```kotlin
+// Android: register a resolver alongside (or instead of) the default font
+CompositionLocalProvider(
+    LocalFontFamilyResolver provides { name ->
+        when (name.lowercase()) {
+            "inter" -> InterFontFamily
+            "mono"  -> FontFamily.Monospace
+            else    -> null   // null → fall through to layer 3
+        }
+    }
+) {
+    NativeDisplayView(config = config)
+}
+```
+
+```swift
+// iOS: resolver closure receives (fontName, size, weight)
+NativeDisplayView(config: config)
+    .environment(\.nativeDisplayFontResolver, { name, size, weight in
+        switch name.lowercased() {
+        case "inter": return Font.custom("Inter", size: size).weight(weight)
+        case "mono":  return Font.custom("CourierNewPSMT", size: size).weight(weight)
+        default:      return nil   // nil → fall through to layer 3
+        }
+    })
+```
+
+**Layer 3 — System default (lowest priority)**
+
+When both layers above produce no font (all return `null`/`nil`), Compose's `Text(fontFamily = null)` / SwiftUI's `Font.system(size:weight:)` is used. This means **Android FontManager user-selected fonts are fully respected** — if the user has changed the system font in Settings, layer 3 picks it up automatically. Layer 1 and 2 override it by design.
+
+**⚠️ Cross-platform note**
+
+Android system default is Roboto; iOS system default is San Francisco (SF Pro). Character widths differ, which can cause text to wrap at different points. If pixel-perfect cross-platform parity matters, enforce a shared font via Layer 1.
+
+---
+
 ### Visual Properties (Non-cascading)
 
 Applied to individual elements, not inherited:
@@ -146,8 +240,8 @@ For SDK developers working on the renderer, style properties are organized into 
 ### Property Groups
 
 **Text Properties** - Used by TEXT and BUTTON elements:
-- `textColor`, `fontSize`, `fontFamily`, `fontWeight`
-- `lineHeight`, `textDecoration`, `textAlign`
+- `textColor`, `fontSize` (TextDimension), `fontFamily`, `fontWeight`
+- `lineHeight` (TextDimension), `textDecoration`, `textAlign`
 - `opacity` (universal)
 
 **Visual Properties** - Used by all elements for backgrounds:
@@ -170,7 +264,7 @@ val textProps = resolvedStyle.extractTextProperties()
 Text(
     text = text,
     color = parseColor(textProps.color) ?: Color.Black,
-    fontSize = (textProps.size ?: 14f).sp,
+    fontSize = (textProps.size?.resolve(rootHeightPx) ?: 14f).sp,
     fontWeight = resolveFontWeight(textProps.weight)
 )
 
@@ -193,9 +287,10 @@ if (shadowProps.radius != null && shadowProps.radius > 0f) {
 ```swift
 // In renderer code
 let textProps = resolvedStyle.extractTextProperties()
+let resolvedSize = textProps.size?.resolve(containerHeight: rootHeight) ?? 14
 Text(text)
     .foregroundColor(ColorParser.parse(textProps.color) ?? .primary)
-    .font(.system(size: textProps.size ?? 14))
+    .font(.system(size: resolvedSize))
     .fontWeight(resolveFontWeight(textProps.weight))
 
 let visualProps = resolvedStyle.extractVisualProperties()

@@ -112,6 +112,21 @@
 }
 ```
 
+`fontSize` and `lineHeight` accept a `TextDimension` — either a raw number (platform units) or `{"value": N, "unit": "percent"}` (resolves as `rootContainerHeight × N / 1000`):
+
+```json
+{
+  "id": "title",
+  "elementType": "text",
+  "bindings": { "text": "Percentage sized" },
+  "style": {
+    "fontSize": { "value": 60, "unit": "percent" },
+    "lineHeight": { "value": 72, "unit": "percent" },
+    "fontWeight": "bold"
+  }
+}
+```
+
 ---
 
 ### 2. IMAGE

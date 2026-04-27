@@ -13,6 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -27,6 +30,8 @@ import com.clevertap.android.nativedisplay.models.ImageFit
 import com.clevertap.android.nativedisplay.models.NativeDisplayElement
 import com.clevertap.android.nativedisplay.models.Orientation
 import com.clevertap.android.nativedisplay.models.Style
+import com.clevertap.android.nativedisplay.models.TextDimensionUnit
+import com.clevertap.android.nativedisplay.models.TextProperties
 
 /**
  * Render an element based on its type.
@@ -37,7 +42,8 @@ internal fun RenderElement(
     evaluator: VariableEvaluator,
     resolvedStyle: Style,
     modifier: Modifier = Modifier,
-    actionHandler: ActionHandler? = null
+    actionHandler: ActionHandler? = null,
+    rootHeightPx: Float = 0f,
 ) {
     val elementModifier = modifier.applyPadding(element.layout)
 
@@ -47,21 +53,49 @@ internal fun RenderElement(
                 evaluator.evaluateString(it)
             } ?: ""
 
-            val textProps = resolvedStyle.extractTextProperties()
-            Text(
-                text = text,
-                modifier = elementModifier,
-                color = parseColor(textProps.color) ?: Color.Black,
-                fontSize = (textProps.size ?: 14f).sp,
-                fontWeight = resolveFontWeight(textProps.weight),
-                fontStyle = resolveFontStyle(textProps.style),
-                letterSpacing = (textProps.letterSpacing ?: 0f).sp,
-                textDecoration = resolveTextDecoration(textProps.decoration),
-                textAlign = resolveTextAlign(textProps.align),
-                lineHeight = textProps.lineHeight?.sp ?: (textProps.size?.times(1.5f) ?: 21f).sp,
-                maxLines = textProps.maxLines ?: Int.MAX_VALUE,
-                overflow = resolveTextOverflow(textProps.overflow)
-            )
+            val textProps: TextProperties = resolvedStyle.extractTextProperties()
+            val isPercentMode = textProps.size?.unit == TextDimensionUnit.PERCENT
+            val resolvedFontSize = textProps.size?.resolve(rootHeightPx) ?: 14f
+            val fontFamily = resolveEffectiveFontFamily(textProps.family)
+            // In percentage mode: all values are in px, convert via toSp() at use site
+            // In platform mode: values are already in sp-compatible units, use .sp
+            if (isPercentMode) {
+                // Default lineHeight = fontSize * 1.2 matches CSS line-height:normal (~1.2×)
+                val resolvedLineHeightPx = textProps.lineHeight?.resolve(rootHeightPx) ?: (resolvedFontSize * 1.2f)
+                Text(
+                    text = text,
+                    modifier = elementModifier,
+                    color = parseColor(textProps.color) ?: Color.Black,
+                    fontSize = with(LocalDensity.current) { resolvedFontSize.toSp() },
+                    fontWeight = resolveFontWeight(textProps.weight),
+                    fontFamily = fontFamily,
+                    fontStyle = resolveFontStyle(textProps.style),
+                    letterSpacing = 0.sp,
+                    textDecoration = resolveTextDecoration(textProps.decoration),
+                    textAlign = resolveTextAlign(textProps.align),
+                    lineHeight = with(LocalDensity.current) { resolvedLineHeightPx.toSp() },
+                    maxLines = textProps.maxLines ?: Int.MAX_VALUE,
+                    overflow = resolveTextOverflow(textProps.overflow),
+                    style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
+                )
+            } else {
+                Text(
+                    text = text,
+                    modifier = elementModifier,
+                    color = parseColor(textProps.color) ?: Color.Black,
+                    fontSize = resolvedFontSize.sp,
+                    fontWeight = resolveFontWeight(textProps.weight),
+                    fontFamily = fontFamily,
+                    fontStyle = resolveFontStyle(textProps.style),
+                    letterSpacing = (textProps.letterSpacing ?: 0f).sp,
+                    textDecoration = resolveTextDecoration(textProps.decoration),
+                    textAlign = resolveTextAlign(textProps.align),
+                    lineHeight = textProps.lineHeight?.resolve(rootHeightPx)?.sp ?: (resolvedFontSize * 1.5f).sp,
+                    maxLines = textProps.maxLines ?: Int.MAX_VALUE,
+                    overflow = resolveTextOverflow(textProps.overflow),
+                    style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
+                )
+            }
         }
 
         ElementType.IMAGE -> {
@@ -118,24 +152,48 @@ internal fun RenderElement(
                 evaluator.evaluateString(it)
             } ?: "Button"
             val textProps = resolvedStyle.extractTextProperties()
+            val isPercentMode = textProps.size?.unit == TextDimensionUnit.PERCENT
+            val resolvedFontSize = textProps.size?.resolve(rootHeightPx) ?: 16f
+            val fontFamily = resolveEffectiveFontFamily(textProps.family)
 
             Box(
                 modifier = elementModifier,
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = buttonText,
-                    color = parseColor(textProps.color) ?: Color.White,
-                    fontSize = (textProps.size ?: 16f).sp,
-                    fontWeight = resolveFontWeight(textProps.weight),
-                    fontStyle = resolveFontStyle(textProps.style),
-                    letterSpacing = (textProps.letterSpacing ?: 0f).sp,
-                    textDecoration = resolveTextDecoration(textProps.decoration),
-                    textAlign = resolveTextAlign(textProps.align),
-                    lineHeight = textProps.lineHeight?.sp ?: (textProps.size?.times(1.5f) ?: 21f).sp,
-                    maxLines = textProps.maxLines ?: Int.MAX_VALUE,
-                    overflow = resolveTextOverflow(textProps.overflow)
-                )
+                if (isPercentMode) {
+                    val resolvedLineHeightPx = textProps.lineHeight?.resolve(rootHeightPx) ?: (resolvedFontSize * 1.2f)
+                    Text(
+                        text = buttonText,
+                        color = parseColor(textProps.color) ?: Color.White,
+                        fontSize = with(LocalDensity.current) { resolvedFontSize.toSp() },
+                        fontWeight = resolveFontWeight(textProps.weight),
+                        fontFamily = fontFamily,
+                        fontStyle = resolveFontStyle(textProps.style),
+                        letterSpacing = 0.sp,
+                        textDecoration = resolveTextDecoration(textProps.decoration),
+                        textAlign = resolveTextAlign(textProps.align),
+                        lineHeight = with(LocalDensity.current) { resolvedLineHeightPx.toSp() },
+                        maxLines = textProps.maxLines ?: Int.MAX_VALUE,
+                        overflow = resolveTextOverflow(textProps.overflow),
+                        style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
+                    )
+                } else {
+                    Text(
+                        text = buttonText,
+                        color = parseColor(textProps.color) ?: Color.White,
+                        fontSize = resolvedFontSize.sp,
+                        fontWeight = resolveFontWeight(textProps.weight),
+                        fontFamily = fontFamily,
+                        fontStyle = resolveFontStyle(textProps.style),
+                        letterSpacing = (textProps.letterSpacing ?: 0f).sp,
+                        textDecoration = resolveTextDecoration(textProps.decoration),
+                        textAlign = resolveTextAlign(textProps.align),
+                        lineHeight = textProps.lineHeight?.resolve(rootHeightPx)?.sp ?: (resolvedFontSize * 1.5f).sp,
+                        maxLines = textProps.maxLines ?: Int.MAX_VALUE,
+                        overflow = resolveTextOverflow(textProps.overflow),
+                        style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
+                    )
+                }
             }
         }
 

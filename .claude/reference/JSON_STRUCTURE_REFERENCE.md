@@ -794,10 +794,10 @@ Combine percentages with aspect ratios for responsive, proportional layouts:
 ```json
 {
   "textColor": "#000000",
-  "fontSize": 16,
+  "fontSize": 16,                // TextDimension: number OR {"value": 40, "unit": "percent"}
   "fontFamily": "System",
   "fontWeight": "normal",        // "normal" | "medium" | "bold" | "light"
-  "lineHeight": 20,
+  "lineHeight": 20,              // TextDimension: number OR {"value": 56, "unit": "percent"}
   "textDecoration": "none",      // "none" | "underline" | "strikethrough"
   "textAlign": "left",           // "left" | "center" | "right"
   
@@ -856,6 +856,51 @@ lineHeight = fontSize × 1.4
 - ✅ Consistent Android-iOS rendering
 - ✅ Predictable layout calculations
 - ✅ No surprises in container overflow/clipping
+
+### TextDimension: Percentage-Based Font Sizing
+
+`fontSize` and `lineHeight` support a `TextDimension` type with two formats:
+
+**Format 1 — Raw number (backward compatible, platform units):**
+```json
+"fontSize": 16
+```
+
+**Format 2 — Object with percentage unit:**
+```json
+"fontSize": { "value": 40, "unit": "percent" }
+```
+
+**Resolution formula** (percentage mode): `rootContainerHeight × value / 1000`
+
+This matches the FE/dashboard rendering behavior where font sizes are relative to container height with a `/1000` divisor.
+
+**Example:**
+```json
+{
+  "type": "container",
+  "id": "card",
+  "containerType": "box",
+  "layout": {
+    "width": { "special": "match_parent" },
+    "height": { "value": 400, "unit": "dp" }
+  },
+  "children": [
+    {
+      "type": "element",
+      "id": "title",
+      "elementType": "text",
+      "bindings": { "text": "Hello" },
+      "style": {
+        "fontSize": { "value": 40, "unit": "percent" },
+        "lineHeight": { "value": 56, "unit": "percent" }
+      }
+    }
+  ]
+}
+```
+
+In a 400dp **root** container: `fontSize = 400 × 40 / 1000 = 16`, `lineHeight = 400 × 56 / 1000 = 22.4`. The root container height is always used, regardless of nesting depth.
 
 ---
 
