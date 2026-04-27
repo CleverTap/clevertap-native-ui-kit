@@ -115,6 +115,13 @@ fun NativeUIKitSampleApp() {
                                             navController.navigate("demo_screen/bridge")
                                         }
                                     )
+                                    DropdownMenuItem(
+                                        text = { Text("📡 CleverTap Integration") },
+                                        onClick = {
+                                            showMenu = false
+                                            navController.navigate("demo_screen/clevertap")
+                                        }
+                                    )
                                     HorizontalDivider()
                                     DropdownMenuItem(
                                         text = { Text("Other Demos") },
@@ -202,6 +209,7 @@ fun DemoScreenContainer(navController: androidx.navigation.NavController, demoTy
                             "animations" -> "🎬 Animations"
                             "test_browser" -> "🧪 Test Browser"
                             "bridge" -> "🔗 Bridge Integration"
+                            "clevertap" -> "📡 CleverTap Integration"
                             "other" -> "Other Demos"
                             else -> "Demo"
                         },
@@ -231,7 +239,7 @@ fun DemoScreenContainer(navController: androidx.navigation.NavController, demoTy
                 .background(Color(0xFFF5F5F5))
                 .then(
                     // No vertical scroll for Home screen and Test Browser
-                    if (demoType == "home" || demoType == "test_browser" || demoType == "bridge") {
+                    if (demoType == "home" || demoType == "test_browser" || demoType == "bridge" || demoType == "clevertap") {
                         Modifier
                     } else {
                         Modifier.verticalScroll(rememberScrollState())
@@ -239,7 +247,7 @@ fun DemoScreenContainer(navController: androidx.navigation.NavController, demoTy
                 )
                 .padding(
                     // No padding for Home screen and Test Browser to allow edge-to-edge design
-                    if (demoType == "home" || demoType == "test_browser" || demoType == "bridge") 0.dp else 16.dp
+                    if (demoType == "home" || demoType == "test_browser" || demoType == "bridge" || demoType == "clevertap") 0.dp else 16.dp
                 )
         ) {
             when (demoType) {
@@ -248,6 +256,7 @@ fun DemoScreenContainer(navController: androidx.navigation.NavController, demoTy
                 "animations" -> AnimationDemoScreen()
                 "test_browser" -> TestBrowserScreen()
                 "bridge" -> BridgeIntegrationScreen()
+                "clevertap" -> CleverTapIntegrationScreen()
                 "other" -> OtherDemosScreen()
             }
         }

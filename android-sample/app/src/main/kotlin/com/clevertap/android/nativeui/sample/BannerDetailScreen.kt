@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.clevertap.android.nativedisplay.listener.InteractionType
-import kotlinx.coroutines.launch
+import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
 import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
@@ -169,7 +169,7 @@ fun BannerDetailScreen(
 
     // Action listener that logs ALL action executions
     val actionListener = remember {
-        object : com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener {
+        object : NativeDisplayActionListener {
             override fun onCustomAction(key: String, value: Any?, metadata: Map<String, String>?) {
                 val actionData = "Custom Action: $key\nValue: $value"
                 val logEntry = InteractionLog(

@@ -28,7 +28,6 @@ extension EnvironmentValues {
 /// Main entry point for rendering native display UI.
 public struct NativeDisplayView: View {
     @Environment(\.nativeDisplayParentSize) private var environmentParentSize
-
     private let config: ResolvedConfig
     private let resolvedStyles: [String: Style]   // Pre-resolved, computed once in init
     private let evaluator: VariableEvaluator
@@ -103,7 +102,8 @@ public struct NativeDisplayView: View {
             evaluator: evaluator,
             parentSize: parentSize,
             actionHandler: actionHandler,
-            componentListener: componentListener
+            componentListener: componentListener,
+            isRoot: true
         )
     }
 }
@@ -116,6 +116,7 @@ struct RenderNode: View {
     let parentSize: CGSize
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
+    var isRoot: Bool = false
     
     var body: some View {
         // Check visibility condition
@@ -165,6 +166,19 @@ struct RenderNode: View {
                 actionHandler: actionHandler,
                 componentListener: componentListener
             )
+            .onAppear {
+                if isRoot {
+                    actionHandler?.fireSystemEvent(eventName: "Notification Viewed", deduplicate: true)
+                }
+                if let action = node.actions?[ActionTriggers.onAppear] {
+                    actionHandler?.handleLifecycleAction(action, nodeId: node.id)
+                }
+            }
+            .onDisappear {
+                if let action = node.actions?[ActionTriggers.onDisappear] {
+                    actionHandler?.handleLifecycleAction(action, nodeId: node.id)
+                }
+            }
             .id(node.id)
 
         case .element(let element):
@@ -188,6 +202,19 @@ struct RenderNode: View {
                 actionHandler: actionHandler,
                 componentListener: !isButton ? componentListener : nil
             )
+            .onAppear {
+                if isRoot {
+                    actionHandler?.fireSystemEvent(eventName: "Notification Viewed", deduplicate: true)
+                }
+                if let action = node.actions?[ActionTriggers.onAppear] {
+                    actionHandler?.handleLifecycleAction(action, nodeId: node.id)
+                }
+            }
+            .onDisappear {
+                if let action = node.actions?[ActionTriggers.onDisappear] {
+                    actionHandler?.handleLifecycleAction(action, nodeId: node.id)
+                }
+            }
         }
     }
 }
@@ -777,6 +804,11 @@ struct RenderElement: View {
         let textProps = resolvedStyle.extractTextProperties()
 
         Button(action: {
+            // Fire system event for button click
+            actionHandler?.fireSystemEvent(
+                eventName: "Notification Clicked",
+                properties: ["nodeId": element.id]
+            )
             if let onClick = element.actions?[ActionTriggers.onClick] {
                 actionHandler?.handleAction(onClick, nodeId: element.id, interactionType: .click)
             }
