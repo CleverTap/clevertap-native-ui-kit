@@ -84,7 +84,7 @@ Validates against `.claude/reference/` documentation:
 - Rendering pipeline follows design
 
 #### JSON_STRUCTURE_REFERENCE.md
-- Color format is ARGB (#AARRGGBB)
+- Color format is RGBA (#RRGGBBAA)
 - All nodes have layout definitions
 - Proper dimension units used
 - Valid container/element types
@@ -321,8 +321,8 @@ Add project-specific rules to `.claude/review-rules.md`:
 # Custom Review Rules
 
 ## Color Format
-- All colors must be ARGB format
-- Check: #AARRGGBB or #RRGGBB
+- All colors must be RGBA format
+- Check: #RRGGBBAA or #RRGGBB
 - Invalid: rgb(), rgba(), color names
 
 ## Layout Required

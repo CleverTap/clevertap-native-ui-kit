@@ -130,7 +130,7 @@ LazyColumn { items(children, key = { it.id }) { child -> RenderNode(child, resol
 ## Common Gotchas
 
 - **Modifier order**: background before padding, border after padding
-- **Color format**: SDK uses ARGB (`#AARRGGBB`), not RGBA; `#FF0000` must become `#FFFF0000`
+- **Color format**: SDK uses RGBA (`#RRGGBBAA`), matching web standard; `#FF0000` is opaque red, `#FF000080` is red at 50% opacity
 - **Gallery sizing**: uses container dimensions, NOT screen dimensions
 - **SPACED strategy**: always provide a spacing value; null spacing = 0dp
 - **SPACE_BETWEEN with 1 child**: child aligns to start — use START/CENTER instead

@@ -203,7 +203,7 @@ jq empty your-test.json && echo "Valid JSON ✅" || echo "Invalid JSON ❌"
 ### 5. Structure Check
 - [ ] No trailing commas
 - [ ] Double quotes (not single quotes)
-- [ ] Colors in hex format `#RRGGBB` or `#AARRGGBB`
+- [ ] Colors in hex format `#RRGGBB` or `#RRGGBBAA`
 - [ ] Percentage values between 0-100
 
 ## Naming Convention

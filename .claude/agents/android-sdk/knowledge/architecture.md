@@ -203,10 +203,10 @@ data class ChildArrangement(
 )
 ```
 
-### 4. ARGB Color Format
-Colors are stored as ARGB hex strings:
-- `#RRGGBB` → `#FFRRGGBB` (opaque)
-- `#AARRGGBB` → as-is (with alpha)
+### 4. RGBA Color Format
+Colors are stored as RGBA hex strings:
+- `#RRGGBB` → opaque (alpha defaults to FF)
+- `#RRGGBBAA` → as-is (with alpha)
 
 ## Extension Points
 

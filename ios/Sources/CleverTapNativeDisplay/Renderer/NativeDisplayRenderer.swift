@@ -714,19 +714,29 @@ struct RenderElement: View {
             }
         }()
 
+        // Build font with weight and italic baked in (iOS 15 compatible).
+        let baseFont = Font.system(size: textProps.size ?? 14, weight: resolveFontWeight(textProps.weight))
+        let font: Font = textProps.style == .italic ? baseFont.italic() : baseFont
+
         // Build the styled Text as a Text value (all Text modifiers return Text).
         let coreText = Text(text)
-            .foregroundColor(ColorParser.parse(textProps.color) ?? .primary)
-            .font(.system(size: textProps.size ?? 14))
-            .fontWeight(resolveFontWeight(textProps.weight))
+            .foregroundColor(ColorParser.parse(textProps.color) ?? .black)
+            .font(font)
+            .kerning(textProps.letterSpacing ?? 0)
+            .underline(textProps.decoration == .underline, color: nil)
+            .strikethrough(textProps.decoration == .strikethrough, color: nil)
             .multilineTextAlignment(textAlignment)
-            .lineSpacing(max(0, (textProps.lineHeight ?? 0) - (textProps.size ?? 14)))
+            .lineSpacing(max(0, (textProps.lineHeight ?? (textProps.size ?? 14) * 1.5) - (textProps.size ?? 14)))
 
         if isWrapContent {
             coreText
+                .lineLimit(textProps.maxLines)
+                .truncationMode(resolveTextOverflow(textProps.overflow))
                 .fixedSize(horizontal: false, vertical: true)
         } else {
             coreText
+                .lineLimit(textProps.maxLines)
+                .truncationMode(resolveTextOverflow(textProps.overflow))
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: frameAlignment)
         }
@@ -845,11 +855,17 @@ struct RenderElement: View {
             // Text is centered within the button — center alignment is the conventional default for buttons.
             Text(buttonText)
                 .foregroundColor(ColorParser.parse(textProps.color) ?? .white)
-                .font(.system(size: textProps.size ?? 16))
-                .fontWeight(resolveFontWeight(textProps.weight))
+                .font({
+                    let base = Font.system(size: textProps.size ?? 16, weight: resolveFontWeight(textProps.weight))
+                    return textProps.style == .italic ? base.italic() : base
+                }())
+                .kerning(textProps.letterSpacing ?? 0)
+                .underline(textProps.decoration == .underline, color: nil)
+                .strikethrough(textProps.decoration == .strikethrough, color: nil)
                 .multilineTextAlignment(resolveTextAlign(textProps.align))
-                .lineSpacing(max(0, (textProps.lineHeight ?? 0) - (textProps.size ?? 16)))
+                .lineSpacing(max(0, (textProps.lineHeight ?? (textProps.size ?? 16) * 1.5) - (textProps.size ?? 16)))
                 .lineLimit(textProps.maxLines)
+                .truncationMode(resolveTextOverflow(textProps.overflow))
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
         .buttonStyle(.plain)
@@ -951,6 +967,15 @@ struct RenderElement: View {
         case "center": return .center
         case "right": return .trailing
         default: return .leading
+        }
+    }
+
+    private func resolveTextOverflow(_ overflow: TextOverflow?) -> Text.TruncationMode {
+        switch overflow {
+        case .ellipsis: return .tail
+        case .clip: return .tail
+        case .visible: return .tail
+        case .none: return .tail
         }
     }
 }
@@ -1205,24 +1230,24 @@ struct DecorationModifier: ViewModifier {
 // MARK: - Color Parser
 
 /// Utility to parse hex color strings to SwiftUI Color.
-/// Supports #RRGGBB (6 chars) and #AARRGGBB (8 chars, ARGB format).
+/// Supports #RRGGBB (6 chars) and #RRGGBBAA (8 chars, RGBA format).
 public struct ColorParser {
     /// Parse hex color string to SwiftUI Color.
     /// - #RRGGBB: 6-character RGB (full opacity)
-    /// - #AARRGGBB: 8-character ARGB (alpha in first byte)
+    /// - #RRGGBBAA: 8-character RGBA (alpha in last byte)
     public static func parse(_ colorString: String?) -> Color? {
         guard let colorString = colorString else { return nil }
-        
+
         var hex = colorString.trimmingCharacters(in: .whitespacesAndNewlines)
         if hex.hasPrefix("#") {
             hex.removeFirst()
         }
-        
+
         guard hex.count == 6 || hex.count == 8 else { return nil }
-        
+
         var rgbValue: UInt64 = 0
         guard Scanner(string: hex).scanHexInt64(&rgbValue) else { return nil }
-        
+
         if hex.count == 6 {
             return Color(
                 red: Double((rgbValue & 0xFF0000) >> 16) / 255.0,
@@ -1230,12 +1255,12 @@ public struct ColorParser {
                 blue: Double(rgbValue & 0x0000FF) / 255.0
             )
         } else {
-            // Format: #AARRGGBB (alpha in highest byte, ARGB standard)
+            // Format: #RRGGBBAA (alpha in lowest byte, RGBA web standard)
             return Color(
-                red: Double((rgbValue & 0x00FF0000) >> 16) / 255.0,      // RR byte
-                green: Double((rgbValue & 0x0000FF00) >> 8) / 255.0,     // GG byte
-                blue: Double((rgbValue & 0x000000FF)) / 255.0,           // BB byte
-                opacity: Double((rgbValue & 0xFF000000) >> 24) / 255.0   // AA byte
+                red: Double((rgbValue & 0xFF000000) >> 24) / 255.0,      // RR byte
+                green: Double((rgbValue & 0x00FF0000) >> 16) / 255.0,    // GG byte
+                blue: Double((rgbValue & 0x0000FF00) >> 8) / 255.0,     // BB byte
+                opacity: Double((rgbValue & 0x000000FF)) / 255.0         // AA byte
             )
         }
     }

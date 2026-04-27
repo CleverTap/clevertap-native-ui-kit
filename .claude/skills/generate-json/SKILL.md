@@ -26,7 +26,7 @@ Generates valid Native Display JSON configurations for testing purposes, strictl
 1. **References Specification**
    - Always reads `.claude/reference/JSON_STRUCTURE_REFERENCE.md`
    - Validates against proper JSON structure rules
-   - Ensures ARGB color format (#AARRGGBB)
+   - Ensures RGBA color format (#RRGGBBAA)
    - Follows proper dimension/spacing conventions
 
 2. **Generates Valid JSON**
@@ -49,7 +49,7 @@ Generates valid Native Display JSON configurations for testing purposes, strictl
 ## Key Rules (from JSON_STRUCTURE_REFERENCE.md)
 
 ### ✅ DO
-- Use ARGB color format: `#AARRGGBB` or `#RRGGBB`
+- Use RGBA color format: `#RRGGBBAA` or `#RRGGBB`
 - Define layout for ALL nodes (containers and elements)
 - Use proper dimension units: `DP`, `SP`, `PERCENT`, `PX`, `WRAP_CONTENT`, `MATCH_PARENT`
 - Include theme with defaultStyle
