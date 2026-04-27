@@ -3,19 +3,8 @@ import CleverTapNativeDisplay
 
 struct ContentView: View {
     var body: some View {
-        NavigationView {
-            BannerShowcaseView()
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        NavigationLink(destination: DemoMenuView()) {
-                            Image(systemName: "ellipsis.circle")
-                                .font(.system(size: 20))
-                        }
-                        .accessibilityIdentifier("menu-button")
-                    }
-                }
-        }
-        .navigationViewStyle(StackNavigationViewStyle())
+        UITabHostView()
+            .ignoresSafeArea()
     }
 }
 
