@@ -50,6 +50,10 @@ class ActionHandler(
 ) {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val firedSystemEvents = mutableSetOf<String>()
+
+    /** Whether an action listener is attached (for callers to skip unnecessary work) */
+    val hasActionListener: Boolean get() = listener != null
 
     companion object {
         private const val TAG = "ActionHandler"
@@ -174,6 +178,57 @@ class ActionHandler(
     ) {
         val action = actions?.get(trigger) ?: return
         handleAction(action, nodeId)
+    }
+
+    /**
+     * Execute a lifecycle action (onAppear/onDisappear).
+     * These bypass the component listener since they are not user interactions.
+     *
+     * @param action The action to execute
+     * @param nodeId The ID of the node that triggered this action
+     */
+    fun handleLifecycleAction(
+        action: Action,
+        nodeId: String
+    ) {
+        coroutineScope.launch {
+            try {
+                Log.d(TAG, "Handling lifecycle action for node: $nodeId, action: ${action::class.simpleName}")
+                when (action) {
+                    is Action.OpenUrl -> handleOpenUrl(action, nodeId)
+                    is Action.CustomAction -> handleCustomAction(action, nodeId)
+                    is Action.Navigate -> handleNavigate(action, nodeId)
+                    is Action.TrackEvent -> handleTrackEvent(action, nodeId)
+                    is Action.CompositeAction -> handleCompositeAction(action, nodeId)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error handling lifecycle action for node: $nodeId", e)
+                listener?.onActionError(action, e)
+            }
+        }
+    }
+
+    /**
+     * Fire a hardcoded system event through the action listener.
+     * System events are SDK-level events that always fire (not server-driven).
+     *
+     * @param eventName The system event name (e.g., "Notification Viewed")
+     * @param properties Optional event properties
+     */
+    fun fireSystemEvent(eventName: String, properties: Map<String, Any?>? = null, deduplicate: Boolean = false) {
+        if (!hasActionListener) return
+        if (deduplicate && !firedSystemEvents.add(eventName)) {
+            Log.d(TAG, "System event already fired, skipping: $eventName")
+            return
+        }
+        coroutineScope.launch {
+            try {
+                Log.d(TAG, "Firing system event: $eventName")
+                listener?.onTrackEvent(eventName, properties)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error firing system event: $eventName", e)
+            }
+        }
     }
 
     /**
