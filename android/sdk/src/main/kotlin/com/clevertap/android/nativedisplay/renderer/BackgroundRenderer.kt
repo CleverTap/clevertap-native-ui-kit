@@ -64,12 +64,16 @@ private fun Modifier.applyStaticSolid(bg: Background.Solid): Modifier {
 
 /**
  * Apply linear gradient background (non-composable).
+<<<<<<< HEAD
  * Uses drawWithContent so gradient start/end are computed from the actual component
  * size at draw time — fixes solid-color appearance on small elements like buttons.
+=======
+>>>>>>> origin/task/SDK-5399_ios
  */
 private fun Modifier.applyStaticLinearGradient(bg: Background.LinearGradient): Modifier {
     val colors = bg.colors.mapNotNull { parseColor(it) }
     if (colors.isEmpty()) return this
+<<<<<<< HEAD
 
     return this.drawWithContent {
         val angleRadians = Math.toRadians((bg.angle - 90.0))
@@ -101,6 +105,28 @@ private fun Modifier.applyStaticLinearGradient(bg: Background.LinearGradient): M
         drawRect(brush)
         drawContent()
     }
+=======
+    
+    val brush = if (bg.stops != null && bg.stops.isNotEmpty()) {
+        val colorStops = colors.mapIndexed { index, color ->
+            val stop = bg.stops.getOrNull(index) ?: (index.toFloat() / (colors.size - 1))
+            stop to color
+        }
+        Brush.linearGradient(
+            colorStops = colorStops.toTypedArray(),
+            start = calculateGradientStart(bg.angle),
+            end = calculateGradientEnd(bg.angle)
+        )
+    } else {
+        Brush.linearGradient(
+            colors = colors,
+            start = calculateGradientStart(bg.angle),
+            end = calculateGradientEnd(bg.angle)
+        )
+    }
+    
+    return this.background(brush)
+>>>>>>> origin/task/SDK-5399_ios
 }
 
 /**
@@ -247,6 +273,7 @@ private fun Modifier.applyAnimatedShimmer(bg: Background.Shimmer): Modifier {
     val highlightColor = parseColor(bg.highlightColor) ?: Color.White
     
     return this.drawWithContent {
+<<<<<<< HEAD
         val angleRadians = Math.toRadians((bg.angle - 90.0))
         // Offset pans the gradient across the component; scale by component dimension so
         // the sweep covers the full component regardless of its size.
@@ -264,6 +291,16 @@ private fun Modifier.applyAnimatedShimmer(bg: Background.Shimmer): Modifier {
             colors = listOf(baseColor, highlightColor, baseColor),
             start = shimmerStart,
             end = shimmerEnd
+=======
+        val brush = Brush.linearGradient(
+            colors = listOf(
+                baseColor,
+                highlightColor,
+                baseColor
+            ),
+            start = calculateGradientStart(bg.angle, offset),
+            end = calculateGradientEnd(bg.angle, offset)
+>>>>>>> origin/task/SDK-5399_ios
         )
         drawRect(brush)
         drawContent()
@@ -301,6 +338,7 @@ private fun Modifier.applyAnimatedGradient(bg: Background.AnimatedGradient): Mod
             AnimationStyle.PULSE -> colors  // Same as smooth for now
         }
         
+<<<<<<< HEAD
         val angleRadians = Math.toRadians((bg.angle - 90.0))
         val gradStart = Offset(
             x = (0.5f - cos(angleRadians).toFloat() * 0.5f) * size.width,
@@ -315,6 +353,13 @@ private fun Modifier.applyAnimatedGradient(bg: Background.AnimatedGradient): Mod
                 colors = rotatedColors,
                 start = gradStart,
                 end = gradEnd
+=======
+        val brush = when (bg.gradientType) {
+            GradientType.LINEAR -> Brush.linearGradient(
+                colors = rotatedColors,
+                start = calculateGradientStart(bg.angle),
+                end = calculateGradientEnd(bg.angle)
+>>>>>>> origin/task/SDK-5399_ios
             )
             GradientType.RADIAL -> Brush.radialGradient(
                 colors = rotatedColors,
@@ -419,6 +464,34 @@ private fun Modifier.applyLayeredBackground(bg: Background.Layered): Modifier {
 // HELPER FUNCTIONS (Non-Composable)
 // ============================================================================
 
+<<<<<<< HEAD
+=======
+/**
+ * Calculate gradient start offset based on angle.
+ * Pure function - no composition needed.
+ */
+private fun calculateGradientStart(angleDegrees: Float, offset: Float = 0f): Offset {
+    val angleRadians = Math.toRadians(angleDegrees.toDouble())
+    val adjustedOffset = offset * 1000f
+    return Offset(
+        x = (0.5f - cos(angleRadians).toFloat() * 0.5f) * 1000f + adjustedOffset,
+        y = (0.5f - sin(angleRadians).toFloat() * 0.5f) * 1000f + adjustedOffset
+    )
+}
+
+/**
+ * Calculate gradient end offset based on angle.
+ * Pure function - no composition needed.
+ */
+private fun calculateGradientEnd(angleDegrees: Float, offset: Float = 0f): Offset {
+    val angleRadians = Math.toRadians(angleDegrees.toDouble())
+    val adjustedOffset = offset * 1000f
+    return Offset(
+        x = (0.5f + cos(angleRadians).toFloat() * 0.5f) * 1000f + adjustedOffset,
+        y = (0.5f + sin(angleRadians).toFloat() * 0.5f) * 1000f + adjustedOffset
+    )
+}
+>>>>>>> origin/task/SDK-5399_ios
 
 /**
  * Draw dots pattern.

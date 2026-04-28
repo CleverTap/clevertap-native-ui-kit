@@ -15,12 +15,15 @@ espresso = "3.6.1"
 robolectric = "4.13"
 roborazzi = "1.29.0"
 runtime = "1.10.4"
+<<<<<<< HEAD
 fragment = "1.8.5"
 appcompat = "1.7.0"
 recyclerview = "1.3.2"
 retrofit = "2.11.0"
 material = "1.11.0"
 constraintlayout = "2.1.4"
+=======
+>>>>>>> origin/task/SDK-5399_ios
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.15.0" }
@@ -54,6 +57,7 @@ androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplaye
 androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3" }
 androidx-media3_hls = { module = "androidx.media3:media3-exoplayer-hls", version.ref = "media3" }
 
+<<<<<<< HEAD
 # Fragment + RecyclerView + AppCompat
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragment" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -67,6 +71,8 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 
+=======
+>>>>>>> origin/task/SDK-5399_ios
 # Testing
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTest" }

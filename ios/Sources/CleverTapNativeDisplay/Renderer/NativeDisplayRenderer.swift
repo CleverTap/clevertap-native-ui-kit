@@ -123,9 +123,22 @@ public struct NativeDisplayView: View {
             // - Root uses percentages/match_parent/wrap_content AND
             // - Config contains percentages somewhere
             // → MUST use GeometryReader to measure parent constraints
-            GeometryReader { geometry in
-                renderContent(parentSize: geometry.size)
-                    .frame(width: geometry.size.width, alignment: .center)
+            //
+            // When the root has an aspectRatio, apply .aspectRatio() to the GeometryReader
+            // so SwiftUI knows the view's natural height. Without this, GeometryReader reports
+            // height=0 inside a ScrollView and greedily expands, causing views to overlap.
+            let rootAspectRatio = config.root.layout?.aspectRatio
+            if let ar = rootAspectRatio, ar > 0 {
+                GeometryReader { geometry in
+                    renderContent(parentSize: geometry.size)
+                        .frame(width: geometry.size.width, alignment: .center)
+                }
+                .aspectRatio(ar, contentMode: .fit)
+            } else {
+                GeometryReader { geometry in
+                    renderContent(parentSize: geometry.size)
+                        .frame(width: geometry.size.width, alignment: .center)
+                }
             }
         }
     }
@@ -480,6 +493,12 @@ struct RenderContainer: View {
                     )
                 }
             }
+            // Clip children to the content area BEFORE adding padding.
+            // Without this, SwiftUI VStack children that overflow the content frame
+            // render into the padding space, visually eating the bottom (and trailing)
+            // padding. Android LinearLayout clips children by default (clipChildren=true),
+            // so .clipped() here restores parity with that behaviour.
+            .clipped()
             .frame(height: heightIsWrap ? nil : containerHeight, alignment: .top)
             .frame(maxWidth: .infinity)
 
@@ -623,7 +642,9 @@ struct RenderContainer: View {
                     )
                 }
             }
-            
+            // Same reason as vertical — clip before padding to preserve trailing padding.
+            .clipped()
+
         case .spaceBetween:
             HStack(alignment: .top, spacing: 0) {
                 ForEach(container.children.indices, id: \.self) { index in
@@ -890,8 +911,12 @@ struct RenderElement: View {
             let isGIF = isAnimatedGIF(url: url, config: element.imageConfig)
 
             if isGIF {
-                // Use custom GIF renderer
+                // Use custom GIF renderer.
+                // .frame(maxWidth/maxHeight: .infinity) is required so the UIViewRepresentable
+                // expands to fill the space allocated by LayoutModifier — without it the
+                // UIImageView uses its intrinsic pixel size instead of the layout bounds.
                 GIFImage(url: url, contentMode: contentMode)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .clipped()
             } else {
                 // Use standard AsyncImage for static images
@@ -966,6 +991,8 @@ struct RenderElement: View {
     
     @ViewBuilder
     private func renderButton() -> some View {
+        let onLongPress = element.actions?[ActionTriggers.onLongPress]
+        let onDoubleTap = element.actions?[ActionTriggers.onDoubleTap]
         let buttonText = element.bindings["text"].map { evaluator.evaluateString($0) } ?? "Button"
 
         let textProps = resolvedStyle.extractTextProperties()
@@ -1014,6 +1041,22 @@ struct RenderElement: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         }
         .buttonStyle(.plain)
+        .ifLet(onLongPress) { view, action in
+            view.simultaneousGesture(
+                LongPressGesture(minimumDuration: 0.5)
+                    .onEnded { _ in
+                        actionHandler?.handleAction(action, nodeId: element.id, interactionType: .longPress)
+                    }
+            )
+        }
+        .ifLet(onDoubleTap) { view, action in
+            view.simultaneousGesture(
+                TapGesture(count: 2)
+                    .onEnded { _ in
+                        actionHandler?.handleAction(action, nodeId: element.id, interactionType: .doubleTap)
+                    }
+            )
+        }
     }
 
     @ViewBuilder

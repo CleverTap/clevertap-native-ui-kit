@@ -46,8 +46,12 @@ import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListen
 class ActionHandler(
     private val context: Context,
     private val listener: NativeDisplayActionListener?,
+<<<<<<< HEAD
     private val componentListener: NativeDisplayComponentListener? = null,
     private val unitId: String? = null
+=======
+    private val componentListener: NativeDisplayComponentListener? = null
+>>>>>>> origin/task/SDK-5399_ios
 ) {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
@@ -226,12 +230,15 @@ class ActionHandler(
             try {
                 Log.d(TAG, "Firing system event: $eventName")
                 listener?.onTrackEvent(eventName, properties)
+<<<<<<< HEAD
                 if (unitId != null) {
                     when (eventName) {
                         "Notification Viewed" -> listener?.onDisplayUnitViewed(unitId)
                         "Notification Clicked" -> listener?.onDisplayUnitClicked(unitId)
                     }
                 }
+=======
+>>>>>>> origin/task/SDK-5399_ios
             } catch (e: Exception) {
                 Log.e(TAG, "Error firing system event: $eventName", e)
             }

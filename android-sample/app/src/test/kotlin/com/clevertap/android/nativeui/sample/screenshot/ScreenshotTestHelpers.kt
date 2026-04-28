@@ -103,7 +103,10 @@ fun StubVideoPlayer(
     muted: Boolean,
     showControls: Boolean,
     showFullscreen: Boolean,
+<<<<<<< HEAD
     openUrl: String? = null,
+=======
+>>>>>>> origin/task/SDK-5399_ios
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -122,7 +125,13 @@ fun StubVideoPlayer(
  * A @Composable lambda delegating to StubVideoPlayer, compatible with LocalVideoPlayerFactory.provides().
  * Kotlin does not support function references (::) to @Composable functions.
  */
+<<<<<<< HEAD
 val stubVideoPlayerFactory: @Composable (String, Boolean, Boolean, Boolean, Boolean, Boolean, String?, Modifier) -> Unit =
     @Composable { videoUrl, autoPlay, loop, muted, showControls, showFullscreen, openUrl, modifier ->
         StubVideoPlayer(videoUrl, autoPlay, loop, muted, showControls, showFullscreen, openUrl, modifier)
+=======
+val stubVideoPlayerFactory: @Composable (String, Boolean, Boolean, Boolean, Boolean, Boolean, Modifier) -> Unit =
+    @Composable { videoUrl, autoPlay, loop, muted, showControls, showFullscreen, modifier ->
+        StubVideoPlayer(videoUrl, autoPlay, loop, muted, showControls, showFullscreen, modifier)
+>>>>>>> origin/task/SDK-5399_ios
     }

@@ -1,0 +1,172 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#263238",
+      "fontSize": 16,
+      "lineHeight": 22
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "vertical-5-children",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 700,
+        "unit": "dp"
+      },
+      "padding": {
+        "top": 20,
+        "bottom": 20,
+        "left": 16,
+        "right": 16
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 12,
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "background": {
+        "type": "radial_gradient",
+        "colors": [
+          "#C5E1A5",
+          "#7CB342"
+        ],
+        "center_x": 0.5,
+        "center_y": 0.5,
+        "radius": 1.0
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Feature Highlights"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 28,
+          "fontWeight": "bold",
+          "textColor": "#1B5E20",
+          "lineHeight": 39
+        }
+      },
+      {
+        "type": "element",
+        "id": "feature-1",
+        "elementType": "text",
+        "bindings": {
+          "text": "Fast Performance - Lightning quick rendering"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "textColor": "#2E7D32",
+          "lineHeight": 25
+        }
+      },
+      {
+        "type": "element",
+        "id": "image",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://yavuzceliker.github.io/sample-images/image-8.jpg"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 200,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "feature-2",
+        "elementType": "text",
+        "bindings": {
+          "text": "Cross-Platform - Works on Android and iOS"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "textColor": "#2E7D32",
+          "lineHeight": 25
+        }
+      },
+      {
+        "type": "element",
+        "id": "cta",
+        "elementType": "button",
+        "bindings": {
+          "text": "Get Started"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 50,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#33691E",
+          "textColor": "#FFFFFF",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "borderRadius": 25,
+          "lineHeight": 25
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

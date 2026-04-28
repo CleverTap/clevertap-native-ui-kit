@@ -14,8 +14,8 @@ android {
         applicationId = "com.clevertap.android.nativeui.sample"
         minSdk = 23
         targetSdk = 36
-        versionCode = 8
-        versionName = "1.7"
+        versionCode = 2
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -44,7 +44,6 @@ android {
     
     buildFeatures {
         compose = true
-        viewBinding = true
     }
     
     packaging {
@@ -56,44 +55,6 @@ android {
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
-        }
-    }
-}
-
-// ── Campaign Screenshot Integration Test ─────────────────────────────────────
-// Single task that runs the test AND pulls results to ~/Desktop before cleanup.
-//
-// Usage: cd android-sample && ./gradlew :app:campaignScreenshots
-// ─────────────────────────────────────────────────────────────────────────────
-val desktopPath = "${System.getProperty("user.home")}/Desktop/campaign-screenshots"
-
-// Restrict connectedDebugAndroidTest to only CampaignScreenshotTest when this task is in the graph
-gradle.taskGraph.whenReady {
-    if (hasTask(":app:campaignScreenshots")) {
-        android.defaultConfig.testInstrumentationRunnerArguments["class"] =
-            "com.clevertap.android.nativeui.sample.CampaignScreenshotTest"
-    }
-}
-
-tasks.register("campaignScreenshots") {
-    group = "verification"
-    description = "Run CampaignScreenshotTest and pull results to ~/Desktop/campaign-screenshots/"
-    dependsOn("connectedDebugAndroidTest")
-    doLast {
-        // AGP pulls additionalTestOutputDir to build/outputs/connected_android_test_additional_output/
-        // automatically. We just copy campaign-screenshots/ from there to the Desktop.
-        val buildOutput = File(projectDir,
-            "build/outputs/connected_android_test_additional_output")
-        val campaignDir = buildOutput.walkTopDown()
-            .firstOrNull { it.isDirectory && it.name == "campaign-screenshots" }
-
-        if (campaignDir != null) {
-            val dest = File(desktopPath)
-            dest.mkdirs()
-            campaignDir.copyRecursively(dest, overwrite = true)
-            println("Screenshots copied to: $desktopPath")
-        } else {
-            println("Warning: campaign-screenshots not found in $buildOutput")
         }
     }
 }
@@ -139,19 +100,6 @@ dependencies {
     // Coil – runtime dep for sample app image loading (SDK uses implementation, not api)
     implementation(libs.io.coil.compose)
     testImplementation(libs.io.coil.compose)
-
-    // Fragment + RecyclerView + AppCompat (for XML Feed tab)
-    implementation(libs.androidx.fragment.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.recyclerview)
-
-    // Material + ConstraintLayout (for XML Feed layouts)
-    implementation(libs.material)
-    implementation(libs.androidx.constraintlayout)
-
-    // Retrofit (for DummyJSON API in XML Feed)
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
 
     // Screenshot Testing
     testImplementation(libs.robolectric)

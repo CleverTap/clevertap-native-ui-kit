@@ -3,7 +3,10 @@ package com.clevertap.android.nativedisplay.bridge
 import android.content.Context
 import android.util.Log
 import com.clevertap.android.sdk.CleverTapAPI
+<<<<<<< HEAD
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
+=======
+>>>>>>> origin/task/SDK-5399_ios
 import java.lang.ref.WeakReference
 
 /**
@@ -39,9 +42,12 @@ class NativeDisplayBridge private constructor() {
     private val listeners = mutableListOf<WeakReference<NativeDisplayBridgeListener>>()
     private val listenersLock = Any()
 
+<<<<<<< HEAD
     /** CleverTapAPI instance used to push display unit attribution events. */
     internal var cleverTapApi: CleverTapAPI? = null
 
+=======
+>>>>>>> origin/task/SDK-5399_ios
 
     companion object {
         private const val TAG = "NativeDisplayBridge"
@@ -268,6 +274,7 @@ class NativeDisplayBridge private constructor() {
     }
 
     /**
+<<<<<<< HEAD
      * Push a display unit viewed (impression) attribution event to the CleverTap Core SDK.
      *
      * Calls `CleverTapAPI.pushDisplayUnitViewedEventForID(unitId)` if a [CleverTapAPI]
@@ -349,6 +356,8 @@ class NativeDisplayBridge private constructor() {
     }
 
     /**
+=======
+>>>>>>> origin/task/SDK-5399_ios
      * Clear all cached display units and remove all listeners.
      */
     fun clear() {

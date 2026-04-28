@@ -23,11 +23,15 @@
       "Bash(./gradlew assembleDebug:*)",
       "Bash(./gradlew:*)",
       "Bash(xargs cat:*)",
+<<<<<<< HEAD
       "Bash(git checkout:*)",
       "mcp__claude_ai_Atlassian__getAccessibleAtlassianResources",
       "mcp__claude_ai_Atlassian__getConfluencePage",
       "mcp__claude_ai_Atlassian__getConfluenceSpaces",
       "mcp__claude_ai_Atlassian__createConfluencePage"
+=======
+      "Bash(git checkout:*)"
+>>>>>>> origin/task/SDK-5399_ios
     ]
   }
 }

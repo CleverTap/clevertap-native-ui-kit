@@ -207,3 +207,15 @@ extension View {
         ))
     }
 }
+
+/// Conditionally applies a modifier only when an optional value is present.
+extension View {
+    @ViewBuilder
+    func ifLet<T, Content: View>(_ value: T?, @ViewBuilder transform: (Self, T) -> Content) -> some View {
+        if let value = value {
+            transform(self, value)
+        } else {
+            self
+        }
+    }
+}

@@ -1,0 +1,293 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    },
+    "colors": {}
+  },
+  "styleClasses": [],
+  "variables": {},
+  "root": {
+    "type": "container",
+    "id": "stagger_container",
+    "containerType": "vertical",
+    "layout": {
+      "padding": {
+        "all": 24
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 16
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFFFFF",
+      "borderRadius": 16,
+      "shadowRadius": 8,
+      "shadowColor": "#00000040"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "stagger_title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Staggered Children Animation"
+        },
+        "style": {
+          "textColor": "#1A237E",
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "textAlign": "center"
+        },
+        "layout": {
+          "padding": {
+            "bottom": 8
+          }
+        },
+        "animation": {
+          "type": "slide_in_left",
+          "duration": 300,
+          "delay": 0,
+          "easing": "ease_out"
+        }
+      },
+      {
+        "type": "element",
+        "id": "stagger_subtitle",
+        "elementType": "text",
+        "bindings": {
+          "text": "Each child slides in with 100ms delay"
+        },
+        "style": {
+          "textColor": "#757575",
+          "fontSize": 14,
+          "textAlign": "center"
+        },
+        "layout": {
+          "padding": {
+            "bottom": 16
+          }
+        },
+        "animation": {
+          "type": "slide_in_left",
+          "duration": 300,
+          "delay": 100,
+          "easing": "ease_out"
+        }
+      },
+      {
+        "type": "container",
+        "id": "card_1",
+        "containerType": "horizontal",
+        "layout": {
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#E3F2FD",
+          "borderRadius": 12
+        },
+        "animation": {
+          "type": "slide_in_left",
+          "duration": 300,
+          "delay": 200,
+          "easing": "ease_out"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "icon_1",
+            "elementType": "text",
+            "bindings": {
+              "text": "🎨"
+            },
+            "style": {
+              "fontSize": 32
+            },
+            "layout": {
+              "padding": {
+                "right": 16
+              }
+            }
+          },
+          {
+            "type": "container",
+            "id": "card_1_content",
+            "containerType": "vertical",
+            "children": [
+              {
+                "type": "element",
+                "id": "card_1_title",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Design First"
+                },
+                "style": {
+                  "fontSize": 18,
+                  "fontWeight": "bold",
+                  "textColor": "#1565C0"
+                }
+              },
+              {
+                "type": "element",
+                "id": "card_1_desc",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Beautiful UI components"
+                },
+                "style": {
+                  "fontSize": 14,
+                  "textColor": "#424242"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "card_2",
+        "containerType": "horizontal",
+        "layout": {
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#F3E5F5",
+          "borderRadius": 12
+        },
+        "animation": {
+          "type": "slide_in_left",
+          "duration": 300,
+          "delay": 300,
+          "easing": "ease_out"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "icon_2",
+            "elementType": "text",
+            "bindings": {
+              "text": "⚡"
+            },
+            "style": {
+              "fontSize": 32
+            },
+            "layout": {
+              "padding": {
+                "right": 16
+              }
+            }
+          },
+          {
+            "type": "container",
+            "id": "card_2_content",
+            "containerType": "vertical",
+            "children": [
+              {
+                "type": "element",
+                "id": "card_2_title",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Fast Performance"
+                },
+                "style": {
+                  "fontSize": 18,
+                  "fontWeight": "bold",
+                  "textColor": "#7B1FA2"
+                }
+              },
+              {
+                "type": "element",
+                "id": "card_2_desc",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Optimized rendering"
+                },
+                "style": {
+                  "fontSize": 14,
+                  "textColor": "#424242"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "card_3",
+        "containerType": "horizontal",
+        "layout": {
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#E8F5E9",
+          "borderRadius": 12
+        },
+        "animation": {
+          "type": "slide_in_left",
+          "duration": 300,
+          "delay": 400,
+          "easing": "ease_out"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "icon_3",
+            "elementType": "text",
+            "bindings": {
+              "text": "🚀"
+            },
+            "style": {
+              "fontSize": 32
+            },
+            "layout": {
+              "padding": {
+                "right": 16
+              }
+            }
+          },
+          {
+            "type": "container",
+            "id": "card_3_content",
+            "containerType": "vertical",
+            "children": [
+              {
+                "type": "element",
+                "id": "card_3_title",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Easy to Use"
+                },
+                "style": {
+                  "fontSize": 18,
+                  "fontWeight": "bold",
+                  "textColor": "#2E7D32"
+                }
+              },
+              {
+                "type": "element",
+                "id": "card_3_desc",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Simple JSON configuration"
+                },
+                "style": {
+                  "fontSize": 14,
+                  "textColor": "#424242"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

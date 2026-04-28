@@ -83,7 +83,11 @@ object SampleConfigs {
             ),
             styleClasses = listOf(
                 StyleClass(
+<<<<<<< HEAD
                     name = "card",
+=======
+                    id = "card",
+>>>>>>> origin/task/SDK-5399_ios
                     style = Style(
                         backgroundColor = "#FFFFFF",
                         borderRadius = Dimension.dp(16f),
@@ -92,7 +96,11 @@ object SampleConfigs {
                     )
                 ),
                 StyleClass(
+<<<<<<< HEAD
                     name = "price-old",
+=======
+                    id = "price-old",
+>>>>>>> origin/task/SDK-5399_ios
                     style = Style(
                         fontSize = TextDimension(16f),
                         textColor = "#999999",
@@ -100,7 +108,11 @@ object SampleConfigs {
                     )
                 ),
                 StyleClass(
+<<<<<<< HEAD
                     name = "price-new",
+=======
+                    id = "price-new",
+>>>>>>> origin/task/SDK-5399_ios
                     style = Style(
                         fontSize = TextDimension(24f),
                         fontWeight = FontWeight.BOLD,

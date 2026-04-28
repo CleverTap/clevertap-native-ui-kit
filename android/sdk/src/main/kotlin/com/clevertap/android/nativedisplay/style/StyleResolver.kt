@@ -16,7 +16,11 @@ class StyleResolver(
     private val theme: Theme,
     private val styleClasses: List<StyleClass>
 ) {
+<<<<<<< HEAD
     private val styleClassMap = styleClasses.associateBy { it.name }
+=======
+    private val styleClassMap = styleClasses.associateBy { it.id }
+>>>>>>> origin/task/SDK-5399_ios
     
     /**
      * Resolve the final style for a node.
