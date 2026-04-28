@@ -199,7 +199,11 @@ public struct NativeDisplayView: View {
         if w.special != nil { return parentWidth } // match_parent / wrap_content
         switch w.unit {
         case .dp, .sp, .px: return w.value
-        case .percent: return parentWidth > 0 ? parentWidth * w.value / 100 : 0
+        case .percent:
+            // Aspect ratio present → percent is ignored, width fills parent.
+            // Keeps rootHeight (used for TextDimension %) consistent with the frame.
+            guard (layout?.aspectRatio ?? 0) <= 0 else { return parentWidth }
+            return parentWidth > 0 ? parentWidth * w.value / 100 : 0
         }
     }
 }
