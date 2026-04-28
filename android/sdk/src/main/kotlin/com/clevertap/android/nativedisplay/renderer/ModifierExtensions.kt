@@ -117,36 +117,20 @@ internal fun Modifier.applySizing(layout: Layout?): Modifier {
         )
     }
 
-<<<<<<< HEAD
     // Apply width
-=======
-    val hasAspectRatio = layout.aspectRatio != null && layout.aspectRatio > 0
-
-    // Apply width.
-    // Aspect ratio present + percent width → fill parent (percent is ignored entirely).
-    // Aspect ratio present + fixed dp/px width → keep the fixed value.
-    // No aspect ratio → apply the width value as-is.
->>>>>>> origin/task/SDK-5399_ios
     layout.width?.let { width ->
         modifier = when (width.special) {
             SpecialDimension.MATCH_PARENT -> modifier.fillMaxWidth()
             SpecialDimension.WRAP_CONTENT -> modifier.wrapContentWidth()
             else -> when (width.unit) {
                 DimensionUnit.DP -> modifier.width(width.value.dp)
-<<<<<<< HEAD
                 DimensionUnit.PERCENT -> modifier.fillMaxWidth(width.value / 100f)
                 DimensionUnit.PX -> modifier.width(width.value.dp) // todo check pixel assignment
-=======
-                DimensionUnit.PERCENT -> if (hasAspectRatio && !hasFixedWidth) modifier.fillMaxWidth()
-                                         else modifier.fillMaxWidth(width.value / 100f)
-                DimensionUnit.PX -> modifier.width(width.value.dp)
->>>>>>> origin/task/SDK-5399_ios
                 else -> modifier.width(width.value.dp)
             }
         }
     }
 
-<<<<<<< HEAD
     // Apply height
     layout.height?.let { height ->
         modifier = when (height.special) {
@@ -157,22 +141,6 @@ internal fun Modifier.applySizing(layout: Layout?): Modifier {
                 DimensionUnit.PERCENT -> modifier.fillMaxHeight(height.value / 100f)
                 DimensionUnit.PX -> modifier.height(height.value.dp)
                 else -> modifier.height(height.value.dp)
-=======
-    // Apply height.
-    // Skipped entirely when aspect ratio is present and height is not a fixed dp/px value —
-    // the aspect ratio modifier already constrains height, so percent height is ignored.
-    if (!hasAspectRatio || hasFixedHeight) {
-        layout.height?.let { height ->
-            modifier = when (height.special) {
-                SpecialDimension.MATCH_PARENT -> modifier.fillMaxHeight()
-                SpecialDimension.WRAP_CONTENT -> modifier.wrapContentHeight()
-                else -> when (height.unit) {
-                    DimensionUnit.DP -> modifier.height(height.value.dp)
-                    DimensionUnit.PERCENT -> modifier.fillMaxHeight(height.value / 100f)
-                    DimensionUnit.PX -> modifier.height(height.value.dp)
-                    else -> modifier.height(height.value.dp)
-                }
->>>>>>> origin/task/SDK-5399_ios
             }
         }
     }

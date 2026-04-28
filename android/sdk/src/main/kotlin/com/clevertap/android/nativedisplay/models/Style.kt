@@ -306,11 +306,7 @@ data class TextGradient(
 @Immutable
 @Serializable
 data class StyleClass(
-<<<<<<< HEAD
     val name: String,
-=======
-    val id: String,
->>>>>>> origin/task/SDK-5399_ios
     val style: Style
 )
 

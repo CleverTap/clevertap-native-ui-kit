@@ -121,12 +121,9 @@ internal object CleverTapAutoWire {
         activeListener = listener
         ctApi.setDisplayUnitListener(listener)
 
-<<<<<<< HEAD
         // Store the CleverTapAPI reference so the bridge can push attribution events
         bridge.cleverTapApi = ctApi
 
-=======
->>>>>>> origin/task/SDK-5399_ios
         Log.d(TAG, "Wired to CleverTap instance${if (clientListener != null) " (with client listener forwarding)" else ""}")
         return true
     }

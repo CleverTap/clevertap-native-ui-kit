@@ -92,18 +92,13 @@ interface NativeDisplayActionListener {
     /**
      * Called when any action execution fails.
      * Override this to handle errors gracefully.
-<<<<<<< HEAD
      *
-=======
-     * 
->>>>>>> origin/task/SDK-5399_ios
      * @param action The action that failed
      * @param error The error that occurred
      */
     fun onActionError(action: Action, error: Throwable) {
         // Default: do nothing (client can override to log or show error)
     }
-<<<<<<< HEAD
 
     /**
      * Called when a Native Display unit has been viewed (impression).
@@ -126,6 +121,4 @@ interface NativeDisplayActionListener {
      * @param unitId The ID of the display unit that was clicked
      */
     fun onDisplayUnitClicked(unitId: String) {}
-=======
->>>>>>> origin/task/SDK-5399_ios
 }

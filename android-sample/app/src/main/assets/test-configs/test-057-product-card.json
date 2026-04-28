@@ -38,11 +38,7 @@
             "unit": "percent"
           },
           "height": {
-<<<<<<< HEAD
             "value": -2,
-=======
-            "value": 200,
->>>>>>> origin/task/SDK-5399_ios
             "unit": "dp"
           },
           "padding": {

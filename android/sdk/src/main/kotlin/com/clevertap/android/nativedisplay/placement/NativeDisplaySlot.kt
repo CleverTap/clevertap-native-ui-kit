@@ -71,12 +71,8 @@ fun NativeDisplaySlot(
             config = currentUnit.config,
             modifier = modifier,
             actionListener = actionListener,
-<<<<<<< HEAD
             componentListener = componentListener,
             unitId = currentUnit.unitId
-=======
-            componentListener = componentListener
->>>>>>> origin/task/SDK-5399_ios
         )
     } else {
         loading()

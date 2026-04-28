@@ -14,11 +14,7 @@
       "style": {
         "fontSize": 16,
         "textColor": "#999999",
-<<<<<<< HEAD
         "textDecoration": "line-through",
-=======
-        "textDecoration": "strikethrough",
->>>>>>> origin/task/SDK-5399_ios
         "lineHeight": 22
       }
     },

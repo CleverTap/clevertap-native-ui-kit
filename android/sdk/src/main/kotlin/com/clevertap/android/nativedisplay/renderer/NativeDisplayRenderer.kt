@@ -1,10 +1,7 @@
 package com.clevertap.android.nativedisplay.renderer
 
 import androidx.compose.foundation.layout.Box
-<<<<<<< HEAD
 import androidx.compose.foundation.layout.BoxWithConstraints
-=======
->>>>>>> origin/task/SDK-5399_ios
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
@@ -46,10 +43,7 @@ fun NativeDisplayView(
     fontFamily: FontFamily? = null,
     actionListener: NativeDisplayActionListener? = null,
     componentListener: NativeDisplayComponentListener? = null,
-<<<<<<< HEAD
     unitId: String? = null,
-=======
->>>>>>> origin/task/SDK-5399_ios
 ) {
     val resolvedStyles = remember(config) {
         StyleResolver(config.theme, config.styleClasses).resolveAll(config.root)
@@ -61,10 +55,7 @@ fun NativeDisplayView(
         fontFamily = fontFamily,
         actionListener = actionListener,
         componentListener = componentListener,
-<<<<<<< HEAD
         unitId = unitId,
-=======
->>>>>>> origin/task/SDK-5399_ios
     )
 }
 
@@ -79,7 +70,6 @@ fun NativeDisplayView(
     fontFamily: FontFamily? = null,
     actionListener: NativeDisplayActionListener? = null,
     componentListener: NativeDisplayComponentListener? = null,
-<<<<<<< HEAD
     unitId: String? = null,
 ) {
     val context = LocalContext.current
@@ -90,16 +80,6 @@ fun NativeDisplayView(
             listener = actionListener,
             componentListener = componentListener,
             unitId = unitId
-=======
-) {
-    val context = LocalContext.current
-
-    val actionHandler = remember(actionListener, componentListener) {
-        ActionHandler(
-            context = context,
-            listener = actionListener,
-            componentListener = componentListener
->>>>>>> origin/task/SDK-5399_ios
         )
     }
 
@@ -113,10 +93,7 @@ fun NativeDisplayView(
         VariableEvaluator(variables = config.variables)
     }
 
-<<<<<<< HEAD
     val content = @Composable {
-=======
->>>>>>> origin/task/SDK-5399_ios
         BoxWithConstraints(modifier = modifier) {
             val parentWidthPx = if (constraints.maxWidth != Constraints.Infinity) constraints.maxWidth.toFloat() else 0f
             val parentHeightPx = if (constraints.maxHeight != Constraints.Infinity) constraints.maxHeight.toFloat() else 0f
@@ -131,10 +108,7 @@ fun NativeDisplayView(
                 isRoot = true,
                 rootHeightPx = rootHeightPx,
             )
-<<<<<<< HEAD
         }
-=======
->>>>>>> origin/task/SDK-5399_ios
     }
 
     if (fontFamily != null) {
@@ -397,18 +371,6 @@ private fun resolveRootWidthPx(rootLayout: Layout?, parentWidthPx: Float, densit
     return when (width.unit) {
         DimensionUnit.DP, DimensionUnit.SP -> width.value * density
         DimensionUnit.PX -> width.value
-<<<<<<< HEAD
         DimensionUnit.PERCENT -> if (parentWidthPx > 0f) parentWidthPx * width.value / 100f else 0f
     }
 }
-=======
-        DimensionUnit.PERCENT -> {
-            // Aspect ratio present → percent is ignored, width fills parent.
-            // Keeps rootHeight (used for TextDimension %) consistent with the rendered frame.
-            if ((rootLayout?.aspectRatio ?: 0f) > 0f) parentWidthPx
-            else if (parentWidthPx > 0f) parentWidthPx * width.value / 100f
-            else 0f
-        }
-    }
-}
->>>>>>> origin/task/SDK-5399_ios

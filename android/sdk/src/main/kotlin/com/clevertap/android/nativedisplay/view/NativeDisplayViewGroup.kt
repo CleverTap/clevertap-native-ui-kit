@@ -85,10 +85,7 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
     private var actionListenerState = mutableStateOf<NativeDisplayActionListener?>(null)
     private var componentListenerState = mutableStateOf<NativeDisplayComponentListener?>(null)
     private var resolvedStylesState = mutableStateOf<PersistentMap<String, Style>>(persistentMapOf())
-<<<<<<< HEAD
     private var unitIdState = mutableStateOf<String?>(null)
-=======
->>>>>>> origin/task/SDK-5399_ios
 
     // State tracking
     private var isRecycled = false
@@ -126,10 +123,7 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
                 val actionListener by remember { actionListenerState }
                 val componentListener by remember { componentListenerState }
                 val resolvedStyles by remember { resolvedStylesState }
-<<<<<<< HEAD
                 val unitId by remember { unitIdState }
-=======
->>>>>>> origin/task/SDK-5399_ios
 
                 config?.let { resolvedConfig ->
                     MaterialTheme {
@@ -138,12 +132,8 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
                             resolvedStyles = resolvedStyles,
                             modifier = Modifier,
                             actionListener = actionListener,
-<<<<<<< HEAD
                             componentListener = componentListener,
                             unitId = unitId
-=======
-                            componentListener = componentListener
->>>>>>> origin/task/SDK-5399_ios
                         )
                     }
                 }
@@ -195,12 +185,8 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
     fun setConfig(
         config: ResolvedConfig,
         actionListener: NativeDisplayActionListener? = null,
-<<<<<<< HEAD
         componentListener: NativeDisplayComponentListener? = null,
         unitId: String? = null
-=======
-        componentListener: NativeDisplayComponentListener? = null
->>>>>>> origin/task/SDK-5399_ios
     ) {
         isRecycled = false
         // Pre-resolve all node styles once — composables get O(1) lookup, no recomputation
@@ -209,10 +195,7 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
         configState.value = config
         actionListenerState.value = actionListener
         componentListenerState.value = componentListener
-<<<<<<< HEAD
         unitIdState.value = unitId
-=======
->>>>>>> origin/task/SDK-5399_ios
         requestLayout()
     }
 
@@ -224,10 +207,7 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
         actionListenerState.value = null
         componentListenerState.value = null
         resolvedStylesState.value = persistentMapOf()
-<<<<<<< HEAD
         unitIdState.value = null
-=======
->>>>>>> origin/task/SDK-5399_ios
     }
 
     /**
@@ -240,10 +220,7 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
         componentListenerState.value = null
         configState.value = null
         resolvedStylesState.value = persistentMapOf()
-<<<<<<< HEAD
         unitIdState.value = null
-=======
->>>>>>> origin/task/SDK-5399_ios
     }
 
     /**

@@ -222,7 +222,6 @@ internal fun RenderElement(
                 evaluator.evaluateBoolean(it)
             } ?: true
 
-<<<<<<< HEAD
             val openUrl = element.bindings["openUrl"]?.let {
                 evaluator.evaluateString(it)
             }?.takeIf { it.isNotEmpty() }
@@ -231,12 +230,6 @@ internal fun RenderElement(
                 val videoFactory = LocalVideoPlayerFactory.current
                 if (videoFactory != null) {
                     videoFactory(videoUrl, autoPlay, loop, muted, showControls, showFullscreen, openUrl, elementModifier)
-=======
-            if (videoUrl.isNotEmpty()) {
-                val videoFactory = LocalVideoPlayerFactory.current
-                if (videoFactory != null) {
-                    videoFactory(videoUrl, autoPlay, loop, muted, showControls, showFullscreen, elementModifier)
->>>>>>> origin/task/SDK-5399_ios
                 } else {
                     VideoPlayer(
                         videoUrl = videoUrl,
@@ -245,10 +238,7 @@ internal fun RenderElement(
                         muted = muted,
                         showControls = showControls,
                         showFullscreen = showFullscreen,
-<<<<<<< HEAD
                         openUrl = openUrl,
-=======
->>>>>>> origin/task/SDK-5399_ios
                         modifier = elementModifier
                     )
                 }

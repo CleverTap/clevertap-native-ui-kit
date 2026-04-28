@@ -293,17 +293,12 @@ Plays video content with custom controls.
     "loop": "false",
     "muted": "false",
     "showControls": "true",
-<<<<<<< HEAD
     "showFullscreen": "true",
     "openUrl": "https://example.com/product"
-=======
-    "showFullscreen": "true"
->>>>>>> origin/task/SDK-5399_ios
   }
 }
 ```
 
-<<<<<<< HEAD
 **Binding keys**: `url` (required), `autoPlay`, `loop`, `muted`, `showControls`, `showFullscreen`, `openUrl`
 
 > ⚠️ `id` is **required** on every node (`NativeDisplayContainer` and `NativeDisplayElement`). Omitting it causes a `MissingFieldException` at parse time.
@@ -315,17 +310,6 @@ Plays video content with custom controls.
 - `showFullscreen="false"` — hides only the fullscreen button
 - `openUrl` — when set, shows a link icon button; tapping opens the URL externally
 - When video ends without `loop`, play button resets and replays from the start on next tap
-=======
-**Binding keys**: `url` (required), `autoPlay`, `loop`, `muted`, `showControls`, `showFullscreen`
-
-**Custom Controls Behavior**:
-- **Play/Pause**, **Mute/Unmute**, **Fullscreen** buttons (not platform default UI)
-- Tap video to show/hide controls
-- Auto-hide after 3 seconds of inactivity
-- Fade in/out animation (300ms)
-- `showControls="false"` - hides all controls
-- `showFullscreen="false"` - hides only fullscreen button
->>>>>>> origin/task/SDK-5399_ios
 
 **Default values**:
 - autoPlay: `false`
@@ -333,10 +317,7 @@ Plays video content with custom controls.
 - muted: `false`
 - showControls: `true`
 - showFullscreen: `true`
-<<<<<<< HEAD
 - openUrl: unset (link button hidden)
-=======
->>>>>>> origin/task/SDK-5399_ios
 
 **Platform Requirements**:
 - **Android**: Host app must add `androidx.media3:media3-exoplayer` dependency
