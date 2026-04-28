@@ -1,9 +1,9 @@
 import XCTest
 
-/// Screenshot capture for all 178 Native Display test configurations.
+/// Screenshot capture for all 177 Native Display test configurations.
 ///
 /// A single test method navigates through every config sequentially using the
-/// in-app "next" arrow — one app launch, one navigation, 178 screenshots.
+/// in-app "next" arrow — one app launch, one navigation, 177 screenshots.
 ///
 /// Run:
 ///   xcodebuild test -scheme NativeDisplaySample \
@@ -68,7 +68,7 @@ final class NativeDisplayConfigTests: XCTestCase {
 
     // MARK: - Single Sequential Run
 
-    /// Captures screenshots for all 178 test configs in one pass.
+    /// Captures screenshots for all 177 test configs in one pass.
     ///
     /// Uses the "nav-next" arrow button to advance through configs without relaunching
     /// the app. `native-display-view` is waited on before each screenshot so the
@@ -249,7 +249,6 @@ final class NativeDisplayConfigTests: XCTestCase {
             "test-170-gallery-box-grid3col-navbtns",
             "test-171-gallery-box-grid2col-video",
             "test-172-gallery-box-grid2col-vertical",
-            "test-172-video-fullscreen-openurl",
             "test-173-gallery-box-snapping-indicators-navbtns",
             "test-174-gallery-box-snapping-indicators-only",
             "test-175-gallery-box-snapping-navbtns-only",
@@ -261,10 +260,13 @@ final class NativeDisplayConfigTests: XCTestCase {
         // Waiting on it resolves in ~100 ms either way — no more burning full timeout on failures.
         let contentSettled = app.descendants(matching: .any)
             .matching(identifier: "content-settled").firstMatch
-        let renderView = app.descendants(matching: .any)
-            .matching(identifier: "native-display-view").firstMatch
         let nextButton = app.buttons["nav-next"]
         let failedLoadPredicate = NSPredicate(format: "label BEGINSWITH 'Failed to load'")
+
+        // content-area is the ZStack below the title bar, nav row, and chip strip.
+        // Screenshotting it crops out all test-browser chrome, leaving only the rendered content.
+        let contentArea = app.descendants(matching: .any)
+            .matching(identifier: "content-area").firstMatch
 
         var failedConfigs: [(name: String, reason: String)] = []
 
@@ -273,6 +275,8 @@ final class NativeDisplayConfigTests: XCTestCase {
             // Only falls back to the full 2 s if the view is in an unexpected state.
             _ = contentSettled.waitForExistence(timeout: 2)
 
+            let renderView = app.descendants(matching: .any)
+                .matching(identifier: "native-display-view").firstMatch
             if !renderView.exists {
                 let reason = app.staticTexts.matching(failedLoadPredicate).firstMatch.exists
                     ? "Failed to load"
@@ -280,10 +284,11 @@ final class NativeDisplayConfigTests: XCTestCase {
                 failedConfigs.append((name: filename, reason: reason))
             }
 
-            // Capture element-level screenshot of NativeDisplayView (no chrome, no padding)
-            let renderView = app.descendants(matching: .any)
-                .matching(identifier: "native-display-view").firstMatch
-            let screenshot = XCTAttachment(screenshot: renderView.exists ? renderView.screenshot() : app.screenshot())
+            // Screenshot only the content-area element — excludes title bar, nav row, and chip strip.
+            // Falls back to app.screenshot() if the element is not yet in the accessibility tree.
+            let screenshot = XCTAttachment(screenshot: contentArea.exists
+                ? contentArea.screenshot()
+                : app.screenshot())
             screenshot.name = filename
             screenshot.lifetime = .keepAlways
             add(screenshot)

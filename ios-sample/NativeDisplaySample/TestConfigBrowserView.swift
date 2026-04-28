@@ -167,6 +167,7 @@ struct TestConfigBrowserView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .accessibilityIdentifier("content-area")
     }
 
     // MARK: - Navigation

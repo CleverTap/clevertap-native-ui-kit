@@ -1,0 +1,143 @@
+{
+  "theme": {
+    "id": "banner-07",
+    "defaultStyle": {
+      "textColor": "#424242",
+      "fontSize": 14
+    }
+  },
+  "variables": {
+    "rating": "4.8",
+    "users": "50K+",
+    "badge": "VERIFIED"
+  },
+  "root": {
+    "type": "container",
+    "id": "banner-root",
+    "containerType": "box",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "aspectRatio": 0.38
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "angle": 90,
+        "colors": ["#FFFFFF", "#FFF3E0"]
+      },
+      "borderRadius": 16
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "verified-badge",
+        "elementType": "text",
+        "bindings": {
+          "text": "✓ {{badge}}"
+        },
+        "layout": {
+          "width": { "value": 28, "unit": "percent" },
+          "height": { "value": 22, "unit": "percent" },
+          "offset": { "x": 4, "y": 6, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 12,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFF",
+          "textAlign": "center",
+          "backgroundColor": "#00C853DD",
+          "borderRadius": 18,
+          "shadowColor": "#00C85360",
+          "shadowRadius": 6,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3
+        }
+      },
+      {
+        "type": "element",
+        "id": "rating-number",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{rating}}"
+        },
+        "layout": {
+          "width": { "value": 45, "unit": "percent" },
+          "offset": { "x": 5, "y": 20, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 64,
+          "fontWeight": "bold",
+          "textColor": "#FF9800",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "stars",
+        "elementType": "text",
+        "bindings": {
+          "text": "★★★★★"
+        },
+        "layout": {
+          "width": { "value": 45, "unit": "percent" },
+          "offset": { "x": 5, "y": 62, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 24,
+          "fontWeight": "normal",
+          "textColor": "#FF9800",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "join-text",
+        "elementType": "text",
+        "bindings": {
+          "text": "Join {{users}} Users"
+        },
+        "layout": {
+          "width": { "value": 48, "unit": "percent" },
+          "offset": { "x": 50, "y": 22, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 20,
+          "fontWeight": "bold",
+          "textColor": "#424242",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "download-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Download"
+        },
+        "layout": {
+          "width": { "value": 42, "unit": "percent" },
+          "height": { "value": 32, "unit": "percent" },
+          "offset": { "x": 52, "y": 50, "unit": "percent" }
+        },
+        "style": {
+          "backgroundColor": "#FF9800",
+          "textColor": "#FFFFFF",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "borderRadius": 24,
+          "shadowColor": "#FF980060",
+          "shadowRadius": 12,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 6
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "download_app",
+            "value": {}
+          }
+        }
+      }
+    ]
+  }
+}

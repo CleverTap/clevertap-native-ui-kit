@@ -1,0 +1,180 @@
+{
+  "theme": {
+    "id": "test-093",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "variables": {
+    "testName": "Percentage Offset - Negative Values"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333",
+          "lineHeight": 25
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests negative percentage offset values. Boxes should position outside or at edges of the container. Green box at -10%,-10%. Red box at 110%,110%."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666",
+          "lineHeight": 17
+        }
+      },
+      {
+        "type": "container",
+        "id": "test-box",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 300,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 300,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderWidth": 2,
+          "borderColor": "#000000"
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "box-center",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 60,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 60,
+                "unit": "dp"
+              },
+              "offset": {
+                "x": 50,
+                "y": 50,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "backgroundColor": "#2196F3"
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "box-negative",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 60,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 60,
+                "unit": "dp"
+              },
+              "offset": {
+                "x": -10,
+                "y": -10,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "backgroundColor": "#4CAF50",
+              "borderWidth": 2,
+              "borderColor": "#2E7D32"
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "box-overflow",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 40,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 40,
+                "unit": "dp"
+              },
+              "offset": {
+                "x": 110,
+                "y": 110,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "backgroundColor": "#F44336",
+              "borderWidth": 2,
+              "borderColor": "#C62828"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": []
+}
