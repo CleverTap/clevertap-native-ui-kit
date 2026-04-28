@@ -10,24 +10,23 @@
   },
   "styleClasses": [
     {
-      "id": "stat-value",
       "style": {
         "fontSize": 24,
         "fontWeight": "bold",
         "textColor": "#000000",
         "lineHeight": 34
-      }
+      },
+      "name": "stat-value"
     },
     {
-      "id": "stat-label",
       "style": {
         "fontSize": 12,
         "textColor": "#999999",
         "lineHeight": 17
-      }
+      },
+      "name": "stat-label"
     },
     {
-      "id": "action-button",
       "style": {
         "backgroundColor": "#2196F3",
         "textColor": "#FFFFFF",
@@ -40,7 +39,8 @@
         "shadowOffsetX": 0,
         "shadowOffsetY": 4,
         "lineHeight": 20
-      }
+      },
+      "name": "action-button"
     }
   ],
   "root": {

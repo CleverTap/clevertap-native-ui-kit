@@ -10,25 +10,24 @@
   },
   "styleClasses": [
     {
-      "id": "price-old",
       "style": {
         "fontSize": 16,
         "textColor": "#999999",
         "textDecoration": "line-through",
         "lineHeight": 22
-      }
+      },
+      "name": "price-old"
     },
     {
-      "id": "price-new",
       "style": {
         "fontSize": 28,
         "textColor": "#F44336",
         "fontWeight": "bold",
         "lineHeight": 39
-      }
+      },
+      "name": "price-new"
     },
     {
-      "id": "badge",
       "style": {
         "backgroundColor": "#FF5722",
         "textColor": "#FFFFFF",
@@ -36,7 +35,8 @@
         "fontWeight": "bold",
         "borderRadius": 4,
         "lineHeight": 17
-      }
+      },
+      "name": "badge"
     }
   ],
   "root": {

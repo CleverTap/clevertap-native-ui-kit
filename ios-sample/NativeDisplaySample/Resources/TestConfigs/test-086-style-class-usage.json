@@ -10,7 +10,6 @@
   },
   "styleClasses": [
     {
-      "id": "primary-button",
       "style": {
         "backgroundColor": "#2196F3",
         "textColor": "#FFFFFF",
@@ -23,10 +22,10 @@
         "shadowOffsetX": 0,
         "shadowOffsetY": 4,
         "lineHeight": 22
-      }
+      },
+      "name": "primary-button"
     },
     {
-      "id": "secondary-button",
       "style": {
         "backgroundColor": "#FFFFFF",
         "textColor": "#2196F3",
@@ -36,10 +35,10 @@
         "borderWidth": 2,
         "borderColor": "#2196F3",
         "lineHeight": 22
-      }
+      },
+      "name": "secondary-button"
     },
     {
-      "id": "card-style",
       "style": {
         "backgroundColor": "#FFFFFF",
         "borderRadius": 12,
@@ -48,27 +47,27 @@
         "shadowRadius": 8,
         "shadowOffsetX": 0,
         "shadowOffsetY": 2
-      }
+      },
+      "name": "card-style"
     },
     {
-      "id": "heading-text",
       "style": {
         "fontSize": 24,
         "fontWeight": "bold",
         "textColor": "#000000",
         "lineHeight": 34
-      }
+      },
+      "name": "heading-text"
     },
     {
-      "id": "body-text",
       "style": {
         "fontSize": 14,
         "lineHeight": 21,
         "textColor": "#666666"
-      }
+      },
+      "name": "body-text"
     },
     {
-      "id": "success-badge",
       "style": {
         "backgroundColor": "#4CAF50",
         "textColor": "#FFFFFF",
@@ -76,10 +75,10 @@
         "fontWeight": "bold",
         "borderRadius": 12,
         "lineHeight": 17
-      }
+      },
+      "name": "success-badge"
     },
     {
-      "id": "error-badge",
       "style": {
         "backgroundColor": "#F44336",
         "textColor": "#FFFFFF",
@@ -87,7 +86,8 @@
         "fontWeight": "bold",
         "borderRadius": 12,
         "lineHeight": 17
-      }
+      },
+      "name": "error-badge"
     }
   ],
   "root": {

@@ -633,11 +633,11 @@ public struct TextGradient: Codable, Equatable {
 
 /// Named style class that can be referenced by elements.
 public struct StyleClass: Codable, Equatable {
-    public let id: String
+    public let name: String
     public let style: Style
 
-    public init(id: String, style: Style) {
-        self.id = id
+    public init(name: String, style: Style) {
+        self.name = name
         self.style = style
     }
 }

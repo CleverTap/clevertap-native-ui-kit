@@ -10,14 +10,14 @@
   },
   "styleClasses": [
     {
-      "id": "base-container",
       "style": {
         "backgroundColor": "#E3F2FD",
         "borderRadius": 12,
         "textColor": "#1976D2",
         "fontSize": 16,
         "lineHeight": 22
-      }
+      },
+      "name": "base-container"
     }
   ],
   "root": {
