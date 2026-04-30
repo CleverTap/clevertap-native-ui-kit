@@ -18,6 +18,10 @@ public struct NativeDisplayUnit {
     /// The resolved configuration ready for rendering with `NativeDisplayView`.
     public let config: ResolvedConfig
 
+    /// Slot identifier from the top-level `slot_id` key in the display unit JSON,
+    /// or `nil` when the unit is not bound to a placement slot.
+    public let slotId: String?
+
     /// Custom key-value pairs extracted from the `custom_kv` field in the display unit JSON.
     public let customExtras: [String: String]
 
@@ -27,11 +31,13 @@ public struct NativeDisplayUnit {
     public init(
         unitId: String,
         config: ResolvedConfig,
+        slotId: String? = nil,
         customExtras: [String: String] = [:],
         rawJson: String? = nil
     ) {
         self.unitId = unitId
         self.config = config
+        self.slotId = slotId
         self.customExtras = customExtras
         self.rawJson = rawJson
     }

@@ -11,12 +11,15 @@ import com.clevertap.android.nativedisplay.models.ResolvedConfig
  *
  * @param unitId Unique identifier for this display unit (typically `wzrk_id` from the server)
  * @param config The resolved configuration ready for rendering
+ * @param slotId Slot identifier from the top-level `slot_id` key, or null when the unit
+ *   is not bound to a placement slot
  * @param customExtras Key-value pairs from the `custom_kv` field in the original payload
  * @param rawJson The original JSON string that produced this unit (retained for debugging)
  */
 data class NativeDisplayUnit(
     val unitId: String,
     val config: ResolvedConfig,
+    val slotId: String? = null,
     val customExtras: Map<String, String> = emptyMap(),
     val rawJson: String? = null
 )

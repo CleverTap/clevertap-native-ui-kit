@@ -34,8 +34,8 @@ interface SlotObserver {
  * Manages Native Display slot registrations and routes display units to observers.
  *
  * This singleton listens for display units via [NativeDisplayBridgeListener] and
- * routes them to registered [SlotObserver] instances based on the `slot_id` key
- * in each unit's [NativeDisplayUnit.customExtras].
+ * routes them to registered [SlotObserver] instances based on each unit's
+ * [NativeDisplayUnit.slotId] (sourced from the top-level `slot_id` key).
  *
  * **Slot lifecycle:**
  * 1. A view registers a slot via [registerSlot]
@@ -58,9 +58,6 @@ class NativeDisplaySlotManager private constructor() : NativeDisplayBridgeListen
 
     companion object {
         private const val TAG = "NDSlotManager"
-
-        /** Key used to extract the slot identifier from [NativeDisplayUnit.customExtras]. */
-        const val SLOT_ID_KEY = "slot_id"
 
         /** Event name sent to CleverTap server to sync active slot IDs. */
         internal const val WZRK_ND_SLOT_SYNC = "wzrk_nd_slot_sync"
@@ -203,9 +200,9 @@ class NativeDisplaySlotManager private constructor() : NativeDisplayBridgeListen
     // --- NativeDisplayBridgeListener ---
 
     override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
-        // Index units by slot_id and notify matching observers
+        // Index units by slotId and notify matching observers
         for (unit in units) {
-            val slotId = unit.customExtras[SLOT_ID_KEY] ?: continue
+            val slotId = unit.slotId ?: continue
 
             synchronized(unitIndexLock) {
                 unitIndex[slotId] = unit

@@ -3,7 +3,8 @@
 //  CleverTapNativeDisplay
 //
 //  Slot-based placement system for Native Display units.
-//  Routes units to registered slots based on the `slot_id` custom extra.
+//  Routes units to registered slots based on the top-level `slot_id` field
+//  exposed by `NativeDisplayUnit.slotId`.
 //
 
 import Foundation
@@ -30,7 +31,8 @@ public protocol NativeDisplaySlotObserver: AnyObject {
 
 /// Singleton manager that routes `NativeDisplayUnit` instances to registered slots.
 ///
-/// Units are matched to slots via the `slot_id` key in `NativeDisplayUnit.customExtras`.
+/// Units are matched to slots via `NativeDisplayUnit.slotId`, which the parser populates
+/// from the top-level `slot_id` key on the display-unit JSON.
 /// The manager listens to the bridge for incoming units and maintains a latest-unit-per-slot
 /// index so that late-registering observers receive the current unit immediately.
 ///
@@ -59,7 +61,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     /// Registry of slot observers. Key is slotId, value is weak set of observers.
     private var slotRegistry: [String: NSHashTable<AnyObject>] = [:]
 
-    /// Latest unit per slot_id for immediate delivery to late registrants.
+    /// Latest unit per slotId for immediate delivery to late registrants.
     private var unitIndex: [String: NativeDisplayUnit] = [:]
 
     /// Thread-safety lock for all mutable state.
@@ -77,8 +79,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     // MARK: - Bridge Listener
 
     /// Called by the bridge when display units are loaded or updated.
-    /// Extracts `slot_id` from each unit's `customExtras`, updates the index,
-    /// and notifies matching observers.
+    /// Reads `slotId` from each unit, updates the index, and notifies matching observers.
     public func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
         lock.lock()
 
@@ -86,7 +87,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
         var notifications: [(NativeDisplaySlotObserver, NativeDisplayUnit)] = []
 
         for unit in units {
-            guard let slotId = unit.customExtras["slot_id"], !slotId.isEmpty else {
+            guard let slotId = unit.slotId, !slotId.isEmpty else {
                 continue
             }
 

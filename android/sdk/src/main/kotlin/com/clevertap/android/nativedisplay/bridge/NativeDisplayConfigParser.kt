@@ -37,6 +37,7 @@ internal class NativeDisplayConfigParser {
         return try {
             val jsonObj = json.parseToJsonElement(jsonString).jsonObject
             val unitId = extractUnitId(jsonObj) ?: return null
+            val slotId = extractSlotId(jsonObj)
             val customExtras = extractCustomExtras(jsonObj)
 
             val resolvedConfig = tryParseNativeDisplayConfig(jsonObj)
@@ -47,6 +48,7 @@ internal class NativeDisplayConfigParser {
             NativeDisplayUnit(
                 unitId = unitId,
                 config = resolvedConfig,
+                slotId = slotId,
                 customExtras = customExtras,
                 rawJson = jsonString
             )
@@ -107,6 +109,14 @@ internal class NativeDisplayConfigParser {
      */
     private fun extractUnitId(jsonObj: JsonObject): String? {
         return jsonObj["wzrk_id"]?.jsonPrimitive?.contentOrNull
+    }
+
+    /**
+     * Extract `slot_id` from the top-level JSON. Empty strings are normalized to null.
+     */
+    private fun extractSlotId(jsonObj: JsonObject): String? {
+        val raw = jsonObj["slot_id"]?.jsonPrimitive?.contentOrNull ?: return null
+        return raw.takeIf { it.isNotEmpty() }
     }
 
     /**
