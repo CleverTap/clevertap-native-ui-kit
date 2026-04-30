@@ -277,9 +277,11 @@ class NativeDisplayBridge private constructor() {
      * @return true if the event was pushed successfully, false if no CleverTapAPI is available
      */
     fun pushViewedEvent(unitId: String): Boolean {
+        val ct = cleverTapApi ?: return false
         return try {
-            cleverTapApi?.pushDisplayUnitViewedEventForID(unitId)
-            cleverTapApi != null
+            seedIfNeeded(unitId)
+            ct.pushDisplayUnitViewedEventForID(unitId)
+            true
         } catch (e: Exception) {
             Log.w(TAG, "pushViewedEvent failed: ${e.message}")
             false
@@ -296,12 +298,42 @@ class NativeDisplayBridge private constructor() {
      * @return true if the event was pushed successfully, false if no CleverTapAPI is available
      */
     fun pushClickedEvent(unitId: String): Boolean {
+        val ct = cleverTapApi ?: return false
         return try {
-            cleverTapApi?.pushDisplayUnitClickedEventForID(unitId)
-            cleverTapApi != null
+            seedIfNeeded(unitId)
+            ct.pushDisplayUnitClickedEventForID(unitId)
+            true
         } catch (e: Exception) {
             Log.w(TAG, "pushClickedEvent failed: ${e.message}")
             false
+        }
+    }
+
+    /**
+     * Older-Core-SDK fallback: when the v7.x [setDisplayUnitCache] attach API
+     * is unavailable (so [CleverTapAutoWire.tryAttachCache] returned false),
+     * inject the unit's raw JSON directly into Core SDK's display-unit cache
+     * just before pushing the event so that
+     * `pushDisplayUnit*EventForID`'s mandatory cache lookup succeeds.
+     *
+     * No-op when running against a Core SDK with the cache-attachment API
+     * (the cache adapter already serves the lookup).
+     */
+    private fun seedIfNeeded(unitId: String) {
+        val ct = cleverTapApi ?: return
+        val cacheAttached = try {
+            val ifaceClass = Class.forName("com.clevertap.android.sdk.displayunits.DisplayUnitCache")
+            ct.javaClass.getMethod("setDisplayUnitCache", ifaceClass)
+            true
+        } catch (_: Throwable) {
+            false
+        }
+        if (cacheAttached) return
+        val raw = synchronized(cacheLock) { cache[unitId]?.rawJson } ?: return
+        try {
+            ReflectionSeeder.seed(ct, listOf(org.json.JSONObject(raw)))
+        } catch (_: Throwable) {
+            // logged inside ReflectionSeeder
         }
     }
 

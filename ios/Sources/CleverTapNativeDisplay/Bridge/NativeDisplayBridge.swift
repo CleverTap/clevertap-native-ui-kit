@@ -272,6 +272,7 @@ public class NativeDisplayBridge {
     @discardableResult
     public func pushViewedEvent(unitId: String) -> Bool {
         guard let ct = cleverTapInstance else { return false }
+        seedIfNeeded(unitId: unitId, instance: ct)
         let sel = NSSelectorFromString("pushDisplayUnitViewedEventForID:")
         guard ct.responds(to: sel) else { return false }
         ct.perform(sel, with: unitId)
@@ -288,10 +289,28 @@ public class NativeDisplayBridge {
     @discardableResult
     public func pushClickedEvent(unitId: String) -> Bool {
         guard let ct = cleverTapInstance else { return false }
+        seedIfNeeded(unitId: unitId, instance: ct)
         let sel = NSSelectorFromString("pushDisplayUnitClickedEventForID:")
         guard ct.responds(to: sel) else { return false }
         ct.perform(sel, with: unitId)
         return true
+    }
+
+    /// Older-Core-SDK fallback: when the v7.x `setDisplayUnitCache:` attach
+    /// API is unavailable (so `CleverTapAutoWire.attachCache` returned false),
+    /// inject the unit's raw JSON directly into Core SDK's display-unit cache
+    /// just before pushing the event so that `recordDisplayUnit*EventForID:`'s
+    /// mandatory cache lookup succeeds.
+    ///
+    /// No-op when the cache is attached (the cache adapter already serves
+    /// lookups).
+    private func seedIfNeeded(unitId: String, instance ct: NSObject) {
+        if CleverTapAutoWire.isCacheAttached { return }
+        guard let raw = getNativeDisplayForId(unitId)?.rawJson,
+              let data = raw.data(using: .utf8),
+              let dict = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+        else { return }
+        ReflectionSeeder.seed(cleverTapInstance: ct, unitDicts: [dict])
     }
 
     /// Create an action listener that automatically forwards viewed/clicked events to
