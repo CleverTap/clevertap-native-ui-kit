@@ -121,7 +121,7 @@ internal class CleverTapAutoWire: NSObject {
     private static func attachCache(to cleverTap: NSObject, bridge: NativeDisplayBridge) -> Bool {
         let selector = NSSelectorFromString("setDisplayUnitCache:")
         guard cleverTap.responds(to: selector) else { return false }
-        let cache = NativeDisplayUnitCacheImpl(bridge: bridge)
+        let cache = bridge.coreSdkCacheAdapter
         cleverTap.perform(selector, with: cache)
         activeCache = cache
         return true

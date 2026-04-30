@@ -163,7 +163,7 @@ internal object CleverTapAutoWire {
         } catch (_: NoSuchMethodException) {
             return false
         }
-        val proxy = NativeDisplayUnitCacheImpl(bridge).asProxy() ?: return false
+        val proxy = bridge.coreSdkCacheProxy() ?: return false
         return try {
             setter.invoke(ctApi, proxy)
             activeCache = proxy

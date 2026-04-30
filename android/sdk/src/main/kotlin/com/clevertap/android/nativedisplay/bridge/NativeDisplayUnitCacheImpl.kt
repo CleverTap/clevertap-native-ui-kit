@@ -6,21 +6,66 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * Builds a runtime proxy implementing Core SDK's `DisplayUnitCache` interface
- * (when present) backed by [NativeDisplayBridge]'s own cache. Routes Core SDK
- * lookups (`getDisplayUnitForID`, `getAllDisplayUnits`) through the bridge,
- * and routes server-driven `updateDisplayUnits` calls into the bridge's
- * existing parse pipeline so existing [NativeDisplayBridgeListener]s still
- * fire.
+ * Owns the in-memory store of [NativeDisplayUnit]s for the bridge **and**
+ * exposes itself as Core SDK's `DisplayUnitCache` interface (when present at
+ * runtime) so that `pushDisplayUnit*EventForID` lookups resolve through the
+ * same data.
  *
- * Uses [Proxy] so the ND SDK retains its zero-runtime-dependency on Core SDK.
- * If `DisplayUnitCache` is not on the classpath at runtime, [asProxy] returns
- * null and the caller falls back to [ReflectionSeeder].
+ * Single source of truth — no duplicate storage between this class and
+ * [NativeDisplayBridge]. The bridge holds one instance and delegates its
+ * storage operations here; the proxy returned by [asProxy] also reads from
+ * the same map, so Core SDK and ND SDK agree on what is cached.
+ *
+ * Thread-safe: all reads/writes guarded by an internal lock.
  */
-internal class NativeDisplayUnitCacheImpl(private val bridge: NativeDisplayBridge) {
+internal class NativeDisplayUnitCacheImpl {
 
-    /** @return a proxy implementing `DisplayUnitCache`, or null if absent at runtime. */
-    fun asProxy(): Any? {
+    private val cache = LinkedHashMap<String, NativeDisplayUnit>()
+    private val lock = Any()
+
+    // -- Bridge-facing storage primitives --
+
+    /** Replace the entire cache with the supplied units, keyed by `unitId`. */
+    fun replaceAll(units: List<NativeDisplayUnit>) {
+        synchronized(lock) {
+            cache.clear()
+            for (unit in units) cache[unit.unitId] = unit
+        }
+    }
+
+    /** Add or update a single entry (does not clear other entries). */
+    fun put(unit: NativeDisplayUnit) {
+        synchronized(lock) { cache[unit.unitId] = unit }
+    }
+
+    /** @return the unit with [unitId], or null if absent. */
+    fun get(unitId: String): NativeDisplayUnit? = synchronized(lock) { cache[unitId] }
+
+    /** @return a snapshot list of all units. */
+    fun getAll(): List<NativeDisplayUnit> = synchronized(lock) { cache.values.toList() }
+
+    /** @return current number of units. */
+    fun size(): Int = synchronized(lock) { cache.size }
+
+    /** Empty the cache. */
+    fun clear() {
+        synchronized(lock) { cache.clear() }
+    }
+
+    // -- Core SDK adapter --
+
+    /**
+     * Returns a JDK [Proxy] implementing
+     * `com.clevertap.android.sdk.displayunits.DisplayUnitCache` when that
+     * type is present on the classpath, else null. The proxy reads from this
+     * instance's storage and forwards server-driven [updateDisplayUnits]
+     * calls (and [reset] calls) through the supplied callbacks so that the
+     * bridge's parser and listener machinery still fire.
+     */
+    fun asProxy(
+        onServerUpdate: (JSONArray) -> Unit,
+        onReset: () -> Unit
+    ): Any? {
         val ifaceClass = try {
             Class.forName("com.clevertap.android.sdk.displayunits.DisplayUnitCache")
         } catch (_: ClassNotFoundException) {
@@ -29,10 +74,12 @@ internal class NativeDisplayUnitCacheImpl(private val bridge: NativeDisplayBridg
         return Proxy.newProxyInstance(ifaceClass.classLoader, arrayOf(ifaceClass)) { proxy, method, args ->
             try {
                 when (method.name) {
-                    "getDisplayUnitForID" -> resolve(args?.firstOrNull() as? String)
-                    "getAllDisplayUnits" -> all()
-                    "updateDisplayUnits" -> ingestServer(args?.firstOrNull() as? JSONArray)
-                    "reset" -> { bridge.clear(); null }
+                    "getDisplayUnitForID" -> resolveAsCt(args?.firstOrNull() as? String)
+                    "getAllDisplayUnits" -> allAsCt()
+                    "updateDisplayUnits" -> {
+                        (args?.firstOrNull() as? JSONArray)?.let(onServerUpdate); null
+                    }
+                    "reset" -> { onReset(); null }
                     "equals" -> args?.firstOrNull() === proxy
                     "hashCode" -> System.identityHashCode(proxy)
                     "toString" -> "NativeDisplayUnitCacheImpl"
@@ -45,27 +92,14 @@ internal class NativeDisplayUnitCacheImpl(private val bridge: NativeDisplayBridg
         }
     }
 
-    private fun resolve(unitId: String?): Any? {
+    private fun resolveAsCt(unitId: String?): Any? {
         if (unitId.isNullOrEmpty()) return null
-        val unit = bridge.getNativeDisplayForId(unitId) ?: return null
-        return unit.rawJson?.let { toCleverTapDisplayUnit(it) }
+        return get(unitId)?.rawJson?.let(::toCleverTapDisplayUnit)
     }
 
-    private fun all(): Any? {
-        val units = bridge.getAllNativeDisplays()
-            .mapNotNull { it.rawJson?.let(::toCleverTapDisplayUnit) }
+    private fun allAsCt(): Any? {
+        val units = getAll().mapNotNull { it.rawJson?.let(::toCleverTapDisplayUnit) }
         return if (units.isEmpty()) null else ArrayList(units)
-    }
-
-    private fun ingestServer(messages: JSONArray?): Any? {
-        if (messages == null || messages.length() == 0) return null
-        val jsonStrings = (0 until messages.length()).mapNotNull { i ->
-            try { messages.optJSONObject(i)?.toString() } catch (_: Throwable) { null }
-        }
-        if (jsonStrings.isNotEmpty()) {
-            bridge.processDisplayUnits(jsonStrings)
-        }
-        return null
     }
 
     private fun toCleverTapDisplayUnit(rawJson: String): Any? = try {

@@ -31,9 +31,10 @@ class NativeDisplayBridge private constructor() {
 
     private val parser = NativeDisplayConfigParser()
 
-    // Cache: unitId → NativeDisplayUnit, synchronized access
-    private val cache = LinkedHashMap<String, NativeDisplayUnit>()
-    private val cacheLock = Any()
+    // In-memory store of parsed Native Display units. Owned by the cache impl
+    // so that storage and the Core-SDK-facing adapter share a single source
+    // of truth — no duplicate caching.
+    private val cache = NativeDisplayUnitCacheImpl()
 
     // Listeners stored as weak references to avoid leaking activities/fragments
     private val listeners = mutableListOf<WeakReference<NativeDisplayBridgeListener>>()
@@ -118,12 +119,7 @@ class NativeDisplayBridge private constructor() {
             parser.tryParse(jsonString)
         }
 
-        synchronized(cacheLock) {
-            cache.clear()
-            for (unit in parsedUnits) {
-                cache[unit.unitId] = unit
-            }
-        }
+        cache.replaceAll(parsedUnits)
 
         Log.d(TAG, "Processed ${parsedUnits.size}/${displayUnitJsonStrings.size} display units")
         notifyListeners(parsedUnits)
@@ -144,9 +140,7 @@ class NativeDisplayBridge private constructor() {
             return
         }
 
-        synchronized(cacheLock) {
-            cache[unit.unitId] = unit
-        }
+        cache.put(unit)
 
         Log.d(TAG, "Processed display unit: ${unit.unitId}")
         notifyListeners(listOf(unit))
@@ -159,11 +153,7 @@ class NativeDisplayBridge private constructor() {
      *
      * @return A snapshot list of all cached units (safe to iterate)
      */
-    fun getAllNativeDisplays(): List<NativeDisplayUnit> {
-        synchronized(cacheLock) {
-            return cache.values.toList()
-        }
-    }
+    fun getAllNativeDisplays(): List<NativeDisplayUnit> = cache.getAll()
 
     /**
      * Get a specific Native Display unit by its ID.
@@ -171,11 +161,7 @@ class NativeDisplayBridge private constructor() {
      * @param unitId The unit identifier (typically `wzrk_id`)
      * @return The matching unit, or null if not found
      */
-    fun getNativeDisplayForId(unitId: String): NativeDisplayUnit? {
-        synchronized(cacheLock) {
-            return cache[unitId]
-        }
-    }
+    fun getNativeDisplayForId(unitId: String): NativeDisplayUnit? = cache.get(unitId)
 
     // --- Push API ---
 
@@ -329,7 +315,7 @@ class NativeDisplayBridge private constructor() {
             false
         }
         if (cacheAttached) return
-        val raw = synchronized(cacheLock) { cache[unitId]?.rawJson } ?: return
+        val raw = cache.get(unitId)?.rawJson ?: return
         try {
             ReflectionSeeder.seed(ct, listOf(org.json.JSONObject(raw)))
         } catch (_: Throwable) {
@@ -384,14 +370,28 @@ class NativeDisplayBridge private constructor() {
      * Clear all cached display units and remove all listeners.
      */
     fun clear() {
-        synchronized(cacheLock) {
-            cache.clear()
-        }
+        cache.clear()
         synchronized(listenersLock) {
             listeners.clear()
         }
         Log.d(TAG, "Bridge cleared")
     }
+
+    /**
+     * Build the Core SDK `DisplayUnitCache` proxy backed by this bridge's
+     * [cache]. Returns null when Core SDK is not on the runtime classpath.
+     * Used by [CleverTapAutoWire] when binding to a CleverTap instance that
+     * supports `setDisplayUnitCache(...)`.
+     */
+    internal fun coreSdkCacheProxy(): Any? = cache.asProxy(
+        onServerUpdate = { jsonArray ->
+            val jsonStrings = (0 until jsonArray.length()).mapNotNull { i ->
+                try { jsonArray.optJSONObject(i)?.toString() } catch (_: Throwable) { null }
+            }
+            if (jsonStrings.isNotEmpty()) processDisplayUnits(jsonStrings)
+        },
+        onReset = { cache.clear() }
+    )
 
     // --- Internal ---
 

@@ -49,10 +49,12 @@ public class NativeDisplayBridge {
 
     // MARK: - Private State
 
-    /// Cache of parsed display units keyed by unitId. Access synchronized via `lock`.
-    private var cache: [String: NativeDisplayUnit] = [:]
+    /// In-memory store of parsed Native Display units. Owned by the cache
+    /// impl so that storage and the Core-SDK-facing adapter share a single
+    /// source of truth — no duplicate caching.
+    private let cache = NativeDisplayUnitCacheImpl()
 
-    /// Thread-safety lock for cache and listener access.
+    /// Thread-safety lock for listener access.
     private let lock = NSLock()
 
     /// Weak listener references.
@@ -76,7 +78,26 @@ public class NativeDisplayBridge {
 
     // MARK: - Init
 
-    private init() {}
+    private init() {
+        cache.onServerUpdate = { [weak self] arr in
+            self?.handleServerCacheUpdate(arr)
+        }
+    }
+
+    /// Bridge-side handler invoked when Core SDK delivers a server response
+    /// through the cache adapter's `updateDisplayUnits:` method. Parses the
+    /// payload, replaces cache contents (via `replaceAll`) and notifies
+    /// listeners — same pipeline as manual `processDisplayUnits(_:)`.
+    private func handleServerCacheUpdate(_ displayUnits: NSArray) {
+        guard let dicts = displayUnits as? [[String: Any]], !dicts.isEmpty else { return }
+        let jsonStrings: [String] = dicts.compactMap { dict in
+            guard let data = try? JSONSerialization.data(withJSONObject: dict) else { return nil }
+            return String(data: data, encoding: .utf8)
+        }
+        if !jsonStrings.isEmpty {
+            processDisplayUnits(jsonStrings)
+        }
+    }
 
     // MARK: - Auto-Wire
 
@@ -168,21 +189,9 @@ public class NativeDisplayBridge {
     /// Process multiple display unit JSON strings. Replaces the entire cache.
     /// - Parameter displayUnitJsonStrings: Array of raw JSON strings from display unit payloads.
     public func processDisplayUnits(_ displayUnitJsonStrings: [String]) {
-        var newCache: [String: NativeDisplayUnit] = [:]
-
-        for jsonString in displayUnitJsonStrings {
-            if let unit = parser.tryParse(jsonString) {
-                newCache[unit.unitId] = unit
-            }
-        }
-
-        let units: [NativeDisplayUnit]
-        lock.lock()
-        cache = newCache
-        units = Array(cache.values)
-        lock.unlock()
-
-        notifyListeners(units)
+        let parsed: [NativeDisplayUnit] = displayUnitJsonStrings.compactMap { parser.tryParse($0) }
+        cache.replaceAll(parsed)
+        notifyListeners(parsed)
     }
 
     /// Process a single display unit JSON string. Adds or updates the unit in cache.
@@ -191,35 +200,19 @@ public class NativeDisplayBridge {
         guard let unit = parser.tryParse(displayUnitJsonString) else {
             return
         }
-
-        let allUnits: [NativeDisplayUnit]
-        lock.lock()
-        cache[unit.unitId] = unit
-        allUnits = Array(cache.values)
-        lock.unlock()
-
-        notifyListeners(allUnits)
+        cache.put(unit)
+        notifyListeners(cache.getAll())
     }
 
     /// Process multiple display unit JSON data objects. Replaces the entire cache.
     /// - Parameter data: Array of raw JSON data from display unit payloads.
     public func processDisplayUnits(data: [Data]) {
-        var newCache: [String: NativeDisplayUnit] = [:]
-
-        for jsonData in data {
+        let parsed: [NativeDisplayUnit] = data.compactMap { jsonData in
             let rawJson = String(data: jsonData, encoding: .utf8)
-            if let unit = parser.tryParse(data: jsonData, rawJson: rawJson) {
-                newCache[unit.unitId] = unit
-            }
+            return parser.tryParse(data: jsonData, rawJson: rawJson)
         }
-
-        let units: [NativeDisplayUnit]
-        lock.lock()
-        cache = newCache
-        units = Array(cache.values)
-        lock.unlock()
-
-        notifyListeners(units)
+        cache.replaceAll(parsed)
+        notifyListeners(parsed)
     }
 
     // MARK: - Pull API
@@ -227,18 +220,14 @@ public class NativeDisplayBridge {
     /// Get all currently cached native display units.
     /// - Returns: Array of all parsed native display units.
     public func getAllNativeDisplays() -> [NativeDisplayUnit] {
-        lock.lock()
-        defer { lock.unlock() }
-        return Array(cache.values)
+        return cache.getAll()
     }
 
     /// Get a specific native display unit by its ID.
     /// - Parameter unitId: The `wzrk_id` of the display unit.
     /// - Returns: The matching `NativeDisplayUnit`, or `nil` if not found.
     public func getNativeDisplayForId(_ unitId: String) -> NativeDisplayUnit? {
-        lock.lock()
-        defer { lock.unlock() }
-        return cache[unitId]
+        return cache.get(unitId)
     }
 
     // MARK: - Push API (Listeners)
@@ -247,18 +236,22 @@ public class NativeDisplayBridge {
     /// Listeners are held as weak references — no need to remove on deallocation.
     /// - Parameter listener: The listener to add.
     public func addListener(_ listener: NativeDisplayBridgeListener) {
-        lock.lock()
-        defer { lock.unlock() }
+        lock.lock(); defer { lock.unlock() }
         listeners.add(listener)
     }
 
     /// Remove a previously added listener.
     /// - Parameter listener: The listener to remove.
     public func removeListener(_ listener: NativeDisplayBridgeListener) {
-        lock.lock()
-        defer { lock.unlock() }
+        lock.lock(); defer { lock.unlock() }
         listeners.remove(listener)
     }
+
+    /// Internal accessor used by `CleverTapAutoWire` when binding to a
+    /// CleverTap instance via `setDisplayUnitCache:`. Returns this bridge's
+    /// own cache instance so storage and Core SDK share a single source of
+    /// truth.
+    internal var coreSdkCacheAdapter: NativeDisplayUnitCacheImpl { cache }
 
     // MARK: - Attribution Push Methods
 
@@ -337,8 +330,8 @@ public class NativeDisplayBridge {
 
     /// Clear all cached display units, tear down auto-wire, and reset state.
     public func clear() {
+        cache.clearStorage()
         lock.lock()
-        cache.removeAll()
         listeners.removeAllObjects()
         isInitialized = false
         lock.unlock()
