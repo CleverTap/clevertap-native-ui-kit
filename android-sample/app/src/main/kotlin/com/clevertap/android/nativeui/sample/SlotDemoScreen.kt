@@ -128,9 +128,11 @@ fun SlotDemoScreen() {
                 Button(
                     onClick = {
                         cleverTapApi?.run {
+                            pushEvent("Footer1")
+                            pushEvent("Footer5")
                             pushEvent("Header1")
                             pushEvent("Header2")
-                            pushEvent("Header3")
+                            pushEvent("Header4")
                             pushEvent("lalit")
                         }
                     },

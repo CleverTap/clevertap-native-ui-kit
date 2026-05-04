@@ -75,6 +75,38 @@ struct SlotDemoView: View {
 
     var body: some View {
         ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Slot Demo")
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .padding(.bottom, 4)
+                
+                Text("This feed contains 4 NativeDisplaySlot views at fixed positions. Tap the button below to fire a CleverTap event that fetches real server data for the slots.")
+                    .font(.body)
+                    .foregroundColor(Color(red: 0x66/255, green: 0x66/255, blue: 0x66/255))
+                    .padding(.bottom, 12)
+                
+                Button(action: {
+                    if let cleverTap = CleverTap.sharedInstance() {
+                        cleverTap.recordEvent("Footer1")
+                        cleverTap.recordEvent("Footer5")
+                        cleverTap.recordEvent("Header1")
+                        cleverTap.recordEvent("Header2")
+                        cleverTap.recordEvent("Header4")
+                        cleverTap.recordEvent("lalit")
+                    }
+                }) {
+                    Text("Fetch Slot Data")
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(Color.accentColor)
+                        .foregroundColor(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.all, 4)
+            
             LazyVStack(spacing: 12) {
                 ForEach(items) { item in
                     switch item {
@@ -98,10 +130,11 @@ struct SlotDemoView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     let ct = CleverTap.sharedInstance()
+                    ct?.recordEvent("Footer1")
+                    ct?.recordEvent("Footer5")
                     ct?.recordEvent("Header1")
                     ct?.recordEvent("Header2")
-                    ct?.recordEvent("Header3")
-                    ct?.recordEvent("lalit")
+                    ct?.recordEvent("Header4")
                 } label: {
                     Text("Fetch Slot Data")
                         .font(.system(size: 14, weight: .medium))
