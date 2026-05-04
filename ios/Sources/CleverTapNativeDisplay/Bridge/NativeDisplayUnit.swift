@@ -28,17 +28,24 @@ public struct NativeDisplayUnit {
     /// The original raw JSON string, retained for debugging or re-serialization.
     public let rawJson: String?
 
+    /// Pre-resolved per-node styles produced at parse time, off the main thread.
+    /// When non-nil, `NativeDisplayView` skips the on-main `StyleResolver.resolveAll`
+    /// walk and uses this dictionary directly. Keyed by `NativeDisplayNode.id`.
+    public let resolvedStyles: [String: Style]?
+
     public init(
         unitId: String,
         config: ResolvedConfig,
         slotId: String? = nil,
         customExtras: [String: String] = [:],
-        rawJson: String? = nil
+        rawJson: String? = nil,
+        resolvedStyles: [String: Style]? = nil
     ) {
         self.unitId = unitId
         self.config = config
         self.slotId = slotId
         self.customExtras = customExtras
         self.rawJson = rawJson
+        self.resolvedStyles = resolvedStyles
     }
 }

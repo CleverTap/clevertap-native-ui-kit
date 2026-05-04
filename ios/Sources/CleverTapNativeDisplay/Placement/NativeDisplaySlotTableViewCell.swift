@@ -99,8 +99,9 @@ open class NativeDisplaySlotTableViewCell: UITableViewCell, NativeDisplaySlotObs
     // MARK: - NativeDisplaySlotObserver
 
     public func onUnitAvailable(_ unit: NativeDisplayUnit) {
+        // Reuse the unit's pre-resolved style map (computed off-main by the bridge).
         let swiftUIView = NativeDisplayView(
-            config: unit.config,
+            unit: unit,
             actionListener: actionListener,
             componentListener: componentListener
         )

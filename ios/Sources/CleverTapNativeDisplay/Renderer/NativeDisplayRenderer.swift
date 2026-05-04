@@ -69,13 +69,21 @@ public struct NativeDisplayView: View {
         config: ResolvedConfig,
         actionListener: NativeDisplayActionListener? = nil,
         componentListener: NativeDisplayComponentListener? = nil,
-        unitId: String? = nil
+        unitId: String? = nil,
+        preResolvedStyles: [String: Style]? = nil
     ) {
         self.config = config
         self.unitId = unitId
-        // Pre-resolve all node styles once — views get O(1) lookup, no resolution at render time
-        let resolver = StyleResolver(theme: config.theme, styleClasses: config.styleClasses)
-        self.resolvedStyles = resolver.resolveAll(node: config.root)
+        // Prefer the pre-resolved style map produced by the bridge parser (off-main).
+        // Falls back to resolving inline on the main thread for direct callers
+        // (e.g. tests, `CleverTapNativeDisplay.createView(from:)`) that don't go
+        // through the bridge.
+        if let preResolvedStyles {
+            self.resolvedStyles = preResolvedStyles
+        } else {
+            let resolver = StyleResolver(theme: config.theme, styleClasses: config.styleClasses)
+            self.resolvedStyles = resolver.resolveAll(node: config.root)
+        }
         self.evaluator = VariableEvaluator(variables: config.variables)
         self.actionHandler = ActionHandler(
             actionListener: actionListener,
@@ -83,6 +91,23 @@ public struct NativeDisplayView: View {
             unitId: unitId
         )
         self.componentListener = componentListener
+    }
+
+    /// Convenience initializer for rendering a `NativeDisplayUnit` produced by
+    /// `NativeDisplayBridge`. Uses the unit's pre-resolved style map when
+    /// available so the SwiftUI view init runs no recursive style work on main.
+    public init(
+        unit: NativeDisplayUnit,
+        actionListener: NativeDisplayActionListener? = nil,
+        componentListener: NativeDisplayComponentListener? = nil
+    ) {
+        self.init(
+            config: unit.config,
+            actionListener: actionListener,
+            componentListener: componentListener,
+            unitId: unit.unitId,
+            preResolvedStyles: unit.resolvedStyles
+        )
     }
 
     public var body: some View {

@@ -63,6 +63,19 @@ public class NativeDisplayBridge {
     /// Parser instance.
     private let parser = NativeDisplayConfigParser()
 
+    /// Serial queue for off-main JSON parsing and cache writes.
+    ///
+    /// Why serial (not concurrent + lock): a serial queue gives FIFO ordering
+    /// across rapid back-to-back `processDisplayUnits` calls. The cache's
+    /// `NSLock` keeps the dictionary structurally consistent but does not
+    /// preserve submission order between parse and cache-write work — a
+    /// concurrent queue could silently re-order the final cache state when
+    /// callers fire payloads in quick succession (e.g. Core SDK fan-out).
+    private let parseQueue = DispatchQueue(
+        label: "com.clevertap.nativedisplay.parse",
+        qos: .userInitiated
+    )
+
     /// Whether auto-wire has been attempted.
     private var isInitialized = false
 
@@ -88,14 +101,24 @@ public class NativeDisplayBridge {
     /// through the cache adapter's `updateDisplayUnits:` method. Parses the
     /// payload, replaces cache contents (via `replaceAll`) and notifies
     /// listeners — same pipeline as manual `processDisplayUnits(_:)`.
+    ///
+    /// Defers all serialization + parse work to the parse queue so we never
+    /// block whatever thread Core SDK happened to call us from.
     private func handleServerCacheUpdate(_ displayUnits: NSArray) {
         guard let dicts = displayUnits as? [[String: Any]], !dicts.isEmpty else { return }
-        let jsonStrings: [String] = dicts.compactMap { dict in
-            guard let data = try? JSONSerialization.data(withJSONObject: dict) else { return nil }
-            return String(data: data, encoding: .utf8)
-        }
-        if !jsonStrings.isEmpty {
-            processDisplayUnits(jsonStrings)
+        parseQueue.async { [weak self] in
+            guard let self else { return }
+            #if DEBUG
+            dispatchPrecondition(condition: .notOnQueue(.main))
+            #endif
+            let jsonStrings: [String] = dicts.compactMap { dict in
+                guard let data = try? JSONSerialization.data(withJSONObject: dict) else { return nil }
+                return String(data: data, encoding: .utf8)
+            }
+            if jsonStrings.isEmpty { return }
+            let parsed: [NativeDisplayUnit] = jsonStrings.compactMap { self.parser.tryParse($0) }
+            self.cache.replaceAll(parsed)
+            self.notifyListeners(parsed)
         }
     }
 
@@ -187,32 +210,59 @@ public class NativeDisplayBridge {
     // MARK: - Manual Mode: Process JSON
 
     /// Process multiple display unit JSON strings. Replaces the entire cache.
+    ///
+    /// Parsing (JSON deserialization, decoding into `ResolvedConfig`, and
+    /// per-node style resolution) runs off the main thread on `parseQueue`.
+    /// Listener notification then hops back to main via `notifyListeners`.
+    /// The method is synchronous from the caller's POV — work is fire-and-forget;
+    /// results are delivered through listeners.
+    ///
     /// - Parameter displayUnitJsonStrings: Array of raw JSON strings from display unit payloads.
     public func processDisplayUnits(_ displayUnitJsonStrings: [String]) {
-        let parsed: [NativeDisplayUnit] = displayUnitJsonStrings.compactMap { parser.tryParse($0) }
-        cache.replaceAll(parsed)
-        notifyListeners(parsed)
+        parseQueue.async { [weak self] in
+            guard let self else { return }
+            #if DEBUG
+            dispatchPrecondition(condition: .notOnQueue(.main))
+            #endif
+            let parsed: [NativeDisplayUnit] = displayUnitJsonStrings.compactMap { self.parser.tryParse($0) }
+            self.cache.replaceAll(parsed)
+            self.notifyListeners(parsed)
+        }
     }
 
     /// Process a single display unit JSON string. Adds or updates the unit in cache.
+    ///
+    /// Parses off-main on `parseQueue`; listener notification hops to main.
     /// - Parameter displayUnitJsonString: Raw JSON string from a display unit payload.
     public func processDisplayUnit(_ displayUnitJsonString: String) {
-        guard let unit = parser.tryParse(displayUnitJsonString) else {
-            return
+        parseQueue.async { [weak self] in
+            guard let self else { return }
+            #if DEBUG
+            dispatchPrecondition(condition: .notOnQueue(.main))
+            #endif
+            guard let unit = self.parser.tryParse(displayUnitJsonString) else { return }
+            self.cache.put(unit)
+            self.notifyListeners(self.cache.getAll())
         }
-        cache.put(unit)
-        notifyListeners(cache.getAll())
     }
 
     /// Process multiple display unit JSON data objects. Replaces the entire cache.
+    ///
+    /// Parses off-main on `parseQueue`; listener notification hops to main.
     /// - Parameter data: Array of raw JSON data from display unit payloads.
     public func processDisplayUnits(data: [Data]) {
-        let parsed: [NativeDisplayUnit] = data.compactMap { jsonData in
-            let rawJson = String(data: jsonData, encoding: .utf8)
-            return parser.tryParse(data: jsonData, rawJson: rawJson)
+        parseQueue.async { [weak self] in
+            guard let self else { return }
+            #if DEBUG
+            dispatchPrecondition(condition: .notOnQueue(.main))
+            #endif
+            let parsed: [NativeDisplayUnit] = data.compactMap { jsonData in
+                let rawJson = String(data: jsonData, encoding: .utf8)
+                return self.parser.tryParse(data: jsonData, rawJson: rawJson)
+            }
+            self.cache.replaceAll(parsed)
+            self.notifyListeners(parsed)
         }
-        cache.replaceAll(parsed)
-        notifyListeners(parsed)
     }
 
     // MARK: - Pull API
@@ -252,6 +302,27 @@ public class NativeDisplayBridge {
     /// own cache instance so storage and Core SDK share a single source of
     /// truth.
     internal var coreSdkCacheAdapter: NativeDisplayUnitCacheImpl { cache }
+
+    // MARK: - Test-Only Helpers
+
+    /// Test-only helper: blocks the caller until any in-flight parse work has
+    /// finished. The serial parse queue's FIFO ordering means a sync barrier
+    /// here drains every previously-submitted task. Used by unit tests that
+    /// rely on synchronous cache observation immediately after submitting JSON.
+    internal func _waitUntilIdle() {
+        parseQueue.sync { /* drain */ }
+    }
+
+    /// Test-only helper: synchronously runs `block` on the parse queue and
+    /// returns its result. Used by unit tests to inspect queue identity
+    /// (label, main-thread-ness) without exposing the queue itself.
+    internal func _runOnParseQueue<T>(_ block: () -> T) -> T {
+        return parseQueue.sync(execute: block)
+    }
+
+    /// Test-only constant: the parse queue label. Must match the label used
+    /// when constructing `parseQueue`.
+    internal static let _parseQueueLabel = "com.clevertap.nativedisplay.parse"
 
     // MARK: - Attribution Push Methods
 
@@ -329,7 +400,15 @@ public class NativeDisplayBridge {
     // MARK: - Clear
 
     /// Clear all cached display units, tear down auto-wire, and reset state.
+    ///
+    /// Drains any in-flight parse work before clearing storage so that pending
+    /// `cache.replaceAll`/`cache.put` writes from earlier `processDisplayUnit(s)`
+    /// calls cannot land after the cache is cleared. `parseQueue.sync` blocks
+    /// the caller until the queue is empty (FIFO drain).
     public func clear() {
+        // Drain any outstanding parse work first so it cannot resurrect cache
+        // state after we wipe it.
+        parseQueue.sync { /* drain */ }
         cache.clearStorage()
         lock.lock()
         listeners.removeAllObjects()
@@ -343,6 +422,10 @@ public class NativeDisplayBridge {
     // MARK: - Private
 
     /// Notify all registered listeners on the main thread.
+    ///
+    /// Callers may invoke this from any queue (typically `parseQueue` after
+    /// parsing finishes). The single `DispatchQueue.main.async` hop is the
+    /// only main-thread transition in the entire process pipeline.
     private func notifyListeners(_ units: [NativeDisplayUnit]) {
         lock.lock()
         let currentListeners = listeners.allObjects.compactMap { $0 as? NativeDisplayBridgeListener }
@@ -351,6 +434,9 @@ public class NativeDisplayBridge {
         if currentListeners.isEmpty { return }
 
         DispatchQueue.main.async {
+            #if DEBUG
+            dispatchPrecondition(condition: .onQueue(.main))
+            #endif
             for listener in currentListeners {
                 listener.onNativeDisplaysLoaded(units)
             }

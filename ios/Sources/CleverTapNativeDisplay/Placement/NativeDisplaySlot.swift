@@ -100,11 +100,13 @@ public struct NativeDisplaySlot<Loading: View>: View {
 
     public var body: some View {
         if let unit = viewModel.unit {
+            // Routes through the unit-aware initializer so the bridge's
+            // pre-resolved style map (computed off-main) is reused — avoids
+            // a redundant `StyleResolver.resolveAll` walk on the main thread.
             NativeDisplayView(
-                config: unit.config,
+                unit: unit,
                 actionListener: actionListener,
-                componentListener: componentListener,
-                unitId: unit.unitId
+                componentListener: componentListener
             )
         } else {
             loading()
