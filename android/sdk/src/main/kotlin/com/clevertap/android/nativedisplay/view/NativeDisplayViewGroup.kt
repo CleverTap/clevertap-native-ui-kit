@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
+import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
@@ -188,10 +189,52 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
         componentListener: NativeDisplayComponentListener? = null,
         unitId: String? = null
     ) {
-        isRecycled = false
-        // Pre-resolve all node styles once — composables get O(1) lookup, no recomputation
+        // Direct-ResolvedConfig path: caller has no NativeDisplayUnit, so styles
+        // were not pre-resolved by the bridge. Resolve them here. This is the
+        // fallback for clients who construct configs locally (e.g. previews,
+        // tests, RecyclerView binders that build configs in-process). The
+        // bridge-driven path goes through [setUnit], which skips this work.
         val resolver = StyleResolver(config.theme, config.styleClasses)
-        resolvedStylesState.value = resolver.resolveAll(config.root)
+        applyState(
+            config = config,
+            resolvedStyles = resolver.resolveAll(config.root),
+            actionListener = actionListener,
+            componentListener = componentListener,
+            unitId = unitId
+        )
+    }
+
+    /**
+     * Set the SDUI configuration to display from a parsed [NativeDisplayUnit].
+     *
+     * Consumes the unit's pre-resolved style map directly, avoiding any
+     * style-cascade work on the calling thread. Prefer this overload whenever
+     * the source of truth is a [NativeDisplayUnit] from the bridge.
+     */
+    @JvmOverloads
+    fun setUnit(
+        unit: NativeDisplayUnit,
+        actionListener: NativeDisplayActionListener? = null,
+        componentListener: NativeDisplayComponentListener? = null,
+    ) {
+        applyState(
+            config = unit.config,
+            resolvedStyles = unit.resolvedStyles,
+            actionListener = actionListener,
+            componentListener = componentListener,
+            unitId = unit.unitId
+        )
+    }
+
+    private fun applyState(
+        config: ResolvedConfig,
+        resolvedStyles: PersistentMap<String, Style>,
+        actionListener: NativeDisplayActionListener?,
+        componentListener: NativeDisplayComponentListener?,
+        unitId: String?
+    ) {
+        isRecycled = false
+        resolvedStylesState.value = resolvedStyles
         configState.value = config
         actionListenerState.value = actionListener
         componentListenerState.value = componentListener

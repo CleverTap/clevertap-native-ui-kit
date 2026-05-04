@@ -1,5 +1,11 @@
 package com.clevertap.android.nativedisplay.bridge
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -9,6 +15,7 @@ import org.junit.Test
  * Tests for [NativeDisplayBridge] covering cache management, listener notification,
  * and singleton behavior.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class NativeDisplayBridgeTest {
 
     private lateinit var bridge: NativeDisplayBridge
@@ -37,6 +44,13 @@ class NativeDisplayBridgeTest {
 
     @Before
     fun setUp() {
+        // Replace the global Main dispatcher with an unconfined test dispatcher.
+        // The bridge marshals listener delivery to Dispatchers.Main; under
+        // UnconfinedTestDispatcher that delivery happens inline before the
+        // parse-scope job completes, so awaitParseIdle() also implies the
+        // listener callback has run.
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+
         // Reset the singleton so each test starts fresh
         resetSingleton()
         bridge = NativeDisplayBridge.create()
@@ -46,6 +60,28 @@ class NativeDisplayBridgeTest {
     fun tearDown() {
         bridge.clear()
         resetSingleton()
+        Dispatchers.resetMain()
+    }
+
+    /**
+     * Block the test thread until [bridge]'s parse scope is idle. The bridge
+     * dispatches parsing onto a single-threaded `Default.limitedParallelism(1)`
+     * dispatcher, so submitting a sentinel through the same dispatcher and
+     * awaiting it guarantees every previously-submitted parse + cache write
+     * has completed before this returns.
+     */
+    private fun awaitProcessed() = runBlocking { bridge.awaitParseIdle() }
+
+    /** Synchronous equivalent of [NativeDisplayBridge.processDisplayUnits] for tests. */
+    private fun process(jsonList: List<String>) {
+        bridge.processDisplayUnits(jsonList)
+        awaitProcessed()
+    }
+
+    /** Synchronous equivalent of [NativeDisplayBridge.processDisplayUnit] for tests. */
+    private fun process(json: String) {
+        bridge.processDisplayUnit(json)
+        awaitProcessed()
     }
 
     /**
@@ -75,11 +111,11 @@ class NativeDisplayBridgeTest {
     @Test
     fun `processDisplayUnits replaces entire cache`() {
         val listA = listOf(makeUnitJson("a1"), makeUnitJson("a2"))
-        bridge.processDisplayUnits(listA)
+        process(listA)
         assertEquals(2, bridge.getAllNativeDisplays().size)
 
         val listB = listOf(makeUnitJson("b1"))
-        bridge.processDisplayUnits(listB)
+        process(listB)
 
         val all = bridge.getAllNativeDisplays()
         assertEquals(1, all.size)
@@ -88,10 +124,10 @@ class NativeDisplayBridgeTest {
 
     @Test
     fun `processDisplayUnits with empty list clears cache`() {
-        bridge.processDisplayUnits(listOf(makeUnitJson("a1")))
+        process(listOf(makeUnitJson("a1")))
         assertEquals(1, bridge.getAllNativeDisplays().size)
 
-        bridge.processDisplayUnits(emptyList())
+        process(emptyList())
 
         assertTrue(bridge.getAllNativeDisplays().isEmpty())
     }
@@ -100,7 +136,7 @@ class NativeDisplayBridgeTest {
 
     @Test
     fun `processDisplayUnit adds single unit to cache`() {
-        bridge.processDisplayUnit(makeUnitJson("unit_1"))
+        process(makeUnitJson("unit_1"))
 
         val all = bridge.getAllNativeDisplays()
         assertEquals(1, all.size)
@@ -109,8 +145,8 @@ class NativeDisplayBridgeTest {
 
     @Test
     fun `processDisplayUnit adds multiple units incrementally`() {
-        bridge.processDisplayUnit(makeUnitJson("unit_1"))
-        bridge.processDisplayUnit(makeUnitJson("unit_2"))
+        process(makeUnitJson("unit_1"))
+        process(makeUnitJson("unit_2"))
 
         val all = bridge.getAllNativeDisplays()
         assertEquals(2, all.size)
@@ -121,8 +157,8 @@ class NativeDisplayBridgeTest {
 
     @Test
     fun `processDisplayUnit updates existing unit with same id`() {
-        bridge.processDisplayUnit(makeUnitJson("unit_1", text = "Original"))
-        bridge.processDisplayUnit(makeUnitJson("unit_1", text = "Updated"))
+        process(makeUnitJson("unit_1", text = "Original"))
+        process(makeUnitJson("unit_1", text = "Updated"))
 
         val all = bridge.getAllNativeDisplays()
         assertEquals(1, all.size)
@@ -131,7 +167,7 @@ class NativeDisplayBridgeTest {
 
     @Test
     fun `processDisplayUnit with invalid JSON does not add to cache`() {
-        bridge.processDisplayUnit("{ invalid }")
+        process("{ invalid }")
 
         assertTrue(bridge.getAllNativeDisplays().isEmpty())
     }
@@ -140,7 +176,7 @@ class NativeDisplayBridgeTest {
 
     @Test
     fun `getNativeDisplayForId returns correct unit`() {
-        bridge.processDisplayUnits(listOf(
+        process(listOf(
             makeUnitJson("alpha"),
             makeUnitJson("beta")
         ))
@@ -153,7 +189,7 @@ class NativeDisplayBridgeTest {
 
     @Test
     fun `getNativeDisplayForId returns null for unknown id`() {
-        bridge.processDisplayUnits(listOf(makeUnitJson("alpha")))
+        process(listOf(makeUnitJson("alpha")))
 
         val unit = bridge.getNativeDisplayForId("unknown")
 
@@ -177,7 +213,7 @@ class NativeDisplayBridgeTest {
         }
         bridge.addListener(listener)
 
-        bridge.processDisplayUnits(listOf(makeUnitJson("u1"), makeUnitJson("u2")))
+        process(listOf(makeUnitJson("u1"), makeUnitJson("u2")))
 
         assertEquals(1, received.size)
         assertEquals(2, received[0].size)
@@ -193,7 +229,7 @@ class NativeDisplayBridgeTest {
         }
         bridge.addListener(listener)
 
-        bridge.processDisplayUnit(makeUnitJson("single"))
+        process(makeUnitJson("single"))
 
         assertEquals(1, received.size)
         assertEquals(1, received[0].size)
@@ -210,7 +246,7 @@ class NativeDisplayBridgeTest {
         }
         bridge.addListener(listener)
 
-        bridge.processDisplayUnits(listOf(makeUnitJson("x"), makeUnitJson("y")))
+        process(listOf(makeUnitJson("x"), makeUnitJson("y")))
 
         assertEquals(listOf("x", "y"), receivedIds)
     }
@@ -230,7 +266,7 @@ class NativeDisplayBridgeTest {
         bridge.addListener(listener1)
         bridge.addListener(listener2)
 
-        bridge.processDisplayUnits(listOf(makeUnitJson("u1")))
+        process(listOf(makeUnitJson("u1")))
 
         assertEquals(1, count1)
         assertEquals(1, count2)
@@ -245,7 +281,7 @@ class NativeDisplayBridgeTest {
         bridge.addListener(listener)
         bridge.addListener(listener) // duplicate
 
-        bridge.processDisplayUnits(listOf(makeUnitJson("u1")))
+        process(listOf(makeUnitJson("u1")))
 
         assertEquals(1, callCount)
     }
@@ -261,7 +297,7 @@ class NativeDisplayBridgeTest {
         bridge.addListener(listener)
         bridge.removeListener(listener)
 
-        bridge.processDisplayUnits(listOf(makeUnitJson("u1")))
+        process(listOf(makeUnitJson("u1")))
 
         assertFalse(called)
     }
@@ -280,7 +316,7 @@ class NativeDisplayBridgeTest {
 
     @Test
     fun `clear empties cache`() {
-        bridge.processDisplayUnits(listOf(makeUnitJson("u1"), makeUnitJson("u2")))
+        process(listOf(makeUnitJson("u1"), makeUnitJson("u2")))
         assertEquals(2, bridge.getAllNativeDisplays().size)
 
         bridge.clear()
@@ -297,7 +333,7 @@ class NativeDisplayBridgeTest {
         bridge.addListener(listener)
         bridge.clear()
 
-        bridge.processDisplayUnits(listOf(makeUnitJson("u1")))
+        process(listOf(makeUnitJson("u1")))
 
         assertFalse(called)
     }
@@ -337,7 +373,7 @@ class NativeDisplayBridgeTest {
             makeUnitJson("valid_2")
         )
 
-        bridge.processDisplayUnits(jsons)
+        process(jsons)
 
         val all = bridge.getAllNativeDisplays()
         assertEquals(2, all.size)
@@ -362,7 +398,7 @@ class NativeDisplayBridgeTest {
         bridge.addListener(throwingListener)
         bridge.addListener(safeListener)
 
-        bridge.processDisplayUnits(listOf(makeUnitJson("u1")))
+        process(listOf(makeUnitJson("u1")))
 
         assertTrue(secondCalled)
     }
