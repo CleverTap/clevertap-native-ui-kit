@@ -3,7 +3,11 @@ package com.clevertap.android.nativedisplay.bridge
 import android.util.Log
 import com.clevertap.android.nativedisplay.models.NativeDisplayConfig
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
+import com.clevertap.android.nativedisplay.models.Style
 import com.clevertap.android.nativedisplay.models.Theme
+import com.clevertap.android.nativedisplay.style.StyleResolver
+import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.contentOrNull
@@ -20,7 +24,7 @@ import kotlinx.serialization.json.jsonPrimitive
  *
  * Returns `null` if the JSON is not a Native Display unit or if parsing fails.
  */
-internal class NativeDisplayConfigParser {
+internal open class NativeDisplayConfigParser {
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -33,7 +37,7 @@ internal class NativeDisplayConfigParser {
      * @param jsonString Raw JSON string from a display unit payload
      * @return A parsed [NativeDisplayUnit], or null if not an ND unit or parse fails
      */
-    fun tryParse(jsonString: String): NativeDisplayUnit? {
+    open fun tryParse(jsonString: String): NativeDisplayUnit? {
         return try {
             val jsonObj = json.parseToJsonElement(jsonString).jsonObject
             val unitId = extractUnitId(jsonObj) ?: return null
@@ -45,9 +49,15 @@ internal class NativeDisplayConfigParser {
                 ?: tryParseAsRootConfig(jsonString, jsonObj)
                 ?: return null
 
+            // Pre-resolve the entire node-tree style map here, on the parse dispatcher,
+            // so renderers don't repeat the work on main. StyleResolver is pure data —
+            // no Compose / density / lifecycle context required.
+            val resolvedStyles = preResolveStyles(resolvedConfig)
+
             NativeDisplayUnit(
                 unitId = unitId,
                 config = resolvedConfig,
+                resolvedStyles = resolvedStyles,
                 slotId = slotId,
                 customExtras = customExtras,
                 rawJson = jsonString
@@ -126,6 +136,21 @@ internal class NativeDisplayConfigParser {
         val customKv = jsonObj["custom_kv"]?.jsonObject ?: return emptyMap()
         return customKv.entries.associate { (key, value) ->
             key to (value.jsonPrimitive.contentOrNull ?: value.toString())
+        }
+    }
+
+    /**
+     * Run [StyleResolver.resolveAll] on the parsed config so the resulting node-id →
+     * Style map is ready before the unit reaches the UI thread. Returns an empty
+     * persistent map if resolution throws — the renderer falls back to per-node
+     * resolution in that case.
+     */
+    private fun preResolveStyles(config: ResolvedConfig): PersistentMap<String, Style> {
+        return try {
+            StyleResolver(config.theme, config.styleClasses).resolveAll(config.root)
+        } catch (e: Exception) {
+            Log.w(TAG, "Style pre-resolution failed: ${e.message}")
+            persistentMapOf()
         }
     }
 

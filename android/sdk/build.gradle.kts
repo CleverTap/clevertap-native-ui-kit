@@ -104,6 +104,11 @@ dependencies {
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    // Bridge tests reflect over NativeDisplayBridge whose `cleverTapApi` field
+    // type is `CleverTapAPI`. `getDeclaredFields0` resolves all field types
+    // during reflection, so the Core SDK class must be on the unit-test
+    // classpath even though it is `compileOnly` for production.
+    testImplementation("com.clevertap.android:clevertap-android-sdk:7.5.0")
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

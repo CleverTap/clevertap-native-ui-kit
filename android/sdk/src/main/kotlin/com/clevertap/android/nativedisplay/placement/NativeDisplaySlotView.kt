@@ -17,7 +17,6 @@ import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener
 import com.clevertap.android.nativedisplay.models.Style
 import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
-import com.clevertap.android.nativedisplay.style.StyleResolver
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 
@@ -163,9 +162,8 @@ class NativeDisplaySlotView @JvmOverloads constructor(
     override fun onUnitAvailable(unit: NativeDisplayUnit) {
         Log.d(TAG, "Unit available for slot: $slotId (unitId=${unit.unitId})")
 
-        // Pre-resolve styles for O(1) lookup during rendering
-        val resolver = StyleResolver(unit.config.theme, unit.config.styleClasses)
-        resolvedStylesState.value = resolver.resolveAll(unit.config.root)
+        // Styles were pre-resolved off-main inside the bridge parser — just consume them.
+        resolvedStylesState.value = unit.resolvedStyles
         unitState.value = unit
         requestLayout()
     }

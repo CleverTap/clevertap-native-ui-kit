@@ -7,10 +7,13 @@ private class MockBridgeListener: NSObject, NativeDisplayBridgeListener {
     var loadedUnits: [NativeDisplayUnit] = []
     var loadedCallCount = 0
     var onLoaded: (() -> Void)?
+    /// Variant callback that receives the units argument — useful for FIFO tests.
+    var onLoadedUnits: (([NativeDisplayUnit]) -> Void)?
 
     func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
         loadedUnits = units
         loadedCallCount += 1
+        onLoadedUnits?(units)
         onLoaded?()
     }
 }
@@ -66,6 +69,7 @@ final class NativeDisplayBridgeTests: XCTestCase {
     func testProcessDisplayUnitsReplacesCache() {
         let listA = [makeUnitJson(unitId: "a1"), makeUnitJson(unitId: "a2")]
         bridge.processDisplayUnits(listA)
+        bridge._waitUntilIdle()
 
         XCTAssertEqual(bridge.getAllNativeDisplays().count, 2)
         XCTAssertNotNil(bridge.getNativeDisplayForId("a1"))
@@ -74,6 +78,7 @@ final class NativeDisplayBridgeTests: XCTestCase {
         // Process list B -- should replace, not append
         let listB = [makeUnitJson(unitId: "b1")]
         bridge.processDisplayUnits(listB)
+        bridge._waitUntilIdle()
 
         let allUnits = bridge.getAllNativeDisplays()
         XCTAssertEqual(allUnits.count, 1, "processDisplayUnits should replace the entire cache")
@@ -86,11 +91,13 @@ final class NativeDisplayBridgeTests: XCTestCase {
 
     func testProcessDisplayUnitAddsToCacheIncrementally() {
         bridge.processDisplayUnit(makeUnitJson(unitId: "single_1"))
+        bridge._waitUntilIdle()
 
         XCTAssertEqual(bridge.getAllNativeDisplays().count, 1)
         XCTAssertNotNil(bridge.getNativeDisplayForId("single_1"))
 
         bridge.processDisplayUnit(makeUnitJson(unitId: "single_2"))
+        bridge._waitUntilIdle()
 
         XCTAssertEqual(bridge.getAllNativeDisplays().count, 2, "processDisplayUnit should add, not replace")
         XCTAssertNotNil(bridge.getNativeDisplayForId("single_1"))
@@ -100,6 +107,7 @@ final class NativeDisplayBridgeTests: XCTestCase {
     func testProcessDisplayUnitUpdatesSameId() {
         bridge.processDisplayUnit(makeUnitJson(unitId: "dup", text: "Version1"))
         bridge.processDisplayUnit(makeUnitJson(unitId: "dup", text: "Version2"))
+        bridge._waitUntilIdle()
 
         XCTAssertEqual(bridge.getAllNativeDisplays().count, 1, "Same unitId should update, not duplicate")
     }
@@ -111,6 +119,7 @@ final class NativeDisplayBridgeTests: XCTestCase {
             makeUnitJson(unitId: "find_me"),
             makeUnitJson(unitId: "other")
         ])
+        bridge._waitUntilIdle()
 
         let found = bridge.getNativeDisplayForId("find_me")
         XCTAssertNotNil(found)
@@ -119,6 +128,7 @@ final class NativeDisplayBridgeTests: XCTestCase {
 
     func testGetNativeDisplayForIdReturnsNilForUnknown() {
         bridge.processDisplayUnits([makeUnitJson(unitId: "known")])
+        bridge._waitUntilIdle()
 
         XCTAssertNil(bridge.getNativeDisplayForId("unknown"), "Should return nil for unknown ID")
     }
@@ -199,6 +209,7 @@ final class NativeDisplayBridgeTests: XCTestCase {
             makeUnitJson(unitId: "clear_1"),
             makeUnitJson(unitId: "clear_2")
         ])
+        bridge._waitUntilIdle()
         XCTAssertEqual(bridge.getAllNativeDisplays().count, 2)
 
         bridge.clear()
@@ -231,6 +242,7 @@ final class NativeDisplayBridgeTests: XCTestCase {
         let data = json.data(using: .utf8)!
 
         bridge.processDisplayUnits(data: [data])
+        bridge._waitUntilIdle()
 
         XCTAssertEqual(bridge.getAllNativeDisplays().count, 1)
         XCTAssertNotNil(bridge.getNativeDisplayForId("data_unit"))
@@ -245,9 +257,97 @@ final class NativeDisplayBridgeTests: XCTestCase {
         """
 
         bridge.processDisplayUnits([validJson, invalidJson])
+        bridge._waitUntilIdle()
 
         XCTAssertEqual(bridge.getAllNativeDisplays().count, 1, "Only valid ND units should be cached")
         XCTAssertNotNil(bridge.getNativeDisplayForId("valid"))
         XCTAssertNil(bridge.getNativeDisplayForId("invalid"))
+    }
+
+    // MARK: - SDK-5770: Off-main parsing
+
+    /// `processDisplayUnits(_:)` must hand parsing to the bridge's serial
+    /// parse queue rather than blocking the main thread. We assert listener
+    /// delivery on main and queue label/main-thread-ness via `_runOnParseQueue`.
+    func testParsingHappensOffMainAndListenerDeliveryOnMain() {
+        let listener = MockBridgeListener()
+        let listenerOnMain = expectation(description: "Listener fires on main")
+        listener.onLoaded = {
+            XCTAssertTrue(Thread.isMainThread, "Listener should be delivered on main")
+            let label = String(cString: __dispatch_queue_get_label(nil))
+            XCTAssertEqual(label, "com.apple.main-thread")
+            listenerOnMain.fulfill()
+        }
+        bridge.addListener(listener)
+
+        XCTAssertTrue(Thread.isMainThread)
+        bridge.processDisplayUnits([makeUnitJson(unitId: "offmain_1")])
+
+        waitForExpectations(timeout: 2)
+        XCTAssertEqual(listener.loadedCallCount, 1)
+    }
+
+    /// Parse work runs on the bridge's labelled serial queue, not on main.
+    /// We assert this by hopping onto the parse queue ourselves and inspecting
+    /// queue label + thread identity.
+    func testParseQueueIsNonMainAndLabelled() {
+        XCTAssertTrue(Thread.isMainThread, "test driver should start on main")
+
+        let label: String = bridge._runOnParseQueue {
+            String(cString: __dispatch_queue_get_label(nil))
+        }
+        let isMainOnQueue: Bool = bridge._runOnParseQueue { Thread.isMainThread }
+
+        XCTAssertEqual(label, NativeDisplayBridge._parseQueueLabel,
+                       "Parse queue label must match the documented identifier")
+        XCTAssertNotEqual(label, "com.apple.main-thread")
+        XCTAssertFalse(isMainOnQueue, "Work submitted to parseQueue must not run on main")
+    }
+
+    /// Submission ordering across rapid processDisplayUnits calls must be
+    /// FIFO. Ten distinct payloads enqueued from main in a tight loop must
+    /// arrive at the listener in the same order they were submitted.
+    func testFifoOrderingAcrossRapidProcessDisplayUnitsCalls() {
+        let listener = MockBridgeListener()
+        let count = 10
+        let allDelivered = expectation(description: "Listener fires \(count) times")
+        allDelivered.expectedFulfillmentCount = count
+
+        var observed: [String] = []
+        listener.onLoadedUnits = { units in
+            // Each batch is a single-element payload — capture the lone unit ID.
+            if let id = units.first?.unitId { observed.append(id) }
+            allDelivered.fulfill()
+        }
+        bridge.addListener(listener)
+
+        // Submit 10 distinct payloads from main in a tight loop.
+        let ids = (0..<count).map { "rapid_\($0)" }
+        for id in ids {
+            bridge.processDisplayUnits([makeUnitJson(unitId: id)])
+        }
+
+        waitForExpectations(timeout: 5)
+
+        XCTAssertEqual(observed.count, count, "Listener should observe all \(count) batches")
+        XCTAssertEqual(observed, ids, "FIFO ordering must be preserved")
+    }
+
+    // MARK: - SDK-5770: Pre-resolved styles on cached units
+
+    /// Each cached unit must carry a pre-resolved style map populated by the
+    /// parser at parse-time (off-main). This eliminates the on-main
+    /// `StyleResolver.resolveAll` walk inside `NativeDisplayView.init`.
+    func testCachedUnitCarriesPreResolvedStyles() {
+        bridge.processDisplayUnits([makeUnitJson(unitId: "styled_1")])
+        bridge._waitUntilIdle()
+
+        guard let unit = bridge.getNativeDisplayForId("styled_1") else {
+            XCTFail("Expected unit to be cached")
+            return
+        }
+        XCTAssertNotNil(unit.resolvedStyles, "Bridge-cached units must include a pre-resolved style map")
+        XCTAssertTrue(unit.resolvedStyles?.keys.contains(unit.config.root.id) ?? false,
+                      "resolvedStyles must include the root node id")
     }
 }

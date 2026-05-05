@@ -60,7 +60,7 @@ internal class NativeDisplayConfigParser {
 
         // Strategy 1: Look for "native_display_config" key
         if let config = tryParseNativeDisplayConfig(from: jsonObject) {
-            return NativeDisplayUnit(
+            return makeUnit(
                 unitId: unitId,
                 config: config,
                 slotId: slotId,
@@ -71,7 +71,7 @@ internal class NativeDisplayConfigParser {
 
         // Strategy 2: Look for "custom_kv.nd_config" string
         if let config = tryParseFromCustomKV(from: jsonObject) {
-            return NativeDisplayUnit(
+            return makeUnit(
                 unitId: unitId,
                 config: config,
                 slotId: slotId,
@@ -82,7 +82,7 @@ internal class NativeDisplayConfigParser {
 
         // Strategy 3: Look for "root" key — treat entire JSON as ND config
         if let config = tryParseAsDirectConfig(from: jsonObject, data: data) {
-            return NativeDisplayUnit(
+            return makeUnit(
                 unitId: unitId,
                 config: config,
                 slotId: slotId,
@@ -93,6 +93,29 @@ internal class NativeDisplayConfigParser {
 
         print("[NativeDisplayBridge] JSON does not contain a Native Display config (unitId: \(unitId))")
         return nil
+    }
+
+    /// Build a `NativeDisplayUnit` and pre-resolve its style tree in a single pass.
+    /// Pre-resolution moves the recursive `StyleResolver` walk off the main thread
+    /// (the renderer's `NativeDisplayView.init` runs on main). Cached units carry
+    /// the resulting `[String: Style]` map and views consume it via O(1) lookup.
+    private func makeUnit(
+        unitId: String,
+        config: ResolvedConfig,
+        slotId: String?,
+        customExtras: [String: String],
+        rawJson: String?
+    ) -> NativeDisplayUnit {
+        let resolver = StyleResolver(theme: config.theme, styleClasses: config.styleClasses)
+        let resolved = resolver.resolveAll(node: config.root)
+        return NativeDisplayUnit(
+            unitId: unitId,
+            config: config,
+            slotId: slotId,
+            customExtras: customExtras,
+            rawJson: rawJson,
+            resolvedStyles: resolved
+        )
     }
 
     // MARK: - Private Parsing Strategies

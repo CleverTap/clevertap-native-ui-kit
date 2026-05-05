@@ -5,6 +5,14 @@ import android.util.Log
 import com.clevertap.android.sdk.CleverTapAPI
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import java.lang.ref.WeakReference
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Main entry point for the CleverTap Core SDK bridge adapter.
@@ -39,6 +47,27 @@ class NativeDisplayBridge private constructor() {
     // Listeners stored as weak references to avoid leaking activities/fragments
     private val listeners = mutableListOf<WeakReference<NativeDisplayBridgeListener>>()
     private val listenersLock = Any()
+
+    /**
+     * Single-threaded dispatcher that serializes all display-unit JSON parsing
+     * (and the subsequent cache writes) off the caller's thread.
+     *
+     * `Dispatchers.Default.limitedParallelism(1)` is deliberate — it gives FIFO
+     * serialization across rapid back-to-back `processDisplayUnit*` calls.
+     * A parallel dispatcher with a `Mutex` would not preserve submission order,
+     * which would silently mis-order cache writes and listener notifications.
+     *
+     * Lifecycle: there is no bridge teardown / dispose entry point today
+     * ([clear] only resets state). The scope lives for the process — acceptable
+     * for a singleton bridge with bounded work per call. If a teardown hook is
+     * added later, it should `parseScope.coroutineContext.cancel()`.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val parseScope = CoroutineScope(
+        Dispatchers.Default.limitedParallelism(1) +
+            SupervisorJob() +
+            CoroutineName("nd-parse")
+    )
 
     /** CleverTapAPI instance used to push display unit attribution events. */
     internal var cleverTapApi: CleverTapAPI? = null
@@ -115,14 +144,21 @@ class NativeDisplayBridge private constructor() {
      * @param displayUnitJsonStrings List of raw JSON strings from display unit payloads
      */
     fun processDisplayUnits(displayUnitJsonStrings: List<String>) {
-        val parsedUnits: List<NativeDisplayUnit> = displayUnitJsonStrings.mapNotNull { jsonString ->
-            parser.tryParse(jsonString)
+        // Snapshot the input before crossing the dispatcher boundary so a
+        // mutating caller can't change the list out from under us.
+        val payload = displayUnitJsonStrings.toList()
+        parseScope.launch {
+            val parsedUnits: List<NativeDisplayUnit> = payload.mapNotNull { jsonString ->
+                parser.tryParse(jsonString)
+            }
+
+            cache.replaceAll(parsedUnits)
+
+            Log.d(TAG, "Processed ${parsedUnits.size}/${payload.size} display units")
+            withContext(Dispatchers.Main) {
+                notifyListeners(parsedUnits)
+            }
         }
-
-        cache.replaceAll(parsedUnits)
-
-        Log.d(TAG, "Processed ${parsedUnits.size}/${displayUnitJsonStrings.size} display units")
-        notifyListeners(parsedUnits)
     }
 
     /**
@@ -134,16 +170,20 @@ class NativeDisplayBridge private constructor() {
      * @param displayUnitJsonString Raw JSON string from a display unit payload
      */
     fun processDisplayUnit(displayUnitJsonString: String) {
-        val unit = parser.tryParse(displayUnitJsonString)
-        if (unit == null) {
-            Log.w(TAG, "Failed to parse display unit, skipping")
-            return
+        parseScope.launch {
+            val unit = parser.tryParse(displayUnitJsonString)
+            if (unit == null) {
+                Log.w(TAG, "Failed to parse display unit, skipping")
+                return@launch
+            }
+
+            cache.put(unit)
+
+            Log.d(TAG, "Processed display unit: ${unit.unitId}")
+            withContext(Dispatchers.Main) {
+                notifyListeners(listOf(unit))
+            }
         }
-
-        cache.put(unit)
-
-        Log.d(TAG, "Processed display unit: ${unit.unitId}")
-        notifyListeners(listOf(unit))
     }
 
     // --- Pull API ---
@@ -394,6 +434,24 @@ class NativeDisplayBridge private constructor() {
     )
 
     // --- Internal ---
+
+    /**
+     * Submit a sentinel job to [parseScope] and suspend until it runs.
+     *
+     * Because [parseScope] is single-threaded with FIFO ordering, awaiting this
+     * sentinel guarantees every previously-submitted parse job has completed its
+     * cache write. The sentinel does NOT wait on the `withContext(Dispatchers.Main)`
+     * leg used for listener delivery — callers that need to observe listener
+     * effects must drain the main dispatcher separately
+     * (e.g. `advanceUntilIdle()` under `Dispatchers.setMain(...)`).
+     *
+     * Visible only to internal callers (tests + intra-package code).
+     */
+    internal suspend fun awaitParseIdle() {
+        val sentinel = CompletableDeferred<Unit>()
+        parseScope.launch { sentinel.complete(Unit) }
+        sentinel.await()
+    }
 
     /**
      * Notify all active listeners. Cleans up dead weak references during iteration.

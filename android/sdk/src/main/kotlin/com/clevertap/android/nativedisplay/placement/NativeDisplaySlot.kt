@@ -67,8 +67,12 @@ fun NativeDisplaySlot(
 
     val currentUnit = unit
     if (currentUnit != null) {
+        // Styles were pre-resolved off-main by the bridge parser — pass them
+        // straight through instead of paying the resolveAll cost on the
+        // composition thread.
         NativeDisplayView(
             config = currentUnit.config,
+            resolvedStyles = currentUnit.resolvedStyles,
             modifier = modifier,
             actionListener = actionListener,
             componentListener = componentListener,
