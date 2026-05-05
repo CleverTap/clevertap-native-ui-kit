@@ -24,6 +24,11 @@ internal class CleverTapAutoWire: NSObject {
     /// Shared observer instance kept alive while auto-wire is active.
     private static var activeObserver: CleverTapAutoWire?
 
+    /// Strong reference to the cache adapter installed via Core SDK v7.x's
+    /// `setDisplayUnitCache:`. Held to keep the adapter alive for the lifetime
+    /// of the wired CleverTap instance.
+    private static var activeCache: NativeDisplayUnitCacheImpl?
+
     /// Whether we've already adopted the CleverTapDisplayUnitDelegate protocol at runtime.
     private static var protocolAdopted = false
 
@@ -53,6 +58,7 @@ internal class CleverTapAutoWire: NSObject {
     @discardableResult
     static func tryAutoWire(bridge: NativeDisplayBridge) -> Bool {
         adoptProtocolIfNeeded()
+        NativeDisplayUnitCacheImpl.adoptProtocolIfNeeded()
 
         // 1. Check if CleverTap class exists
         guard let ctClass = NSClassFromString("CleverTap") as? NSObject.Type else {
@@ -73,7 +79,17 @@ internal class CleverTapAutoWire: NSObject {
             return false
         }
 
-        // 3. Create observer and register as display unit delegate
+        bridge.cleverTapInstance = sharedInstance
+
+        // 3. Prefer the cache-attachment API (Core SDK v7.x+). When attached, server-driven
+        // updates flow via cache.updateDisplayUnits(_:) → bridge.processDisplayUnits, so a
+        // separate display-unit delegate is unnecessary.
+        if attachCache(to: sharedInstance, bridge: bridge) {
+            print("[NativeDisplayBridge] Auto-wired via setDisplayUnitCache:")
+            return true
+        }
+
+        // 4. Fallback: register as display-unit delegate (older Core SDK).
         let observer = CleverTapAutoWire()
         observer.bridge = bridge
 
@@ -84,12 +100,11 @@ internal class CleverTapAutoWire: NSObject {
         }
 
         sharedInstance.perform(setDelegateSelector, with: observer)
-        bridge.cleverTapInstance = sharedInstance
 
-        // 4. Keep observer alive
+        // 5. Keep observer alive
         activeObserver = observer
 
-        // 5. Register for notification-based updates as a fallback
+        // 6. Register for notification-based updates as a fallback
         NotificationCenter.default.addObserver(
             observer,
             selector: #selector(handleDisplayUnitsNotification(_:)),
@@ -97,9 +112,23 @@ internal class CleverTapAutoWire: NSObject {
             object: nil
         )
 
-        print("[NativeDisplayBridge] Auto-wired to CleverTap Core SDK")
+        print("[NativeDisplayBridge] Auto-wired via setDisplayUnitDelegate: fallback")
         return true
     }
+
+    /// Reflectively invokes `-[CleverTap setDisplayUnitCache:]` if available.
+    /// Returns `true` on success; the cache is retained in `activeCache`.
+    private static func attachCache(to cleverTap: NSObject, bridge: NativeDisplayBridge) -> Bool {
+        let selector = NSSelectorFromString("setDisplayUnitCache:")
+        guard cleverTap.responds(to: selector) else { return false }
+        let cache = bridge.coreSdkCacheAdapter
+        cleverTap.perform(selector, with: cache)
+        activeCache = cache
+        return true
+    }
+
+    /// Whether the bridge is wired through the cache-attachment path.
+    static var isCacheAttached: Bool { activeCache != nil }
 
     /// Bind the bridge to a specific CleverTap instance.
     ///
@@ -124,6 +153,7 @@ internal class CleverTapAutoWire: NSObject {
         clientHandler: (([AnyObject]) -> Void)? = nil
     ) -> Bool {
         adoptProtocolIfNeeded()
+        NativeDisplayUnitCacheImpl.adoptProtocolIfNeeded()
 
         // Verify this looks like a CleverTap instance
         let className = String(describing: type(of: cleverTap))
@@ -132,25 +162,45 @@ internal class CleverTapAutoWire: NSObject {
             return false
         }
 
+        bridge.cleverTapInstance = cleverTap
+
+        // Prefer cache-attachment path (Core SDK v7.x+).
+        if attachCache(to: cleverTap, bridge: bridge) {
+            // Keep client's existing display-unit delegate intact when the cache
+            // is attached. Forward any client handler via the existing delegate
+            // path only if requested — otherwise skip delegate registration to
+            // avoid double-firing.
+            if let handler = clientHandler {
+                let observer = CleverTapAutoWire()
+                observer.bridge = bridge
+                observer.clientHandler = handler
+                let setDelegateSelector = NSSelectorFromString("setDisplayUnitDelegate:")
+                if cleverTap.responds(to: setDelegateSelector) {
+                    cleverTap.perform(setDelegateSelector, with: observer)
+                    activeObserver = observer
+                }
+            }
+            print("[NativeDisplayBridge] Bound via setDisplayUnitCache:" + (clientHandler != nil ? " (with client handler)" : ""))
+            return true
+        }
+
+        // Fallback: register as display-unit delegate (older Core SDK).
         let setDelegateSelector = NSSelectorFromString("setDisplayUnitDelegate:")
         guard cleverTap.responds(to: setDelegateSelector) else {
             print("[NativeDisplayBridge] CleverTap instance does not support setDisplayUnitDelegate:")
             return false
         }
 
-        // Create observer and register as delegate
         let observer = CleverTapAutoWire()
         observer.bridge = bridge
         observer.clientHandler = clientHandler
 
         cleverTap.perform(setDelegateSelector, with: observer)
-        bridge.cleverTapInstance = cleverTap
 
-        // Keep observer alive
         activeObserver = observer
 
         let suffix = clientHandler != nil ? " (with client handler forwarding)" : ""
-        print("[NativeDisplayBridge] Bound to CleverTap instance\(suffix)")
+        print("[NativeDisplayBridge] Bound via setDisplayUnitDelegate: fallback\(suffix)")
         return true
     }
 
@@ -160,6 +210,7 @@ internal class CleverTapAutoWire: NSObject {
             NotificationCenter.default.removeObserver(observer)
         }
         activeObserver = nil
+        activeCache = nil
     }
 
     // MARK: - Delegate Callback (Obj-C compatible)
