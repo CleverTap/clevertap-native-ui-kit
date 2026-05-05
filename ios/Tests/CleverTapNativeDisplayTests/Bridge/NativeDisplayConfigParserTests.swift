@@ -35,11 +35,15 @@ final class NativeDisplayConfigParserTests: XCTestCase {
     /// Wraps a ResolvedConfig JSON inside a display unit envelope with `native_display_config`.
     private static func displayUnitJson(
         unitId: String = "test_unit_1",
+        slotId: String? = nil,
         config: String = minimalConfigJson,
         customKV: String? = "{ \"key1\": \"value1\" }"
     ) -> String {
         var parts: [String] = []
         parts.append("\"wzrk_id\": \"\(unitId)\"")
+        if let slot = slotId {
+            parts.append("\"slot_id\": \"\(slot)\"")
+        }
         parts.append("\"type\": \"native_display\"")
         parts.append("\"native_display_config\": \(config)")
         if let kv = customKV {
@@ -51,12 +55,13 @@ final class NativeDisplayConfigParserTests: XCTestCase {
     // MARK: - Strategy 1: native_display_config key
 
     func testParseNativeDisplayConfigKey() {
-        let json = Self.displayUnitJson()
+        let json = Self.displayUnitJson(slotId: "hero_banner")
 
         let unit = parser.tryParse(json)
 
         XCTAssertNotNil(unit, "Should parse a valid display unit with native_display_config")
         XCTAssertEqual(unit?.unitId, "test_unit_1")
+        XCTAssertEqual(unit?.slotId, "hero_banner")
         XCTAssertEqual(unit?.customExtras["key1"], "value1")
 
         // Verify the config root is a text element
@@ -66,6 +71,42 @@ final class NativeDisplayConfigParserTests: XCTestCase {
         } else {
             XCTFail("Expected element node in parsed config root")
         }
+    }
+
+    // MARK: - Root-level slot_id
+
+    func testParseWithoutSlotIdLeavesNil() {
+        let json = Self.displayUnitJson()
+
+        let unit = parser.tryParse(json)
+
+        XCTAssertNotNil(unit)
+        XCTAssertNil(unit?.slotId, "Missing slot_id should leave the field nil")
+    }
+
+    func testParseEmptySlotIdNormalisedToNil() {
+        let json = Self.displayUnitJson(slotId: "")
+
+        let unit = parser.tryParse(json)
+
+        XCTAssertNotNil(unit)
+        XCTAssertNil(unit?.slotId, "Empty slot_id should be normalised to nil")
+    }
+
+    func testParseIgnoresSlotIdNestedUnderCustomKV() {
+        // Old contract — slot_id used to live under custom_kv. New contract puts it at the root.
+        let json = """
+        {
+            "wzrk_id": "unit_legacy_slot",
+            "native_display_config": \(Self.minimalConfigJson),
+            "custom_kv": { "slot_id": "legacy_slot" }
+        }
+        """
+
+        let unit = parser.tryParse(json)
+
+        XCTAssertNotNil(unit)
+        XCTAssertNil(unit?.slotId, "slot_id under custom_kv must not populate the slot field")
     }
 
     // MARK: - Strategy 2: custom_kv.nd_config fallback

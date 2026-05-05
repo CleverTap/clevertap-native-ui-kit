@@ -49,6 +49,9 @@ internal class NativeDisplayConfigParser {
             return nil
         }
 
+        // Slot ID lives at the root, alongside `wzrk_id` and `native_display_config`.
+        let slotId = extractSlotId(from: jsonObject)
+
         // Extract custom extras
         let customExtras = extractCustomExtras(from: jsonObject)
 
@@ -60,6 +63,7 @@ internal class NativeDisplayConfigParser {
             return NativeDisplayUnit(
                 unitId: unitId,
                 config: config,
+                slotId: slotId,
                 customExtras: customExtras,
                 rawJson: rawJsonString
             )
@@ -70,6 +74,7 @@ internal class NativeDisplayConfigParser {
             return NativeDisplayUnit(
                 unitId: unitId,
                 config: config,
+                slotId: slotId,
                 customExtras: customExtras,
                 rawJson: rawJsonString
             )
@@ -80,6 +85,7 @@ internal class NativeDisplayConfigParser {
             return NativeDisplayUnit(
                 unitId: unitId,
                 config: config,
+                slotId: slotId,
                 customExtras: customExtras,
                 rawJson: rawJsonString
             )
@@ -139,6 +145,12 @@ internal class NativeDisplayConfigParser {
     }
 
     // MARK: - Helpers
+
+    /// Extract `slot_id` from the top-level JSON. Empty strings are normalized to `nil`.
+    private func extractSlotId(from jsonObject: [String: Any]) -> String? {
+        guard let raw = jsonObject["slot_id"] as? String, !raw.isEmpty else { return nil }
+        return raw
+    }
 
     /// Extract custom key-value pairs from the `custom_kv` field.
     private func extractCustomExtras(from jsonObject: [String: Any]) -> [String: String] {

@@ -24,6 +24,7 @@ Every item in the `adUnit_notifs` array is a JSON object. The ND SDK parser expe
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `wzrk_id` | string | **Yes** | Unique campaign/unit identifier. Parser rejects the unit without it. |
+| `slot_id` | string | No | Top-level placement slot identifier. When present, the ND SDK routes the unit to any client `NativeDisplaySlot` registered under the same `slot_id`. |
 | `type` | string | No | e.g. `"native_display"`. Informational — not used by the ND parser. |
 | `native_display_config` | object | Conditional | The ND config (shared across platforms). |
 | `native_display_config_android` | object | No | Android-only ND config. Takes precedence over `native_display_config` on Android. |
@@ -31,6 +32,8 @@ Every item in the `adUnit_notifs` array is a JSON object. The ND SDK parser expe
 | `custom_kv` | object | No | Flat key-value pairs passed through to the client app as `customExtras`. |
 | `bg` | string | No | Legacy field — used by old display unit rendering, ignored by ND SDK. |
 | `content` | array | No | Legacy field — used by old display unit rendering, ignored by ND SDK. |
+
+> **Slot routing:** `slot_id` lives at the **root** of the display-unit object (alongside `wzrk_id` and `native_display_config`). It is **not** read from `custom_kv` — keep the slot identifier out of the pass-through KV map.
 
 > At least one of `native_display_config`, `native_display_config_android`, or `native_display_config_ios` must be present for the ND SDK to parse the unit. Otherwise the unit is silently skipped.
 
@@ -99,13 +102,14 @@ The value under `native_display_config` (or the platform-specific keys) is a `Na
 }
 ```
 
-### 2. Shared Config with Custom KV
+### 2. Shared Config with Slot Routing and Custom KV
 
 ```json
 {
   "adUnit_notifs": [
     {
       "wzrk_id": "campaign_456",
+      "slot_id": "home_hero",
       "type": "native_display",
       "native_display_config": {
         "root": {
@@ -135,6 +139,8 @@ The value under `native_display_config` (or the platform-specific keys) is a `Na
   ]
 }
 ```
+
+The unit above is delivered to any client `NativeDisplaySlot` registered under `"home_hero"`. `custom_kv` remains a free-form KV pass-through to the client app — `slot_id` is intentionally not read from there.
 
 ### 3. Platform-Specific Configs (different UI per platform)
 
@@ -294,3 +300,4 @@ The value under `native_display_config` (or the platform-specific keys) is a `Na
 3. **Platform keys take precedence** — if `native_display_config_android` exists, `native_display_config` is not checked on Android (same for iOS with `_ios`).
 4. **Unknown keys are ignored** — the parser uses `ignoreUnknownKeys`, so you can add new fields without breaking older SDK versions.
 5. **`custom_kv` is pass-through** — everything in `custom_kv` is forwarded to the client app as string key-value pairs. The client app can use these for placement logic, analytics, etc.
+6. **`slot_id` lives at the root** — placement routing reads `slot_id` from the top-level object only. Do not nest it inside `custom_kv`.

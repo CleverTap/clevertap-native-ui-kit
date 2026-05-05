@@ -27,6 +27,7 @@ class NativeDisplayConfigParserTest {
         val json = """
             {
                 "wzrk_id": "unit_1",
+                "slot_id": "hero_banner",
                 "type": "native_display",
                 "native_display_config": {
                     "root": {
@@ -48,12 +49,96 @@ class NativeDisplayConfigParserTest {
 
         assertNotNull(unit)
         assertEquals("unit_1", unit!!.unitId)
+        assertEquals("hero_banner", unit.slotId)
         assertNotNull(unit.config)
         assertTrue(unit.config.root is NativeDisplayElement)
         val root = unit.config.root as NativeDisplayElement
         assertEquals(ElementType.TEXT, root.elementType)
         assertEquals("Hello", root.bindings["text"])
         assertEquals("value1", unit.customExtras["key1"])
+    }
+
+    // -- Root-level slot_id --
+
+    @Test
+    fun `tryParse without slot_id leaves slotId null`() {
+        val json = """
+            {
+                "wzrk_id": "unit_no_slot",
+                "native_display_config": {
+                    "root": {
+                        "type": "element",
+                        "id": "txt1",
+                        "elementType": "text",
+                        "bindings": { "text": "NoSlot" },
+                        "layout": {
+                            "width": { "special": "match_parent" },
+                            "height": { "special": "wrap_content" }
+                        }
+                    }
+                }
+            }
+        """.trimIndent()
+
+        val unit = parser.tryParse(json)
+
+        assertNotNull(unit)
+        assertNull(unit!!.slotId)
+    }
+
+    @Test
+    fun `tryParse normalises empty slot_id to null`() {
+        val json = """
+            {
+                "wzrk_id": "unit_empty_slot",
+                "slot_id": "",
+                "native_display_config": {
+                    "root": {
+                        "type": "element",
+                        "id": "txt1",
+                        "elementType": "text",
+                        "bindings": { "text": "EmptySlot" },
+                        "layout": {
+                            "width": { "special": "match_parent" },
+                            "height": { "special": "wrap_content" }
+                        }
+                    }
+                }
+            }
+        """.trimIndent()
+
+        val unit = parser.tryParse(json)
+
+        assertNotNull(unit)
+        assertNull(unit!!.slotId)
+    }
+
+    @Test
+    fun `tryParse ignores slot_id nested under custom_kv`() {
+        // Old contract — slot_id used to live under custom_kv. New contract puts it at the root.
+        val json = """
+            {
+                "wzrk_id": "unit_legacy_slot",
+                "native_display_config": {
+                    "root": {
+                        "type": "element",
+                        "id": "txt1",
+                        "elementType": "text",
+                        "bindings": { "text": "LegacySlot" },
+                        "layout": {
+                            "width": { "special": "match_parent" },
+                            "height": { "special": "wrap_content" }
+                        }
+                    }
+                },
+                "custom_kv": { "slot_id": "legacy_slot" }
+            }
+        """.trimIndent()
+
+        val unit = parser.tryParse(json)
+
+        assertNotNull(unit)
+        assertNull(unit!!.slotId)
     }
 
     // -- Strategy 2: custom_kv.nd_config fallback --

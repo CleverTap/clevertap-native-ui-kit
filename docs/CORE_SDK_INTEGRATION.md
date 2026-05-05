@@ -61,6 +61,7 @@ The bridge expects the Native Display config to be embedded in the display unit 
 ```json
 {
   "wzrk_id": "unit_123",
+  "slot_id": "hero_banner",
   "type": "native_display",
   "native_display_config": {
     "version": "1.0",
@@ -78,6 +79,8 @@ The bridge expects the Native Display config to be embedded in the display unit 
   }
 }
 ```
+
+`slot_id` is optional — present only when the unit should route to a placement slot (`NativeDisplaySlot`). It lives at the root of the display-unit object, alongside `wzrk_id`.
 
 The parser also supports two fallback strategies:
 - `custom_kv["nd_config"]` containing the config as a JSON string
@@ -372,6 +375,7 @@ navigationController?.pushViewController(vc, animated: true)
 |----------|------|-------------|
 | `unitId` | `String` | The `wzrk_id` from the display unit payload |
 | `config` | `ResolvedConfig` | Parsed config ready for `NativeDisplayView` |
+| `slotId` | `String?` | Top-level `slot_id` from the payload, used by `NativeDisplaySlotManager` to route the unit to a registered slot. `null` when absent. |
 | `customExtras` | `Map<String, String>` | Key-value pairs from `custom_kv` |
 | `rawJson` | `String?` | The original ND config JSON (for debugging) |
 
