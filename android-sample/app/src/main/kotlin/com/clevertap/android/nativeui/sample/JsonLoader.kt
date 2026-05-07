@@ -2,7 +2,7 @@ package com.clevertap.android.nativeui.sample
 
 import android.content.Context
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
-import com.clevertap.android.nativedisplay.samples.JsonSampleLoader
+import com.clevertap.android.nativeui.sample.samples.JsonSampleLoader
 
 /**
  * Utility class for loading JSON showcase examples from assets.

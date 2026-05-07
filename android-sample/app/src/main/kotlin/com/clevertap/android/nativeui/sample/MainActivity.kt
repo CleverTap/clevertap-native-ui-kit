@@ -40,7 +40,7 @@ import com.clevertap.android.nativedisplay.models.ChildArrangement
 import com.clevertap.android.nativedisplay.models.NativeDisplayContainer
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
 import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
-import com.clevertap.android.nativedisplay.samples.*
+import com.clevertap.android.nativeui.sample.samples.*
 
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
