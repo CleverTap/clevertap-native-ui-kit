@@ -142,3 +142,5 @@ signing.properties
 keystore.properties
 
 android-sample/app/configs
+.claude/worktrees/
+.claude/scheduled_tasks.lock
