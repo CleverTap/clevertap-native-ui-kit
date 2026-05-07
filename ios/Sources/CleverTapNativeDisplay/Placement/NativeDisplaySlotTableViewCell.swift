@@ -27,7 +27,7 @@ import SwiftUI
 /// }
 /// ```
 @available(iOS 15.0, *)
-open class NativeDisplaySlotTableViewCell: UITableViewCell, NativeDisplaySlotObserver {
+public final class NativeDisplaySlotTableViewCell: UITableViewCell, NativeDisplaySlotObserver {
 
     // MARK: - Properties
 
@@ -137,7 +137,7 @@ open class NativeDisplaySlotTableViewCell: UITableViewCell, NativeDisplaySlotObs
 
     // MARK: - Lifecycle
 
-    open override func prepareForReuse() {
+    public override func prepareForReuse() {
         super.prepareForReuse()
 
         // Unregister from current slot on reuse

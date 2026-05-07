@@ -29,7 +29,7 @@ import kotlin.random.Random
  * @return Modified Modifier with background applied
  */
 @Composable
-fun Modifier.applyBackground(background: Background?): Modifier {
+internal fun Modifier.applyBackground(background: Background?): Modifier {
     if (background == null) return this
     
     return when (background) {

@@ -14,17 +14,17 @@ import SafariServices
 import UIKit
 
 /// Handles execution of actions triggered by Native Display components.
-public class ActionHandler {
-    
+class ActionHandler {
+
     private weak var actionListener: NativeDisplayActionListener?
     private weak var componentListener: NativeDisplayComponentListener?
     private var firedSystemEvents = Set<String>()
     private let unitId: String?
 
     /// Whether an action listener is attached (for callers to skip unnecessary work)
-    public var hasActionListener: Bool { actionListener != nil }
+    var hasActionListener: Bool { actionListener != nil }
 
-    public init(
+    init(
         actionListener: NativeDisplayActionListener?,
         componentListener: NativeDisplayComponentListener?,
         unitId: String? = nil
@@ -41,7 +41,7 @@ public class ActionHandler {
     ///   - action: The action to execute
     ///   - nodeId: The ID of the node that triggered this action
     ///   - interactionType: The type of interaction that triggered this action
-    public func handleAction(
+    func handleAction(
         _ action: Action,
         nodeId: String,
         interactionType: InteractionType = .click
@@ -88,7 +88,7 @@ public class ActionHandler {
     /// - Parameters:
     ///   - action: The action to execute
     ///   - nodeId: The ID of the node that triggered this action
-    public func handleLifecycleAction(
+    func handleLifecycleAction(
         _ action: Action,
         nodeId: String
     ) {
@@ -119,7 +119,7 @@ public class ActionHandler {
     /// - Parameters:
     ///   - eventName: The system event name (e.g., "Notification Viewed")
     ///   - properties: Optional event properties
-    public func fireSystemEvent(eventName: String, properties: [String: Any]? = nil, deduplicate: Bool = false) {
+    func fireSystemEvent(eventName: String, properties: [String: Any]? = nil, deduplicate: Bool = false) {
         guard hasActionListener else { return }
         if deduplicate {
             guard firedSystemEvents.insert(eventName).inserted else {
@@ -147,7 +147,7 @@ public class ActionHandler {
     /// - Parameters:
     ///   - nodeId: The ID of the component
     ///   - interactionType: The type of interaction
-    public func handleInteractionWithoutAction(
+    func handleInteractionWithoutAction(
         nodeId: String,
         interactionType: InteractionType
     ) {

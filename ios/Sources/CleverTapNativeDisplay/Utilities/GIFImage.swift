@@ -3,16 +3,16 @@ import UIKit
 import ImageIO
 
 /// SwiftUI view for displaying animated GIFs
-public struct GIFImage: UIViewRepresentable {
+struct GIFImage: UIViewRepresentable {
     let url: URL
     let contentMode: ContentMode
 
-    public init(url: URL, contentMode: ContentMode) {
+    init(url: URL, contentMode: ContentMode) {
         self.url = url
         self.contentMode = contentMode
     }
 
-    public func makeUIView(context: Context) -> UIImageView {
+    func makeUIView(context: Context) -> UIImageView {
         let imageView = UIImageView()
         imageView.contentMode = contentMode == .fit ? .scaleAspectFit : .scaleAspectFill
         imageView.clipsToBounds = true
@@ -26,7 +26,7 @@ public struct GIFImage: UIViewRepresentable {
         return imageView
     }
 
-    public func updateUIView(_ uiView: UIImageView, context: Context) {
+    func updateUIView(_ uiView: UIImageView, context: Context) {
         Task {
             if let image = await loadAnimatedGIF(from: url) {
                 await MainActor.run {

@@ -10,8 +10,8 @@ import ImageIO
 // MARK: - Environment Key for Parent Size
 
 /// Environment key for explicitly setting parent size (overrides GeometryReader)
-public struct ParentSizeEnvironmentKey: EnvironmentKey {
-    public static let defaultValue: CGSize? = nil
+struct ParentSizeEnvironmentKey: EnvironmentKey {
+    static let defaultValue: CGSize? = nil
 }
 
 extension EnvironmentValues {
@@ -26,14 +26,14 @@ extension EnvironmentValues {
 // MARK: - Environment Keys for Font Customization
 
 /// Environment key for client-provided default font family name (HIGHEST priority).
-public struct DefaultFontFamilyKey: EnvironmentKey {
-    public static let defaultValue: String? = nil
+struct DefaultFontFamilyKey: EnvironmentKey {
+    static let defaultValue: String? = nil
 }
 
 /// Environment key for a custom font resolver closure.
 /// Called when JSON specifies a fontFamily and no client default overrides it.
-public struct FontFamilyResolverKey: EnvironmentKey {
-    public static let defaultValue: ((String, CGFloat, Font.Weight) -> Font)? = nil
+struct FontFamilyResolverKey: EnvironmentKey {
+    static let defaultValue: ((String, CGFloat, Font.Weight) -> Font)? = nil
 }
 
 extension EnvironmentValues {
@@ -1511,11 +1511,11 @@ private struct DecorationView<Content: View>: View {
 
 /// Utility to parse hex color strings to SwiftUI Color.
 /// Supports #RRGGBB (6 chars) and #RRGGBBAA (8 chars, RGBA format).
-public struct ColorParser {
+struct ColorParser {
     /// Parse hex color string to SwiftUI Color.
     /// - #RRGGBB: 6-character RGB (full opacity)
     /// - #RRGGBBAA: 8-character RGBA (alpha in last byte)
-    public static func parse(_ colorString: String?) -> Color? {
+    static func parse(_ colorString: String?) -> Color? {
         guard let colorString = colorString else { return nil }
 
         var hex = colorString.trimmingCharacters(in: .whitespacesAndNewlines)

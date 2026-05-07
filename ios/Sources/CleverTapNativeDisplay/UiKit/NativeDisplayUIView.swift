@@ -42,7 +42,7 @@ struct _NativeDisplayRoot: View {
 /// NSLayoutConstraint.activate([...])
 /// ```
 @available(iOS 13.0, *)
-open class NativeDisplayUIView: UIView {
+public final class NativeDisplayUIView: UIView {
     
     // MARK: - Properties
 
@@ -103,7 +103,7 @@ open class NativeDisplayUIView: UIView {
     
     // MARK: - Lifecycle
     
-    open override func didMoveToWindow() {
+    public override func didMoveToWindow() {
         super.didMoveToWindow()
         
         // Find parent view controller and add hosting controller as child
@@ -117,7 +117,7 @@ open class NativeDisplayUIView: UIView {
         }
     }
     
-    open override func willMove(toWindow newWindow: UIWindow?) {
+    public override func willMove(toWindow newWindow: UIWindow?) {
         super.willMove(toWindow: newWindow)
         
         // Remove from parent if moving to nil window
@@ -142,7 +142,7 @@ open class NativeDisplayUIView: UIView {
     
     // MARK: - Intrinsic Content Size
     
-    open override var intrinsicContentSize: CGSize {
+    public override var intrinsicContentSize: CGSize {
         hostingController?.view.intrinsicContentSize ?? .zero
     }
     

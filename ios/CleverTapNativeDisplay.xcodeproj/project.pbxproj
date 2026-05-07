@@ -28,7 +28,6 @@
 		B010 /* BackgroundRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F010 /* BackgroundRenderer.swift */; };
 		B011 /* VariableEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F011 /* VariableEvaluator.swift */; };
 		B012 /* StyleResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F012 /* StyleResolver.swift */; };
-		B013 /* CleverTapNativeDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F013 /* CleverTapNativeDisplay.swift */; };
 		B014 /* HtmlJsBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F014 /* HtmlJsBridge.swift */; };
 		B015 /* HtmlWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F015 /* HtmlWebView.swift */; };
 		BT01 /* CleverTapNativeDisplayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FT01 /* CleverTapNativeDisplayTests.swift */; };
@@ -67,7 +66,6 @@
 		F010 /* BackgroundRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundRenderer.swift; sourceTree = "<group>"; };
 		F011 /* VariableEvaluator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableEvaluator.swift; sourceTree = "<group>"; };
 		F012 /* StyleResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleResolver.swift; sourceTree = "<group>"; };
-		F013 /* CleverTapNativeDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleverTapNativeDisplay.swift; sourceTree = "<group>"; };
 		F014 /* HtmlJsBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HtmlJsBridge.swift; sourceTree = "<group>"; };
 		F015 /* HtmlWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HtmlWebView.swift; sourceTree = "<group>"; };
 		FT01 /* CleverTapNativeDisplayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleverTapNativeDisplayTests.swift; sourceTree = "<group>"; };
@@ -197,7 +195,6 @@
 				41969A6D2F0BDB380050EB83 /* Modifiers */,
 				41969A6A2F0BCA2A0050EB83 /* Handlers */,
 				41969A652F0BC86B0050EB83 /* Listeners */,
-				F013 /* CleverTapNativeDisplay.swift */,
 				GRP_MDL /* Models */,
 				GRP_RND /* Renderer */,
 				GRP_EVL /* Evaluator */,
@@ -370,7 +367,6 @@
 				B012 /* StyleResolver.swift in Sources */,
 				41969A6F2F0BDB420050EB83 /* TappableModifier.swift in Sources */,
 				41969A6C2F0BCA390050EB83 /* ActionHandler.swift in Sources */,
-				B013 /* CleverTapNativeDisplay.swift in Sources */,
 				B014 /* HtmlJsBridge.swift in Sources */,
 				B015 /* HtmlWebView.swift in Sources */,
 			);

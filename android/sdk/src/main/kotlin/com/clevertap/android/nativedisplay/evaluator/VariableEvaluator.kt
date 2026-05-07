@@ -12,7 +12,7 @@ import kotlinx.serialization.json.*
  * 
  * Phase 2+ will add reactive state management.
  */
-class VariableEvaluator(
+internal class VariableEvaluator(
     private val variables: Map<String, JsonElement>
 ) {
     companion object {

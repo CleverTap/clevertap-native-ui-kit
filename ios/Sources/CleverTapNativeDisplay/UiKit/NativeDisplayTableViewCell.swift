@@ -22,7 +22,7 @@ import SwiftUI
 /// }
 /// ```
 @available(iOS 13.0, *)
-open class NativeDisplayTableViewCell: UITableViewCell {
+public final class NativeDisplayTableViewCell: UITableViewCell {
     
     // MARK: - Properties
     
@@ -101,7 +101,7 @@ open class NativeDisplayTableViewCell: UITableViewCell {
     
     // MARK: - Lifecycle
     
-    open override func prepareForReuse() {
+    public override func prepareForReuse() {
         super.prepareForReuse()
         // Note: We keep the hosting controller for reuse
         // The configure method will update its content

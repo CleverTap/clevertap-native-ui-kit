@@ -55,7 +55,7 @@ import kotlinx.coroutines.launch
  * Main gallery renderer that routes to the appropriate implementation based on mode.
  */
 @Composable
-fun RenderGallery(
+internal fun RenderGallery(
     container: NativeDisplayContainer,
     resolvedStyles: PersistentMap<String, Style>,
     evaluator: VariableEvaluator,

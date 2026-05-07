@@ -260,7 +260,7 @@ public struct Style: Codable, Equatable {
     /// ```
     ///
     /// - Returns: TextProperties containing all text styling values
-    public func extractTextProperties() -> TextProperties {
+    func extractTextProperties() -> TextProperties {
         TextProperties(
             color: textColor,
             size: fontSize,
@@ -295,7 +295,7 @@ public struct Style: Codable, Equatable {
     /// ```
     ///
     /// - Returns: VisualProperties containing background and opacity values
-    public func extractVisualProperties() -> VisualProperties {
+    func extractVisualProperties() -> VisualProperties {
         VisualProperties(
             background: background,
             backgroundColor: backgroundColor,
@@ -320,7 +320,7 @@ public struct Style: Codable, Equatable {
     /// ```
     ///
     /// - Returns: BorderProperties containing border styling values
-    public func extractBorderProperties() -> BorderProperties {
+    func extractBorderProperties() -> BorderProperties {
         BorderProperties(
             radius: borderRadius,
             width: borderWidth,
@@ -347,7 +347,7 @@ public struct Style: Codable, Equatable {
     /// ```
     ///
     /// - Returns: ShadowProperties containing shadow styling values
-    public func extractShadowProperties() -> ShadowProperties {
+    func extractShadowProperties() -> ShadowProperties {
         ShadowProperties(
             color: shadowColor,
             radius: shadowRadius,
@@ -426,23 +426,23 @@ public struct Style: Codable, Equatable {
 /// - textShadow: Drop shadow effect on text
 /// - textGradient: Gradient effect on text
 /// - opacity: Text opacity (0.0 to 1.0)
-public struct TextProperties {
-    public let color: String?
-    public let size: TextDimension?
-    public let family: String?
-    public let weight: FontWeight?
-    public let style: FontStyle?
-    public let lineHeight: TextDimension?
-    public let letterSpacing: CGFloat?
-    public let decoration: TextDecoration?
-    public let align: String?
-    public let maxLines: Int?
-    public let overflow: TextOverflow?
-    public let textShadow: TextShadow?
-    public let textGradient: TextGradient?
-    public let opacity: CGFloat?
+struct TextProperties {
+    let color: String?
+    let size: TextDimension?
+    let family: String?
+    let weight: FontWeight?
+    let style: FontStyle?
+    let lineHeight: TextDimension?
+    let letterSpacing: CGFloat?
+    let decoration: TextDecoration?
+    let align: String?
+    let maxLines: Int?
+    let overflow: TextOverflow?
+    let textShadow: TextShadow?
+    let textGradient: TextGradient?
+    let opacity: CGFloat?
 
-    public init(
+    init(
         color: String?,
         size: TextDimension?,
         family: String?,
@@ -476,7 +476,7 @@ public struct TextProperties {
 
     /// Default text properties with sensible defaults.
     /// Used as fallback when properties are not specified.
-    public static let `default` = TextProperties(
+    static let `default` = TextProperties(
         color: nil,
         size: TextDimension(value: 14),
         family: nil,
@@ -501,12 +501,12 @@ public struct TextProperties {
 /// - background: Complex background (gradients, images, animations)
 /// - backgroundColor: Simple solid background color
 /// - opacity: Element opacity (0.0 to 1.0)
-public struct VisualProperties {
-    public let background: Background?
-    public let backgroundColor: String?
-    public let opacity: CGFloat?
+struct VisualProperties {
+    let background: Background?
+    let backgroundColor: String?
+    let opacity: CGFloat?
 
-    public init(
+    init(
         background: Background?,
         backgroundColor: String?,
         opacity: CGFloat?
@@ -517,7 +517,7 @@ public struct VisualProperties {
     }
 
     /// Empty visual properties (no background, no opacity).
-    public static let empty = VisualProperties(
+    static let empty = VisualProperties(
         background: nil,
         backgroundColor: nil,
         opacity: nil
@@ -531,12 +531,12 @@ public struct VisualProperties {
 /// - radius: Border radius as a Dimension (supports dp or percent units)
 /// - width: Border width in points (stroke thickness)
 /// - color: Border color in hex format
-public struct BorderProperties {
-    public let radius: Dimension?
-    public let width: CGFloat?
-    public let color: String?
+struct BorderProperties {
+    let radius: Dimension?
+    let width: CGFloat?
+    let color: String?
 
-    public init(
+    init(
         radius: Dimension?,
         width: CGFloat?,
         color: String?
@@ -547,7 +547,7 @@ public struct BorderProperties {
     }
 
     /// Empty border properties (no border).
-    public static let empty = BorderProperties(
+    static let empty = BorderProperties(
         radius: nil,
         width: nil,
         color: nil
@@ -562,13 +562,13 @@ public struct BorderProperties {
 /// - radius: Shadow blur radius in points
 /// - offsetX: Horizontal shadow offset in points
 /// - offsetY: Vertical shadow offset in points
-public struct ShadowProperties {
-    public let color: String?
-    public let radius: CGFloat?
-    public let offsetX: CGFloat?
-    public let offsetY: CGFloat?
+struct ShadowProperties {
+    let color: String?
+    let radius: CGFloat?
+    let offsetX: CGFloat?
+    let offsetY: CGFloat?
 
-    public init(
+    init(
         color: String?,
         radius: CGFloat?,
         offsetX: CGFloat?,
@@ -581,7 +581,7 @@ public struct ShadowProperties {
     }
 
     /// Empty shadow properties (no shadow).
-    public static let empty = ShadowProperties(
+    static let empty = ShadowProperties(
         color: nil,
         radius: nil,
         offsetX: nil,

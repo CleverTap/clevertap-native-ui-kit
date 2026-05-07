@@ -15,11 +15,11 @@ public struct NativeDisplayConfig: Codable, Equatable {
     public let root: NativeDisplayNode?
     
     // Phase 2+: References to external resources (optional)
-    public let templateRef: TemplateReference?
-    public let styleRef: StyleReference?
-    public let dataRef: DataReference?
-    
-    public init(
+    let templateRef: TemplateReference?
+    let styleRef: StyleReference?
+    let dataRef: DataReference?
+
+    init(
         version: String = "1.0",
         theme: Theme? = nil,
         styleClasses: [StyleClass] = [],
@@ -58,16 +58,16 @@ public struct NativeDisplayConfig: Codable, Equatable {
     }
     
     /// Check if this is a monolithic config (Phase 1).
-    public var isMonolithic: Bool {
+    var isMonolithic: Bool {
         theme != nil &&
         root != nil &&
         templateRef == nil &&
         styleRef == nil &&
         dataRef == nil
     }
-    
+
     /// Check if this config has external references (Phase 2+).
-    public var hasReferences: Bool {
+    var hasReferences: Bool {
         templateRef != nil ||
         styleRef != nil ||
         dataRef != nil
@@ -75,12 +75,12 @@ public struct NativeDisplayConfig: Codable, Equatable {
 }
 
 /// Reference to external template (Phase 2+).
-public struct TemplateReference: Codable, Equatable {
-    public let templateId: String
-    public let version: String
-    public let url: String?
-    
-    public init(templateId: String, version: String, url: String? = nil) {
+struct TemplateReference: Codable, Equatable {
+    let templateId: String
+    let version: String
+    let url: String?
+
+    init(templateId: String, version: String, url: String? = nil) {
         self.templateId = templateId
         self.version = version
         self.url = url
@@ -88,12 +88,12 @@ public struct TemplateReference: Codable, Equatable {
 }
 
 /// Reference to external style data (Phase 2+).
-public struct StyleReference: Codable, Equatable {
-    public let styleId: String
-    public let version: String
-    public let url: String?
-    
-    public init(styleId: String, version: String, url: String? = nil) {
+struct StyleReference: Codable, Equatable {
+    let styleId: String
+    let version: String
+    let url: String?
+
+    init(styleId: String, version: String, url: String? = nil) {
         self.styleId = styleId
         self.version = version
         self.url = url
@@ -101,11 +101,11 @@ public struct StyleReference: Codable, Equatable {
 }
 
 /// Reference to external data (Phase 2+).
-public struct DataReference: Codable, Equatable {
-    public let dataId: String
-    public let url: String
-    
-    public init(dataId: String, url: String) {
+struct DataReference: Codable, Equatable {
+    let dataId: String
+    let url: String
+
+    init(dataId: String, url: String) {
         self.dataId = dataId
         self.url = url
     }
@@ -167,13 +167,13 @@ public extension ResolvedConfig {
     }
 }
 
-public extension NativeDisplayConfig {
+extension NativeDisplayConfig {
     /// Parse a NativeDisplayConfig from JSON data.
     static func from(jsonData: Data) throws -> NativeDisplayConfig {
         let decoder = JSONDecoder()
         return try decoder.decode(NativeDisplayConfig.self, from: jsonData)
     }
-    
+
     /// Parse a NativeDisplayConfig from a JSON string.
     static func from(jsonString: String) throws -> NativeDisplayConfig {
         guard let data = jsonString.data(using: .utf8) else {
@@ -185,7 +185,7 @@ public extension NativeDisplayConfig {
         }
         return try from(jsonData: data)
     }
-    
+
     /// Convert to ResolvedConfig if this is a monolithic config.
     func toResolvedConfig() -> ResolvedConfig? {
         guard let theme = theme, let root = root else {
