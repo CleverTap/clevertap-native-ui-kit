@@ -13,7 +13,11 @@ let package = Package(
             targets: ["CleverTapNativeDisplay"]
         ),
     ],
-    dependencies: [],
+    dependencies: [
+        // Generates DocC documentation. Used by the docs site CI job
+        // to produce static HTML for `/api/ios/<version>/`.
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.3.0"),
+    ],
     targets: [
         .target(
             name: "CleverTapNativeDisplay",
