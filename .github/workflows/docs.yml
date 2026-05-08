@@ -80,10 +80,17 @@ jobs:
             "$DOCC_ARCHIVE" \
             --output-path docc-out \
             --hosting-base-path "/clevertap-native-ui-kit/api/ios/${{ steps.ver.outputs.version }}/"
+      # DocC's static-hosting output contains JSON files for Swift operators
+      # like `!=(_:_:).json`. The `:` is illegal in actions/upload-artifact@v4
+      # because of Windows-filesystem compatibility checks. Tar the directory
+      # so the colons survive the upload, then extract on the site job.
+      - name: Archive docc-out
+        working-directory: ios
+        run: tar -czf docc-out.tar.gz -C docc-out .
       - uses: actions/upload-artifact@v4
         with:
           name: docc-html
-          path: ios/docc-out
+          path: ios/docc-out.tar.gz
           if-no-files-found: error
           retention-days: 7
 
@@ -111,7 +118,12 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: docc-html
-          path: website/static/api/ios/${{ steps.ver.outputs.version }}
+          path: docc-html-tar
+      - name: Extract docc-html.tar.gz
+        run: |
+          DEST="website/static/api/ios/${{ steps.ver.outputs.version }}"
+          mkdir -p "$DEST"
+          tar -xzf docc-html-tar/docc-out.tar.gz -C "$DEST"
 
       - name: Copy referenced test-configs into static/
         run: |
