@@ -1,0 +1,217 @@
+/* CleverTap Native UI Kit — docs site theme.
+ * Brand palette: CleverTap red on white (light) / near-black (dark).
+ * Goal: minimal, content-first, generous whitespace, restrained typography.
+ */
+
+:root {
+  /* Primary — CleverTap red */
+  --ifm-color-primary:         #E94B35;
+  --ifm-color-primary-dark:    #D43E29;
+  --ifm-color-primary-darker:  #C73923;
+  --ifm-color-primary-darkest: #A12D1B;
+  --ifm-color-primary-light:   #ED6453;
+  --ifm-color-primary-lighter: #EE7060;
+  --ifm-color-primary-lightest:#F2917F;
+
+  /* Surfaces */
+  --ifm-background-color: #FFFFFF;
+  --ifm-background-surface-color: #FAFAFA;
+  --ifm-color-content: #1F2328;
+  --ifm-color-content-secondary: #57606A;
+  --ifm-color-emphasis-200: #EDEDED;
+  --ifm-color-emphasis-300: #D8D8D8;
+
+  /* Typography */
+  --ifm-font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --ifm-font-family-monospace: "SF Mono", ui-monospace, "Cascadia Mono",
+    Menlo, Consolas, monospace;
+  --ifm-font-size-base: 15px;
+  --ifm-line-height-base: 1.65;
+  --ifm-heading-font-weight: 600;
+
+  /* Headings — restrained sizes */
+  --ifm-h1-font-size: 2rem;       /* default 2.5rem — too big for an SDK doc */
+  --ifm-h2-font-size: 1.5rem;
+  --ifm-h3-font-size: 1.2rem;
+  --ifm-h4-font-size: 1rem;
+
+  /* Code */
+  --ifm-code-font-size: 90%;
+  --ifm-code-background: #F6F6F7;
+  --docusaurus-highlighted-code-line-bg: rgba(233, 75, 53, 0.10);
+
+  /* Layout — slightly tighter than default */
+  --ifm-spacing-horizontal: 1rem;
+  --ifm-toc-padding-vertical: 0.4rem;
+  --ifm-navbar-height: 56px;
+  --ifm-navbar-padding-vertical: 0.4rem;
+
+  /* Links */
+  --ifm-link-color: var(--ifm-color-primary-dark);
+  --ifm-link-hover-color: var(--ifm-color-primary-darker);
+
+  /* Tables */
+  --ifm-table-border-color: var(--ifm-color-emphasis-300);
+  --ifm-table-stripe-background: var(--ifm-background-surface-color);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary:         #FF7060;
+  --ifm-color-primary-dark:    #FF5544;
+  --ifm-color-primary-darker:  #F0483A;
+  --ifm-color-primary-darkest: #C7382B;
+  --ifm-color-primary-light:   #FF8978;
+  --ifm-color-primary-lighter: #FF9685;
+  --ifm-color-primary-lightest:#FFB1A4;
+
+  --ifm-background-color: #0F1115;
+  --ifm-background-surface-color: #16191F;
+  --ifm-color-content: #E6EDF3;
+  --ifm-color-content-secondary: #9BA4B0;
+  --ifm-color-emphasis-200: #1F242C;
+  --ifm-color-emphasis-300: #2A313B;
+  --ifm-code-background: #1A1E25;
+
+  --docusaurus-highlighted-code-line-bg: rgba(255, 112, 96, 0.16);
+}
+
+/* === Tighten the page === */
+
+.markdown > h1:first-child {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.markdown h2 {
+  margin-top: 2.25rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.markdown h3 {
+  margin-top: 1.75rem;
+}
+
+.markdown p,
+.markdown li {
+  font-size: 0.95rem;
+}
+
+/* Reduce default code-block padding chunkiness */
+.theme-code-block pre {
+  padding: 0.85rem 1rem;
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+/* Inline code — subtle, not screaming red */
+.markdown code:not([class*="language-"]) {
+  background: var(--ifm-code-background);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.85em;
+  color: var(--ifm-color-content);
+}
+
+/* Tables — readable, restrained */
+.markdown table {
+  display: table;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+.markdown table thead {
+  background: var(--ifm-background-surface-color);
+}
+
+.markdown table th,
+.markdown table td {
+  padding: 0.5rem 0.75rem;
+}
+
+/* Blockquote / admonition trim */
+.theme-admonition {
+  font-size: 0.92rem;
+  padding: 0.75rem 1rem;
+}
+
+/* Sidebar — quieter typography */
+.menu__list {
+  font-size: 0.9rem;
+}
+
+.menu__link {
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+}
+
+.menu__link--sublist-caret::after,
+.menu__caret::before {
+  opacity: 0.6;
+}
+
+/* TOC on the right — quieter */
+.table-of-contents {
+  font-size: 0.85rem;
+}
+
+/* Navbar — minimal */
+.navbar {
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  box-shadow: none;
+}
+
+.navbar__title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Footer — restrained */
+.footer {
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-color-content);
+  padding: 2rem 0;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+[data-theme='dark'] .footer {
+  background: var(--ifm-background-surface-color);
+}
+
+.footer__title {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ifm-color-content-secondary);
+}
+
+.footer__link-item {
+  font-size: 0.88rem;
+  color: var(--ifm-color-content);
+}
+
+.footer__copyright {
+  font-size: 0.8rem;
+  color: var(--ifm-color-content-secondary);
+}
+
+/* Pagination (next/prev) — softer */
+.pagination-nav__link {
+  border-radius: 6px;
+  border-color: var(--ifm-color-emphasis-200);
+}
+
+.pagination-nav__sublabel {
+  font-size: 0.75rem;
+  color: var(--ifm-color-content-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Constrain content width for readability */
+.theme-doc-markdown {
+  max-width: 760px;
+}
