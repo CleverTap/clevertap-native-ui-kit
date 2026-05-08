@@ -120,7 +120,7 @@ struct SlotDemoView: View {
                     }
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 12)
             .padding(.vertical, 12)
         }
         .background(Color(.systemGroupedBackground))

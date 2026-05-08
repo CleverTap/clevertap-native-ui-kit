@@ -141,29 +141,28 @@ public struct NativeDisplayView: View {
             // → Skip GeometryReader (performance win)
             let screenSize = UIScreen.main.bounds.size
             renderContent(parentSize: screenSize)
+        } else if let ar = config.root.layout?.aspectRatio, ar > 0 {
+            // Priority 3.5: Aspect ratio present → derive height from offered width.
+            // .frame(maxWidth: .infinity) fills the parent's offered width.
+            // .aspectRatio(.fit) in a vertical ScrollView sets height = width / ar.
+            // GeometryReader is constrained by both, so geo.size is always accurate —
+            // avoids the unreliable initial-pass sizes of a bare GeometryReader in LazyVStack.
+            GeometryReader { geo in
+                renderContent(parentSize: geo.size)
+            }
+            .aspectRatio(ar, contentMode: .fit)
+            .frame(maxWidth: .infinity)
         } else {
             // Priority 4: GeometryReader (ONLY when truly needed)
             // Conditions to reach here:
             // - NO environment override AND
+            // - Root has no aspect ratio AND
             // - Root uses percentages/match_parent/wrap_content AND
             // - Config contains percentages somewhere
             // → MUST use GeometryReader to measure parent constraints
-            //
-            // When the root has an aspectRatio, apply .aspectRatio() to the GeometryReader
-            // so SwiftUI knows the view's natural height. Without this, GeometryReader reports
-            // height=0 inside a ScrollView and greedily expands, causing views to overlap.
-            let rootAspectRatio = config.root.layout?.aspectRatio
-            if let ar = rootAspectRatio, ar > 0 {
-                GeometryReader { geometry in
-                    renderContent(parentSize: geometry.size)
-                        .frame(width: geometry.size.width, alignment: .center)
-                }
-                .aspectRatio(ar, contentMode: .fit)
-            } else {
-                GeometryReader { geometry in
-                    renderContent(parentSize: geometry.size)
-                        .frame(width: geometry.size.width, alignment: .center)
-                }
+            GeometryReader { geometry in
+                renderContent(parentSize: geometry.size)
+                    .frame(width: geometry.size.width, alignment: .center)
             }
         }
     }
@@ -486,9 +485,10 @@ struct RenderContainer: View {
                 width = rawWidth
                 height = rawHeight
             } else {
-                // Aspect ratio constrains: width is primary, derive height
-                width = rawWidth
-                height = rawWidth / aspectRatio
+                // Aspect ratio present + non-fixed width → fill parent width.
+                // Matches resolveRootWidth(): percent is ignored when aspectRatio is set.
+                width = widthIsFixed ? rawWidth : parentSize.width
+                height = width / aspectRatio
             }
         } else {
             width = rawWidth
@@ -1280,8 +1280,10 @@ struct LayoutModifier: ViewModifier {
         }
 
         if let w = explicitWidth {
-            // Width known → derive height from aspect ratio
-            return (w, w / ratio, false)
+            // When width is percent (not fixed dp/px/sp), aspect ratio wins: fill parent width.
+            // Matches resolveRootWidth() rule: "Aspect ratio present → percent is ignored, width fills parent."
+            let frameWidth = widthIsFixed ? w : parentSize.width
+            return (frameWidth, frameWidth / ratio, false)
         }
         if let h = explicitHeight {
             // Height known → derive width from aspect ratio
