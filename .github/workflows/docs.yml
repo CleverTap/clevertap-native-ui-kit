@@ -3,15 +3,29 @@ name: Docs site
 # Build and deploy the documentation site at https://clevertap.github.io/clevertap-native-ui-kit/.
 #
 # Triggers:
-#   • push to main           → deploy to /next/   (in-progress docs)
-#   • push of tag v*.*.*     → snapshot the version, deploy to /<version>/, alias as latest
-#   • workflow_dispatch      → manual rebuild
+#   • pull_request             → build & verify (no deploy) — surfaces in PR Checks
+#   • push to main             → build + deploy to /next/  (in-progress docs)
+#   • push of tag v*.*.*       → snapshot the version, build + deploy to /<version>/
+#   • workflow_dispatch        → manual rebuild (only available once the workflow lands on the default branch)
 #
 # Three jobs run in parallel; a final deploy job downloads their artifacts and
 # publishes the assembled site to gh-pages. The iOS doc job MUST run on macOS
 # because the SDK depends on UIKit/SwiftUI which can't compile on Linux.
+#
+# Deploy is skipped on pull_request runs so PR builds don't push to gh-pages
+# from a pre-merge state.
 
 on:
+  pull_request:
+    paths:
+      - 'website/**'
+      - 'android/sdk/**'
+      - 'ios/Sources/**'
+      - 'ios/Package.swift'
+      - 'ios/CleverTapNativeDisplay.xcodeproj/**'
+      - '.github/workflows/docs.yml'
+      - 'VERSION'
+      - 'test-configs/**'
   push:
     branches: [main]
     tags: ['v*.*.*']
@@ -132,6 +146,8 @@ jobs:
         run: npm run build
 
       - name: Deploy to gh-pages
+        # Skip on pull_request runs — only deploy from main pushes and tags.
+        if: github.event_name != 'pull_request'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
