@@ -51,6 +51,10 @@ Pods/
 Carthage/
 .swiftpm/
 
+# DocC build output (xcodebuild docbuild + transform-for-static-hosting)
+ios/docc-build/
+ios/docc-out/
+
 # Swift Package Manager
 .swiftpm/
 .build/

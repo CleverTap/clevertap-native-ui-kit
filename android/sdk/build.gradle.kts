@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.dokka)
     id("maven-publish")
 }
 
@@ -101,6 +102,22 @@ val libraryVersion = if (versionFile.exists()) {
     versionFile.readText().trim()
 } else {
     "0.1.0"
+}
+
+// Dokka — generates HTML API reference for the public Kotlin surface.
+// Output: android/sdk/build/dokka/html/. Consumed by the docs-site CI job
+// which copies it into website/static/api/android/<version>/.
+tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+    moduleName.set("clevertap-native-ui-kit")
+    outputDirectory.set(layout.buildDirectory.dir("dokka/html"))
+
+    dokkaSourceSets.configureEach {
+        includes.from("dokka/module.md")
+        jdkVersion.set(17)
+        skipDeprecated.set(false)
+        // sourceLink config can be added once we have a stable github URL —
+        // skipped in v1.0.0 to keep the script free of FQN URL imports.
+    }
 }
 
 afterEvaluate {
