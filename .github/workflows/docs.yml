@@ -1,0 +1,142 @@
+name: Docs site
+
+# Build and deploy the documentation site at https://clevertap.github.io/clevertap-native-ui-kit/.
+#
+# Triggers:
+#   • push to main           → deploy to /next/   (in-progress docs)
+#   • push of tag v*.*.*     → snapshot the version, deploy to /<version>/, alias as latest
+#   • workflow_dispatch      → manual rebuild
+#
+# Three jobs run in parallel; a final deploy job downloads their artifacts and
+# publishes the assembled site to gh-pages. The iOS doc job MUST run on macOS
+# because the SDK depends on UIKit/SwiftUI which can't compile on Linux.
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*.*.*']
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed to push gh-pages
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dokka:
+    name: Build Dokka (Android API)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v3
+      - name: Generate Dokka HTML
+        working-directory: android
+        run: ./gradlew :sdk:dokkaHtml --no-daemon --console=plain
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dokka-html
+          path: android/sdk/build/dokka/html
+          if-no-files-found: error
+          retention-days: 7
+
+  docc:
+    name: Build DocC (iOS API)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read VERSION
+        id: ver
+        run: echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
+      - name: Generate DocC archive
+        working-directory: ios
+        run: |
+          xcodebuild docbuild \
+            -scheme CleverTapNativeDisplay \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
+            DOCC_HOSTING_BASE_PATH="/clevertap-native-ui-kit/api/ios/${{ steps.ver.outputs.version }}/"
+          DOCC_ARCHIVE=$(find build -name '*.doccarchive' | head -1)
+          xcrun docc process-archive transform-for-static-hosting \
+            "$DOCC_ARCHIVE" \
+            --output-path docc-out \
+            --hosting-base-path "/clevertap-native-ui-kit/api/ios/${{ steps.ver.outputs.version }}/"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docc-html
+          path: ios/docc-out
+          if-no-files-found: error
+          retention-days: 7
+
+  site:
+    name: Build & deploy docs site
+    runs-on: ubuntu-latest
+    needs: [dokka, docc]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - name: Read VERSION
+        id: ver
+        run: echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dokka-html
+          path: website/static/api/android/${{ steps.ver.outputs.version }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: docc-html
+          path: website/static/api/ios/${{ steps.ver.outputs.version }}
+
+      - name: Copy referenced test-configs into static/
+        run: |
+          mkdir -p website/static/test-configs
+          cp test-configs/test-017-box-single-child.json \
+             test-configs/test-018-box-3-children.json \
+             test-configs/test-091-offset-percent-box-basic.json \
+             test-configs/test-090-styled-profile-card.json \
+             test-configs/test-045-box-padding-large.json \
+             website/static/test-configs/
+
+      - name: Install npm deps
+        working-directory: website
+        run: npm ci
+
+      - name: Snapshot version on tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        working-directory: website
+        run: |
+          VERSION="${{ steps.ver.outputs.version }}"
+          # Skip if this version is already snapshotted (idempotent on retries)
+          if [ ! -d "versioned_docs/version-$VERSION" ]; then
+            npx docusaurus docs:version "$VERSION"
+            git config user.name 'github-actions'
+            git config user.email 'github-actions@github.com'
+            git add versioned_docs versioned_sidebars versions.json
+            git commit -m "docs: snapshot v$VERSION" || true
+          fi
+
+      - name: Build site
+        working-directory: website
+        run: npm run build
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: website/build
+          publish_branch: gh-pages
+          force_orphan: false
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
