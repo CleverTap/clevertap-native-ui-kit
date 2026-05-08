@@ -8,7 +8,15 @@ import Foundation
 public enum ContainerType: String, Codable, CaseIterable {
     case vertical
     case horizontal
+
+    /// Z-stacked overlapping children, anchored top-leading. The only
+    /// container type with a documented v1.0.0 contract — see the
+    /// [BOX guide](https://clevertap.github.io/clevertap-native-ui-kit/components/containers/box).
+    ///
+    /// Children render in source order; the last child paints on top. Position
+    /// children inside a `box` with `Layout.offset` (typically as percentages).
     case box
+
     case gallery
 }
 
@@ -28,7 +36,16 @@ public enum ElementType: String, Codable, CaseIterable {
 public enum DimensionUnit: String, Codable, CaseIterable {
     case dp
     case sp
+
+    /// Percentage of the parent's measured size. Resolves as
+    /// `parentDimension * value / 100`. The only unit with a documented v1.0.0
+    /// contract — see the
+    /// [percentage dimensions guide](https://clevertap.github.io/clevertap-native-ui-kit/dimensions/percent).
+    ///
+    /// Behaves identically on Android (Compose `fillMaxWidth(value/100f)`) and
+    /// iOS (`parentSize * value / 100`).
     case percent
+
     case px
 }
 

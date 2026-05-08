@@ -55,7 +55,40 @@ extension EnvironmentValues {
 
 // MARK: - Native Display View
 
-/// Main entry point for rendering native display UI.
+/// Renders a `ResolvedConfig` as a SwiftUI view tree.
+///
+/// This is the primary public entry point for rendering server-driven UI on
+/// iOS. The same JSON config renders identically as a Jetpack Compose UI on
+/// Android via the companion `NativeDisplayView` Composable.
+///
+/// ## v1.0.0 documented surface
+///
+/// v1.0.0 contracts only the ``ContainerType/box`` container plus
+/// ``DimensionUnit/percent`` dimensions. Other containers, elements, and
+/// units compile and render but their cross-platform contract stabilizes in
+/// subsequent minor releases.
+///
+/// ## Typical use
+///
+/// ```swift
+/// let resolved = try NativeDisplayConfigParser.parse(json: jsonString)
+/// NativeDisplayView(config: resolved)
+///     .ignoresSafeArea()
+/// ```
+///
+/// Style resolution runs once during init and is cached for every subsequent
+/// SwiftUI render pass driven by the same `config`.
+///
+/// ## Sizing
+///
+/// `NativeDisplayView` resolves its parent size in priority order:
+/// 1. `\.nativeDisplayParentSize` environment value (if set) — absolute override.
+/// 2. Root container's explicit fixed dimensions.
+/// 3. `UIScreen.main.bounds.size` — when no percentages are used.
+/// 4. `GeometryReader` — fallback when percentages are used and parent is unbounded.
+///
+/// Avoid wrapping this view in a parent that gives it unbounded width or
+/// height — percent children measure to zero and disappear.
 public struct NativeDisplayView: View {
     @Environment(\.nativeDisplayParentSize) private var environmentParentSize
     private let config: ResolvedConfig

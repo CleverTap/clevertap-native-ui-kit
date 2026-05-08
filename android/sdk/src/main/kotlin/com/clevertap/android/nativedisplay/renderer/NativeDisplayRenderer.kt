@@ -25,6 +25,7 @@ import com.clevertap.android.nativedisplay.models.ElementType
 import com.clevertap.android.nativedisplay.models.NativeDisplayContainer
 import com.clevertap.android.nativedisplay.models.NativeDisplayElement
 import android.content.Context
+import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge
 import com.clevertap.android.nativedisplay.models.Layout
 import com.clevertap.android.nativedisplay.models.NativeDisplayNode
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
@@ -33,8 +34,42 @@ import com.clevertap.android.nativedisplay.style.StyleResolver
 import kotlinx.collections.immutable.PersistentMap
 
 /**
- * Convenience overload that pre-resolves styles internally.
- * Use this when calling NativeDisplayView directly without going through NativeDisplayViewGroup.
+ * Renders a [ResolvedConfig] as a Jetpack Compose UI tree.
+ *
+ * This is the primary public entry point for rendering server-driven UI on
+ * Android. The same JSON config renders identically as a SwiftUI view on iOS
+ * via the companion `NativeDisplayView` SwiftUI struct.
+ *
+ * ### v1.0.0 documented surface
+ *
+ * v1.0.0 contracts only the [ContainerType.BOX] container plus
+ * [DimensionUnit.PERCENT] dimensions. Other containers, elements, and units
+ * compile and render but their cross-platform contract stabilizes in
+ * subsequent minor releases.
+ *
+ * ### Typical use
+ *
+ * ```kotlin
+ * val resolved = NativeDisplayConfigParser.parse(jsonString)
+ * NativeDisplayView(
+ *     config = resolved,
+ *     modifier = Modifier.fillMaxSize(),
+ * )
+ * ```
+ *
+ * Style resolution runs once on first composition and is cached for every
+ * subsequent recomposition driven by the same `config`.
+ *
+ * @param config Parsed config tree, typically from [NativeDisplayConfigParser].
+ * @param modifier Compose modifier applied to the root [BoxWithConstraints].
+ * @param fontFamily If non-null, overrides every text node's `fontFamily`.
+ * @param actionListener Called when a node with an `actions` block fires a trigger.
+ * @param componentListener Called for visibility / render lifecycle events.
+ * @param unitId Optional display-unit id forwarded to attribution events when the
+ *               CleverTap Core SDK bridge is initialised.
+ *
+ * @see NativeDisplayConfigParser for parsing JSON
+ * @see com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge for backend integration
  */
 @Composable
 fun NativeDisplayView(
@@ -77,7 +112,7 @@ fun NativeDisplayView(
     val actionHandler = remember(actionListener, componentListener, unitId) {
         ActionHandler(
             context = context,
-            listener = actionListener,
+            listener = NativeDisplayBridge.getInstance()?.createEventForwardingListener(actionListener),
             componentListener = componentListener,
             unitId = unitId
         )
