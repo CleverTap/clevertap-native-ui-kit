@@ -5,8 +5,6 @@ public final class com/clevertap/android/nativedisplay/bridge/NativeDisplayBridg
 	public final fun bind (Lcom/clevertap/android/sdk/CleverTapAPI;Lcom/clevertap/android/sdk/displayunits/DisplayUnitListener;)Z
 	public static synthetic fun bind$default (Lcom/clevertap/android/nativedisplay/bridge/NativeDisplayBridge;Lcom/clevertap/android/sdk/CleverTapAPI;Lcom/clevertap/android/sdk/displayunits/DisplayUnitListener;ILjava/lang/Object;)Z
 	public final fun clear ()V
-	public final fun createEventForwardingListener (Lcom/clevertap/android/nativedisplay/listener/NativeDisplayActionListener;)Lcom/clevertap/android/nativedisplay/listener/NativeDisplayActionListener;
-	public static synthetic fun createEventForwardingListener$default (Lcom/clevertap/android/nativedisplay/bridge/NativeDisplayBridge;Lcom/clevertap/android/nativedisplay/listener/NativeDisplayActionListener;ILjava/lang/Object;)Lcom/clevertap/android/nativedisplay/listener/NativeDisplayActionListener;
 	public final fun fetchNativeDisplays (Lcom/clevertap/android/sdk/CleverTapAPI;)Z
 	public final fun getAllNativeDisplays ()Ljava/util/List;
 	public final fun getNativeDisplayForId (Ljava/lang/String;)Lcom/clevertap/android/nativedisplay/bridge/NativeDisplayUnit;

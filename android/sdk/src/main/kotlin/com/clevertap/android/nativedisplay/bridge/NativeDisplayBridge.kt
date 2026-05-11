@@ -3,7 +3,6 @@ package com.clevertap.android.nativedisplay.bridge
 import android.content.Context
 import android.util.Log
 import com.clevertap.android.sdk.CleverTapAPI
-import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import java.lang.ref.WeakReference
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineName
@@ -360,49 +359,6 @@ class NativeDisplayBridge private constructor() {
             ReflectionSeeder.seed(ct, listOf(org.json.JSONObject(raw)))
         } catch (_: Throwable) {
             // logged inside ReflectionSeeder
-        }
-    }
-
-    /**
-     * Create a [NativeDisplayActionListener] that automatically forwards display unit
-     * attribution events to the CleverTap Core SDK via [pushViewedEvent] and [pushClickedEvent].
-     *
-     * An optional [base] listener is invoked first so that the client's own handling
-     * is preserved. This listener can be passed as the `actionListener` parameter to
-     * [NativeDisplayView] or [NativeDisplayViewGroup.setConfig].
-     *
-     * ```kotlin
-     * val listener = bridge.createEventForwardingListener(base = myListener)
-     * NativeDisplayView(config = config, actionListener = listener, unitId = unit.unitId)
-     * ```
-     *
-     * @param base Optional client listener to delegate all callbacks to first
-     * @return A [NativeDisplayActionListener] that forwards attribution events to the Core SDK
-     */
-    fun createEventForwardingListener(
-        base: NativeDisplayActionListener? = null
-    ): NativeDisplayActionListener {
-        return object : NativeDisplayActionListener {
-            override fun onCustomAction(key: String, value: Any?, metadata: Map<String, String>?) {
-                base?.onCustomAction(key, value, metadata)
-            }
-            override fun onNavigate(destination: String, params: Map<String, String>?) {
-                base?.onNavigate(destination, params)
-            }
-            override fun onTrackEvent(eventName: String, properties: Map<String, Any?>?) {
-                base?.onTrackEvent(eventName, properties)
-            }
-            override fun onOpenUrl(url: String, openInBrowser: Boolean): Boolean {
-                return base?.onOpenUrl(url, openInBrowser) ?: false
-            }
-            override fun onDisplayUnitViewed(unitId: String) {
-                base?.onDisplayUnitViewed(unitId)
-                pushViewedEvent(unitId)
-            }
-            override fun onDisplayUnitClicked(unitId: String) {
-                base?.onDisplayUnitClicked(unitId)
-                pushClickedEvent(unitId)
-            }
         }
     }
 
