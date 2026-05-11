@@ -340,7 +340,10 @@ class NDViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
     NativeDisplayViewGroup(parent.context)
 ) {
     fun bind(unit: NativeDisplayUnit) {
-        (itemView as NativeDisplayViewGroup).setConfig(unit.config)
+        // setUnit() consumes the pre-resolved style map and wires the unitId
+        // so Notification Viewed/Clicked attribution fires. Prefer it over
+        // setConfig(unit.config) whenever a NativeDisplayUnit is available.
+        (itemView as NativeDisplayViewGroup).setUnit(unit)
     }
 }
 ```
