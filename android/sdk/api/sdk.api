@@ -2264,8 +2264,8 @@ public final class com/clevertap/android/nativedisplay/renderer/NativeDisplayLoc
 }
 
 public final class com/clevertap/android/nativedisplay/renderer/NativeDisplayRendererKt {
-	public static final fun NativeDisplayView (Lcom/clevertap/android/nativedisplay/models/ResolvedConfig;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/text/font/FontFamily;Lcom/clevertap/android/nativedisplay/listener/NativeDisplayActionListener;Lcom/clevertap/android/nativedisplay/listener/NativeDisplayComponentListener;Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
-	public static final fun NativeDisplayView (Lcom/clevertap/android/nativedisplay/models/ResolvedConfig;Lkotlinx/collections/immutable/PersistentMap;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/text/font/FontFamily;Lcom/clevertap/android/nativedisplay/listener/NativeDisplayActionListener;Lcom/clevertap/android/nativedisplay/listener/NativeDisplayComponentListener;Ljava/lang/String;Landroidx/compose/runtime/Composer;II)V
+	public static final fun NativeDisplayView (Lcom/clevertap/android/nativedisplay/bridge/NativeDisplayUnit;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/text/font/FontFamily;Lcom/clevertap/android/nativedisplay/listener/NativeDisplayActionListener;Lcom/clevertap/android/nativedisplay/listener/NativeDisplayComponentListener;Landroidx/compose/runtime/Composer;II)V
+	public static final fun NativeDisplayView (Lcom/clevertap/android/nativedisplay/models/ResolvedConfig;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/text/font/FontFamily;Lcom/clevertap/android/nativedisplay/listener/NativeDisplayActionListener;Lcom/clevertap/android/nativedisplay/listener/NativeDisplayComponentListener;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class com/clevertap/android/nativedisplay/utils/ExtensionsKt {
