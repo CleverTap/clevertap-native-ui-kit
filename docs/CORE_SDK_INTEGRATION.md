@@ -321,8 +321,10 @@ Once you have a `NativeDisplayUnit`, pass its `config` to the SDK's rendering co
 fun NativeDisplayScreen(units: List<NativeDisplayUnit>) {
     LazyColumn {
         items(units) { unit ->
+            // Use the unit: overload so Notification Viewed / Clicked attribution
+            // fires automatically. The config: overload is render-only.
             NativeDisplayView(
-                config = unit.config,
+                unit = unit,
                 actionListener = myActionListener,
                 componentListener = myComponentListener
             )
@@ -352,7 +354,9 @@ struct NativeDisplayList: View {
     var body: some View {
         ScrollView {
             ForEach(units, id: \.unitId) { unit in
-                NativeDisplayView(config: unit.config)
+                // Use the unit: initializer so Notification Viewed / Clicked
+                // attribution fires automatically. config: is render-only.
+                NativeDisplayView(unit: unit)
             }
         }
     }
