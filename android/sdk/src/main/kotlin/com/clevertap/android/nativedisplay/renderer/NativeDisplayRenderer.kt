@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Constraints
+import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
 import com.clevertap.android.nativedisplay.evaluator.VariableEvaluator
 import com.clevertap.android.nativedisplay.handler.ActionHandler
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
@@ -33,8 +34,37 @@ import com.clevertap.android.nativedisplay.style.StyleResolver
 import kotlinx.collections.immutable.PersistentMap
 
 /**
- * Convenience overload that pre-resolves styles internally.
- * Use this when calling NativeDisplayView directly without going through NativeDisplayViewGroup.
+ * Attribution-aware entry point for rendering a parsed [NativeDisplayUnit].
+ *
+ * Uses the unit's pre-resolved style map (computed off-main by the bridge parser)
+ * and the `unitId` needed to fire `Notification Viewed` / `Notification Clicked`
+ * events. Prefer this overload whenever the source is a [NativeDisplayUnit].
+ */
+@Composable
+fun NativeDisplayView(
+    unit: NativeDisplayUnit,
+    modifier: Modifier = Modifier,
+    fontFamily: FontFamily? = null,
+    actionListener: NativeDisplayActionListener? = null,
+    componentListener: NativeDisplayComponentListener? = null,
+) {
+    NativeDisplayView(
+        config = unit.config,
+        resolvedStyles = unit.resolvedStyles,
+        modifier = modifier,
+        fontFamily = fontFamily,
+        actionListener = actionListener,
+        componentListener = componentListener,
+        unitId = unit.unitId,
+    )
+}
+
+/**
+ * Render-only entry point. No `unitId` is wired, so attribution events
+ * (`Notification Viewed` / `Notification Clicked`) do not fire. Use this for
+ * previews, tests, and raw-JSON browsers that don't have a parsed
+ * [NativeDisplayUnit]. For bridge- or placement-delivered content, prefer the
+ * overload that takes a [NativeDisplayUnit].
  */
 @Composable
 fun NativeDisplayView(
@@ -43,7 +73,6 @@ fun NativeDisplayView(
     fontFamily: FontFamily? = null,
     actionListener: NativeDisplayActionListener? = null,
     componentListener: NativeDisplayComponentListener? = null,
-    unitId: String? = null,
 ) {
     val resolvedStyles = remember(config) {
         StyleResolver(config.theme, config.styleClasses).resolveAll(config.root)
@@ -55,15 +84,17 @@ fun NativeDisplayView(
         fontFamily = fontFamily,
         actionListener = actionListener,
         componentListener = componentListener,
-        unitId = unitId,
+        unitId = null,
     )
 }
 
 /**
- * Main entry point for rendering native display UI.
+ * Internal entry point used by SDK wrappers ([NativeDisplaySlot],
+ * [NativeDisplayViewGroup], [NativeDisplaySlotView]) that hold the pre-resolved
+ * style map and unit identity separately in mutable state.
  */
 @Composable
-fun NativeDisplayView(
+internal fun NativeDisplayView(
     config: ResolvedConfig,
     resolvedStyles: PersistentMap<String, Style>,
     modifier: Modifier = Modifier,

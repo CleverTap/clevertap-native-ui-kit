@@ -117,9 +117,8 @@ struct CleverTapIntegrationView: View {
                     VStack(spacing: 12) {
                         ForEach(viewModel.displayUnits, id: \.unitId) { unit in
                             NativeDisplayView(
-                                config: unit.config,
-                                actionListener: viewModel,
-                                unitId: unit.unitId
+                                unit: unit,
+                                actionListener: viewModel
                             )
                             .frame(maxWidth: .infinity)
                         }
