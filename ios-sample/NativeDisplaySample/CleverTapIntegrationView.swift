@@ -118,7 +118,8 @@ struct CleverTapIntegrationView: View {
                         ForEach(viewModel.displayUnits, id: \.unitId) { unit in
                             NativeDisplayView(
                                 config: unit.config,
-                                actionListener: viewModel
+                                actionListener: viewModel,
+                                unitId: unit.unitId
                             )
                             .frame(maxWidth: .infinity)
                         }
@@ -257,9 +258,6 @@ class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBr
             dict.map { "\($0.key)=\($0.value)" }.joined(separator: ", ")
         } ?? ""
         log("EVENT \(eventName)\(propsStr.isEmpty ? "" : " [\(propsStr)]")")
-        
-        // Forward system events to CleverTap
-        cleverTapInstance?.recordEvent(eventName, withProps: properties ?? [:])
     }
 
     func onActionError(action: Action, error: Error) {

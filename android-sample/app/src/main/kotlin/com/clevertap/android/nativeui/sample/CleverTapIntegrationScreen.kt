@@ -254,7 +254,8 @@ private fun CanvasContent(
                 NativeDisplayView(
                     config = unit.config,
                     modifier = Modifier.fillMaxWidth(),
-                    actionListener = actionListener
+                    actionListener = actionListener,
+                    unitId = unit.unitId
                 )
             }
         }
