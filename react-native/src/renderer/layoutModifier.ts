@@ -48,10 +48,15 @@ export function resolveSpacingStyle(spacing: Spacing): {
   };
 }
 
-export function resolveOffsetStyle(offset: Offset): { translateX: number; translateY: number } {
-  let x = offset.x;
-  let y = offset.y;
-  return { translateX: x, translateY: y };
+export function resolveOffsetStyle(offset: Offset): {
+  top: number | `${number}%`;
+  left: number | `${number}%`;
+} {
+  if (offset.unit === 'percent') {
+    return { top: `${offset.y}%`, left: `${offset.x}%` };
+  }
+  // dp / sp / px - use raw number (RN treats unitless as dp)
+  return { top: offset.y, left: offset.x };
 }
 
 export function resolveLayoutStyle(layout: Layout, rootHeightPx: number): ViewStyle {

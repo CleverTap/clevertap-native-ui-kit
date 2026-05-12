@@ -12,6 +12,16 @@ export class ActionHandler {
     private readonly unitId: string,
   ) {}
 
+  /**
+   * Fire the unit-clicked system event without dispatching any action.
+   * Call this on every button press so analytics always track the click,
+   * matching Android which fires "Notification Clicked" unconditionally.
+   */
+  fireClickedEvent(_nodeId: string): void {
+    this.bridge?.pushClickedEvent(this.unitId);
+    this.actionListener?.onDisplayUnitClicked?.(this.unitId);
+  }
+
   handle(action: Action, nodeId: string, interactionType: InteractionType): void {
     console.log(`[ActionHandler] Handling action type=${action.type} nodeId=${nodeId} interaction=${interactionType}`);
 
@@ -26,7 +36,9 @@ export class ActionHandler {
       }
     }
 
-    this.bridge?.pushClickedEvent(this.unitId);
+    // Note: pushClickedEvent is intentionally NOT called here.
+    // ButtonElement calls fireClickedEvent() on every press before handle(),
+    // ensuring the system event fires exactly once even when no action is defined.
 
     this._dispatch(action, nodeId, interactionType);
   }
