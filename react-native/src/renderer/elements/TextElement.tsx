@@ -41,7 +41,10 @@ export function TextElement({ node, resolvedStyle }: TextElementProps): React.Re
 
   const maxLines = resolvedStyle.maxLines;
   const overflow = resolvedStyle.overflow;
-  const ellipsizeMode = overflow === 'ellipsis' ? 'tail' : undefined;
+  // RN ellipsizeMode: 'tail' for ellipsis, 'clip' for hard clip, undefined for default.
+  // Matches Android TextOverflow.Ellipsis / Clip / Visible.
+  const ellipsizeMode: 'tail' | 'clip' | undefined =
+    overflow === 'ellipsis' ? 'tail' : overflow === 'clip' ? 'clip' : undefined;
 
   // lineHeight must always be explicit
   let lineHeight: number | undefined = nodeStyle.lineHeight as number | undefined;

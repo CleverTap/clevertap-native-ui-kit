@@ -22,6 +22,16 @@ export class ActionHandler {
     this.actionListener?.onDisplayUnitClicked?.(this.unitId);
   }
 
+  /**
+   * Fire a lifecycle action (onAppear / onDisappear).
+   * Bypasses the componentListener — lifecycle events are not user interactions.
+   * Matches Android's LaunchedEffect / DisposableEffect pattern.
+   */
+  handleLifecycle(action: Action, nodeId: string, trigger: 'appear' | 'disappear'): void {
+    console.log(`[ActionHandler] Lifecycle trigger=${trigger} nodeId=${nodeId}`);
+    this._dispatch(action, nodeId, 'click');
+  }
+
   handle(action: Action, nodeId: string, interactionType: InteractionType): void {
     console.log(`[ActionHandler] Handling action type=${action.type} nodeId=${nodeId} interaction=${interactionType}`);
 

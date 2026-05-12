@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import { View } from 'react-native';
 import { isContainer, isElement } from '../models/NativeDisplayNode';
 import { VariableEvaluator } from '../evaluator/VariableEvaluator';
 import { EntranceAnimation } from './EntranceAnimation';
@@ -19,6 +20,29 @@ import type { RenderNodeProps } from './types';
 export type { RenderNodeProps };
 
 export function RenderNode({ node, resolvedStyles, actionHandler, variables }: RenderNodeProps): React.ReactElement | null {
+  // Stable ref so lifecycle cleanup always sees the current handler without
+  // the effect needing actionHandler in its dependency array.
+  const actionHandlerRef = useRef(actionHandler);
+  actionHandlerRef.current = actionHandler;
+
+  // Lifecycle actions: onAppear fires once on mount, onDisappear on unmount.
+  // Matches Android's LaunchedEffect / DisposableEffect pattern in applyClickable().
+  useEffect(() => {
+    const handler = actionHandlerRef.current;
+    const appearAction = node.actions?.onAppear;
+    if (appearAction) {
+      handler.handleLifecycle(appearAction, node.id, 'appear');
+    }
+    return () => {
+      const disappearAction = node.actions?.onDisappear;
+      if (disappearAction) {
+        actionHandlerRef.current.handleLifecycle(disappearAction, node.id, 'disappear');
+      }
+    };
+  // Re-run only if the node identity changes (e.g. item replaced in a list).
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [node.id]);
+
   // Visibility check
   if (node.visible != null) {
     const visibleStr = String(node.visible);
@@ -103,6 +127,27 @@ export function RenderNode({ node, resolvedStyles, actionHandler, variables }: R
         {content}
       </BackgroundRenderer>
     );
+  }
+
+  // Apply layout offset for non-BOX container children.
+  // BOX containers clear layout.offset from childForRender after consuming it as
+  // absolute top/left, so this path only fires for VERTICAL/HORIZONTAL/GALLERY children.
+  // Percent offsets outside a BOX cannot be resolved without parent dimensions.
+  // Matches Android's Modifier.applyOffset() which uses Modifier.offset() (no layout shift).
+  const offset = node.layout?.offset;
+  if (offset && (offset.x !== 0 || offset.y !== 0)) {
+    if (offset.unit === 'percent') {
+      console.warn(
+        `[RenderNode] node ${node.id}: percent offset outside a BOX container is not supported — use a BOX container for percent-based absolute positioning.`,
+      );
+    } else {
+      // dp / sp / px — shift visually without removing element from flex flow
+      content = (
+        <View style={{ transform: [{ translateX: offset.x }, { translateY: offset.y }] }}>
+          {content}
+        </View>
+      );
+    }
   }
 
   return content;

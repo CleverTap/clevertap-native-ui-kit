@@ -142,8 +142,11 @@ export function BoxContainer({
 
         // Override child's own width/height to 100%/100% so it fills the
         // wrapper without double-applying the same dimension.
+        // Clear offset — the wrapper's top/left already places the child; leaving
+        // offset set would cause RenderNode to double-apply it as a transform.
         const overriddenLayout = {
           ...childLayout,
+          offset: undefined,
           ...(widthPx !== undefined
             ? { width: { value: 100, unit: 'percent' as const, special: null } }
             : {}),
