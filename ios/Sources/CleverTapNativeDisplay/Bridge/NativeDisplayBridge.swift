@@ -328,38 +328,77 @@ public class NativeDisplayBridge {
 
     /// Push a display unit viewed event to the CleverTap Core SDK.
     ///
-    /// Invokes `-[CleverTap recordDisplayUnitViewedEventForID:]` via
-    /// `performSelector` to avoid a compile-time dependency on the CleverTap SDK.
-    /// (The iOS Core SDK names this `recordDisplayUnit…`; the Android Core SDK
-    /// uses `pushDisplayUnit…`. The cross-platform ND-SDK method name stays
-    /// `pushViewedEvent` so both platforms expose the same public API.)
+    /// When `extras` is non-empty and the host Core SDK responds to the selector
+    /// `-recordDisplayUnitViewedEventForID:additionalProperties:`, that overload is
+    /// invoked so the attribution event carries the extra properties. Older Core
+    /// SDK versions without the overload silently fall back to the single-arg
+    /// `-recordDisplayUnitViewedEventForID:`.
     ///
-    /// - Parameter unitId: The `wzrk_id` of the display unit that was viewed.
+    /// `performSelector` is used so we do not require a compile-time dependency on
+    /// the CleverTap SDK. (The iOS Core SDK names this `recordDisplayUnit…`; the
+    /// Android Core SDK uses `pushDisplayUnit…`. The cross-platform ND-SDK method
+    /// name stays `pushViewedEvent` so both platforms expose the same public API.)
+    ///
+    /// - Parameters:
+    ///   - unitId: The `wzrk_id` of the display unit that was viewed.
+    ///   - extras: Optional additional event properties. Non-scalar/empty values are
+    ///             dropped by `ActionAttributionExtras.sanitize`.
     /// - Returns: `true` if the event was sent, `false` if no CleverTap instance is available.
     @discardableResult
-    public func pushViewedEvent(unitId: String) -> Bool {
+    public func pushViewedEvent(unitId: String, extras: [String: Any]? = nil) -> Bool {
         guard let ct = cleverTapInstance else { return false }
         seedIfNeeded(unitId: unitId, instance: ct)
-        let sel = NSSelectorFromString("recordDisplayUnitViewedEventForID:")
-        guard ct.responds(to: sel) else { return false }
-        ct.perform(sel, with: unitId)
-        return true
+        return invokeAttributionEvent(
+            on: ct,
+            singleArgSelector: "recordDisplayUnitViewedEventForID:",
+            twoArgSelector: "recordDisplayUnitViewedEventForID:additionalProperties:",
+            unitId: unitId,
+            extras: extras
+        )
     }
 
     /// Push a display unit clicked event to the CleverTap Core SDK.
     ///
-    /// Invokes `-[CleverTap recordDisplayUnitClickedEventForID:]` via
-    /// `performSelector` to avoid a compile-time dependency on the CleverTap SDK.
-    /// (See `pushViewedEvent` for the rationale behind the name asymmetry
-    /// between the iOS / Android Core SDK selectors and the ND-SDK method.)
+    /// When `extras` is non-empty and the host Core SDK responds to
+    /// `-recordDisplayUnitClickedEventForID:additionalProperties:`, that overload is
+    /// invoked so the click attribution carries the button's action context
+    /// (URL, custom KVs, metadata, etc.). Older Core SDK versions silently fall
+    /// back to the single-arg `-recordDisplayUnitClickedEventForID:`.
     ///
-    /// - Parameter unitId: The `wzrk_id` of the display unit that was clicked.
+    /// - Parameters:
+    ///   - unitId: The `wzrk_id` of the display unit that was clicked.
+    ///   - extras: Optional additional event properties.
     /// - Returns: `true` if the event was sent, `false` if no CleverTap instance is available.
     @discardableResult
-    public func pushClickedEvent(unitId: String) -> Bool {
+    public func pushClickedEvent(unitId: String, extras: [String: Any]? = nil) -> Bool {
         guard let ct = cleverTapInstance else { return false }
         seedIfNeeded(unitId: unitId, instance: ct)
-        let sel = NSSelectorFromString("recordDisplayUnitClickedEventForID:")
+        return invokeAttributionEvent(
+            on: ct,
+            singleArgSelector: "recordDisplayUnitClickedEventForID:",
+            twoArgSelector: "recordDisplayUnitClickedEventForID:additionalProperties:",
+            unitId: unitId,
+            extras: extras
+        )
+    }
+
+    /// Prefer the two-arg `additionalProperties:` selector when present and `extras`
+    /// is non-empty; otherwise fall back to the legacy single-arg selector.
+    private func invokeAttributionEvent(
+        on ct: NSObject,
+        singleArgSelector: String,
+        twoArgSelector: String,
+        unitId: String,
+        extras: [String: Any]?
+    ) -> Bool {
+        if let sanitized = ActionAttributionExtras.sanitize(extras) {
+            let twoArgSel = NSSelectorFromString(twoArgSelector)
+            if ct.responds(to: twoArgSel) {
+                ct.perform(twoArgSel, with: unitId, with: sanitized as NSDictionary)
+                return true
+            }
+        }
+        let sel = NSSelectorFromString(singleArgSelector)
         guard ct.responds(to: sel) else { return false }
         ct.perform(sel, with: unitId)
         return true

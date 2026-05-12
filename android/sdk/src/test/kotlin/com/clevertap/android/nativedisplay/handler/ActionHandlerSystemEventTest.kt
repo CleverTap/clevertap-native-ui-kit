@@ -70,7 +70,11 @@ class ActionHandlerSystemEventTest {
     /** Counting bridge stand-in — drop-in for `bridge.pushViewedEvent` / `bridge.pushClickedEvent`. */
     private class PushCounter {
         val invocations = mutableListOf<String>()
-        val fn: (String) -> Unit = { id -> invocations.add(id) }
+        val extras = mutableListOf<Map<String, Any?>?>()
+        val fn: (String, Map<String, Any?>?) -> Unit = { id, extra ->
+            invocations.add(id)
+            extras.add(extra)
+        }
     }
 
     private fun newHandler(
@@ -133,8 +137,8 @@ class ActionHandlerSystemEventTest {
             listener = listener,
             componentListener = null,
             unitId = "unit-1",
-            pushViewedEvent = { /* simulate bridge missing / cleverTapApi == null */ },
-            pushClickedEvent = { /* unused */ },
+            pushViewedEvent = { _, _ -> /* simulate bridge missing / cleverTapApi == null */ },
+            pushClickedEvent = { _, _ -> /* unused */ },
         )
 
         handler.fireSystemEvent("Notification Viewed")
@@ -155,8 +159,8 @@ class ActionHandlerSystemEventTest {
             listener = null,
             componentListener = null,
             unitId = "unit-1",
-            pushViewedEvent = { /* bridge absent */ },
-            pushClickedEvent = { /* bridge absent */ },
+            pushViewedEvent = { _, _ -> /* bridge absent */ },
+            pushClickedEvent = { _, _ -> /* bridge absent */ },
         )
         // Should not throw.
         handler.fireSystemEvent("Notification Viewed")
@@ -240,9 +244,9 @@ class ActionHandlerSystemEventTest {
     // -- Properties pass-through --
 
     @Test
-    fun `viewed forwards properties to onTrackEvent`() = runTest {
+    fun `viewed forwards properties to onTrackEvent and to bridge`() = runTest {
         val listener = FakeListener()
-        val (handler, _, _) = newHandler(listener)
+        val (handler, viewedPusher, _) = newHandler(listener)
         val props = mapOf("nodeId" to "root")
 
         handler.fireSystemEvent("Notification Viewed", properties = props)
@@ -250,6 +254,23 @@ class ActionHandlerSystemEventTest {
         assertEquals(1, listener.trackEvents.size)
         assertEquals("Notification Viewed", listener.trackEvents[0].first)
         assertEquals(props, listener.trackEvents[0].second)
+        assertEquals(listOf("unit-1"), viewedPusher.invocations)
+        assertEquals(listOf<Map<String, Any?>?>(props), viewedPusher.extras)
+    }
+
+    @Test
+    fun `clicked forwards action extras to bridge`() = runTest {
+        val (handler, _, clickedPusher) = newHandler()
+        val extras = mapOf(
+            "wzrk_btn_id" to "cta_buy",
+            "wzrk_action_type" to "open_url",
+            "action_url" to "https://example.com"
+        )
+
+        handler.fireSystemEvent("Notification Clicked", properties = extras)
+
+        assertEquals(listOf("unit-1"), clickedPusher.invocations)
+        assertEquals(listOf<Map<String, Any?>?>(extras), clickedPusher.extras)
     }
 
     // -- Unrelated system event: bridge NOT invoked --

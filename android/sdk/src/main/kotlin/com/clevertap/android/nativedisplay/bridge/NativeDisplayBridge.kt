@@ -2,6 +2,7 @@ package com.clevertap.android.nativedisplay.bridge
 
 import android.content.Context
 import android.util.Log
+import com.clevertap.android.nativedisplay.handler.ActionAttributionExtras
 import com.clevertap.android.sdk.CleverTapAPI
 import java.lang.ref.WeakReference
 import kotlinx.coroutines.CompletableDeferred
@@ -80,6 +81,12 @@ class NativeDisplayBridge private constructor() {
 
         /** Fetch type constant for Native Display units. */
         internal const val FETCH_TYPE_NATIVE_DISPLAY = 9
+
+        /** Core SDK method name for the viewed-attribution event. */
+        private const val METHOD_VIEWED = "pushDisplayUnitViewedEventForID"
+
+        /** Core SDK method name for the clicked-attribution event. */
+        private const val METHOD_CLICKED = "pushDisplayUnitClickedEventForID"
 
         @Volatile
         private var instance: NativeDisplayBridge? = null
@@ -295,17 +302,22 @@ class NativeDisplayBridge private constructor() {
     /**
      * Push a display unit viewed (impression) attribution event to the CleverTap Core SDK.
      *
-     * Calls `CleverTapAPI.pushDisplayUnitViewedEventForID(unitId)` if a [CleverTapAPI]
-     * instance has been stored (set automatically when using auto-wire or [bind]).
+     * When [extras] is non-empty and the host Core SDK exposes the overload
+     * `pushDisplayUnitViewedEventForID(String, HashMap<String, Object>)`, that overload is
+     * invoked reflectively so attribution flows with the extra properties attached. Older
+     * Core SDK versions without the overload silently fall back to the single-arg method.
      *
      * @param unitId The ID of the display unit that was viewed
+     * @param extras Optional additional event properties to attach. Non-scalar/null values are
+     *               sanitized away by [ActionAttributionExtras.sanitize].
      * @return true if the event was pushed successfully, false if no CleverTapAPI is available
      */
-    fun pushViewedEvent(unitId: String): Boolean {
+    @JvmOverloads
+    fun pushViewedEvent(unitId: String, extras: Map<String, Any?>? = null): Boolean {
         val ct = cleverTapApi ?: return false
         return try {
             seedIfNeeded(unitId)
-            ct.pushDisplayUnitViewedEventForID(unitId)
+            invokeAttributionEvent(ct, METHOD_VIEWED, unitId, extras)
             true
         } catch (e: Exception) {
             Log.w(TAG, "pushViewedEvent failed: ${e.message}")
@@ -316,21 +328,55 @@ class NativeDisplayBridge private constructor() {
     /**
      * Push a display unit clicked attribution event to the CleverTap Core SDK.
      *
-     * Calls `CleverTapAPI.pushDisplayUnitClickedEventForID(unitId)` if a [CleverTapAPI]
-     * instance has been stored (set automatically when using auto-wire or [bind]).
+     * When [extras] is non-empty and the host Core SDK exposes the overload
+     * `pushDisplayUnitClickedEventForID(String, HashMap<String, Object>)`, that overload is
+     * invoked reflectively so the click attribution carries the button's action context
+     * (URL, custom KVs, metadata, etc.). Older Core SDK versions silently fall back to the
+     * single-arg method.
      *
      * @param unitId The ID of the display unit that was clicked
+     * @param extras Optional additional event properties to attach. Non-scalar/null values are
+     *               sanitized away by [ActionAttributionExtras.sanitize].
      * @return true if the event was pushed successfully, false if no CleverTapAPI is available
      */
-    fun pushClickedEvent(unitId: String): Boolean {
+    @JvmOverloads
+    fun pushClickedEvent(unitId: String, extras: Map<String, Any?>? = null): Boolean {
         val ct = cleverTapApi ?: return false
         return try {
             seedIfNeeded(unitId)
-            ct.pushDisplayUnitClickedEventForID(unitId)
+            invokeAttributionEvent(ct, METHOD_CLICKED, unitId, extras)
             true
         } catch (e: Exception) {
             Log.w(TAG, "pushClickedEvent failed: ${e.message}")
             false
+        }
+    }
+
+    /**
+     * Invoke either the new `(String, HashMap)` overload of `pushDisplayUnit*EventForID`
+     * when present, or the legacy single-arg method otherwise. The single-arg path is the
+     * direct compile-time call we have always used; the two-arg path is reflective so the
+     * ND SDK does not require a compile-time bump of the Core SDK dependency to ship.
+     */
+    private fun invokeAttributionEvent(
+        ct: CleverTapAPI,
+        methodName: String,
+        unitId: String,
+        extras: Map<String, Any?>?
+    ) {
+        val sanitized = ActionAttributionExtras.sanitize(extras)
+        if (sanitized != null) {
+            val overload = runCatching {
+                ct.javaClass.getMethod(methodName, String::class.java, HashMap::class.java)
+            }.getOrNull()
+            if (overload != null) {
+                overload.invoke(ct, unitId, HashMap(sanitized))
+                return
+            }
+        }
+        when (methodName) {
+            METHOD_VIEWED -> ct.pushDisplayUnitViewedEventForID(unitId)
+            METHOD_CLICKED -> ct.pushDisplayUnitClickedEventForID(unitId)
         }
     }
 

@@ -58,8 +58,8 @@ internal class ActionHandler(
     private val listener: NativeDisplayActionListener?,
     private val componentListener: NativeDisplayComponentListener? = null,
     private val unitId: String? = null,
-    private val pushViewedEvent: (String) -> Unit = DEFAULT_PUSH_VIEWED,
-    private val pushClickedEvent: (String) -> Unit = DEFAULT_PUSH_CLICKED,
+    private val pushViewedEvent: (String, Map<String, Any?>?) -> Unit = DEFAULT_PUSH_VIEWED,
+    private val pushClickedEvent: (String, Map<String, Any?>?) -> Unit = DEFAULT_PUSH_CLICKED,
 ) {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
@@ -77,11 +77,11 @@ internal class ActionHandler(
          * When Core SDK is absent the bridge's push methods short-circuit
          * (return false) — the auto-wire path is a graceful no-op.
          */
-        private val DEFAULT_PUSH_VIEWED: (String) -> Unit = { unitId ->
-            NativeDisplayBridge.getInstance()?.pushViewedEvent(unitId)
+        private val DEFAULT_PUSH_VIEWED: (String, Map<String, Any?>?) -> Unit = { unitId, extras ->
+            NativeDisplayBridge.getInstance()?.pushViewedEvent(unitId, extras)
         }
-        private val DEFAULT_PUSH_CLICKED: (String) -> Unit = { unitId ->
-            NativeDisplayBridge.getInstance()?.pushClickedEvent(unitId)
+        private val DEFAULT_PUSH_CLICKED: (String, Map<String, Any?>?) -> Unit = { unitId, extras ->
+            NativeDisplayBridge.getInstance()?.pushClickedEvent(unitId, extras)
         }
     }
 
@@ -261,11 +261,11 @@ internal class ActionHandler(
                     when (eventName) {
                         "Notification Viewed" -> {
                             listener?.onDisplayUnitViewed(unitId)
-                            pushViewedEvent(unitId)
+                            pushViewedEvent(unitId, properties)
                         }
                         "Notification Clicked" -> {
                             listener?.onDisplayUnitClicked(unitId)
-                            pushClickedEvent(unitId)
+                            pushClickedEvent(unitId, properties)
                         }
                     }
                 }

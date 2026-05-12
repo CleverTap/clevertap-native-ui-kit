@@ -138,10 +138,10 @@ class ActionHandler {
                 switch eventName {
                 case "Notification Viewed":
                     actionListener?.onDisplayUnitViewed?(unitId: unitId)
-                    NativeDisplayBridge.shared.pushViewedEvent(unitId: unitId)
+                    NativeDisplayBridge.shared.pushViewedEvent(unitId: unitId, extras: properties)
                 case "Notification Clicked":
                     actionListener?.onDisplayUnitClicked?(unitId: unitId)
-                    NativeDisplayBridge.shared.pushClickedEvent(unitId: unitId)
+                    NativeDisplayBridge.shared.pushClickedEvent(unitId: unitId, extras: properties)
                 default:
                     break
                 }
