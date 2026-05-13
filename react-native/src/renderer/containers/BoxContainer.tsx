@@ -140,18 +140,31 @@ export function BoxContainer({
         if (widthPx !== undefined) wrapperStyle.width = widthPx;
         if (heightPx !== undefined) wrapperStyle.height = heightPx;
 
-        // Override child's own width/height to 100%/100% so it fills the
-        // wrapper without double-applying the same dimension.
-        // Clear offset — the wrapper's top/left already places the child; leaving
-        // offset set would cause RenderNode to double-apply it as a transform.
+        // Override child's own width/height to the resolved PIXEL dimensions
+        // (dp), not "100%". The wrapper already carries the same pixel size,
+        // so this is not a double-application: every wrapper down the chain
+        // ends up with the same definite pixel size.
+        //
+        // Why not "100%": iOS RN's text measurement does not reliably chain
+        // a width constraint through (wrapper:pixel → BackgroundRenderer-view:
+        // no-explicit-width-just-stretch → element-wrapper:width-100%) into
+        // RCTText's measure function. The text gets measured at intrinsic
+        // (unbounded) width and renders single-line, then the outer wrapper's
+        // overflow:'hidden' (auto-injected by borderRadius) hard-clips it.
+        // Substituting explicit dp values keeps every link in the chain
+        // "definite" so Yoga passes a real maxWidth into RCTText.
+        //
+        // Clear offset — the wrapper's top/left already places the child;
+        // leaving offset set would cause RenderNode to double-apply it as a
+        // transform.
         const overriddenLayout = {
           ...childLayout,
           offset: undefined,
           ...(widthPx !== undefined
-            ? { width: { value: 100, unit: 'percent' as const, special: null } }
+            ? { width: { value: widthPx, unit: 'dp' as const, special: null } }
             : {}),
           ...(heightPx !== undefined
-            ? { height: { value: 100, unit: 'percent' as const, special: null } }
+            ? { height: { value: heightPx, unit: 'dp' as const, special: null } }
             : {}),
         };
         const childForRender = { ...child, layout: overriddenLayout };

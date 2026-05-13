@@ -1,15 +1,15 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import type { TextStyle, ViewStyle } from 'react-native';
+import type { ViewStyle } from 'react-native';
 import type { Layout } from '../../models/Layout';
 import type { NativeDisplayElement } from '../../models/NativeDisplayNode';
 import type { Style } from '../../models/Style';
-import { resolveTextDim } from '../../utils/dimension';
 import { parseColor } from '../../utils/color';
 import { getMaskedView, getLinearGradient } from '../../optional/optionalDeps';
 import { useRootSize } from '../../context/RootSizeContext';
 import { useFontContext, resolveFont } from '../../context/FontContext';
 import { resolveLayoutStyle, resolveNodeStyle } from '../layoutModifier';
+import { splitNodeStyle } from '../styleSplit';
 
 function isWrapContentLayout(layout: Layout): boolean {
   const w = layout.width;
@@ -24,6 +24,34 @@ interface TextElementProps {
   resolvedStyle: Partial<Style>;
 }
 
+/**
+ * TextElement always renders as <View><Text/></View>.
+ *
+ * Why the wrapper is unconditional:
+ *  - `resolveNodeStyle` injects `overflow: 'hidden'` whenever `borderRadius` is
+ *    set (to clip children of a View to rounded corners). If that style lands
+ *    on a <Text>, iOS clips the rendered glyphs to the box and DISABLES soft-
+ *    wrap, producing single-line hard-clipping like "Some UI body wi".
+ *  - View-only properties (borderRadius, borderWidth, borderColor, shadow*,
+ *    backgroundColor) painted directly on a <Text> hug the glyph box, not the
+ *    element's layout footprint.
+ *
+ * Architecture mirrors the iOS SwiftUI renderer:
+ *   wrapper View == LayoutModifier + view-level style
+ *   inner Text   == text-level style (color, font, letterSpacing, textShadow,
+ *                                     textAlign, lineHeight)
+ *
+ * `splitNodeStyle` is the single source of truth for which keys go where.
+ * `ButtonElement` uses the same helper.
+ *
+ * Why we do NOT auto-inject a default `lineHeight`:
+ *   On iOS Fabric, setting an explicit `lineHeight` on an `<RCTText>` whose
+ *   parent has a constrained width forces the measurement pass into single-
+ *   line mode at intrinsic width. The wrapper then hard-clips the overflowing
+ *   glyphs ("Some UI body wi"). Letting iOS pick its own lineHeight (~1.176 ×
+ *   fontSize) avoids the bug. JSON authors who need cross-platform line-height
+ *   parity must set `lineHeight` explicitly in the unit JSON.
+ */
 export function TextElement({ node, resolvedStyle }: TextElementProps): React.ReactElement {
   const { height: rootHeight } = useRootSize();
   const fontCtx = useFontContext();
@@ -39,26 +67,57 @@ export function TextElement({ node, resolvedStyle }: TextElementProps): React.Re
     nodeStyle.fontFamily = fontFamily;
   }
 
-  const maxLines = resolvedStyle.maxLines;
+  // RN Text `numberOfLines`:
+  //   - `undefined` is supposed to mean "unlimited", but on iOS Fabric the
+  //     prop defaults to `1` when not explicitly set, producing single-line
+  //     hard-clipped output ("Some UI body wi") for any text whose natural
+  //     width exceeds its parent View's width.
+  //   - `0` is the documented sentinel for "unlimited lines with wrapping".
+  // Always pass `0` when the JSON omits `maxLines`.
+  const maxLines: number = resolvedStyle.maxLines ?? 0;
   const overflow = resolvedStyle.overflow;
   // RN ellipsizeMode: 'tail' for ellipsis, 'clip' for hard clip, undefined for default.
   // Matches Android TextOverflow.Ellipsis / Clip / Visible.
   const ellipsizeMode: 'tail' | 'clip' | undefined =
     overflow === 'ellipsis' ? 'tail' : overflow === 'clip' ? 'clip' : undefined;
 
-  // lineHeight must always be explicit
-  let lineHeight: number | undefined = nodeStyle.lineHeight as number | undefined;
-  if (lineHeight == null && resolvedStyle.fontSize) {
-    const fs = resolveTextDim(resolvedStyle.fontSize, rootHeight) ?? 14;
-    // Fall back: platform default ratio Android=1.5, iOS=1.176 - use 1.3 as neutral cross-platform safe default
-    lineHeight = fs * 1.3;
-    nodeStyle.lineHeight = lineHeight;
+  // Split: view-level (borderRadius, backgroundColor, borderWidth, borderColor,
+  // overflow, opacity, shadow*, elevation) -> wrapper View.
+  // text-level (color, font*, letterSpacing, textAlign, textDecoration*) -> inner Text.
+  const { viewStyle, textStyle } = splitNodeStyle(nodeStyle as Record<string, unknown>);
+
+  // resolveNodeStyle auto-injects `overflow: 'hidden'` whenever borderRadius is
+  // set, so View children get clipped to rounded corners. For a Text-only
+  // wrapper there is nothing to clip - the glyphs paint themselves and the
+  // rounded corner geometry is carried by the border outline, not by clipping.
+  //
+  // Worse: on iOS, `overflow:'hidden'` on the direct parent of an RCTText can
+  // disrupt the text measurement pass. Strip it here so RCTText receives the
+  // wrapper's width as a definite max-width during measurement and wraps
+  // correctly.
+  delete (viewStyle as Record<string, unknown>).overflow;
+
+  // textShadow* are NATIVE Text properties on RN - keep them on the inner Text.
+  if (resolvedStyle.textShadow) {
+    const ts = resolvedStyle.textShadow;
+    textStyle.textShadowColor = parseColor(ts.color);
+    textStyle.textShadowOffset = { width: ts.offsetX, height: ts.offsetY };
+    textStyle.textShadowRadius = ts.blur;
   }
 
-  const textStyle: TextStyle = {
-    ...nodeStyle,
-  };
+  const isWrapContent = isWrapContentLayout(layout);
 
+  // wrap_content text needs flexShrink:1 on the wrapper so a long string next
+  // to a fixed-dp sibling (image with explicit width) shrinks rather than
+  // pushing the sibling off-screen. Same intent as iOS's lack of
+  // .frame(maxWidth:.infinity) on the wrap-content branch.
+  const wrapperStyle: ViewStyle = isWrapContent
+    ? { ...layoutStyle, ...viewStyle, flexShrink: 1 }
+    : { ...layoutStyle, ...viewStyle };
+
+  // Gradient (MaskedView) path. The mask receives the styled Text; MaskedView
+  // owns layout + view-level style so corners / borders / clipping apply to
+  // the gradient's box, not to the glyphs.
   const gradient = resolvedStyle.textGradient;
   if (gradient && gradient.colors.length >= 2) {
     const MaskedView = getMaskedView();
@@ -75,7 +134,7 @@ export function TextElement({ node, resolvedStyle }: TextElementProps): React.Re
 
       return (
         <MaskedView
-          style={[layoutStyle, { flexDirection: 'row' }]}
+          style={[wrapperStyle, { flexDirection: 'row' }]}
           maskElement={
             <Text
               style={[textStyle, { color: 'black' }]}
@@ -104,46 +163,15 @@ export function TextElement({ node, resolvedStyle }: TextElementProps): React.Re
     textStyle.color = parseColor(gradient.colors[0]) ?? textStyle.color;
   }
 
-  if (resolvedStyle.textShadow) {
-    const ts = resolvedStyle.textShadow;
-    textStyle.textShadowColor = parseColor(ts.color);
-    textStyle.textShadowOffset = { width: ts.offsetX, height: ts.offsetY };
-    textStyle.textShadowRadius = ts.blur;
-  }
-
-  // Wrap <Text> in a <View> so the View is the flex item seen by parent containers.
-  // <Text> in a flex row measures itself at the full container width when it wraps,
-  // making flexShrink ineffective. A View wrapper is properly measured and shrinkable,
-  // so fixed-size siblings (e.g. an image with explicit dp width) are never pushed
-  // off-screen by long text content.
-  const isWrapContent = isWrapContentLayout(layout);
-  if (isWrapContent) {
-    const { backgroundColor, ...textOnlyStyle } = textStyle as TextStyle & { backgroundColor?: string };
-    const wrapperStyle: ViewStyle = {
-      ...layoutStyle,
-      flexShrink: 1,
-      ...(backgroundColor ? { backgroundColor } : {}),
-    };
-    return (
-      <View style={wrapperStyle}>
-        <Text
-          style={textOnlyStyle as TextStyle}
-          numberOfLines={maxLines}
-          ellipsizeMode={ellipsizeMode}
-        >
-          {text}
-        </Text>
-      </View>
-    );
-  }
-
   return (
-    <Text
-      style={[layoutStyle, textStyle]}
-      numberOfLines={maxLines}
-      ellipsizeMode={ellipsizeMode}
-    >
-      {text}
-    </Text>
+    <View style={wrapperStyle}>
+      <Text
+        style={textStyle}
+        numberOfLines={maxLines}
+        ellipsizeMode={ellipsizeMode}
+      >
+        {text}
+      </Text>
+    </View>
   );
 }
