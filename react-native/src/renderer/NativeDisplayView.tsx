@@ -87,6 +87,7 @@ export function NativeDisplayView(props: NativeDisplayViewProps): React.ReactEle
     viewedRef.current = true;
     NativeDisplayBridge.shared.pushViewedEvent(unitId);
     actionListener?.onDisplayUnitViewed?.(unitId);
+    actionListener?.onTrackEvent?.('Notification Viewed', undefined);
   }, [unitId, actionListener, root]);
 
   if (!root) return null;

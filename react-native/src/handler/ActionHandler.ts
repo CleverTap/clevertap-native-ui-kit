@@ -1,5 +1,13 @@
 import { Linking } from 'react-native';
 import type { Action, CompositeAction } from '../models/Action';
+
+// Mirrors the isValidUrlScheme check in Android ActionHandler.kt and iOS ActionHandler.swift.
+// Only http/https/tel/mailto are considered safe to open. Everything else (including schemeless
+// URLs like "www.google.com" or markdown strings like "[text](url)") is dropped with a warning.
+function isValidUrlScheme(url: string): boolean {
+  const scheme = url.split(':')[0]?.toLowerCase();
+  return ['http', 'https', 'tel', 'mailto'].includes(scheme ?? '');
+}
 import { resolveOpenUrl } from '../models/Action';
 import type { NativeDisplayActionListener } from '../listener/NativeDisplayActionListener';
 import type { NativeDisplayComponentListener, InteractionType } from '../listener/NativeDisplayComponentListener';
@@ -17,9 +25,10 @@ export class ActionHandler {
    * Call this on every button press so analytics always track the click,
    * matching Android which fires "Notification Clicked" unconditionally.
    */
-  fireClickedEvent(_nodeId: string): void {
+  fireClickedEvent(nodeId: string): void {
     this.bridge?.pushClickedEvent(this.unitId);
     this.actionListener?.onDisplayUnitClicked?.(this.unitId);
+    this.actionListener?.onTrackEvent('Notification Clicked', { nodeId });
   }
 
   /**
@@ -59,6 +68,10 @@ export class ActionHandler {
         const url = resolveOpenUrl(action);
         if (!url) {
           console.warn(`[ActionHandler] open_url action has no resolvable URL for nodeId=${nodeId}`);
+          return;
+        }
+        if (!isValidUrlScheme(url)) {
+          console.warn(`[ActionHandler] Invalid or missing URL scheme, dropping open_url for nodeId=${nodeId}: ${url}`);
           return;
         }
         const openInBrowser = action.openInBrowser ?? false;
