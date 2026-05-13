@@ -57,8 +57,19 @@ export const getBlurView = (): any | null =>
   );
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getExpoImage = (): any | null =>
-  tryLoad('expo-image', () => require('expo-image').Image);
+export const getExpoImage = (): any | null => {
+  // expo-image requires babel-preset-expo to inline process.env.EXPO_OS at
+  // build time. In a bare React Native project that transform is absent, so
+  // the module throws at initialisation — before our try/catch can intercept
+  // it — causing Metro to report a fatal error. Guard with the same env var
+  // check expo itself uses: if it was never inlined the string is literally
+  // 'undefined', which is falsy, so we skip the load entirely.
+  //
+  // In an Expo-managed/bare-with-expo-modules project the var is inlined to
+  // 'ios' / 'android' / 'web', so the load proceeds normally.
+  if (!process.env.EXPO_OS) return null;
+  return tryLoad('expo-image', () => require('expo-image').Image);
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getFastImage = (): any | null =>

@@ -140,7 +140,9 @@ export function TestConfigBrowserScreen(): React.ReactElement {
         </View>
       </View>
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+      {/* Unit area: sits outside any ScrollView so gallery FlatLists don't
+          nest inside a same-orientation ScrollView (RN invariant warning). */}
+      <View style={styles.unitArea}>
         {loading && (
           <View style={styles.loadingRow}>
             <ActivityIndicator size="small" />
@@ -148,9 +150,12 @@ export function TestConfigBrowserScreen(): React.ReactElement {
           </View>
         )}
         {unit && <NativeDisplayView unit={unit} />}
+      </View>
 
+      {/* Spec panel in its own scroll area at the bottom */}
+      <View style={styles.specArea}>
         <SpecPanel config={entry.config} />
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -184,11 +189,13 @@ const styles = StyleSheet.create({
   navButton: {
     flex: 1,
   },
-  scroll: {
+  unitArea: {
     flex: 1,
+    paddingHorizontal: 16,
   },
-  scrollContent: {
-    padding: 16,
+  specArea: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
   },
   loadingRow: {
     flexDirection: 'row',

@@ -352,6 +352,9 @@ export function GalleryContainer({
   return (
     <View style={[layoutStyle, nodeStyle, { position: 'relative' }]}>
       <FlatList
+        // FlatList forbids changing numColumns after mount — key on the values
+        // that affect it so a config change forces a fresh unmount/remount.
+        key={`${mode}-${orientation}-${columns}`}
         ref={flatListRef}
         data={node.children}
         horizontal={!isVertical}
