@@ -1,12 +1,13 @@
 import React, { useCallback, useRef } from 'react';
 import { Pressable, Text } from 'react-native';
-import type { TextStyle } from 'react-native';
+import type { ViewStyle } from 'react-native';
 import type { NativeDisplayElement } from '../../models/NativeDisplayNode';
 import type { Style } from '../../models/Style';
 import { ActionHandler } from '../../handler/ActionHandler';
 import { useRootSize } from '../../context/RootSizeContext';
 import { useFontContext, resolveFont } from '../../context/FontContext';
 import { resolveLayoutStyle, resolveNodeStyle } from '../layoutModifier';
+import { splitNodeStyle } from '../styleSplit';
 import { resolveTextDim } from '../../utils/dimension';
 
 // Two taps within this window are treated as a double-tap.
@@ -40,7 +41,13 @@ export function ButtonElement({ node, resolvedStyle, actionHandler }: ButtonElem
     nodeStyle.lineHeight = fs * 1.3;
   }
 
-  const textStyle: TextStyle = { ...nodeStyle };
+  // Split nodeStyle: view-level props (backgroundColor, borderRadius*,
+  // borderWidth, borderColor, overflow, opacity, shadow*, elevation) go on
+  // <Pressable>; text-level props (color, font*, letterSpacing, textAlign,
+  // textShadow*, etc) go on the inner <Text>. Otherwise borderColor/
+  // borderWidth paint a stroke around the label's intrinsic glyph box
+  // instead of around the button's layout footprint.
+  const { viewStyle, textStyle } = splitNodeStyle(nodeStyle as Record<string, unknown>);
 
   const handlePress = useCallback(() => {
     const now = Date.now();
@@ -75,9 +82,16 @@ export function ButtonElement({ node, resolvedStyle, actionHandler }: ButtonElem
     }
   }, [node, actionHandler]);
 
+  const pressableStyle: ViewStyle = {
+    ...layoutStyle,
+    ...viewStyle,
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+
   return (
     <Pressable
-      style={[layoutStyle, { alignItems: 'center', justifyContent: 'center' }]}
+      style={pressableStyle}
       onPress={handlePress}
       onLongPress={handleLongPress}
     >
