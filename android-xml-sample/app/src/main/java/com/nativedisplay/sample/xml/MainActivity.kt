@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
                 val products: List<Product> = response.products.take(30)
 
                 val feedItems = mutableListOf<com.nativedisplay.sample.xml.ui.FeedItem>()
-                
+
                 products.forEachIndexed { index, product ->
                     // Add gallery every 7 items
                     if (index > 0 && index % 7 == 0) {
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
                     }
-                    
+
                     // Add individual product
                     if (index % 3 == 0) {
                         feedItems.add(
@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
             id = "gallery_theme",
             defaultStyle = Style(
                 textColor = "#333333",
-                fontSize = 14f,
+                fontSize = TextDimension(14f),
                 fontWeight = FontWeight.NORMAL
             ),
             colors = mapOf(
@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity() {
             StyleClass(
                 name = "gallery_header",
                 style = Style(
-                    fontSize = 20f,
+                    fontSize = TextDimension(20f),
                     fontWeight = FontWeight.BOLD,
                     textColor = "#000000"
                 )
@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity() {
                 name = "gallery_item_card",
                 style = Style(
                     backgroundColor = "#FFFFFF",
-                    borderRadius = Dimension.dp(\1f),
+                    borderRadius = Dimension.dp(12f),
                     shadowColor = "#000000",
                     shadowRadius = 3f,
                     shadowOffsetY = 2f
@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity() {
             StyleClass(
                 name = "gallery_title",
                 style = Style(
-                    fontSize = 14f,
+                    fontSize = TextDimension(14f),
                     fontWeight = FontWeight.MEDIUM,
                     textColor = "#000000"
                 )
@@ -151,7 +151,7 @@ class MainActivity : AppCompatActivity() {
             StyleClass(
                 name = "gallery_price",
                 style = Style(
-                    fontSize = 16f,
+                    fontSize = TextDimension(16f),
                     fontWeight = FontWeight.BOLD,
                     textColor = "#FF3B30"
                 )
@@ -173,16 +173,16 @@ class MainActivity : AppCompatActivity() {
                     NativeDisplayElement(
                         id = "gallery_image_${product.id}",
                         elementType = ElementType.IMAGE,
-                        bindings = mapOf("src" to product.thumbnail),
+                        bindings = mapOf("url" to product.thumbnail),
                         layout = Layout(
                             width = Dimension.MATCH_PARENT,
                             height = Dimension.dp(140f)
                         ),
                         style = Style(
-                            borderRadius = Dimension.dp(\1f)
+                            borderRadius = Dimension.dp(8f)
                         )
                     ),
-                    
+
                     // Spacer
                     NativeDisplayElement(
                         id = "gallery_spacer1_${product.id}",
@@ -191,7 +191,7 @@ class MainActivity : AppCompatActivity() {
                             height = Dimension.dp(8f)
                         )
                     ),
-                    
+
                     // Product Title
                     NativeDisplayElement(
                         id = "gallery_title_${product.id}",
@@ -199,7 +199,7 @@ class MainActivity : AppCompatActivity() {
                         bindings = mapOf("text" to product.title.take(40) + "..."),
                         styleClass = "gallery_title"
                     ),
-                    
+
                     // Spacer
                     NativeDisplayElement(
                         id = "gallery_spacer2_${product.id}",
@@ -208,7 +208,7 @@ class MainActivity : AppCompatActivity() {
                             height = Dimension.dp(4f)
                         )
                     ),
-                    
+
                     // Price with Rating
                     NativeDisplayContainer(
                         id = "gallery_footer_${product.id}",
@@ -228,7 +228,7 @@ class MainActivity : AppCompatActivity() {
                                 elementType = ElementType.TEXT,
                                 bindings = mapOf("text" to "⭐ ${product.rating}"),
                                 style = Style(
-                                    fontSize = 12f,
+                                    fontSize = TextDimension(12f),
                                     textColor = "#666666"
                                 )
                             )
@@ -261,7 +261,7 @@ class MainActivity : AppCompatActivity() {
                         padding = Spacing.horizontal(16f)
                     )
                 ),
-                
+
                 // Spacer
                 NativeDisplayElement(
                     id = "gallery_header_spacer",
@@ -270,7 +270,7 @@ class MainActivity : AppCompatActivity() {
                         height = Dimension.dp(12f)
                     )
                 ),
-                
+
                 // Gallery Container
                 NativeDisplayContainer(
                     id = "product_gallery",
@@ -300,13 +300,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun createProductConfig(product: Product): ResolvedConfig {
         // No variables - using inline content directly in bindings
-        
+
         // Create theme
         val theme = Theme(
             id = "product_card_theme",
             defaultStyle = Style(
                 textColor = "#333333",
-                fontSize = 14f,
+                fontSize = TextDimension(14f),
                 fontWeight = FontWeight.NORMAL
             ),
             colors = mapOf(
@@ -322,7 +322,7 @@ class MainActivity : AppCompatActivity() {
                 name = "card",
                 style = Style(
                     backgroundColor = "#FFFFFF",
-                    borderRadius = Dimension.dp(\1f),
+                    borderRadius = Dimension.dp(12f),
                     shadowColor = "#000000",
                     shadowRadius = 4f,
                     shadowOffsetY = 2f
@@ -331,7 +331,7 @@ class MainActivity : AppCompatActivity() {
             StyleClass(
                 name = "title",
                 style = Style(
-                    fontSize = 18f,
+                    fontSize = TextDimension(18f),
                     fontWeight = FontWeight.BOLD,
                     textColor = "#000000"
                 )
@@ -339,9 +339,9 @@ class MainActivity : AppCompatActivity() {
             StyleClass(
                 name = "description",
                 style = Style(
-                    fontSize = 14f,
+                    fontSize = TextDimension(14f),
                     textColor = "#666666",
-                    lineHeight = 20f
+                    lineHeight = TextDimension(20f)
                 )
             ),
             StyleClass(
@@ -349,9 +349,9 @@ class MainActivity : AppCompatActivity() {
                 style = Style(
                     backgroundColor = "#FF3B30",
                     textColor = "#FFFFFF",
-                    fontSize = 16f,
+                    fontSize = TextDimension(16f),
                     fontWeight = FontWeight.MEDIUM,
-                    borderRadius = Dimension.dp(\1f)
+                    borderRadius = Dimension.dp(8f)
                 )
             )
         )
@@ -369,16 +369,16 @@ class MainActivity : AppCompatActivity() {
                 NativeDisplayElement(
                     id = "product_image",
                     elementType = ElementType.IMAGE,
-                    bindings = mapOf("src" to product.thumbnail), // Direct value, no {{}}
+                    bindings = mapOf("url" to product.thumbnail), // Direct value, no {{}}
                     layout = Layout(
                         width = Dimension.MATCH_PARENT,
                         height = Dimension.dp(200f)
                     ),
                     style = Style(
-                        borderRadius = Dimension.dp(\1f)
+                        borderRadius = Dimension.dp(8f)
                     )
                 ),
-                
+
                 // Spacer
                 NativeDisplayElement(
                     id = "spacer1",
@@ -387,7 +387,7 @@ class MainActivity : AppCompatActivity() {
                         height = Dimension.dp(12f)
                     )
                 ),
-                
+
                 // Product Title - inline content
                 NativeDisplayElement(
                     id = "product_title",
@@ -395,7 +395,7 @@ class MainActivity : AppCompatActivity() {
                     bindings = mapOf("text" to product.title), // Direct value
                     styleClass = "title"
                 ),
-                
+
                 // Spacer
                 NativeDisplayElement(
                     id = "spacer2",
@@ -404,7 +404,7 @@ class MainActivity : AppCompatActivity() {
                         height = Dimension.dp(8f)
                     )
                 ),
-                
+
                 // Product Description - inline content
                 NativeDisplayElement(
                     id = "product_description",
@@ -412,7 +412,7 @@ class MainActivity : AppCompatActivity() {
                     bindings = mapOf("text" to product.description), // Direct value
                     styleClass = "description"
                 ),
-                
+
                 // Spacer
                 NativeDisplayElement(
                     id = "spacer3",
@@ -421,7 +421,7 @@ class MainActivity : AppCompatActivity() {
                         height = Dimension.dp(12f)
                     )
                 ),
-                
+
                 // Price and Rating Row
                 NativeDisplayContainer(
                     id = "info_row",
@@ -436,7 +436,7 @@ class MainActivity : AppCompatActivity() {
                             elementType = ElementType.TEXT,
                             bindings = mapOf("text" to "$${product.price}"), // Direct value
                             style = Style(
-                                fontSize = 20f,
+                                fontSize = TextDimension(20f),
                                 fontWeight = FontWeight.BOLD,
                                 textColor = "#FF3B30"
                             )
@@ -447,13 +447,13 @@ class MainActivity : AppCompatActivity() {
                             elementType = ElementType.TEXT,
                             bindings = mapOf("text" to "⭐ ${product.rating}"), // Direct value
                             style = Style(
-                                fontSize = 14f,
+                                fontSize = TextDimension(14f),
                                 textColor = "#666666"
                             )
                         )
                     )
                 ),
-                
+
                 // Spacer
                 NativeDisplayElement(
                     id = "spacer4",
@@ -462,7 +462,7 @@ class MainActivity : AppCompatActivity() {
                         height = Dimension.dp(16f)
                     )
                 ),
-                
+
                 // Buy Now Button - inline content
                 NativeDisplayElement(
                     id = "buy_button",

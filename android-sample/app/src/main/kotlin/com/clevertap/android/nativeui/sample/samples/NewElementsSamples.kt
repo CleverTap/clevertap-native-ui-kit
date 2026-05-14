@@ -1,4 +1,4 @@
-package com.clevertap.android.nativedisplay.samples
+package com.clevertap.android.nativeui.sample.samples
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
