@@ -328,11 +328,8 @@ public class NativeDisplayBridge {
 
     /// Push a display unit viewed event to the CleverTap Core SDK.
     ///
-    /// Invokes `-[CleverTap recordDisplayUnitViewedEventForID:]` via
-    /// `performSelector` to avoid a compile-time dependency on the CleverTap SDK.
-    /// (The iOS Core SDK names this `recordDisplayUnit…`; the Android Core SDK
-    /// uses `pushDisplayUnit…`. The cross-platform ND-SDK method name stays
-    /// `pushViewedEvent` so both platforms expose the same public API.)
+    /// Always calls `-recordDisplayUnitViewedEventForID:`. Impressions are inherently
+    /// unit-level in ND (the root mount fires once); there is no per-element view event.
     ///
     /// - Parameter unitId: The `wzrk_id` of the display unit that was viewed.
     /// - Returns: `true` if the event was sent, `false` if no CleverTap instance is available.
@@ -348,21 +345,80 @@ public class NativeDisplayBridge {
 
     /// Push a display unit clicked event to the CleverTap Core SDK.
     ///
-    /// Invokes `-[CleverTap recordDisplayUnitClickedEventForID:]` via
-    /// `performSelector` to avoid a compile-time dependency on the CleverTap SDK.
-    /// (See `pushViewedEvent` for the rationale behind the name asymmetry
-    /// between the iOS / Android Core SDK selectors and the ND-SDK method.)
+    /// When `extras` carries a `wzrk_btn_id` transport marker (set by
+    /// `ActionAttributionExtras.from` from the clicked node id) AND the host Core SDK
+    /// responds to the new selector
+    /// `-recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:`,
+    /// that selector is invoked — the element id is extracted from the extras dict
+    /// and passed as the dedicated argument; the remaining (sanitized) entries
+    /// become `additionalProperties`.
     ///
-    /// - Parameter unitId: The `wzrk_id` of the display unit that was clicked.
+    /// On older Core SDK versions without the new selector, the legacy
+    /// `-recordDisplayUnitClickedEventForID:` fires instead — the campaign click is
+    /// still attributed but per-element context is lost (graceful degradation, no
+    /// namespace squatting). Clients receive coarse unit-level attribution until
+    /// they upgrade Core SDK.
+    ///
+    /// - Parameters:
+    ///   - unitId: The `wzrk_id` of the display unit that was clicked.
+    ///   - extras: Optional event extras built by `ActionAttributionExtras.from`.
     /// - Returns: `true` if the event was sent, `false` if no CleverTap instance is available.
     @discardableResult
-    public func pushClickedEvent(unitId: String) -> Bool {
+    public func pushClickedEvent(unitId: String, extras: [String: Any]? = nil) -> Bool {
         guard let ct = cleverTapInstance else { return false }
         seedIfNeeded(unitId: unitId, instance: ct)
+        return invokeClickedEvent(on: ct, unitId: unitId, extras: extras)
+    }
+
+    /// Prefer the new element-aware selector when Core SDK exposes it; fall back to
+    /// the legacy unit-level selector otherwise.
+    private func invokeClickedEvent(
+        on ct: NSObject,
+        unitId: String,
+        extras: [String: Any]?
+    ) -> Bool {
+        let sanitized = ActionAttributionExtras.sanitize(extras)
+        let elementId = sanitized?[ActionAttributionExtras.keyButtonId] as? String
+        if let sanitized = sanitized, let elementId = elementId {
+            let elementSel = NSSelectorFromString(
+                "recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:"
+            )
+            if ct.responds(to: elementSel) {
+                // Strip the transport marker — Core SDK adds `wzrk_element_id` to the
+                // event from the dedicated parameter.
+                var additionalProps = sanitized
+                additionalProps.removeValue(forKey: ActionAttributionExtras.keyButtonId)
+                sendThreeArgSelector(
+                    target: ct,
+                    selector: elementSel,
+                    arg1: unitId as NSString,
+                    arg2: elementId as NSString,
+                    arg3: additionalProps as NSDictionary
+                )
+                return true
+            }
+        }
+        // Fallback: legacy unit-level click attribution (no per-element data).
         let sel = NSSelectorFromString("recordDisplayUnitClickedEventForID:")
         guard ct.responds(to: sel) else { return false }
         ct.perform(sel, with: unitId)
         return true
+    }
+
+    /// Invokes a 3-argument Objective-C selector. `NSObject.perform(_:with:with:)`
+    /// caps at 2 arguments; for 3 we resolve the method's `IMP` and call it via a
+    /// typed function-pointer cast.
+    private func sendThreeArgSelector(
+        target: NSObject,
+        selector: Selector,
+        arg1: AnyObject,
+        arg2: AnyObject,
+        arg3: AnyObject
+    ) {
+        typealias Imp = @convention(c) (AnyObject, Selector, AnyObject, AnyObject, AnyObject) -> Void
+        let imp = target.method(for: selector)
+        let fn = unsafeBitCast(imp, to: Imp.self)
+        fn(target, selector, arg1, arg2, arg3)
     }
 
     /// Older-Core-SDK fallback: when the v7.x `setDisplayUnitCache:` attach

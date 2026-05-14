@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Constraints
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
 import com.clevertap.android.nativedisplay.evaluator.VariableEvaluator
+import com.clevertap.android.nativedisplay.handler.ActionAttributionExtras
 import com.clevertap.android.nativedisplay.handler.ActionHandler
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener
@@ -194,7 +195,13 @@ internal fun RenderNode(
                     actionHandler = actionHandler,
                     componentListener = componentListener,
                     onSystemClick = if (isButton) {
-                        { actionHandler.fireSystemEvent("Notification Clicked", mapOf("nodeId" to node.id)) }
+                        {
+                            val extras = ActionAttributionExtras.from(
+                                action = node.actions?.get(ActionTriggers.ON_CLICK),
+                                nodeId = node.id
+                            )
+                            actionHandler.fireSystemEvent("Notification Clicked", extras)
+                        }
                     } else {
                         null
                     }

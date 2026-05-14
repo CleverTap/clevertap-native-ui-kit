@@ -10,6 +10,7 @@
 		41969A672F0BC8790050EB83 /* NativeDisplayActionListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A662F0BC8790050EB83 /* NativeDisplayActionListener.swift */; };
 		41969A692F0BC8EC0050EB83 /* InteractionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A682F0BC8EC0050EB83 /* InteractionType.swift */; };
 		41969A6C2F0BCA390050EB83 /* ActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A6B2F0BCA390050EB83 /* ActionHandler.swift */; };
+		B0AAE001 /* ActionAttributionExtras.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0AAE001 /* ActionAttributionExtras.swift */; };
 		41969A6F2F0BDB420050EB83 /* TappableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A6E2F0BDB420050EB83 /* TappableModifier.swift */; };
 		41969A712F0BE6410050EB83 /* ActionTriggers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A702F0BE6410050EB83 /* ActionTriggers.swift */; };
 		41F1ACEA2F18E9DA0018C5EA /* NativeDisplayUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1ACE82F18E9DA0018C5EA /* NativeDisplayUIView.swift */; };
@@ -62,6 +63,7 @@
 		41969A662F0BC8790050EB83 /* NativeDisplayActionListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayActionListener.swift; sourceTree = "<group>"; };
 		41969A682F0BC8EC0050EB83 /* InteractionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractionType.swift; sourceTree = "<group>"; };
 		41969A6B2F0BCA390050EB83 /* ActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionHandler.swift; sourceTree = "<group>"; };
+		F0AAE001 /* ActionAttributionExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionAttributionExtras.swift; sourceTree = "<group>"; };
 		41969A6E2F0BDB420050EB83 /* TappableModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TappableModifier.swift; sourceTree = "<group>"; };
 		41969A702F0BE6410050EB83 /* ActionTriggers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTriggers.swift; sourceTree = "<group>"; };
 		41F1ACE62F18E9DA0018C5EA /* NativeDisplayCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 			isa = PBXGroup;
 			children = (
 				41969A6B2F0BCA390050EB83 /* ActionHandler.swift */,
+				F0AAE001 /* ActionAttributionExtras.swift */,
 			);
 			path = Handlers;
 			sourceTree = "<group>";
@@ -425,6 +428,7 @@
 				B012 /* StyleResolver.swift in Sources */,
 				41969A6F2F0BDB420050EB83 /* TappableModifier.swift in Sources */,
 				41969A6C2F0BCA390050EB83 /* ActionHandler.swift in Sources */,
+				B0AAE001 /* ActionAttributionExtras.swift in Sources */,
 				B014 /* HtmlJsBridge.swift in Sources */,
 				B015 /* HtmlWebView.swift in Sources */,
 				B016 /* AnimationModifier.swift in Sources */,
