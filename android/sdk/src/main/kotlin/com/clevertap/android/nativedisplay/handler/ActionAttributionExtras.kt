@@ -13,32 +13,45 @@ import kotlinx.serialization.json.longOrNull
 
 /**
  * Pure helper that turns an [Action] (and the originating node id) into a flat map of
- * key/value pairs suitable for the additional-properties payload of CleverTap Core SDK's
- * `pushDisplayUnitClickedEventForID(unitId, extras)` / `pushDisplayUnitViewedEventForID`
- * overloads.
+ * key/value pairs that the bridge feeds into Core SDK's element-click attribution path.
  *
- * The output is intentionally flat and JSON-friendly — Core SDK's event pipeline expects
- * scalar values (`String` / `Number` / `Boolean`). Per-action `metadata` / `params` /
- * `properties` maps are spread verbatim so the client's own keys land on the event with
- * their original names. A `CustomAction.value` that is a JSON object is treated the same
- * way (entries spread); primitive values land under a single `action_value` key.
+ * Transport contract with [com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge]:
+ * - `wzrk_btn_id` carries the clicked node id. The bridge extracts it and passes it as the
+ *   `elementID` argument to the new Core SDK method
+ *   `pushDisplayUnitElementClickedEventForID(unitId, elementId, additionalProperties)`.
+ *   It does NOT forward it inside `additionalProperties` (Core SDK adds it to the event as
+ *   `wzrk_element_id` from the dedicated parameter).
+ * - All other entries become Core SDK's `additionalProperties` map and are merged into the
+ *   event's `evtData` after the usual `wzrk_*` enrichment from the cached unit JSON. Core
+ *   SDK strips any `wzrk_*` keys from this map defensively — so action fields use the
+ *   `action_*` prefix (unprefixed within the wzrk namespace) and bundle entries from a
+ *   `CustomAction.value` JSON object spread as first-class keys.
  *
- * Reserved keys produced by this helper:
- * - `wzrk_btn_id` — the node id of the clicked component (matches Core SDK push-notification
- *   convention for button identification).
- * - `wzrk_action_type` — one of `open_url` / `custom` / `navigate` / `event` / `composite`.
+ * Per-action `metadata` / `params` / `properties` maps are spread verbatim so the client's
+ * own keys land on the event with their original names. A `CustomAction.value` that is a
+ * JSON object is treated the same way (entries spread); primitive values land under a
+ * single `action_value` key.
+ *
+ * Output keys produced by this helper:
+ * - `wzrk_btn_id` — transport marker, extracted by the bridge as `elementID`.
+ * - `action_type` — one of `open_url` / `custom` / `navigate` / `event` / `composite`.
  * - `action_key` — the [Action.CustomAction.key] discriminator (e.g. `"kv"` for the BE's
  *   KV-bundle shape, `"close"` for the close-action shape).
+ * - Action-specific keys scoped with the `action_` prefix (`action_url`, `action_destination`,
+ *   `action_event_name`, …).
+ * - Spread entries from `CustomAction.value` JsonObject / metadata / params / properties.
  *
- * Action-specific keys are scoped with the `action_` prefix to avoid collisions with the
- * Core SDK's own `wzrk_*` enrichment. When entries from `CustomAction.value` (or any of
- * `metadata` / `params` / `properties`) are spread, key collisions resolve last-write-wins
- * under this order: reserved keys → value entries → metadata entries.
+ * Key collisions resolve last-write-wins under this order: reserved keys → value entries →
+ * metadata entries.
  */
 internal object ActionAttributionExtras {
 
-    private const val KEY_BUTTON_ID = "wzrk_btn_id"
-    private const val KEY_ACTION_TYPE = "wzrk_action_type"
+    /**
+     * Transport marker — the bridge extracts this and passes it as Core SDK's `elementID`
+     * argument. NOT forwarded as part of `additionalProperties`.
+     */
+    const val KEY_BUTTON_ID = "wzrk_btn_id"
+    private const val KEY_ACTION_TYPE = "action_type"
 
     fun from(action: Action?, nodeId: String?): Map<String, Any?> {
         val out = linkedMapOf<String, Any?>()

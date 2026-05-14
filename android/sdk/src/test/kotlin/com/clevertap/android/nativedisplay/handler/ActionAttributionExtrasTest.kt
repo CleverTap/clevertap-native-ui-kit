@@ -21,7 +21,7 @@ class ActionAttributionExtrasTest {
     fun `from with null action emits only button id`() {
         val extras = ActionAttributionExtras.from(action = null, nodeId = "btn_buy")
         assertEquals("btn_buy", extras["wzrk_btn_id"])
-        assertNull(extras["wzrk_action_type"])
+        assertNull(extras["action_type"])
     }
 
     @Test
@@ -39,7 +39,7 @@ class ActionAttributionExtrasTest {
         )
         val extras = ActionAttributionExtras.from(action, "btn1")
 
-        assertEquals("open_url", extras["wzrk_action_type"])
+        assertEquals("open_url", extras["action_type"])
         assertEquals("https://example.com", extras["action_url"])
         assertEquals(true, extras["action_open_in_browser"])
         assertEquals("btn1", extras["wzrk_btn_id"])
@@ -57,7 +57,7 @@ class ActionAttributionExtrasTest {
         )
         val extras = ActionAttributionExtras.from(action, "btn2")
 
-        assertEquals("custom", extras["wzrk_action_type"])
+        assertEquals("custom", extras["action_type"])
         assertEquals("kv", extras["action_key"])
         // Value entries land as first-class extras (no stringified action_value blob).
         assertFalse(
@@ -99,7 +99,7 @@ class ActionAttributionExtrasTest {
         )
         val extras = ActionAttributionExtras.from(action, "btn_empty")
 
-        assertEquals("custom", extras["wzrk_action_type"])
+        assertEquals("custom", extras["action_type"])
         assertEquals("kv", extras["action_key"])
         assertFalse(
             "Empty JsonObject value should not emit action_value",
@@ -107,7 +107,7 @@ class ActionAttributionExtrasTest {
         )
         // Exactly the reserved keys, nothing else.
         assertEquals(
-            setOf("wzrk_btn_id", "wzrk_action_type", "action_key"),
+            setOf("wzrk_btn_id", "action_type", "action_key"),
             extras.keys
         )
     }
@@ -130,7 +130,7 @@ class ActionAttributionExtrasTest {
             params = mapOf("user_id" to "u-1")
         )
         val extras = ActionAttributionExtras.from(action, nodeId = null)
-        assertEquals("navigate", extras["wzrk_action_type"])
+        assertEquals("navigate", extras["action_type"])
         assertEquals("profile", extras["action_destination"])
         assertEquals("u-1", extras["user_id"])
         assertFalse(extras.containsKey("wzrk_btn_id"))

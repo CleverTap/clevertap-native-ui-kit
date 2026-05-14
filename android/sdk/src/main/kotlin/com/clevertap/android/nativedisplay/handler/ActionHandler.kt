@@ -58,7 +58,7 @@ internal class ActionHandler(
     private val listener: NativeDisplayActionListener?,
     private val componentListener: NativeDisplayComponentListener? = null,
     private val unitId: String? = null,
-    private val pushViewedEvent: (String, Map<String, Any?>?) -> Unit = DEFAULT_PUSH_VIEWED,
+    private val pushViewedEvent: (String) -> Unit = DEFAULT_PUSH_VIEWED,
     private val pushClickedEvent: (String, Map<String, Any?>?) -> Unit = DEFAULT_PUSH_CLICKED,
 ) {
 
@@ -70,15 +70,18 @@ internal class ActionHandler(
 
         /**
          * Default attribution forwarders — invoke the singleton bridge so that
-         * `pushDisplayUnitViewedEventForID` / `pushDisplayUnitClickedEventForID`
-         * fire on the CleverTap Core SDK whenever it is wired, regardless of
-         * whether the host app supplied a [NativeDisplayActionListener].
+         * `pushDisplayUnitViewedEventForID` / `pushDisplayUnitClickedEventForID` (or its
+         * element-aware successor) fire on the CleverTap Core SDK whenever it is wired,
+         * regardless of whether the host app supplied a [NativeDisplayActionListener].
          *
-         * When Core SDK is absent the bridge's push methods short-circuit
-         * (return false) — the auto-wire path is a graceful no-op.
+         * When Core SDK is absent the bridge's push methods short-circuit (return false) —
+         * the auto-wire path is a graceful no-op.
+         *
+         * Viewed is unit-level (no extras); Clicked carries action extras when the host's
+         * Core SDK exposes the element-aware method, else falls back to unit-level click.
          */
-        private val DEFAULT_PUSH_VIEWED: (String, Map<String, Any?>?) -> Unit = { unitId, extras ->
-            NativeDisplayBridge.getInstance()?.pushViewedEvent(unitId, extras)
+        private val DEFAULT_PUSH_VIEWED: (String) -> Unit = { unitId ->
+            NativeDisplayBridge.getInstance()?.pushViewedEvent(unitId)
         }
         private val DEFAULT_PUSH_CLICKED: (String, Map<String, Any?>?) -> Unit = { unitId, extras ->
             NativeDisplayBridge.getInstance()?.pushClickedEvent(unitId, extras)
@@ -261,7 +264,7 @@ internal class ActionHandler(
                     when (eventName) {
                         "Notification Viewed" -> {
                             listener?.onDisplayUnitViewed(unitId)
-                            pushViewedEvent(unitId, properties)
+                            pushViewedEvent(unitId)
                         }
                         "Notification Clicked" -> {
                             listener?.onDisplayUnitClicked(unitId)

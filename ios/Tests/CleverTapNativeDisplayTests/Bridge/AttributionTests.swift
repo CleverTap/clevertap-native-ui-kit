@@ -3,18 +3,22 @@ import XCTest
 
 // MARK: - Mock CleverTap Instance
 //
-// A minimal NSObject that responds to the iOS Core SDK selectors
-// `recordDisplayUnitViewedEventForID:` and `recordDisplayUnitClickedEventForID:`
-// (declared on `CleverTap (DisplayUnit)` in CleverTapSDK). The bridge invokes
-// these via `performSelector` to avoid a compile-time CleverTap dependency, so
-// Swift's dynamic ObjC dispatch on `@objc` methods of an `NSObject` subclass
-// is enough — no real CleverTap SDK is required.
+// Minimal NSObject responding to the iOS Core SDK selectors via Swift's dynamic
+// ObjC dispatch — no real CleverTap SDK is required. The bridge invokes these
+// selectors via `performSelector` (single-arg) or runtime `objc_msgSend` (three-arg)
+// to avoid a compile-time CleverTap dependency.
+//
+// `MockCleverTapInstance` simulates a Core SDK build that exposes the NEW
+// element-aware selector
+// `-recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:`
+// AS WELL AS the legacy single-arg selectors. Used to verify the bridge prefers
+// the new selector when present.
 
 @objc private final class MockCleverTapInstance: NSObject {
     var viewedUnitIds: [String] = []
     var clickedUnitIds: [String] = []
-    var viewedExtras: [[String: Any]] = []
-    var clickedExtras: [[String: Any]] = []
+    /// `(unitId, elementId, additionalProperties)` captured per new-selector call.
+    var elementClicks: [(String, String, [String: Any])] = []
 
     @objc func recordDisplayUnitViewedEventForID(_ unitId: String) {
         viewedUnitIds.append(unitId)
@@ -24,19 +28,19 @@ import XCTest
         clickedUnitIds.append(unitId)
     }
 
-    @objc func recordDisplayUnitViewedEventForID(_ unitId: String, additionalProperties props: NSDictionary) {
-        viewedUnitIds.append(unitId)
-        viewedExtras.append(props as? [String: Any] ?? [:])
-    }
-
-    @objc func recordDisplayUnitClickedEventForID(_ unitId: String, additionalProperties props: NSDictionary) {
-        clickedUnitIds.append(unitId)
-        clickedExtras.append(props as? [String: Any] ?? [:])
+    @objc(recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:)
+    func recordDisplayUnitElementClickedEventForID(
+        _ unitId: String,
+        elementID: String,
+        additionalProperties props: NSDictionary
+    ) {
+        elementClicks.append((unitId, elementID, props as? [String: Any] ?? [:]))
     }
 }
 
-/// Legacy CleverTap mock — responds only to the single-arg selectors, mirroring an
-/// older Core SDK version that has not yet shipped the `additionalProperties:` overloads.
+/// Legacy CleverTap mock — responds only to the legacy single-arg selectors,
+/// mirroring an older Core SDK version that has not yet shipped the
+/// element-aware selector. Used to verify graceful fallback.
 @objc private final class LegacyMockCleverTapInstance: NSObject {
     var viewedUnitIds: [String] = []
     var clickedUnitIds: [String] = []
@@ -286,46 +290,59 @@ final class AttributionTests: XCTestCase {
         XCTAssertEqual(mockCt.clickedUnitIds, ["unit_dd_2"])
     }
 
-    // MARK: - additionalProperties overload (Core SDK PR #538 contract)
+    // MARK: - Element-aware selector (new Core SDK method)
 
-    func test_clicked_prefersTwoArgSelector_whenExtrasProvidedAndOverloadAvailable() {
+    func test_clicked_prefersElementSelector_whenExtrasCarryButtonIdAndSelectorAvailable() {
         let mockCt = MockCleverTapInstance()
         bridge.cleverTapInstance = mockCt
         let extras: [String: Any] = [
             "wzrk_btn_id": "cta_buy",
-            "wzrk_action_type": "open_url",
+            "action_type": "open_url",
             "action_url": "https://example.com"
         ]
 
         let ok = bridge.pushClickedEvent(unitId: "unit_x", extras: extras)
 
         XCTAssertTrue(ok)
-        XCTAssertEqual(mockCt.clickedUnitIds, ["unit_x"])
-        XCTAssertEqual(mockCt.clickedExtras.count, 1)
-        XCTAssertEqual(mockCt.clickedExtras.first?["wzrk_btn_id"] as? String, "cta_buy")
-        XCTAssertEqual(mockCt.clickedExtras.first?["action_url"] as? String, "https://example.com")
+        XCTAssertEqual(mockCt.elementClicks.count, 1)
+        // No legacy single-arg call when new selector handled it.
+        XCTAssertTrue(mockCt.clickedUnitIds.isEmpty)
+
+        let (unitId, elementId, props) = mockCt.elementClicks[0]
+        XCTAssertEqual(unitId, "unit_x")
+        XCTAssertEqual(elementId, "cta_buy")
+        // Transport marker stripped from additionalProperties — Core SDK adds
+        // `wzrk_element_id` from the dedicated parameter.
+        XCTAssertNil(props["wzrk_btn_id"])
+        XCTAssertEqual(props["action_type"] as? String, "open_url")
+        XCTAssertEqual(props["action_url"] as? String, "https://example.com")
     }
 
-    func test_clicked_fallsBackToSingleArgSelector_whenOverloadAbsent() {
+    func test_clicked_fallsBackToLegacySelector_whenElementSelectorAbsent() {
         let legacyCt = LegacyMockCleverTapInstance()
         bridge.cleverTapInstance = legacyCt
-        let extras: [String: Any] = ["wzrk_btn_id": "cta_buy"]
+        let extras: [String: Any] = ["wzrk_btn_id": "cta_buy", "action_url": "https://x"]
 
         let ok = bridge.pushClickedEvent(unitId: "unit_legacy", extras: extras)
 
-        XCTAssertTrue(ok, "Must still attribute the click on Core SDK without the new overload")
+        XCTAssertTrue(ok, "Must still attribute the campaign click without per-element context")
         XCTAssertEqual(legacyCt.clickedUnitIds, ["unit_legacy"])
+        // Graceful degradation — element id and action context are dropped.
     }
 
-    func test_viewed_prefersTwoArgSelector_whenExtrasProvided() {
+    func test_clicked_fallsBackToLegacySelector_whenExtrasMissButtonIdMarker() {
         let mockCt = MockCleverTapInstance()
         bridge.cleverTapInstance = mockCt
+        // No wzrk_btn_id transport marker (e.g. container-level click with no node id).
+        let extras: [String: Any] = ["action_type": "open_url"]
 
-        let ok = bridge.pushViewedEvent(unitId: "u_v", extras: ["custom": "abc"])
+        let ok = bridge.pushClickedEvent(unitId: "unit_y", extras: extras)
 
         XCTAssertTrue(ok)
-        XCTAssertEqual(mockCt.viewedUnitIds, ["u_v"])
-        XCTAssertEqual(mockCt.viewedExtras.first?["custom"] as? String, "abc")
+        // Element selector requires an elementID; without the transport marker
+        // we fall back to the legacy unit-level selector.
+        XCTAssertEqual(mockCt.clickedUnitIds, ["unit_y"])
+        XCTAssertTrue(mockCt.elementClicks.isEmpty)
     }
 
     func test_clicked_singleArgPath_whenExtrasNil() {
@@ -336,7 +353,7 @@ final class AttributionTests: XCTestCase {
 
         XCTAssertTrue(ok)
         XCTAssertEqual(mockCt.clickedUnitIds, ["u_c"])
-        XCTAssertTrue(mockCt.clickedExtras.isEmpty, "Two-arg selector must not be used when extras are nil")
+        XCTAssertTrue(mockCt.elementClicks.isEmpty, "Element selector must not be used when extras are nil")
     }
 
     // MARK: - nil unitId skips bridge push
