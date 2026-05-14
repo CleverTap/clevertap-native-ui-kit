@@ -119,7 +119,10 @@ export function TextElement({ node, resolvedStyle }: TextElementProps): React.Re
   // owns layout + view-level style so corners / borders / clipping apply to
   // the gradient's box, not to the glyphs.
   const gradient = resolvedStyle.textGradient;
-  if (gradient && gradient.colors.length >= 2) {
+  // Guard: colors may be null/undefined if the server sends a malformed
+  // textGradient object. Fall through to flat text rendering instead of
+  // throwing, so the error boundary is not triggered by this specific case.
+  if (gradient && Array.isArray(gradient.colors) && gradient.colors.length >= 2) {
     const MaskedView = getMaskedView();
     const LinearGradient = getLinearGradient();
 

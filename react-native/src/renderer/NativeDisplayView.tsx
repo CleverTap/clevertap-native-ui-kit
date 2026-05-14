@@ -11,6 +11,7 @@ import { ActionHandler } from '../handler/ActionHandler';
 import { RootSizeProvider } from '../context/RootSizeContext';
 import { FontProvider } from '../context/FontContext';
 import { RenderNode } from './RenderNode';
+import { RenderErrorBoundary } from './RenderErrorBoundary';
 import { hasPercentDimensions } from '../utils/dimension';
 
 interface NativeDisplayViewPropsWithUnit {
@@ -104,17 +105,26 @@ export function NativeDisplayView(props: NativeDisplayViewProps): React.ReactEle
     setMeasuredSize({ width, height });
   };
 
+  // RenderErrorBoundary prevents a bad JSON config from crashing the host app.
+  // See RenderErrorBoundary.tsx for the full explanation.
+  //
+  // key={unitId} resets the boundary whenever the active unit changes. A React
+  // error boundary stays in hasError:true until it is unmounted; without this
+  // key, navigating from a broken unit to a healthy one would still show the
+  // empty fallback because the same boundary instance is reused.
   const inner = (
-    <RootSizeProvider size={rootSize}>
-      <FontProvider fontResolver={fontResolver}>
-        <RenderNode
-          node={root}
-          resolvedStyles={resolvedStyles}
-          actionHandler={actionHandler}
-          variables={variables}
-        />
-      </FontProvider>
-    </RootSizeProvider>
+    <RenderErrorBoundary key={unitId || 'default'}>
+      <RootSizeProvider size={rootSize}>
+        <FontProvider fontResolver={fontResolver}>
+          <RenderNode
+            node={root}
+            resolvedStyles={resolvedStyles}
+            actionHandler={actionHandler}
+            variables={variables}
+          />
+        </FontProvider>
+      </RootSizeProvider>
+    </RenderErrorBoundary>
   );
 
   if (needsMeasurement && !measuredSize) {

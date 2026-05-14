@@ -11,6 +11,7 @@ export interface TestConfig {
 
 /* eslint-disable @typescript-eslint/no-require-imports */
 export const ALL_CONFIGS: TestConfig[] = [
+  { id: 'test-178-error-boundary-smoke-test', filename: 'test-178-error-boundary-smoke-test', config: require('../../../test-configs/test-178-error-boundary-smoke-test.json') },
   { id: 'test-177-button-stroke-text-clip-repro', filename: 'test-177-button-stroke-text-clip-repro', config: require('../../../test-configs/test-177-button-stroke-text-clip-repro.json') },
   { id: 'image-fit-test', filename: 'image-fit-test', config: require('../../../test-configs/image-fit-test.json') },
   { id: 'test-001-vertical-simple', filename: 'test-001-vertical-simple', config: require('../../../test-configs/test-001-vertical-simple.json') },
