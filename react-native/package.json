@@ -33,6 +33,7 @@
     "react-native": ">=0.73.0",
     "clevertap-react-native": ">=4.1.0",
     "react-native-linear-gradient": ">=2.8.0",
+    "expo-linear-gradient": ">=13.0.0",
     "react-native-svg": ">=15.0.0",
     "react-native-reanimated": ">=3.5.0",
     "react-native-webview": ">=13.7.0",
@@ -45,6 +46,7 @@
   "peerDependenciesMeta": {
     "clevertap-react-native": { "optional": true },
     "react-native-linear-gradient": { "optional": true },
+    "expo-linear-gradient": { "optional": true },
     "react-native-svg": { "optional": true },
     "react-native-reanimated": { "optional": true },
     "react-native-webview": { "optional": true },

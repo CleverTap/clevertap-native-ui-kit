@@ -32,7 +32,7 @@ function LinearGradientBg({
   const parsedColors = background.colors.map((c) => parseColor(c) ?? c);
 
   if (!LinearGradient) {
-    console.warn('[BackgroundRenderer] linear_gradient requires react-native-linear-gradient. Falling back to solid color.');
+    console.warn('[BackgroundRenderer] linear_gradient requires react-native-linear-gradient (or expo-linear-gradient for Expo). Falling back to solid color.');
     return (
       <View style={[style, { backgroundColor: parsedColors[0] ?? 'transparent' }]}>
         {children}
@@ -40,7 +40,7 @@ function LinearGradientBg({
     );
   }
 
-  const angleRad = ((background.angle ?? 0) * Math.PI) / 180;
+  const angleRad = (((background.angle ?? 0) - 90) * Math.PI) / 180;
   const startX = 0.5 - Math.cos(angleRad) * 0.5;
   const startY = 0.5 - Math.sin(angleRad) * 0.5;
   const endX = 0.5 + Math.cos(angleRad) * 0.5;
@@ -149,7 +149,7 @@ function AnimatedGradientBg({
 
   const LinearGradient = getLinearGradient();
   if (!LinearGradient) {
-    console.warn('[BackgroundRenderer] animated_gradient requires react-native-linear-gradient. Falling back to solid color.');
+    console.warn('[BackgroundRenderer] animated_gradient requires react-native-linear-gradient (or expo-linear-gradient for Expo). Falling back to solid color.');
     return (
       <View style={[style, { backgroundColor: parsedColors[0] ?? 'transparent' }]}>
         {children}
@@ -172,7 +172,7 @@ function AnimatedGradientBg({
     );
   }, []);
 
-  const angleRad = ((background.angle ?? 0) * Math.PI) / 180;
+  const angleRad = (((background.angle ?? 0) - 90) * Math.PI) / 180;
   const startX = 0.5 - Math.cos(angleRad) * 0.5;
   const startY = 0.5 - Math.sin(angleRad) * 0.5;
   const endX = 0.5 + Math.cos(angleRad) * 0.5;

@@ -23,8 +23,20 @@ function tryLoad<T>(name: string, loader: Loader<T>): T | null {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getLinearGradient = (): any | null =>
-  tryLoad('react-native-linear-gradient', () => require('react-native-linear-gradient').default);
+export const getLinearGradient = (): any | null => {
+  // Prefer react-native-linear-gradient; fall back to expo-linear-gradient for Expo clients.
+  // Both expose the same start/end/colors API so BackgroundRenderer works unchanged.
+  const rn = tryLoad('react-native-linear-gradient', () => require('react-native-linear-gradient').default);
+  if (rn) return rn;
+  // expo-linear-gradient uses expo-modules-core and requires the Expo env (same guard as expo-image).
+  if (!process.env.EXPO_OS) return null;
+  // eval('require') is the standard Metro escape hatch: Metro's static analyser
+  // does not follow requires inside eval, so bare-RN projects that don't have
+  // expo-linear-gradient installed will never see a bundle-time resolution error.
+  // The tryLoad wrapper catches any runtime error if the package is absent.
+  // eslint-disable-next-line no-eval
+  return tryLoad('expo-linear-gradient', () => eval('require')('expo-linear-gradient').LinearGradient);
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getSvg = (): any | null =>
