@@ -65,19 +65,51 @@ public struct NativeDisplayView: View {
     private let componentListener: NativeDisplayComponentListener?
     private let unitId: String?
 
+    /// Render-only initializer. No `unitId` is wired, so attribution events
+    /// (`Notification Viewed` / `Notification Clicked`) do not fire. Use this for
+    /// previews, tests, and raw-JSON browsers that do not have a parsed
+    /// `NativeDisplayUnit`. For bridge- or placement-delivered content, prefer
+    /// `init(unit:actionListener:componentListener:)`.
     public init(
         config: ResolvedConfig,
         actionListener: NativeDisplayActionListener? = nil,
-        componentListener: NativeDisplayComponentListener? = nil,
-        unitId: String? = nil,
-        preResolvedStyles: [String: Style]? = nil
+        componentListener: NativeDisplayComponentListener? = nil
+    ) {
+        self.init(
+            config: config,
+            actionListener: actionListener,
+            componentListener: componentListener,
+            unitId: nil,
+            preResolvedStyles: nil
+        )
+    }
+
+    /// Attribution-aware initializer. Uses the unit's pre-resolved style map
+    /// (computed off-main by the bridge parser) and the `unitId` needed to fire
+    /// `Notification Viewed` / `Notification Clicked` events.
+    public init(
+        unit: NativeDisplayUnit,
+        actionListener: NativeDisplayActionListener? = nil,
+        componentListener: NativeDisplayComponentListener? = nil
+    ) {
+        self.init(
+            config: unit.config,
+            actionListener: actionListener,
+            componentListener: componentListener,
+            unitId: unit.unitId,
+            preResolvedStyles: unit.resolvedStyles
+        )
+    }
+
+    private init(
+        config: ResolvedConfig,
+        actionListener: NativeDisplayActionListener?,
+        componentListener: NativeDisplayComponentListener?,
+        unitId: String?,
+        preResolvedStyles: [String: Style]?
     ) {
         self.config = config
         self.unitId = unitId
-        // Prefer the pre-resolved style map produced by the bridge parser (off-main).
-        // Falls back to resolving inline on the main thread for direct callers
-        // (e.g. tests, `CleverTapNativeDisplay.createView(from:)`) that don't go
-        // through the bridge.
         if let preResolvedStyles {
             self.resolvedStyles = preResolvedStyles
         } else {
@@ -91,23 +123,6 @@ public struct NativeDisplayView: View {
             unitId: unitId
         )
         self.componentListener = componentListener
-    }
-
-    /// Convenience initializer for rendering a `NativeDisplayUnit` produced by
-    /// `NativeDisplayBridge`. Uses the unit's pre-resolved style map when
-    /// available so the SwiftUI view init runs no recursive style work on main.
-    public init(
-        unit: NativeDisplayUnit,
-        actionListener: NativeDisplayActionListener? = nil,
-        componentListener: NativeDisplayComponentListener? = nil
-    ) {
-        self.init(
-            config: unit.config,
-            actionListener: actionListener,
-            componentListener: componentListener,
-            unitId: unit.unitId,
-            preResolvedStyles: unit.resolvedStyles
-        )
     }
 
     public var body: some View {

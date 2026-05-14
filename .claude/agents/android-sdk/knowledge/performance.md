@@ -9,13 +9,18 @@ This document reflects the **actual implemented architecture** as of the perform
 Styles are resolved **once at config-set time**, before any composable runs. The render tree receives a flat `PersistentMap<String, Style>` and does an O(1) lookup per node.
 
 ```kotlin
-// ✅ CURRENT PATTERN — in NativeDisplayViewGroup.setConfig()
-val resolver = StyleResolver(config.theme, config.styleClasses)
-resolvedStylesState.value = resolver.resolveAll(config.root)  // one pass, entire tree
+// ✅ CURRENT PATTERN — bridge-parsed units carry styles already resolved
+//    (NativeDisplayConfigParser does the resolveAll off-main, into NativeDisplayUnit.resolvedStyles)
+NativeDisplayView(unit = unit, actionListener = ..., componentListener = ...)
 
-// ✅ CURRENT PATTERN — in NativeDisplayView composable
+// ✅ CURRENT PATTERN — render-only path resolves once on first composition
+//    (public config: overload only; no unitId / attribution)
+NativeDisplayView(config = config)
+
+// ✅ INTERNAL PATTERN — SDK wrappers (NativeDisplaySlot, NativeDisplayViewGroup,
+//    NativeDisplaySlotView) drive the `internal` overload directly:
 @Composable
-fun NativeDisplayView(
+internal fun NativeDisplayView(
     config: ResolvedConfig,
     resolvedStyles: PersistentMap<String, Style>,  // pre-resolved, passed in
     ...
@@ -28,7 +33,7 @@ val resolvedStyle = resolvedStyles[node.id] ?: Style.EMPTY
 val style = remember(node.id) { styleResolver.resolveWithColors(node) }
 ```
 
-**Why**: StyleResolver is never a composable parameter. No `remember` ceremony needed per node.
+**Why**: StyleResolver is never a composable parameter on the public surface. The `resolvedStyles`-taking overload is `internal` only — call sites pass `unit:` (style map already inside `NativeDisplayUnit`) or `config:` (resolved once on first composition). No `remember` ceremony needed per node.
 
 ---
 
@@ -416,7 +421,7 @@ fun TracedComponent() {
 @Test
 fun benchmarkRendering() {
     val start = System.nanoTime()
-    composeTestRule.setContent { NativeDisplayView(config = testConfig, resolvedStyles = testStyles) }
+    composeTestRule.setContent { NativeDisplayView(config = testConfig) }
     composeTestRule.waitForIdle()
     val ms = (System.nanoTime() - start) / 1_000_000
     println("Render time: ${ms}ms")

@@ -252,10 +252,9 @@ private fun CanvasContent(
         ) {
             items(receivedUnits, key = { it.unitId }) { unit ->
                 NativeDisplayView(
-                    config = unit.config,
+                    unit = unit,
                     modifier = Modifier.fillMaxWidth(),
                     actionListener = actionListener,
-                    unitId = unit.unitId
                 )
             }
         }
