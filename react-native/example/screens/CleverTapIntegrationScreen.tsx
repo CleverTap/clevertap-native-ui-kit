@@ -10,6 +10,7 @@ import {
   Linking,
   KeyboardAvoidingView,
   Platform,
+  useWindowDimensions,
 } from 'react-native';
 import CleverTap from 'clevertap-react-native';
 import {
@@ -47,6 +48,8 @@ export function CleverTapIntegrationScreen(): React.ReactElement {
   const [log, setLog] = useState<string[]>([]);
   const [eventName, setEventName] = useState('');
   const [bridgeBound, setBridgeBound] = useState(false);
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
 
   const ctAvailable = typeof (CleverTap as unknown as Record<string, unknown>).recordEvent === 'function';
 
@@ -54,15 +57,10 @@ export function CleverTapIntegrationScreen(): React.ReactElement {
     setLog((prev) => [`[${timestamp()}] ${message}`, ...prev]);
   }, []);
 
-  // Wire CleverTap to the bridge once on mount
+  // Bridge is bound once in App.tsx. Just track whether it's available.
   useEffect(() => {
-    try {
-      NativeDisplayBridge.shared.bind(CleverTap);
-      setBridgeBound(true);
-      appendLog('Bridge bound to CleverTap');
-    } catch (e) {
-      appendLog(`ERROR binding bridge: ${String(e)}`);
-    }
+    setBridgeBound(true);
+    appendLog('Bridge ready');
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -70,6 +68,7 @@ export function CleverTapIntegrationScreen(): React.ReactElement {
   useEffect(() => {
     const listener: NativeDisplayBridgeListener = {
       onNativeDisplaysLoaded(incoming: NativeDisplayUnit[]) {
+        // Show all units like Android/iOS - no filtering
         setUnits(incoming);
         appendLog(`Received ${incoming.length} display unit(s)`);
         incoming.forEach((u) => appendLog(`  unit: ${u.unitId}`));
@@ -116,6 +115,99 @@ export function CleverTapIntegrationScreen(): React.ReactElement {
     setEventName('');
   }
 
+  // ─── Landscape layout (33/67 split) ────────────────────────────────────────
+  if (isLandscape) {
+    return (
+      <SafeAreaView style={styles.root}>
+        <KeyboardAvoidingView
+          style={styles.landscapeRow}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          {/* Left panel: event input + status badges + event log */}
+          <View style={styles.leftPanel}>
+            {/* Event input */}
+            <View style={styles.eventSection}>
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter event name"
+                  placeholderTextColor="#999"
+                  value={eventName}
+                  onChangeText={setEventName}
+                  onSubmitEditing={sendEvent}
+                  returnKeyType="send"
+                />
+                <View style={styles.sendBtn}>
+                  <Button
+                    title="Send Event"
+                    onPress={sendEvent}
+                    disabled={!eventName.trim() || !ctAvailable}
+                  />
+                </View>
+              </View>
+            </View>
+
+            <View style={styles.divider} />
+
+            {/* Status badges */}
+            <View style={styles.statusRow}>
+              <StatusBadge label="CleverTap" ok={ctAvailable} />
+              <StatusBadge label="Bridge" ok={bridgeBound} />
+            </View>
+
+            <View style={styles.divider} />
+
+            {/* Event log */}
+            <View style={styles.logSectionLandscape}>
+              <View style={styles.logHeader}>
+                <Text style={styles.logTitle}>Event Log</Text>
+                {log.length > 0 && (
+                  <Button title="Clear" onPress={() => setLog([])} />
+                )}
+              </View>
+              <ScrollView style={styles.logScrollLandscape} contentContainerStyle={styles.logContent}>
+                {log.length === 0 ? (
+                  <Text style={styles.logEmpty}>No events yet</Text>
+                ) : (
+                  log.map((entry, i) => (
+                    <Text key={i} style={[styles.logEntry, { color: logColor(entry) }]}>
+                      {entry}
+                    </Text>
+                  ))
+                )}
+              </ScrollView>
+            </View>
+          </View>
+
+          <View style={styles.verticalDivider} />
+
+          {/* Right panel: canvas */}
+          <View style={styles.rightPanel}>
+            <Text style={styles.canvasLabel}>Native Display Canvas</Text>
+            <View style={styles.divider} />
+            {units.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyText}>Waiting for Native Display response...</Text>
+              </View>
+            ) : (
+              <ScrollView contentContainerStyle={styles.canvasScroll}>
+                {units.map((unit) => (
+                  <NativeDisplayView
+                    key={unit.unitId}
+                    unit={unit}
+                    actionListener={actionListener}
+                    style={styles.unitView}
+                  />
+                ))}
+              </ScrollView>
+            )}
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    );
+  }
+
+  // ─── Portrait layout (vertical stack) ──────────────────────────────────────
   return (
     <SafeAreaView style={styles.root}>
       <KeyboardAvoidingView
@@ -159,7 +251,6 @@ export function CleverTapIntegrationScreen(): React.ReactElement {
         <View style={styles.canvas}>
           {units.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyIcon}>📥</Text>
               <Text style={styles.emptyText}>Waiting for Native Display response...</Text>
             </View>
           ) : (
@@ -181,7 +272,7 @@ export function CleverTapIntegrationScreen(): React.ReactElement {
         {/* Event log */}
         <View style={styles.logSection}>
           <View style={styles.logHeader}>
-            <Text style={styles.logTitle}>📄 Event Log</Text>
+            <Text style={styles.logTitle}>Event Log</Text>
             {log.length > 0 && (
               <Button title="Clear" onPress={() => setLog([])} />
             )}
@@ -243,6 +334,33 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F9FAFB',
   },
+  // Landscape
+  landscapeRow: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  leftPanel: {
+    flex: 1,
+  },
+  verticalDivider: {
+    width: 1,
+    backgroundColor: '#E5E7EB',
+  },
+  rightPanel: {
+    flex: 2,
+  },
+  logSectionLandscape: {
+    flex: 1,
+    paddingHorizontal: 12,
+    paddingTop: 6,
+    paddingBottom: 8,
+  },
+  logScrollLandscape: {
+    flex: 1,
+    backgroundColor: '#1E2A33',
+    borderRadius: 8,
+  },
+  // Shared
   divider: {
     height: 1,
     backgroundColor: '#E5E7EB',
@@ -279,6 +397,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: '#374151',
+    padding: 10,
   },
   canvas: {
     flex: 1,
@@ -289,9 +408,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     padding: 32,
-  },
-  emptyIcon: {
-    fontSize: 28,
   },
   emptyText: {
     fontSize: 14,

@@ -55,8 +55,20 @@ export class NativeDisplayBridge {
         );
       }
     }
+  }
 
-    // Pull any units already sitting in the CT cache
+  /**
+   * Fetch any display units already cached by the CleverTap SDK and deliver
+   * them to all registered listeners.
+   *
+   * Call this once at startup, right after bind() - same as the native apps:
+   *   iOS:     bridge.bind(ct); bridge.fetchNativeDisplays(ct)
+   *   Android: bridge.bind(ct); bridge.fetchNativeDisplays(ct)
+   */
+  fetchNativeDisplays(cleverTap: unknown): void {
+    const ct = cleverTap as Record<string, unknown>;
+    if (!ct || typeof ct !== 'object') return;
+
     if (typeof ct['getAllDisplayUnits'] === 'function') {
       (ct['getAllDisplayUnits'] as (cb: (err: unknown, res: unknown) => void) => void)(
         (err, res) => {
@@ -67,6 +79,8 @@ export class NativeDisplayBridge {
           }
         },
       );
+    } else {
+      console.warn('[NativeDisplayBridge] fetchNativeDisplays: getAllDisplayUnits not available on CleverTap instance.');
     }
   }
 
