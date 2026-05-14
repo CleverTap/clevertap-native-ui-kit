@@ -43,7 +43,7 @@ import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListen
  * @param context Android context for starting intents, opening URLs, etc.
  * @param listener Client's callback interface for handling actions
  */
-class ActionHandler(
+internal class ActionHandler(
     private val context: Context,
     private val listener: NativeDisplayActionListener?,
     private val componentListener: NativeDisplayComponentListener? = null,

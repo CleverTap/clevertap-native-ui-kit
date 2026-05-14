@@ -122,7 +122,7 @@ fun NativeDisplayView(
  * Recursively render a display node (container or element).
  */
 @Composable
-fun RenderNode(
+internal fun RenderNode(
     node: NativeDisplayNode,
     resolvedStyles: PersistentMap<String, Style>,
     evaluator: VariableEvaluator,

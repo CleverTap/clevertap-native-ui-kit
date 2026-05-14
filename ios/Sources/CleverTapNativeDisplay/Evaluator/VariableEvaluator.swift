@@ -11,15 +11,15 @@ import Foundation
 /// - Ternary expressions: {{isPremium ? 'Premium' : 'Free'}}
 ///
 /// Phase 2+ will add reactive state management.
-public class VariableEvaluator {
-    
+class VariableEvaluator {
+
     private let variables: [String: AnyCodable]
     private static let templatePattern = try! NSRegularExpression(
         pattern: "\\{\\{([^}]+)\\}\\}",
         options: []
     )
-    
-    public init(variables: [String: AnyCodable]) {
+
+    init(variables: [String: AnyCodable]) {
         self.variables = variables
     }
     
@@ -28,7 +28,7 @@ public class VariableEvaluator {
     /// Examples:
     /// - "Hello {{userName}}" → "Hello John"
     /// - "{{itemCount}} items" → "5 items"
-    public func evaluateString(_ template: String) -> String {
+    func evaluateString(_ template: String) -> String {
         var result = template
         let range = NSRange(template.startIndex..., in: template)
         
@@ -54,7 +54,7 @@ public class VariableEvaluator {
     /// Examples:
     /// - "{{itemCount > 0}}" → true/false
     /// - "{{isPremium}}" → true/false
-    public func evaluateBoolean(_ expression: String) -> Bool {
+    func evaluateBoolean(_ expression: String) -> Bool {
         let cleaned = expression
             .trimmingCharacters(in: .whitespaces)
             .replacingOccurrences(of: "{{", with: "")

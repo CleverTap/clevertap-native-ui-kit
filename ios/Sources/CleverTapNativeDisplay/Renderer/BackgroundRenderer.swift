@@ -4,14 +4,14 @@
 import SwiftUI
 
 /// View that renders a background based on the Background configuration.
-public struct BackgroundView: View {
+struct BackgroundView: View {
     let background: Background
-    
-    public init(background: Background) {
+
+    init(background: Background) {
         self.background = background
     }
-    
-    public var body: some View {
+
+    var body: some View {
         switch background {
         case .solid(let bg):
             SolidBackgroundView(background: bg)

@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow as ComposeTextOverflow
 /**
  * Parse hex color string to Compose Color.
  */
-fun parseColor(colorString: String?): Color? {
+internal fun parseColor(colorString: String?): Color? {
     if (colorString == null) return null
 
     return try {

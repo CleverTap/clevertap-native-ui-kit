@@ -131,23 +131,19 @@ class NativeDisplayBridgeOffMainParseTest {
     // ---------------------------------------------------------------------
 
     /**
-     * Swap `bridge.parser` for a recording wrapper that captures the thread
-     * each `tryParse` call runs on. The default parser is replaced via
-     * reflection — required because the field is private and not injectable
-     * by design (internal threading is not a public concern).
+     * Install a thread-recording hook on the bridge's parser. Captures the
+     * thread each `tryParse` call runs on via the parser's `threadObserver`
+     * test seam. The bridge's parser is private, so reflection is required —
+     * but we no longer need to swap the parser instance, only set its
+     * observer property (the parser itself is `final internal` and not
+     * subclassable).
      */
     private fun installRecordingParser(): ConcurrentLinkedQueue<Thread> {
         val recorded = ConcurrentLinkedQueue<Thread>()
-        val real = NativeDisplayConfigParser()
-        val recording = object : NativeDisplayConfigParser() {
-            override fun tryParse(jsonString: String): NativeDisplayUnit? {
-                recorded.add(Thread.currentThread())
-                return real.tryParse(jsonString)
-            }
-        }
         val parserField = NativeDisplayBridge::class.java.getDeclaredField("parser")
         parserField.isAccessible = true
-        parserField.set(bridge, recording)
+        val parser = parserField.get(bridge) as NativeDisplayConfigParser
+        parser.threadObserver = { recorded.add(it) }
         return recorded
     }
 

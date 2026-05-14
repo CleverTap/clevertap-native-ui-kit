@@ -1,6 +1,7 @@
 package com.clevertap.android.nativedisplay.bridge
 
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import com.clevertap.android.nativedisplay.models.NativeDisplayConfig
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
 import com.clevertap.android.nativedisplay.models.Style
@@ -24,7 +25,7 @@ import kotlinx.serialization.json.jsonPrimitive
  *
  * Returns `null` if the JSON is not a Native Display unit or if parsing fails.
  */
-internal open class NativeDisplayConfigParser {
+internal class NativeDisplayConfigParser {
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -32,12 +33,23 @@ internal open class NativeDisplayConfigParser {
     }
 
     /**
+     * Test-only seam. When non-null, invoked at the start of every [tryParse]
+     * call with the executing thread. Production callers must not set this —
+     * exposed solely so unit tests (e.g. NativeDisplayBridgeOffMainParseTest)
+     * can verify parsing happens off the caller's thread without needing to
+     * subclass this class.
+     */
+    @VisibleForTesting
+    internal var threadObserver: ((Thread) -> Unit)? = null
+
+    /**
      * Attempt to parse a raw JSON string into a [NativeDisplayUnit].
      *
      * @param jsonString Raw JSON string from a display unit payload
      * @return A parsed [NativeDisplayUnit], or null if not an ND unit or parse fails
      */
-    open fun tryParse(jsonString: String): NativeDisplayUnit? {
+    fun tryParse(jsonString: String): NativeDisplayUnit? {
+        threadObserver?.invoke(Thread.currentThread())
         return try {
             val jsonObj = json.parseToJsonElement(jsonString).jsonObject
             val unitId = extractUnitId(jsonObj) ?: return null
