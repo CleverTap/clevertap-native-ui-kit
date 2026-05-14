@@ -22,49 +22,49 @@ interface BoxContainerProps {
 }
 
 /**
- * Converts a layout Dimension to an absolute pixel value.
- * Returns undefined for wrap_content (let content size itself).
+ * Convert a layout Dimension to an absolute pixel value.
+ * Returns undefined for wrap_content so the content can size itself.
  */
 function dimensionToPx(dim: Dimension | undefined, parentPx: number): number | undefined {
   if (!dim) return undefined;
   if (dim.special === 'wrap_content') return undefined;
   if (dim.special === 'match_parent') return parentPx;
   if (dim.unit === 'percent') return (parentPx * dim.value) / 100;
-  // dp / sp / px — treat as raw density-independent points
+  // dp / sp / px - use the value as raw density-independent points
   return dim.value;
 }
 
 /**
- * Resolves the BOX container's pixel dimensions synchronously, mirroring
- * Android's NativeDisplayRenderer.resolveRootHeightPx() priority order:
+ * Compute the BOX container's pixel dimensions synchronously, following the
+ * same priority order as Android's NativeDisplayRenderer.resolveRootHeightPx():
  *
- *  1. Fixed dp/sp/px height → direct value
- *  2. aspectRatio + known width → width / aspectRatio   ← wins over percent
- *  3. Percent height + bounded parent → parentHeight × value / 100
+ *  1. Fixed dp/sp/px height - use the value directly
+ *  2. aspectRatio + known width - width / aspectRatio (wins over percent)
+ *  3. Percent height + bounded parent - parentHeight x value / 100
  *  4. Parent height
- *  5. Width fallback (square)
+ *  5. Width as fallback (produces a square)
  *
- * This avoids the onLayout trap: when height:"60%" lives inside an
- * unconstrained ScrollView, Yoga resolves it as 0 before aspectRatio can
- * override it, so onLayout reports height=0 and every child lands at y=0.
- * Computing in JS against the known root dimensions bypasses Yoga entirely.
+ * This avoids a Yoga trap: when height is "60%" inside an unconstrained
+ * ScrollView, Yoga resolves it to 0 before aspectRatio can override it, so
+ * onLayout reports height=0 and every child lands at y=0. Computing in JS
+ * against the known root dimensions sidesteps Yoga entirely.
  */
 function resolveBoxDimensionsPx(
   layout: Layout,
   rootWidth: number,
   rootHeight: number,
 ): { width: number; height: number } {
-  // Width: fixed → percent of root → root width
+  // Width: fixed value, then percent of root, then root width
   const width = dimensionToPx(layout.width, rootWidth) ?? rootWidth;
 
   const h = layout.height;
 
-  // Priority 1: explicit fixed height (dp / sp / px, no special)
+  // Priority 1: explicit fixed height (dp / sp / px, no special value)
   if (h && h.special == null && h.unit !== 'percent') {
     return { width, height: h.value };
   }
 
-  // Priority 2: aspectRatio overrides percent height (matches Android line 348-353)
+  // Priority 2: aspectRatio overrides percent height (matches Android renderer line 348-353)
   if (layout.aspectRatio != null && layout.aspectRatio > 0) {
     return { width, height: width / layout.aspectRatio };
   }
@@ -74,16 +74,16 @@ function resolveBoxDimensionsPx(
     return { width, height: (rootHeight * h.value) / 100 };
   }
 
-  // Priority 4: root height
+  // Priority 4: fall back to the root height
   if (rootHeight > 0) {
     return { width, height: rootHeight };
   }
 
-  // Priority 5: square fallback
+  // Priority 5: fall back to a square
   return { width, height: width };
 }
 
-export function BoxContainer({
+export const BoxContainer = React.memo(function BoxContainer({
   node,
   resolvedStyle,
   resolvedStyles,
@@ -97,10 +97,10 @@ export function BoxContainer({
   const nodeStyle = resolveNodeStyle(resolvedStyle, rootHeight);
 
   // Compute BOX pixel dimensions synchronously using Android's priority order.
-  // We suppress the `height` style when aspectRatio is set alongside a percent
-  // height — the aspectRatio prop handles the visual size correctly, and keeping
+  // We remove the `height` style when aspectRatio is set alongside a percent
+  // height - the aspectRatio prop handles the visual size correctly, and keeping
   // `height: "60%"` would make Yoga resolve it as 0 in an unconstrained
-  // ScrollView axis, fighting the aspectRatio.
+  // ScrollView axis, which fights the aspectRatio.
   const boxStyle: ViewStyle = { ...layoutStyle, ...nodeStyle, position: 'relative' };
   if (
     layout.aspectRatio != null &&
@@ -118,7 +118,7 @@ export function BoxContainer({
         const childLayout = child.layout ?? {};
         const offset = childLayout.offset;
 
-        // Child position (top-left corner within the BOX)
+        // Position of the child's top-left corner within the BOX
         let top = 0;
         let left = 0;
         if (offset) {
@@ -126,13 +126,13 @@ export function BoxContainer({
             top = (boxSize.height * offset.y) / 100;
             left = (boxSize.width * offset.x) / 100;
           } else {
-            // dp / sp / px — raw values
+            // dp / sp / px - use the raw values
             top = offset.y;
             left = offset.x;
           }
         }
 
-        // Child dimensions in px (undefined = wrap content along that axis)
+        // Child size in pixels (undefined means wrap content along that axis)
         const widthPx = dimensionToPx(childLayout.width, boxSize.width);
         const heightPx = dimensionToPx(childLayout.height, boxSize.height);
 
@@ -140,23 +140,22 @@ export function BoxContainer({
         if (widthPx !== undefined) wrapperStyle.width = widthPx;
         if (heightPx !== undefined) wrapperStyle.height = heightPx;
 
-        // Override child's own width/height to the resolved PIXEL dimensions
+        // Override the child's own width/height with the resolved pixel values
         // (dp), not "100%". The wrapper already carries the same pixel size,
-        // so this is not a double-application: every wrapper down the chain
-        // ends up with the same definite pixel size.
+        // so this is not a double-application: every wrapper in the chain ends
+        // up with the same definite pixel size.
         //
-        // Why not "100%": iOS RN's text measurement does not reliably chain
-        // a width constraint through (wrapper:pixel → BackgroundRenderer-view:
-        // no-explicit-width-just-stretch → element-wrapper:width-100%) into
-        // RCTText's measure function. The text gets measured at intrinsic
-        // (unbounded) width and renders single-line, then the outer wrapper's
-        // overflow:'hidden' (auto-injected by borderRadius) hard-clips it.
-        // Substituting explicit dp values keeps every link in the chain
-        // "definite" so Yoga passes a real maxWidth into RCTText.
+        // Why not "100%": iOS RN's text measurement does not reliably chain a
+        // width constraint through (wrapper:pixel -> BackgroundRenderer view with
+        // no explicit width -> element wrapper: width-100%) into RCTText's
+        // measure function. The text gets measured at intrinsic (unbounded) width
+        // and renders on a single line, then the outer wrapper's overflow:'hidden'
+        // (auto-injected by borderRadius) hard-clips it. Using explicit dp values
+        // keeps every step in the chain definite, so Yoga passes a real maxWidth
+        // to RCTText.
         //
-        // Clear offset — the wrapper's top/left already places the child;
-        // leaving offset set would cause RenderNode to double-apply it as a
-        // transform.
+        // Clear offset here - the wrapper's top/left already places the child.
+        // Leaving offset set would cause RenderNode to apply it again as a transform.
         const overriddenLayout = {
           ...childLayout,
           offset: undefined,
@@ -181,4 +180,4 @@ export function BoxContainer({
       })}
     </View>
   );
-}
+});

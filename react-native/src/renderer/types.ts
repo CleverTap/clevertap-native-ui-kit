@@ -6,5 +6,4 @@ export interface RenderNodeProps {
   node: NativeDisplayNode;
   resolvedStyles: ResolvedStyles;
   actionHandler: ActionHandler;
-  variables?: Record<string, unknown>;
 }

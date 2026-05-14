@@ -56,7 +56,7 @@ export class NativeDisplayBridge {
       }
     }
 
-    // Pull any units already in CT cache
+    // Pull any units already sitting in the CT cache
     if (typeof ct['getAllDisplayUnits'] === 'function') {
       (ct['getAllDisplayUnits'] as (cb: (err: unknown, res: unknown) => void) => void)(
         (err, res) => {
@@ -149,18 +149,18 @@ export class NativeDisplayBridge {
   }
 
   private _resolveDisplayUnitsLoadedEvent(ct: Record<string, unknown>): string | null {
-    // The constant is exported as CleverTapDisplayUnitsLoaded
+    // Use the event name constant if the CT instance exposes it
     if (typeof ct['CleverTapDisplayUnitsLoaded'] === 'string') {
       return ct['CleverTapDisplayUnitsLoaded'];
     }
-    // Fallback to the known constant value
+    // Fall back to the known string value
     return 'CleverTapDisplayUnitsLoaded';
   }
 
   private _handleCleverTapDisplayUnitsEvent(event: unknown): void {
     if (!event || typeof event !== 'object') return;
     const e = event as Record<string, unknown>;
-    // CT RN SDK fires the event with { displayUnits: [...] } or the array directly
+    // The CT RN SDK sends the event as { displayUnits: [...] } or as a plain array
     const units = Array.isArray(e) ? e : (e['displayUnits'] as unknown[] | undefined);
     if (!Array.isArray(units)) return;
     const jsonStrings = this._extractJsonStrings(units);

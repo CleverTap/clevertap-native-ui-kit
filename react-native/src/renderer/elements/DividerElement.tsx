@@ -12,7 +12,7 @@ interface DividerElementProps {
   containerDirection?: 'row' | 'column';
 }
 
-export function DividerElement({ node, resolvedStyle, containerDirection }: DividerElementProps): React.ReactElement {
+export const DividerElement = React.memo(function DividerElement({ node, resolvedStyle, containerDirection }: DividerElementProps): React.ReactElement {
   const { height: rootHeight } = useRootSize();
   const layout = node.layout ?? {};
   const layoutStyle = resolveLayoutStyle(layout, rootHeight);
@@ -30,4 +30,4 @@ export function DividerElement({ node, resolvedStyle, containerDirection }: Divi
     : { height: '100%' as const, width: thickness, backgroundColor: color };
 
   return <View style={[layoutStyle, dividerStyle]} />;
-}
+});

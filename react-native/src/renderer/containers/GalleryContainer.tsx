@@ -19,9 +19,7 @@ interface GalleryContainerProps {
   RenderNode: React.ComponentType<RenderNodeProps>;
 }
 
-// ---------------------------------------------------------------------------
 // Indicator dots
-// ---------------------------------------------------------------------------
 
 interface IndicatorProps {
   count: number;
@@ -75,9 +73,7 @@ function Indicator({
   );
 }
 
-// ---------------------------------------------------------------------------
 // Arrow navigation buttons
-// ---------------------------------------------------------------------------
 
 interface ArrowButtonProps {
   direction: 'prev' | 'next';
@@ -92,7 +88,7 @@ function ArrowButton({ direction, isVertical, arrowStyle: cfg, onPress }: ArrowB
   const size = cfg?.size ?? 20;
   const pad = cfg?.padding ?? 8;
 
-  // Symbol: horizontal gallery uses ‹ › , vertical uses ∧ ∨
+  // Pick arrow symbol: horizontal uses ‹ ›, vertical uses ∧ ∨
   let symbol: string;
   if (isVertical) {
     symbol = direction === 'prev' ? '∧' : '∨';
@@ -100,7 +96,7 @@ function ArrowButton({ direction, isVertical, arrowStyle: cfg, onPress }: ArrowB
     symbol = direction === 'prev' ? '‹' : '›';
   }
 
-  // Position: prev = left/top, next = right/bottom
+  // Position: prev button is left/top, next button is right/bottom
   const positionStyle: ViewStyle = { position: 'absolute' };
   if (isVertical) {
     positionStyle[direction === 'prev' ? 'top' : 'bottom'] = 4;
@@ -134,11 +130,9 @@ function ArrowButton({ direction, isVertical, arrowStyle: cfg, onPress }: ArrowB
   );
 }
 
-// ---------------------------------------------------------------------------
 // GalleryContainer
-// ---------------------------------------------------------------------------
 
-export function GalleryContainer({
+export const GalleryContainer = React.memo(function GalleryContainer({
   node,
   resolvedStyle,
   resolvedStyles,
@@ -151,7 +145,7 @@ export function GalleryContainer({
   const nodeStyle = resolveNodeStyle(resolvedStyle, rootHeight);
   const galleryConfig = node.galleryConfig;
 
-  // --- Config values ---
+  // Config values
   const mode = galleryConfig?.mode ?? 'snapping';
   const orientation = galleryConfig?.orientation ?? 'horizontal';
   const isVertical = orientation === 'vertical';
@@ -169,18 +163,18 @@ export function GalleryContainer({
   const infiniteScroll = galleryConfig?.infiniteScroll ?? false;
   const initialPage = galleryConfig?.initialPage ?? 0;
 
-  // --- State ---
+  // State
   const [activeIndex, setActiveIndex] = useState(initialPage);
   const activeIndexRef = useRef(initialPage);
   const flatListRef = useRef<FlatList>(null);
 
-  // --- Container dimensions ---
+  // Container dimensions
   const containerWidth =
     typeof layoutStyle.width === 'number' ? layoutStyle.width : rootWidth;
   const containerHeight =
     typeof layoutStyle.height === 'number' ? layoutStyle.height : rootHeight;
 
-  // --- Item size ---
+  // Item size
   const peekBefore = peek?.before ?? 0;
   const peekAfter = peek?.after ?? 0;
 
@@ -188,10 +182,10 @@ export function GalleryContainer({
   let itemHeight: number | undefined;
 
   if (isVertical) {
-    // Vertical gallery: item fills the cross-axis (full width).
-    // itemsPerView controls how many items are visible along scroll axis.
+    // Vertical gallery: each item fills the full width (cross-axis).
+    // itemsPerView controls how many items are visible along the scroll axis.
     if (mode === 'free_flow_grid' && columns > 1) {
-      // Multi-column vertical grid: items sized to fit `columns` per row
+      // Multi-column vertical grid: size items to fit `columns` per row
       itemWidth = (containerWidth - spacing * (columns - 1)) / columns;
     } else {
       itemWidth = containerWidth;
@@ -201,13 +195,13 @@ export function GalleryContainer({
     } else if (mode === 'free_flow_grid') {
       itemHeight = (containerHeight - spacing * (itemsPerView - 1)) / itemsPerView;
     }
-    // free_flow vertical: items render at their own height
+    // free_flow vertical: items render at their own natural height
   } else {
     // Horizontal gallery
     if (mode === 'free_flow_grid') {
       if (columns > 1) {
         // Multi-row horizontal grid: group items into rows of `columns` each.
-        // Item width is based on itemsPerView (columns per screen).
+        // Item width is derived from itemsPerView (visible columns per screen).
         itemWidth = (containerWidth - spacing * (itemsPerView - 1)) / itemsPerView;
       } else {
         itemWidth = (containerWidth - spacing * (itemsPerView - 1)) / itemsPerView;
@@ -215,12 +209,12 @@ export function GalleryContainer({
     } else if (mode === 'snapping') {
       itemWidth = containerWidth - peekBefore - peekAfter;
     } else {
-      // free_flow: items render at their own width
+      // free_flow: items render at their own natural width
       itemWidth = containerWidth;
     }
   }
 
-  // --- Scroll helpers ---
+  // Scroll helpers
   const scrollToIndex = useCallback((index: number, animated: boolean) => {
     flatListRef.current?.scrollToIndex({ index, animated });
   }, []);
@@ -253,7 +247,7 @@ export function GalleryContainer({
     }
   }, [infiniteScroll, node.children.length, scrollToIndex]);
 
-  // --- Auto-scroll ---
+  // Auto-scroll
   useEffect(() => {
     if (!autoScrollInterval || autoScrollInterval <= 0 || node.children.length <= 1) return;
 
@@ -265,7 +259,7 @@ export function GalleryContainer({
 
       if (next >= count) {
         if (infiniteScroll) {
-          // Jump instantly to start so the user sees a seamless loop
+          // Jump back to the start instantly so the loop appears seamless
           next = 0;
           animated = false;
         } else {
@@ -281,7 +275,7 @@ export function GalleryContainer({
     return () => clearInterval(timer);
   }, [autoScrollInterval, infiniteScroll, node.children.length, scrollToIndex]);
 
-  // --- FlatList callbacks ---
+  // FlatList callbacks
   const keyExtractor = useCallback((item: typeof node.children[0]) => item.id, []);
 
   const onViewableItemsChanged = useCallback(
@@ -295,7 +289,7 @@ export function GalleryContainer({
     [],
   );
 
-  // --- Item renderer ---
+  // Item renderer
   const renderItem = useCallback(
     ({ item }: { item: typeof node.children[0] }) => {
       const wrapStyle: ViewStyle = {};
@@ -319,7 +313,7 @@ export function GalleryContainer({
     [isVertical, mode, itemWidth, itemHeight, resolvedStyles, actionHandler, RenderNode],
   );
 
-  // --- Separator ---
+  // Separator between items
   const ItemSeparator = useCallback(
     () =>
       spacing > 0 ? (
@@ -328,7 +322,7 @@ export function GalleryContainer({
     [spacing, isVertical],
   );
 
-  // --- Paging / snap ---
+  // Paging and snap settings
   const pagingEnabled = mode === 'snapping' && !peek;
   const snapToInterval =
     mode === 'snapping' && peek
@@ -338,7 +332,7 @@ export function GalleryContainer({
   const contentPaddingStart = peekBefore > 0 ? peekBefore : undefined;
   const contentPaddingEnd = peekAfter > 0 ? peekAfter : undefined;
 
-  // getItemLayout needs itemSize to be known (not free_flow)
+  // getItemLayout requires a known item size - not available in free_flow mode
   const knownItemSize = isVertical ? itemHeight : itemWidth;
   const getItemLayout =
     mode !== 'free_flow' && knownItemSize !== undefined
@@ -352,8 +346,8 @@ export function GalleryContainer({
   return (
     <View style={[layoutStyle, nodeStyle, { position: 'relative' }]}>
       <FlatList
-        // FlatList forbids changing numColumns after mount — key on the values
-        // that affect it so a config change forces a fresh unmount/remount.
+        // FlatList does not allow numColumns to change after mount. Key on the
+        // values that affect it so any config change forces a remount.
         key={`${mode}-${orientation}-${columns}`}
         ref={flatListRef}
         data={node.children}
@@ -380,7 +374,7 @@ export function GalleryContainer({
         viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
         initialScrollIndex={initialPage > 0 ? initialPage : undefined}
         getItemLayout={getItemLayout}
-        // Multi-column grid (vertical scroll only — FlatList numColumns requires vertical)
+        // Multi-column grid (vertical scroll only - FlatList numColumns requires vertical orientation)
         numColumns={!isVertical || mode !== 'free_flow_grid' ? undefined : columns > 1 ? columns : undefined}
       />
 
@@ -415,4 +409,4 @@ export function GalleryContainer({
       )}
     </View>
   );
-}
+});

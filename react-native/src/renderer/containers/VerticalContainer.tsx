@@ -18,7 +18,7 @@ interface VerticalContainerProps {
   RenderNode: React.ComponentType<RenderNodeProps>;
 }
 
-export function VerticalContainer({
+export const VerticalContainer = React.memo(function VerticalContainer({
   node,
   resolvedStyle,
   resolvedStyles,
@@ -77,4 +77,4 @@ export function VerticalContainer({
       {childElements}
     </View>
   );
-}
+});

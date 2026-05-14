@@ -43,7 +43,7 @@ export class NativeDisplayConfigParser {
     }
   }
 
-  // Strategy 1: top-level native_display_config key
+  // Strategy 1: top-level `native_display_config` key
   private _tryParseNativeDisplayConfig(
     jsonObj: Record<string, unknown>,
   ): ResolvedConfig | null {
@@ -58,7 +58,7 @@ export class NativeDisplayConfigParser {
     }
   }
 
-  // Strategy 2: custom_kv.nd_config JSON string
+  // Strategy 2: `custom_kv.nd_config` JSON string
   private _tryParseFromCustomKv(
     jsonObj: Record<string, unknown>,
   ): ResolvedConfig | null {
@@ -76,7 +76,7 @@ export class NativeDisplayConfigParser {
     }
   }
 
-  // Strategy 3: treat entire object as NativeDisplayConfig if it has a root key
+  // Strategy 3: treat the entire object as a NativeDisplayConfig if it has a `root` key
   private _tryParseAsRootConfig(
     jsonObj: Record<string, unknown>,
   ): ResolvedConfig | null {

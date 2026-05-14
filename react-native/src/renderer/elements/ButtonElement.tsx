@@ -10,7 +10,7 @@ import { resolveLayoutStyle, resolveNodeStyle } from '../layoutModifier';
 import { splitNodeStyle } from '../styleSplit';
 import { resolveTextDim } from '../../utils/dimension';
 
-// Two taps within this window are treated as a double-tap.
+// Two taps within this window count as a double-tap.
 // Matches Android's default ViewConfiguration.DOUBLE_TAP_TIMEOUT (300 ms).
 const DOUBLE_TAP_WINDOW_MS = 300;
 
@@ -20,7 +20,7 @@ interface ButtonElementProps {
   actionHandler: ActionHandler;
 }
 
-export function ButtonElement({ node, resolvedStyle, actionHandler }: ButtonElementProps): React.ReactElement {
+export const ButtonElement = React.memo(function ButtonElement({ node, resolvedStyle, actionHandler }: ButtonElementProps): React.ReactElement {
   const { height: rootHeight } = useRootSize();
   const fontCtx = useFontContext();
   const layout = node.layout ?? {};
@@ -35,7 +35,7 @@ export function ButtonElement({ node, resolvedStyle, actionHandler }: ButtonElem
     nodeStyle.fontFamily = fontFamily;
   }
 
-  // Always emit explicit lineHeight
+  // Always set an explicit lineHeight
   if (nodeStyle.lineHeight == null && resolvedStyle.fontSize) {
     const fs = resolveTextDim(resolvedStyle.fontSize, rootHeight) ?? 14;
     nodeStyle.lineHeight = fs * 1.3;
@@ -43,10 +43,10 @@ export function ButtonElement({ node, resolvedStyle, actionHandler }: ButtonElem
 
   // Split nodeStyle: view-level props (backgroundColor, borderRadius*,
   // borderWidth, borderColor, overflow, opacity, shadow*, elevation) go on
-  // <Pressable>; text-level props (color, font*, letterSpacing, textAlign,
-  // textShadow*, etc) go on the inner <Text>. Otherwise borderColor/
-  // borderWidth paint a stroke around the label's intrinsic glyph box
-  // instead of around the button's layout footprint.
+  // the Pressable; text-level props (color, font*, letterSpacing, textAlign,
+  // textShadow*, etc) go on the inner Text. Without this split, borderColor/
+  // borderWidth paint a stroke around the label's glyph box instead of
+  // around the button's full layout footprint.
   const { viewStyle, textStyle } = splitNodeStyle(nodeStyle as Record<string, unknown>);
 
   const handlePress = useCallback(() => {
@@ -54,18 +54,18 @@ export function ButtonElement({ node, resolvedStyle, actionHandler }: ButtonElem
     const gap = now - lastTapAt.current;
     lastTapAt.current = now;
 
-    // Always fire unit-clicked system event - matches Android which fires
-    // "Notification Clicked" on every button press regardless of action.
+    // Always fire the unit-clicked event - matches Android which fires
+    // "Notification Clicked" on every button press regardless of action type.
     actionHandler.fireClickedEvent(node.id);
 
-    // Double-tap: second tap within the window fires onDoubleTap action.
-    // Single-tap always fires onClick action (same-tap semantics as Android
-    // combinedClickable which fires both click and doubleClick independently).
+    // Double-tap: if the second tap lands within the window, fire onDoubleTap.
+    // A single tap always fires onClick (matches Android combinedClickable
+    // which fires both click and doubleClick independently on the same tap).
     if (gap > 0 && gap < DOUBLE_TAP_WINDOW_MS) {
       const doubleTapAction = node.actions?.onDoubleTap;
       if (doubleTapAction) {
         actionHandler.handle(doubleTapAction, node.id, 'doubleTap');
-        return; // skip onClick on the tap that completes a double-tap
+        return; // skip onClick for the tap that completes the double-tap
       }
     }
 
@@ -98,4 +98,4 @@ export function ButtonElement({ node, resolvedStyle, actionHandler }: ButtonElem
       <Text style={textStyle}>{label}</Text>
     </Pressable>
   );
-}
+});

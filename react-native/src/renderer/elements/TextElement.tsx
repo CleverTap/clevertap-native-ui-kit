@@ -25,34 +25,34 @@ interface TextElementProps {
 }
 
 /**
- * TextElement always renders as <View><Text/></View>.
+ * TextElement always renders as `<View><Text/></View>`.
  *
  * Why the wrapper is unconditional:
- *  - `resolveNodeStyle` injects `overflow: 'hidden'` whenever `borderRadius` is
- *    set (to clip children of a View to rounded corners). If that style lands
- *    on a <Text>, iOS clips the rendered glyphs to the box and DISABLES soft-
- *    wrap, producing single-line hard-clipping like "Some UI body wi".
+ *  - `resolveNodeStyle` injects `overflow: 'hidden'` whenever `borderRadius`
+ *    is set, to clip View children to rounded corners. If that style lands on a
+ *    `<Text>`, iOS clips the glyphs and disables soft-wrap, producing
+ *    single-line hard-clipping like "Some UI body wi".
  *  - View-only properties (borderRadius, borderWidth, borderColor, shadow*,
- *    backgroundColor) painted directly on a <Text> hug the glyph box, not the
- *    element's layout footprint.
+ *    backgroundColor) painted directly on a `<Text>` hug the glyph box, not
+ *    the element's layout footprint.
  *
- * Architecture mirrors the iOS SwiftUI renderer:
- *   wrapper View == LayoutModifier + view-level style
- *   inner Text   == text-level style (color, font, letterSpacing, textShadow,
- *                                     textAlign, lineHeight)
+ * Structure mirrors the iOS SwiftUI renderer:
+ *   wrapper View = layout modifier + view-level style
+ *   inner Text   = text-level style (color, font, letterSpacing, textShadow,
+ *                  textAlign, lineHeight)
  *
- * `splitNodeStyle` is the single source of truth for which keys go where.
+ * `splitNodeStyle` decides which keys go where.
  * `ButtonElement` uses the same helper.
  *
- * Why we do NOT auto-inject a default `lineHeight`:
+ * Why we do not auto-inject a default `lineHeight`:
  *   On iOS Fabric, setting an explicit `lineHeight` on an `<RCTText>` whose
- *   parent has a constrained width forces the measurement pass into single-
- *   line mode at intrinsic width. The wrapper then hard-clips the overflowing
- *   glyphs ("Some UI body wi"). Letting iOS pick its own lineHeight (~1.176 ×
- *   fontSize) avoids the bug. JSON authors who need cross-platform line-height
- *   parity must set `lineHeight` explicitly in the unit JSON.
+ *   parent has a constrained width forces the measurement pass into single-line
+ *   mode at intrinsic width. The wrapper then hard-clips the glyphs. Letting
+ *   iOS pick its own lineHeight (about 1.176 x fontSize) avoids the bug. JSON
+ *   authors who need cross-platform line-height parity must set `lineHeight`
+ *   explicitly in the unit JSON.
  */
-export function TextElement({ node, resolvedStyle }: TextElementProps): React.ReactElement {
+export const TextElement = React.memo(function TextElement({ node, resolvedStyle }: TextElementProps): React.ReactElement {
   const { height: rootHeight } = useRootSize();
   const fontCtx = useFontContext();
   const layout = node.layout ?? {};
@@ -68,36 +68,34 @@ export function TextElement({ node, resolvedStyle }: TextElementProps): React.Re
   }
 
   // RN Text `numberOfLines`:
-  //   - `undefined` is supposed to mean "unlimited", but on iOS Fabric the
-  //     prop defaults to `1` when not explicitly set, producing single-line
-  //     hard-clipped output ("Some UI body wi") for any text whose natural
-  //     width exceeds its parent View's width.
-  //   - `0` is the documented sentinel for "unlimited lines with wrapping".
+  //   - `undefined` should mean "unlimited", but on iOS Fabric the prop
+  //     defaults to `1` when not explicitly set. Any text wider than its
+  //     parent View is hard-clipped to one line ("Some UI body wi").
+  //   - `0` is the documented sentinel for unlimited lines with wrapping.
   // Always pass `0` when the JSON omits `maxLines`.
   const maxLines: number = resolvedStyle.maxLines ?? 0;
   const overflow = resolvedStyle.overflow;
-  // RN ellipsizeMode: 'tail' for ellipsis, 'clip' for hard clip, undefined for default.
+  // Map to RN ellipsizeMode: 'tail' for ellipsis, 'clip' for hard clip, undefined for default.
   // Matches Android TextOverflow.Ellipsis / Clip / Visible.
   const ellipsizeMode: 'tail' | 'clip' | undefined =
     overflow === 'ellipsis' ? 'tail' : overflow === 'clip' ? 'clip' : undefined;
 
-  // Split: view-level (borderRadius, backgroundColor, borderWidth, borderColor,
-  // overflow, opacity, shadow*, elevation) -> wrapper View.
-  // text-level (color, font*, letterSpacing, textAlign, textDecoration*) -> inner Text.
+  // Split into view-level keys (borderRadius, backgroundColor, borderWidth,
+  // borderColor, overflow, opacity, shadow*, elevation) for the wrapper View,
+  // and text-level keys (color, font*, letterSpacing, textAlign, textDecoration*)
+  // for the inner Text.
   const { viewStyle, textStyle } = splitNodeStyle(nodeStyle as Record<string, unknown>);
 
-  // resolveNodeStyle auto-injects `overflow: 'hidden'` whenever borderRadius is
-  // set, so View children get clipped to rounded corners. For a Text-only
-  // wrapper there is nothing to clip - the glyphs paint themselves and the
-  // rounded corner geometry is carried by the border outline, not by clipping.
+  // `resolveNodeStyle` injects `overflow: 'hidden'` when borderRadius is set,
+  // so View children get clipped to rounded corners. For a Text-only wrapper
+  // there is nothing to clip - the rounded corner is just a border outline.
   //
-  // Worse: on iOS, `overflow:'hidden'` on the direct parent of an RCTText can
-  // disrupt the text measurement pass. Strip it here so RCTText receives the
-  // wrapper's width as a definite max-width during measurement and wraps
-  // correctly.
+  // On iOS, `overflow: 'hidden'` on the direct parent of an RCTText can break
+  // the measurement pass. Removing it lets RCTText receive the wrapper's width
+  // as a definite max-width, so text wraps correctly.
   delete (viewStyle as Record<string, unknown>).overflow;
 
-  // textShadow* are NATIVE Text properties on RN - keep them on the inner Text.
+  // textShadow* are native Text properties in RN - keep them on the inner Text.
   if (resolvedStyle.textShadow) {
     const ts = resolvedStyle.textShadow;
     textStyle.textShadowColor = parseColor(ts.color);
@@ -108,20 +106,20 @@ export function TextElement({ node, resolvedStyle }: TextElementProps): React.Re
   const isWrapContent = isWrapContentLayout(layout);
 
   // wrap_content text needs flexShrink:1 on the wrapper so a long string next
-  // to a fixed-dp sibling (image with explicit width) shrinks rather than
-  // pushing the sibling off-screen. Same intent as iOS's lack of
-  // .frame(maxWidth:.infinity) on the wrap-content branch.
+  // to a fixed-dp sibling (such as an image with an explicit width) shrinks
+  // rather than pushing the sibling off-screen. This matches the intent of
+  // iOS not setting .frame(maxWidth:.infinity) on the wrap-content branch.
   const wrapperStyle: ViewStyle = isWrapContent
     ? { ...layoutStyle, ...viewStyle, flexShrink: 1 }
     : { ...layoutStyle, ...viewStyle };
 
-  // Gradient (MaskedView) path. The mask receives the styled Text; MaskedView
-  // owns layout + view-level style so corners / borders / clipping apply to
-  // the gradient's box, not to the glyphs.
+  // Gradient path using MaskedView. The mask holds the styled Text; MaskedView
+  // owns layout and view-level styles so corners, borders, and clipping apply
+  // to the gradient box, not to the glyphs.
   const gradient = resolvedStyle.textGradient;
-  // Guard: colors may be null/undefined if the server sends a malformed
+  // Guard: `colors` may be null/undefined if the server sends a malformed
   // textGradient object. Fall through to flat text rendering instead of
-  // throwing, so the error boundary is not triggered by this specific case.
+  // throwing, so the error boundary is not triggered by this one case.
   if (gradient && Array.isArray(gradient.colors) && gradient.colors.length >= 2) {
     const MaskedView = getMaskedView();
     const LinearGradient = getLinearGradient();
@@ -157,7 +155,7 @@ export function TextElement({ node, resolvedStyle }: TextElementProps): React.Re
         </MaskedView>
       );
     }
-    // Fallback: use first color as flat text
+    // Fall back to the first color as flat text
     const missing = [
       !MaskedView && '@react-native-masked-view/masked-view',
       !LinearGradient && 'react-native-linear-gradient',
@@ -177,4 +175,4 @@ export function TextElement({ node, resolvedStyle }: TextElementProps): React.Re
       </Text>
     </View>
   );
-}
+});

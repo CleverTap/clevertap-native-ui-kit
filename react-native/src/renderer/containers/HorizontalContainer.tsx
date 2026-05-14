@@ -18,7 +18,7 @@ interface HorizontalContainerProps {
   RenderNode: React.ComponentType<RenderNodeProps>;
 }
 
-export function HorizontalContainer({
+export const HorizontalContainer = React.memo(function HorizontalContainer({
   node,
   resolvedStyle,
   resolvedStyles,
@@ -77,4 +77,4 @@ export function HorizontalContainer({
       {childElements}
     </View>
   );
-}
+});

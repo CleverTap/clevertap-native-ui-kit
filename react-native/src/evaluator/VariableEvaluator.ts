@@ -16,7 +16,7 @@ export class VariableEvaluator {
     if (trimmed === 'true') return true;
     if (trimmed === 'false') return false;
 
-    // Single template variable: {{varName}}
+    // Single template variable of the form {{varName}}
     const singleVarMatch = /^\{\{([^}]+)\}\}$/.exec(trimmed);
     if (singleVarMatch) {
       const value = this._getVariable(singleVarMatch[1]!.trim());
@@ -26,7 +26,7 @@ export class VariableEvaluator {
       return Boolean(value);
     }
 
-    // Multi-operator checks: >= and <= must come before > and <
+    // Check >= and <= before > and < to avoid partial matches
     if (trimmed.includes('>=')) return this._evaluateBinaryExpr(trimmed, '>=');
     if (trimmed.includes('<=')) return this._evaluateBinaryExpr(trimmed, '<=');
     if (trimmed.includes('>')) return this._evaluateBinaryExpr(trimmed, '>');
@@ -41,17 +41,17 @@ export class VariableEvaluator {
   }
 
   private _evaluateExpression(expression: string): unknown {
-    // Ternary: condition ? trueValue : falseValue
+    // Ternary expression: condition ? trueValue : falseValue
     const ternaryMatch = /^(.+?)\?(.+?):(.+)$/.exec(expression);
     if (ternaryMatch) {
       const condition = ternaryMatch[1]!.trim();
       const trueVal = ternaryMatch[2]!.trim().replace(/^['"]|['"]$/g, '');
       const falseVal = ternaryMatch[3]!.trim().replace(/^['"]|['"]$/g, '');
-      // Evaluate condition directly (not re-wrapped in {{}})
+      // Evaluate the condition as-is, not wrapped in {{}}
       return this.evaluateBoolean(condition) ? trueVal : falseVal;
     }
 
-    // Inside {{...}} context: treat expression as a variable path; missing → ''
+    // Inside {{...}}: treat the expression as a variable path; return '' if missing
     return this._getVariable(expression) ?? '';
   }
 
@@ -77,35 +77,35 @@ export class VariableEvaluator {
       }
     }
 
-    // Equality: coerce both sides to string
+    // Equality check: convert both sides to string before comparing
     const leftStr = String(leftVal ?? '');
     const rightStr = String(rightVal ?? '');
     return operator === '==' ? leftStr === rightStr : leftStr !== rightStr;
   }
 
   private _resolveOperand(raw: string): unknown {
-    // Template variable: {{varName}}
+    // Template variable of the form {{varName}}
     const templateMatch = /^\{\{([^}]+)\}\}$/.exec(raw);
     if (templateMatch) {
       return this._getVariable(templateMatch[1]!.trim()) ?? '';
     }
-    // Quoted string (single or double quotes)
+    // Quoted string literal (single or double quotes)
     if (
       (raw.startsWith('"') && raw.endsWith('"')) ||
       (raw.startsWith("'") && raw.endsWith("'"))
     ) {
       return raw.slice(1, -1);
     }
-    // Number
+    // Numeric literal
     const num = parseFloat(raw);
     if (!isNaN(num) && String(num) === raw) return num;
     // Boolean literal
     if (raw === 'true') return true;
     if (raw === 'false') return false;
-    // Bare variable name (no template syntax)
+    // Bare variable name without template syntax
     const varValue = this._getVariable(raw);
     if (varValue !== undefined) return varValue;
-    // Unquoted string literal
+    // Treat anything else as an unquoted string
     return raw;
   }
 

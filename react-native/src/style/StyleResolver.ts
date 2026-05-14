@@ -19,7 +19,7 @@ export class StyleResolver {
   }
 
   resolve(node: NativeDisplayNode): Style {
-    // Priority: inline > styleClass > theme.defaultStyle
+    // Resolution order: inline style > style class > theme default
     let resolved: Style = { ...this.theme.defaultStyle };
 
     if (node.styleClass) {

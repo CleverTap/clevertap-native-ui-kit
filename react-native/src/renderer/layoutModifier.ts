@@ -55,7 +55,7 @@ export function resolveOffsetStyle(offset: Offset): {
   if (offset.unit === 'percent') {
     return { top: `${offset.y}%`, left: `${offset.x}%` };
   }
-  // dp / sp / px - use raw number (RN treats unitless as dp)
+  // dp / sp / px - use the raw number (RN treats unitless values as dp)
   return { top: offset.y, left: offset.x };
 }
 
@@ -67,13 +67,13 @@ export function resolveLayoutStyle(layout: Layout, rootHeightPx: number): ViewSt
     style.flex = 1;
   } else if (width !== undefined) {
     style.width = width as number | `${number}%`;
-    // Explicit dp/px/percent width means this element must hold its stated size.
-    // flexShrink: 0 prevents a sibling with wrap_content from pushing it off-screen
+    // An explicit dp/px/percent width means this element must hold its stated size.
+    // flexShrink: 0 stops a wrap_content sibling from pushing it off-screen
     // in a horizontal flex row.
     style.flexShrink = 0;
   }
   // wrap_content (width === undefined) leaves flexShrink at RN's default of 1,
-  // so the element can yield space to fixed-size siblings when the row is tight.
+  // so the element can shrink to give space to fixed-size siblings in a tight row.
 
   const height = resolveDimension(layout.height);
   if (height === MATCH_PARENT_MARKER) {
@@ -110,7 +110,7 @@ export function resolveNodeStyle(resolved: Partial<Style>, rootHeightPx: number)
 
   if (resolved.borderRadius) {
     style.borderRadius = resolveBorderRadius(resolved.borderRadius, rootHeightPx);
-    // overflow hidden needed to clip children to borderRadius
+    // overflow: hidden clips children to the borderRadius
     style.overflow = 'hidden';
   }
 
@@ -157,7 +157,7 @@ export function resolveNodeStyle(resolved: Partial<Style>, rootHeightPx: number)
 
   if (resolved.lineHeight) {
     const lh = resolveTextDim(resolved.lineHeight, rootHeightPx);
-    // lineHeight in RN is absolute - never multiply by fontSize
+    // lineHeight in RN is an absolute value - do not multiply by fontSize
     if (lh != null) style.lineHeight = lh;
   }
 

@@ -10,6 +10,7 @@ import { NativeDisplayBridge } from '../bridge/NativeDisplayBridge';
 import { ActionHandler } from '../handler/ActionHandler';
 import { RootSizeProvider } from '../context/RootSizeContext';
 import { FontProvider } from '../context/FontContext';
+import { VariablesProvider } from '../context/VariablesContext';
 import { RenderNode } from './RenderNode';
 import { RenderErrorBoundary } from './RenderErrorBoundary';
 import { hasPercentDimensions } from '../utils/dimension';
@@ -43,7 +44,7 @@ export function NativeDisplayView(props: NativeDisplayViewProps): React.ReactEle
     style,
   } = props;
 
-  // Hooks must be called unconditionally
+  // Hooks must always be called, regardless of props
   const [measuredSize, setMeasuredSize] = useState<{ width: number; height: number } | null>(null);
   const viewedRef = useRef(false);
 
@@ -105,23 +106,24 @@ export function NativeDisplayView(props: NativeDisplayViewProps): React.ReactEle
     setMeasuredSize({ width, height });
   };
 
-  // RenderErrorBoundary prevents a bad JSON config from crashing the host app.
+  // RenderErrorBoundary stops a bad JSON config from crashing the host app.
   // See RenderErrorBoundary.tsx for the full explanation.
   //
-  // key={unitId} resets the boundary whenever the active unit changes. A React
-  // error boundary stays in hasError:true until it is unmounted; without this
-  // key, navigating from a broken unit to a healthy one would still show the
-  // empty fallback because the same boundary instance is reused.
+  // key={unitId} resets the boundary whenever the active unit changes. An error
+  // boundary stays in hasError=true until it unmounts. Without this key,
+  // switching from a broken unit to a healthy one would still show the fallback
+  // because the same boundary instance is reused.
   const inner = (
     <RenderErrorBoundary key={unitId || 'default'}>
       <RootSizeProvider size={rootSize}>
         <FontProvider fontResolver={fontResolver}>
-          <RenderNode
-            node={root}
-            resolvedStyles={resolvedStyles}
-            actionHandler={actionHandler}
-            variables={variables}
-          />
+          <VariablesProvider variables={variables}>
+            <RenderNode
+              node={root}
+              resolvedStyles={resolvedStyles}
+              actionHandler={actionHandler}
+            />
+          </VariablesProvider>
         </FontProvider>
       </RootSizeProvider>
     </RenderErrorBoundary>

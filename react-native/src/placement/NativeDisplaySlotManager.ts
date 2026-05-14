@@ -30,7 +30,7 @@ class NativeDisplaySlotManager implements NativeDisplayBridgeListener {
     this._slots.get(slotId)!.add(observer);
     console.log(`[NativeDisplaySlotManager] Registered observer for slot: ${slotId}`);
 
-    // Immediate delivery if unit already cached
+    // If a unit is already cached for this slot, deliver it immediately
     const cached = this._unitIndex.get(slotId);
     if (cached) {
       console.log(`[NativeDisplaySlotManager] Delivering cached unit ${cached.unitId} to new observer for slot: ${slotId}`);
@@ -85,7 +85,7 @@ class NativeDisplaySlotManager implements NativeDisplayBridgeListener {
     );
   }
 
-  // NativeDisplayBridgeListener
+  // NativeDisplayBridgeListener implementation
   onNativeDisplaysLoaded(units: NativeDisplayUnit[]): void {
     for (const unit of units) {
       if (!unit.slotId) continue;

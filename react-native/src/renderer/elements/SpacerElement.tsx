@@ -10,7 +10,7 @@ interface SpacerElementProps {
   resolvedStyle: Partial<Style>;
 }
 
-export function SpacerElement({ node, resolvedStyle }: SpacerElementProps): React.ReactElement {
+export const SpacerElement = React.memo(function SpacerElement({ node, resolvedStyle }: SpacerElementProps): React.ReactElement {
   const { height: rootHeight } = useRootSize();
   const layout = node.layout ?? {};
   const layoutStyle = resolveLayoutStyle(layout, rootHeight);
@@ -22,10 +22,10 @@ export function SpacerElement({ node, resolvedStyle }: SpacerElementProps): Reac
     || (heightRaw !== undefined && heightRaw !== MATCH_PARENT_MARKER);
   const isFlex = widthRaw === MATCH_PARENT_MARKER || heightRaw === MATCH_PARENT_MARKER;
 
-  // Default to flex:1 when no explicit size given (spacer fills remaining space)
+  // Default to flex:1 when no explicit size is given so the spacer fills remaining space
   const style = hasExplicitSize
     ? layoutStyle
     : { ...layoutStyle, flex: 1 };
 
   return <View style={style} />;
-}
+});

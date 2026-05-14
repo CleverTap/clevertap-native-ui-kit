@@ -106,7 +106,7 @@ function SvgGradientBg({
     );
   }
 
-  // sweep_gradient - approximate with linear as SVG sweep is complex
+  // sweep_gradient - approximate with a linear gradient since SVG sweep gradients are complex
   const bg = background as import('../models/Background').SweepGradientBackground;
   const stops = bg.stops ?? bg.colors.map((_, i) => i / Math.max(bg.colors.length - 1, 1));
   return (
@@ -162,7 +162,7 @@ function AnimatedGradientBg({
     ? reanimated.default.createAnimatedComponent(LinearGradient)
     : LinearGradient;
 
-  // Rotate through color stops by cycling index offset - simplified implementation
+  // Cycle through color stops - simplified implementation
   const progress = useSharedValue(0);
   useEffect(() => {
     progress.value = withRepeat(
@@ -404,7 +404,7 @@ function ParticlesBg({
     );
   }
 
-  // Simplified: just render a static set of dots as a fallback to full particle system
+  // Simplified: render a static set of dots as a stand-in for a full particle system
   const count = Math.min(background.particle_count ?? 20, 50);
   const size = background.particle_size ?? 4;
   const opacity = background.opacity ?? 0.7;

@@ -1,9 +1,9 @@
 import { Linking } from 'react-native';
 import type { Action, CompositeAction } from '../models/Action';
 
-// Mirrors the isValidUrlScheme check in Android ActionHandler.kt and iOS ActionHandler.swift.
-// Only http/https/tel/mailto are considered safe to open. Everything else (including schemeless
-// URLs like "www.google.com" or markdown strings like "[text](url)") is dropped with a warning.
+// Matches the URL scheme check in Android ActionHandler.kt and iOS ActionHandler.swift.
+// Only http, https, tel, and mailto are safe to open. Everything else (including
+// schemeless URLs like "www.google.com" or strings like "[text](url)") is dropped with a warning.
 function isValidUrlScheme(url: string): boolean {
   const scheme = url.split(':')[0]?.toLowerCase();
   return ['http', 'https', 'tel', 'mailto'].includes(scheme ?? '');
@@ -21,9 +21,9 @@ export class ActionHandler {
   ) {}
 
   /**
-   * Fire the unit-clicked system event without dispatching any action.
-   * Call this on every button press so analytics always track the click,
-   * matching Android which fires "Notification Clicked" unconditionally.
+   * Fire the unit-clicked event without dispatching any action.
+   * Call this on every button press so analytics always records the click.
+   * Matches Android behavior, which fires "Notification Clicked" on every press.
    */
   fireClickedEvent(nodeId: string): void {
     this.bridge?.pushClickedEvent(this.unitId);
@@ -33,7 +33,7 @@ export class ActionHandler {
 
   /**
    * Fire a lifecycle action (onAppear / onDisappear).
-   * Bypasses the componentListener — lifecycle events are not user interactions.
+   * Skips the componentListener because lifecycle events are not user interactions.
    * Matches Android's LaunchedEffect / DisposableEffect pattern.
    */
   handleLifecycle(action: Action, nodeId: string, trigger: 'appear' | 'disappear'): void {
@@ -55,9 +55,9 @@ export class ActionHandler {
       }
     }
 
-    // Note: pushClickedEvent is intentionally NOT called here.
+    // pushClickedEvent is intentionally not called here.
     // ButtonElement calls fireClickedEvent() on every press before handle(),
-    // ensuring the system event fires exactly once even when no action is defined.
+    // so the system event fires exactly once even when no action is defined.
 
     this._dispatch(action, nodeId, interactionType);
   }

@@ -10,7 +10,7 @@ interface VideoElementProps {
   resolvedStyle: Partial<Style>;
 }
 
-export function VideoElement({ node, resolvedStyle }: VideoElementProps): React.ReactElement | null {
+export const VideoElement = React.memo(function VideoElement({ node, resolvedStyle }: VideoElementProps): React.ReactElement | null {
   const { height: rootHeight } = useRootSize();
   const Video = getVideo();
 
@@ -42,4 +42,4 @@ export function VideoElement({ node, resolvedStyle }: VideoElementProps): React.
       resizeMode="contain"
     />
   );
-}
+});

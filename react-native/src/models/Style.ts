@@ -28,7 +28,7 @@ export interface TextGradient {
 }
 
 export interface Style {
-  // Text properties (cascade to children)
+  // Text properties - these cascade down to children
   textColor?: string;
   fontSize?: TextDimension;
   fontFamily?: string;
@@ -43,22 +43,22 @@ export interface Style {
   textShadow?: TextShadow;
   textGradient?: TextGradient;
 
-  // Visual properties (do NOT cascade)
+  // Visual properties - these do not cascade
   background?: Background;
   backgroundColor?: string;
 
-  // Border properties (do NOT cascade)
+  // Border properties - these do not cascade
   borderRadius?: Dimension;
   borderWidth?: number;
   borderColor?: string;
 
-  // Shadow properties (do NOT cascade)
+  // Shadow properties - these do not cascade
   shadowColor?: string;
   shadowRadius?: number;
   shadowOffsetX?: number;
   shadowOffsetY?: number;
 
-  // Universal (cascades)
+  // Universal - cascades to children
   opacity?: number;
 }
 

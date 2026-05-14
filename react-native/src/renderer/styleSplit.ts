@@ -1,20 +1,19 @@
 import type { TextStyle, ViewStyle } from 'react-native';
 
 /**
- * View-level RN style keys.
+ * Style keys that belong on a View (or Pressable), not on a Text.
  *
- * When these appear in the resolved `nodeStyle`, they MUST be applied to the
- * wrapping `<View>` / `<Pressable>` (the "box"), not to an inner `<Text>`.
+ * When these appear in the resolved `nodeStyle`, they must go on the wrapping
+ * `<View>` / `<Pressable>`, not on an inner `<Text>`.
  *
- * Background: `resolveNodeStyle` auto-injects `overflow: 'hidden'` whenever a
- * node has `borderRadius`, so that View children get clipped to rounded corners.
- * If that style lands on a `<Text>`, iOS clips the rendered glyphs and disables
- * soft-wrap, producing single-line hard-clipping ("Some UI body wi").
+ * Why: `resolveNodeStyle` injects `overflow: 'hidden'` whenever a node has
+ * `borderRadius`, so children are clipped to rounded corners. If that style
+ * lands on a `<Text>`, iOS clips the glyphs and disables soft-wrap, producing
+ * single-line hard-clipping ("Some UI body wi").
  *
- * Similarly, `borderColor` / `borderWidth` / `backgroundColor` applied to a
- * `<Text>` paint a box around the text's intrinsic size, not around the
- * element's layout footprint - making the stroke hug the label instead of the
- * button.
+ * Similarly, `borderColor` / `borderWidth` / `backgroundColor` on a `<Text>`
+ * paint a box around the text's intrinsic size, not around the element's
+ * layout footprint - so the stroke hugs the label instead of the button.
  */
 export const VIEW_STYLE_KEYS: ReadonlyArray<string> = [
   'backgroundColor',
@@ -39,7 +38,7 @@ export const VIEW_STYLE_KEYS: ReadonlyArray<string> = [
 ];
 
 /**
- * Split a resolved node style object into a view-level subset (for the wrapper
+ * Split a resolved node style into a view-level subset (for the wrapper
  * View / Pressable) and a text-level subset (for the inner Text).
  *
  * Used by `TextElement` and `ButtonElement` to keep view-only styles (border,

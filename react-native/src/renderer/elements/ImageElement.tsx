@@ -31,7 +31,7 @@ function isGif(url: string, animated?: boolean | null): boolean {
   return url.toLowerCase().endsWith('.gif');
 }
 
-export function ImageElement({ node, resolvedStyle }: ImageElementProps): React.ReactElement | null {
+export const ImageElement = React.memo(function ImageElement({ node, resolvedStyle }: ImageElementProps): React.ReactElement | null {
   const { height: rootHeight } = useRootSize();
   const url = node.bindings?.url ?? '';
   if (!url) return null;
@@ -44,8 +44,8 @@ export function ImageElement({ node, resolvedStyle }: ImageElementProps): React.
   const resizeMode = fitToResizeMode(fit);
   const gif = isGif(url, imageConfig?.animated);
 
-  // Cast needed: resolveNodeStyle returns ViewStyle & TextStyle whose overflow includes 'scroll',
-  // but ImageStyle only allows 'visible' | 'hidden'. Images don't scroll, so the cast is safe.
+  // Cast needed: resolveNodeStyle returns ViewStyle & TextStyle where overflow includes 'scroll',
+  // but ImageStyle only allows 'visible' | 'hidden'. Images never scroll, so the cast is safe.
   const combinedStyle = { ...layoutStyle, ...nodeStyle } as unknown as ImageStyle;
 
   const ExpoImage = getExpoImage();
@@ -78,7 +78,7 @@ export function ImageElement({ node, resolvedStyle }: ImageElementProps): React.
     );
   }
 
-  // Falling back to RN built-in Image - neither expo-image nor react-native-fast-image is installed.
+  // Neither expo-image nor react-native-fast-image is available; fall back to the built-in Image.
   // GIFs will animate on iOS but show only a static frame on Android.
   if (gif) {
     console.warn('[ImageElement] GIF detected but neither expo-image nor react-native-fast-image is installed. Install one of these peer dependencies for GIF support on Android.');
@@ -91,4 +91,4 @@ export function ImageElement({ node, resolvedStyle }: ImageElementProps): React.
       resizeMode={resizeMode}
     />
   );
-}
+});
