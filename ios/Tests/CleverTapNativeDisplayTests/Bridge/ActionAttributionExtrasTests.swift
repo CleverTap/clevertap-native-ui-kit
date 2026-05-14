@@ -34,10 +34,10 @@ final class ActionAttributionExtrasTests: XCTestCase {
 
     // MARK: - CustomAction
 
-    func test_from_customAction_spreadsMetadataAndStringifiesNestedValue() {
+    func test_from_customAction_spreadsDictionaryValueEntriesVerbatim() {
         let action = Action.custom(
             .init(
-                key: "add_to_cart",
+                key: "kv",
                 value: AnyCodable(["sku": "SKU-123", "qty": 2] as [String: Any]),
                 metadata: ["campaign": "summer_sale", "tier": "gold"]
             )
@@ -45,12 +45,12 @@ final class ActionAttributionExtrasTests: XCTestCase {
         let extras = ActionAttributionExtras.from(action: action, nodeId: "btn2")
 
         XCTAssertEqual(extras[ActionAttributionExtras.keyActionType] as? String, "custom")
-        XCTAssertEqual(extras["action_key"] as? String, "add_to_cart")
-        // Nested value lands as a JSON string so the dashboard captures the full payload.
-        let serialized = extras["action_value"] as? String
-        XCTAssertNotNil(serialized)
-        XCTAssertTrue(serialized!.contains("\"sku\""), "value should serialize as JSON: \(serialized ?? "nil")")
-        // metadata spreads verbatim
+        XCTAssertEqual(extras["action_key"] as? String, "kv")
+        // Value entries land as first-class extras (no stringified action_value blob).
+        XCTAssertNil(extras["action_value"], "action_value should not be set when value is a dictionary")
+        XCTAssertEqual(extras["sku"] as? String, "SKU-123")
+        XCTAssertEqual(extras["qty"] as? Int, 2)
+        // metadata entries continue to spread verbatim alongside value entries
         XCTAssertEqual(extras["campaign"] as? String, "summer_sale")
         XCTAssertEqual(extras["tier"] as? String, "gold")
     }
@@ -59,6 +59,39 @@ final class ActionAttributionExtrasTests: XCTestCase {
         let action = Action.custom(.init(key: "k", value: AnyCodable(42), metadata: nil))
         let extras = ActionAttributionExtras.from(action: action, nodeId: "btn3")
         XCTAssertEqual(extras["action_value"] as? Int, 42)
+    }
+
+    func test_from_customAction_metadataWinsOnKeyCollisionWithValueEntries() {
+        let action = Action.custom(
+            .init(
+                key: "kv",
+                value: AnyCodable(["user_id": "from-value", "only_in_value": "v"] as [String: Any]),
+                metadata: ["user_id": "from-meta", "only_in_meta": "m"]
+            )
+        )
+        let extras = ActionAttributionExtras.from(action: action, nodeId: "btn_collision")
+
+        // metadata is spread AFTER value entries -> last-write-wins on collision
+        XCTAssertEqual(extras["user_id"] as? String, "from-meta")
+        // non-colliding entries from both sides are preserved
+        XCTAssertEqual(extras["only_in_value"] as? String, "v")
+        XCTAssertEqual(extras["only_in_meta"] as? String, "m")
+    }
+
+    func test_from_customAction_emptyDictionaryValueEmitsNoSpreadEntries() {
+        let action = Action.custom(
+            .init(key: "kv", value: AnyCodable([String: Any]()), metadata: nil)
+        )
+        let extras = ActionAttributionExtras.from(action: action, nodeId: "btn_empty")
+
+        XCTAssertEqual(extras[ActionAttributionExtras.keyActionType] as? String, "custom")
+        XCTAssertEqual(extras["action_key"] as? String, "kv")
+        XCTAssertNil(extras["action_value"], "Empty dictionary value should not emit action_value")
+        // Exactly the reserved keys, nothing else.
+        XCTAssertEqual(
+            Set(extras.keys),
+            Set(["wzrk_btn_id", ActionAttributionExtras.keyActionType, "action_key"])
+        )
     }
 
     // MARK: - Navigate

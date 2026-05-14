@@ -18,18 +18,22 @@ import kotlinx.serialization.json.longOrNull
  * overloads.
  *
  * The output is intentionally flat and JSON-friendly — Core SDK's event pipeline expects
- * scalar values (`String` / `Number` / `Boolean`). Nested objects/arrays from `CustomAction.value`
- * are JSON-serialized into a single string so attribution dashboards receive a complete record
- * of what the button did rather than dropping structured payloads on the floor.
+ * scalar values (`String` / `Number` / `Boolean`). Per-action `metadata` / `params` /
+ * `properties` maps are spread verbatim so the client's own keys land on the event with
+ * their original names. A `CustomAction.value` that is a JSON object is treated the same
+ * way (entries spread); primitive values land under a single `action_value` key.
  *
  * Reserved keys produced by this helper:
  * - `wzrk_btn_id` — the node id of the clicked component (matches Core SDK push-notification
  *   convention for button identification).
  * - `wzrk_action_type` — one of `open_url` / `custom` / `navigate` / `event` / `composite`.
+ * - `action_key` — the [Action.CustomAction.key] discriminator (e.g. `"kv"` for the BE's
+ *   KV-bundle shape, `"close"` for the close-action shape).
  *
  * Action-specific keys are scoped with the `action_` prefix to avoid collisions with the
- * Core SDK's own `wzrk_*` enrichment. Per-action `metadata` / `params` / `properties` maps
- * are spread verbatim so the client's own keys land on the event with their original names.
+ * Core SDK's own `wzrk_*` enrichment. When entries from `CustomAction.value` (or any of
+ * `metadata` / `params` / `properties`) are spread, key collisions resolve last-write-wins
+ * under this order: reserved keys → value entries → metadata entries.
  */
 internal object ActionAttributionExtras {
 
@@ -53,7 +57,16 @@ internal object ActionAttributionExtras {
             is Action.CustomAction -> {
                 out[KEY_ACTION_TYPE] = "custom"
                 out["action_key"] = action.key
-                out["action_value"] = jsonElementToScalar(action.value)
+                val v = action.value
+                if (v is JsonObject) {
+                    // Spread the bundle entries so the dashboard can slice per KV name
+                    // (e.g. the BE's `{ "type": "custom", "key": "kv", "value": {...} }` shape).
+                    for ((entryKey, entryValue) in v) {
+                        out[entryKey] = jsonElementToScalar(entryValue)
+                    }
+                } else {
+                    out["action_value"] = jsonElementToScalar(v)
+                }
                 action.metadata?.forEach { (k, v) -> out[k] = v }
             }
             is Action.Navigate -> {

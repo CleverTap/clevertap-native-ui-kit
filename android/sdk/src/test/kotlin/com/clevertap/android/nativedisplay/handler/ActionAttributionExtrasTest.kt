@@ -46,9 +46,9 @@ class ActionAttributionExtrasTest {
     }
 
     @Test
-    fun `from custom_action stringifies nested value and spreads metadata`() {
+    fun `from custom_action spreads JsonObject value entries verbatim`() {
         val action = Action.CustomAction(
-            key = "add_to_cart",
+            key = "kv",
             value = buildJsonObject {
                 put("sku", "SKU-123")
                 put("qty", 2)
@@ -58,11 +58,58 @@ class ActionAttributionExtrasTest {
         val extras = ActionAttributionExtras.from(action, "btn2")
 
         assertEquals("custom", extras["wzrk_action_type"])
-        assertEquals("add_to_cart", extras["action_key"])
-        val serialized = extras["action_value"] as String
-        assertTrue("value should contain sku: $serialized", serialized.contains("sku"))
+        assertEquals("kv", extras["action_key"])
+        // Value entries land as first-class extras (no stringified action_value blob).
+        assertFalse(
+            "action_value should not be set when value is a JsonObject",
+            extras.containsKey("action_value")
+        )
+        assertEquals("SKU-123", extras["sku"])
+        assertEquals(2L, extras["qty"])
+        // metadata entries continue to spread verbatim alongside value entries
         assertEquals("summer", extras["campaign"])
         assertEquals("gold", extras["tier"])
+    }
+
+    @Test
+    fun `from custom_action metadata wins on key collision with value entries`() {
+        val action = Action.CustomAction(
+            key = "kv",
+            value = buildJsonObject {
+                put("user_id", "from-value")
+                put("only_in_value", "v")
+            },
+            metadata = mapOf("user_id" to "from-meta", "only_in_meta" to "m")
+        )
+        val extras = ActionAttributionExtras.from(action, "btn_collision")
+
+        // metadata is spread AFTER value entries → last-write-wins on collision
+        assertEquals("from-meta", extras["user_id"])
+        // non-colliding entries from both sides are preserved
+        assertEquals("v", extras["only_in_value"])
+        assertEquals("m", extras["only_in_meta"])
+    }
+
+    @Test
+    fun `from custom_action with empty JsonObject value emits no spread entries`() {
+        val action = Action.CustomAction(
+            key = "kv",
+            value = buildJsonObject { },
+            metadata = null
+        )
+        val extras = ActionAttributionExtras.from(action, "btn_empty")
+
+        assertEquals("custom", extras["wzrk_action_type"])
+        assertEquals("kv", extras["action_key"])
+        assertFalse(
+            "Empty JsonObject value should not emit action_value",
+            extras.containsKey("action_value")
+        )
+        // Exactly the reserved keys, nothing else.
+        assertEquals(
+            setOf("wzrk_btn_id", "wzrk_action_type", "action_key"),
+            extras.keys
+        )
     }
 
     @Test

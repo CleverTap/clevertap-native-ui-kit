@@ -8,18 +8,22 @@
 //  / `-[CleverTap recordDisplayUnitViewedEventForID:additionalProperties:]` selectors.
 //
 //  The output is intentionally flat and JSON-friendly — Core SDK's event pipeline expects
-//  scalar values (`String` / `NSNumber`). Nested objects/arrays from `CustomAction.value`
-//  are JSON-serialized into a string so attribution dashboards receive a complete record
-//  of what the button did rather than dropping structured payloads on the floor.
+//  scalar values (`String` / `NSNumber`). Per-action `metadata` / `params` / `properties`
+//  maps are spread verbatim so the client's own keys land on the event with their original
+//  names. A `CustomAction.value` that is a dictionary is treated the same way (entries
+//  spread); primitive values land under a single `action_value` key.
 //
 //  Reserved keys produced by this helper:
 //  - `wzrk_btn_id` — the node id of the clicked component (matches Core SDK push-notification
 //    convention for button identification).
 //  - `wzrk_action_type` — one of `open_url` / `custom` / `navigate` / `event` / `composite`.
+//  - `action_key` — the `CustomAction.key` discriminator (e.g. `"kv"` for the BE's KV-bundle
+//    shape, `"close"` for the close-action shape).
 //
 //  Action-specific keys are scoped with the `action_` prefix to avoid collisions with the
-//  Core SDK's own `wzrk_*` enrichment. Per-action `metadata` / `params` / `properties` maps
-//  are spread verbatim so the client's own keys land on the event with their original names.
+//  Core SDK's own `wzrk_*` enrichment. When entries from `CustomAction.value` (or any of
+//  `metadata` / `params` / `properties`) are spread, key collisions resolve last-write-wins
+//  under this order: reserved keys → value entries → metadata entries.
 //
 
 import Foundation
@@ -49,8 +53,16 @@ enum ActionAttributionExtras {
         case .custom(let a):
             out[keyActionType] = "custom"
             out["action_key"] = a.key
-            if let scalar = scalar(from: a.value) {
-                out["action_value"] = scalar
+            if let dict = a.value.value as? [String: Any] {
+                // Spread the bundle entries so the dashboard can slice per KV name
+                // (e.g. the BE's `{ "type": "custom", "key": "kv", "value": {...} }` shape).
+                for (entryKey, raw) in dict {
+                    if let s = scalar(fromAny: raw) {
+                        out[entryKey] = s
+                    }
+                }
+            } else if let s = scalar(from: a.value) {
+                out["action_value"] = s
             }
             if let metadata = a.metadata {
                 for (k, v) in metadata { out[k] = v }
@@ -80,8 +92,14 @@ enum ActionAttributionExtras {
     /// Scalars (string/number/bool) round-trip as their native type; objects/arrays are
     /// serialized to a compact JSON string so the payload remains analytics-friendly.
     private static func scalar(from anyCodable: AnyCodable) -> Any? {
-        let v = anyCodable.value
+        return scalar(fromAny: anyCodable.value)
+    }
+
+    /// Same coercion as `scalar(from:)` but starting from a raw `Any` — used when spreading
+    /// the already-unwrapped entries of an `AnyCodable`-wrapped dictionary.
+    private static func scalar(fromAny v: Any) -> Any? {
         if v is Void { return nil }
+        if v is NSNull { return nil }
         if let s = v as? String { return s }
         if let b = v as? Bool { return b }
         if let i = v as? Int { return i }
