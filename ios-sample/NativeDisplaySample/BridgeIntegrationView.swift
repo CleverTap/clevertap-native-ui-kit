@@ -203,7 +203,7 @@ struct BridgeIntegrationView: View {
                             }
 
                             // Rendered NativeDisplayView
-                            NativeDisplayView(config: unit.config)
+                            NativeDisplayView(unit: unit)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 380)
                                 .cornerRadius(12)

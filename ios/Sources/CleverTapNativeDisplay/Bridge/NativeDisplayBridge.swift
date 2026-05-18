@@ -337,7 +337,7 @@ public class NativeDisplayBridge {
     public func pushViewedEvent(unitId: String) -> Bool {
         guard let ct = cleverTapInstance else { return false }
         seedIfNeeded(unitId: unitId, instance: ct)
-        let sel = NSSelectorFromString("pushDisplayUnitViewedEventForID:")
+        let sel = NSSelectorFromString("recordDisplayUnitViewedEventForID:")
         guard ct.responds(to: sel) else { return false }
         ct.perform(sel, with: unitId)
         return true
@@ -354,7 +354,7 @@ public class NativeDisplayBridge {
     public func pushClickedEvent(unitId: String) -> Bool {
         guard let ct = cleverTapInstance else { return false }
         seedIfNeeded(unitId: unitId, instance: ct)
-        let sel = NSSelectorFromString("pushDisplayUnitClickedEventForID:")
+        let sel = NSSelectorFromString("recordDisplayUnitClickedEventForID:")
         guard ct.responds(to: sel) else { return false }
         ct.perform(sel, with: unitId)
         return true

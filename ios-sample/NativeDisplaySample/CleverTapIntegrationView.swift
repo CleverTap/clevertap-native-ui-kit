@@ -117,7 +117,7 @@ struct CleverTapIntegrationView: View {
                     VStack(spacing: 12) {
                         ForEach(viewModel.displayUnits, id: \.unitId) { unit in
                             NativeDisplayView(
-                                config: unit.config,
+                                unit: unit,
                                 actionListener: viewModel
                             )
                             .frame(maxWidth: .infinity)
@@ -261,6 +261,16 @@ class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBr
         
         // Forward system events to CleverTap
         cleverTapInstance?.recordEvent(eventName, withProps: properties ?? [:])
+    }
+
+    func onDisplayUnitViewed(unitId: String) {
+        log("VIEWED unitId: \(unitId)")
+        bridge.pushViewedEvent(unitId: unitId)
+    }
+
+    func onDisplayUnitClicked(unitId: String) {
+        log("CLICKED unitId: \(unitId)")
+        bridge.pushClickedEvent(unitId: unitId)
     }
 
     func onActionError(action: Action, error: Error) {
