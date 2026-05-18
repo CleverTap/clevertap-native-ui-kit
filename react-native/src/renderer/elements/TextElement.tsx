@@ -105,12 +105,22 @@ export const TextElement = React.memo(function TextElement({ node, resolvedStyle
 
   const isWrapContent = isWrapContentLayout(layout);
 
-  // wrap_content text needs flexShrink:1 on the wrapper so a long string next
-  // to a fixed-dp sibling (such as an image with an explicit width) shrinks
-  // rather than pushing the sibling off-screen. This matches the intent of
-  // iOS not setting .frame(maxWidth:.infinity) on the wrap-content branch.
+  // wrap_content text uses `flexShrink: 0` to match Android's
+  // `Modifier.wrapContentWidth()` semantics: each child takes its intrinsic width
+  // and is never compressed by its parent. RN's default of `flexShrink: 1` causes
+  // multiple wrap_content text siblings in a tight horizontal row (e.g. a strip
+  // of chips) to each get squeezed below their intrinsic width - the text then
+  // wraps to two lines, doubling chip height. The shortest chip stays one line
+  // because it can't shrink below its single-word width, producing the visible
+  // "one chip short, others tall" mismatch vs Android.
+  //
+  // Trade-off: if a long wrap_content string sits next to a fixed-dp sibling
+  // (e.g. text + explicit-width image) and the row is too tight, the sibling can
+  // be pushed off-screen. Android Compose Row behaves the same way - intrinsic
+  // children overflow rather than shrink. JSON authors who need clipping should
+  // set an explicit width or use `overflow: 'ellipsis'` with `maxLines: 1`.
   const wrapperStyle: ViewStyle = isWrapContent
-    ? { ...layoutStyle, ...viewStyle, flexShrink: 1 }
+    ? { ...layoutStyle, ...viewStyle, flexShrink: 0 }
     : { ...layoutStyle, ...viewStyle };
 
   // Gradient path using MaskedView. The mask holds the styled Text; MaskedView

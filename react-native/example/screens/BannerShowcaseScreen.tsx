@@ -593,7 +593,14 @@ const detail = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   bannerScroll: {
+    // 16dp padding mirrors the Android sample's
+    // `Modifier.fillMaxSize().padding(16.dp)` around `NativeDisplayView`.
+    // Without it the renderer resolves percentage widths against a wider
+    // parent than Android does, and the visual size of the unit no longer
+    // matches between platforms. flexGrow keeps the content area filling
+    // the ScrollView vertically when the unit is shorter than the viewport.
     padding: 16,
+    flexGrow: 1,
   },
   unitView: {
     width: '100%',

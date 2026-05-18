@@ -64,7 +64,10 @@ export function resolveLayoutStyle(layout: Layout, rootHeightPx: number): ViewSt
 
   const width = resolveDimension(layout.width);
   if (width === MATCH_PARENT_MARKER) {
-    style.flex = 1;
+    // match_parent width = fill available horizontal space.
+    // In RN, flex: 1 fills the main axis (height in a vertical container), NOT width.
+    // width: '100%' is the correct equivalent for horizontal fill.
+    style.width = '100%';
   } else if (width !== undefined) {
     style.width = width as number | `${number}%`;
     // An explicit dp/px/percent width means this element must hold its stated size.

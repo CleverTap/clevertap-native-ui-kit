@@ -46,15 +46,23 @@ function LinearGradientBg({
   const endX = 0.5 + Math.cos(angleRad) * 0.5;
   const endY = 0.5 + Math.sin(angleRad) * 0.5;
 
+  // Use a wrapper View so the outer View owns the size/position (from the `style` prop),
+  // and the LinearGradient fills it with explicit 100%x100% dimensions. Using
+  // absoluteFill (bottom/right: 0) on the gradient itself is unreliable when the
+  // parent has no normal-flow children and derives its height from aspectRatio.
+  // Explicit width/height percentages always resolve against the known parent size.
   return (
-    <LinearGradient
-      colors={parsedColors}
-      start={{ x: startX, y: startY }}
-      end={{ x: endX, y: endY }}
-      style={style}
-    >
+    <View style={style}>
+      <LinearGradient
+        colors={parsedColors}
+        start={{ x: startX, y: startY }}
+        end={{ x: endX, y: endY }}
+        style={{ position: 'absolute', width: '100%', height: '100%' }}
+      >
+        {null}
+      </LinearGradient>
       {children}
-    </LinearGradient>
+    </View>
   );
 }
 
@@ -178,15 +186,20 @@ function AnimatedGradientBg({
   const endX = 0.5 + Math.cos(angleRad) * 0.5;
   const endY = 0.5 + Math.sin(angleRad) * 0.5;
 
+  // Same wrapper-View pattern as LinearGradientBg: explicit 100%x100% fills the
+  // outer View reliably regardless of how the parent derived its dimensions.
   return (
-    <AnimatedLinearGradient
-      colors={parsedColors}
-      start={{ x: startX, y: startY }}
-      end={{ x: endX, y: endY }}
-      style={style}
-    >
+    <View style={style}>
+      <AnimatedLinearGradient
+        colors={parsedColors}
+        start={{ x: startX, y: startY }}
+        end={{ x: endX, y: endY }}
+        style={{ position: 'absolute', width: '100%', height: '100%' }}
+      >
+        {null}
+      </AnimatedLinearGradient>
       {children}
-    </AnimatedLinearGradient>
+    </View>
   );
 }
 

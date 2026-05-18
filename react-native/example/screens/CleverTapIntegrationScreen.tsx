@@ -115,7 +115,93 @@ export function CleverTapIntegrationScreen(): React.ReactElement {
     setEventName('');
   }
 
-  // ─── Landscape layout (33/67 split) ────────────────────────────────────────
+  // Header block: mirrors Android `FireEventHeader` (padding 16dp, spacedBy 12dp,
+  // input Row with spacedBy 8dp, then a HorizontalDivider + "Native Display Canvas"
+  // label in portrait only). Badges are tucked below the input row as a subtle
+  // status line so the parent layout still matches Android visually.
+  const headerBlock = (showCanvasLabel: boolean): React.ReactElement => (
+    <View style={styles.fireEventHeader}>
+      <View style={styles.inputRow}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter event name"
+          placeholderTextColor="#999"
+          value={eventName}
+          onChangeText={setEventName}
+          onSubmitEditing={sendEvent}
+          returnKeyType="send"
+        />
+        <View style={styles.sendBtn}>
+          <Button
+            title="Send Event"
+            onPress={sendEvent}
+            disabled={!eventName.trim() || !ctAvailable}
+          />
+        </View>
+      </View>
+      <View style={styles.statusRow}>
+        <StatusBadge label="CleverTap" ok={ctAvailable} />
+        <StatusBadge label="Bridge" ok={bridgeBound} />
+      </View>
+      {showCanvasLabel && (
+        <>
+          <View style={styles.divider} />
+          <Text style={styles.canvasLabel}>Native Display Canvas</Text>
+        </>
+      )}
+    </View>
+  );
+
+  // Event log block: mirrors Android `EventLogFooter` (HorizontalDivider inside
+  // the block, title row, then a dark Card with monospace log lines).
+  const eventLogBlock = (fillHeight: boolean): React.ReactElement => (
+    <View style={[styles.eventLogFooter, fillHeight && styles.eventLogFooterFill]}>
+      <View style={styles.divider} />
+      <View style={styles.logHeader}>
+        <Text style={styles.logTitle}>Event Log</Text>
+        {log.length > 0 && (
+          <Button title="Clear" onPress={() => setLog([])} />
+        )}
+      </View>
+      <ScrollView
+        style={[styles.logScroll, fillHeight && styles.logScrollFill]}
+        contentContainerStyle={styles.logContent}
+      >
+        {log.length === 0 ? (
+          <Text style={styles.logEmpty}>No events yet</Text>
+        ) : (
+          log.map((entry, i) => (
+            <Text key={i} style={[styles.logEntry, { color: logColor(entry) }]}>
+              {entry}
+            </Text>
+          ))
+        )}
+      </ScrollView>
+    </View>
+  );
+
+  const canvasBlock = (
+    <View style={styles.canvas}>
+      {units.length === 0 ? (
+        <View style={styles.emptyState}>
+          <Text style={styles.emptyText}>Waiting for Native Display response...</Text>
+        </View>
+      ) : (
+        <ScrollView contentContainerStyle={styles.canvasScroll}>
+          {units.map((unit) => (
+            <NativeDisplayView
+              key={unit.unitId}
+              unit={unit}
+              actionListener={actionListener}
+              style={styles.unitView}
+            />
+          ))}
+        </ScrollView>
+      )}
+    </View>
+  );
+
+  // ─── Landscape layout (33/67 split) - mirrors Android landscape branch ────
   if (isLandscape) {
     return (
       <SafeAreaView style={styles.root}>
@@ -123,172 +209,33 @@ export function CleverTapIntegrationScreen(): React.ReactElement {
           style={styles.landscapeRow}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-          {/* Left panel: event input + status badges + event log */}
+          {/* Left panel ~33%: event input + log (no canvas label in landscape,
+              matching Android's `showCanvasLabel = false`) */}
           <View style={styles.leftPanel}>
-            {/* Event input */}
-            <View style={styles.eventSection}>
-              <View style={styles.inputRow}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter event name"
-                  placeholderTextColor="#999"
-                  value={eventName}
-                  onChangeText={setEventName}
-                  onSubmitEditing={sendEvent}
-                  returnKeyType="send"
-                />
-                <View style={styles.sendBtn}>
-                  <Button
-                    title="Send Event"
-                    onPress={sendEvent}
-                    disabled={!eventName.trim() || !ctAvailable}
-                  />
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.divider} />
-
-            {/* Status badges */}
-            <View style={styles.statusRow}>
-              <StatusBadge label="CleverTap" ok={ctAvailable} />
-              <StatusBadge label="Bridge" ok={bridgeBound} />
-            </View>
-
-            <View style={styles.divider} />
-
-            {/* Event log */}
-            <View style={styles.logSectionLandscape}>
-              <View style={styles.logHeader}>
-                <Text style={styles.logTitle}>Event Log</Text>
-                {log.length > 0 && (
-                  <Button title="Clear" onPress={() => setLog([])} />
-                )}
-              </View>
-              <ScrollView style={styles.logScrollLandscape} contentContainerStyle={styles.logContent}>
-                {log.length === 0 ? (
-                  <Text style={styles.logEmpty}>No events yet</Text>
-                ) : (
-                  log.map((entry, i) => (
-                    <Text key={i} style={[styles.logEntry, { color: logColor(entry) }]}>
-                      {entry}
-                    </Text>
-                  ))
-                )}
-              </ScrollView>
-            </View>
+            {headerBlock(false)}
+            {eventLogBlock(true)}
           </View>
 
           <View style={styles.verticalDivider} />
 
-          {/* Right panel: canvas */}
-          <View style={styles.rightPanel}>
-            <Text style={styles.canvasLabel}>Native Display Canvas</Text>
-            <View style={styles.divider} />
-            {units.length === 0 ? (
-              <View style={styles.emptyState}>
-                <Text style={styles.emptyText}>Waiting for Native Display response...</Text>
-              </View>
-            ) : (
-              <ScrollView contentContainerStyle={styles.canvasScroll}>
-                {units.map((unit) => (
-                  <NativeDisplayView
-                    key={unit.unitId}
-                    unit={unit}
-                    actionListener={actionListener}
-                    style={styles.unitView}
-                  />
-                ))}
-              </ScrollView>
-            )}
-          </View>
+          {/* Right panel ~67%: canvas only - matches Android right column */}
+          <View style={styles.rightPanel}>{canvasBlock}</View>
         </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }
 
-  // ─── Portrait layout (vertical stack) ──────────────────────────────────────
+  // ─── Portrait layout (vertical stack) - mirrors Android portrait branch ───
+  // Column { FireEventHeader, CanvasContent(weight 1), EventLogFooter }
   return (
     <SafeAreaView style={styles.root}>
       <KeyboardAvoidingView
         style={styles.root}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        {/* Status row */}
-        <View style={styles.statusRow}>
-          <StatusBadge label="CleverTap" ok={ctAvailable} />
-          <StatusBadge label="Bridge" ok={bridgeBound} />
-        </View>
-
-        <View style={styles.divider} />
-
-        {/* Event input */}
-        <View style={styles.eventSection}>
-          <View style={styles.inputRow}>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter event name"
-              placeholderTextColor="#999"
-              value={eventName}
-              onChangeText={setEventName}
-              onSubmitEditing={sendEvent}
-              returnKeyType="send"
-            />
-            <View style={styles.sendBtn}>
-              <Button
-                title="Send Event"
-                onPress={sendEvent}
-                disabled={!eventName.trim() || !ctAvailable}
-              />
-            </View>
-          </View>
-          <Text style={styles.canvasLabel}>Native Display Canvas</Text>
-        </View>
-
-        <View style={styles.divider} />
-
-        {/* Display canvas */}
-        <View style={styles.canvas}>
-          {units.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>Waiting for Native Display response...</Text>
-            </View>
-          ) : (
-            <ScrollView contentContainerStyle={styles.canvasScroll}>
-              {units.map((unit) => (
-                <NativeDisplayView
-                  key={unit.unitId}
-                  unit={unit}
-                  actionListener={actionListener}
-                  style={styles.unitView}
-                />
-              ))}
-            </ScrollView>
-          )}
-        </View>
-
-        <View style={styles.divider} />
-
-        {/* Event log */}
-        <View style={styles.logSection}>
-          <View style={styles.logHeader}>
-            <Text style={styles.logTitle}>Event Log</Text>
-            {log.length > 0 && (
-              <Button title="Clear" onPress={() => setLog([])} />
-            )}
-          </View>
-          <ScrollView style={styles.logScroll} contentContainerStyle={styles.logContent}>
-            {log.length === 0 ? (
-              <Text style={styles.logEmpty}>No events yet</Text>
-            ) : (
-              log.map((entry, i) => (
-                <Text key={i} style={[styles.logEntry, { color: logColor(entry) }]}>
-                  {entry}
-                </Text>
-              ))
-            )}
-          </ScrollView>
-        </View>
+        {headerBlock(true)}
+        {canvasBlock}
+        {eventLogBlock(false)}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -334,46 +281,32 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F9FAFB',
   },
-  // Landscape
+
+  // ── Landscape split ─────────────────────────────────────────────────────
+  // Android: Row(fillMaxSize) { Column(weight 0.33) ... VerticalDivider ...
+  //          Column(weight 0.67) }
   landscapeRow: {
     flex: 1,
     flexDirection: 'row',
   },
   leftPanel: {
-    flex: 1,
+    flex: 1, // 33% (1 of 1+2)
+  },
+  rightPanel: {
+    flex: 2, // 67% (2 of 1+2)
   },
   verticalDivider: {
     width: 1,
     backgroundColor: '#E5E7EB',
   },
-  rightPanel: {
-    flex: 2,
+
+  // ── FireEventHeader ─────────────────────────────────────────────────────
+  // Android: Column(fillMaxWidth, padding(16.dp), spacedBy(12.dp))
+  fireEventHeader: {
+    padding: 16,
+    gap: 12,
   },
-  logSectionLandscape: {
-    flex: 1,
-    paddingHorizontal: 12,
-    paddingTop: 6,
-    paddingBottom: 8,
-  },
-  logScrollLandscape: {
-    flex: 1,
-    backgroundColor: '#1E2A33',
-    borderRadius: 8,
-  },
-  // Shared
-  divider: {
-    height: 1,
-    backgroundColor: '#E5E7EB',
-  },
-  statusRow: {
-    flexDirection: 'row',
-    gap: 8,
-    padding: 10,
-  },
-  eventSection: {
-    padding: 10,
-    gap: 8,
-  },
+  // Android: Row(fillMaxWidth, spacedBy(8.dp), verticalAlignment Center)
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -393,14 +326,38 @@ const styles = StyleSheet.create({
   sendBtn: {
     minWidth: 100,
   },
+  // RN-only: status badges tucked below the input row. Android's
+  // FireEventHeader doesn't render these because CleverTap availability is
+  // implicit on Android; here we keep them for parity with the existing RN
+  // UX but make them subtle so they don't dominate the comparison.
+  statusRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  // Android: Text("Native Display Canvas", titleSmall, FontWeight.SemiBold)
+  // titleSmall is ~14sp / SemiBold.
   canvasLabel: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     color: '#374151',
-    padding: 10,
   },
+
+  // ── CanvasContent (the parent of NativeDisplayView) ─────────────────────
+  // Matches Android exactly:
+  //   LazyColumn(modifier = fillMaxWidth().weight(1f).padding(horizontal=16.dp),
+  //              verticalArrangement = Arrangement.spacedBy(12.dp),
+  //              contentPadding = PaddingValues(vertical = 8.dp))
   canvas: {
     flex: 1,
+  },
+  canvasScroll: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    gap: 12,
+  },
+  // Android: NativeDisplayView(modifier = Modifier.fillMaxWidth())
+  unitView: {
+    width: '100%',
   },
   emptyState: {
     flex: 1,
@@ -414,47 +371,62 @@ const styles = StyleSheet.create({
     color: '#9CA3AF',
     textAlign: 'center',
   },
-  canvasScroll: {
-    padding: 12,
-    gap: 12,
-  },
-  unitView: {
-    width: '100%',
-  },
-  logSection: {
-    maxHeight: 180,
-    paddingHorizontal: 12,
-    paddingTop: 6,
+
+  // ── EventLogFooter ──────────────────────────────────────────────────────
+  // Android: Column(fillMaxWidth, padding(horizontal=16.dp).padding(bottom=8.dp),
+  //                 spacedBy(4.dp))
+  //   - HorizontalDivider at the top (inside the footer, NOT before it)
+  //   - Row(title + Clear button)
+  //   - Card(bg #263238, RoundedCornerShape(8), heightIn(min=80, max=160))
+  //     containing the LazyColumn(padding(10), spacedBy(2)) of log lines.
+  eventLogFooter: {
+    paddingHorizontal: 16,
     paddingBottom: 8,
+    gap: 4,
+  },
+  // In landscape Android's EventLogFooter is `Modifier.weight(1f)` inside the
+  // left column - the log Card uses `fillMaxHeight()` instead of the
+  // min/max heightIn. fillHeight: true flips to that behaviour.
+  eventLogFooterFill: {
+    flex: 1,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#E5E7EB',
   },
   logHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 4,
   },
   logTitle: {
-    fontSize: 13,
+    fontSize: 14, // titleSmall on Android
     fontWeight: '600',
     color: '#374151',
   },
   logScroll: {
-    backgroundColor: '#1E2A33',
+    backgroundColor: '#263238', // matches Android Card containerColor
     borderRadius: 8,
-    maxHeight: 140,
+    minHeight: 80,
+    maxHeight: 160,
+  },
+  logScrollFill: {
+    flex: 1,
+    minHeight: undefined,
+    maxHeight: undefined,
   },
   logContent: {
     padding: 10,
-    gap: 1,
+    gap: 2, // matches Android Arrangement.spacedBy(2.dp)
   },
   logEmpty: {
-    fontSize: 11,
-    color: '#6B7280',
+    fontSize: 12, // bodySmall on Android
+    color: '#607D8B', // matches Android empty state
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   logEntry: {
-    fontSize: 11,
+    fontSize: 12, // bodySmall on Android
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
-    lineHeight: 17,
+    lineHeight: 16, // matches Android lineHeight = 16.sp
   },
 });

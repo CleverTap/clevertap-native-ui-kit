@@ -11,6 +11,7 @@ import {
   resolveLayoutStyle,
   resolveNodeStyle,
 } from '../layoutModifier';
+import { BackgroundRenderer } from '../BackgroundRenderer';
 import { useRootSize } from '../../context/RootSizeContext';
 
 interface BoxContainerProps {
@@ -114,6 +115,22 @@ export const BoxContainer = React.memo(function BoxContainer({
 
   return (
     <View style={boxStyle}>
+      {resolvedStyle.background && (
+        <BackgroundRenderer
+          background={resolvedStyle.background}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            // Use the pre-computed pixel dimensions so Yoga never needs to resolve
+            // bottom/right constraints against an aspectRatio-derived parent height.
+            width: boxSize.width,
+            height: boxSize.height,
+          }}
+        >
+          {null}
+        </BackgroundRenderer>
+      )}
       {node.children.map((child) => {
         const childLayout = child.layout ?? {};
         const offset = childLayout.offset;

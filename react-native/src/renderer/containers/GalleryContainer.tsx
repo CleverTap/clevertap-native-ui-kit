@@ -10,6 +10,7 @@ import type { ArrowStyle } from '../../models/GalleryConfig';
 import { resolveLayoutStyle, resolveNodeStyle } from '../layoutModifier';
 import { parseColor } from '../../utils/color';
 import { useRootSize } from '../../context/RootSizeContext';
+import { BackgroundRenderer } from '../BackgroundRenderer';
 
 interface GalleryContainerProps {
   node: NativeDisplayContainer;
@@ -345,6 +346,18 @@ export const GalleryContainer = React.memo(function GalleryContainer({
 
   return (
     <View style={[layoutStyle, nodeStyle, { position: 'relative' }]}>
+      {resolvedStyle.background && (
+        <BackgroundRenderer
+          background={resolvedStyle.background}
+          // Explicit width/height: '100%' resolves reliably against the parent's
+          // measured size, including wrap_content containers. absoluteFillObject's
+          // right:0/bottom:0 inset anchoring fails for wrap_content parents on iOS,
+          // leaving the underlying LinearGradient at zero height.
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+        >
+          {null}
+        </BackgroundRenderer>
+      )}
       <FlatList
         // FlatList does not allow numColumns to change after mount. Key on the
         // values that affect it so any config change forces a remount.

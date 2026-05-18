@@ -133,8 +133,10 @@ function RenderNodeFn({ node, resolvedStyles, actionHandler }: RenderNodeProps):
     content = <EntranceAnimation animation={node.animation}>{content}</EntranceAnimation>;
   }
 
-  // Wrap in a background renderer if a background is set
-  if (resolvedStyle.background) {
+  // Wrap ELEMENT nodes in a background renderer.
+  // Containers handle their own background internally as an absoluteFill child,
+  // so their background is always clipped to the container's own bounds.
+  if (resolvedStyle.background && !isContainer(node)) {
     content = (
       <BackgroundRenderer background={resolvedStyle.background}>
         {content}

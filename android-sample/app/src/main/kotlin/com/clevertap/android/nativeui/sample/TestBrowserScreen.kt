@@ -44,9 +44,15 @@ import androidx.compose.ui.text.withStyle
 fun TestBrowserScreen() {
     val context = LocalContext.current
 
-    // List of all test configuration files (181 tests)
+    // List of all test configuration files. The first three entries are repro
+    // fixtures that live at the top of RN's `configRegistry.ts` (see
+    // react-native/example/testConfigs/configRegistry.ts) - mirrored here so the
+    // Browser tab opens the same fixture at the same index on both platforms.
     val testFiles = remember {
         listOf(
+            "test-178-error-boundary-smoke-test.json",
+            "test-177-button-stroke-text-clip-repro.json",
+            "image-fit-test.json",
             "test-001-vertical-simple.json",
             "test-002-horizontal-simple.json",
             "test-003-box-simple.json",
@@ -308,6 +314,9 @@ fun TestBrowserScreen() {
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState())
+                            // Cyan tint so any space around the NativeDisplayView
+                            // is obvious. Mirrors the RN contentScroll background.
+                            .background(Color(0xFF80DEEA))
                     ) {
                         NativeDisplayView(
                             config = currentConfig,
