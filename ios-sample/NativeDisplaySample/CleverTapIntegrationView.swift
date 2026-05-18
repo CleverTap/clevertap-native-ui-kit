@@ -260,16 +260,6 @@ class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBr
         log("EVENT \(eventName)\(propsStr.isEmpty ? "" : " [\(propsStr)]")")
     }
 
-    func onDisplayUnitViewed(unitId: String) {
-        log("VIEWED unitId: \(unitId)")
-        bridge.pushViewedEvent(unitId: unitId)
-    }
-
-    func onDisplayUnitClicked(unitId: String) {
-        log("CLICKED unitId: \(unitId)")
-        bridge.pushClickedEvent(unitId: unitId)
-    }
-
     func onActionError(action: Action, error: Error) {
         log("ERROR: \(error.localizedDescription)")
     }
