@@ -5,7 +5,7 @@ import Foundation
 
 /// Base protocol for all display nodes (containers and elements).
 /// Supports unlimited nesting for maximum flexibility.
-public protocol NativeDisplayNodeProtocol: Codable {
+protocol NativeDisplayNodeProtocol: Codable {
     var id: String { get }
     var layout: Layout? { get }
     var style: Style? { get }

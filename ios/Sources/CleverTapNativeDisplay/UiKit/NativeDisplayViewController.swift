@@ -18,7 +18,7 @@ import SwiftUI
 /// navigationController?.pushViewController(viewController, animated: true)
 /// ```
 @available(iOS 13.0, *)
-open class NativeDisplayViewController: UIViewController {
+public final class NativeDisplayViewController: UIViewController {
     
     // MARK: - Properties
     
@@ -51,7 +51,7 @@ open class NativeDisplayViewController: UIViewController {
     
     // MARK: - Lifecycle
     
-    open override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         setupSwiftUIView()
     }

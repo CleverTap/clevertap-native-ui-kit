@@ -14,17 +14,14 @@ import SafariServices
 import UIKit
 
 /// Handles execution of actions triggered by Native Display components.
-public class ActionHandler {
-    
+class ActionHandler {
+
     private weak var actionListener: NativeDisplayActionListener?
     private weak var componentListener: NativeDisplayComponentListener?
     private var firedSystemEvents = Set<String>()
     private let unitId: String?
 
-    /// Whether an action listener is attached (for callers to skip unnecessary work)
-    public var hasActionListener: Bool { actionListener != nil }
-
-    public init(
+    init(
         actionListener: NativeDisplayActionListener?,
         componentListener: NativeDisplayComponentListener?,
         unitId: String? = nil
@@ -41,7 +38,7 @@ public class ActionHandler {
     ///   - action: The action to execute
     ///   - nodeId: The ID of the node that triggered this action
     ///   - interactionType: The type of interaction that triggered this action
-    public func handleAction(
+    func handleAction(
         _ action: Action,
         nodeId: String,
         interactionType: InteractionType = .click
@@ -88,7 +85,7 @@ public class ActionHandler {
     /// - Parameters:
     ///   - action: The action to execute
     ///   - nodeId: The ID of the node that triggered this action
-    public func handleLifecycleAction(
+    func handleLifecycleAction(
         _ action: Action,
         nodeId: String
     ) {
@@ -114,13 +111,20 @@ public class ActionHandler {
         }
     }
 
-    /// Fire a hardcoded system event through the action listener.
+    /// Fire a hardcoded system event through the action listener and, when a
+    /// CleverTap Core SDK instance is wired into `NativeDisplayBridge.shared`,
+    /// auto-forward `Notification Viewed` / `Notification Clicked` to Core SDK's
+    /// attribution APIs (`-[CleverTap recordDisplayUnitViewedEventForID:]` /
+    /// `-[CleverTap recordDisplayUnitClickedEventForID:]`).
+    ///
     /// System events are SDK-level events that always fire (not server-driven).
+    /// Bridge push methods short-circuit when no Core SDK instance is attached,
+    /// so this stays a graceful no-op in standalone use.
+    ///
     /// - Parameters:
     ///   - eventName: The system event name (e.g., "Notification Viewed")
     ///   - properties: Optional event properties
-    public func fireSystemEvent(eventName: String, properties: [String: Any]? = nil, deduplicate: Bool = false) {
-        guard hasActionListener else { return }
+    func fireSystemEvent(eventName: String, properties: [String: Any]? = nil, deduplicate: Bool = false) {
         if deduplicate {
             guard firedSystemEvents.insert(eventName).inserted else {
                 print("ActionHandler: System event already fired, skipping: \(eventName)")
@@ -134,8 +138,10 @@ public class ActionHandler {
                 switch eventName {
                 case "Notification Viewed":
                     actionListener?.onDisplayUnitViewed?(unitId: unitId)
+                    NativeDisplayBridge.shared.pushViewedEvent(unitId: unitId)
                 case "Notification Clicked":
                     actionListener?.onDisplayUnitClicked?(unitId: unitId)
+                    NativeDisplayBridge.shared.pushClickedEvent(unitId: unitId, extras: properties)
                 default:
                     break
                 }
@@ -147,7 +153,7 @@ public class ActionHandler {
     /// - Parameters:
     ///   - nodeId: The ID of the component
     ///   - interactionType: The type of interaction
-    public func handleInteractionWithoutAction(
+    func handleInteractionWithoutAction(
         nodeId: String,
         interactionType: InteractionType
     ) {

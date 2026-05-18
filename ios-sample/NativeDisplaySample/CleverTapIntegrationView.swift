@@ -258,9 +258,6 @@ class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBr
             dict.map { "\($0.key)=\($0.value)" }.joined(separator: ", ")
         } ?? ""
         log("EVENT \(eventName)\(propsStr.isEmpty ? "" : " [\(propsStr)]")")
-        
-        // Forward system events to CleverTap
-        cleverTapInstance?.recordEvent(eventName, withProps: properties ?? [:])
     }
 
     func onDisplayUnitViewed(unitId: String) {

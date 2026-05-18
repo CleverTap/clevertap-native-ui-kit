@@ -1,6 +1,5 @@
 package com.clevertap.android.nativedisplay.utils
 
-import com.clevertap.nativedisplay.utils.SDUIRecyclerViewConfig
 import android.content.Context
 import android.util.TypedValue
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +12,7 @@ import com.clevertap.android.nativedisplay.view.NativeDisplayViewGroup
 /**
  * Convert DP to pixels.
  */
-fun Int.dpToPx(context: Context): Int {
+internal fun Int.dpToPx(context: Context): Int {
     return TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_DIP,
         this.toFloat(),
@@ -24,7 +23,7 @@ fun Int.dpToPx(context: Context): Int {
 /**
  * Convert pixels to DP.
  */
-fun Int.pxToDp(context: Context): Int {
+internal fun Int.pxToDp(context: Context): Int {
     return (this / context.resources.displayMetrics.density).toInt()
 }
 

@@ -2,8 +2,8 @@ package com.clevertap.android.nativedisplay.bridge
 
 import android.content.Context
 import android.util.Log
+import com.clevertap.android.nativedisplay.handler.ActionAttributionExtras
 import com.clevertap.android.sdk.CleverTapAPI
-import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import java.lang.ref.WeakReference
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineName
@@ -81,6 +81,18 @@ class NativeDisplayBridge private constructor() {
 
         /** Fetch type constant for Native Display units. */
         internal const val FETCH_TYPE_NATIVE_DISPLAY = 9
+
+        /**
+         * Core SDK method name for the new element-level clicked-attribution event.
+         * Signature: `pushDisplayUnitElementClickedEventForID(String unitID, String elementID,
+         * HashMap<String, Object> additionalProperties)`.
+         *
+         * Combines the legacy unit-level `wzrk_*` enrichment (from the cached unit JSON) with
+         * the element id (added to the event as `wzrk_element_id`) and the caller-supplied
+         * `additionalProperties` (merged into `evtData` after enrichment; `wzrk_*` keys
+         * stripped defensively).
+         */
+        private const val METHOD_ELEMENT_CLICKED = "pushDisplayUnitElementClickedEventForID"
 
         @Volatile
         private var instance: NativeDisplayBridge? = null
@@ -296,8 +308,8 @@ class NativeDisplayBridge private constructor() {
     /**
      * Push a display unit viewed (impression) attribution event to the CleverTap Core SDK.
      *
-     * Calls `CleverTapAPI.pushDisplayUnitViewedEventForID(unitId)` if a [CleverTapAPI]
-     * instance has been stored (set automatically when using auto-wire or [bind]).
+     * Always calls `pushDisplayUnitViewedEventForID(unitId)`. Impressions are inherently
+     * unit-level in ND (the root mount fires once); there is no per-element view event.
      *
      * @param unitId The ID of the display unit that was viewed
      * @return true if the event was pushed successfully, false if no CleverTapAPI is available
@@ -317,22 +329,72 @@ class NativeDisplayBridge private constructor() {
     /**
      * Push a display unit clicked attribution event to the CleverTap Core SDK.
      *
-     * Calls `CleverTapAPI.pushDisplayUnitClickedEventForID(unitId)` if a [CleverTapAPI]
-     * instance has been stored (set automatically when using auto-wire or [bind]).
+     * When [extras] carries a `wzrk_btn_id` transport marker (set by
+     * [ActionAttributionExtras.from] from the clicked node id) AND the host Core SDK exposes
+     * `pushDisplayUnitElementClickedEventForID(String unitID, String elementID,
+     * HashMap<String, Object> additionalProperties)`, that method is invoked reflectively —
+     * the element id is extracted from the extras map and passed as the dedicated argument;
+     * the remaining (sanitized) entries become `additionalProperties`.
+     *
+     * On older Core SDK versions without the new method, the legacy single-arg
+     * `pushDisplayUnitClickedEventForID(unitId)` fires instead — the campaign click is still
+     * attributed but per-element context is lost (graceful degradation, no namespace
+     * squatting). Clients receive coarse unit-level attribution until they upgrade Core SDK.
      *
      * @param unitId The ID of the display unit that was clicked
+     * @param extras Optional event extras built by [ActionAttributionExtras.from]. Non-scalar /
+     *               null values are dropped by [ActionAttributionExtras.sanitize].
      * @return true if the event was pushed successfully, false if no CleverTapAPI is available
      */
-    fun pushClickedEvent(unitId: String): Boolean {
+    @JvmOverloads
+    fun pushClickedEvent(unitId: String, extras: Map<String, Any?>? = null): Boolean {
         val ct = cleverTapApi ?: return false
         return try {
             seedIfNeeded(unitId)
-            ct.pushDisplayUnitClickedEventForID(unitId)
+            invokeClickedEvent(ct, unitId, extras)
             true
         } catch (e: Exception) {
             Log.w(TAG, "pushClickedEvent failed: ${e.message}")
             false
         }
+    }
+
+    /**
+     * Prefer the new element-aware method when Core SDK exposes it; fall back to the legacy
+     * unit-level method otherwise.
+     *
+     * The reflection probe targets the exact 3-arg signature
+     * `pushDisplayUnitElementClickedEventForID(String, String, HashMap)` — if it's absent
+     * (older Core SDK), `getMethod` throws and we degrade gracefully.
+     */
+    private fun invokeClickedEvent(
+        ct: CleverTapAPI,
+        unitId: String,
+        extras: Map<String, Any?>?
+    ) {
+        val sanitized = ActionAttributionExtras.sanitize(extras)
+        val elementId = sanitized?.get(ActionAttributionExtras.KEY_BUTTON_ID) as? String
+        if (sanitized != null && elementId != null) {
+            val elementMethod = runCatching {
+                ct.javaClass.getMethod(
+                    METHOD_ELEMENT_CLICKED,
+                    String::class.java,
+                    String::class.java,
+                    HashMap::class.java
+                )
+            }.getOrNull()
+            if (elementMethod != null) {
+                // Strip the transport marker — Core SDK adds `wzrk_element_id` to the event
+                // from the dedicated parameter.
+                val additionalProps = HashMap<String, Any>(sanitized).apply {
+                    remove(ActionAttributionExtras.KEY_BUTTON_ID)
+                }
+                elementMethod.invoke(ct, unitId, elementId, additionalProps)
+                return
+            }
+        }
+        // Fallback: legacy unit-level click attribution (no per-element data).
+        ct.pushDisplayUnitClickedEventForID(unitId)
     }
 
     /**
@@ -360,49 +422,6 @@ class NativeDisplayBridge private constructor() {
             ReflectionSeeder.seed(ct, listOf(org.json.JSONObject(raw)))
         } catch (_: Throwable) {
             // logged inside ReflectionSeeder
-        }
-    }
-
-    /**
-     * Create a [NativeDisplayActionListener] that automatically forwards display unit
-     * attribution events to the CleverTap Core SDK via [pushViewedEvent] and [pushClickedEvent].
-     *
-     * An optional [base] listener is invoked first so that the client's own handling
-     * is preserved. This listener can be passed as the `actionListener` parameter to
-     * [NativeDisplayView] or [NativeDisplayViewGroup.setConfig].
-     *
-     * ```kotlin
-     * val listener = bridge.createEventForwardingListener(base = myListener)
-     * NativeDisplayView(config = config, actionListener = listener, unitId = unit.unitId)
-     * ```
-     *
-     * @param base Optional client listener to delegate all callbacks to first
-     * @return A [NativeDisplayActionListener] that forwards attribution events to the Core SDK
-     */
-    fun createEventForwardingListener(
-        base: NativeDisplayActionListener? = null
-    ): NativeDisplayActionListener {
-        return object : NativeDisplayActionListener {
-            override fun onCustomAction(key: String, value: Any?, metadata: Map<String, String>?) {
-                base?.onCustomAction(key, value, metadata)
-            }
-            override fun onNavigate(destination: String, params: Map<String, String>?) {
-                base?.onNavigate(destination, params)
-            }
-            override fun onTrackEvent(eventName: String, properties: Map<String, Any?>?) {
-                base?.onTrackEvent(eventName, properties)
-            }
-            override fun onOpenUrl(url: String, openInBrowser: Boolean): Boolean {
-                return base?.onOpenUrl(url, openInBrowser) ?: false
-            }
-            override fun onDisplayUnitViewed(unitId: String) {
-                base?.onDisplayUnitViewed(unitId)
-                pushViewedEvent(unitId)
-            }
-            override fun onDisplayUnitClicked(unitId: String) {
-                base?.onDisplayUnitClicked(unitId)
-                pushClickedEvent(unitId)
-            }
         }
     }
 

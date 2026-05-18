@@ -22,7 +22,7 @@ import SwiftUI
 /// }
 /// ```
 @available(iOS 13.0, *)
-open class NativeDisplayCollectionViewCell: UICollectionViewCell {
+public final class NativeDisplayCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
     
@@ -100,7 +100,7 @@ open class NativeDisplayCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Lifecycle
     
-    open override func prepareForReuse() {
+    public override func prepareForReuse() {
         super.prepareForReuse()
         // Note: We keep the hosting controller for reuse
         // The configure method will update its content

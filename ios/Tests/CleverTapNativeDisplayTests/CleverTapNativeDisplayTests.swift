@@ -31,7 +31,7 @@ final class CleverTapNativeDisplayTests: XCTestCase {
         
         XCTAssertEqual(config.theme.id, "default")
         XCTAssertEqual(config.theme.defaultStyle.textColor, "#000000")
-        XCTAssertEqual(config.theme.defaultStyle.fontSize, 14)
+        XCTAssertEqual(config.theme.defaultStyle.fontSize, TextDimension(value: 14))
     }
     
     func testParseConfigWithElement() throws {
@@ -154,7 +154,7 @@ final class CleverTapNativeDisplayTests: XCTestCase {
         let resolvedStyle = resolver.resolve(node: .element(element))
         
         XCTAssertEqual(resolvedStyle.textColor, "#FF0000") // Inline override
-        XCTAssertEqual(resolvedStyle.fontSize, 14) // From theme
+        XCTAssertEqual(resolvedStyle.fontSize, TextDimension(value: 14)) // From theme
     }
     
     // MARK: - Dimension Tests

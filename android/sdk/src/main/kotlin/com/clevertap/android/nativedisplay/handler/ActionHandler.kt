@@ -3,6 +3,7 @@ package com.clevertap.android.nativedisplay.handler
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.models.Action
 import com.clevertap.android.nativedisplay.models.ExecutionMode
@@ -42,22 +43,49 @@ import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListen
  *
  * @param context Android context for starting intents, opening URLs, etc.
  * @param listener Client's callback interface for handling actions
+ * @param componentListener Optional component interaction listener
+ * @param unitId The CleverTap display unit ID (`wzrk_id`) for attribution events; null when
+ *        the config did not come from a Core SDK display unit payload
+ * @param pushViewedEvent Test seam invoked when "Notification Viewed" fires. Production
+ *        default forwards to [NativeDisplayBridge.pushViewedEvent], which is a no-op when
+ *        no CleverTap Core SDK is wired — making the auto-attribution path safe regardless
+ *        of whether a client listener is supplied.
+ * @param pushClickedEvent Test seam invoked when "Notification Clicked" fires. Production
+ *        default forwards to [NativeDisplayBridge.pushClickedEvent], same no-op guarantee.
  */
-class ActionHandler(
+internal class ActionHandler(
     private val context: Context,
     private val listener: NativeDisplayActionListener?,
     private val componentListener: NativeDisplayComponentListener? = null,
-    private val unitId: String? = null
+    private val unitId: String? = null,
+    private val pushViewedEvent: (String) -> Unit = DEFAULT_PUSH_VIEWED,
+    private val pushClickedEvent: (String, Map<String, Any?>?) -> Unit = DEFAULT_PUSH_CLICKED,
 ) {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private val firedSystemEvents = mutableSetOf<String>()
 
-    /** Whether an action listener is attached (for callers to skip unnecessary work) */
-    val hasActionListener: Boolean get() = listener != null
-
     companion object {
         private const val TAG = "ActionHandler"
+
+        /**
+         * Default attribution forwarders — invoke the singleton bridge so that
+         * `pushDisplayUnitViewedEventForID` / `pushDisplayUnitClickedEventForID` (or its
+         * element-aware successor) fire on the CleverTap Core SDK whenever it is wired,
+         * regardless of whether the host app supplied a [NativeDisplayActionListener].
+         *
+         * When Core SDK is absent the bridge's push methods short-circuit (return false) —
+         * the auto-wire path is a graceful no-op.
+         *
+         * Viewed is unit-level (no extras); Clicked carries action extras when the host's
+         * Core SDK exposes the element-aware method, else falls back to unit-level click.
+         */
+        private val DEFAULT_PUSH_VIEWED: (String) -> Unit = { unitId ->
+            NativeDisplayBridge.getInstance()?.pushViewedEvent(unitId)
+        }
+        private val DEFAULT_PUSH_CLICKED: (String, Map<String, Any?>?) -> Unit = { unitId, extras ->
+            NativeDisplayBridge.getInstance()?.pushClickedEvent(unitId, extras)
+        }
     }
 
     /**
@@ -210,14 +238,20 @@ class ActionHandler(
     }
 
     /**
-     * Fire a hardcoded system event through the action listener.
+     * Fire a hardcoded system event through the action listener AND the CleverTap
+     * Core SDK bridge (when wired).
+     *
      * System events are SDK-level events that always fire (not server-driven).
+     * Notification Viewed / Notification Clicked are also forwarded to the bridge
+     * so attribution flows to Core SDK automatically whenever it is integrated —
+     * the client does not have to opt in by attaching a listener.
      *
      * @param eventName The system event name (e.g., "Notification Viewed")
      * @param properties Optional event properties
+     * @param deduplicate When true, skips firing if this event name was already fired
+     *                    by this handler instance
      */
     fun fireSystemEvent(eventName: String, properties: Map<String, Any?>? = null, deduplicate: Boolean = false) {
-        if (!hasActionListener) return
         if (deduplicate && !firedSystemEvents.add(eventName)) {
             Log.d(TAG, "System event already fired, skipping: $eventName")
             return
@@ -228,8 +262,14 @@ class ActionHandler(
                 listener?.onTrackEvent(eventName, properties)
                 if (unitId != null) {
                     when (eventName) {
-                        "Notification Viewed" -> listener?.onDisplayUnitViewed(unitId)
-                        "Notification Clicked" -> listener?.onDisplayUnitClicked(unitId)
+                        "Notification Viewed" -> {
+                            listener?.onDisplayUnitViewed(unitId)
+                            pushViewedEvent(unitId)
+                        }
+                        "Notification Clicked" -> {
+                            listener?.onDisplayUnitClicked(unitId)
+                            pushClickedEvent(unitId, properties)
+                        }
                     }
                 }
             } catch (e: Exception) {

@@ -44,12 +44,16 @@ import Foundation
     @objc func onTrackEvent(eventName: String, properties: [String: Any]?)
 
     /// Called when a display unit is viewed (Notification Viewed system event).
-    /// Use this to call `pushDisplayUnitViewedEventForID` on the CleverTap Core SDK.
+    /// The SDK auto-forwards this to `-[CleverTap recordDisplayUnitViewedEventForID:]`
+    /// whenever the CleverTap Core SDK is integrated; override only to add your
+    /// own analytics on top.
     /// - Parameter unitId: The `wzrk_id` of the display unit that was viewed.
     @objc optional func onDisplayUnitViewed(unitId: String)
 
     /// Called when a display unit is clicked (Notification Clicked system event).
-    /// Use this to call `pushDisplayUnitClickedEventForID` on the CleverTap Core SDK.
+    /// The SDK auto-forwards this to `-[CleverTap recordDisplayUnitClickedEventForID:]`
+    /// whenever the CleverTap Core SDK is integrated; override only to add your
+    /// own analytics on top.
     /// - Parameter unitId: The `wzrk_id` of the display unit that was clicked.
     @objc optional func onDisplayUnitClicked(unitId: String)
 }

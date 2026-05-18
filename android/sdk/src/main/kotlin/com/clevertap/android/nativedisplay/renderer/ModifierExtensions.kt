@@ -49,7 +49,7 @@ import com.clevertap.android.nativedisplay.models.Style
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Modifier.applyClickable(
+internal fun Modifier.applyClickable(
     nodeId: String,
     actions: Map<String, Action>?,
     actionHandler: ActionHandler,
@@ -213,7 +213,7 @@ internal fun Modifier.percentageOffset(xPercent: Float, yPercent: Float): Modifi
  * Pattern follows BackgroundRenderer.kt - composable when needed for animations.
  */
 @Composable
-fun Modifier.applyEntranceAnimation(animation: Animation?): Modifier {
+internal fun Modifier.applyEntranceAnimation(animation: Animation?): Modifier {
     // No animation configured
     if (animation == null || animation.type == AnimationType.NONE) {
         return this

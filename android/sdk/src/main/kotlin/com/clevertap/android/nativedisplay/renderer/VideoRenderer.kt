@@ -78,7 +78,7 @@ private fun VideoControlIcon(
  * Supports Media3 ExoPlayer with runtime detection and graceful degradation.
  */
 @Composable
-fun VideoPlayer(
+internal fun VideoPlayer(
     videoUrl: String,
     autoPlay: Boolean = false,
     loop: Boolean = false,
