@@ -44,12 +44,22 @@ import androidx.compose.ui.text.withStyle
 fun TestBrowserScreen() {
     val context = LocalContext.current
 
-    // List of all test configuration files. The first three entries are repro
-    // fixtures that live at the top of RN's `configRegistry.ts` (see
+    // List of all test configuration files. The first entries are repro fixtures
+    // that live at the top of RN's `configRegistry.ts` (see
     // react-native/example/testConfigs/configRegistry.ts) - mirrored here so the
     // Browser tab opens the same fixture at the same index on both platforms.
     val testFiles = remember {
         listOf(
+            // Production CleverTap response fixtures - real native_display_config
+            // payloads captured from server logs, transcribed verbatim into JSON.
+            "prod-001-box-1x1-2buttons.json",
+            "prod-002-box-16x9-video.json",
+            "prod-003-box-16x9-buttons.json",
+            "prod-004-box-9x16-buttons.json",
+            "prod-005-box-3x4-images.json",
+            "prod-006-box-16x9-yes-no.json",
+            "prod-007-box-16x9-flower-rainbow.json",
+            "prod-008-box-3x4-lorem-ipsum.json",
             "test-178-error-boundary-smoke-test.json",
             "test-177-button-stroke-text-clip-repro.json",
             "image-fit-test.json",

@@ -11,6 +11,17 @@ export interface TestConfig {
 
 /* eslint-disable @typescript-eslint/no-require-imports */
 export const ALL_CONFIGS: TestConfig[] = [
+  // Production CleverTap response fixtures - real native_display_config payloads
+  // captured from server logs, transcribed verbatim into JSON. They live at the
+  // top of the Browser tab so they're the first thing visible when the app opens.
+  { id: 'prod-001-box-1x1-2buttons', filename: 'prod-001-box-1x1-2buttons', config: require('../../../test-configs/prod-001-box-1x1-2buttons.json') },
+  { id: 'prod-002-box-16x9-video', filename: 'prod-002-box-16x9-video', config: require('../../../test-configs/prod-002-box-16x9-video.json') },
+  { id: 'prod-003-box-16x9-buttons', filename: 'prod-003-box-16x9-buttons', config: require('../../../test-configs/prod-003-box-16x9-buttons.json') },
+  { id: 'prod-004-box-9x16-buttons', filename: 'prod-004-box-9x16-buttons', config: require('../../../test-configs/prod-004-box-9x16-buttons.json') },
+  { id: 'prod-005-box-3x4-images', filename: 'prod-005-box-3x4-images', config: require('../../../test-configs/prod-005-box-3x4-images.json') },
+  { id: 'prod-006-box-16x9-yes-no', filename: 'prod-006-box-16x9-yes-no', config: require('../../../test-configs/prod-006-box-16x9-yes-no.json') },
+  { id: 'prod-007-box-16x9-flower-rainbow', filename: 'prod-007-box-16x9-flower-rainbow', config: require('../../../test-configs/prod-007-box-16x9-flower-rainbow.json') },
+  { id: 'prod-008-box-3x4-lorem-ipsum', filename: 'prod-008-box-3x4-lorem-ipsum', config: require('../../../test-configs/prod-008-box-3x4-lorem-ipsum.json') },
   { id: 'test-178-error-boundary-smoke-test', filename: 'test-178-error-boundary-smoke-test', config: require('../../../test-configs/test-178-error-boundary-smoke-test.json') },
   { id: 'test-177-button-stroke-text-clip-repro', filename: 'test-177-button-stroke-text-clip-repro', config: require('../../../test-configs/test-177-button-stroke-text-clip-repro.json') },
   { id: 'image-fit-test', filename: 'image-fit-test', config: require('../../../test-configs/image-fit-test.json') },
