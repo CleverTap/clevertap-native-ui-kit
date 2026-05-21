@@ -11,6 +11,8 @@ public final class com/clevertap/android/nativedisplay/bridge/NativeDisplayBridg
 	public final fun processDisplayUnit (Ljava/lang/String;)V
 	public final fun processDisplayUnits (Ljava/util/List;)V
 	public final fun pushClickedEvent (Ljava/lang/String;)Z
+	public final fun pushClickedEvent (Ljava/lang/String;Ljava/util/Map;)Z
+	public static synthetic fun pushClickedEvent$default (Lcom/clevertap/android/nativedisplay/bridge/NativeDisplayBridge;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Z
 	public final fun pushViewedEvent (Ljava/lang/String;)Z
 	public final fun removeListener (Lcom/clevertap/android/nativedisplay/bridge/NativeDisplayBridgeListener;)V
 }
