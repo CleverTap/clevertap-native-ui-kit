@@ -54,6 +54,43 @@ import XCTest
     }
 }
 
+/// Counts how often the bridge probes a specific selector via `responds(to:)`.
+/// Otherwise behaves identically to `MockCleverTapInstance` — same selectors,
+/// same captured state. Used to verify the bridge memoises the element-clicked
+/// availability check across repeated clicks.
+@objc private final class ProbeCountingCleverTapInstance: NSObject {
+    var viewedUnitIds: [String] = []
+    var clickedUnitIds: [String] = []
+    var elementClicks: [(String, String, [String: Any])] = []
+
+    /// Per-selector call count from `responds(to:)`. Read by tests.
+    var respondsProbeCounts: [Selector: Int] = [:]
+
+    @objc func recordDisplayUnitViewedEventForID(_ unitId: String) {
+        viewedUnitIds.append(unitId)
+    }
+
+    @objc func recordDisplayUnitClickedEventForID(_ unitId: String) {
+        clickedUnitIds.append(unitId)
+    }
+
+    @objc(recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:)
+    func recordDisplayUnitElementClickedEventForID(
+        _ unitId: String,
+        elementID: String,
+        additionalProperties props: NSDictionary
+    ) {
+        elementClicks.append((unitId, elementID, props as? [String: Any] ?? [:]))
+    }
+
+    override func responds(to aSelector: Selector!) -> Bool {
+        if let sel = aSelector {
+            respondsProbeCounts[sel, default: 0] += 1
+        }
+        return super.responds(to: aSelector)
+    }
+}
+
 // MARK: - Mock Action Listener
 //
 // Records `onDisplayUnitViewed` / `onDisplayUnitClicked` callbacks so tests
@@ -357,6 +394,51 @@ final class AttributionTests: XCTestCase {
     }
 
     // MARK: - nil unitId skips bridge push
+
+    // MARK: - Element-clicked selector availability cache
+
+    func test_pushClickedEvent_probesElementSelectorOnceAcrossRepeatedClicks() {
+        let mockCt = ProbeCountingCleverTapInstance()
+        bridge.cleverTapInstance = mockCt
+        let elementSel = NSSelectorFromString(
+            "recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:"
+        )
+        let extras: [String: Any] = ["wzrk_btn_id": "cta_buy", "action_type": "open_url"]
+
+        bridge.pushClickedEvent(unitId: "u1", extras: extras)
+        bridge.pushClickedEvent(unitId: "u2", extras: extras)
+        bridge.pushClickedEvent(unitId: "u3", extras: extras)
+
+        XCTAssertEqual(mockCt.elementClicks.count, 3, "Each click should dispatch the new selector")
+        XCTAssertEqual(
+            mockCt.respondsProbeCounts[elementSel] ?? 0, 1,
+            "Element-clicked selector availability should be probed at most once across N clicks"
+        )
+    }
+
+    func test_rebindingCleverTapInstance_reprobesElementSelectorOnNextClick() {
+        let firstCt = ProbeCountingCleverTapInstance()
+        let secondCt = ProbeCountingCleverTapInstance()
+        let elementSel = NSSelectorFromString(
+            "recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:"
+        )
+        let extras: [String: Any] = ["wzrk_btn_id": "btn", "action_type": "open_url"]
+
+        bridge.cleverTapInstance = firstCt
+        bridge.pushClickedEvent(unitId: "u1", extras: extras)
+        bridge.pushClickedEvent(unitId: "u2", extras: extras)
+        XCTAssertEqual(firstCt.respondsProbeCounts[elementSel] ?? 0, 1)
+
+        // Re-binding must invalidate the cache so the next click re-probes the new instance.
+        bridge.cleverTapInstance = secondCt
+        bridge.pushClickedEvent(unitId: "u3", extras: extras)
+        bridge.pushClickedEvent(unitId: "u4", extras: extras)
+        XCTAssertEqual(
+            secondCt.respondsProbeCounts[elementSel] ?? 0, 1,
+            "After rebinding the cache must be reset and the new instance probed exactly once"
+        )
+        XCTAssertEqual(secondCt.elementClicks.count, 2, "New instance receives the post-rebind clicks")
+    }
 
     func test_nilUnitId_skipsBridgePushButStillFiresTrackEvent() async {
         let mockCt = MockCleverTapInstance()
