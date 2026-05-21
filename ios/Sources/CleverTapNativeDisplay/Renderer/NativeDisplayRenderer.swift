@@ -157,16 +157,14 @@ public struct NativeDisplayView: View {
             let screenSize = UIScreen.main.bounds.size
             renderContent(parentSize: screenSize)
         } else if let ar = config.root.layout?.aspectRatio, ar > 0 {
-            // Priority 3.5: Aspect ratio present → derive height from offered width.
-            // .frame(maxWidth: .infinity) fills the parent's offered width.
-            // .aspectRatio(.fit) in a vertical ScrollView sets height = width / ar.
-            // GeometryReader is constrained by both, so geo.size is always accurate —
-            // avoids the unreliable initial-pass sizes of a bare GeometryReader in LazyVStack.
-            GeometryReader { geo in
-                renderContent(parentSize: geo.size)
-            }
-            .aspectRatio(ar, contentMode: .fit)
-            .frame(maxWidth: .infinity)
+            // Priority 3.5: Aspect ratio present → use screen width as the offered
+            // width and derive height = width / aspectRatio. Avoids GeometryReader
+            // entirely, which is unreliable inside ScrollView / LazyVStack on the
+            // first measurement pass (reports height ~ 0, causing layout overlap).
+            // Integrators in insetted hosts (sidebar layouts, padded canvases) can
+            // override via `.environment(\.nativeDisplayParentSize, ...)`.
+            let offeredWidth = UIScreen.main.bounds.width
+            renderContent(parentSize: CGSize(width: offeredWidth, height: offeredWidth / ar))
         } else {
             // Priority 4: GeometryReader (ONLY when truly needed)
             // Conditions to reach here:
