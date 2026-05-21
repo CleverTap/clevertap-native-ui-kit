@@ -12,12 +12,12 @@
 //    `-recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:`.
 //    It is NOT forwarded inside `additionalProperties` (Core SDK adds it to the
 //    event as `wzrk_element_id` from the dedicated parameter).
-//  - All other entries become Core SDK's `additionalProperties` dict and are
-//    merged into the event's `evtData` after the usual `wzrk_*` enrichment from
-//    the cached unit JSON. Core SDK strips any `wzrk_*` keys from this dict
-//    defensively — so action fields use the `action_*` prefix (unprefixed within
-//    the wzrk namespace) and bundle entries from a `CustomAction.value`
-//    dictionary spread as first-class keys.
+//  - All other entries become Core SDK's `additionalProperties` dict. Core SDK
+//    layers the cached unit JSON's `wzrk_*` keys on top of this dict before
+//    recording, so caller-supplied `wzrk_*` keys are overridden by the cached
+//    unit's namespace (cached `wzrk_*` always wins). Action fields use the
+//    `action_*` prefix to stay outside the `wzrk_*` namespace and bundle
+//    entries from a `CustomAction.value` dictionary spread as first-class keys.
 //
 //  Per-action `metadata` / `params` / `properties` maps are spread verbatim so
 //  the client's own keys land on the event with their original names. A

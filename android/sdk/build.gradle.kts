@@ -109,6 +109,10 @@ dependencies {
     // during reflection, so the Core SDK class must be on the unit-test
     // classpath even though it is `compileOnly` for production.
     testImplementation("com.clevertap.android:clevertap-android-sdk:7.5.0")
+    // play-services-tasks is a transitive dep of CleverTapAPI that surfaces
+    // when the test classpath tries to load CleverTapAPI (e.g. for
+    // Unsafe.allocateInstance in NativeDisplayBridgeReflectionCacheTest).
+    testImplementation("com.google.android.gms:play-services-tasks:18.2.0")
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

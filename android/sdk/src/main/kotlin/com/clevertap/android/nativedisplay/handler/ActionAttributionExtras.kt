@@ -22,10 +22,10 @@ import kotlinx.serialization.json.longOrNull
  *   It does NOT forward it inside `additionalProperties` (Core SDK adds it to the event as
  *   `wzrk_element_id` from the dedicated parameter).
  * - All other entries become Core SDK's `additionalProperties` map and are merged into the
- *   event's `evtData` after the usual `wzrk_*` enrichment from the cached unit JSON. Core
- *   SDK strips any `wzrk_*` keys from this map defensively — so action fields use the
- *   `action_*` prefix (unprefixed within the wzrk namespace) and bundle entries from a
- *   `CustomAction.value` JSON object spread as first-class keys.
+ *   event's `evtData` together with the `wzrk_*` enrichment layered on top from the cached
+ *   unit JSON. The `wzrk_*` namespace is server-owned (Core SDK adds those keys from the
+ *   cached unit, never from client input) — so action fields use the `action_*` prefix and
+ *   bundle entries from a `CustomAction.value` JSON object spread as first-class keys.
  *
  * Per-action `metadata` / `params` / `properties` maps are spread verbatim so the client's
  * own keys land on the event with their original names. A `CustomAction.value` that is a
@@ -61,6 +61,7 @@ internal object ActionAttributionExtras {
     }
 
     private fun appendAction(action: Action, out: MutableMap<String, Any?>) {
+        // TODO : we will get all wzrk fields from the server so handle this once after discussion
         when (action) {
             is Action.OpenUrl -> {
                 out[KEY_ACTION_TYPE] = "open_url"
