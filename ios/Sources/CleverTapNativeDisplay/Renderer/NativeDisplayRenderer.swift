@@ -162,6 +162,8 @@ public struct NativeDisplayView: View {
             // .aspectRatio(.fit) in a vertical ScrollView sets height = width / ar.
             // GeometryReader is constrained by both, so geo.size is always accurate —
             // avoids the unreliable initial-pass sizes of a bare GeometryReader in LazyVStack.
+            // This respects host-applied padding / safe-area / multi-column insets,
+            // which a UIScreen.main.bounds fallback would ignore.
             GeometryReader { geo in
                 renderContent(parentSize: geo.size)
             }
