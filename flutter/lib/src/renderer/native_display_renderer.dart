@@ -12,6 +12,7 @@ import 'elements/divider_element.dart';
 import 'elements/image_element.dart';
 import 'elements/spacer_element.dart';
 import 'elements/text_element.dart';
+import 'elements/video_element.dart';
 import 'resolved_styles_scope.dart';
 
 class NativeDisplayRenderer extends StatelessWidget {
@@ -86,6 +87,7 @@ class NativeDisplayRenderer extends StatelessWidget {
         ),
       ElementType.spacer => SpacerElement(node: node, style: style),
       ElementType.divider => DividerElement(node: node, style: style),
+      ElementType.video => VideoElement(node: node, style: style, evaluator: evaluator),
       _ => const SizedBox.shrink(),
     };
   }
