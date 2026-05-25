@@ -1,0 +1,868 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    },
+    "colors": {}
+  },
+  "styleClasses": [],
+  "variables": {},
+  "root": {
+    "type": "container",
+    "id": "dashboard_root",
+    "containerType": "vertical",
+    "layout": {
+      "spacing": 16,
+      "padding": {
+        "all": 16
+      }
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "header_card",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 20
+          },
+          "spacing": 12
+        },
+        "style": {
+          "background": {
+            "type": "layered",
+            "layers": [
+              {
+                "type": "linear_gradient",
+                "angle": 135,
+                "colors": ["#1A237E", "#283593", "#3949AB"]
+              },
+              {
+                "type": "pattern",
+                "pattern_type": "dots",
+                "primary_color": "#00000000",
+                "secondary_color": "#FFFFFF05",
+                "size": 3,
+                "spacing": 15
+              }
+            ]
+          },
+          "borderRadius": 20,
+          "shadowRadius": 10,
+          "shadowColor": "#00000030"
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "header_top",
+            "containerType": "horizontal",
+            "layout": {
+              "spacing": 12
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "header_text_section",
+                "containerType": "vertical",
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp"
+                  },
+                  "spacing": 6
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "greeting",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "Welcome back,"
+                    },
+                    "style": {
+                      "textColor": "#FFFFFF",
+                      "fontSize": 14,
+                      "opacity": 0.8
+                    }
+                  },
+                  {
+                    "type": "element",
+                    "id": "username_header",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "John Doe"
+                    },
+                    "style": {
+                      "textColor": "#FFFFFF",
+                      "fontSize": 22,
+                      "fontWeight": "bold"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "notification_button",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 48,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 48,
+                    "unit": "dp"
+                  },
+                  "padding": {
+                    "all": 12
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 12,
+                  "opacity": 0.15
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "bell_icon",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "🔔"
+                    },
+                    "style": {
+                      "textColor": "#FFFFFF",
+                      "fontSize": 20,
+                      "textAlign": "center"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "total_revenue_card",
+            "containerType": "vertical",
+            "layout": {
+              "spacing": 8,
+              "padding": {
+                "all": 16
+              },
+              "margin": {
+                "top": 12
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 16,
+              "opacity": 0.12
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "revenue_label",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Total Revenue"
+                },
+                "style": {
+                  "textColor": "#FFFFFF",
+                  "fontSize": 13,
+                  "opacity": 0.9
+                }
+              },
+              {
+                "type": "container",
+                "id": "revenue_amount_section",
+                "containerType": "horizontal",
+                "layout": {
+                  "spacing": 12
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "revenue_amount",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "$45,231"
+                    },
+                    "style": {
+                      "textColor": "#FFFFFF",
+                      "fontSize": 32,
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "type": "container",
+                    "id": "growth_badge",
+                    "containerType": "horizontal",
+                    "layout": {
+                      "spacing": 4,
+                      "padding": {
+                        "vertical": 6,
+                        "horizontal": 10
+                      },
+                      "margin": {
+                        "top": 8
+                      }
+                    },
+                    "style": {
+                      "backgroundColor": "#4CAF50",
+                      "borderRadius": 12,
+                      "opacity": 0.9
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "growth_arrow",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "↑"
+                        },
+                        "style": {
+                          "textColor": "#FFFFFF",
+                          "fontSize": 12,
+                          "fontWeight": "bold"
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "growth_percent",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "12.5%"
+                        },
+                        "style": {
+                          "textColor": "#FFFFFF",
+                          "fontSize": 12,
+                          "fontWeight": "bold"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "metrics_grid",
+        "containerType": "horizontal",
+        "layout": {
+          "spacing": 12
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "metric_card_1",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp"
+              },
+              "padding": {
+                "all": 16
+              },
+              "spacing": 12
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 16,
+              "shadowRadius": 6,
+              "shadowColor": "#00000010"
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "metric_1_icon_container",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 40,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 40,
+                    "unit": "dp"
+                  },
+                  "padding": {
+                    "all": 8
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#E3F2FD",
+                  "borderRadius": 10,
+                  "opacity": 0.9
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "metric_1_icon",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "👥"
+                    },
+                    "style": {
+                      "textColor": "#1976D2",
+                      "fontSize": 20,
+                      "textAlign": "center"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "metric_1_value",
+                "elementType": "text",
+                "bindings": {
+                  "text": "1,234"
+                },
+                "style": {
+                  "textColor": "#1A1A1A",
+                  "fontSize": 24,
+                  "fontWeight": "bold"
+                }
+              },
+              {
+                "type": "element",
+                "id": "metric_1_label",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Active Users"
+                },
+                "style": {
+                  "textColor": "#666666",
+                  "fontSize": 12,
+                  "opacity": 0.8
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "metric_card_2",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp"
+              },
+              "padding": {
+                "all": 16
+              },
+              "spacing": 12
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 16,
+              "shadowRadius": 6,
+              "shadowColor": "#00000010"
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "metric_2_icon_container",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 40,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 40,
+                    "unit": "dp"
+                  },
+                  "padding": {
+                    "all": 8
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#F3E5F5",
+                  "borderRadius": 10,
+                  "opacity": 0.9
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "metric_2_icon",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "📦"
+                    },
+                    "style": {
+                      "textColor": "#7B1FA2",
+                      "fontSize": 20,
+                      "textAlign": "center"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "metric_2_value",
+                "elementType": "text",
+                "bindings": {
+                  "text": "89"
+                },
+                "style": {
+                  "textColor": "#1A1A1A",
+                  "fontSize": 24,
+                  "fontWeight": "bold"
+                }
+              },
+              {
+                "type": "element",
+                "id": "metric_2_label",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Orders"
+                },
+                "style": {
+                  "textColor": "#666666",
+                  "fontSize": 12,
+                  "opacity": 0.8
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "activity_card",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 20
+          },
+          "spacing": 16
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 20,
+          "shadowRadius": 6,
+          "shadowColor": "#00000010"
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "activity_header",
+            "containerType": "horizontal",
+            "layout": {
+              "spacing": 12
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "activity_title",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Recent Activity"
+                },
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "textColor": "#1A1A1A",
+                  "fontSize": 18,
+                  "fontWeight": "bold"
+                }
+              },
+              {
+                "type": "container",
+                "id": "view_all_button",
+                "containerType": "box",
+                "layout": {
+                  "padding": {
+                    "vertical": 6,
+                    "horizontal": 12
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#F5F5F5",
+                  "borderRadius": 8,
+                  "opacity": 0.9
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "view_all_text",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "View All"
+                    },
+                    "style": {
+                      "textColor": "#667eea",
+                      "fontSize": 12,
+                      "fontWeight": "bold"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "activity_item_1",
+            "containerType": "horizontal",
+            "layout": {
+              "spacing": 12,
+              "padding": {
+                "all": 12
+              }
+            },
+            "style": {
+              "backgroundColor": "#F8F9FA",
+              "borderRadius": 12,
+              "opacity": 0.7
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "activity_1_icon",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 40,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 40,
+                    "unit": "dp"
+                  },
+                  "padding": {
+                    "all": 8
+                  }
+                },
+                "style": {
+                  "background": {
+                    "type": "pulse",
+                    "color": "#4CAF50",
+                    "min_opacity": 0.3,
+                    "max_opacity": 0.8,
+                    "duration": 1500,
+                    "loop": true
+                  },
+                  "borderRadius": 10
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "activity_1_emoji",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "✓"
+                    },
+                    "style": {
+                      "textColor": "#FFFFFF",
+                      "fontSize": 18,
+                      "fontWeight": "bold",
+                      "textAlign": "center"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "activity_1_content",
+                "containerType": "vertical",
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp"
+                  },
+                  "spacing": 4
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "activity_1_title",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "Payment Received"
+                    },
+                    "style": {
+                      "textColor": "#1A1A1A",
+                      "fontSize": 14,
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "type": "element",
+                    "id": "activity_1_desc",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "Order #12345 completed"
+                    },
+                    "style": {
+                      "textColor": "#666666",
+                      "fontSize": 12,
+                      "opacity": 0.8
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "activity_1_time",
+                "elementType": "text",
+                "bindings": {
+                  "text": "2m ago"
+                },
+                "style": {
+                  "textColor": "#999999",
+                  "fontSize": 11,
+                  "opacity": 0.7
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "activity_item_2",
+            "containerType": "horizontal",
+            "layout": {
+              "spacing": 12,
+              "padding": {
+                "all": 12
+              }
+            },
+            "style": {
+              "backgroundColor": "#F8F9FA",
+              "borderRadius": 12,
+              "opacity": 0.7
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "activity_2_icon",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 40,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 40,
+                    "unit": "dp"
+                  },
+                  "padding": {
+                    "all": 8
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#FFF3E0",
+                  "borderRadius": 10,
+                  "opacity": 0.9
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "activity_2_emoji",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "📦"
+                    },
+                    "style": {
+                      "textColor": "#F57C00",
+                      "fontSize": 18,
+                      "textAlign": "center"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "activity_2_content",
+                "containerType": "vertical",
+                "layout": {
+                  "width": {
+                    "value": 0,
+                    "unit": "dp"
+                  },
+                  "spacing": 4
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "activity_2_title",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "New Order Placed"
+                    },
+                    "style": {
+                      "textColor": "#1A1A1A",
+                      "fontSize": 14,
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "type": "element",
+                    "id": "activity_2_desc",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "Order #12346 pending"
+                    },
+                    "style": {
+                      "textColor": "#666666",
+                      "fontSize": 12,
+                      "opacity": 0.8
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "activity_2_time",
+                "elementType": "text",
+                "bindings": {
+                  "text": "15m ago"
+                },
+                "style": {
+                  "textColor": "#999999",
+                  "fontSize": 11,
+                  "opacity": 0.7
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "quick_actions",
+        "containerType": "horizontal",
+        "layout": {
+          "spacing": 12
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "action_1",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp"
+              },
+              "padding": {
+                "all": 16
+              },
+              "spacing": 8
+            },
+            "style": {
+              "background": {
+                "type": "linear_gradient",
+                "angle": 135,
+                "colors": ["#667eea", "#764ba2"]
+              },
+              "borderRadius": 16,
+              "shadowRadius": 8,
+              "shadowColor": "#667eea40"
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "action_1_icon",
+                "elementType": "text",
+                "bindings": {
+                  "text": "+"
+                },
+                "style": {
+                  "textColor": "#FFFFFF",
+                  "fontSize": 28,
+                  "fontWeight": "bold",
+                  "textAlign": "center"
+                }
+              },
+              {
+                "type": "element",
+                "id": "action_1_label",
+                "elementType": "text",
+                "bindings": {
+                  "text": "New Order"
+                },
+                "style": {
+                  "textColor": "#FFFFFF",
+                  "fontSize": 12,
+                  "fontWeight": "bold",
+                  "textAlign": "center",
+                  "opacity": 0.95
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "action_2",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 0,
+                "unit": "dp"
+              },
+              "padding": {
+                "all": 16
+              },
+              "spacing": 8
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 16,
+              "borderWidth": 2,
+              "borderColor": "#E0E0E0",
+              "opacity": 0.9
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "action_2_icon",
+                "elementType": "text",
+                "bindings": {
+                  "text": "📊"
+                },
+                "style": {
+                  "textColor": "#667eea",
+                  "fontSize": 28,
+                  "textAlign": "center"
+                }
+              },
+              {
+                "type": "element",
+                "id": "action_2_label",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Reports"
+                },
+                "style": {
+                  "textColor": "#333333",
+                  "fontSize": 12,
+                  "fontWeight": "bold",
+                  "textAlign": "center",
+                  "opacity": 0.9
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
