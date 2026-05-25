@@ -9,6 +9,7 @@ import 'containers/horizontal_container.dart';
 import 'containers/vertical_container.dart';
 import 'elements/button_element.dart';
 import 'elements/divider_element.dart';
+import 'elements/html_element.dart';
 import 'elements/image_element.dart';
 import 'elements/spacer_element.dart';
 import 'elements/text_element.dart';
@@ -88,7 +89,7 @@ class NativeDisplayRenderer extends StatelessWidget {
       ElementType.spacer => SpacerElement(node: node, style: style),
       ElementType.divider => DividerElement(node: node, style: style),
       ElementType.video => VideoElement(node: node, style: style, evaluator: evaluator),
-      _ => const SizedBox.shrink(),
+      ElementType.html => HtmlElement(node: node, style: style, evaluator: evaluator),
     };
   }
 }
