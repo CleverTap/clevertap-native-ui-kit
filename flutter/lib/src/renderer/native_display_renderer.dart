@@ -3,6 +3,7 @@ import '../evaluator/variable_evaluator.dart';
 import '../models/enums.dart';
 import '../models/native_display_node.dart';
 import '../models/style.dart';
+import 'animation_modifier.dart';
 import 'containers/box_container.dart';
 import 'containers/gallery_renderer.dart';
 import 'containers/horizontal_container.dart';
@@ -37,10 +38,16 @@ class NativeDisplayRenderer extends StatelessWidget {
     final resolvedStyles = ResolvedStylesScope.of(context);
     final style = resolvedStyles[node.id] ?? Style.empty;
 
-    return switch (node) {
+    Widget built = switch (node) {
       NativeDisplayContainer c => _buildContainer(c, style),
       NativeDisplayElement e => _buildElement(context, e, style),
     };
+
+    final anim = node.animation;
+    if (anim != null && anim.type != AnimationType.none) {
+      built = AnimationModifier(animation: anim, child: built);
+    }
+    return built;
   }
 
   Widget _buildContainer(NativeDisplayContainer node, Style style) {
