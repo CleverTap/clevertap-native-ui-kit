@@ -6,6 +6,8 @@ import 'package:clevertap_native_display/src/renderer/containers/vertical_contai
 import 'package:clevertap_native_display/src/renderer/containers/horizontal_container.dart';
 import 'package:clevertap_native_display/src/renderer/containers/gallery_renderer.dart';
 import 'package:clevertap_native_display/src/evaluator/variable_evaluator.dart';
+import 'package:clevertap_native_display/src/renderer/root_height_scope.dart';
+import 'package:clevertap_native_display/src/renderer/resolved_styles_scope.dart';
 
 NativeDisplayContainer makeContainer({
   String id = 'c',
@@ -28,7 +30,13 @@ void main() {
 
   Widget wrap(Widget w) => Directionality(
         textDirection: TextDirection.ltr,
-        child: w,
+        child: RootHeightScope(
+          rootHeight: 200,
+          child: ResolvedStylesScope(
+            styles: const {},
+            child: w,
+          ),
+        ),
       );
 
   group('BoxContainer', () {
@@ -124,21 +132,95 @@ void main() {
     });
   });
 
-  group('GalleryRenderer stub', () {
-    testWidgets('renders without crash', (tester) async {
+  group('GalleryRenderer', () {
+    testWidgets('renders PageView', (tester) async {
       final node = makeContainer(
         type: ContainerType.gallery,
-        children: [makeElement(id: 'a')],
+        children: [makeElement(id: 'a'), makeElement(id: 'b')],
       );
 
-      await tester.pumpWidget(wrap(GalleryRenderer(
-        node: node,
-        style: Style.empty,
-        evaluator: evaluator,
+      await tester.pumpWidget(wrap(SizedBox(
+        width: 300,
+        height: 200,
+        child: GalleryRenderer(
+          node: node,
+          style: Style.empty,
+          evaluator: evaluator,
+        ),
       )));
 
-      // No crash is the test
-      expect(find.byType(SizedBox), findsOneWidget);
+      expect(find.byType(PageView), findsOneWidget);
+    });
+
+    testWidgets('renders correct number of children', (tester) async {
+      final node = NativeDisplayContainer(
+        id: 'gallery',
+        containerType: ContainerType.gallery,
+        children: [
+          NativeDisplayElement(id: 'a', elementType: ElementType.text, bindings: {'text': 'Page 1'}),
+          NativeDisplayElement(id: 'b', elementType: ElementType.text, bindings: {'text': 'Page 2'}),
+          NativeDisplayElement(id: 'c', elementType: ElementType.text, bindings: {'text': 'Page 3'}),
+        ],
+      );
+
+      await tester.pumpWidget(wrap(SizedBox(
+        width: 300,
+        height: 200,
+        child: GalleryRenderer(
+          node: node,
+          style: Style.empty,
+          evaluator: evaluator,
+        ),
+      )));
+      await tester.pump();
+
+      expect(find.byType(PageView), findsOneWidget);
+    });
+
+    testWidgets('renders indicators when showIndicators is true', (tester) async {
+      final node = NativeDisplayContainer(
+        id: 'gallery',
+        containerType: ContainerType.gallery,
+        children: [
+          NativeDisplayElement(id: 'a', elementType: ElementType.text, bindings: {'text': 'P1'}),
+          NativeDisplayElement(id: 'b', elementType: ElementType.text, bindings: {'text': 'P2'}),
+        ],
+        galleryConfig: GalleryConfig.fromJson({
+          'showIndicators': true,
+        }),
+      );
+
+      await tester.pumpWidget(wrap(SizedBox(
+        width: 300,
+        height: 200,
+        child: GalleryRenderer(
+          node: node,
+          style: Style.empty,
+          evaluator: evaluator,
+        ),
+      )));
+
+      // Indicators are rendered as Container dots inside a Stack
+      expect(find.byType(Stack), findsOneWidget);
+    });
+
+    testWidgets('empty children renders empty PageView without crash', (tester) async {
+      final node = makeContainer(
+        type: ContainerType.gallery,
+        children: const [],
+      );
+
+      await tester.pumpWidget(wrap(SizedBox(
+        width: 300,
+        height: 200,
+        child: GalleryRenderer(
+          node: node,
+          style: Style.empty,
+          evaluator: evaluator,
+        ),
+      )));
+
+      expect(find.byType(PageView), findsOneWidget);
     });
   });
 }
