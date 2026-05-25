@@ -10,3 +10,5 @@ export 'src/models/gallery_config.dart';
 export 'src/models/node_config.dart';
 export 'src/models/native_display_node.dart';
 export 'src/models/native_display_config.dart';
+export 'src/renderer/native_display_view.dart'
+    show NativeDisplayView, NativeDisplayActionListener, NativeDisplayComponentListener;
