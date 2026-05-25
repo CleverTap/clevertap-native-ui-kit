@@ -7,7 +7,10 @@ import 'containers/box_container.dart';
 import 'containers/gallery_renderer.dart';
 import 'containers/horizontal_container.dart';
 import 'containers/vertical_container.dart';
+import 'elements/button_element.dart';
+import 'elements/divider_element.dart';
 import 'elements/image_element.dart';
+import 'elements/spacer_element.dart';
 import 'elements/text_element.dart';
 import 'resolved_styles_scope.dart';
 
@@ -75,6 +78,14 @@ class NativeDisplayRenderer extends StatelessWidget {
     return switch (node.elementType) {
       ElementType.text => TextElement(node: node, style: style, evaluator: evaluator),
       ElementType.image => ImageElement(node: node, style: style),
+      ElementType.button => ButtonElement(
+          node: node,
+          style: style,
+          evaluator: evaluator,
+          actionListener: actionListener,
+        ),
+      ElementType.spacer => SpacerElement(node: node, style: style),
+      ElementType.divider => DividerElement(node: node, style: style),
       _ => const SizedBox.shrink(),
     };
   }
