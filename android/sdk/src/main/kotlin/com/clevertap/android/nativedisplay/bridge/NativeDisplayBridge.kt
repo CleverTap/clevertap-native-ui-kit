@@ -5,6 +5,7 @@ import android.util.Log
 import com.clevertap.android.nativedisplay.handler.ActionAttributionExtras
 import com.clevertap.android.sdk.CleverTapAPI
 import java.lang.ref.WeakReference
+import java.lang.reflect.Method
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -69,8 +70,57 @@ class NativeDisplayBridge private constructor() {
             CoroutineName("nd-parse")
     )
 
-    /** CleverTapAPI instance used to push display unit attribution events. */
+    /**
+     * CleverTapAPI instance used to push display unit attribution events.
+     *
+     * Reassignment (including back to `null`) invalidates the memoised reflection probes
+     * below so a new attached instance is re-probed once on its first event. Both probes
+     * depend only on the loaded `CleverTapAPI` class identity — which is invariant for a
+     * given attached instance — so caching per-bridge is safe.
+     */
     internal var cleverTapApi: CleverTapAPI? = null
+        set(value) {
+            field = value
+            resetReflectionCaches()
+        }
+
+    /**
+     * Resolved `pushDisplayUnitElementClickedEventForID` reflection target, or `null` when
+     * the host Core SDK is too old to expose it. Written exactly once per attached
+     * CleverTapAPI instance; subsequent reads return the cached value without re-probing.
+     *
+     * `@Volatile` plus the "write value before flag" ordering in [resolveElementClickedMethod]
+     * gives a safe happens-before guarantee for readers without explicit synchronisation,
+     * mirroring the one-shot probe pattern used in [CleverTapAutoWire].
+     */
+    @Volatile
+    private var elementClickedMethod: Method? = null
+
+    /**
+     * Flips to `true` the first time [resolveElementClickedMethod] runs the probe, even when
+     * the method is absent. Distinguishes "absent" (cached `null`) from "not yet probed"
+     * (uninitialised) so absence does not get re-probed on every click.
+     */
+    @Volatile
+    private var elementClickedResolved: Boolean = false
+
+    /**
+     * Memoised `CleverTapAPI.setDisplayUnitCache` availability probe used by [seedIfNeeded].
+     * `null` means "not yet probed"; `true`/`false` are sticky cached results for the
+     * lifetime of the currently attached CleverTapAPI instance.
+     */
+    @Volatile
+    private var setDisplayUnitCacheAvailable: Boolean? = null
+
+    /**
+     * Clear both reflection caches. Invoked from the [cleverTapApi] setter so a freshly
+     * attached instance gets a single fresh probe on its first event.
+     */
+    private fun resetReflectionCaches() {
+        elementClickedMethod = null
+        elementClickedResolved = false
+        setDisplayUnitCacheAvailable = null
+    }
 
 
     companion object {
@@ -87,10 +137,12 @@ class NativeDisplayBridge private constructor() {
          * Signature: `pushDisplayUnitElementClickedEventForID(String unitID, String elementID,
          * HashMap<String, Object> additionalProperties)`.
          *
-         * Combines the legacy unit-level `wzrk_*` enrichment (from the cached unit JSON) with
-         * the element id (added to the event as `wzrk_element_id`) and the caller-supplied
-         * `additionalProperties` (merged into `evtData` after enrichment; `wzrk_*` keys
-         * stripped defensively).
+         * Combines the caller-supplied `additionalProperties` (merged into `evtData` first)
+         * with the unit-level `wzrk_*` enrichment layered on top from the cached unit JSON,
+         * plus the element id added to the event as `wzrk_element_id` from the dedicated
+         * parameter. The `wzrk_*` namespace is server-owned — Core SDK always sources those
+         * keys from the cached unit, so client `additionalProperties` should stay in the
+         * `action_*` (and unprefixed) namespace.
          */
         private const val METHOD_ELEMENT_CLICKED = "pushDisplayUnitElementClickedEventForID"
 
@@ -375,14 +427,7 @@ class NativeDisplayBridge private constructor() {
         val sanitized = ActionAttributionExtras.sanitize(extras)
         val elementId = sanitized?.get(ActionAttributionExtras.KEY_BUTTON_ID) as? String
         if (sanitized != null && elementId != null) {
-            val elementMethod = runCatching {
-                ct.javaClass.getMethod(
-                    METHOD_ELEMENT_CLICKED,
-                    String::class.java,
-                    String::class.java,
-                    HashMap::class.java
-                )
-            }.getOrNull()
+            val elementMethod = resolveElementClickedMethod(ct)
             if (elementMethod != null) {
                 // Strip the transport marker — Core SDK adds `wzrk_element_id` to the event
                 // from the dedicated parameter.
@@ -398,6 +443,31 @@ class NativeDisplayBridge private constructor() {
     }
 
     /**
+     * Memoised lookup of the new element-clicked Core SDK method. Probes the class exactly
+     * once per attached CleverTapAPI instance — the result (including `null` for absent)
+     * is cached until [resetReflectionCaches] runs.
+     *
+     * The write order — value before the resolved flag — keeps concurrent readers safe with
+     * `@Volatile` alone (a reader that observes `elementClickedResolved == true` is
+     * guaranteed to observe the prior write to `elementClickedMethod`). Mirrors the
+     * one-shot probe pattern in [CleverTapAutoWire.tryAttachCache].
+     */
+    private fun resolveElementClickedMethod(ct: CleverTapAPI): Method? {
+        if (elementClickedResolved) return elementClickedMethod
+        val resolved = runCatching {
+            ct.javaClass.getMethod(
+                METHOD_ELEMENT_CLICKED,
+                String::class.java,
+                String::class.java,
+                HashMap::class.java
+            )
+        }.getOrNull()
+        elementClickedMethod = resolved
+        elementClickedResolved = true
+        return resolved
+    }
+
+    /**
      * Older-Core-SDK fallback: when the v7.x [setDisplayUnitCache] attach API
      * is unavailable (so [CleverTapAutoWire.tryAttachCache] returned false),
      * inject the unit's raw JSON directly into Core SDK's display-unit cache
@@ -409,20 +479,33 @@ class NativeDisplayBridge private constructor() {
      */
     private fun seedIfNeeded(unitId: String) {
         val ct = cleverTapApi ?: return
-        val cacheAttached = try {
-            val ifaceClass = Class.forName("com.clevertap.android.sdk.displayunits.DisplayUnitCache")
-            ct.javaClass.getMethod("setDisplayUnitCache", ifaceClass)
-            true
-        } catch (_: Throwable) {
-            false
-        }
-        if (cacheAttached) return
+        if (isSetDisplayUnitCacheAvailable(ct)) return
         val raw = cache.get(unitId)?.rawJson ?: return
         try {
             ReflectionSeeder.seed(ct, listOf(org.json.JSONObject(raw)))
         } catch (_: Throwable) {
             // logged inside ReflectionSeeder
         }
+    }
+
+    /**
+     * Memoised lookup of `CleverTapAPI.setDisplayUnitCache(DisplayUnitCache)`. Probes the
+     * class (including the `Class.forName` interface lookup) exactly once per attached
+     * CleverTapAPI instance and caches the result — including `false` for absent — until
+     * [resetReflectionCaches] runs. Previously this probe ran on every click, even on the
+     * upgraded-Core-SDK happy path where it always returns `true`.
+     */
+    private fun isSetDisplayUnitCacheAvailable(ct: CleverTapAPI): Boolean {
+        setDisplayUnitCacheAvailable?.let { return it }
+        val available = try {
+            val ifaceClass = Class.forName("com.clevertap.android.sdk.displayunits.DisplayUnitCache")
+            ct.javaClass.getMethod("setDisplayUnitCache", ifaceClass)
+            true
+        } catch (_: Throwable) {
+            false
+        }
+        setDisplayUnitCacheAvailable = available
+        return available
     }
 
     /**

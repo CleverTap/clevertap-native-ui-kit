@@ -9,6 +9,25 @@
 
 import Foundation
 
+// MARK: - Core SDK Selector Constants
+//
+// Lifted out of the per-click hot path so that `NSSelectorFromString` parsing
+// happens exactly once at module load instead of on every gesture handler call.
+// These names are invariant — the Core SDK methods they reference never change
+// for a given iOS Core SDK version.
+
+/// New element-aware click attribution selector (Core SDK v7.0+).
+/// Signature: `-recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:`.
+private let elementClickedSelector: Selector = NSSelectorFromString(
+    "recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:"
+)
+
+/// Legacy unit-level click attribution selector (all Core SDK versions).
+/// Signature: `-recordDisplayUnitClickedEventForID:`.
+private let legacyClickedSelector: Selector = NSSelectorFromString(
+    "recordDisplayUnitClickedEventForID:"
+)
+
 /// Bridge between CleverTap Core SDK and the Native Display SDK.
 ///
 /// Provides two integration modes:
@@ -81,7 +100,27 @@ public class NativeDisplayBridge {
 
     /// Weak reference to the CleverTap Core SDK instance.
     /// Stored as NSObject to avoid a compile-time dependency on the CleverTap SDK.
-    internal weak var cleverTapInstance: NSObject?
+    ///
+    /// `didSet` invalidates the reflection caches whose results depend on the
+    /// attached instance — the next click after a (re)bind re-probes once and
+    /// repopulates the cache.
+    internal weak var cleverTapInstance: NSObject? {
+        didSet {
+            // main-thread only; bind/unbind paths and tests assign on main.
+            elementClickedResponds = nil
+        }
+    }
+
+    /// Cached result of `cleverTapInstance.responds(to: elementClickedSelector)`.
+    ///
+    /// Three states:
+    /// - `nil` — not yet probed (or invalidated by a `cleverTapInstance` change).
+    /// - `true` — Core SDK exposes the new element-aware selector.
+    /// - `false` — Core SDK is on an older version; bridge will use the legacy fallback.
+    ///
+    /// Read/written on the main thread only (gesture handler call sites). The
+    /// legacy fallback selector is not cached — it's on the rare slow path.
+    private var elementClickedResponds: Bool?
 
     /// Event name for server fetch requests.
     static let wzrkFetch = "wzrk_fetch"
@@ -380,17 +419,14 @@ public class NativeDisplayBridge {
         let sanitized = ActionAttributionExtras.sanitize(extras)
         let elementId = sanitized?[ActionAttributionExtras.keyButtonId] as? String
         if let sanitized = sanitized, let elementId = elementId {
-            let elementSel = NSSelectorFromString(
-                "recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:"
-            )
-            if ct.responds(to: elementSel) {
+            if isElementClickedAvailable(on: ct) {
                 // Strip the transport marker — Core SDK adds `wzrk_element_id` to the
                 // event from the dedicated parameter.
                 var additionalProps = sanitized
                 additionalProps.removeValue(forKey: ActionAttributionExtras.keyButtonId)
                 sendThreeArgSelector(
                     target: ct,
-                    selector: elementSel,
+                    selector: elementClickedSelector,
                     arg1: unitId as NSString,
                     arg2: elementId as NSString,
                     arg3: additionalProps as NSDictionary
@@ -399,10 +435,22 @@ public class NativeDisplayBridge {
             }
         }
         // Fallback: legacy unit-level click attribution (no per-element data).
-        let sel = NSSelectorFromString("recordDisplayUnitClickedEventForID:")
-        guard ct.responds(to: sel) else { return false }
-        ct.perform(sel, with: unitId)
+        // Not cached — only reached when the new selector is absent (rare slow path).
+        guard ct.responds(to: legacyClickedSelector) else { return false }
+        ct.perform(legacyClickedSelector, with: unitId)
         return true
+    }
+
+    /// Lazily resolve and cache whether the attached Core SDK responds to the
+    /// element-aware click selector. The cache is invalidated whenever
+    /// `cleverTapInstance` is (re)set — see its `didSet`.
+    ///
+    /// main-thread only; gesture handler call sites are serialised on main.
+    private func isElementClickedAvailable(on ct: NSObject) -> Bool {
+        if let cached = elementClickedResponds { return cached }
+        let responds = ct.responds(to: elementClickedSelector)
+        elementClickedResponds = responds
+        return responds
     }
 
     /// Invokes a 3-argument Objective-C selector. `NSObject.perform(_:with:with:)`
