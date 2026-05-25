@@ -1,0 +1,217 @@
+{
+  "theme": {
+    "id": "banner-09",
+    "defaultStyle": {
+      "textColor": "#424242",
+      "fontSize": 14
+    }
+  },
+  "variables": {
+    "price": "$9.99",
+    "period": "month",
+    "badge": "7 DAYS FREE"
+  },
+  "root": {
+    "type": "container",
+    "id": "banner-root",
+    "containerType": "box",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "aspectRatio": 0.65
+    },
+    "style": {
+      "background": {
+        "type": "radial_gradient",
+        "center_x": 0.5,
+        "center_y": 0.5,
+        "radius": 1.0,
+        "colors": ["#E8EAF6", "#C5CAE9"]
+      },
+      "borderRadius": 16
+    },
+    "animation": {
+      "type": "fade_in",
+      "duration": 600,
+      "easing": "ease_out"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "trial-badge",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{badge}}"
+        },
+        "layout": {
+          "width": { "value": 38, "unit": "percent" },
+          "height": { "value": 7, "unit": "percent" },
+          "offset": { "x": 31, "y": 3, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 13,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFF",
+          "textAlign": "center",
+          "backgroundColor": "#00C853DD",
+          "borderRadius": 18,
+          "shadowColor": "#00C85360",
+          "shadowRadius": 6,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3
+        }
+      },
+      {
+        "type": "element",
+        "id": "premium-title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Go Premium"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "offset": { "x": 0, "y": 12, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 36,
+          "fontWeight": "bold",
+          "textColor": "#424242",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "feature-1",
+        "elementType": "text",
+        "bindings": {
+          "text": "✓ Ad-Free Experience"
+        },
+        "layout": {
+          "width": { "value": 90, "unit": "percent" },
+          "offset": { "x": 5, "y": 28, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 17,
+          "fontWeight": "normal",
+          "textColor": "#424242",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "feature-2",
+        "elementType": "text",
+        "bindings": {
+          "text": "✓ Unlimited Downloads"
+        },
+        "layout": {
+          "width": { "value": 90, "unit": "percent" },
+          "offset": { "x": 5, "y": 39, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 17,
+          "fontWeight": "normal",
+          "textColor": "#424242",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "feature-3",
+        "elementType": "text",
+        "bindings": {
+          "text": "✓ HD Quality"
+        },
+        "layout": {
+          "width": { "value": 90, "unit": "percent" },
+          "offset": { "x": 5, "y": 50, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 17,
+          "fontWeight": "normal",
+          "textColor": "#424242",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "feature-4",
+        "elementType": "text",
+        "bindings": {
+          "text": "✓ Offline Mode"
+        },
+        "layout": {
+          "width": { "value": 90, "unit": "percent" },
+          "offset": { "x": 5, "y": 61, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 17,
+          "fontWeight": "normal",
+          "textColor": "#424242",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "trial-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Start Free Trial"
+        },
+        "layout": {
+          "width": { "value": 52, "unit": "percent" },
+          "height": { "value": 15, "unit": "percent" },
+          "offset": { "x": 6, "y": 78, "unit": "percent" }
+        },
+        "style": {
+          "backgroundColor": "#5C6BC0",
+          "textColor": "#FFFFFF",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "borderRadius": 28,
+          "shadowColor": "#5C6BC060",
+          "shadowRadius": 12,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 6
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "start_trial",
+            "value": {
+              "plan": "premium"
+            }
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "upgrade-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Buy Now"
+        },
+        "layout": {
+          "width": { "value": 32, "unit": "percent" },
+          "height": { "value": 15, "unit": "percent" },
+          "offset": { "x": 62, "y": 78, "unit": "percent" }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF30",
+          "textColor": "#424242",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "borderRadius": 28,
+          "borderWidth": 2,
+          "borderColor": "#5C6BC0"
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "buy_premium",
+            "value": {}
+          }
+        }
+      }
+    ]
+  }
+}
