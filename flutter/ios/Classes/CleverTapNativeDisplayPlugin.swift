@@ -1,5 +1,8 @@
+#if canImport(Flutter)
 import Flutter
-import UIKit
+#elseif canImport(FlutterMacOS)
+import FlutterMacOS
+#endif
 
 public class CleverTapNativeDisplayPlugin: NSObject, FlutterPlugin {
 
