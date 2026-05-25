@@ -12,3 +12,4 @@ export 'src/models/native_display_node.dart';
 export 'src/models/native_display_config.dart';
 export 'src/renderer/native_display_view.dart'
     show NativeDisplayView, NativeDisplayActionListener, NativeDisplayComponentListener;
+export 'src/handler/action_handler.dart' show ActionHandler;
