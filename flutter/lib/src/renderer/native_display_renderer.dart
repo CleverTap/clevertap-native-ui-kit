@@ -1,7 +1,12 @@
 import 'package:flutter/widgets.dart';
 import '../evaluator/variable_evaluator.dart';
+import '../models/enums.dart';
 import '../models/native_display_node.dart';
 import '../models/style.dart';
+import 'containers/box_container.dart';
+import 'containers/gallery_renderer.dart';
+import 'containers/horizontal_container.dart';
+import 'containers/vertical_container.dart';
 import 'resolved_styles_scope.dart';
 
 class NativeDisplayRenderer extends StatelessWidget {
@@ -25,17 +30,43 @@ class NativeDisplayRenderer extends StatelessWidget {
     final resolvedStyles = ResolvedStylesScope.of(context);
     final style = resolvedStyles[node.id] ?? Style.empty;
 
-    final child = switch (node) {
-      NativeDisplayContainer c => _buildContainer(context, c, style),
+    return switch (node) {
+      NativeDisplayContainer c => _buildContainer(c, style),
       NativeDisplayElement e => _buildElement(context, e, style),
     };
-
-    return child;
   }
 
-  Widget _buildContainer(BuildContext context, NativeDisplayContainer node, Style style) {
-    // Stub — full implementation in Steps 4 and 10
-    return const SizedBox.shrink();
+  Widget _buildContainer(NativeDisplayContainer node, Style style) {
+    return switch (node.containerType) {
+      ContainerType.box => BoxContainer(
+          node: node,
+          style: style,
+          evaluator: evaluator,
+          actionListener: actionListener,
+          componentListener: componentListener,
+        ),
+      ContainerType.vertical => VerticalContainer(
+          node: node,
+          style: style,
+          evaluator: evaluator,
+          actionListener: actionListener,
+          componentListener: componentListener,
+        ),
+      ContainerType.horizontal => HorizontalContainer(
+          node: node,
+          style: style,
+          evaluator: evaluator,
+          actionListener: actionListener,
+          componentListener: componentListener,
+        ),
+      ContainerType.gallery => GalleryRenderer(
+          node: node,
+          style: style,
+          evaluator: evaluator,
+          actionListener: actionListener,
+          componentListener: componentListener,
+        ),
+    };
   }
 
   Widget _buildElement(BuildContext context, NativeDisplayElement node, Style style) {
