@@ -7,6 +7,7 @@ import 'containers/box_container.dart';
 import 'containers/gallery_renderer.dart';
 import 'containers/horizontal_container.dart';
 import 'containers/vertical_container.dart';
+import 'elements/image_element.dart';
 import 'elements/text_element.dart';
 import 'resolved_styles_scope.dart';
 
@@ -73,6 +74,7 @@ class NativeDisplayRenderer extends StatelessWidget {
   Widget _buildElement(BuildContext context, NativeDisplayElement node, Style style) {
     return switch (node.elementType) {
       ElementType.text => TextElement(node: node, style: style, evaluator: evaluator),
+      ElementType.image => ImageElement(node: node, style: style),
       _ => const SizedBox.shrink(),
     };
   }
