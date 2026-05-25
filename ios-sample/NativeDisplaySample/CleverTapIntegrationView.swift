@@ -124,6 +124,7 @@ struct CleverTapIntegrationView: View {
                         }
                     }
                     .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 10)
                 }
                 .frame(maxWidth: .infinity)
                 .accessibilityIdentifier("ct-display-canvas")
