@@ -1,0 +1,119 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    },
+    "colors": {}
+  },
+  "styleClasses": [],
+  "variables": {},
+  "root": {
+    "type": "container",
+    "id": "fade_container",
+    "containerType": "vertical",
+    "layout": {
+      "padding": {
+        "all": 24
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFFFFF",
+      "borderRadius": 16,
+      "shadowRadius": 8,
+      "shadowColor": "#00000040"
+    },
+    "animation": {
+      "type": "fade_in",
+      "duration": 500,
+      "delay": 0,
+      "easing": "ease_out"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Container with Fade Animation"
+        },
+        "style": {
+          "textColor": "#1A237E",
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "textAlign": "center"
+        },
+        "layout": {
+          "padding": {
+            "bottom": 16
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "This entire container fades in smoothly over 500ms. All children appear together with the container."
+        },
+        "style": {
+          "textColor": "#424242",
+          "fontSize": 16,
+          "lineHeight": 24,
+          "textAlign": "center"
+        },
+        "layout": {
+          "padding": {
+            "bottom": 24
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "demo_image",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://dummyjson.com/image/400x200/008080/0000ff?text=Hello+Lalit"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 50,
+            "unit": "dp"
+          },
+          "padding": {
+            "bottom": 16
+          }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      },
+      {
+        "type": "element",
+        "id": "cta_button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Get Started"
+        },
+        "style": {
+          "backgroundColor": "#1976D2",
+          "textColor": "#FFFFFF",
+          "fontSize": 16,
+          "fontWeight": "bold",
+          "borderRadius": 8
+        },
+        "layout": {
+          "padding": {
+            "vertical": 12,
+            "horizontal": 32
+          }
+        }
+      }
+    ]
+  }
+}

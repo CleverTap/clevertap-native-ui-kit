@@ -1,0 +1,104 @@
+{
+  "wzrk_id": "demo_unit_notification",
+  "type": "native_display",
+  "native_display_config": {
+    "theme": {
+      "id": "notification",
+      "defaultStyle": {
+        "textColor": "#1F2937",
+        "fontSize": 14,
+        "lineHeight": 20
+      }
+    },
+    "root": {
+      "type": "container",
+      "id": "notification-card",
+      "containerType": "horizontal",
+      "layout": {
+        "width": { "value": 100, "unit": "percent" },
+        "height": { "value": -2, "unit": "dp" },
+        "padding": { "all": 16 },
+        "arrangement": { "spacing": 12, "strategy": "spaced" }
+      },
+      "style": {
+        "backgroundColor": "#FFFFFF",
+        "borderRadius": 12,
+        "shadowRadius": 8,
+        "shadowColor": "#000000",
+        "shadowOpacity": 0.08,
+        "shadowOffsetY": 2,
+        "borderWidth": 1,
+        "borderColor": "#E5E7EB"
+      },
+      "children": [
+        {
+          "type": "element",
+          "id": "avatar",
+          "elementType": "image",
+          "bindings": {
+            "url": "https://yavuzceliker.github.io/sample-images/image-750.jpg"
+          },
+          "layout": {
+            "width": { "value": 48, "unit": "dp" },
+            "height": { "value": 48, "unit": "dp" }
+          },
+          "style": { "borderRadius": 24 }
+        },
+        {
+          "type": "container",
+          "id": "content",
+          "containerType": "vertical",
+          "layout": {
+            "width": { "value": -1, "unit": "dp" },
+            "arrangement": { "spacing": 4, "strategy": "spaced" }
+          },
+          "children": [
+            {
+              "type": "element",
+              "id": "sender",
+              "elementType": "text",
+              "bindings": { "text": "Sarah Johnson" },
+              "layout": { "width": { "value": 100, "unit": "percent" } },
+              "style": {
+                "fontSize": 16,
+                "fontWeight": "bold",
+                "textColor": "#111827",
+                "lineHeight": 22
+              }
+            },
+            {
+              "type": "element",
+              "id": "message",
+              "elementType": "text",
+              "bindings": { "text": "Hey! Just wanted to check in about our meeting tomorrow." },
+              "layout": { "width": { "value": 100, "unit": "percent" } },
+              "style": {
+                "fontSize": 14,
+                "textColor": "#6B7280",
+                "lineHeight": 20
+              }
+            },
+            {
+              "type": "element",
+              "id": "time",
+              "elementType": "text",
+              "bindings": { "text": "2 minutes ago" },
+              "layout": { "width": { "value": 100, "unit": "percent" } },
+              "style": {
+                "fontSize": 12,
+                "textColor": "#9CA3AF",
+                "lineHeight": 17
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "styleClasses": [],
+    "variables": {}
+  },
+  "custom_kv": {
+    "campaign": "re_engagement",
+    "sender_id": "user_42"
+  }
+}

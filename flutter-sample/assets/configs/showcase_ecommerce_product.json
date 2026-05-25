@@ -1,0 +1,522 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    },
+    "colors": {}
+  },
+  "styleClasses": [],
+  "variables": {},
+  "root": {
+    "type": "container",
+    "id": "ecommerce_root",
+    "containerType": "vertical",
+    "layout": {
+      "spacing": 16,
+      "padding": {
+        "all": 16
+      }
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "product_card",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "layered",
+            "layers": [
+              {
+                "type": "linear_gradient",
+                "angle": 135,
+                "colors": ["#FFFFFF", "#F8F9FA"]
+              },
+              {
+                "type": "pattern",
+                "pattern_type": "dots",
+                "primary_color": "#00000000",
+                "secondary_color": "#E0E0E010",
+                "size": 4,
+                "spacing": 20
+              }
+            ]
+          },
+          "borderRadius": 20,
+          "shadowRadius": 12,
+          "shadowColor": "#00000020"
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "product_image_section",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 200,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "radial_gradient",
+                "center_x": 0.5,
+                "center_y": 0.5,
+                "radius": 1.0,
+                "colors": ["#F0F0F0", "#D0D0D0"]
+              },
+              "borderRadius": 20
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "new_badge",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 70,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 32,
+                    "unit": "dp"
+                  },
+                  "margin": {
+                    "left": 12,
+                    "top": 12
+                  },
+                  "padding": {
+                    "vertical": 8,
+                    "horizontal": 12
+                  }
+                },
+                "style": {
+                  "background": {
+                    "type": "animated_gradient",
+                    "gradient_type": "linear",
+                    "angle": 45,
+                    "colors": ["#FFD700", "#FFA500", "#FFD700"],
+                    "duration": 2000,
+                    "loop": true,
+                    "animation_style": "smooth"
+                  },
+                  "borderRadius": 16,
+                  "opacity": 0.95
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "new_badge_text",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "NEW"
+                    },
+                    "style": {
+                      "textColor": "#FFFFFF",
+                      "fontSize": 12,
+                      "fontWeight": "bold",
+                      "textAlign": "center"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "product_image_placeholder",
+                "elementType": "text",
+                "bindings": {
+                  "text": "🎁"
+                },
+                "style": {
+                  "textColor": "#666666",
+                  "fontSize": 80,
+                  "textAlign": "center",
+                  "opacity": 0.5
+                },
+                "layout": {
+                  "padding": {
+                    "top": 85
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "product_info",
+            "containerType": "vertical",
+            "layout": {
+              "padding": {
+                "all": 20
+              },
+              "spacing": 12
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "product_category",
+                "elementType": "text",
+                "bindings": {
+                  "text": "PREMIUM WATCHES"
+                },
+                "style": {
+                  "textColor": "#FF6B6B",
+                  "fontSize": 11,
+                  "fontWeight": "bold",
+                  "opacity": 0.9
+                }
+              },
+              {
+                "type": "element",
+                "id": "product_name",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Luxury Chronograph Watch"
+                },
+                "style": {
+                  "textColor": "#1A1A1A",
+                  "fontSize": 22,
+                  "fontWeight": "bold",
+                  "lineHeight": 28
+                }
+              },
+              {
+                "type": "element",
+                "id": "product_description",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Elegant timepiece with Swiss movement, sapphire crystal, and water resistance up to 100m. Perfect blend of style and functionality."
+                },
+                "style": {
+                  "textColor": "#666666",
+                  "fontSize": 14,
+                  "lineHeight": 20,
+                  "opacity": 0.85
+                }
+              },
+              {
+                "type": "container",
+                "id": "price_section",
+                "containerType": "horizontal",
+                "layout": {
+                  "spacing": 12,
+                  "margin": {
+                    "top": 8
+                  }
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "current_price",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "$599"
+                    },
+                    "style": {
+                      "textColor": "#1A1A1A",
+                      "fontSize": 28,
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "type": "element",
+                    "id": "original_price",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "$899"
+                    },
+                    "style": {
+                      "textColor": "#999999",
+                      "fontSize": 18,
+                      "textDecoration": "strikethrough",
+                      "opacity": 0.7
+                    }
+                  },
+                  {
+                    "type": "container",
+                    "id": "discount_badge",
+                    "containerType": "box",
+                    "layout": {
+                      "padding": {
+                        "horizontal": 12,
+                        "vertical": 6
+                      }
+                    },
+                    "style": {
+                      "backgroundColor": "#FF6B6B",
+                      "borderRadius": 12,
+                      "opacity": 0.9
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "discount_text",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "33% OFF"
+                        },
+                        "style": {
+                          "textColor": "#FFFFFF",
+                          "fontSize": 12,
+                          "fontWeight": "bold"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "divider",
+                "elementType": "divider",
+                "layout": {
+                  "margin": {
+                    "vertical": 16
+                  }
+                },
+                "dividerConfig": {
+                  "orientation": "horizontal",
+                  "thickness": 1,
+                  "color": "#E0E0E0"
+                }
+              },
+              {
+                "type": "container",
+                "id": "features_section",
+                "containerType": "vertical",
+                "layout": {
+                  "spacing": 10
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "features_title",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "Key Features:"
+                    },
+                    "style": {
+                      "textColor": "#1A1A1A",
+                      "fontSize": 14,
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "type": "container",
+                    "id": "feature_1",
+                    "containerType": "horizontal",
+                    "layout": {
+                      "spacing": 8
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "feature_1_bullet",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "✓"
+                        },
+                        "style": {
+                          "textColor": "#4ECDC4",
+                          "fontSize": 14,
+                          "fontWeight": "bold"
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "feature_1_text",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Swiss Automatic Movement"
+                        },
+                        "style": {
+                          "textColor": "#666666",
+                          "fontSize": 14,
+                          "opacity": 0.9
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "feature_2",
+                    "containerType": "horizontal",
+                    "layout": {
+                      "spacing": 8
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "feature_2_bullet",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "✓"
+                        },
+                        "style": {
+                          "textColor": "#4ECDC4",
+                          "fontSize": 14,
+                          "fontWeight": "bold"
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "feature_2_text",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Sapphire Crystal Glass"
+                        },
+                        "style": {
+                          "textColor": "#666666",
+                          "fontSize": 14,
+                          "opacity": 0.9
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "feature_3",
+                    "containerType": "horizontal",
+                    "layout": {
+                      "spacing": 8
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "feature_3_bullet",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "✓"
+                        },
+                        "style": {
+                          "textColor": "#4ECDC4",
+                          "fontSize": 14,
+                          "fontWeight": "bold"
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "feature_3_text",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "100m Water Resistant"
+                        },
+                        "style": {
+                          "textColor": "#666666",
+                          "fontSize": 14,
+                          "opacity": 0.9
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "action_buttons",
+                "containerType": "horizontal",
+                "layout": {
+                  "spacing": 12,
+                  "margin": {
+                    "top": 20
+                  }
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "add_to_cart_container",
+                    "containerType": "box",
+                    "layout": {
+                      "width": {
+                        "value": 0,
+                        "unit": "dp"
+                      },
+                      "padding": {
+                        "vertical": 16,
+                        "horizontal": 32
+                      }
+                    },
+                    "style": {
+                      "background": {
+                        "type": "linear_gradient",
+                        "angle": 135,
+                        "colors": ["#667eea", "#764ba2"]
+                      },
+                      "borderRadius": 16
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "add_to_cart_text",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Add to Cart"
+                        },
+                        "style": {
+                          "textColor": "#FFFFFF",
+                          "fontSize": 16,
+                          "fontWeight": "bold"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "wishlist_button",
+                    "containerType": "box",
+                    "layout": {
+                      "width": {
+                        "value": 56,
+                        "unit": "dp"
+                      },
+                      "height": {
+                        "value": 56,
+                        "unit": "dp"
+                      },
+                      "padding": {
+                        "all": 16
+                      }
+                    },
+                    "style": {
+                      "backgroundColor": "#FFFFFF",
+                      "borderRadius": 16,
+                      "borderWidth": 2,
+                      "borderColor": "#FF6B6B",
+                      "opacity": 0.9
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "wishlist_icon",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "♥"
+                        },
+                        "style": {
+                          "textColor": "#FF6B6B",
+                          "fontSize": 20,
+                          "textAlign": "center"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

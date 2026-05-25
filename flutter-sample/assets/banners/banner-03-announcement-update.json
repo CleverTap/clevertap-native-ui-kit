@@ -1,0 +1,123 @@
+{
+  "theme": {
+    "id": "banner-03",
+    "defaultStyle": {
+      "textColor": "#1565C0",
+      "fontSize": 14
+    }
+  },
+  "variables": {
+    "message": "New Features Available!"
+  },
+  "root": {
+    "type": "container",
+    "id": "banner-root",
+    "containerType": "box",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "aspectRatio": 0.28
+    },
+    "style": {
+      "background": {
+        "type": "radial_gradient",
+        "center_x": 0.5,
+        "center_y": 0.5,
+        "radius": 1.0,
+        "colors": ["#E3F2FD", "#BBDEFB"]
+      },
+      "borderRadius": 16
+    },
+    "animation": {
+      "type": "scale_in",
+      "duration": 400,
+      "easing": "ease_out"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "update-badge",
+        "elementType": "text",
+        "bindings": {
+          "text": "UPDATE"
+        },
+        "layout": {
+          "width": { "value": 22, "unit": "percent" },
+          "height": { "value": 35, "unit": "percent" },
+          "offset": { "x": 4, "y": 32, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 13,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFF",
+          "textAlign": "center",
+          "backgroundColor": "#1976D2EE",
+          "borderRadius": 18
+        }
+      },
+      {
+        "type": "element",
+        "id": "announcement-text",
+        "elementType": "text",
+        "bindings": {
+          "text": "🎉 {{message}}"
+        },
+        "layout": {
+          "width": { "value": 50, "unit": "percent" },
+          "offset": { "x": 28, "y": 20, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#1565C0",
+          "textAlign": "left"
+        }
+      },
+      {
+        "type": "element",
+        "id": "update-text",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tap to learn more"
+        },
+        "layout": {
+          "width": { "value": 50, "unit": "percent" },
+          "offset": { "x": 28, "y": 58, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 13,
+          "fontWeight": "normal",
+          "textColor": "#1976D2",
+          "textAlign": "left",
+          "opacity": 0.85
+        }
+      },
+      {
+        "type": "element",
+        "id": "close-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "✕"
+        },
+        "layout": {
+          "width": { "value": 12, "unit": "percent" },
+          "height": { "value": 52, "unit": "percent" },
+          "offset": { "x": 84, "y": 24, "unit": "percent" }
+        },
+        "style": {
+          "backgroundColor": "#90CAF9BB",
+          "textColor": "#1565C0",
+          "fontSize": 20,
+          "fontWeight": "bold",
+          "borderRadius": 20
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "dismiss",
+            "value": {}
+          }
+        }
+      }
+    ]
+  }
+}
