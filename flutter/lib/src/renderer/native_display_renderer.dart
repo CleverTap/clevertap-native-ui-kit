@@ -7,6 +7,7 @@ import 'containers/box_container.dart';
 import 'containers/gallery_renderer.dart';
 import 'containers/horizontal_container.dart';
 import 'containers/vertical_container.dart';
+import 'elements/text_element.dart';
 import 'resolved_styles_scope.dart';
 
 class NativeDisplayRenderer extends StatelessWidget {
@@ -70,7 +71,9 @@ class NativeDisplayRenderer extends StatelessWidget {
   }
 
   Widget _buildElement(BuildContext context, NativeDisplayElement node, Style style) {
-    // Stub — full implementation in Steps 6-12
-    return const SizedBox.shrink();
+    return switch (node.elementType) {
+      ElementType.text => TextElement(node: node, style: style, evaluator: evaluator),
+      _ => const SizedBox.shrink(),
+    };
   }
 }
