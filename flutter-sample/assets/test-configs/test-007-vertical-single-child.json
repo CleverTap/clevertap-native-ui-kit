@@ -1,0 +1,71 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#212121",
+      "fontSize": 16,
+      "lineHeight": 22
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "vertical-single",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 300,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 20
+      },
+      "arrangement": {
+        "strategy": "center"
+      }
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "angle": 135,
+        "colors": [
+          "#667EEA",
+          "#764BA2"
+        ]
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Welcome to Native Display"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 28,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFF",
+          "textAlign": "center",
+          "lineHeight": 39
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

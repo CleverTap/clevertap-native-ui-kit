@@ -1,0 +1,97 @@
+{
+  "theme": {
+    "id": "test-129"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#1A1A2E"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "text_underline",
+        "elementType": "text",
+        "bindings": {
+          "text": "Underlined text decoration"
+        },
+        "layout": {
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 20,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "lineHeight": 24,
+          "textColor": "#FFFFFF",
+          "textDecoration": "underline"
+        }
+      },
+      {
+        "type": "element",
+        "id": "text_strikethrough",
+        "elementType": "text",
+        "bindings": {
+          "text": "Strikethrough text decoration"
+        },
+        "layout": {
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 45,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "lineHeight": 24,
+          "textColor": "#CCCCCC",
+          "textDecoration": "strikethrough"
+        }
+      },
+      {
+        "type": "element",
+        "id": "text_italic",
+        "elementType": "text",
+        "bindings": {
+          "text": "Italic font style text"
+        },
+        "layout": {
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 70,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "lineHeight": 24,
+          "textColor": "#FFFFFF",
+          "fontStyle": "italic"
+        }
+      }
+    ]
+  }
+}

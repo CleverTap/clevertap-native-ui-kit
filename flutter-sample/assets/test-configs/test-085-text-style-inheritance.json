@@ -1,0 +1,483 @@
+{
+  "theme": {
+    "id": "inheritance-theme",
+    "defaultStyle": {
+      "fontSize": 14,
+      "textColor": "#666666",
+      "fontWeight": "normal",
+      "lineHeight": 20
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "inheritance-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 20
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 20,
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5",
+      "textColor": "#000000",
+      "fontSize": 16,
+      "lineHeight": 22
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Text Style Inheritance Demo"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 26,
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "lineHeight": 36
+        }
+      },
+      {
+        "type": "container",
+        "id": "level-1-container",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 12,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#E3F2FD",
+          "borderRadius": 12,
+          "textColor": "#1565C0",
+          "fontSize": 18,
+          "fontWeight": "medium",
+          "lineHeight": 25
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "level-1-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "Level 1: Blue text (18sp, medium) - inherited from container"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "id": "level-2-container",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              },
+              "padding": {
+                "all": 12
+              },
+              "arrangement": {
+                "strategy": "spaced",
+                "spacing": 8,
+                "spacingUnit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#BBDEFB",
+              "borderRadius": 8,
+              "fontSize": 16,
+              "lineHeight": 22
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "level-2-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Level 2: Still blue, but smaller (16sp) - inherits color, overrides size"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  }
+                }
+              },
+              {
+                "type": "container",
+                "id": "level-3-container",
+                "containerType": "vertical",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 0,
+                    "unit": "dp",
+                    "special": "wrap_content"
+                  },
+                  "padding": {
+                    "all": 8
+                  },
+                  "arrangement": {
+                    "strategy": "spaced",
+                    "spacing": 4,
+                    "spacingUnit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#90CAF9",
+                  "borderRadius": 6,
+                  "textColor": "#0D47A1",
+                  "fontWeight": "bold"
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "level-3-text",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "Level 3: Dark blue and bold - overrides color and weight"
+                    },
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      },
+                      "height": {
+                        "value": 0,
+                        "unit": "dp",
+                        "special": "wrap_content"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "inheritance-demo-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 12,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFEBEE",
+          "borderRadius": 12,
+          "textColor": "#C62828",
+          "fontSize": 16,
+          "lineHeight": 26
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "demo-2-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Red Theme Section"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "lineHeight": 28
+            }
+          },
+          {
+            "type": "element",
+            "id": "demo-2-body",
+            "elementType": "text",
+            "bindings": {
+              "text": "All text in this section inherits red color and 1.6 line height from the parent container. This demonstrates how text properties cascade down the tree."
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "id": "demo-2-override",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text overrides the inherited color to green."
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "textColor": "#2E7D32"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "mixed-inheritance",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 12,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFF3E0",
+          "borderRadius": 12,
+          "textColor": "#E65100",
+          "fontFamily": "serif"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "mixed-title",
+            "elementType": "text",
+            "bindings": {
+              "text": "Font Family Inheritance"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "lineHeight": 28
+            }
+          },
+          {
+            "type": "element",
+            "id": "mixed-serif",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text inherits the serif font family from the container."
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "id": "mixed-monospace",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text overrides to use monospace: console.log('Hello');"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontFamily": "monospace",
+              "fontSize": 14,
+              "lineHeight": 20
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "visual-not-inherited",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 12,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#E8F5E9",
+          "borderRadius": 12,
+          "borderWidth": 2,
+          "borderColor": "#2E7D32",
+          "shadowColor": "#000000",
+          "shadowOpacity": 0.2,
+          "shadowRadius": 8,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "not-inherited-note",
+            "elementType": "text",
+            "bindings": {
+              "text": "Note: Visual properties (backgroundColor, borderRadius, shadows) do NOT inherit. Each child must define its own visual styling."
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "medium",
+              "textColor": "#2E7D32",
+              "lineHeight": 20
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

@@ -1,0 +1,267 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#37474F",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "vertical-10-children",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 1200,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 16
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 8,
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#ECEFF1"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "header",
+        "elementType": "text",
+        "bindings": {
+          "text": "Daily News Feed"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 26,
+          "fontWeight": "bold",
+          "textColor": "#263238",
+          "lineHeight": 36
+        }
+      },
+      {
+        "type": "element",
+        "id": "news-1",
+        "elementType": "text",
+        "bindings": {
+          "text": "Breaking: New SDK Release Available"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 16,
+          "textColor": "#455A64",
+          "lineHeight": 22
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-1",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://yavuzceliker.github.io/sample-images/image-9.jpg"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 150,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "news-2",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tech: AI Advances in Mobile Development"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 16,
+          "textColor": "#455A64",
+          "lineHeight": 22
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-2",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://yavuzceliker.github.io/sample-images/image-10.jpg"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 150,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "news-3",
+        "elementType": "text",
+        "bindings": {
+          "text": "Business: Market Trends for 2026"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 16,
+          "textColor": "#455A64",
+          "lineHeight": 22
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-3",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://yavuzceliker.github.io/sample-images/image-11.jpg"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 150,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "news-4",
+        "elementType": "text",
+        "bindings": {
+          "text": "Sports: Championship Finals This Weekend"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 16,
+          "textColor": "#455A64",
+          "lineHeight": 22
+        }
+      },
+      {
+        "type": "element",
+        "id": "divider",
+        "elementType": "divider",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 2,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#B0BEC5"
+        }
+      },
+      {
+        "type": "element",
+        "id": "footer",
+        "elementType": "text",
+        "bindings": {
+          "text": "Load more stories..."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 14,
+          "textColor": "#78909C",
+          "textAlign": "center",
+          "lineHeight": 20
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

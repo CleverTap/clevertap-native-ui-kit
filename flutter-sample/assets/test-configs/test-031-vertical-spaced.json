@@ -1,0 +1,180 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#1A237E",
+      "fontSize": 16,
+      "lineHeight": 22
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "vertical-spaced",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 600,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 20
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 12,
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "angle": 135,
+        "colors": [
+          "#E8EAF6",
+          "#C5CAE9"
+        ]
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "header",
+        "elementType": "text",
+        "bindings": {
+          "text": "SPACED Arrangement Strategy"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "textColor": "#1A237E",
+          "lineHeight": 34
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Fixed spacing of 12dp between each child element"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 16,
+          "textColor": "#3F51B5",
+          "lineHeight": 22
+        }
+      },
+      {
+        "type": "element",
+        "id": "card-1",
+        "elementType": "text",
+        "bindings": {
+          "text": "Card 1"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 80,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "fontSize": 18,
+          "textColor": "#1A237E",
+          "lineHeight": 25
+        }
+      },
+      {
+        "type": "element",
+        "id": "card-2",
+        "elementType": "text",
+        "bindings": {
+          "text": "Card 2"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 80,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "fontSize": 18,
+          "textColor": "#1A237E",
+          "lineHeight": 25
+        }
+      },
+      {
+        "type": "element",
+        "id": "card-3",
+        "elementType": "text",
+        "bindings": {
+          "text": "Card 3"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 80,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8,
+          "fontSize": 18,
+          "textColor": "#1A237E",
+          "lineHeight": 25
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

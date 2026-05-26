@@ -1,0 +1,301 @@
+{
+  "theme": {
+    "id": "test-112",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "variables": {
+    "testName": "Combined - Nested Complex Layout"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333",
+          "lineHeight": 25
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests complex nested containers with both aspect ratios and percentage offsets at multiple levels."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666",
+          "lineHeight": 17
+        }
+      },
+      {
+        "type": "container",
+        "id": "outer-container",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "aspectRatio": 1.5
+        },
+        "style": {
+          "backgroundColor": "#E3F2FD",
+          "borderRadius": 12,
+          "borderWidth": 3,
+          "borderColor": "#2196F3"
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "level-1-box",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "aspectRatio": 1.333,
+              "offset": {
+                "x": 15,
+                "y": 10,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "backgroundColor": "#E8F5E9",
+              "borderRadius": 10,
+              "borderWidth": 2,
+              "borderColor": "#4CAF50"
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "level-2-left",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "dp"
+                  },
+                  "aspectRatio": 1.0,
+                  "offset": {
+                    "x": 5,
+                    "y": 15,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#FFF3E0",
+                  "borderRadius": 8,
+                  "borderWidth": 2,
+                  "borderColor": "#FF9800"
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "level-3-inner",
+                    "containerType": "box",
+                    "layout": {
+                      "width": {
+                        "value": 50,
+                        "unit": "percent"
+                      },
+                      "aspectRatio": 1.0,
+                      "offset": {
+                        "x": 25,
+                        "y": 25,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "backgroundColor": "#FFEBEE",
+                      "borderRadius": 6,
+                      "borderWidth": 2,
+                      "borderColor": "#F44336"
+                    },
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "level-2-right",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 120,
+                    "unit": "dp"
+                  },
+                  "aspectRatio": 0.75,
+                  "offset": {
+                    "x": 60,
+                    "y": 30,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#F3E5F5",
+                  "borderRadius": 8,
+                  "borderWidth": 2,
+                  "borderColor": "#9C27B0"
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "horizontal-mix",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "arrangement": {
+            "spacing": 12,
+            "spacingUnit": "dp",
+            "strategy": "space_between"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "card-1-outer",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 150,
+                "unit": "dp"
+              },
+              "aspectRatio": 1.2
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 8,
+              "borderWidth": 1,
+              "borderColor": "#E0E0E0"
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "card-1-image",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 80,
+                    "unit": "percent"
+                  },
+                  "aspectRatio": 1.0,
+                  "offset": {
+                    "x": 10,
+                    "y": 5,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#2196F3",
+                  "borderRadius": 6
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "card-2-outer",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 150,
+                "unit": "dp"
+              },
+              "aspectRatio": 1.2
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 8,
+              "borderWidth": 1,
+              "borderColor": "#E0E0E0"
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "card-2-image",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 80,
+                    "unit": "percent"
+                  },
+                  "aspectRatio": 1.0,
+                  "offset": {
+                    "x": 10,
+                    "y": 5,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#4CAF50",
+                  "borderRadius": 6
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

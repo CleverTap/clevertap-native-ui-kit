@@ -1,0 +1,238 @@
+{
+  "theme": {
+    "id": "test-096",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "variables": {
+    "testName": "Percentage Offset - Responsive Parent Sizes"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333",
+          "lineHeight": 25
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests percentage offset with different parent container sizes. Same 50%,50% offset applied to small, medium, and large containers."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666",
+          "lineHeight": 17
+        }
+      },
+      {
+        "type": "container",
+        "id": "containers-row",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "arrangement": {
+            "spacing": 16,
+            "spacingUnit": "dp",
+            "strategy": "spaced"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "small-container",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 150,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 150,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#E3F2FD",
+              "borderWidth": 2,
+              "borderColor": "#2196F3"
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "small-box",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 30,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 30,
+                    "unit": "dp"
+                  },
+                  "offset": {
+                    "x": 50,
+                    "y": 50,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#2196F3"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "medium-container",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 200,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 200,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#E8F5E9",
+              "borderWidth": 2,
+              "borderColor": "#4CAF50"
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "medium-box",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 40,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 40,
+                    "unit": "dp"
+                  },
+                  "offset": {
+                    "x": 50,
+                    "y": 50,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#4CAF50"
+                },
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "large-container",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 250,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 250,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFF3E0",
+              "borderWidth": 2,
+              "borderColor": "#FF9800"
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "large-box",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 50,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 50,
+                    "unit": "dp"
+                  },
+                  "offset": {
+                    "x": 50,
+                    "y": 50,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#FF9800"
+                },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": []
+}
