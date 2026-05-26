@@ -449,6 +449,12 @@ This means a minimal dimension can be:
 {"value": 50, "unit": "percent"}
 ```
 
+> **⚠️ Dashboard constraint — `percent` and `aspectRatio` only**
+>
+> The CleverTap dashboard generates JSON using **only** `percent` dimensions and `aspectRatio` for layout sizing. Fixed units (`dp`, `sp`, `px`) and special values (`wrap_content`, `match_parent`) are SDK-only features — they exist to support programmatic JSON creation and backward compatibility, but are **not emitted by the dashboard**.
+>
+> **Implication for new platform implementations**: All dimension types must still be correctly parsed and rendered (for hand-authored JSON and tests), but in production the renderer will almost exclusively receive `percent` + `aspectRatio`. Design tests accordingly and prioritise these paths.
+
 ### Layout Object
 
 ```json
@@ -513,9 +519,11 @@ Aspect ratios automatically calculate one dimension based on the other, maintain
 
 **How it works:**
 - `aspectRatio` = width / height
-- If you specify `width` + `aspectRatio`, height is calculated automatically
-- If you specify `height` + `aspectRatio`, width is calculated automatically
-- Common ratios: `1.0` (square), `1.77` (16:9), `0.75` (3:4 portrait)
+- If `width` is **fixed (dp/sp/px)** + `aspectRatio`: height = fixedWidth / aspectRatio
+- If `height` is **fixed (dp/sp/px)** + `aspectRatio`: width = fixedHeight × aspectRatio
+- If `width` is **percent** + `aspectRatio`: **percent is ignored**; node uses full parent width; height = parentWidth / aspectRatio
+- If no explicit dimensions + `aspectRatio`: uses full parent width; height = parentWidth / aspectRatio
+- Common ratios: `1.0` (square), `1.777` (16:9), `0.75` (3:4 portrait)
 
 ### Aspect Ratio Examples
 
@@ -559,12 +567,23 @@ Aspect ratios automatically calculate one dimension based on the other, maintain
 }
 ```
 
-### Aspect Ratio Priority Rules
+### Aspect Ratio Sizing Resolution Priority
 
-1. **Both dimensions specified**: `aspectRatio` is ignored
-2. **Width + aspectRatio**: Height is calculated as `width / aspectRatio`
-3. **Height + aspectRatio**: Width is calculated as `height * aspectRatio`
-4. **Only aspectRatio**: Depends on parent constraints
+`aspectRatio` is applied **before** explicit width/height constraints. In priority order:
+
+1. **Both width AND height are fixed (dp/sp/px)**: `aspectRatio` is **skipped**; explicit dimensions win.
+2. **Only height is fixed (dp/sp/px)**: `aspectRatio` derives width = `fixedHeight × aspectRatio`.
+3. **Only width is fixed (dp/sp/px)**: `aspectRatio` derives height = `fixedWidth / aspectRatio`.
+4. **Width is percent + aspectRatio**: uses **full available parent width** (percent is ignored); height = `parentWidth / aspectRatio`.
+5. **Height is percent + aspectRatio**: AR-derived height is used (percent height is ignored).
+6. **No explicit width or height**: uses full parent width; height = `parentWidth / aspectRatio`.
+
+> **⚠️ Critical**: A percent width does **not** constrain a node when `aspectRatio` is present.
+> `"width": {"value": 80, "unit": "percent"}, "aspectRatio": 1.777` renders at **full parent width**, not 80%.
+>
+> **Why**: Android applies `aspectRatio` modifier before `fillMaxWidth(fraction)` — the AR modifier locks constraints to `{W=parentWidth, H=parentWidth/ratio}`, making the subsequent `fillMaxWidth` have no effect. iOS has the same behavior (explicit `guard ar <= 0` check returns parentWidth for percent). Flutter matches this: `_effectiveWidth` returns full `availableWidth` when AR is present.
+>
+> This rule is consistent across Android, iOS, and Flutter.
 
 ---
 

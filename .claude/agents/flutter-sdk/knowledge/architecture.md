@@ -101,29 +101,23 @@ factory NativeDisplayNode.fromJson(Map<String, dynamic> json) {
 
 ### 3. Rendering Layer (`src/renderer/`)
 
-**NativeDisplayView** — the public entry-point `StatelessWidget`:
-```dart
-class NativeDisplayView extends StatelessWidget {
-  final NativeDisplayConfig config;
-  final NativeDisplayActionListener? actionListener;
+**NativeDisplayView** — the public entry-point `StatelessWidget`. Uses `LayoutBuilder` to get available width, then:
+- Pre-resolves all styles once in constructor (never inside `build()`)
+- Computes `effectiveRootWidth` and `rootHeight` for percent font/border resolution
+- Applies root sizing via `_applyRootSizing`
 
-  // Pre-resolve styles once — never inside build()
-  final Map<String, Style> _resolvedStyles;
+**Root sizing rule — aspectRatio takes full width (critical)**:
+When `aspectRatio` is set on the root node, `effectiveRootWidth = availableWidth` (full parent width — percent is ignored). Height = `availableWidth / aspectRatio`. The `AspectRatio` Flutter widget in `NativeDisplayRenderer._wrapWithSizing` handles the visual constraint; no explicit `Align+SizedBox` wrapper is added.
 
-  NativeDisplayView({super.key, required this.config, this.actionListener})
-      : _resolvedStyles = StyleResolver.resolve(config);
-
-  @override
-  Widget build(BuildContext context) => NativeDisplayRenderer(
-        node: config.root,
-        config: config,
-        resolvedStyles: _resolvedStyles,
-        actionListener: actionListener,
-      );
-}
+```
+layout.aspectRatio present  →  full parent width, height = parentWidth / AR
+layout.width.percent only   →  Align + SizedBox(width = parentWidth * pct/100)
+neither                     →  no wrapping; child fills slot naturally
 ```
 
-**NativeDisplayRenderer** — recursive `_buildNode()` dispatches to container or element renderers.
+This matches Android (Compose modifier ordering) and iOS (guard returning parentWidth for percent when AR set). See `rendering-pipeline.md` for the full priority table.
+
+**NativeDisplayRenderer** — recursive dispatch to container or element renderers. Applies `AspectRatio` widget when `layout.aspectRatio > 0` and not both dimensions fixed.
 
 ### 4. Bridge Layer (`src/bridge/`)
 
