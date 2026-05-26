@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../models/enums.dart';
@@ -42,27 +43,31 @@ class ImageElement extends StatelessWidget {
         ),
       );
     } else if (isGif) {
-      // Flutter natively handles animated GIFs via Image.network
+      // Flutter's image codec handles animated GIFs natively via Image.network.
+      // CachedNetworkImage may not preserve frame timing for animated GIFs.
       imageWidget = Image.network(
         url,
         fit: fit,
-        loadingBuilder: (ctx, child, progress) => progress == null ? child : const SizedBox.shrink(),
+        loadingBuilder: (ctx, child, progress) =>
+            progress == null ? child : const SizedBox.shrink(),
         errorBuilder: (ctx, err, stack) => const SizedBox.shrink(),
       );
     } else {
-      imageWidget = Image.network(
-        url,
+      imageWidget = CachedNetworkImage(
+        imageUrl: url,
         fit: fit,
-        loadingBuilder: (ctx, child, progress) => progress == null ? child : const SizedBox.shrink(),
-        errorBuilder: (ctx, err, stack) => const SizedBox.shrink(),
+        placeholder: (ctx, url) => const SizedBox.shrink(),
+        errorWidget: (ctx, url, err) => const SizedBox.shrink(),
       );
     }
 
-    return StyleApplier.apply(
-      imageWidget,
-      style,
-      rootHeight: rootHeight,
-      padding: node.layout?.padding,
+    return RepaintBoundary(
+      child: StyleApplier.apply(
+        imageWidget,
+        style,
+        rootHeight: rootHeight,
+        padding: node.layout?.padding,
+      ),
     );
   }
 
