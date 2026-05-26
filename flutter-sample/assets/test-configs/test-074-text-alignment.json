@@ -1,0 +1,332 @@
+{
+  "theme": {
+    "id": "text-alignment-theme",
+    "defaultStyle": {
+      "fontSize": 16,
+      "textColor": "#000000",
+      "fontWeight": "normal",
+      "lineHeight": 22
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "text-alignment-root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 24,
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#E8F4F8"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Text Alignment Examples"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "backgroundColor": "#2196F3",
+          "textColor": "#FFFFFF",
+          "borderRadius": 8,
+          "lineHeight": 34
+        }
+      },
+      {
+        "type": "container",
+        "id": "align-start-container",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 12
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 4,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "align-start-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "Start Alignment:"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#666666",
+              "lineHeight": 20
+            }
+          },
+          {
+            "type": "element",
+            "id": "align-start-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text is aligned to the start (left in LTR)"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "textAlign": "start",
+              "fontSize": 16,
+              "lineHeight": 22
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "align-center-container",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 12
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 4,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "align-center-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "Center Alignment:"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#666666",
+              "lineHeight": 20
+            }
+          },
+          {
+            "type": "element",
+            "id": "align-center-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text is centered"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "textAlign": "center",
+              "fontSize": 16,
+              "lineHeight": 22
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "align-end-container",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 12
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 4,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "align-end-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "End Alignment:"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#666666",
+              "lineHeight": 20
+            }
+          },
+          {
+            "type": "element",
+            "id": "align-end-text",
+            "elementType": "text",
+            "bindings": {
+              "text": "This text is aligned to the end (right in LTR)"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "textAlign": "end",
+              "fontSize": 16,
+              "lineHeight": 22
+            }
+          }
+        ]
+      },
+      {
+        "type": "element",
+        "id": "multiline-demo",
+        "elementType": "text",
+        "bindings": {
+          "text": "Center aligned multiline text. This demonstrates how text alignment works with longer content that wraps across multiple lines."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "textAlign": "center",
+          "fontSize": 14,
+          "lineHeight": 21,
+          "backgroundColor": "#FFF3E0",
+          "borderRadius": 8
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

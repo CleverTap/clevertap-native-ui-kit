@@ -1,0 +1,308 @@
+{
+  "theme": {
+    "id": "test-108",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "variables": {
+    "testName": "Aspect Ratio - Extreme Wide (10:1, 20:1)"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333",
+          "lineHeight": 25
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests extremely wide aspect ratios. Useful for banners, progress bars, and ultra-wide elements."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666",
+          "lineHeight": 17
+        }
+      },
+      {
+        "type": "container",
+        "id": "ratio-5-1",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "aspectRatio": 5.0,
+          "padding": {
+            "all": 12,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#2196F3",
+          "borderRadius": 4
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "text-5-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "5:1 Aspect Ratio - Wide Banner"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "lineHeight": 20
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "ratio-10-1",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "aspectRatio": 10.0,
+          "padding": {
+            "vertical": 8,
+            "horizontal": 16,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#4CAF50",
+          "borderRadius": 4
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "text-10-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "10:1 Aspect Ratio - Progress Bar"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 12,
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "lineHeight": 17
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "ratio-15-1",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "aspectRatio": 15.0,
+          "padding": {
+            "vertical": 6,
+            "horizontal": 12,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FF9800",
+          "borderRadius": 4
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "text-15-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "15:1 - Ultra-wide Divider Bar"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 11,
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "lineHeight": 15
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "ratio-20-1",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "aspectRatio": 20.0,
+          "padding": {
+            "vertical": 4,
+            "horizontal": 8,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#F44336",
+          "borderRadius": 2
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "text-20-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "20:1 Extreme"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 10,
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "lineHeight": 14
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "progress-bar-example",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "arrangement": {
+            "spacing": 8,
+            "spacingUnit": "dp",
+            "strategy": "spaced"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "progress-label",
+            "elementType": "text",
+            "bindings": {
+              "text": "Progress Bar Example"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 12,
+              "fontWeight": "bold",
+              "textColor": "#666666",
+              "lineHeight": 17
+            }
+          },
+          {
+            "type": "container",
+            "id": "progress-bar",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "aspectRatio": 12.0
+            },
+            "style": {
+              "backgroundColor": "#9C27B0",
+              "borderRadius": 4
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+}

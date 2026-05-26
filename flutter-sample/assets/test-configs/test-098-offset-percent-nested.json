@@ -1,0 +1,184 @@
+{
+  "theme": {
+    "id": "test-098",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "variables": {
+    "testName": "Percentage Offset - Nested Containers"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333",
+          "lineHeight": 25
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests percentage offset with nested Box containers. Each level calculates offset relative to its immediate parent, not the root."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666",
+          "lineHeight": 17
+        }
+      },
+      {
+        "type": "container",
+        "id": "outer-box",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 300,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 300,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#E3F2FD",
+          "borderWidth": 3,
+          "borderColor": "#2196F3"
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "middle-box",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 200,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 200,
+                "unit": "dp"
+              },
+              "offset": {
+                "x": 25,
+                "y": 25,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "backgroundColor": "#E8F5E9",
+              "borderWidth": 3,
+              "borderColor": "#4CAF50"
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "inner-box",
+                "containerType": "box",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 100,
+                    "unit": "dp"
+                  },
+                  "offset": {
+                    "x": 25,
+                    "y": 25,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#FFF3E0",
+                  "borderWidth": 3,
+                  "borderColor": "#FF9800"
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "innermost-box",
+                    "containerType": "box",
+                    "layout": {
+                      "width": {
+                        "value": 50,
+                        "unit": "dp"
+                      },
+                      "height": {
+                        "value": 50,
+                        "unit": "dp"
+                      },
+                      "offset": {
+                        "x": 25,
+                        "y": 25,
+                        "unit": "percent"
+                      }
+                    },
+                    "style": {
+                      "backgroundColor": "#FFEBEE",
+                      "borderWidth": 3,
+                      "borderColor": "#F44336"
+                    },
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": []
+}

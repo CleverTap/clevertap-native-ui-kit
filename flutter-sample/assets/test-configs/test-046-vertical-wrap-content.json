@@ -1,0 +1,178 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#D84315",
+      "fontSize": 16,
+      "lineHeight": 22
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "vertical-wrap-content",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 0,
+        "unit": "dp",
+        "special": "wrap_content"
+      },
+      "padding": {
+        "all": 20
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 16,
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#FBE9E7",
+      "borderRadius": 16
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "header",
+        "elementType": "text",
+        "bindings": {
+          "text": "WRAP_CONTENT Height"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 26,
+          "fontWeight": "bold",
+          "textColor": "#BF360C",
+          "lineHeight": 36
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Container height automatically adjusts to fit all children plus padding and spacing"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 16,
+          "textColor": "#D84315",
+          "lineHeight": 24
+        }
+      },
+      {
+        "type": "element",
+        "id": "card-1",
+        "elementType": "text",
+        "bindings": {
+          "text": "Card with variable text"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "fontSize": 18,
+          "textColor": "#BF360C",
+          "lineHeight": 25
+        }
+      },
+      {
+        "type": "element",
+        "id": "card-2",
+        "elementType": "text",
+        "bindings": {
+          "text": "This card has much longer text that spans multiple lines and demonstrates how wrap_content adapts to content size dynamically."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "fontSize": 16,
+          "textColor": "#D84315",
+          "lineHeight": 24
+        }
+      },
+      {
+        "type": "element",
+        "id": "card-3",
+        "elementType": "text",
+        "bindings": {
+          "text": "Short text"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "fontSize": 18,
+          "textColor": "#BF360C",
+          "lineHeight": 25
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

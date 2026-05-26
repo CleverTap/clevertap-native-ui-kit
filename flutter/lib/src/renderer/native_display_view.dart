@@ -37,54 +37,108 @@ class NativeDisplayView extends StatelessWidget {
     if (root == null) return const SizedBox.shrink();
 
     final evaluator = VariableEvaluator(config.variables);
+    final screenHeight = MediaQuery.sizeOf(context).height;
 
-    Widget buildContent(double availableWidth, double availableHeight) {
-      return RootHeightScope(
-        rootHeight: availableHeight,
-        child: ResolvedStylesScope(
-          styles: _resolvedStyles,
-          child: NativeDisplayRenderer(
-            node: root,
-            evaluator: evaluator,
-            actionListener: actionListener,
-            componentListener: componentListener,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final layouterWidth =
+            constraints.maxWidth.isInfinite ? screenHeight : constraints.maxWidth;
+
+        final effectiveRootWidth = _effectiveWidth(root.layout, layouterWidth);
+        final rootHeight =
+            _computeRootHeight(root.layout, effectiveRootWidth, constraints, screenHeight);
+
+        Widget child = RootHeightScope(
+          rootHeight: rootHeight,
+          child: ResolvedStylesScope(
+            styles: _resolvedStyles,
+            child: NativeDisplayRenderer(
+              node: root,
+              evaluator: evaluator,
+              actionListener: actionListener,
+              componentListener: componentListener,
+            ),
           ),
-        ),
-      );
-    }
+        );
 
-    final needsLayout = _needsLayoutBuilder(root.layout);
+        child = _applyRootSizing(child, root.layout, effectiveRootWidth, rootHeight, screenHeight);
 
-    if (needsLayout) {
-      return LayoutBuilder(
-        builder: (context, constraints) => buildContent(
-          constraints.maxWidth,
-          constraints.maxHeight.isInfinite ? 0 : constraints.maxHeight,
-        ),
-      );
-    }
-
-    final w = _fixedSize(root.layout?.width);
-    final h = _fixedSize(root.layout?.height);
-    return SizedBox(
-      width: w,
-      height: h,
-      child: buildContent(w ?? double.infinity, h ?? 0),
+        return child;
+      },
     );
   }
 
-  bool _needsLayoutBuilder(Layout? layout) {
-    if (layout == null) return false;
-    if (_isPercent(layout.width) || _isPercent(layout.height)) return true;
-    if (layout.aspectRatio != null) return true;
-    return false;
+  Widget _applyRootSizing(
+    Widget child,
+    Layout? layout,
+    double effectiveRootWidth,
+    double rootHeight,
+    double screenHeight,
+  ) {
+    if (layout == null) return child;
+
+    final rw = layout.width;
+    final rh = layout.height;
+    final ar = layout.aspectRatio;
+    final hasAR = ar != null && ar > 0;
+
+    // AR takes precedence over all percent dimensions — it uses full available width
+    // and derives height. The AspectRatio widget in _wrapWithSizing handles the
+    // visual constraint; no additional sizing wrapper is needed here.
+    if (hasAR) return child;
+
+    final hasPercentWidth =
+        rw != null && rw.special == null && rw.unit == DimensionUnit.percent && rw.value > 0;
+
+    if (hasPercentWidth) {
+      double? explicitHeight;
+      if (rh != null && rh.special == null && rh.unit == DimensionUnit.percent && rh.value > 0) {
+        explicitHeight = screenHeight * rh.value / 100.0;
+      }
+      return Align(
+        alignment: Alignment.topLeft,
+        child: SizedBox(width: effectiveRootWidth, height: explicitHeight, child: child),
+      );
+    }
+
+    if (rh != null && rh.special == null && rh.unit == DimensionUnit.percent && rh.value > 0) {
+      return SizedBox(height: screenHeight * rh.value / 100.0, child: child);
+    }
+
+    return child;
   }
 
-  bool _isPercent(Dimension? dim) =>
-      dim != null && dim.special == null && dim.unit == DimensionUnit.percent;
+  double _effectiveWidth(Layout? layout, double availableWidth) {
+    // AR present → use full available width; percent is irrelevant.
+    final ar = layout?.aspectRatio;
+    if (ar != null && ar > 0) return availableWidth;
 
-  double? _fixedSize(Dimension? dim) {
-    if (dim == null || dim.special != null || dim.unit == DimensionUnit.percent) return null;
-    return dim.value;
+    final w = layout?.width;
+    if (w != null && w.special == null && w.unit == DimensionUnit.percent && w.value > 0) {
+      return availableWidth * w.value / 100.0;
+    }
+    return availableWidth;
+  }
+
+  double _computeRootHeight(
+    Layout? layout,
+    double effectiveRootWidth,
+    BoxConstraints constraints,
+    double screenHeight,
+  ) {
+    if (layout == null) return screenHeight;
+
+    final ar = layout.aspectRatio;
+    if (ar != null && ar > 0) return effectiveRootWidth / ar;
+
+    final h = layout.height;
+    if (h != null && h.special == null && h.value > 0) {
+      if (h.unit == DimensionUnit.percent) return screenHeight * h.value / 100.0;
+      return h.value;
+    }
+
+    if (!constraints.maxHeight.isInfinite) return constraints.maxHeight;
+
+    return screenHeight;
   }
 }

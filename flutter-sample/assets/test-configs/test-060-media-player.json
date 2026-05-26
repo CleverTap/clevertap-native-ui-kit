@@ -1,0 +1,268 @@
+{
+  "theme": {
+    "id": "media-player",
+    "defaultStyle": {
+      "textColor": "#FFFFFFFF",
+      "fontSize": 14,
+      "fontFamily": "System",
+      "lineHeight": 20
+    }
+  },
+  "variables": {
+    "videoTitle": "Wildlife Documentary: Nature's Wonders",
+    "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "duration": "12:34",
+    "currentTime": "5:42"
+  },
+  "root": {
+    "id": "media-player-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "backgroundColor": "#FF000000"
+    },
+    "children": [
+      {
+        "id": "video-player",
+        "elementType": "video",
+        "bindings": {
+          "url": "{{videoUrl}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 280,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FF000000"
+        },
+        "type": "element"
+      },
+      {
+        "id": "controls-container",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 24
+          },
+          "arrangement": {
+            "spacing": 16,
+            "strategy": "spaced"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FF1A1A1A"
+        },
+        "children": [
+          {
+            "id": "video-info",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "arrangement": {
+                "spacing": 8,
+                "strategy": "spaced"
+              }
+            },
+            "children": [
+              {
+                "id": "video-title",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{videoTitle}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 20,
+                  "fontWeight": "bold",
+                  "textColor": "#FFFFFFFF",
+                  "lineHeight": 28
+                },
+                "type": "element"
+              },
+              {
+                "id": "time-display",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{currentTime}} / {{duration}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "normal",
+                  "textColor": "#FFB3B3B3",
+                  "lineHeight": 20
+                },
+                "type": "element"
+              }
+            ],
+            "type": "container"
+          },
+          {
+            "id": "progress-bar",
+            "elementType": "divider",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 4,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFEF4444",
+              "borderRadius": 2
+            },
+            "type": "element"
+          },
+          {
+            "id": "button-row",
+            "containerType": "horizontal",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 64,
+                "unit": "dp"
+              },
+              "arrangement": {
+                "strategy": "space_evenly"
+              }
+            },
+            "children": [
+              {
+                "id": "rewind-button",
+                "elementType": "button",
+                "bindings": {
+                  "text": "⏪"
+                },
+                "layout": {
+                  "width": {
+                    "value": 64,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 64,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#FF333333",
+                  "borderRadius": 32,
+                  "fontSize": 28,
+                  "textColor": "#FFFFFFFF",
+                  "shadowRadius": 8,
+                  "shadowColor": "#FF000000",
+                  "shadowOpacity": 0.3,
+                  "shadowOffsetY": 4,
+                  "lineHeight": 39
+                },
+                "type": "element"
+              },
+              {
+                "id": "play-button",
+                "elementType": "button",
+                "bindings": {
+                  "text": "▶️"
+                },
+                "layout": {
+                  "width": {
+                    "value": 80,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 80,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#FFEF4444",
+                  "borderRadius": 40,
+                  "fontSize": 32,
+                  "textColor": "#FFFFFFFF",
+                  "shadowRadius": 12,
+                  "shadowColor": "#FFEF4444",
+                  "shadowOpacity": 0.5,
+                  "shadowOffsetY": 6,
+                  "lineHeight": 45
+                },
+                "type": "element"
+              },
+              {
+                "id": "forward-button",
+                "elementType": "button",
+                "bindings": {
+                  "text": "⏩"
+                },
+                "layout": {
+                  "width": {
+                    "value": 64,
+                    "unit": "dp"
+                  },
+                  "height": {
+                    "value": 64,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#FF333333",
+                  "borderRadius": 32,
+                  "fontSize": 28,
+                  "textColor": "#FFFFFFFF",
+                  "shadowRadius": 8,
+                  "shadowColor": "#FF000000",
+                  "shadowOpacity": 0.3,
+                  "shadowOffsetY": 4,
+                  "lineHeight": 39
+                },
+                "type": "element"
+              }
+            ],
+            "type": "container"
+          }
+        ],
+        "type": "container"
+      }
+    ],
+    "type": "container"
+  },
+  "styleClasses": []
+}

@@ -1,0 +1,75 @@
+{
+  "theme": {
+    "id": "test-123"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "aspectRatio": 0.5625
+    },
+    "style": {
+      "backgroundColor": "#000000"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "video",
+        "elementType": "video",
+        "bindings": {
+          "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "unit": "percent"
+          }
+        },
+        "autoPlay": true,
+        "muted": true,
+        "loop": true,
+        "showControls": false,
+        "showFullscreen": false
+      },
+      {
+        "type": "element",
+        "id": "caption",
+        "elementType": "text",
+        "bindings": {
+          "text": "Big Buck Bunny — Classic Animation"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 88,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 13,
+          "lineHeight": 18,
+          "textColor": "#FFFFFF",
+          "backgroundColor": "#88000000"
+        }
+      }
+    ]
+  }
+}

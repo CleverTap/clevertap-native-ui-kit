@@ -1,0 +1,51 @@
+{
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "special": "match_parent" },
+      "height": { "special": "wrap_content" }
+    },
+    "style": {
+      "backgroundColor": "#0F0F23"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "HTML Element — JavaScript Enabled"
+        },
+        "layout": {
+          "width": { "special": "match_parent" },
+          "height": { "special": "wrap_content" },
+          "padding": { "all": 16 }
+        },
+        "style": {
+          "textColor": "#FFFFFF",
+          "fontSize": 20,
+          "fontWeight": "bold"
+        }
+      },
+      {
+        "type": "element",
+        "id": "html-js",
+        "elementType": "html",
+        "bindings": {
+          "html": "<!DOCTYPE html><html><head><meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'><style>body{margin:0;padding:16px;font-family:-apple-system,sans-serif;background:transparent;color:#E0E0E0}#counter{font-size:48px;color:#FF6B6B;text-align:center;margin:16px 0}button{background:#4ECDC4;border:none;color:#1A1A2E;padding:12px 24px;border-radius:8px;font-size:16px;cursor:pointer;display:block;margin:8px auto}</style></head><body><div id='counter'>0</div><button onclick='increment()'>Tap to Count</button><script>var count=0;function increment(){count++;document.getElementById('counter').textContent=count;}</script></body></html>"
+        },
+        "htmlConfig": {
+          "javascriptEnabled": true,
+          "scrollEnabled": false,
+          "transparentBackground": true
+        },
+        "layout": {
+          "width": { "special": "match_parent" },
+          "height": { "value": 200, "unit": "dp" }
+        }
+      }
+    ]
+  }
+}

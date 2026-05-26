@@ -1,0 +1,34 @@
+{
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#000000"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "video",
+        "elementType": "video",
+        "bindings": {
+          "url": "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8",
+          "openUrl": "https://peach.blender.org"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 100, "unit": "percent" }
+        },
+        "autoPlay": false,
+        "muted": false,
+        "loop": false,
+        "showControls": true,
+        "showFullscreen": true
+      }
+    ]
+  }
+}

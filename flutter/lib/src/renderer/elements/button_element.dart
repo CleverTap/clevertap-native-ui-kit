@@ -30,7 +30,15 @@ class ButtonElement extends StatelessWidget {
     return GestureDetector(
       onTap: _handleClick,
       child: StyleApplier.apply(
-        Center(child: Text(text, style: _buildTextStyle(rootHeight))),
+        Center(
+          child: Text(
+            text,
+            style: _buildTextStyle(rootHeight),
+            maxLines: style.maxLines,
+            overflow: _resolveOverflow(style.overflow),
+            softWrap: style.maxLines == null,
+          ),
+        ),
         style,
         rootHeight: rootHeight,
         padding: node.layout?.padding,
@@ -48,8 +56,16 @@ class ButtonElement extends StatelessWidget {
       fontWeight: _resolveFontWeight(style.fontWeight),
       fontStyle: style.fontStyle == NDFontStyle.italic ? FontStyle.italic : FontStyle.normal,
       height: lineHeight != null ? lineHeight / fontSize : null,
+      letterSpacing: style.letterSpacing,
     );
   }
+
+  TextOverflow? _resolveOverflow(NDTextOverflow? overflow) => switch (overflow) {
+        NDTextOverflow.clip => TextOverflow.clip,
+        NDTextOverflow.ellipsis => TextOverflow.ellipsis,
+        NDTextOverflow.visible => null,
+        null => null,
+      };
 
   FontWeight _resolveFontWeight(NDFontWeight? w) => switch (w) {
         NDFontWeight.light => FontWeight.w300,
