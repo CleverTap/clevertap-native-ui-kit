@@ -14,29 +14,85 @@ typedef NativeDisplayActionListener = void Function(
 typedef NativeDisplayComponentListener = bool Function(
     String event, String nodeId, Map<String, dynamic>? params);
 
-class NativeDisplayView extends StatelessWidget {
+class NativeDisplayView extends StatefulWidget {
   final NativeDisplayConfig config;
+
+  /// Pre-resolved styles from [NativeDisplayConfigParser]. When provided,
+  /// the view skips [StyleResolver] entirely — avoiding redundant computation.
+  final Map<String, Style>? resolvedStyles;
+
   final NativeDisplayActionListener? actionListener;
   final NativeDisplayComponentListener? componentListener;
-  final Map<String, Style> _resolvedStyles;
 
-  NativeDisplayView({
+  const NativeDisplayView({
     super.key,
     required this.config,
+    this.resolvedStyles,
     this.actionListener,
     this.componentListener,
-  }) : _resolvedStyles = StyleResolver().resolveAll(
-          config.root,
-          config.theme ?? NDTheme.empty,
-          config.styleClasses,
-        );
+  });
+
+  @override
+  State<NativeDisplayView> createState() => _NativeDisplayViewState();
+}
+
+class _NativeDisplayViewState extends State<NativeDisplayView> {
+  late Map<String, Style> _resolvedStyles;
+
+  @override
+  void initState() {
+    super.initState();
+    _resolvedStyles = _resolve();
+  }
+
+  @override
+  void didUpdateWidget(NativeDisplayView old) {
+    super.didUpdateWidget(old);
+    if (!identical(old.config, widget.config) ||
+        !identical(old.resolvedStyles, widget.resolvedStyles)) {
+      _resolvedStyles = _resolve();
+    }
+  }
+
+  Map<String, Style> _resolve() =>
+      widget.resolvedStyles ??
+      StyleResolver().resolveAll(
+        widget.config.root,
+        widget.config.theme ?? NDTheme.empty,
+        widget.config.styleClasses,
+      );
 
   @override
   Widget build(BuildContext context) {
-    final root = config.root;
+    final root = widget.config.root;
     if (root == null) return const SizedBox.shrink();
 
-    final evaluator = VariableEvaluator(config.variables);
+    final evaluator = VariableEvaluator(widget.config.variables);
+    final layout = root.layout;
+
+    // Optimization: when root has only fixed (dp) dimensions and no aspectRatio,
+    // skip LayoutBuilder — constraints are already known from the JSON values.
+    if (_hasOnlyFixedDimensions(layout)) {
+      final fixedWidth = layout!.width!.value;
+      final fixedHeight = layout.height!.value;
+      return SizedBox(
+        width: fixedWidth,
+        height: fixedHeight,
+        child: RootHeightScope(
+          rootHeight: fixedHeight,
+          child: ResolvedStylesScope(
+            styles: _resolvedStyles,
+            child: NativeDisplayRenderer(
+              node: root,
+              evaluator: evaluator,
+              actionListener: widget.actionListener,
+              componentListener: widget.componentListener,
+            ),
+          ),
+        ),
+      );
+    }
+
     final screenHeight = MediaQuery.sizeOf(context).height;
 
     return LayoutBuilder(
@@ -44,9 +100,9 @@ class NativeDisplayView extends StatelessWidget {
         final layouterWidth =
             constraints.maxWidth.isInfinite ? screenHeight : constraints.maxWidth;
 
-        final effectiveRootWidth = _effectiveWidth(root.layout, layouterWidth);
+        final effectiveRootWidth = _effectiveWidth(layout, layouterWidth);
         final rootHeight =
-            _computeRootHeight(root.layout, effectiveRootWidth, constraints, screenHeight);
+            _computeRootHeight(layout, effectiveRootWidth, constraints, screenHeight);
 
         Widget child = RootHeightScope(
           rootHeight: rootHeight,
@@ -55,17 +111,29 @@ class NativeDisplayView extends StatelessWidget {
             child: NativeDisplayRenderer(
               node: root,
               evaluator: evaluator,
-              actionListener: actionListener,
-              componentListener: componentListener,
+              actionListener: widget.actionListener,
+              componentListener: widget.componentListener,
             ),
           ),
         );
 
-        child = _applyRootSizing(child, root.layout, effectiveRootWidth, rootHeight, screenHeight);
+        child = _applyRootSizing(child, layout, effectiveRootWidth, rootHeight, screenHeight);
 
         return child;
       },
     );
+  }
+
+  bool _hasOnlyFixedDimensions(Layout? layout) {
+    if (layout == null) return false;
+    final ar = layout.aspectRatio;
+    if (ar != null && ar > 0) return false;
+    final w = layout.width;
+    final h = layout.height;
+    if (w == null || h == null) return false;
+    if (w.special != null || h.special != null) return false;
+    if (w.unit == DimensionUnit.percent || h.unit == DimensionUnit.percent) return false;
+    return w.value > 0 && h.value > 0;
   }
 
   Widget _applyRootSizing(
