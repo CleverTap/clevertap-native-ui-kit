@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
@@ -14,7 +12,7 @@ class CleverTapIntegrationScreen extends StatefulWidget {
 class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen> {
   final _eventController = TextEditingController();
   final List<String> _log = [];
-  final List<_UnitEntry> _units = [];
+  final List<NativeDisplayUnit> _units = [];
 
   // CleverTapPlugin() returns the singleton — needed for instance method registration.
   final _ct = CleverTapPlugin();
@@ -43,17 +41,13 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
     }
   }
 
-  void _onUnitsLoaded(List<dynamic>? units) {
-    if (units == null || units.isEmpty) return;
-    final parsed = <_UnitEntry>[];
-    for (final unit in units) {
-      final entry = _extractEntry(unit);
-      if (entry != null) {
-        parsed.add(entry);
-      } else {
-        _addLog('WARN: unit has no recognisable NativeDisplayConfig');
-      }
-    }
+  Future<void> _onUnitsLoaded(List<dynamic>? rawUnits) async {
+    if (rawUnits == null || rawUnits.isEmpty) return;
+
+    // Parsing (deep-cast + 3-strategy extraction + style resolution) runs off
+    // the main thread via Isolate.run() in NativeDisplayConfigParser.
+    final parsed = await NativeDisplayConfigParser.parseAll(rawUnits);
+
     if (!mounted) return;
     setState(() {
       _units
@@ -61,61 +55,10 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
         ..addAll(parsed);
       _log.add('[${_ts()}] Received ${parsed.length} Native Display unit(s)');
     });
-  }
 
-  /// Platform channel maps arrive as Map<Object?, Object?> at every nesting level.
-  /// This recursively converts the entire tree to Map<String, dynamic>.
-  static Map<String, dynamic> _deepCast(Map raw) =>
-      raw.map((k, v) => MapEntry(k.toString(), _deepCastValue(v)));
-
-  static dynamic _deepCastValue(dynamic v) {
-    if (v is Map) return _deepCast(v);
-    if (v is List) return v.map(_deepCastValue).toList();
-    return v;
-  }
-
-  /// Mirrors the 3-strategy extraction from the old SampleApplication.kt.
-  _UnitEntry? _extractEntry(dynamic raw) {
-    if (raw is! Map) return null;
-    final unit = _deepCast(raw);
-    final unitId = unit['wzrk_id']?.toString() ?? unit['slot_id']?.toString();
-
-    // Strategy 1: native_display_config key
-    final ndRaw = unit['native_display_config'];
-    if (ndRaw is Map<String, dynamic>) {
-      try {
-        return _UnitEntry(NativeDisplayConfig.fromJson(ndRaw), unitId);
-      } catch (e) {
-        _addLog('ERROR parsing native_display_config: $e');
-      }
+    if (parsed.length < rawUnits.length) {
+      _addLog('WARN: ${rawUnits.length - parsed.length} unit(s) had no recognisable NativeDisplayConfig');
     }
-
-    // Strategy 2: custom_kv.nd_config string
-    final kv = unit['custom_kv'];
-    if (kv is Map<String, dynamic>) {
-      final ndStr = kv['nd_config'];
-      if (ndStr is String && ndStr.isNotEmpty) {
-        try {
-          return _UnitEntry(
-            NativeDisplayConfig.fromJson(jsonDecode(ndStr) as Map<String, dynamic>),
-            unitId,
-          );
-        } catch (e) {
-          _addLog('ERROR parsing custom_kv.nd_config: $e');
-        }
-      }
-    }
-
-    // Strategy 3: top-level root key
-    if (unit.containsKey('root')) {
-      try {
-        return _UnitEntry(NativeDisplayConfig.fromJson(unit), unitId);
-      } catch (e) {
-        _addLog('ERROR parsing root-level config: $e');
-      }
-    }
-
-    return null;
   }
 
   Future<void> _sendEvent() async {
@@ -166,12 +109,6 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
       ),
     );
   }
-}
-
-class _UnitEntry {
-  final NativeDisplayConfig config;
-  final String? unitId;
-  const _UnitEntry(this.config, this.unitId);
 }
 
 // ── Header ────────────────────────────────────────────────────────────────────
@@ -234,7 +171,7 @@ class _FireEventHeader extends StatelessWidget {
 // ── Canvas ────────────────────────────────────────────────────────────────────
 
 class _CanvasContent extends StatelessWidget {
-  final List<_UnitEntry> units;
+  final List<NativeDisplayUnit> units;
   final void Function(String) onAction;
 
   const _CanvasContent({required this.units, required this.onAction});
@@ -252,16 +189,16 @@ class _CanvasContent extends StatelessWidget {
     return ListView.builder(
       itemCount: units.length,
       itemBuilder: (ctx, i) {
-        final entry = units[i];
-        // DEBUG: outer slot shown in red, inner card in its natural state
+        final unit = units[i];
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: NativeDisplayView(
-            config: entry.config,
+            config: unit.config,
+            resolvedStyles: unit.resolvedStyles,
             actionListener: (action, nodeId, params) {
               onAction('ACTION $action on $nodeId');
-              if (entry.unitId != null) {
-                CleverTapPlugin.pushDisplayUnitClickedEvent(entry.unitId!);
+              if (unit.unitId.isNotEmpty) {
+                CleverTapPlugin.pushDisplayUnitClickedEvent(unit.unitId);
               }
             },
           ),
