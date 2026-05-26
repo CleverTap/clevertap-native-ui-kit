@@ -44,8 +44,6 @@ flutter {
 }
 
 dependencies {
-    // CleverTap Core SDK — required for CleverTapAPI + display unit callbacks
+    // CleverTap Core SDK — provides CleverTapAPI, CTDisplayUnitListener, CleverTapDisplayUnit
     implementation("com.clevertap.android:clevertap-android-sdk:8.0.0")
-    // Native Display Android SDK — provides NativeDisplayBridge + NativeDisplayUnit
-    implementation("com.clevertap.android:native-display-sdk")
 }
