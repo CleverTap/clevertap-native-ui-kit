@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.clevertap.flutter.clevertap_native_display_sample"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -44,6 +44,4 @@ flutter {
 }
 
 dependencies {
-    // CleverTap Core SDK — provides CleverTapAPI, CTDisplayUnitListener, CleverTapDisplayUnit
-    implementation("com.clevertap.android:clevertap-android-sdk:8.0.0")
 }

@@ -151,14 +151,12 @@ class StyleApplier {
   }
 
   static Border? _resolveBorder(Style style, double rootHeight) {
-    final color = ColorParser.parse(style.borderColor);
     final width = style.borderWidth;
-    if (color == null && width == null) return null;
-    final resolvedWidth = width != null ? rootHeight * width / 1000.0 : 1.0;
-    return Border.all(
-      color: color ?? const Color(0xFF000000),
-      width: resolvedWidth,
-    );
+    if (width == null || width <= 0) return null;
+    final resolvedWidth = rootHeight * width / 1000.0;
+    if (resolvedWidth <= 0) return null;
+    final color = ColorParser.parse(style.borderColor) ?? const Color(0xFF000000);
+    return Border.all(color: color, width: resolvedWidth);
   }
 
   static List<BoxShadow>? _resolveShadow(Style style) {

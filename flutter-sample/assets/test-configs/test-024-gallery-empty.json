@@ -1,0 +1,43 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#4A148C",
+      "fontSize": 16,
+      "lineHeight": 22
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "gallery-empty",
+    "containerType": "gallery",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 300,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 16
+      }
+    },
+    "style": {
+      "backgroundColor": "#F3E5F5",
+      "borderRadius": 12
+    },
+    "galleryConfig": {
+      "mode": "snapping",
+      "orientation": "horizontal",
+      "peek": {
+        "before": 0,
+        "after": 0
+      }
+    },
+    "children": []
+  },
+  "styleClasses": [],
+  "variables": {}
+}

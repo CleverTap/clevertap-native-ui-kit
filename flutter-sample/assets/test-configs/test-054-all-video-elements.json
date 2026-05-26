@@ -1,0 +1,83 @@
+{
+  "theme": {
+    "id": "video-showcase",
+    "defaultStyle": {
+      "textColor": "#FFFFFF",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "video-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16
+      },
+      "arrangement": {
+        "type": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#1A1A1A"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "main-video",
+        "elementType": "video",
+        "bindings": {
+          "url": "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 240,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12,
+          "backgroundColor": "#000000"
+        }
+      },
+      {
+        "type": "element",
+        "id": "preview-video",
+        "elementType": "video",
+        "bindings": {
+          "url": "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 180,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 12,
+          "backgroundColor": "#000000",
+          "opacity": 0.8
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}
