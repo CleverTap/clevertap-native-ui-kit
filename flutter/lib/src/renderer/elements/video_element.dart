@@ -95,11 +95,13 @@ class _VideoElementState extends State<VideoElement> {
       content = video;
     }
 
-    return StyleApplier.apply(
-      content,
-      widget.style,
-      rootHeight: rootHeight,
-      padding: widget.node.layout?.padding,
+    return RepaintBoundary(
+      child: StyleApplier.apply(
+        content,
+        widget.style,
+        rootHeight: rootHeight,
+        padding: widget.node.layout?.padding,
+      ),
     );
   }
 }
