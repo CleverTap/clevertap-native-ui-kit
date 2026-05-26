@@ -23,18 +23,36 @@ class StyleApplier {
     }
 
     final radius = _resolveBorderRadius(style.borderRadius, rootHeight);
-
-    if (radius != null) {
-      result = ClipRRect(borderRadius: BorderRadius.circular(radius), child: result);
-    }
-
-    final decoration = _buildDecoration(style, rootHeight, radius);
-    if (decoration != null) {
-      result = DecoratedBox(decoration: decoration, child: result);
-    }
-
     final opacity = style.opacity;
-    if (opacity != null && opacity < 1.0) {
+
+    // For solid backgrounds, bake opacity directly into the color to avoid a
+    // saveLayer call. The Opacity widget is only used for complex content
+    // (gradients, images, no background) where full-subtree alpha blending is needed.
+    final bg = style.background;
+    final hasSolidBg =
+        (bg == null && style.backgroundColor != null) || bg is SolidBackground;
+    final bakedOpacity =
+        (hasSolidBg && opacity != null && opacity < 1.0) ? opacity : null;
+
+    final decoration = _buildDecoration(style, rootHeight, radius, bakedOpacity);
+    if (decoration != null) {
+      // Correct order: DecoratedBox (outside) paints background/border/shadow.
+      // ClipRRect (inside) clips children to the same border radius.
+      if (radius != null) {
+        result = DecoratedBox(
+          decoration: decoration,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(radius),
+            child: result,
+          ),
+        );
+      } else {
+        result = DecoratedBox(decoration: decoration, child: result);
+      }
+    }
+
+    // Use the Opacity widget only when we couldn't bake alpha into a solid color.
+    if (opacity != null && opacity < 1.0 && !hasSolidBg) {
       result = Opacity(opacity: opacity.clamp(0.0, 1.0), child: result);
     }
 
@@ -51,8 +69,13 @@ class StyleApplier {
     );
   }
 
-  static BoxDecoration? _buildDecoration(Style style, double rootHeight, double? radius) {
-    final bgResult = _resolveBackground(style, rootHeight);
+  static BoxDecoration? _buildDecoration(
+    Style style,
+    double rootHeight,
+    double? radius,
+    double? bakedOpacity,
+  ) {
+    final bgResult = _resolveBackground(style, rootHeight, bakedOpacity);
     final border = _resolveBorder(style, rootHeight);
     final shadows = _resolveShadow(style);
 
@@ -62,13 +85,20 @@ class StyleApplier {
 
     if (bgResult is Color) {
       bgColor = bgResult;
-    } else if (bgResult is LinearGradient || bgResult is RadialGradient || bgResult is SweepGradient) {
+    } else if (bgResult is LinearGradient ||
+        bgResult is RadialGradient ||
+        bgResult is SweepGradient) {
       bgGradient = bgResult as Gradient;
     } else if (bgResult is DecorationImage) {
       bgImage = bgResult;
     }
 
-    if (bgColor == null && bgGradient == null && bgImage == null && border == null && shadows == null && radius == null) {
+    if (bgColor == null &&
+        bgGradient == null &&
+        bgImage == null &&
+        border == null &&
+        shadows == null &&
+        radius == null) {
       return null;
     }
 
@@ -82,13 +112,19 @@ class StyleApplier {
     );
   }
 
-  static dynamic _resolveBackground(Style style, double rootHeight) {
+  static dynamic _resolveBackground(Style style, double rootHeight, double? bakedOpacity) {
     final bg = style.background;
     if (bg == null) {
-      return ColorParser.parse(style.backgroundColor);
+      final color = ColorParser.parse(style.backgroundColor);
+      if (color == null || bakedOpacity == null) return color;
+      return color.withValues(alpha: bakedOpacity.clamp(0.0, 1.0));
     }
     return switch (bg) {
-      SolidBackground s => ColorParser.parse(s.color),
+      SolidBackground s => () {
+          final color = ColorParser.parse(s.color);
+          if (color == null || bakedOpacity == null) return color;
+          return color.withValues(alpha: bakedOpacity.clamp(0.0, 1.0));
+        }(),
       LinearGradientBackground lg => _buildLinearGradient(lg),
       RadialGradientBackground rg => _buildRadialGradient(rg),
       SweepGradientBackground sg => _buildSweepGradient(sg),

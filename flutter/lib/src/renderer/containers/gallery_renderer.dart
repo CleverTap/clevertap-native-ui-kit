@@ -121,7 +121,7 @@ class _GalleryRendererState extends State<GalleryRenderer> {
                   child: item,
                 );
               }
-              return item;
+              return RepaintBoundary(child: item);
             },
           ),
         );
