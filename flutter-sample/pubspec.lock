@@ -56,6 +56,14 @@ packages:
       relative: true
     source: path
     version: "0.1.0"
+  clevertap_plugin:
+    dependency: "direct main"
+    description:
+      name: clevertap_plugin
+      sha256: "2de4b90a98b1bf4c8bff0de3f113221d655162539d13bcc3bce5bdfd2ac83e05"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.0"
   clock:
     dependency: transitive
     description:

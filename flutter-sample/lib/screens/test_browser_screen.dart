@@ -185,6 +185,7 @@ const _testFiles = [
   'test-179-html-transparent-bg.json',
   'test-180-html-scrollable-content.json',
   'test-172-video-fullscreen-openurl.json',
+  'test-parity-80pct-ar.json',
 ];
 
 class TestBrowserScreen extends StatefulWidget {
