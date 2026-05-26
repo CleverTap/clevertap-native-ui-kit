@@ -178,31 +178,64 @@ class DimensionCalculator {
     if (dim.special == 'match_parent') return parentSize;
     if (dim.special == 'wrap_content') return null;   // null → intrinsic size
     if (dim.unit == 'percent') return parentSize * dim.value / 100;
-    if (dim.aspectRatio != null) return null;          // caller handles aspect ratio
     return dim.value; // dp/sp/px — treat as logical pixels
   }
 }
+```
 
-// Usage: always wrap in LayoutBuilder when percent dimensions are used
-Widget buildConstrainedNode(NativeDisplayNode node, List<Widget>? children) {
-  return LayoutBuilder(
-    builder: (context, constraints) {
-      final w = DimensionCalculator.resolve(node.layout.width, constraints.maxWidth, rootHeight);
-      final h = DimensionCalculator.resolve(node.layout.height, constraints.maxHeight, rootHeight);
+## Root Sizing — aspectRatio Precedence Rule
 
-      // Handle aspect ratio
-      Widget child = buildContent(node, children);
-      if (node.layout.width?.aspectRatio != null) {
-        child = AspectRatio(
-          aspectRatio: node.layout.width!.aspectRatio!,
-          child: child,
-        );
-      }
+**When `aspectRatio` is set on the root, it uses full available parent width and ignores any `width.percent` value.**
 
-      return SizedBox(width: w, height: h, child: child);
-    },
-  );
+This matches Android (Compose `aspectRatio` modifier locks `{W=parentWidth, H=parentWidth/ratio}` before `fillMaxWidth(fraction)` applies) and iOS (explicit guard returning `parentWidth` for percent when AR set).
+
+### Implementation in `NativeDisplayView`
+
+```dart
+// _effectiveWidth: AR present → full width, percent ignored
+double _effectiveWidth(Layout? layout, double availableWidth) {
+  final ar = layout?.aspectRatio;
+  if (ar != null && ar > 0) return availableWidth;          // AR wins, ignore percent
+  final w = layout?.width;
+  if (w != null && w.special == null && w.unit == DimensionUnit.percent && w.value > 0) {
+    return availableWidth * w.value / 100.0;
+  }
+  return availableWidth;
 }
+
+// _computeRootHeight: AR → fullWidth / AR (not percentWidth / AR)
+double _computeRootHeight(Layout? layout, double effectiveRootWidth, BoxConstraints constraints, double screenHeight) {
+  if (layout == null) return screenHeight;
+  final ar = layout.aspectRatio;
+  if (ar != null && ar > 0) return effectiveRootWidth / ar;  // effectiveRootWidth = fullWidth when AR set
+  final h = layout.height;
+  if (h != null && h.special == null && h.value > 0) {
+    if (h.unit == DimensionUnit.percent) return screenHeight * h.value / 100.0;
+    return h.value;
+  }
+  if (!constraints.maxHeight.isInfinite) return constraints.maxHeight;
+  return screenHeight;
+}
+
+// _applyRootSizing: AR → return child unchanged; AspectRatio widget handles visual constraint
+Widget _applyRootSizing(Widget child, Layout? layout, ...) {
+  if (layout == null) return child;
+  final ar = layout.aspectRatio;
+  if (ar != null && ar > 0) return child;    // AR takes full width; no Align+SizedBox wrapper
+  // ... percent width/height sizing applied only when no AR ...
+}
+```
+
+### aspectRatio sizing priority (all nodes, all platforms)
+
+| Scenario | Result |
+|---|---|
+| Both width AND height fixed (dp/sp/px) | `aspectRatio` skipped |
+| Only height fixed (dp/sp/px) | width = `fixedHeight × AR` |
+| Only width fixed (dp/sp/px) | height = `fixedWidth / AR` |
+| width is percent + AR | **percent ignored**; uses full parent width; height = `parentWidth / AR` |
+| height is percent + AR | AR-derived height; percent height ignored |
+| No explicit width or height | full parent width; height = `parentWidth / AR` |
 ```
 
 ---

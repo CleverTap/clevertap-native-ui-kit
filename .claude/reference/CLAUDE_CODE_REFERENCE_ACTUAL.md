@@ -54,6 +54,7 @@ Layout {
   offset?: Offset (for positioning in Box/Stack)
   padding?: Spacing
   arrangement?: ChildArrangement (for container child spacing)
+  aspectRatio?: Float   // width / height ratio
 }
 ```
 
@@ -67,6 +68,21 @@ Dimension {
   special: SpecialDimension? (WRAP_CONTENT, MATCH_PARENT)
 }
 ```
+
+### aspectRatio Sizing Resolution Priority
+
+`aspectRatio` is applied **before** explicit width/height. Rules in priority order:
+
+| Scenario | Result |
+|---|---|
+| Both width AND height fixed (dp/sp/px) | `aspectRatio` skipped; explicit dims win |
+| Only height fixed (dp/sp/px) | width = `fixedHeight × aspectRatio` |
+| Only width fixed (dp/sp/px) | height = `fixedWidth / aspectRatio` |
+| width is percent (any) + aspectRatio | **percent ignored**; uses full parent width; height = `parentWidth / aspectRatio` |
+| height is percent + aspectRatio | AR-derived height used; percent height ignored |
+| No explicit width or height | uses full parent width; height = `parentWidth / aspectRatio` |
+
+> **⚠️ `width.percent` is ignored when `aspectRatio` is present.** This is identical on Android (Compose modifier ordering), iOS (guard check), and Flutter (`_effectiveWidth` returns `availableWidth` when AR set).
 
 ### Offset Object (For Positioning)
 ```kotlin
