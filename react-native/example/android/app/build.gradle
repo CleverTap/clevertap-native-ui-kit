@@ -84,6 +84,11 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        // AndroidManifest references ${usesCleartextTraffic} - keep it disabled
+        // to match iOS Info.plist's `NSAllowsArbitraryLoads = false`. Without
+        // this placeholder defined, the manifest merger leaves the attribute
+        // empty and the launcher activity can refuse to start.
+        manifestPlaceholders = [usesCleartextTraffic: "false"]
     }
     signingConfigs {
         debug {

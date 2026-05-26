@@ -29,8 +29,15 @@ export function isWrapContent(dim: Dimension | undefined): boolean {
 
 export function resolveTextDim(td: TextDimension | undefined, rootHeightPx: number): number | undefined {
   if (!td) return undefined;
-  if (td.unit === 'percent') return rootHeightPx * td.value / 1000;
-  return td.value;
+  const result = td.unit === 'percent' ? (rootHeightPx * td.value) / 1000 : td.value;
+  // Never return 0 or negative. Android Fabric throws
+  //   IllegalArgumentException: FontSize should be a positive value
+  // when measuring text with `letterSpacing` set against a fontSize of 0.
+  // Returning undefined makes the caller skip setting fontSize entirely, so
+  // RN falls back to its own default (14) and Fabric is happy.
+  // This happens in practice on the first render of a NativeDisplayView before
+  // `onLayout` has supplied a non-zero `rootHeightPx`.
+  return result > 0 ? result : undefined;
 }
 
 export function hasBorderRadiusPercent(dim: Dimension | undefined): boolean {

@@ -1,9 +1,9 @@
 buildscript {
     ext {
-        buildToolsVersion = "36.0.0"
+        buildToolsVersion = "35.0.0"
         minSdkVersion = 24
-        compileSdkVersion = 36
-        targetSdkVersion = 36
+        compileSdkVersion = 35
+        targetSdkVersion = 35
         ndkVersion = "27.1.12297006"
         kotlinVersion = "2.1.20"
     }
@@ -12,10 +12,23 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle")
+        classpath("com.android.tools.build:gradle:8.6.0")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
     }
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+// We're pinned to AGP 8.6.0 (Android Studio compatibility) which supports
+// compileSdk up to 35. Some transitive deps (e.g. via react-native 0.85)
+// resolve to androidx.core:1.17.0, which requires compileSdk 36 + AGP 8.9.1.
+// Force core/core-ktx down to 1.15.0 (the last line that supports compileSdk 35).
+allprojects {
+    configurations.all {
+        resolutionStrategy {
+            force "androidx.core:core:1.15.0"
+            force "androidx.core:core-ktx:1.15.0"
+        }
+    }
+}

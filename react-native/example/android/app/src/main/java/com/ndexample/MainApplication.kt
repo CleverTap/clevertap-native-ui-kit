@@ -24,8 +24,15 @@ class MainApplication : Application(), ReactApplication {
 
   override fun onCreate() {
     super.onCreate()
-    ActivityLifecycleCallback.register(this)
+    // Mirror the iOS AppDelegate's launch sequence one-for-one:
+    //   iOS                                          | Android
+    //   -------------------------------------------- | -------------------------------------------------
+    //   CleverTap.setDebugLevel(2)                   | CleverTapAPI.setDebugLevel(LogLevel.DEBUG)  (both = level 2)
+    //   CleverTap.autoIntegrate()                    | ActivityLifecycleCallback.register(this)
+    //   CleverTapReactManager...applicationDidLaunch | clevertap-react-native autolinks its ReactPackage,
+    //                                                |   so no explicit RN-bridge call is needed here.
     CleverTapAPI.setDebugLevel(CleverTapAPI.LogLevel.DEBUG)
+    ActivityLifecycleCallback.register(this)
     loadReactNative(this)
   }
 }

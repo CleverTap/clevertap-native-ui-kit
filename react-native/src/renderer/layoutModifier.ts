@@ -177,7 +177,14 @@ export function resolveNodeStyle(resolved: Partial<Style>, rootHeightPx: number)
   }
 
   if (resolved.letterSpacing != null) {
-    style.letterSpacing = resolved.letterSpacing;
+    // Skip letterSpacing when fontSize is explicitly 0. Android Fabric's
+    // text layout pass throws IllegalArgumentException("FontSize should be a
+    // positive value") because it computes em-relative letter spacing from
+    // fontSize. If fontSize is unset, RN's default (14) is used and Fabric
+    // is happy - so only the explicit-zero case is dangerous.
+    if (style.fontSize !== 0) {
+      style.letterSpacing = resolved.letterSpacing;
+    }
   }
 
   if (resolved.textDecoration) {
