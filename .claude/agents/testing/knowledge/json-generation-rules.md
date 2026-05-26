@@ -106,16 +106,27 @@ This is the COMPLETE specification for generating valid Native Display JSON conf
 
 ### 6. Aspect Ratio
 
-Automatically calculates one dimension from the other:
+Automatically calculates one dimension from the other. **When `aspectRatio` is set, percent width is ignored — the node uses full parent width.**
 
 ```json
 {
   "layout": {
-    "width": {"value": 100, "unit": "percent"},
-    "aspectRatio": 1.5  // width / height
+    "width": {"value": 80, "unit": "percent"},
+    "aspectRatio": 1.777
   }
 }
 ```
+
+> ⚠️ The above renders at **full parent width** (not 80%), height = parentWidth / 1.777.
+> `width.percent` is overridden by `aspectRatio` on all platforms (Android, iOS, Flutter).
+> To intentionally constrain to 80% width without AR, omit `aspectRatio`.
+
+**aspectRatio priority rules:**
+- Both width AND height fixed (dp/sp/px) → AR skipped, explicit dims win
+- Only width fixed (dp/sp/px) + AR → height = fixedWidth / AR
+- Only height fixed (dp/sp/px) + AR → width = fixedHeight × AR
+- Any percent dimension + AR → **percent ignored, full parent width, height = parentWidth / AR**
+- No explicit dims + AR → full parent width, height = parentWidth / AR
 
 **Common ratios:**
 - `1.0` - Square (1:1)

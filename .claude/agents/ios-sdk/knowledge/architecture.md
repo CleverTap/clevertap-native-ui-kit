@@ -38,6 +38,29 @@ struct NativeDisplayConfig: Codable {
 - **Template Evaluation**: Variable interpolation
 - **Layout Calculation**: Dimension resolution, RTL support
 
+#### aspectRatio Sizing Priority (critical — matches Android/Flutter)
+
+When `aspectRatio` is set, width/height percent values are **ignored**. The node uses full available parent width; height = `parentWidth / aspectRatio`. Implementation in `NativeDisplayRenderer.swift`:
+
+```swift
+case .percent:
+    // Aspect ratio present → percent is ignored, width fills parent.
+    guard (layout?.aspectRatio ?? 0) <= 0 else { return parentWidth }
+    return parentWidth * dim.value / 100
+```
+
+And for the root:
+```swift
+} else if let ar = config.root.layout?.aspectRatio, ar > 0 {
+    // .frame(maxWidth: .infinity) fills parent width
+    // .aspectRatio(.fit) derives height = width / ar
+    .aspectRatio(ar, contentMode: .fit)
+    .frame(maxWidth: .infinity)
+}
+```
+
+`aspectRatio` is skipped only when **both** width AND height are fixed (non-percent, non-nil special). See `.claude/reference/CLAUDE_CODE_REFERENCE_ACTUAL.md` for the full priority table.
+
 ### 3. UI Rendering (`ios/Sources/Views/`)
 - `NativeDisplayView` - Main entry point
 - `ContainerView` - Renders containers

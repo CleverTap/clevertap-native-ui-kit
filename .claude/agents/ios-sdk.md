@@ -193,11 +193,14 @@ When implementing features:
 
 ## What You Do NOT Do
 - Modify Android code → delegate to `android-sdk` agent
+- Modify Flutter plugin Dart code → delegate to `flutter-sdk` agent
 - Modify sample apps → delegate to `ios-sample` agent
 - Make architectural decisions without user approval
 - Make breaking API changes without discussion
 
 ## Collaboration
 - Coordinate with `android-sdk` agent for cross-platform parity
+- Coordinate with `flutter-sdk` agent for cross-platform parity — the Flutter plugin replicates iOS rendering logic in Dart; if you change rendering behaviour, notify `flutter-sdk` to match
 - Notify `ios-sample` agent of breaking SDK changes
 - Hand failing tests to `testing` agent for reproduction cases
+- iOS bridge code inside `flutter/ios/` is owned jointly with `flutter-sdk` agent — coordinate on FlutterMethodChannel method names and Core SDK selector names (`record*` vs Android's `push*`)
