@@ -7,6 +7,8 @@ import '../models/native_display_config.dart';
 
 class NativeDisplayBridge {
   static const _channel = MethodChannel('com.clevertap.flutter.nativedisplay');
+  static const _events = EventChannel('com.clevertap.flutter/native_display_events');
+  static const _sampleChannel = MethodChannel('com.clevertap.flutter/native_display');
 
   // Fetch a display unit config JSON from the native CleverTap Core SDK by unitId.
   // Returns null when the unit is not found or an error occurs.
@@ -40,6 +42,25 @@ class NativeDisplayBridge {
       });
     } on PlatformException catch (e) {
       debugPrint('[NativeDisplay] pushClickedEvent failed for $unitId: ${e.message}');
+    }
+  }
+
+  // Stream of events pushed from the native side (e.g. units_updated).
+  // Each event is a Map<String, dynamic> with at minimum a 'type' key.
+  static Stream<Map<String, dynamic>> get eventStream => _events
+      .receiveBroadcastStream()
+      .where((e) => e is Map)
+      .map((e) => (e as Map).cast<String, dynamic>());
+
+  // Fire a CleverTap event by name via the native Core SDK.
+  // Used by the sample app's integration screen to send user-defined events.
+  static Future<void> pushEvent(String eventName) async {
+    try {
+      await _sampleChannel.invokeMethod<void>('pushEvent', {'eventName': eventName});
+    } on PlatformException catch (e) {
+      debugPrint('[NativeDisplay] pushEvent failed for $eventName: ${e.message}');
+    } catch (_) {
+      // Channel may not be set up in all host apps — silently ignore
     }
   }
 }

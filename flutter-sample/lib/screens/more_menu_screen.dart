@@ -5,28 +5,28 @@ import 'arrangement_demo_screen.dart';
 import 'animation_demo_screen.dart';
 import 'home_screen_demo.dart';
 import 'bridge_integration_screen.dart';
-import 'slot_demo_screen.dart';
+import 'other_demos_screen.dart';
 
 class MoreMenuScreen extends StatelessWidget {
   const MoreMenuScreen({super.key});
 
   static const _items = [
+    (Icons.link, 'Bridge Integration', 'Core SDK bridge demo with mock data'),
     (Icons.image_outlined, 'Banner Showcase', 'Browse all 10 pre-defined banners'),
     (Icons.align_horizontal_left, 'Arrangements', 'Explore all 7 arrangement strategies'),
     (Icons.auto_awesome, 'Animations', 'Container and element animations'),
     (Icons.house_outlined, 'Home Screen', 'Example home screen layout'),
-    (Icons.link, 'Bridge Integration', 'Core SDK bridge demo with mock data'),
-    (Icons.pin_drop_outlined, 'Slot Demo', 'Mixed content feed with native display slots'),
+    (Icons.grid_view, 'Other Demos', 'Gallery, E-commerce, Social, Dashboard'),
   ];
 
   Widget _destinationFor(String title) {
     return switch (title) {
+      'Bridge Integration' => const BridgeIntegrationScreen(),
       'Banner Showcase' => const _FullScreenShell(title: 'Banner Showcase', child: BannerShowcaseScreen()),
       'Arrangements' => const ArrangementDemoScreen(),
       'Animations' => const AnimationDemoScreen(),
       'Home Screen' => const _FullScreenShell(title: 'Home Screen', child: _HomeScreenShell()),
-      'Bridge Integration' => const BridgeIntegrationScreen(),
-      'Slot Demo' => const SlotDemoScreen(),
+      'Other Demos' => const _FullScreenShell(title: 'Other Demos', child: OtherDemosScreen()),
       _ => const SizedBox.shrink(),
     };
   }

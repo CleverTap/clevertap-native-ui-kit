@@ -89,31 +89,42 @@ class _GalleryRendererState extends State<GalleryRenderer> {
     final config = _config;
     final children = widget.node.children;
 
-    Widget gallery = PageView.builder(
-      controller: _pageController,
-      scrollDirection: config.orientation == Orientation.vertical
-          ? Axis.vertical
-          : Axis.horizontal,
-      onPageChanged: (page) => setState(() => _currentPage = page),
-      itemCount: config.infiniteScroll ? null : children.length,
-      itemBuilder: (context, index) {
-        final child = children[index % children.length];
-        Widget item = NativeDisplayRenderer(
-          node: child,
-          evaluator: widget.evaluator,
-          actionListener: widget.actionListener,
-          componentListener: widget.componentListener,
+    // PageView requires bounded height. Use LayoutBuilder; fall back to 200 if parent is unbounded.
+    Widget gallery = LayoutBuilder(
+      builder: (ctx, constraints) {
+        final h = constraints.maxHeight.isInfinite || constraints.maxHeight == 0
+            ? 200.0
+            : constraints.maxHeight;
+        return SizedBox(
+          height: h,
+          child: PageView.builder(
+            controller: _pageController,
+            scrollDirection: config.orientation == Orientation.vertical
+                ? Axis.vertical
+                : Axis.horizontal,
+            onPageChanged: (page) => setState(() => _currentPage = page),
+            itemCount: config.infiniteScroll ? null : children.length,
+            itemBuilder: (context, index) {
+              final child = children[index % children.length];
+              Widget item = NativeDisplayRenderer(
+                node: child,
+                evaluator: widget.evaluator,
+                actionListener: widget.actionListener,
+                componentListener: widget.componentListener,
+              );
+              if (config.spacing > 0) {
+                final isVertical = config.orientation == Orientation.vertical;
+                item = Padding(
+                  padding: isVertical
+                      ? EdgeInsets.symmetric(vertical: config.spacing / 2)
+                      : EdgeInsets.symmetric(horizontal: config.spacing / 2),
+                  child: item,
+                );
+              }
+              return item;
+            },
+          ),
         );
-        if (config.spacing > 0) {
-          final isVertical = config.orientation == Orientation.vertical;
-          item = Padding(
-            padding: isVertical
-                ? EdgeInsets.symmetric(vertical: config.spacing / 2)
-                : EdgeInsets.symmetric(horizontal: config.spacing / 2),
-            child: item,
-          );
-        }
-        return item;
       },
     );
 
