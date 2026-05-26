@@ -157,6 +157,21 @@ Row(
 
 ## Dimension Calculation Issues
 
+### Problem: Assuming percent width is respected when aspectRatio is set
+
+```kotlin
+// JSON: {"width": {"value": 80, "unit": "percent"}, "aspectRatio": 1.777}
+
+// ❌ Wrong assumption: card renders at 80% width
+// ✅ Actual: card renders at FULL parent width, height = parentWidth / 1.777
+```
+
+**Why**: `applySizing` in `ModifierExtensions.kt` applies `aspectRatio` modifier BEFORE `fillMaxWidth(fraction)`. The AR modifier locks constraints to `{minW=parentWidth, H=parentWidth/ratio}`. The subsequent `fillMaxWidth(0.8f)` receives `minW=parentWidth` and cannot shrink the width — so the 80% has zero effect.
+
+**Rule**: `aspectRatio` overrides all percent dimensions. Percent is only respected when no AR is set. Fixed (dp/px) dims override AR only when BOTH width AND height are fixed simultaneously.
+
+See `ModifierExtensions.kt:109-118` for the exact implementation.
+
 ### Problem: Percent Dimension Without Parent Size
 
 ```kotlin

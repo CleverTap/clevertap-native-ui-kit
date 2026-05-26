@@ -15,6 +15,11 @@ clevertap-native-ui-kit/
 ├── ios/                  # iOS SDK (Swift + SwiftUI)
 │   └── Sources/          # Core SDK source
 ├── ios-sample/           # iOS sample app
+├── flutter/              # Flutter plugin (Dart + platform bridges)
+│   ├── lib/              # Pure Dart renderer + public API
+│   ├── android/          # Android MethodChannel bridge
+│   └── ios/              # iOS FlutterMethodChannel bridge
+├── flutter-sample/       # Flutter sample app
 ├── docs/                 # Documentation
 └── .claude/
     ├── agents/           # Subagent definitions
@@ -76,6 +81,10 @@ theme (optional) | styleClasses (optional) | variables (optional) | root (requir
 ## Layout System
 
 **Dimension units**: `dp` `sp` `percent` `px` | **Special**: `wrap_content` `match_parent`
+
+> **⚠️ Dashboard constraint — `percent` and `aspectRatio` only**: The CleverTap dashboard generates JSON using only `percent` dimensions and `aspectRatio`. Fixed units (`dp`, `sp`, `px`) and specials (`wrap_content`, `match_parent`) are SDK-only — they exist for programmatic JSON and backward compatibility but are **not emitted by the dashboard**. New platform implementations must support all types correctly, but real dashboard payloads will only ever contain `percent` + `aspectRatio`.
+
+> **⚠️ aspectRatio overrides percent dimensions**: When `aspectRatio` is set on a node, the node uses **full available parent width** and derives height = `parentWidth / aspectRatio`. Any `width.percent` or `height.percent` value is **ignored**. `aspectRatio` is only skipped when BOTH `width` AND `height` are fixed (dp/sp/px) simultaneously. This is consistent across Android (Compose modifier ordering), iOS (SwiftUI frame), and Flutter (AspectRatio widget).
 
 **Arrangement strategies** (all lowercase in JSON): `spaced` `space_between` `space_evenly` `space_around` `start` `center` `end`
 
@@ -147,13 +156,16 @@ Specialized subagents for domain-focused work:
 |-------|--------|
 | `android-sdk` | Android SDK — Kotlin/Compose implementation |
 | `ios-sdk` | iOS SDK — Swift/SwiftUI implementation |
+| `flutter-sdk` | Flutter plugin — Dart renderer + platform channel bridge |
 | `android-sample` | Android demo apps (Compose + XML) |
 | `ios-sample` | iOS demo app (SwiftUI) |
+| `flutter-sample` | Flutter demo app |
 | `testing` | Test JSON generation, Roborazzi screenshots, visual comparison |
 
 **Invoking agents explicitly:**
 ```
 "Using the android-sdk agent, implement the GRID container from spec 013"
+"Using the flutter-sdk agent, implement the GALLERY container in Dart"
 "Using the testing agent, generate 25 GALLERY container test variations"
 ```
 
@@ -161,7 +173,8 @@ Specialized subagents for domain-focused work:
 - SDK agents do not touch sample apps — delegate to sample agents
 - Sample agents do not touch SDK code — delegate to SDK agents
 - Testing agent does not fix bugs — hands issues to SDK agents
-- Cross-platform features need both `android-sdk` AND `ios-sdk`
+- Cross-platform features need `android-sdk`, `ios-sdk`, AND `flutter-sdk`
+- `flutter-sdk` owns `flutter/lib/` (Dart); platform bridges in `flutter/android/` and `flutter/ios/` are coordinated with `android-sdk` and `ios-sdk` respectively
 
 Agent workflows and examples → `.claude/agents/` and `.claude/AGENTS_QUICK_REFERENCE.md`
 
@@ -173,12 +186,16 @@ Agent workflows and examples → `.claude/agents/` and `.claude/AGENTS_QUICK_REF
 
 **iOS**: `Codable` structs · SwiftUI rendering · `ios/Sources/` module structure
 
+**Flutter**: `fromJson`/`toJson` Dart models · Flutter widget rendering · `flutter/lib/` package structure
+
 **Commands**:
 ```
 Android build:  cd android && ./gradlew build
 Android test:   cd android && ./gradlew test
 iOS build:      cd ios && swift build
 iOS test:       cd ios && swift test
+Flutter build:  cd flutter && flutter build
+Flutter test:   cd flutter && flutter test
 ```
 
 ---
