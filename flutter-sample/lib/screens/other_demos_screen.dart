@@ -9,11 +9,11 @@ class OtherDemosScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
+    return const DefaultTabController(
       length: 5,
       child: Column(
         children: [
-          const TabBar(
+          TabBar(
             isScrollable: true,
             tabAlignment: TabAlignment.start,
             tabs: [
@@ -24,7 +24,7 @@ class OtherDemosScreen extends StatelessWidget {
               Tab(text: 'Dashboard'),
             ],
           ),
-          const Expanded(
+          Expanded(
             child: TabBarView(
               children: [
                 _JsonTab(assetPath: 'assets/configs/home_screen.json'),

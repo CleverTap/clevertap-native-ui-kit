@@ -34,13 +34,13 @@ class BridgeIntegrationScreen extends StatelessWidget {
                   ?.copyWith(color: const Color(0xFF666666)),
             ),
             const Divider(height: 32),
-            _ConfigSection(
+            const _ConfigSection(
               title: 'Mock Product Unit',
               description: 'Simulates a product display unit delivered by the Core SDK.',
               assetPath: 'assets/configs/bridge_mock_product.json',
             ),
             const SizedBox(height: 24),
-            _ConfigSection(
+            const _ConfigSection(
               title: 'Mock Notification Unit',
               description: 'Simulates a notification-style display unit.',
               assetPath: 'assets/configs/bridge_mock_notification.json',
@@ -138,9 +138,9 @@ await NativeDisplayBridge.pushClickedEvent(unitId, elementId: nodeId);''';
                 color: const Color(0xFFE3F2FD),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: SelectableText(
+              child: const SelectableText(
                 snippet,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'monospace',
                   fontSize: 12,
                   color: Color(0xFF1565C0),
