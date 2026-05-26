@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import '../evaluator/variable_evaluator.dart';
 import '../models/enums.dart';
+import '../models/layout.dart';
 import '../models/native_display_node.dart';
 import '../models/style.dart';
 import 'animation_modifier.dart';
@@ -16,6 +17,8 @@ import 'elements/spacer_element.dart';
 import 'elements/text_element.dart';
 import 'elements/video_element.dart';
 import 'resolved_styles_scope.dart';
+import 'root_height_scope.dart';
+import 'style_applier.dart';
 
 class NativeDisplayRenderer extends StatelessWidget {
   final NativeDisplayNode node;
@@ -37,11 +40,27 @@ class NativeDisplayRenderer extends StatelessWidget {
 
     final resolvedStyles = ResolvedStylesScope.of(context);
     final style = resolvedStyles[node.id] ?? Style.empty;
+    final rootHeight = RootHeightScope.of(context);
 
     Widget built = switch (node) {
       NativeDisplayContainer c => _buildContainer(c, style),
       NativeDisplayElement e => _buildElement(context, e, style),
     };
+
+    // Containers apply style here; elements apply their own style internally.
+    if (node is NativeDisplayContainer) {
+      built = StyleApplier.apply(
+        built,
+        style,
+        rootHeight: rootHeight,
+        padding: node.layout?.padding,
+      );
+    }
+
+    // Apply aspectRatio and fixed (dp/sp/px) sizing.
+    // Percent sizing is handled by each parent container:
+    //   BOX → Positioned(width:, height:), VERTICAL/HORIZONTAL → FractionallySizedBox.
+    built = _wrapWithSizing(built, node.layout);
 
     final anim = node.animation;
     if (anim != null && anim.type != AnimationType.none) {
@@ -98,5 +117,44 @@ class NativeDisplayRenderer extends StatelessWidget {
       ElementType.video => VideoElement(node: node, style: style, evaluator: evaluator),
       ElementType.html => HtmlElement(node: node, style: style, evaluator: evaluator),
     };
+  }
+
+  /// Wraps [child] with an [AspectRatio] or [SizedBox] for fixed/ratio sizing.
+  ///
+  /// Mirrors the Android/iOS rule:
+  ///   - AR is applied unless BOTH width AND height are fixed (dp/sp/px).
+  ///   - Percent is NOT treated as "fixed", so AR wins over percent dimensions.
+  ///
+  /// Percent sizing is handled by the parent container (not here) to avoid
+  /// using FractionallySizedBox inside Stack/Positioned where constraints are loose.
+  Widget _wrapWithSizing(Widget child, Layout? layout) {
+    if (layout == null) return child;
+
+    final w = layout.width;
+    final h = layout.height;
+
+    final wIsFixed = w != null &&
+        w.special == null &&
+        w.unit != DimensionUnit.percent &&
+        w.value > 0;
+    final hIsFixed = h != null &&
+        h.special == null &&
+        h.unit != DimensionUnit.percent &&
+        h.value > 0;
+
+    final ar = layout.aspectRatio;
+    if (ar != null && ar > 0 && !(wIsFixed && hIsFixed)) {
+      return AspectRatio(aspectRatio: ar, child: child);
+    }
+
+    if (wIsFixed || hIsFixed) {
+      return SizedBox(
+        width: wIsFixed ? w.value : null,
+        height: hIsFixed ? h.value : null,
+        child: child,
+      );
+    }
+
+    return child;
   }
 }

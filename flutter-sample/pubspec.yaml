@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
   clevertap_native_display:
     path: ../flutter
+  clevertap_plugin: ^4.0.0
 
 dev_dependencies:
   flutter_test:
@@ -23,3 +24,4 @@ flutter:
   assets:
     - assets/banners/
     - assets/configs/
+    - assets/test-configs/

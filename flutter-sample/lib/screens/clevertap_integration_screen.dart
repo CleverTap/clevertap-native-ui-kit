@@ -1,12 +1,9 @@
-import 'dart:async';
 import 'dart:convert';
 
+import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
 
-/// Mirrors the Android CleverTapIntegrationScreen.
-/// Subscribes to NativeDisplayBridge.eventStream to receive display units pushed
-/// from the native CleverTap Core SDK and renders them via NativeDisplayView.
 class CleverTapIntegrationScreen extends StatefulWidget {
   const CleverTapIntegrationScreen({super.key});
 
@@ -17,69 +14,127 @@ class CleverTapIntegrationScreen extends StatefulWidget {
 class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen> {
   final _eventController = TextEditingController();
   final List<String> _log = [];
-  final List<NativeDisplayConfig> _units = [];
-  StreamSubscription<Map<String, dynamic>>? _unitSubscription;
+  final List<_UnitEntry> _units = [];
+
+  // CleverTapPlugin() returns the singleton — needed for instance method registration.
+  final _ct = CleverTapPlugin();
 
   @override
   void initState() {
     super.initState();
-    _subscribeToUnits();
+    _ct.setCleverTapDisplayUnitsLoadedHandler(_onUnitsLoaded);
+    _fetchCachedUnits();
   }
 
   @override
   void dispose() {
-    _unitSubscription?.cancel();
     _eventController.dispose();
     super.dispose();
   }
 
-  void _log_(String msg) {
-    final now = TimeOfDay.now();
-    final ts = '[${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}]';
-    setState(() => _log.add('$ts $msg'));
+  Future<void> _fetchCachedUnits() async {
+    try {
+      final units = await CleverTapPlugin.getAllDisplayUnits();
+      if (units != null && units.isNotEmpty) {
+        _onUnitsLoaded(units.cast<dynamic>());
+      }
+    } catch (e) {
+      _addLog('ERROR fetching cached units: $e');
+    }
   }
 
-  void _subscribeToUnits() {
-    _unitSubscription = NativeDisplayBridge.eventStream.listen(
-      (event) {
-        if (event['type'] == 'units_updated') {
-          final rawUnits = (event['units'] as List?)?.cast<String>() ?? [];
-          final configs = <NativeDisplayConfig>[];
-          for (final jsonStr in rawUnits) {
-            if (jsonStr.isEmpty) continue;
-            try {
-              final map = jsonDecode(jsonStr) as Map<String, dynamic>;
-              configs.add(NativeDisplayConfig.fromJson(map));
-            } catch (e) {
-              _log_('ERROR parsing unit: $e');
-            }
-          }
-          setState(() {
-            _units
-              ..clear()
-              ..addAll(configs);
-            _log.add(
-              '[${_timestamp()}] Received ${configs.length} Native Display unit(s)',
-            );
-          });
+  void _onUnitsLoaded(List<dynamic>? units) {
+    if (units == null || units.isEmpty) return;
+    final parsed = <_UnitEntry>[];
+    for (final unit in units) {
+      final entry = _extractEntry(unit);
+      if (entry != null) {
+        parsed.add(entry);
+      } else {
+        _addLog('WARN: unit has no recognisable NativeDisplayConfig');
+      }
+    }
+    if (!mounted) return;
+    setState(() {
+      _units
+        ..clear()
+        ..addAll(parsed);
+      _log.add('[${_ts()}] Received ${parsed.length} Native Display unit(s)');
+    });
+  }
+
+  /// Platform channel maps arrive as Map<Object?, Object?> at every nesting level.
+  /// This recursively converts the entire tree to Map<String, dynamic>.
+  static Map<String, dynamic> _deepCast(Map raw) =>
+      raw.map((k, v) => MapEntry(k.toString(), _deepCastValue(v)));
+
+  static dynamic _deepCastValue(dynamic v) {
+    if (v is Map) return _deepCast(v);
+    if (v is List) return v.map(_deepCastValue).toList();
+    return v;
+  }
+
+  /// Mirrors the 3-strategy extraction from the old SampleApplication.kt.
+  _UnitEntry? _extractEntry(dynamic raw) {
+    if (raw is! Map) return null;
+    final unit = _deepCast(raw);
+    final unitId = unit['wzrk_id']?.toString() ?? unit['slot_id']?.toString();
+
+    // Strategy 1: native_display_config key
+    final ndRaw = unit['native_display_config'];
+    if (ndRaw is Map<String, dynamic>) {
+      try {
+        return _UnitEntry(NativeDisplayConfig.fromJson(ndRaw), unitId);
+      } catch (e) {
+        _addLog('ERROR parsing native_display_config: $e');
+      }
+    }
+
+    // Strategy 2: custom_kv.nd_config string
+    final kv = unit['custom_kv'];
+    if (kv is Map<String, dynamic>) {
+      final ndStr = kv['nd_config'];
+      if (ndStr is String && ndStr.isNotEmpty) {
+        try {
+          return _UnitEntry(
+            NativeDisplayConfig.fromJson(jsonDecode(ndStr) as Map<String, dynamic>),
+            unitId,
+          );
+        } catch (e) {
+          _addLog('ERROR parsing custom_kv.nd_config: $e');
         }
-      },
-      onError: (Object e) => _log_('ERROR from event stream: $e'),
-    );
-  }
+      }
+    }
 
-  String _timestamp() {
-    final now = TimeOfDay.now();
-    return '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+    // Strategy 3: top-level root key
+    if (unit.containsKey('root')) {
+      try {
+        return _UnitEntry(NativeDisplayConfig.fromJson(unit), unitId);
+      } catch (e) {
+        _addLog('ERROR parsing root-level config: $e');
+      }
+    }
+
+    return null;
   }
 
   Future<void> _sendEvent() async {
     final name = _eventController.text.trim();
     if (name.isEmpty) return;
-    await NativeDisplayBridge.pushEvent(name);
-    _log_('Fired event: $name');
+    await CleverTapPlugin.recordEvent(name, {});
+    _addLog('Fired event: $name');
     _eventController.clear();
     setState(() {});
+  }
+
+  void _addLog(String msg) {
+    if (!mounted) return;
+    setState(() => _log.add('[${_ts()}] $msg'));
+  }
+
+  String _ts() {
+    final t = TimeOfDay.now();
+    return '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -95,30 +150,40 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
           _FireEventHeader(
             controller: _eventController,
             onSend: _sendEvent,
-            isSendEnabled: _eventController.text.isNotEmpty,
-            eventController: _eventController,
             onChanged: () => setState(() {}),
           ),
-          Expanded(child: _CanvasContent(units: _units, onAction: _log_)),
-          _EventLogFooter(messages: _log, onClear: () => setState(() => _log.clear())),
+          Expanded(
+            child: _CanvasContent(
+              units: _units,
+              onAction: _addLog,
+            ),
+          ),
+          _EventLogFooter(
+            messages: _log,
+            onClear: () => setState(() => _log.clear()),
+          ),
         ],
       ),
     );
   }
 }
 
+class _UnitEntry {
+  final NativeDisplayConfig config;
+  final String? unitId;
+  const _UnitEntry(this.config, this.unitId);
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+
 class _FireEventHeader extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
-  final bool isSendEnabled;
-  final TextEditingController eventController;
   final VoidCallback onChanged;
 
   const _FireEventHeader({
     required this.controller,
     required this.onSend,
-    required this.isSendEnabled,
-    required this.eventController,
     required this.onChanged,
   });
 
@@ -146,7 +211,7 @@ class _FireEventHeader extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               FilledButton(
-                onPressed: isSendEnabled ? onSend : null,
+                onPressed: controller.text.isNotEmpty ? onSend : null,
                 child: const Text('Send Event'),
               ),
             ],
@@ -166,8 +231,10 @@ class _FireEventHeader extends StatelessWidget {
   }
 }
 
+// ── Canvas ────────────────────────────────────────────────────────────────────
+
 class _CanvasContent extends StatelessWidget {
-  final List<NativeDisplayConfig> units;
+  final List<_UnitEntry> units;
   final void Function(String) onAction;
 
   const _CanvasContent({required this.units, required this.onAction});
@@ -184,16 +251,27 @@ class _CanvasContent extends StatelessWidget {
     }
     return ListView.builder(
       itemCount: units.length,
-      itemBuilder: (ctx, i) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: NativeDisplayView(
-          config: units[i],
-          actionListener: (action, nodeId, params) => onAction('ACTION $action on $nodeId'),
-        ),
-      ),
+      itemBuilder: (ctx, i) {
+        final entry = units[i];
+        // DEBUG: outer slot shown in red, inner card in its natural state
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: NativeDisplayView(
+            config: entry.config,
+            actionListener: (action, nodeId, params) {
+              onAction('ACTION $action on $nodeId');
+              if (entry.unitId != null) {
+                CleverTapPlugin.pushDisplayUnitClickedEvent(entry.unitId!);
+              }
+            },
+          ),
+        );
+      },
     );
   }
 }
+
+// ── Event Log ─────────────────────────────────────────────────────────────────
 
 class _EventLogFooter extends StatefulWidget {
   final List<String> messages;
@@ -206,16 +284,16 @@ class _EventLogFooter extends StatefulWidget {
 }
 
 class _EventLogFooterState extends State<_EventLogFooter> {
-  final _scrollController = ScrollController();
+  final _scroll = ScrollController();
 
   @override
   void didUpdateWidget(_EventLogFooter old) {
     super.didUpdateWidget(old);
     if (widget.messages.length != old.messages.length) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollController.hasClients) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
+        if (_scroll.hasClients) {
+          _scroll.animateTo(
+            _scroll.position.maxScrollExtent,
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeOut,
           );
@@ -226,14 +304,14 @@ class _EventLogFooterState extends State<_EventLogFooter> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _scroll.dispose();
     super.dispose();
   }
 
-  Color _msgColor(String msg) {
-    if (msg.contains('EVENT')) return const Color(0xFFFFD54F);
+  Color _color(String msg) {
+    if (msg.contains('Fired')) return const Color(0xFFFFD54F);
     if (msg.contains('ACTION')) return const Color(0xFF81D4FA);
-    if (msg.contains('ERROR')) return const Color(0xFFEF9A9A);
+    if (msg.contains('ERROR') || msg.contains('WARN')) return const Color(0xFFEF9A9A);
     if (msg.contains('Received')) return const Color(0xFFA5D6A7);
     return const Color(0xFF80CBC4);
   }
@@ -252,7 +330,10 @@ class _EventLogFooterState extends State<_EventLogFooter> {
             children: [
               const Text('Event Log', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
               if (widget.messages.isNotEmpty)
-                TextButton(onPressed: widget.onClear, child: const Text('Clear', style: TextStyle(fontSize: 12))),
+                TextButton(
+                  onPressed: widget.onClear,
+                  child: const Text('Clear', style: TextStyle(fontSize: 12)),
+                ),
             ],
           ),
           Container(
@@ -266,21 +347,17 @@ class _EventLogFooterState extends State<_EventLogFooter> {
             child: widget.messages.isEmpty
                 ? const Text(
                     'No events yet',
-                    style: TextStyle(
-                      fontFamily: 'monospace',
-                      fontSize: 12,
-                      color: Color(0xFF607D8B),
-                    ),
+                    style: TextStyle(fontFamily: 'monospace', fontSize: 12, color: Color(0xFF607D8B)),
                   )
                 : ListView.builder(
-                    controller: _scrollController,
+                    controller: _scroll,
                     itemCount: widget.messages.length,
                     itemBuilder: (ctx, i) => Text(
                       widget.messages[i],
                       style: TextStyle(
                         fontFamily: 'monospace',
                         fontSize: 11,
-                        color: _msgColor(widget.messages[i]),
+                        color: _color(widget.messages[i]),
                         height: 1.4,
                       ),
                     ),
