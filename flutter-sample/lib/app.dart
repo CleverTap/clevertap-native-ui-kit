@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'screens/banner_showcase_screen.dart';
+import 'screens/clevertap_integration_screen.dart';
+import 'screens/slot_demo_screen.dart';
 import 'screens/test_browser_screen.dart';
-import 'screens/other_demos_screen.dart';
 import 'screens/more_menu_screen.dart';
 
 class NativeDisplaySampleApp extends StatelessWidget {
@@ -31,27 +31,25 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedTab = 0;
 
-  static const _tabs = [
-    BannerShowcaseScreen(),
-    TestBrowserScreen(),
-    OtherDemosScreen(),
-    MoreMenuScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
         index: _selectedTab,
-        children: _tabs,
+        children: const [
+          CleverTapIntegrationScreen(),
+          SlotDemoScreen(),
+          TestBrowserScreen(),
+          MoreMenuScreen(),
+        ],
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedTab,
         onDestinationSelected: (i) => setState(() => _selectedTab = i),
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.image), label: 'Banners'),
+          NavigationDestination(icon: Icon(Icons.wifi_tethering), label: 'Events'),
+          NavigationDestination(icon: Icon(Icons.view_stream), label: 'Slots'),
           NavigationDestination(icon: Icon(Icons.science), label: 'Browser'),
-          NavigationDestination(icon: Icon(Icons.grid_view), label: 'Demos'),
           NavigationDestination(icon: Icon(Icons.more_horiz), label: 'More'),
         ],
       ),
