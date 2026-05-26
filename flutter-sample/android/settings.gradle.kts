@@ -23,10 +23,3 @@ plugins {
 }
 
 include(":app")
-
-// Include the local Android SDK so SampleApplication can use NativeDisplayBridge
-includeBuild("../../../android") {
-    dependencySubstitution {
-        substitute(module("com.clevertap.android:native-display-sdk")).using(project(":sdk"))
-    }
-}
