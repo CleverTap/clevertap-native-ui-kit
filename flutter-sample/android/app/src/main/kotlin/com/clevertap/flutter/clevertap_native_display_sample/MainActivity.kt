@@ -24,6 +24,11 @@ class MainActivity : FlutterActivity() {
             .setStreamHandler(object : EventChannel.StreamHandler {
                 override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
                     eventSink = events
+                    // Replay any units that arrived before Flutter subscribed
+                    val cached = SampleApplication.cachedUnitJsons
+                    if (cached.isNotEmpty()) {
+                        pushUnitsToFlutter(cached)
+                    }
                 }
                 override fun onCancel(arguments: Any?) {
                     eventSink = null
