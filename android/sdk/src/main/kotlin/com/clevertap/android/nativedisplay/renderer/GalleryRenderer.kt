@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+
 package com.clevertap.android.nativedisplay.renderer
 
 import androidx.compose.foundation.background
@@ -166,7 +168,6 @@ internal fun RenderSnappingGallery(
                     contentPadding = if (hasPeek) PaddingValues(start = peekBefore, end = peekAfter)
                                      else PaddingValues(0.dp),
                     pageSpacing = config.spacing.dp,
-                    beyondViewportPageCount = if (container.children.size > 1) 1 else 0
                 ) { page ->
                     container.children.getOrNull(page)?.let { child ->
                         RenderNode(
@@ -187,7 +188,6 @@ internal fun RenderSnappingGallery(
                     contentPadding = if (hasPeek) PaddingValues(top = peekBefore, bottom = peekAfter)
                                      else PaddingValues(0.dp),
                     pageSpacing = config.spacing.dp,
-                    beyondViewportPageCount = if (container.children.size > 1) 1 else 0
                 ) { page ->
                     container.children.getOrNull(page)?.let { child ->
                         RenderNode(
