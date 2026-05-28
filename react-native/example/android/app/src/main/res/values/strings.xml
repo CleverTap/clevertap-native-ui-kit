@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">NDExample</string>
+    <string name="clevertap_account_id">468-RZW-ZK6Z</string>
+    <string name="clevertap_token">012-b64</string>
+</resources>

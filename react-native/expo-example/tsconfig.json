@@ -1,0 +1,21 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@clevertap/native-display-sdk": ["../src/index.ts"],
+      "@bare-example/*": ["../example/*"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "../src/**/*.ts",
+    "../src/**/*.tsx",
+    "../example/screens/**/*.ts",
+    "../example/screens/**/*.tsx",
+    "../example/testConfigs/**/*.ts"
+  ],
+  "exclude": ["**/node_modules", "**/Pods", "android", "ios"]
+}
