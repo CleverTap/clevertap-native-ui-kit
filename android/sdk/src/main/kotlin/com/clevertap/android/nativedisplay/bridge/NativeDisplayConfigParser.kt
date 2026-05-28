@@ -11,7 +11,9 @@ import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
@@ -58,7 +60,7 @@ internal class NativeDisplayConfigParser {
 
             val resolvedConfig = tryParseNativeDisplayConfig(jsonObj)
                 ?: tryParseFromCustomKv(jsonObj)
-                ?: tryParseAsRootConfig(jsonString, jsonObj)
+                ?: tryParseAsRootConfig(jsonObj)
                 ?: return null
 
             // Pre-resolve the entire node-tree style map here, on the parse dispatcher,
@@ -115,10 +117,10 @@ internal class NativeDisplayConfigParser {
     /**
      * Strategy 3: If `root` key is present, treat the entire JSON as an ND config.
      */
-    private fun tryParseAsRootConfig(jsonString: String, jsonObj: JsonObject): ResolvedConfig? {
+    private fun tryParseAsRootConfig(jsonObj: JsonObject): ResolvedConfig? {
         if (!jsonObj.containsKey("root")) return null
         return try {
-            val ndConfig = json.decodeFromString(NativeDisplayConfig.serializer(), jsonString)
+            val ndConfig = json.decodeFromJsonElement(NativeDisplayConfig.serializer(), jsonObj)
             ndConfig.toResolvedConfig()
         } catch (e: Exception) {
             Log.w(TAG, "Failed to parse JSON as NativeDisplayConfig: ${e.message}")
@@ -147,7 +149,7 @@ internal class NativeDisplayConfigParser {
     private fun extractCustomExtras(jsonObj: JsonObject): Map<String, String> {
         val customKv = jsonObj["custom_kv"]?.jsonObject ?: return emptyMap()
         return customKv.entries.associate { (key, value) ->
-            key to (value.jsonPrimitive.contentOrNull ?: value.toString())
+            key to ((value as? JsonPrimitive)?.contentOrNull ?: value.toString())
         }
     }
 
@@ -184,6 +186,6 @@ internal class NativeDisplayConfigParser {
     }
 
     companion object {
-        private const val TAG = "NativeDisplayBridge"
+        private const val TAG = "NDConfigParser"
     }
 }

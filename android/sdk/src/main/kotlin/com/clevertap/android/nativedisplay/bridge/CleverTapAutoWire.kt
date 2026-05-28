@@ -15,7 +15,7 @@ import com.clevertap.android.sdk.displayunits.model.CleverTapDisplayUnit
  */
 internal object CleverTapAutoWire {
 
-    private const val TAG = "NativeDisplayBridge"
+    private const val TAG = "CleverTapAutoWire"
 
     /**
      * Strong reference to the listener we register with the Core SDK.

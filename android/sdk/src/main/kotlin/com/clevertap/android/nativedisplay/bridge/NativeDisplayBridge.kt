@@ -561,15 +561,8 @@ class NativeDisplayBridge private constructor() {
     private fun notifyListeners(units: List<NativeDisplayUnit>) {
         val activeListeners: List<NativeDisplayBridgeListener>
         synchronized(listenersLock) {
-            // Collect active listeners and prune dead references
-            val dead = mutableListOf<WeakReference<NativeDisplayBridgeListener>>()
-            activeListeners = listeners.mapNotNull { ref ->
-                ref.get() ?: run {
-                    dead.add(ref)
-                    null
-                }
-            }
-            listeners.removeAll(dead)
+            listeners.removeAll { it.get() == null }
+            activeListeners = listeners.mapNotNull { it.get() }
         }
 
         for (listener in activeListeners) {
