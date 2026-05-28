@@ -1,0 +1,27 @@
+name: clevertap_native_display_sample
+description: Sample app demonstrating the CleverTap Native Display Flutter plugin.
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  clevertap_native_display:
+    path: ../flutter
+  clevertap_plugin: ^4.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/banners/
+    - assets/configs/
+    - assets/test-configs/

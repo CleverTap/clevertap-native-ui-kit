@@ -1,0 +1,30 @@
+name: clevertap_native_display
+description: Native Display SDK Flutter plugin for CleverTap — renders server-driven UI from JSON.
+version: 0.1.0
+homepage: https://github.com/CleverTap/clevertap-native-ui-kit
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cached_network_image: ^3.4.1
+  video_player: ^2.9.2
+  webview_flutter: ^4.9.0
+  url_launcher: ^6.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.clevertap.flutter.nativedisplay
+        pluginClass: CleverTapNativeDisplayPlugin
+      ios:
+        pluginClass: CleverTapNativeDisplayPlugin

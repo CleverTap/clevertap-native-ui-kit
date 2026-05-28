@@ -1,0 +1,84 @@
+{
+  "theme": {
+    "id": "test-140"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "primary_button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Primary Action"
+        },
+        "layout": {
+          "width": {
+            "value": 60,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 14,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 20,
+            "y": 35,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "backgroundColor": "#2196F3",
+          "textColor": "#FFFFFF",
+          "fontSize": 15,
+          "lineHeight": 21,
+          "borderRadius": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "secondary_button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Secondary Action"
+        },
+        "layout": {
+          "width": {
+            "value": 60,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 14,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 20,
+            "y": 55,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "textColor": "#2196F3",
+          "fontSize": 15,
+          "lineHeight": 21,
+          "borderRadius": 8,
+          "borderWidth": 2,
+          "borderColor": "#2196F3"
+        }
+      }
+    ]
+  }
+}
