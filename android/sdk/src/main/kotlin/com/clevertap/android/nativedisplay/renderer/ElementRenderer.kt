@@ -1,6 +1,6 @@
 package com.clevertap.android.nativedisplay.renderer
 
-import androidx.compose.foundation.background
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.HorizontalDivider
@@ -70,7 +70,7 @@ internal fun RenderElement(
                     fontWeight = resolveFontWeight(textProps.weight),
                     fontFamily = fontFamily,
                     fontStyle = resolveFontStyle(textProps.style),
-                    letterSpacing = 0.sp,
+                    letterSpacing = (textProps.letterSpacing ?: 0f).sp,
                     textDecoration = resolveTextDecoration(textProps.decoration),
                     textAlign = resolveTextAlign(textProps.align),
                     lineHeight = with(LocalDensity.current) { resolvedLineHeightPx.toSp() },
@@ -138,12 +138,7 @@ internal fun RenderElement(
                     contentScale = contentScale
                 )
             } else {
-                Box(
-                    modifier = elementModifier.background(Color.LightGray),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No Image", color = Color.Gray, fontSize = 12.sp)
-                }
+                Log.w("NDElementRenderer", "IMAGE element '${element.id}' has no url binding — skipping render")
             }
         }
 
@@ -169,7 +164,7 @@ internal fun RenderElement(
                         fontWeight = resolveFontWeight(textProps.weight),
                         fontFamily = fontFamily,
                         fontStyle = resolveFontStyle(textProps.style),
-                        letterSpacing = 0.sp,
+                        letterSpacing = (textProps.letterSpacing ?: 0f).sp,
                         textDecoration = resolveTextDecoration(textProps.decoration),
                         textAlign = resolveTextAlign(textProps.align),
                         lineHeight = with(LocalDensity.current) { resolvedLineHeightPx.toSp() },
@@ -243,13 +238,7 @@ internal fun RenderElement(
                     )
                 }
             } else {
-                // Fallback for missing URL
-                Box(
-                    modifier = elementModifier.background(Color.DarkGray),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No Video URL", color = Color.Gray, fontSize = 12.sp)
-                }
+                Log.w("NDElementRenderer", "VIDEO element '${element.id}' has no url binding — skipping render")
             }
         }
 
@@ -275,12 +264,7 @@ internal fun RenderElement(
                     )
                 }
             } else {
-                Box(
-                    modifier = elementModifier.background(Color.LightGray),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No HTML Content", color = Color.Gray, fontSize = 12.sp)
-                }
+                Log.w("NDElementRenderer", "HTML element '${element.id}' has no html/url binding — skipping render")
             }
         }
 

@@ -135,10 +135,7 @@ internal fun RenderSnappingGallery(
     )
     val scope = rememberCoroutineScope()
 
-    BoxWithConstraints(modifier = modifier) {
-        val containerWidth = this.maxWidth
-        val containerHeight = this.maxHeight
-
+    Box(modifier = modifier) {
         // Calculate peek padding from dp-based PeekConfig
         val peekBefore = config.peek.before.dp
         val peekAfter = config.peek.after.dp
@@ -239,7 +236,7 @@ internal fun RenderSnappingGallery(
                     config = config,
                     pageCount = container.children.size,
                     modifier = Modifier.align(
-                        when (config.indicatorStyle?.position) {
+                        when (config.indicatorStyle?.position?.lowercase()) {
                             "top" -> Alignment.TopCenter
                             "left" -> Alignment.CenterStart
                             "right" -> Alignment.CenterEnd
@@ -518,11 +515,7 @@ internal fun RenderGalleryIndicators(
     val activeColor = parseColor(indicatorStyle.activeColor) ?: Color.Blue
     val inactiveColor = parseColor(indicatorStyle.inactiveColor) ?: Color.LightGray
 
-    val arrangement = if (config.orientation == Orientation.HORIZONTAL) {
-        Arrangement.spacedBy(indicatorStyle.spacing.dp)
-    } else {
-        Arrangement.spacedBy(indicatorStyle.spacing.dp)
-    }
+    val arrangement = Arrangement.spacedBy(indicatorStyle.spacing.dp)
 
     if (config.orientation == Orientation.HORIZONTAL) {
         Row(

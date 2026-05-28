@@ -12,6 +12,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Constraints
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
@@ -185,7 +186,7 @@ internal fun RenderNode(
     // use the parent's constraints, not the element's constrained size
     val finalModifier = modifier
         .applyOffset(node.layout)
-        .applySizing(node.layout)
+        .applySizing(node.layout, LocalDensity.current.density)
         .applyEntranceAnimation(node.animation)
         .let { mod ->
             if (actionHandler != null && shouldApplyClickable) {

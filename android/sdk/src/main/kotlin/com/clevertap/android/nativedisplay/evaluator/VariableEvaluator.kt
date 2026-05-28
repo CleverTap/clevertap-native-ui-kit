@@ -17,6 +17,7 @@ internal class VariableEvaluator(
 ) {
     companion object {
         private val TEMPLATE_PATTERN = Regex("\\{\\{([^}]+)\\}\\}")
+        private val TERNARY_PATTERN = Regex("(.+?)\\?(.+?):(.+)")
     }
     
     /**
@@ -77,8 +78,7 @@ internal class VariableEvaluator(
      */
     private fun evaluateExpression(expression: String): Any {
         // Check for ternary operator: condition ? trueValue : falseValue
-        val ternaryPattern = Regex("(.+?)\\?(.+?):(.+)")
-        val ternaryMatch = ternaryPattern.matchEntire(expression)
+        val ternaryMatch = TERNARY_PATTERN.matchEntire(expression)
         
         if (ternaryMatch != null) {
             val condition = ternaryMatch.groupValues[1].trim()

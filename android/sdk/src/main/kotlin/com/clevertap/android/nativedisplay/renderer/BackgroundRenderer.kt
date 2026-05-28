@@ -1,5 +1,6 @@
 package com.clevertap.android.nativedisplay.renderer
 
+import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.runtime.*
@@ -203,7 +204,7 @@ private fun Modifier.applyStaticImage(bg: Background.Image): Modifier {
         ImageFit.CROP -> ContentScale.Crop
         ImageFit.CONTAIN -> ContentScale.Fit
         ImageFit.FILL -> ContentScale.FillBounds
-        ImageFit.TILE -> ContentScale.Crop
+        ImageFit.TILE -> { Log.w("NDBackgroundRenderer", "ImageFit.TILE is not yet supported; falling back to CROP"); ContentScale.Crop }
     }
 
     val painter = rememberAsyncImagePainter(
@@ -391,8 +392,8 @@ private fun Modifier.applyAnimatedParticles(bg: Background.Particles): Modifier 
         drawContent()
         
         particles.forEach { particle ->
-            val x = ((particle.x + particle.vx * time * 0.001f) % 1f) * size.width
-            val y = ((particle.y + particle.vy * time * 0.001f) % 1f) * size.height
+            val x = (particle.x + particle.vx * time * 0.001f).mod(1f) * size.width
+            val y = (particle.y + particle.vy * time * 0.001f).mod(1f) * size.height
             
             drawCircle(
                 color = particleColor,

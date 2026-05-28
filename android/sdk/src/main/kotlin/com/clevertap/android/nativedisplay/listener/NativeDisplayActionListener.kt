@@ -102,8 +102,10 @@ interface NativeDisplayActionListener {
 
     /**
      * Called when a Native Display unit has been viewed (impression).
-     * Use this to forward attribution to CleverTap Core SDK via
-     * `pushDisplayUnitViewedEventForID(unitId)`.
+     *
+     * **Do NOT call `pushDisplayUnitViewedEventForID` here** — the SDK already fires
+     * the attribution event automatically. This callback is a notification only,
+     * intended for custom analytics or UI updates (e.g. logging, badge counters).
      *
      * Default implementation is a no-op — existing implementors do not need to override.
      *
@@ -113,8 +115,10 @@ interface NativeDisplayActionListener {
 
     /**
      * Called when a Native Display unit has been clicked.
-     * Use this to forward attribution to CleverTap Core SDK via
-     * `pushDisplayUnitClickedEventForID(unitId)`.
+     *
+     * **Do NOT call `pushDisplayUnitClickedEventForID` here** — the SDK already fires
+     * the attribution event automatically. This callback is a notification only,
+     * intended for custom analytics or UI updates (e.g. logging, dismiss logic).
      *
      * Default implementation is a no-op — existing implementors do not need to override.
      *
