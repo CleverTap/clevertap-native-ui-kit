@@ -96,7 +96,8 @@ class NativeDisplaySlotView @JvmOverloads constructor(
                             resolvedStyles = resolvedStyles,
                             modifier = Modifier,
                             actionListener = actionListener,
-                            componentListener = componentListener
+                            componentListener = componentListener,
+                            unitId = currentUnit.unitId,
                         )
                     }
                 }
@@ -212,7 +213,7 @@ class NativeDisplaySlotView @JvmOverloads constructor(
         var height = composeView.measuredHeight
 
         if (height == 0 && MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.AT_MOST) {
-            height = 100 // Minimum placeholder height in pixels
+            height = (48 * context.resources.displayMetrics.density).toInt() // 48dp minimum
         }
 
         setMeasuredDimension(width, height)

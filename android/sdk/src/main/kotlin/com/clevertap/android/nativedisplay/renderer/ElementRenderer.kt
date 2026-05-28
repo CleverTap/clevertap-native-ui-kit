@@ -1,6 +1,6 @@
 package com.clevertap.android.nativedisplay.renderer
 
-import androidx.compose.foundation.background
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.HorizontalDivider
@@ -52,50 +52,14 @@ internal fun RenderElement(
             val text = element.bindings["text"]?.let {
                 evaluator.evaluateString(it)
             } ?: ""
-
-            val textProps: TextProperties = resolvedStyle.extractTextProperties()
-            val isPercentMode = textProps.size?.unit == TextDimensionUnit.PERCENT
-            val resolvedFontSize = textProps.size?.resolve(rootHeightPx) ?: 14f
-            val fontFamily = resolveEffectiveFontFamily(textProps.family)
-            // In percentage mode: all values are in px, convert via toSp() at use site
-            // In platform mode: values are already in sp-compatible units, use .sp
-            if (isPercentMode) {
-                // Default lineHeight = fontSize * 1.2 matches CSS line-height:normal (~1.2×)
-                val resolvedLineHeightPx = textProps.lineHeight?.resolve(rootHeightPx) ?: (resolvedFontSize * 1.2f)
-                Text(
-                    text = text,
-                    modifier = elementModifier,
-                    color = parseColor(textProps.color) ?: Color.Black,
-                    fontSize = with(LocalDensity.current) { resolvedFontSize.toSp() },
-                    fontWeight = resolveFontWeight(textProps.weight),
-                    fontFamily = fontFamily,
-                    fontStyle = resolveFontStyle(textProps.style),
-                    letterSpacing = 0.sp,
-                    textDecoration = resolveTextDecoration(textProps.decoration),
-                    textAlign = resolveTextAlign(textProps.align),
-                    lineHeight = with(LocalDensity.current) { resolvedLineHeightPx.toSp() },
-                    maxLines = textProps.maxLines ?: Int.MAX_VALUE,
-                    overflow = resolveTextOverflow(textProps.overflow),
-                    style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
-                )
-            } else {
-                Text(
-                    text = text,
-                    modifier = elementModifier,
-                    color = parseColor(textProps.color) ?: Color.Black,
-                    fontSize = resolvedFontSize.sp,
-                    fontWeight = resolveFontWeight(textProps.weight),
-                    fontFamily = fontFamily,
-                    fontStyle = resolveFontStyle(textProps.style),
-                    letterSpacing = (textProps.letterSpacing ?: 0f).sp,
-                    textDecoration = resolveTextDecoration(textProps.decoration),
-                    textAlign = resolveTextAlign(textProps.align),
-                    lineHeight = textProps.lineHeight?.resolve(rootHeightPx)?.sp ?: (resolvedFontSize * 1.5f).sp,
-                    maxLines = textProps.maxLines ?: Int.MAX_VALUE,
-                    overflow = resolveTextOverflow(textProps.overflow),
-                    style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
-                )
-            }
+            RenderTextContent(
+                text = text,
+                textProps = resolvedStyle.extractTextProperties(),
+                rootHeightPx = rootHeightPx,
+                modifier = elementModifier,
+                defaultColor = Color.Black,
+                defaultFontSize = 14f,
+            )
         }
 
         ElementType.IMAGE -> {
@@ -138,12 +102,7 @@ internal fun RenderElement(
                     contentScale = contentScale
                 )
             } else {
-                Box(
-                    modifier = elementModifier.background(Color.LightGray),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No Image", color = Color.Gray, fontSize = 12.sp)
-                }
+                Log.w("NDElementRenderer", "IMAGE element '${element.id}' has no url binding — skipping render")
             }
         }
 
@@ -151,49 +110,17 @@ internal fun RenderElement(
             val buttonText = element.bindings["text"]?.let {
                 evaluator.evaluateString(it)
             } ?: "Button"
-            val textProps = resolvedStyle.extractTextProperties()
-            val isPercentMode = textProps.size?.unit == TextDimensionUnit.PERCENT
-            val resolvedFontSize = textProps.size?.resolve(rootHeightPx) ?: 16f
-            val fontFamily = resolveEffectiveFontFamily(textProps.family)
-
             Box(
                 modifier = elementModifier,
                 contentAlignment = Alignment.Center
             ) {
-                if (isPercentMode) {
-                    val resolvedLineHeightPx = textProps.lineHeight?.resolve(rootHeightPx) ?: (resolvedFontSize * 1.2f)
-                    Text(
-                        text = buttonText,
-                        color = parseColor(textProps.color) ?: Color.White,
-                        fontSize = with(LocalDensity.current) { resolvedFontSize.toSp() },
-                        fontWeight = resolveFontWeight(textProps.weight),
-                        fontFamily = fontFamily,
-                        fontStyle = resolveFontStyle(textProps.style),
-                        letterSpacing = 0.sp,
-                        textDecoration = resolveTextDecoration(textProps.decoration),
-                        textAlign = resolveTextAlign(textProps.align),
-                        lineHeight = with(LocalDensity.current) { resolvedLineHeightPx.toSp() },
-                        maxLines = textProps.maxLines ?: Int.MAX_VALUE,
-                        overflow = resolveTextOverflow(textProps.overflow),
-                        style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
-                    )
-                } else {
-                    Text(
-                        text = buttonText,
-                        color = parseColor(textProps.color) ?: Color.White,
-                        fontSize = resolvedFontSize.sp,
-                        fontWeight = resolveFontWeight(textProps.weight),
-                        fontFamily = fontFamily,
-                        fontStyle = resolveFontStyle(textProps.style),
-                        letterSpacing = (textProps.letterSpacing ?: 0f).sp,
-                        textDecoration = resolveTextDecoration(textProps.decoration),
-                        textAlign = resolveTextAlign(textProps.align),
-                        lineHeight = textProps.lineHeight?.resolve(rootHeightPx)?.sp ?: (resolvedFontSize * 1.5f).sp,
-                        maxLines = textProps.maxLines ?: Int.MAX_VALUE,
-                        overflow = resolveTextOverflow(textProps.overflow),
-                        style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
-                    )
-                }
+                RenderTextContent(
+                    text = buttonText,
+                    textProps = resolvedStyle.extractTextProperties(),
+                    rootHeightPx = rootHeightPx,
+                    defaultColor = Color.White,
+                    defaultFontSize = 16f,
+                )
             }
         }
 
@@ -243,13 +170,7 @@ internal fun RenderElement(
                     )
                 }
             } else {
-                // Fallback for missing URL
-                Box(
-                    modifier = elementModifier.background(Color.DarkGray),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No Video URL", color = Color.Gray, fontSize = 12.sp)
-                }
+                Log.w("NDElementRenderer", "VIDEO element '${element.id}' has no url binding — skipping render")
             }
         }
 
@@ -275,12 +196,7 @@ internal fun RenderElement(
                     )
                 }
             } else {
-                Box(
-                    modifier = elementModifier.background(Color.LightGray),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No HTML Content", color = Color.Gray, fontSize = 12.sp)
-                }
+                Log.w("NDElementRenderer", "HTML element '${element.id}' has no html/url binding — skipping render")
             }
         }
 
@@ -309,5 +225,63 @@ internal fun RenderElement(
                 }
             }
         }
+    }
+}
+
+/**
+ * Shared text rendering for TEXT and BUTTON elements.
+ *
+ * Handles both percent mode (font sizes in px, converted via [LocalDensity]) and
+ * platform mode (font sizes already in sp-compatible units). In percent mode the
+ * default line-height is 1.2× font size (CSS normal); in platform mode it is 1.5×.
+ */
+@Composable
+private fun RenderTextContent(
+    text: String,
+    textProps: TextProperties,
+    rootHeightPx: Float,
+    modifier: Modifier = Modifier,
+    defaultColor: Color = Color.Black,
+    defaultFontSize: Float = 14f,
+) {
+    val isPercentMode = textProps.size?.unit == TextDimensionUnit.PERCENT
+    val resolvedFontSize = textProps.size?.resolve(rootHeightPx) ?: defaultFontSize
+    val fontFamily = resolveEffectiveFontFamily(textProps.family)
+
+    if (isPercentMode) {
+        val resolvedLineHeightPx = textProps.lineHeight?.resolve(rootHeightPx) ?: (resolvedFontSize * 1.2f)
+        Text(
+            text = text,
+            modifier = modifier,
+            color = parseColor(textProps.color) ?: defaultColor,
+            fontSize = with(LocalDensity.current) { resolvedFontSize.toSp() },
+            fontWeight = resolveFontWeight(textProps.weight),
+            fontFamily = fontFamily,
+            fontStyle = resolveFontStyle(textProps.style),
+            letterSpacing = (textProps.letterSpacing ?: 0f).sp,
+            textDecoration = resolveTextDecoration(textProps.decoration),
+            textAlign = resolveTextAlign(textProps.align),
+            lineHeight = with(LocalDensity.current) { resolvedLineHeightPx.toSp() },
+            maxLines = textProps.maxLines ?: Int.MAX_VALUE,
+            overflow = resolveTextOverflow(textProps.overflow),
+            style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
+        )
+    } else {
+        Text(
+            text = text,
+            modifier = modifier,
+            color = parseColor(textProps.color) ?: defaultColor,
+            fontSize = resolvedFontSize.sp,
+            fontWeight = resolveFontWeight(textProps.weight),
+            fontFamily = fontFamily,
+            fontStyle = resolveFontStyle(textProps.style),
+            letterSpacing = (textProps.letterSpacing ?: 0f).sp,
+            textDecoration = resolveTextDecoration(textProps.decoration),
+            textAlign = resolveTextAlign(textProps.align),
+            lineHeight = textProps.lineHeight?.resolve(rootHeightPx)?.sp ?: (resolvedFontSize * 1.5f).sp,
+            maxLines = textProps.maxLines ?: Int.MAX_VALUE,
+            overflow = resolveTextOverflow(textProps.overflow),
+            style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
+        )
     }
 }

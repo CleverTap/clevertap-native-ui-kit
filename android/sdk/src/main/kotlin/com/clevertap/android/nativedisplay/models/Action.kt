@@ -7,7 +7,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonDecoder
@@ -117,11 +116,7 @@ sealed class Action {
  */
 internal object OpenUrlSerializer : KSerializer<Action.OpenUrl> {
 
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("open_url") {
-        element<String>("url")
-        element<Boolean>("openInBrowser", isOptional = true)
-        element<Boolean>("customTabsEnabled", isOptional = true)
-    }
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("open_url")
 
     override fun deserialize(decoder: Decoder): Action.OpenUrl {
         val jsonDecoder = decoder as JsonDecoder

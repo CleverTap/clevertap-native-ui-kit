@@ -124,14 +124,14 @@ public final class com/clevertap/android/nativedisplay/models/Action$CompositeAc
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Action$CompositeAction$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Action$CompositeAction$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Action$CompositeAction$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Action$CompositeAction;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Action$CompositeAction;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Action$CompositeAction;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Action$CompositeAction;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -158,14 +158,14 @@ public final class com/clevertap/android/nativedisplay/models/Action$CustomActio
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Action$CustomAction$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Action$CustomAction$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Action$CustomAction$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Action$CustomAction;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Action$CustomAction;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Action$CustomAction;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Action$CustomAction;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -190,14 +190,14 @@ public final class com/clevertap/android/nativedisplay/models/Action$Navigate : 
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Action$Navigate$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Action$Navigate$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Action$Navigate$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Action$Navigate;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Action$Navigate;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Action$Navigate;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Action$Navigate;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -244,14 +244,14 @@ public final class com/clevertap/android/nativedisplay/models/Action$TrackEvent 
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Action$TrackEvent$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Action$TrackEvent$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Action$TrackEvent$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Action$TrackEvent;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Action$TrackEvent;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Action$TrackEvent;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Action$TrackEvent;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -291,14 +291,14 @@ public final class com/clevertap/android/nativedisplay/models/Animation {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Animation$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Animation$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Animation$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Animation;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Animation;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Animation;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Animation;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -380,14 +380,14 @@ public final class com/clevertap/android/nativedisplay/models/ArrowStyle {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/ArrowStyle$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/ArrowStyle$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/ArrowStyle$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/ArrowStyle;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/ArrowStyle;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/ArrowStyle;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/ArrowStyle;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -427,14 +427,14 @@ public final class com/clevertap/android/nativedisplay/models/Background$Animate
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Background$AnimatedGradient$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Background$AnimatedGradient$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Background$AnimatedGradient$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$AnimatedGradient;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$AnimatedGradient;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$AnimatedGradient;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$AnimatedGradient;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -471,14 +471,14 @@ public final class com/clevertap/android/nativedisplay/models/Background$Image :
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Background$Image$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Background$Image$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Background$Image$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$Image;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$Image;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$Image;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$Image;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -500,14 +500,14 @@ public final class com/clevertap/android/nativedisplay/models/Background$Layered
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Background$Layered$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Background$Layered$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Background$Layered$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$Layered;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$Layered;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$Layered;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$Layered;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -534,14 +534,14 @@ public final class com/clevertap/android/nativedisplay/models/Background$LinearG
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Background$LinearGradient$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Background$LinearGradient$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Background$LinearGradient$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$LinearGradient;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$LinearGradient;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$LinearGradient;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$LinearGradient;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -574,14 +574,14 @@ public final class com/clevertap/android/nativedisplay/models/Background$Particl
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Background$Particles$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Background$Particles$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Background$Particles$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$Particles;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$Particles;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$Particles;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$Particles;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -614,14 +614,14 @@ public final class com/clevertap/android/nativedisplay/models/Background$Pattern
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Background$Pattern$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Background$Pattern$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Background$Pattern$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$Pattern;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$Pattern;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$Pattern;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$Pattern;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -652,14 +652,14 @@ public final class com/clevertap/android/nativedisplay/models/Background$Pulse :
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Background$Pulse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Background$Pulse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Background$Pulse$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$Pulse;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$Pulse;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$Pulse;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$Pulse;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -690,14 +690,14 @@ public final class com/clevertap/android/nativedisplay/models/Background$RadialG
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Background$RadialGradient$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Background$RadialGradient$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Background$RadialGradient$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$RadialGradient;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$RadialGradient;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$RadialGradient;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$RadialGradient;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -728,14 +728,14 @@ public final class com/clevertap/android/nativedisplay/models/Background$Shimmer
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Background$Shimmer$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Background$Shimmer$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Background$Shimmer$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$Shimmer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$Shimmer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$Shimmer;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$Shimmer;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -757,14 +757,14 @@ public final class com/clevertap/android/nativedisplay/models/Background$Solid :
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Background$Solid$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Background$Solid$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Background$Solid$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$Solid;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$Solid;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$Solid;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$Solid;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -795,14 +795,14 @@ public final class com/clevertap/android/nativedisplay/models/Background$SweepGr
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Background$SweepGradient$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Background$SweepGradient$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Background$SweepGradient$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$SweepGradient;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Background$SweepGradient;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$SweepGradient;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Background$SweepGradient;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -851,14 +851,14 @@ public final class com/clevertap/android/nativedisplay/models/ChildArrangement {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/ChildArrangement$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/ChildArrangement$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/ChildArrangement$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/ChildArrangement;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/ChildArrangement;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/ChildArrangement;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/ChildArrangement;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -906,14 +906,14 @@ public final class com/clevertap/android/nativedisplay/models/DataReference {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/DataReference$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/DataReference$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/DataReference$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/DataReference;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/DataReference;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/DataReference;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/DataReference;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -941,14 +941,14 @@ public final class com/clevertap/android/nativedisplay/models/Dimension {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Dimension$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Dimension$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Dimension$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Dimension;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Dimension;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Dimension;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Dimension;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1017,14 +1017,14 @@ public final class com/clevertap/android/nativedisplay/models/DividerConfig {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/DividerConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/DividerConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/DividerConfig$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/DividerConfig;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/DividerConfig;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/DividerConfig;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/DividerConfig;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1152,14 +1152,14 @@ public final class com/clevertap/android/nativedisplay/models/GalleryConfig {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/GalleryConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/GalleryConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/GalleryConfig$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/GalleryConfig;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/GalleryConfig;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/GalleryConfig;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/GalleryConfig;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1217,14 +1217,14 @@ public final class com/clevertap/android/nativedisplay/models/HtmlConfig {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/HtmlConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/HtmlConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/HtmlConfig$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/HtmlConfig;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/HtmlConfig;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/HtmlConfig;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/HtmlConfig;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1250,14 +1250,14 @@ public final class com/clevertap/android/nativedisplay/models/ImageConfig {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/ImageConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/ImageConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/ImageConfig$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/ImageConfig;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/ImageConfig;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/ImageConfig;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/ImageConfig;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1306,14 +1306,14 @@ public final class com/clevertap/android/nativedisplay/models/IndicatorStyle {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/IndicatorStyle$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/IndicatorStyle$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/IndicatorStyle$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/IndicatorStyle;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/IndicatorStyle;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/IndicatorStyle;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/IndicatorStyle;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1347,14 +1347,14 @@ public final class com/clevertap/android/nativedisplay/models/Layout {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Layout$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Layout$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Layout$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Layout;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Layout;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Layout;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Layout;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1395,14 +1395,14 @@ public final class com/clevertap/android/nativedisplay/models/NativeDisplayConfi
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/NativeDisplayConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/NativeDisplayConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/NativeDisplayConfig$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/NativeDisplayConfig;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/NativeDisplayConfig;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/NativeDisplayConfig;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/NativeDisplayConfig;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1445,14 +1445,14 @@ public final class com/clevertap/android/nativedisplay/models/NativeDisplayConta
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/NativeDisplayContainer$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/NativeDisplayContainer$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/NativeDisplayContainer$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/NativeDisplayContainer;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/NativeDisplayContainer;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/NativeDisplayContainer;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/NativeDisplayContainer;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1497,14 +1497,14 @@ public final class com/clevertap/android/nativedisplay/models/NativeDisplayEleme
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/NativeDisplayElement$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/NativeDisplayElement$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/NativeDisplayElement$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/NativeDisplayElement;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/NativeDisplayElement;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/NativeDisplayElement;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/NativeDisplayElement;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1550,14 +1550,14 @@ public final class com/clevertap/android/nativedisplay/models/Offset {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Offset$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Offset$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Offset$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Offset;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Offset;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Offset;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Offset;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1633,14 +1633,14 @@ public final class com/clevertap/android/nativedisplay/models/PeekConfig {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/PeekConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/PeekConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/PeekConfig$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/PeekConfig;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/PeekConfig;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/PeekConfig;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/PeekConfig;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1669,14 +1669,14 @@ public final class com/clevertap/android/nativedisplay/models/ResolvedConfig {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/ResolvedConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/ResolvedConfig$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/ResolvedConfig$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/ResolvedConfig;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/ResolvedConfig;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/ResolvedConfig;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/ResolvedConfig;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1756,14 +1756,14 @@ public final class com/clevertap/android/nativedisplay/models/Spacing {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Spacing$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Spacing$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Spacing$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Spacing;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Spacing;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Spacing;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Spacing;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1856,14 +1856,14 @@ public final class com/clevertap/android/nativedisplay/models/Style {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Style$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Style$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Style$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Style;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Style;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Style;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Style;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1888,14 +1888,14 @@ public final class com/clevertap/android/nativedisplay/models/StyleClass {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/StyleClass$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/StyleClass$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/StyleClass$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/StyleClass;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/StyleClass;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/StyleClass;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/StyleClass;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1922,14 +1922,14 @@ public final class com/clevertap/android/nativedisplay/models/StyleReference {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/StyleReference$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/StyleReference$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/StyleReference$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/StyleReference;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/StyleReference;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/StyleReference;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/StyleReference;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -1956,14 +1956,14 @@ public final class com/clevertap/android/nativedisplay/models/TemplateReference 
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/TemplateReference$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/TemplateReference$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/TemplateReference$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/TemplateReference;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/TemplateReference;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/TemplateReference;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/TemplateReference;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -2045,14 +2045,14 @@ public final class com/clevertap/android/nativedisplay/models/TextGradient {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/TextGradient$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/TextGradient$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/TextGradient$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/TextGradient;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/TextGradient;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/TextGradient;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/TextGradient;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -2138,14 +2138,14 @@ public final class com/clevertap/android/nativedisplay/models/TextShadow {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/TextShadow$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/TextShadow$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/TextShadow$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/TextShadow;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/TextShadow;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/TextShadow;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/TextShadow;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -2173,14 +2173,14 @@ public final class com/clevertap/android/nativedisplay/models/Theme {
 	public fun toString ()Ljava/lang/String;
 }
 
-public synthetic class com/clevertap/android/nativedisplay/models/Theme$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public final class com/clevertap/android/nativedisplay/models/Theme$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/models/Theme$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Theme;
+	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/clevertap/android/nativedisplay/models/Theme;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Theme;)V
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/clevertap/android/nativedisplay/models/Theme;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -2213,6 +2213,7 @@ public final class com/clevertap/android/nativedisplay/models/VisualProperties$C
 
 public final class com/clevertap/android/nativedisplay/placement/ComposableSingletons$NativeDisplaySlotKt {
 	public static final field INSTANCE Lcom/clevertap/android/nativedisplay/placement/ComposableSingletons$NativeDisplaySlotKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$sdk_release ()Lkotlin/jvm/functions/Function2;
 }
