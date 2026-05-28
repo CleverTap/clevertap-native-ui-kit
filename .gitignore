@@ -127,6 +127,14 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+# Python
+**/*.pyc
+**/__pycache__/
+*.py[cod]
+
+# Test / screenshot comparison output
+tools/tools/comparison_report/
+
 # Temporary files
 *.tmp
 *.bak
