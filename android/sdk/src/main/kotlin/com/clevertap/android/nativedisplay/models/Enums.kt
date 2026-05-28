@@ -111,6 +111,17 @@ enum class FontStyle {
 }
 
 /**
+ * Text alignment values.
+ */
+@Serializable
+enum class TextAlign {
+    @SerialName("left") LEFT,
+    @SerialName("center") CENTER,
+    @SerialName("right") RIGHT,
+    @SerialName("justify") JUSTIFY
+}
+
+/**
  * Text decoration values.
  */
 @Serializable
@@ -158,7 +169,7 @@ enum class Orientation {
 @Serializable
 enum class SnapBehavior {
     @SerialName("none")
-    NONE,           // Free scrolling
+    NONE,           // Currently treated as CENTER snap; free-scroll mode requires a future LazyRow renderer
     
     @SerialName("start")
     START,          // Snap to start
@@ -234,6 +245,26 @@ enum class ArrangementStrategy {
 }
 
 /**
+ * Shape of gallery page indicators.
+ */
+@Serializable
+enum class IndicatorShape {
+    @SerialName("circle") CIRCLE,
+    @SerialName("rectangle") RECTANGLE
+}
+
+/**
+ * Position of gallery page indicators relative to the gallery.
+ */
+@Serializable
+enum class IndicatorPosition {
+    @SerialName("top") TOP,
+    @SerialName("bottom") BOTTOM,
+    @SerialName("left") LEFT,
+    @SerialName("right") RIGHT
+}
+
+/**
  * Animation types for component entrance effects.
  * Each component animates independently on first appearance.
  */
@@ -293,8 +324,5 @@ enum class Easing {
     EASE_IN_BACK,
 
     @SerialName("ease_out_back")
-    EASE_OUT_BACK,
-
-    @SerialName("spring")
-    SPRING
+    EASE_OUT_BACK
 }

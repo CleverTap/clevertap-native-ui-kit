@@ -73,8 +73,8 @@ data class IndicatorStyle(
     val spacing: Float = 8f,
     val activeColor: String = "#2196F3",
     val inactiveColor: String = "#BDBDBD",
-    val shape: String = "circle",  // "circle" or "rectangle"
-    val position: String = "bottom"  // "top", "bottom", "left", "right"
+    val shape: IndicatorShape = IndicatorShape.CIRCLE,
+    val position: IndicatorPosition = IndicatorPosition.BOTTOM
 )
 
 @Immutable

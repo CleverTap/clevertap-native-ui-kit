@@ -57,7 +57,7 @@ data class Style(
     val lineHeight: TextDimension? = null,
     val letterSpacing: Float? = null,
     val textDecoration: TextDecoration? = null,
-    val textAlign: String? = null,  // "left", "center", "right", "justify"
+    val textAlign: TextAlign? = null,
     val maxLines: Int? = null,
     val overflow: TextOverflow? = null,
     val textShadow: TextShadow? = null,

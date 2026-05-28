@@ -32,7 +32,7 @@ data class TextProperties(
     val lineHeight: TextDimension?,
     val letterSpacing: Float?,
     val decoration: TextDecoration?,
-    val align: String?,
+    val align: TextAlign?,
     val maxLines: Int?,
     val overflow: TextOverflow?,
     val textShadow: TextShadow?,

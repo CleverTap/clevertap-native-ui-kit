@@ -45,6 +45,8 @@ import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListen
 import com.clevertap.android.nativedisplay.models.ArrowStyle
 import com.clevertap.android.nativedisplay.models.GalleryConfig
 import com.clevertap.android.nativedisplay.models.GalleryMode
+import com.clevertap.android.nativedisplay.models.IndicatorPosition
+import com.clevertap.android.nativedisplay.models.IndicatorShape
 import com.clevertap.android.nativedisplay.models.IndicatorStyle
 import com.clevertap.android.nativedisplay.models.NativeDisplayContainer
 import com.clevertap.android.nativedisplay.models.Orientation
@@ -236,10 +238,10 @@ internal fun RenderSnappingGallery(
                     config = config,
                     pageCount = container.children.size,
                     modifier = Modifier.align(
-                        when (config.indicatorStyle?.position?.lowercase()) {
-                            "top" -> Alignment.TopCenter
-                            "left" -> Alignment.CenterStart
-                            "right" -> Alignment.CenterEnd
+                        when (config.indicatorStyle?.position) {
+                            IndicatorPosition.TOP -> Alignment.TopCenter
+                            IndicatorPosition.LEFT -> Alignment.CenterStart
+                            IndicatorPosition.RIGHT -> Alignment.CenterEnd
                             else -> Alignment.BottomCenter
                         }
                     )
@@ -528,7 +530,7 @@ internal fun RenderGalleryIndicators(
                         .size(indicatorStyle.size.dp)
                         .background(
                             color = if (pagerState.currentPage == index) activeColor else inactiveColor,
-                            shape = if (indicatorStyle.shape == "circle") CircleShape else RoundedCornerShape(
+                            shape = if (indicatorStyle.shape == IndicatorShape.CIRCLE) CircleShape else RoundedCornerShape(
                                 2.dp
                             )
                         )
@@ -546,7 +548,7 @@ internal fun RenderGalleryIndicators(
                         .size(indicatorStyle.size.dp)
                         .background(
                             color = if (pagerState.currentPage == index) activeColor else inactiveColor,
-                            shape = if (indicatorStyle.shape == "circle") CircleShape else RoundedCornerShape(
+                            shape = if (indicatorStyle.shape == IndicatorShape.CIRCLE) CircleShape else RoundedCornerShape(
                                 2.dp
                             )
                         )
