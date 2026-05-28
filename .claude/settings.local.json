@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git mv:*)",
+      "Bash(for f in test-*.json)",
+      "Bash(do jq:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(for file in test-configs/test-06{0..9}-*.json test-configs/test-070-*.json)",
+      "Bash(do)",
+      "Bash(python3:*)",
+      "Bash(done)",
+      "Bash(git add:*)",
+      "Bash(git stash:*)",
+      "Bash(./gradlew :sdk:compileDebugKotlin:*)",
+      "Bash(git commit:*)",
+      "Bash(find:*)",
+      "WebSearch",
+      "Bash(./gradlew build:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(swift build:*)",
+      "Bash(./gradlew clean build:*)",
+      "Bash(./gradlew assembleDebug:*)",
+      "Bash(./gradlew:*)",
+      "Bash(xargs cat:*)",
+      "Bash(git checkout:*)",
+      "mcp__claude_ai_Atlassian__getAccessibleAtlassianResources",
+      "mcp__claude_ai_Atlassian__getConfluencePage",
+      "mcp__claude_ai_Atlassian__getConfluenceSpaces",
+      "mcp__claude_ai_Atlassian__createConfluencePage",
+      "mcp__github__list_commits"
+    ]
+  }
+}

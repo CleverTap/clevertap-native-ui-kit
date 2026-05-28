@@ -1,0 +1,276 @@
+{
+  "theme": {
+    "id": "feedback-form-theme",
+    "defaultStyle": {
+      "textColor": "#FF2C3E50",
+      "fontSize": 16,
+      "fontFamily": "System"
+    }
+  },
+  "variables": {
+    "productName": "Premium Headphones",
+    "userName": "Alex",
+    "ratingPrompt": "How would you rate your purchase?",
+    "feedbackPrompt": "Share your experience with us",
+    "thankYouNote": "Your feedback helps us improve!",
+    "productImage": "https://cdn.dummyjson.com/products/images/smartphones/iPhone%206/1.png"
+  },
+  "root": {
+    "type": "container",
+    "id": "feedback-form-root",
+    "containerType": "box",
+    "layout": {
+      "width": { "value": 100, "unit": "percent", "special": null },
+      "aspectRatio": 0.75
+    },
+    "style": {
+      "background": {
+        "type": "image",
+        "url": "https://yavuzceliker.github.io/sample-images/image-140.jpg",
+        "fit": "crop",
+        "opacity": 1.0,
+        "tint": "#000000",
+        "tint_opacity": 0.8
+      },
+      "borderRadius": 24,
+      "shadowColor": "#60000000",
+      "shadowRadius": 20,
+      "shadowOffsetX": 0,
+      "shadowOffsetY": 10
+    },
+    "animation": {
+      "type": "slide_in_bottom",
+      "duration": 600,
+      "easing": "ease_out"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "product-image",
+        "elementType": "image",
+        "bindings": {
+          "url": "{{productImage}}"
+        },
+        "layout": {
+          "width": { "value": 35, "unit": "percent", "special": null },
+          "height": { "value": 35, "unit": "percent", "special": null },
+          "offset": { "x": 32, "y": 5, "unit": "percent" }
+        },
+        "style": {
+          "backgroundColor": "#FF1F2937",
+          "borderRadius": 20,
+          "shadowColor": "#80000000",
+          "shadowRadius": 16,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "form-title",
+        "elementType": "text",
+        "bindings": {
+          "text": "We'd Love Your Feedback!"
+        },
+        "layout": {
+          "width": { "value": 90, "unit": "percent", "special": null },
+          "height": { "value": 0, "unit": "dp", "special": "wrap_content" },
+          "offset": { "x": 5, "y": 44, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 28,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFFFF",
+          "textAlign": "center",
+          "shadowColor": "#FF000000",
+          "shadowRadius": 12,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4
+        }
+      },
+      {
+        "type": "element",
+        "id": "user-greeting",
+        "elementType": "text",
+        "bindings": {
+          "text": "Hi {{userName}},"
+        },
+        "layout": {
+          "width": { "value": 85, "unit": "percent", "special": null },
+          "height": { "value": 0, "unit": "dp", "special": "wrap_content" },
+          "offset": { "x": 7, "y": 54, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 20,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFFFF",
+          "textAlign": "center",
+          "shadowColor": "#FF000000",
+          "shadowRadius": 10,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3
+        }
+      },
+      {
+        "type": "element",
+        "id": "rating-prompt",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{ratingPrompt}}"
+        },
+        "layout": {
+          "width": { "value": 80, "unit": "percent", "special": null },
+          "height": { "value": 0, "unit": "dp", "special": "wrap_content" },
+          "padding": { "horizontal": 12, "vertical": 8, "unit": "dp" },
+          "offset": { "x": 10, "y": 62, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 17,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFFFF",
+          "textAlign": "center",
+          "shadowColor": "#FF000000",
+          "shadowRadius": 10,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3
+        }
+      },
+      {
+        "type": "element",
+        "id": "feedback-prompt",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{feedbackPrompt}}"
+        },
+        "layout": {
+          "width": { "value": 78, "unit": "percent", "special": null },
+          "height": { "value": 0, "unit": "dp", "special": "wrap_content" },
+          "padding": { "horizontal": 10, "vertical": 6, "unit": "dp" },
+          "offset": { "x": 11, "y": 70, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 16,
+          "fontWeight": "medium",
+          "textColor": "#FFFFFFFF",
+          "textAlign": "center",
+          "shadowColor": "#FF000000",
+          "shadowRadius": 8,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 2,
+          "fontFamily": "System"
+        }
+      },
+      {
+        "type": "element",
+        "id": "thank-you-note",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{thankYouNote}}"
+        },
+        "layout": {
+          "width": { "value": 75, "unit": "percent", "special": null },
+          "height": { "value": 0, "unit": "dp", "special": "wrap_content" },
+          "offset": { "x": 12, "y": 78, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 14,
+          "fontWeight": "medium",
+          "textColor": "#FFFDE68A",
+          "textAlign": "center",
+          "shadowColor": "#FF000000",
+          "shadowRadius": 8,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 2,
+          "opacity": 1.0,
+          "fontFamily": "System"
+        }
+      },
+      {
+        "type": "element",
+        "id": "submit-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Submit Feedback"
+        },
+        "layout": {
+          "width": { "value": 42, "unit": "percent", "special": null },
+          "height": { "value": 12, "unit": "percent", "special": null },
+          "offset": { "x": 6, "y": 86, "unit": "percent" }
+        },
+        "style": {
+          "backgroundColor": "#FF10B981",
+          "textColor": "#FFFFFFFF",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "borderRadius": 32,
+          "borderWidth": 3,
+          "borderColor": "#FFFFFFFF",
+          "shadowColor": "#80000000",
+          "shadowRadius": 16,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 8
+        },
+        "actions": {
+          "onClick": {
+            "type": "composite",
+            "executionMode": "sequential",
+            "actions": [
+              {
+                "type": "event",
+                "eventName": "FeedbackSubmitted",
+                "properties": {
+                  "product": "{{productName}}",
+                  "user": "{{userName}}",
+                  "timestamp": "2026-02-13"
+                }
+              },
+              {
+                "type": "custom",
+                "key": "submit_feedback",
+                "value": {
+                  "form_type": "product_feedback",
+                  "product": "{{productName}}"
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "skip-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Maybe Later"
+        },
+        "layout": {
+          "width": { "value": 42, "unit": "percent", "special": null },
+          "height": { "value": 12, "unit": "percent", "special": null },
+          "offset": { "x": 52, "y": 86, "unit": "percent" }
+        },
+        "style": {
+          "backgroundColor": "#00000000",
+          "textColor": "#FFFFFFFF",
+          "fontSize": 16,
+          "fontWeight": "bold",
+          "borderRadius": 32,
+          "borderWidth": 3,
+          "borderColor": "#FFFFFFFF",
+          "shadowColor": "#80000000",
+          "shadowRadius": 16,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 8
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "skip_feedback",
+            "value": {
+              "action": "dismiss"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

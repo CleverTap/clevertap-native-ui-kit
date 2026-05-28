@@ -1,0 +1,162 @@
+{
+  "theme": {
+    "id": "banner-01",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 16
+    }
+  },
+  "variables": {
+    "discount": "50%"
+  },
+  "root": {
+    "type": "container",
+    "id": "banner-root",
+    "containerType": "box",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "aspectRatio": 0.55
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "angle": 135,
+        "colors": ["#FF6B6B", "#FFE66D"]
+      },
+      "borderRadius": 16
+    },
+    "animation": {
+      "type": "fade_in",
+      "duration": 500,
+      "easing": "ease_out"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "discount-badge",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{discount}} OFF"
+        },
+        "layout": {
+          "width": { "value": 28, "unit": "percent" },
+          "height": { "value": 15, "unit": "percent" },
+          "offset": { "x": 5, "y": 5, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 22,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFF",
+          "textAlign": "center",
+          "backgroundColor": "#FF3B3BDD",
+          "borderRadius": 20
+        }
+      },
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "SUMMER SALE"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "offset": { "x": 0, "y": 28, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 44,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFF",
+          "textAlign": "center",
+          "shadowColor": "#00000060",
+          "shadowRadius": 8,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4
+        }
+      },
+      {
+        "type": "element",
+        "id": "subtitle",
+        "elementType": "text",
+        "bindings": {
+          "text": "Shop the hottest deals"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "offset": { "x": 0, "y": 52, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "medium",
+          "textColor": "#FFFFFF",
+          "textAlign": "center",
+          "opacity": 0.95
+        }
+      },
+      {
+        "type": "element",
+        "id": "shop-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Shop Now"
+        },
+        "layout": {
+          "width": { "value": 42, "unit": "percent" },
+          "height": { "value": 18, "unit": "percent" },
+          "offset": { "x": 6, "y": 72, "unit": "percent" }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "textColor": "#FF6B6B",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "borderRadius": 28,
+          "shadowColor": "#00000050",
+          "shadowRadius": 12,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 6
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "shop_now",
+            "value": {
+              "campaign": "summer_sale"
+            }
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "browse-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Browse All"
+        },
+        "layout": {
+          "width": { "value": 42, "unit": "percent" },
+          "height": { "value": 18, "unit": "percent" },
+          "offset": { "x": 52, "y": 72, "unit": "percent" }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF40",
+          "textColor": "#FFFFFF",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "borderRadius": 28,
+          "borderWidth": 2,
+          "borderColor": "#FFFFFF"
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "browse_all",
+            "value": {
+              "campaign": "summer_sale"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

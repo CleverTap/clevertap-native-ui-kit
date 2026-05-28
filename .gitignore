@@ -54,12 +54,10 @@ Carthage/
 # Swift Package Manager
 .swiftpm/
 .build/
-*.xcodeproj
 Package.resolved
 
 # CocoaPods
 Pods/
-*.xcworkspace
 Podfile.lock
 
 # Xcode
@@ -129,7 +127,28 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+# Python
+**/*.pyc
+**/__pycache__/
+*.py[cod]
+
+# Test / screenshot comparison output
+tools/tools/comparison_report/
+
 # Temporary files
 *.tmp
 *.bak
 *.cache
+
+# Additional Android/Kotlin ignores
+.kotlin/
+**/.kotlin/
+**/local.properties
+*.jks
+*.keystore
+signing.properties
+keystore.properties
+
+android-sample/app/configs
+.claude/worktrees/
+.claude/scheduled_tasks.lock
