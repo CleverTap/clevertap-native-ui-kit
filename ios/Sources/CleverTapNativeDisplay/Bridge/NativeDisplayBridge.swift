@@ -387,7 +387,7 @@ public class NativeDisplayBridge {
     /// When the host Core SDK responds to the new selector
     /// `-recordDisplayUnitElementClickedEventForID:additionalProperties:`,
     /// that selector is invoked with all sanitized `extras` as `additionalProperties`.
-    /// Attribution fields (`wzrk_element_id`, `wzrk_btn_text`, etc.) are injected by
+    /// Attribution fields (`wzrk_element_id`, `wzrk_c2a`, etc.) are injected by
     /// the BE into each action's `metadata` and already flow through `extras` via
     /// `ActionAttributionExtras.from` — no dedicated `elementID:` argument is needed.
     ///
