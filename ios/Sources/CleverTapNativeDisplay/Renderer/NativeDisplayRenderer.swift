@@ -259,6 +259,10 @@ struct RenderNode: View {
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
     var isRoot: Bool = false
+    /// True when this node is a direct child of a BOX container.
+    /// The parent BOX applies the offset externally via padding overlay, so this node
+    /// must NOT also apply offset internally (which would double it).
+    var inBoxContainer: Bool = false
     
     var body: some View {
         // Check visibility condition
@@ -289,7 +293,7 @@ struct RenderNode: View {
             let layoutMod = LayoutModifier(layout: node.layout, parentSize: parentSize, nodeId: node.id)
             let offsetValue = layoutMod.calculateOffset()
 
-            RenderContainer(
+            let containerView = RenderContainer(
                 container: container,
                 resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
@@ -301,7 +305,14 @@ struct RenderNode: View {
             )
             .modifier(layoutMod)
             .modifier(DecorationModifier(style: resolvedStyle, rootHeight: rootHeight))
-            .offset(x: offsetValue.width, y: offsetValue.height)
+
+            Group {
+                if inBoxContainer {
+                    containerView
+                } else {
+                    containerView.offset(x: offsetValue.width, y: offsetValue.height)
+                }
+            }
             .applyEntranceAnimation(node.animation)
             .applyTappable(
                 nodeId: node.id,
@@ -327,8 +338,12 @@ struct RenderNode: View {
         case .element(let element):
             let layoutMod = LayoutModifier(layout: node.layout, parentSize: parentSize, nodeId: node.id)
             let offsetValue = layoutMod.calculateOffset()
+            // Video elements handle their own tap interaction (controls show/hide) internally.
+            // Passing a componentListener here would add a competing gesture that blocks the
+            // internal Color.clear tap layer. Explicit onClick actions still work via `actions`.
+            let isVideo = element.elementType == .video
 
-            RenderElement(
+            let elementView = RenderElement(
                 element: element,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
@@ -338,13 +353,23 @@ struct RenderNode: View {
             )
             .modifier(layoutMod)
             .modifier(DecorationModifier(style: resolvedStyle, rootHeight: rootHeight))
-            .offset(x: offsetValue.width, y: offsetValue.height)
+
+            // BOX container children: offset is applied externally via padding overlay
+            // in RenderContainer.box, so hit-testing and visual position always align.
+            // Non-BOX children: use .offset() for visual-only displacement.
+            Group {
+                if inBoxContainer {
+                    elementView
+                } else {
+                    elementView.offset(x: offsetValue.width, y: offsetValue.height)
+                }
+            }
             .applyEntranceAnimation(node.animation)
             .applyTappable(
                 nodeId: node.id,
                 actions: !isButton && shouldApplyTappable ? node.actions : nil,
                 actionHandler: actionHandler,
-                componentListener: !isButton ? componentListener : nil
+                componentListener: (!isButton && !isVideo) ? componentListener : nil
             )
             .onAppear {
                 if isRoot {
@@ -409,19 +434,34 @@ struct RenderContainer: View {
                 .padding(paddingInsets)
 
         case .box:
-            // For BOX containers, use ZStack with topLeading alignment
-            // Children use .offset() (applied in LayoutModifier) to move from their natural position
+            // BOX uses absolute positioning. Each child is placed on a full-size transparent
+            // canvas via .overlay + .padding. This approach correctly aligns both visual
+            // rendering and hit-testing, unlike .offset() (visual only) or .position()
+            // (unreliable hit-test alignment for UIViewRepresentable subtrees).
             ZStack(alignment: .topLeading) {
                 ForEach(container.children, id: \.id) { child in
-                    RenderNode(
-                        node: child,
-                        resolvedStyles: resolvedStyles,
-                        evaluator: evaluator,
+                    let childOffset = LayoutModifier(
+                        layout: child.layout,
                         parentSize: containerSize,
-                        rootHeight: rootHeight,
-                        actionHandler: actionHandler,
-                        componentListener: componentListener
-                    )
+                        nodeId: child.id
+                    ).calculateOffset()
+
+                    Color.clear
+                        .frame(width: containerSize.width, height: containerSize.height)
+                        .overlay(alignment: .topLeading) {
+                            RenderNode(
+                                node: child,
+                                resolvedStyles: resolvedStyles,
+                                evaluator: evaluator,
+                                parentSize: containerSize,
+                                rootHeight: rootHeight,
+                                actionHandler: actionHandler,
+                                componentListener: componentListener,
+                                inBoxContainer: true
+                            )
+                            .padding(.top, childOffset.height)
+                            .padding(.leading, childOffset.width)
+                        }
                 }
             }
             .frame(
@@ -1721,7 +1761,6 @@ private struct VideoPlayerView: View {
 
     @StateObject private var playerManager = PlayerManager()
     @State private var showControlsUI = false
-    @State private var controlsOpacity: Double = 0
     @State private var isFullscreen = false
 
     var body: some View {
@@ -1729,17 +1768,18 @@ private struct VideoPlayerView: View {
             // Custom AVPlayerLayer — hidden when fullscreen (shared AVPlayer instance)
             VideoPlayerLayer(player: playerManager.player)
                 .opacity(isFullscreen ? 0 : 1)
-                .onTapGesture {
-                    if showControls {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            showControlsUI.toggle()
-                            controlsOpacity = showControlsUI ? 1.0 : 0.0
-                        }
+
+            // Transparent tap layer — detects taps reliably as a pure SwiftUI view
+            if showControls && !isFullscreen {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        showControlsUI.toggle()
                     }
-                }
+            }
 
             // Custom controls overlay
-            if showControls && controlsOpacity > 0 {
+            if showControls {
                 VStack {
                     Spacer()
                     HStack(spacing: 12) {
@@ -1777,7 +1817,9 @@ private struct VideoPlayerView: View {
                     }
                     .padding(12)
                 }
-                .opacity(controlsOpacity)
+                .opacity(showControlsUI ? 1.0 : 0.0)
+                .animation(.easeInOut(duration: 0.3), value: showControlsUI)
+                .allowsHitTesting(showControlsUI)
             }
         }
         .fullScreenCover(isPresented: $isFullscreen) {
@@ -1797,10 +1839,7 @@ private struct VideoPlayerView: View {
             if isShown {
                 // Auto-hide after 3 seconds
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        showControlsUI = false
-                        controlsOpacity = 0
-                    }
+                    showControlsUI = false
                 }
             }
         }
@@ -1819,10 +1858,12 @@ private struct VideoFullscreenView: View {
 
             VideoPlayerLayer(player: playerManager.player)
                 .ignoresSafeArea()
+
+            Color.clear
+                .contentShape(Rectangle())
+                .ignoresSafeArea()
                 .onTapGesture {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        showControlsUI.toggle()
-                    }
+                    showControlsUI.toggle()
                 }
 
             if showControlsUI {

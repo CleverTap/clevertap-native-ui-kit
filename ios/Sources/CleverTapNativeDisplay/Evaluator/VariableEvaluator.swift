@@ -76,12 +76,13 @@ class VariableEvaluator {
             return evaluateEquality(cleaned, operator: "!=")
         }
         
-        // Handle plain string literals "true" / "false" sent directly in bindings
+        // Handle plain string literals "true" / "false" / "1" / "0" sent directly in bindings
         switch cleaned.lowercased() {
         case "true": return true
         case "false": return false
         default: break
         }
+        if let number = Double(cleaned) { return number != 0 }
 
         // Fall back to variable lookup for {{variableName}} expressions
         if let value = getVariable(cleaned) {
@@ -219,6 +220,7 @@ class VariableEvaluator {
         case let int as Int:
             return int != 0
         case let string as String:
+            if let number = Double(string) { return number != 0 }
             return string.lowercased() == "true"
         default:
             return nil
