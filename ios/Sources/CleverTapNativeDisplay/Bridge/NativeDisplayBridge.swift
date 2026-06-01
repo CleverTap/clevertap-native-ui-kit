@@ -17,9 +17,9 @@ import Foundation
 // for a given iOS Core SDK version.
 
 /// New element-aware click attribution selector (Core SDK v7.0+).
-/// Signature: `-recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:`.
+/// Signature: `-recordDisplayUnitElementClickedEventForID:additionalProperties:`.
 private let elementClickedSelector: Selector = NSSelectorFromString(
-    "recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:"
+    "recordDisplayUnitElementClickedEventForID:additionalProperties:"
 )
 
 /// Legacy unit-level click attribution selector (all Core SDK versions).
@@ -384,19 +384,17 @@ public class NativeDisplayBridge {
 
     /// Push a display unit clicked event to the CleverTap Core SDK.
     ///
-    /// When `extras` carries a `wzrk_btn_id` transport marker (set by
-    /// `ActionAttributionExtras.from` from the clicked node id) AND the host Core SDK
-    /// responds to the new selector
-    /// `-recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:`,
-    /// that selector is invoked — the element id is extracted from the extras dict
-    /// and passed as the dedicated argument; the remaining (sanitized) entries
-    /// become `additionalProperties`.
+    /// When the host Core SDK responds to the new selector
+    /// `-recordDisplayUnitElementClickedEventForID:additionalProperties:`,
+    /// that selector is invoked with all sanitized `extras` as `additionalProperties`.
+    /// Attribution fields (`wzrk_element_id`, `wzrk_btn_text`, etc.) are injected by
+    /// the BE into each action's `metadata` and already flow through `extras` via
+    /// `ActionAttributionExtras.from` — no dedicated `elementID:` argument is needed.
     ///
     /// On older Core SDK versions without the new selector, the legacy
     /// `-recordDisplayUnitClickedEventForID:` fires instead — the campaign click is
-    /// still attributed but per-element context is lost (graceful degradation, no
-    /// namespace squatting). Clients receive coarse unit-level attribution until
-    /// they upgrade Core SDK.
+    /// still attributed but per-element context is lost (graceful degradation).
+    /// Clients receive coarse unit-level attribution until they upgrade Core SDK.
     ///
     /// - Parameters:
     ///   - unitId: The `wzrk_id` of the display unit that was clicked.
@@ -417,25 +415,11 @@ public class NativeDisplayBridge {
         extras: [String: Any]?
     ) -> Bool {
         let sanitized = ActionAttributionExtras.sanitize(extras)
-        let elementId = sanitized?[ActionAttributionExtras.keyButtonId] as? String
-        if let sanitized = sanitized, let elementId = elementId {
-            if isElementClickedAvailable(on: ct) {
-                // Strip the transport marker — Core SDK adds `wzrk_element_id` to the
-                // event from the dedicated parameter.
-                var additionalProps = sanitized
-                additionalProps.removeValue(forKey: ActionAttributionExtras.keyButtonId)
-                sendThreeArgSelector(
-                    target: ct,
-                    selector: elementClickedSelector,
-                    arg1: unitId as NSString,
-                    arg2: elementId as NSString,
-                    arg3: additionalProps as NSDictionary
-                )
-                return true
-            }
+        if let sanitized, isElementClickedAvailable(on: ct) {
+            ct.perform(elementClickedSelector, with: unitId as NSString, with: sanitized as NSDictionary)
+            return true
         }
         // Fallback: legacy unit-level click attribution (no per-element data).
-        // Not cached — only reached when the new selector is absent (rare slow path).
         guard ct.responds(to: legacyClickedSelector) else { return false }
         ct.perform(legacyClickedSelector, with: unitId)
         return true
@@ -451,22 +435,6 @@ public class NativeDisplayBridge {
         let responds = ct.responds(to: elementClickedSelector)
         elementClickedResponds = responds
         return responds
-    }
-
-    /// Invokes a 3-argument Objective-C selector. `NSObject.perform(_:with:with:)`
-    /// caps at 2 arguments; for 3 we resolve the method's `IMP` and call it via a
-    /// typed function-pointer cast.
-    private func sendThreeArgSelector(
-        target: NSObject,
-        selector: Selector,
-        arg1: AnyObject,
-        arg2: AnyObject,
-        arg3: AnyObject
-    ) {
-        typealias Imp = @convention(c) (AnyObject, Selector, AnyObject, AnyObject, AnyObject) -> Void
-        let imp = target.method(for: selector)
-        let fn = unsafeBitCast(imp, to: Imp.self)
-        fn(target, selector, arg1, arg2, arg3)
     }
 
     /// Older-Core-SDK fallback: when the v7.x `setDisplayUnitCache:` attach

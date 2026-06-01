@@ -5,17 +5,11 @@ import XCTest
 /// into a flat property bag for the Core SDK attribution overloads.
 final class ActionAttributionExtrasTests: XCTestCase {
 
-    // MARK: - nodeId only / nil action
+    // MARK: - nil action
 
-    func test_from_withNilAction_emitsOnlyButtonId() {
-        let extras = ActionAttributionExtras.from(action: nil, nodeId: "cta_buy")
-        XCTAssertEqual(extras[ActionAttributionExtras.keyButtonId] as? String, "cta_buy")
-        XCTAssertNil(extras[ActionAttributionExtras.keyActionType])
-    }
-
-    func test_from_withEmptyNodeId_skipsButtonId() {
-        let extras = ActionAttributionExtras.from(action: nil, nodeId: "")
-        XCTAssertNil(extras[ActionAttributionExtras.keyButtonId])
+    func test_from_withNilAction_returnsEmptyMap() {
+        let extras = ActionAttributionExtras.from(action: nil)
+        XCTAssertTrue(extras.isEmpty)
     }
 
     // MARK: - OpenUrl
@@ -24,12 +18,12 @@ final class ActionAttributionExtrasTests: XCTestCase {
         let action = Action.openUrl(
             .init(url: "https://example.com", openInBrowser: true, customTabsEnabled: false)
         )
-        let extras = ActionAttributionExtras.from(action: action, nodeId: "btn1")
+        let extras = ActionAttributionExtras.from(action: action)
 
         XCTAssertEqual(extras[ActionAttributionExtras.keyActionType] as? String, "open_url")
         XCTAssertEqual(extras["action_url"] as? String, "https://example.com")
         XCTAssertEqual(extras["action_open_in_browser"] as? Bool, true)
-        XCTAssertEqual(extras[ActionAttributionExtras.keyButtonId] as? String, "btn1")
+        XCTAssertNil(extras["wzrk_btn_id"], "wzrk_btn_id transport marker must not be emitted")
     }
 
     // MARK: - CustomAction
@@ -42,7 +36,7 @@ final class ActionAttributionExtrasTests: XCTestCase {
                 metadata: ["campaign": "summer_sale", "tier": "gold"]
             )
         )
-        let extras = ActionAttributionExtras.from(action: action, nodeId: "btn2")
+        let extras = ActionAttributionExtras.from(action: action)
 
         XCTAssertEqual(extras[ActionAttributionExtras.keyActionType] as? String, "custom")
         XCTAssertEqual(extras["action_key"] as? String, "kv")
@@ -57,7 +51,7 @@ final class ActionAttributionExtrasTests: XCTestCase {
 
     func test_from_customAction_scalarValueRoundTripsAsNativeType() {
         let action = Action.custom(.init(key: "k", value: AnyCodable(42), metadata: nil))
-        let extras = ActionAttributionExtras.from(action: action, nodeId: "btn3")
+        let extras = ActionAttributionExtras.from(action: action)
         XCTAssertEqual(extras["action_value"] as? Int, 42)
     }
 
@@ -69,7 +63,7 @@ final class ActionAttributionExtrasTests: XCTestCase {
                 metadata: ["user_id": "from-meta", "only_in_meta": "m"]
             )
         )
-        let extras = ActionAttributionExtras.from(action: action, nodeId: "btn_collision")
+        let extras = ActionAttributionExtras.from(action: action)
 
         // metadata is spread AFTER value entries -> last-write-wins on collision
         XCTAssertEqual(extras["user_id"] as? String, "from-meta")
@@ -82,7 +76,7 @@ final class ActionAttributionExtrasTests: XCTestCase {
         let action = Action.custom(
             .init(key: "kv", value: AnyCodable([String: Any]()), metadata: nil)
         )
-        let extras = ActionAttributionExtras.from(action: action, nodeId: "btn_empty")
+        let extras = ActionAttributionExtras.from(action: action)
 
         XCTAssertEqual(extras[ActionAttributionExtras.keyActionType] as? String, "custom")
         XCTAssertEqual(extras["action_key"] as? String, "kv")
@@ -90,8 +84,28 @@ final class ActionAttributionExtrasTests: XCTestCase {
         // Exactly the reserved keys, nothing else.
         XCTAssertEqual(
             Set(extras.keys),
-            Set(["wzrk_btn_id", ActionAttributionExtras.keyActionType, "action_key"])
+            Set([ActionAttributionExtras.keyActionType, "action_key"])
         )
+    }
+
+    func test_from_customAction_metadataSpreadsBeInjectedWzrkAttributionFields() {
+        let action = Action.custom(
+            .init(
+                key: "kv",
+                value: AnyCodable([String: Any]()),
+                metadata: [
+                    "wzrk_element_id": "btn_hero",
+                    "wzrk_btn_text": "Buy Now",
+                    "wzrk_activity_type": "click"
+                ]
+            )
+        )
+        let extras = ActionAttributionExtras.from(action: action)
+
+        // BE-injected wzrk_* fields arrive via metadata and flow through as-is
+        XCTAssertEqual(extras["wzrk_element_id"] as? String, "btn_hero")
+        XCTAssertEqual(extras["wzrk_btn_text"] as? String, "Buy Now")
+        XCTAssertEqual(extras["wzrk_activity_type"] as? String, "click")
     }
 
     // MARK: - Navigate
@@ -100,10 +114,11 @@ final class ActionAttributionExtrasTests: XCTestCase {
         let action = Action.navigate(
             .init(destination: "profile", params: ["user_id": "u-1"])
         )
-        let extras = ActionAttributionExtras.from(action: action, nodeId: nil)
+        let extras = ActionAttributionExtras.from(action: action)
         XCTAssertEqual(extras[ActionAttributionExtras.keyActionType] as? String, "navigate")
         XCTAssertEqual(extras["action_destination"] as? String, "profile")
         XCTAssertEqual(extras["user_id"] as? String, "u-1")
+        XCTAssertNil(extras["wzrk_btn_id"])
     }
 
     // MARK: - TrackEvent
@@ -115,7 +130,7 @@ final class ActionAttributionExtrasTests: XCTestCase {
                 properties: ["position": AnyCodable(3), "is_hero": AnyCodable(true)]
             )
         )
-        let extras = ActionAttributionExtras.from(action: action, nodeId: "btn4")
+        let extras = ActionAttributionExtras.from(action: action)
         XCTAssertEqual(extras["action_event_name"] as? String, "Banner Tapped")
         XCTAssertEqual(extras["position"] as? Int, 3)
         XCTAssertEqual(extras["is_hero"] as? Bool, true)
@@ -133,7 +148,7 @@ final class ActionAttributionExtrasTests: XCTestCase {
                 executionMode: .parallel
             )
         )
-        let extras = ActionAttributionExtras.from(action: action, nodeId: "btn5")
+        let extras = ActionAttributionExtras.from(action: action)
         XCTAssertEqual(extras["action_count"] as? Int, 2)
         XCTAssertEqual(extras["action_mode"] as? String, "parallel")
     }

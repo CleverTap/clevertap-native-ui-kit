@@ -2,22 +2,17 @@
 //  ActionAttributionExtras.swift
 //  CleverTapNativeDisplay
 //
-//  Pure helper that turns an `Action` (and the originating node id) into a flat
-//  `[String: Any]` payload that the bridge feeds into Core SDK's element-click
-//  attribution path.
+//  Pure helper that turns an `Action` into a flat `[String: Any]` payload that
+//  the bridge feeds into Core SDK's element-click attribution path.
 //
-//  Transport contract with `NativeDisplayBridge`:
-//  - `wzrk_btn_id` carries the clicked node id. The bridge extracts it and passes
-//    it as the `elementID:` argument to the new Core SDK selector
-//    `-recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:`.
-//    It is NOT forwarded inside `additionalProperties` (Core SDK adds it to the
-//    event as `wzrk_element_id` from the dedicated parameter).
-//  - All other entries become Core SDK's `additionalProperties` dict. Core SDK
-//    layers the cached unit JSON's `wzrk_*` keys on top of this dict before
-//    recording, so caller-supplied `wzrk_*` keys are overridden by the cached
-//    unit's namespace (cached `wzrk_*` always wins). Action fields use the
-//    `action_*` prefix to stay outside the `wzrk_*` namespace and bundle
-//    entries from a `CustomAction.value` dictionary spread as first-class keys.
+//  All action entries (including action.metadata which carries BE-injected
+//  wzrk_* attribution fields) become Core SDK's additionalProperties dict.
+//
+//  The BE injects attribution fields such as `wzrk_element_id`, `wzrk_btn_text`,
+//  `wzrk_activity_type`, and `wzrk_data` into each action's `metadata` field
+//  server-side. The `custom` case already spreads `action.metadata` into the
+//  extras dict, so these keys reach Core SDK via `additionalProperties` without
+//  a dedicated `elementID:` parameter.
 //
 //  Per-action `metadata` / `params` / `properties` maps are spread verbatim so
 //  the client's own keys land on the event with their original names. A
@@ -25,7 +20,6 @@
 //  spread); primitive values land under a single `action_value` key.
 //
 //  Output keys produced by this helper:
-//  - `wzrk_btn_id` — transport marker, extracted by the bridge as `elementID`.
 //  - `action_type` — one of `open_url` / `custom` / `navigate` / `event` /
 //    `composite`.
 //  - `action_key` — the `CustomAction.key` discriminator (e.g. `"kv"` for the
@@ -43,16 +37,10 @@ import Foundation
 
 enum ActionAttributionExtras {
 
-    /// Transport marker — the bridge extracts this and passes it as Core SDK's
-    /// `elementID:` argument. NOT forwarded as part of `additionalProperties`.
-    static let keyButtonId = "wzrk_btn_id"
     static let keyActionType = "action_type"
 
-    static func from(action: Action?, nodeId: String?) -> [String: Any] {
+    static func from(action: Action?) -> [String: Any] {
         var out: [String: Any] = [:]
-        if let nodeId = nodeId, !nodeId.isEmpty {
-            out[keyButtonId] = nodeId
-        }
         if let action = action {
             append(action, into: &out)
         }
