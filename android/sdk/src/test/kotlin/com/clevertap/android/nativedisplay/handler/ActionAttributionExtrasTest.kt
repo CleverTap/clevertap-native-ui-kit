@@ -123,16 +123,16 @@ class ActionAttributionExtrasTest {
             value = buildJsonObject { },
             metadata = mapOf(
                 "wzrk_element_id" to "btn_hero",
-                "wzrk_btn_text" to "Buy Now",
-                "wzrk_activity_type" to "click"
+                "wzrk_c2a" to "Buy Now",
+                "wzrk_act" to "click"
             )
         )
         val extras = ActionAttributionExtras.from(action)
 
         // BE-injected wzrk_* fields arrive via metadata and flow through as-is
         assertEquals("btn_hero", extras["wzrk_element_id"])
-        assertEquals("Buy Now", extras["wzrk_btn_text"])
-        assertEquals("click", extras["wzrk_activity_type"])
+        assertEquals("Buy Now", extras["wzrk_c2a"])
+        assertEquals("click", extras["wzrk_act"])
     }
 
     @Test
