@@ -95,8 +95,8 @@ final class ActionAttributionExtrasTests: XCTestCase {
                 value: AnyCodable([String: Any]()),
                 metadata: [
                     "wzrk_element_id": "btn_hero",
-                    "wzrk_btn_text": "Buy Now",
-                    "wzrk_activity_type": "click"
+                    "wzrk_c2a": "Buy Now",
+                    "wzrk_act": "click"
                 ]
             )
         )
@@ -104,8 +104,8 @@ final class ActionAttributionExtrasTests: XCTestCase {
 
         // BE-injected wzrk_* fields arrive via metadata and flow through as-is
         XCTAssertEqual(extras["wzrk_element_id"] as? String, "btn_hero")
-        XCTAssertEqual(extras["wzrk_btn_text"] as? String, "Buy Now")
-        XCTAssertEqual(extras["wzrk_activity_type"] as? String, "click")
+        XCTAssertEqual(extras["wzrk_c2a"] as? String, "Buy Now")
+        XCTAssertEqual(extras["wzrk_act"] as? String, "click")
     }
 
     // MARK: - Navigate
