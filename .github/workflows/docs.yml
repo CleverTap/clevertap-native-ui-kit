@@ -39,6 +39,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check-website:
+    name: Check website content present
+    runs-on: ubuntu-latest
+    outputs:
+      has_website: ${{ steps.check.outputs.has_website }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: check
+        run: |
+          if [ -f "website/package.json" ]; then
+            echo "has_website=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_website=false" >> "$GITHUB_OUTPUT"
+          fi
+
   dokka:
     name: Build Dokka (Android API)
     runs-on: ubuntu-latest
@@ -97,8 +112,8 @@ jobs:
   site:
     name: Build & deploy docs site
     runs-on: ubuntu-latest
-    needs: [dokka, docc]
-    if: hashFiles('website/package.json') != ''
+    needs: [check-website, dokka, docc]
+    if: needs.check-website.outputs.has_website == 'true'
     steps:
       - uses: actions/checkout@v4
         with:
