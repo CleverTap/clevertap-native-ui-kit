@@ -1762,6 +1762,7 @@ private struct VideoPlayerView: View {
     @StateObject private var playerManager = PlayerManager()
     @State private var showControlsUI = false
     @State private var isFullscreen = false
+    @State private var hideControlsWorkItem: DispatchWorkItem?
 
     var body: some View {
         ZStack {
@@ -1836,12 +1837,11 @@ private struct VideoPlayerView: View {
             playerManager.cleanup()
         }
         .onChange(of: showControlsUI) { isShown in
-            if isShown {
-                // Auto-hide after 3 seconds
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    showControlsUI = false
-                }
-            }
+            hideControlsWorkItem?.cancel()
+            guard isShown else { return }
+            let workItem = DispatchWorkItem { showControlsUI = false }
+            hideControlsWorkItem = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: workItem)
         }
     }
 }
@@ -1851,6 +1851,7 @@ private struct VideoFullscreenView: View {
     let openUrl: String?
     @Binding var isPresented: Bool
     @State private var showControlsUI = true
+    @State private var hideControlsWorkItem: DispatchWorkItem?
 
     var body: some View {
         ZStack {
@@ -1918,21 +1919,24 @@ private struct VideoFullscreenView: View {
             }
         }
         .onChange(of: showControlsUI) { isShown in
-            if isShown {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        showControlsUI = false
-                    }
-                }
-            }
-        }
-        .onAppear {
-            // Auto-hide controls after 3 seconds when fullscreen opens
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            hideControlsWorkItem?.cancel()
+            guard isShown else { return }
+            let workItem = DispatchWorkItem {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     showControlsUI = false
                 }
             }
+            hideControlsWorkItem = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: workItem)
+        }
+        .onAppear {
+            let workItem = DispatchWorkItem {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    showControlsUI = false
+                }
+            }
+            hideControlsWorkItem = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: workItem)
         }
     }
 }

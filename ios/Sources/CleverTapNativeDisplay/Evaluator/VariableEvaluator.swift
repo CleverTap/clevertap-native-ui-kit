@@ -219,6 +219,8 @@ class VariableEvaluator {
             return bool
         case let int as Int:
             return int != 0
+        case let double as Double:
+            return double != 0
         case let string as String:
             if let number = Double(string) { return number != 0 }
             return string.lowercased() == "true"
