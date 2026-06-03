@@ -18,16 +18,9 @@ import org.junit.Test
 class ActionAttributionExtrasTest {
 
     @Test
-    fun `from with null action emits only button id`() {
-        val extras = ActionAttributionExtras.from(action = null, nodeId = "btn_buy")
-        assertEquals("btn_buy", extras["wzrk_btn_id"])
-        assertNull(extras["action_type"])
-    }
-
-    @Test
-    fun `from with empty node id skips button id key`() {
-        val extras = ActionAttributionExtras.from(action = null, nodeId = "")
-        assertFalse(extras.containsKey("wzrk_btn_id"))
+    fun `from with null action returns empty map`() {
+        val extras = ActionAttributionExtras.from(action = null)
+        assertTrue(extras.isEmpty())
     }
 
     @Test
@@ -37,12 +30,12 @@ class ActionAttributionExtrasTest {
             openInBrowser = true,
             customTabsEnabled = false
         )
-        val extras = ActionAttributionExtras.from(action, "btn1")
+        val extras = ActionAttributionExtras.from(action)
 
         assertEquals("open_url", extras["action_type"])
         assertEquals("https://example.com", extras["action_url"])
         assertEquals(true, extras["action_open_in_browser"])
-        assertEquals("btn1", extras["wzrk_btn_id"])
+        assertFalse(extras.containsKey("wzrk_btn_id"))
     }
 
     @Test
@@ -55,7 +48,7 @@ class ActionAttributionExtrasTest {
             },
             metadata = mapOf("campaign" to "summer", "tier" to "gold")
         )
-        val extras = ActionAttributionExtras.from(action, "btn2")
+        val extras = ActionAttributionExtras.from(action)
 
         assertEquals("custom", extras["action_type"])
         assertEquals("kv", extras["action_key"])
@@ -81,7 +74,7 @@ class ActionAttributionExtrasTest {
             },
             metadata = mapOf("user_id" to "from-meta", "only_in_meta" to "m")
         )
-        val extras = ActionAttributionExtras.from(action, "btn_collision")
+        val extras = ActionAttributionExtras.from(action)
 
         // metadata is spread AFTER value entries → last-write-wins on collision
         assertEquals("from-meta", extras["user_id"])
@@ -97,7 +90,7 @@ class ActionAttributionExtrasTest {
             value = buildJsonObject { },
             metadata = null
         )
-        val extras = ActionAttributionExtras.from(action, "btn_empty")
+        val extras = ActionAttributionExtras.from(action)
 
         assertEquals("custom", extras["action_type"])
         assertEquals("kv", extras["action_key"])
@@ -107,7 +100,7 @@ class ActionAttributionExtrasTest {
         )
         // Exactly the reserved keys, nothing else.
         assertEquals(
-            setOf("wzrk_btn_id", "action_type", "action_key"),
+            setOf("action_type", "action_key"),
             extras.keys
         )
     }
@@ -119,8 +112,27 @@ class ActionAttributionExtrasTest {
             value = JsonPrimitive(42),
             metadata = null
         )
-        val extras = ActionAttributionExtras.from(action, "btn3")
+        val extras = ActionAttributionExtras.from(action)
         assertEquals(42L, extras["action_value"])
+    }
+
+    @Test
+    fun `from custom_action metadata spreads BE-injected wzrk attribution fields`() {
+        val action = Action.CustomAction(
+            key = "kv",
+            value = buildJsonObject { },
+            metadata = mapOf(
+                "wzrk_element_id" to "btn_hero",
+                "wzrk_c2a" to "Buy Now",
+                "wzrk_act" to "click"
+            )
+        )
+        val extras = ActionAttributionExtras.from(action)
+
+        // BE-injected wzrk_* fields arrive via metadata and flow through as-is
+        assertEquals("btn_hero", extras["wzrk_element_id"])
+        assertEquals("Buy Now", extras["wzrk_c2a"])
+        assertEquals("click", extras["wzrk_act"])
     }
 
     @Test
@@ -129,7 +141,7 @@ class ActionAttributionExtrasTest {
             destination = "profile",
             params = mapOf("user_id" to "u-1")
         )
-        val extras = ActionAttributionExtras.from(action, nodeId = null)
+        val extras = ActionAttributionExtras.from(action)
         assertEquals("navigate", extras["action_type"])
         assertEquals("profile", extras["action_destination"])
         assertEquals("u-1", extras["user_id"])
@@ -145,7 +157,7 @@ class ActionAttributionExtrasTest {
                 "is_hero" to JsonPrimitive(true)
             )
         )
-        val extras = ActionAttributionExtras.from(action, "btn4")
+        val extras = ActionAttributionExtras.from(action)
         assertEquals("Banner Tapped", extras["action_event_name"])
         assertEquals(3L, extras["position"])
         assertEquals(true, extras["is_hero"])
@@ -160,7 +172,7 @@ class ActionAttributionExtrasTest {
             ),
             executionMode = ExecutionMode.PARALLEL
         )
-        val extras = ActionAttributionExtras.from(action, "btn5")
+        val extras = ActionAttributionExtras.from(action)
         assertEquals(2, extras["action_count"])
         assertEquals("parallel", extras["action_mode"])
     }

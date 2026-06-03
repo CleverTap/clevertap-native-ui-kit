@@ -8,6 +8,7 @@
 // Supports both auto-wire (runtime Core SDK detection) and manual JSON input modes.
 
 import Foundation
+import ObjectiveC
 
 // MARK: - Core SDK Selector Constants
 //
@@ -17,9 +18,9 @@ import Foundation
 // for a given iOS Core SDK version.
 
 /// New element-aware click attribution selector (Core SDK v7.0+).
-/// Signature: `-recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:`.
+/// Signature: `-recordDisplayUnitElementClickedEventForID:additionalProperties:`.
 private let elementClickedSelector: Selector = NSSelectorFromString(
-    "recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:"
+    "recordDisplayUnitElementClickedEventForID:additionalProperties:"
 )
 
 /// Legacy unit-level click attribution selector (all Core SDK versions).
@@ -98,6 +99,10 @@ public class NativeDisplayBridge {
     /// Whether auto-wire has been attempted.
     private var isInitialized = false
 
+    /// Set to `true` by `CleverTapAutoWire.attachCache` when `setDisplayUnitCache:` succeeds.
+    /// Used by `seedIfNeeded` to skip reflective seeding — the cache adapter already serves lookups.
+    internal var isCacheAttached = false
+
     /// Weak reference to the CleverTap Core SDK instance.
     /// Stored as NSObject to avoid a compile-time dependency on the CleverTap SDK.
     ///
@@ -141,17 +146,31 @@ public class NativeDisplayBridge {
     /// payload, replaces cache contents (via `replaceAll`) and notifies
     /// listeners — same pipeline as manual `processDisplayUnits(_:)`.
     ///
-    /// Defers all serialization + parse work to the parse queue so we never
-    /// block whatever thread Core SDK happened to call us from.
+    /// Core SDK passes `NSArray<CleverTapDisplayUnit *>` — not raw dictionaries.
+    /// JSON is extracted from each unit via `performSelector("json")` or
+    /// `performSelector("jsonObject")`, matching what `CleverTapAutoWire.displayUnitsUpdated`
+    /// does on the delegate fallback path.
+    ///
+    /// Defers all work to the parse queue so we never block Core SDK's thread.
     private func handleServerCacheUpdate(_ displayUnits: NSArray) {
-        guard let dicts = displayUnits as? [[String: Any]], !dicts.isEmpty else { return }
         parseQueue.async { [weak self] in
             guard let self else { return }
             #if DEBUG
             dispatchPrecondition(condition: .notOnQueue(.main))
             #endif
-            let jsonStrings: [String] = dicts.compactMap { dict in
-                guard let data = try? JSONSerialization.data(withJSONObject: dict) else { return nil }
+            let selJson = NSSelectorFromString("json")
+            let selJsonObject = NSSelectorFromString("jsonObject")
+            let jsonStrings: [String] = displayUnits.compactMap { element in
+                guard let obj = element as? NSObject else { return nil }
+                let dict: [String: Any]?
+                if obj.responds(to: selJson) {
+                    dict = obj.perform(selJson)?.takeUnretainedValue() as? [String: Any]
+                } else if obj.responds(to: selJsonObject) {
+                    dict = obj.perform(selJsonObject)?.takeUnretainedValue() as? [String: Any]
+                } else {
+                    dict = nil
+                }
+                guard let d = dict, let data = try? JSONSerialization.data(withJSONObject: d) else { return nil }
                 return String(data: data, encoding: .utf8)
             }
             if jsonStrings.isEmpty { return }
@@ -384,19 +403,17 @@ public class NativeDisplayBridge {
 
     /// Push a display unit clicked event to the CleverTap Core SDK.
     ///
-    /// When `extras` carries a `wzrk_btn_id` transport marker (set by
-    /// `ActionAttributionExtras.from` from the clicked node id) AND the host Core SDK
-    /// responds to the new selector
-    /// `-recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:`,
-    /// that selector is invoked — the element id is extracted from the extras dict
-    /// and passed as the dedicated argument; the remaining (sanitized) entries
-    /// become `additionalProperties`.
+    /// When the host Core SDK responds to the new selector
+    /// `-recordDisplayUnitElementClickedEventForID:additionalProperties:`,
+    /// that selector is invoked with all sanitized `extras` as `additionalProperties`.
+    /// Attribution fields (`wzrk_element_id`, `wzrk_c2a`, etc.) are injected by
+    /// the BE into each action's `metadata` and already flow through `extras` via
+    /// `ActionAttributionExtras.from` — no dedicated `elementID:` argument is needed.
     ///
     /// On older Core SDK versions without the new selector, the legacy
     /// `-recordDisplayUnitClickedEventForID:` fires instead — the campaign click is
-    /// still attributed but per-element context is lost (graceful degradation, no
-    /// namespace squatting). Clients receive coarse unit-level attribution until
-    /// they upgrade Core SDK.
+    /// still attributed but per-element context is lost (graceful degradation).
+    /// Clients receive coarse unit-level attribution until they upgrade Core SDK.
     ///
     /// - Parameters:
     ///   - unitId: The `wzrk_id` of the display unit that was clicked.
@@ -416,32 +433,28 @@ public class NativeDisplayBridge {
         unitId: String,
         extras: [String: Any]?
     ) -> Bool {
-        let sanitized = ActionAttributionExtras.sanitize(extras)
-        let elementId = sanitized?[ActionAttributionExtras.keyButtonId] as? String
-        if let sanitized = sanitized, let elementId = elementId {
-            if isElementClickedAvailable(on: ct) {
-                // Strip the transport marker — Core SDK adds `wzrk_element_id` to the
-                // event from the dedicated parameter.
-                var additionalProps = sanitized
-                additionalProps.removeValue(forKey: ActionAttributionExtras.keyButtonId)
-                sendThreeArgSelector(
-                    target: ct,
-                    selector: elementClickedSelector,
-                    arg1: unitId as NSString,
-                    arg2: elementId as NSString,
-                    arg3: additionalProps as NSDictionary
-                )
-                return true
+        if isElementClickedAvailable(on: ct) {
+            // Use the element-aware path whenever available, even when extras is empty.
+            // An empty dict is a valid additionalProperties argument — the Core SDK
+            // still enriches the event from its own cached unit JSON.
+            let sanitized = ActionAttributionExtras.sanitize(extras) ?? [:]
+            // perform(_:with:with:) is unsafe for void-returning ObjC methods in Swift —
+            // its Unmanaged<AnyObject>? return type misinterprets the empty return register.
+            // Resolve the IMP directly and call it with the correct C signature.
+            typealias ElementClickedIMP = @convention(c) (AnyObject, Selector, NSString, NSDictionary) -> Void
+            if let imp = class_getMethodImplementation(type(of: ct), elementClickedSelector) {
+                let fn = unsafeBitCast(imp, to: ElementClickedIMP.self)
+                fn(ct, elementClickedSelector, unitId as NSString, sanitized as NSDictionary)
             }
+            return true
         }
         // Fallback: legacy unit-level click attribution (no per-element data).
-        // Not cached — only reached when the new selector is absent (rare slow path).
         guard ct.responds(to: legacyClickedSelector) else { return false }
         ct.perform(legacyClickedSelector, with: unitId)
         return true
     }
 
-    /// Lazily resolve and cache whether the attached Core SDK responds to the
+    /// Lazily resolve and cache whetherin the attached Core SDK responds to the
     /// element-aware click selector. The cache is invalidated whenever
     /// `cleverTapInstance` is (re)set — see its `didSet`.
     ///
@@ -453,22 +466,6 @@ public class NativeDisplayBridge {
         return responds
     }
 
-    /// Invokes a 3-argument Objective-C selector. `NSObject.perform(_:with:with:)`
-    /// caps at 2 arguments; for 3 we resolve the method's `IMP` and call it via a
-    /// typed function-pointer cast.
-    private func sendThreeArgSelector(
-        target: NSObject,
-        selector: Selector,
-        arg1: AnyObject,
-        arg2: AnyObject,
-        arg3: AnyObject
-    ) {
-        typealias Imp = @convention(c) (AnyObject, Selector, AnyObject, AnyObject, AnyObject) -> Void
-        let imp = target.method(for: selector)
-        let fn = unsafeBitCast(imp, to: Imp.self)
-        fn(target, selector, arg1, arg2, arg3)
-    }
-
     /// Older-Core-SDK fallback: when the v7.x `setDisplayUnitCache:` attach
     /// API is unavailable (so `CleverTapAutoWire.attachCache` returned false),
     /// inject the unit's raw JSON directly into Core SDK's display-unit cache
@@ -478,7 +475,7 @@ public class NativeDisplayBridge {
     /// No-op when the cache is attached (the cache adapter already serves
     /// lookups).
     private func seedIfNeeded(unitId: String, instance ct: NSObject) {
-        if CleverTapAutoWire.isCacheAttached { return }
+        if isCacheAttached { return }
         guard let raw = getNativeDisplayForId(unitId)?.rawJson,
               let data = raw.data(using: .utf8),
               let dict = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]

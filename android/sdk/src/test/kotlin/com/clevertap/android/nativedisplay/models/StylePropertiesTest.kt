@@ -14,7 +14,7 @@ class StylePropertiesTest {
             fontFamily = "Arial",
             lineHeight = TextDimension(24f),
             textDecoration = TextDecoration.UNDERLINE,
-            textAlign = "center",
+            textAlign = TextAlign.CENTER,
             opacity = 0.9f,
             // Non-text properties (should not appear in text props)
             borderRadius = Dimension.dp(8f),
@@ -29,7 +29,7 @@ class StylePropertiesTest {
         assertEquals("Arial", textProps.family)
         assertEquals(TextDimension(24f), textProps.lineHeight)
         assertEquals(TextDecoration.UNDERLINE, textProps.decoration)
-        assertEquals("center", textProps.align)
+        assertEquals(TextAlign.CENTER, textProps.align)
         assertEquals(0.9f, textProps.opacity)
     }
 

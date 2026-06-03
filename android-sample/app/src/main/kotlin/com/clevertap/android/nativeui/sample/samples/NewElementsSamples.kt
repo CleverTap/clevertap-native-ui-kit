@@ -287,8 +287,8 @@ object NewElementsSamples {
                                 size = 10f,
                                 activeColor = "#007AFF",
                                 inactiveColor = "#CCCCCC",
-                                position = "bottom",
-                                shape = "circle"
+                                position = IndicatorPosition.BOTTOM,
+                                shape = IndicatorShape.CIRCLE
                             )
                         ),
                         children = createGalleryItems(7)
@@ -435,8 +435,8 @@ object NewElementsSamples {
                                 activeColor = "#FF6B6B",
                                 inactiveColor = "#DDDDDD",
                                 spacing = 6f,
-                                position = "bottom",
-                                shape = "circle"
+                                position = IndicatorPosition.BOTTOM,
+                                shape = IndicatorShape.CIRCLE
                             ),
                             arrowStyle = ArrowStyle(
                                 size = 28f,
@@ -475,7 +475,7 @@ object NewElementsSamples {
                         style = Style(
                             fontSize = TextDimension(16f),
                             textColor = "#999999",
-                            textAlign = "center"
+                            textAlign = TextAlign.CENTER
                         )
                     )
                 )
@@ -513,7 +513,7 @@ object NewElementsSamples {
                             fontSize = TextDimension(24f),
                             fontWeight = FontWeight.BOLD,
                             textColor = "#FFFFFF",
-                            textAlign = "center"
+                            textAlign = TextAlign.CENTER
                         )
                     ),
                     NativeDisplayElement(
@@ -527,7 +527,7 @@ object NewElementsSamples {
                         style = Style(
                             fontSize = TextDimension(14f),
                             textColor = "#FFFFFF",
-                            textAlign = "center"
+                            textAlign = TextAlign.CENTER
                         )
                     )
                 )

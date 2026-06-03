@@ -34,48 +34,61 @@ public enum Action: Codable, Equatable {
         public let url: String
         public let openInBrowser: Bool
         public let customTabsEnabled: Bool
+        public let metadata: [String: String]?
 
-        public init(url: String, openInBrowser: Bool = false, customTabsEnabled: Bool = true) {
+        public init(url: String, openInBrowser: Bool = false, customTabsEnabled: Bool = true, metadata: [String: String]? = nil) {
             self.url = url
             self.openInBrowser = openInBrowser
             self.customTabsEnabled = customTabsEnabled
+            self.metadata = metadata
         }
 
         private enum CodingKeys: String, CodingKey {
             case url
             case openInBrowser
             case customTabsEnabled
+            case metadata
         }
 
-        /// Platform-specific URL object keys
+        /// Platform-specific URL object keys (prefer ios; also handle legacy {text, replacements} object)
         private enum PlatformUrlKeys: String, CodingKey {
-            case ios
+            case android, ios
+        }
+
+        private enum LegacyUrlObjectKeys: String, CodingKey {
+            case text
         }
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
-            // url can be a plain string or an object with platform keys
+            // url can be: plain string, {"android":…,"ios":…} with string values,
+            // or {"android":{text,replacements}} legacy Ultron object format — use `text`.
             if let urlString = try? container.decode(String.self, forKey: .url) {
-                // Old format: "url": "www.google.com"
                 self.url = urlString
             } else if let platformContainer = try? container.nestedContainer(
                 keyedBy: PlatformUrlKeys.self, forKey: .url
             ) {
-                // New format: "url": {"android": "...", "ios": "..."}
-                self.url = try platformContainer.decode(String.self, forKey: .ios)
+                // Prefer ios; if the value is an object, dig into `text`
+                if let direct = try? platformContainer.decode(String.self, forKey: .ios) {
+                    self.url = direct
+                } else if let legacyContainer = try? platformContainer.nestedContainer(
+                    keyedBy: LegacyUrlObjectKeys.self, forKey: .ios
+                ), let text = try? legacyContainer.decode(String.self, forKey: .text) {
+                    self.url = text
+                } else {
+                    self.url = ""
+                }
             } else {
-                throw DecodingError.typeMismatch(
-                    String.self,
-                    DecodingError.Context(
-                        codingPath: container.codingPath + [CodingKeys.url],
-                        debugDescription: "Expected url to be a String or an object with an 'ios' key"
-                    )
-                )
+                self.url = ""
             }
 
             self.openInBrowser = try container.decodeIfPresent(Bool.self, forKey: .openInBrowser) ?? false
             self.customTabsEnabled = try container.decodeIfPresent(Bool.self, forKey: .customTabsEnabled) ?? true
+
+            // Metadata: coerce any JSON value type to String — never crash on nested objects
+            let rawMeta = (try? container.decodeIfPresent([String: AnyCodable].self, forKey: .metadata)) ?? nil
+            self.metadata = ndMetadataToStringMap(rawMeta)
         }
     }
     
@@ -83,11 +96,24 @@ public enum Action: Codable, Equatable {
         public let key: String
         public let value: AnyCodable
         public let metadata: [String: String]?
-        
+
         public init(key: String, value: AnyCodable, metadata: [String: String]? = nil) {
             self.key = key
             self.value = value
             self.metadata = metadata
+        }
+
+        private enum CodingKeys: String, CodingKey {
+            case key, value, metadata
+        }
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            self.key = try container.decode(String.self, forKey: .key)
+            self.value = try container.decode(AnyCodable.self, forKey: .value)
+            // Metadata: coerce any JSON value type to String — never crash on nested objects
+            let rawMeta = (try? container.decodeIfPresent([String: AnyCodable].self, forKey: .metadata)) ?? nil
+            self.metadata = ndMetadataToStringMap(rawMeta)
         }
     }
     
@@ -181,4 +207,44 @@ public enum Action: Codable, Equatable {
 public enum ExecutionMode: String, Codable {
     case sequential
     case parallel
+}
+
+// MARK: - Metadata parsing helpers (file-private)
+
+/// Converts an `[String: AnyCodable]` metadata map to `[String: String]`, coercing any
+/// JSON value type to its string representation. Objects and arrays become compact JSON strings.
+/// Null/void values are dropped. Never throws or crashes.
+private func ndMetadataToStringMap(_ raw: [String: AnyCodable]?) -> [String: String]? {
+    guard let raw = raw, !raw.isEmpty else { return nil }
+    var result: [String: String] = [:]
+    for (k, v) in raw {
+        if let s = ndAnyCodableToString(v.value) {
+            result[k] = s
+        }
+    }
+    return result.isEmpty ? nil : result
+}
+
+private func ndAnyCodableToString(_ v: Any) -> String? {
+    if v is Void || v is NSNull { return nil }
+    if let s = v as? String { return s }
+    // Bool must be checked before NSNumber — on Darwin, Bool bridges to NSNumber
+    if let b = v as? Bool { return b ? "true" : "false" }
+    if let n = v as? NSNumber { return n.stringValue }
+    // Objects and arrays: serialize to compact JSON string
+    if let data = try? JSONSerialization.data(withJSONObject: ndUnwrapAnyCodable(v)),
+       let s = String(data: data, encoding: .utf8) { return s }
+    return String(describing: v)
+}
+
+/// Recursively unwraps `AnyCodable` wrappers inside arrays/dicts so `JSONSerialization` can
+/// handle them without encountering opaque wrapper types.
+private func ndUnwrapAnyCodable(_ value: Any) -> Any {
+    if let arr = value as? [Any] {
+        return arr.map { ndUnwrapAnyCodable(($0 as? AnyCodable)?.value ?? $0) }
+    }
+    if let dict = value as? [String: Any] {
+        return dict.mapValues { ndUnwrapAnyCodable(($0 as? AnyCodable)?.value ?? $0) }
+    }
+    return value
 }

@@ -12,20 +12,16 @@ import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.longOrNull
 
 /**
- * Pure helper that turns an [Action] (and the originating node id) into a flat map of
- * key/value pairs that the bridge feeds into Core SDK's element-click attribution path.
+ * Pure helper that turns an [Action] into a flat map of key/value pairs that the bridge feeds
+ * into Core SDK's element-click attribution path.
  *
- * Transport contract with [com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge]:
- * - `wzrk_btn_id` carries the clicked node id. The bridge extracts it and passes it as the
- *   `elementID` argument to the new Core SDK method
- *   `pushDisplayUnitElementClickedEventForID(unitId, elementId, additionalProperties)`.
- *   It does NOT forward it inside `additionalProperties` (Core SDK adds it to the event as
- *   `wzrk_element_id` from the dedicated parameter).
- * - All other entries become Core SDK's `additionalProperties` map and are merged into the
- *   event's `evtData` together with the `wzrk_*` enrichment layered on top from the cached
- *   unit JSON. The `wzrk_*` namespace is server-owned (Core SDK adds those keys from the
- *   cached unit, never from client input) — so action fields use the `action_*` prefix and
- *   bundle entries from a `CustomAction.value` JSON object spread as first-class keys.
+ * All action entries (including action.metadata which carries BE-injected wzrk_* attribution
+ * fields) become Core SDK's additionalProperties map.
+ *
+ * The BE injects attribution fields such as `wzrk_element_id`, `wzrk_btn_text`,
+ * `wzrk_activity_type`, and `wzrk_data` into each action's `metadata` field server-side.
+ * The `CustomAction` case already spreads `action.metadata` into the extras map, so these
+ * keys reach Core SDK via `additionalProperties` without a dedicated `elementID` parameter.
  *
  * Per-action `metadata` / `params` / `properties` maps are spread verbatim so the client's
  * own keys land on the event with their original names. A `CustomAction.value` that is a
@@ -33,7 +29,6 @@ import kotlinx.serialization.json.longOrNull
  * single `action_value` key.
  *
  * Output keys produced by this helper:
- * - `wzrk_btn_id` — transport marker, extracted by the bridge as `elementID`.
  * - `action_type` — one of `open_url` / `custom` / `navigate` / `event` / `composite`.
  * - `action_key` — the [Action.CustomAction.key] discriminator (e.g. `"kv"` for the BE's
  *   KV-bundle shape, `"close"` for the close-action shape).
@@ -46,16 +41,10 @@ import kotlinx.serialization.json.longOrNull
  */
 internal object ActionAttributionExtras {
 
-    /**
-     * Transport marker — the bridge extracts this and passes it as Core SDK's `elementID`
-     * argument. NOT forwarded as part of `additionalProperties`.
-     */
-    const val KEY_BUTTON_ID = "wzrk_btn_id"
     private const val KEY_ACTION_TYPE = "action_type"
 
-    fun from(action: Action?, nodeId: String?): Map<String, Any?> {
+    fun from(action: Action?): Map<String, Any?> {
         val out = linkedMapOf<String, Any?>()
-        if (!nodeId.isNullOrEmpty()) out[KEY_BUTTON_ID] = nodeId
         if (action != null) appendAction(action, out)
         return out
     }
@@ -67,6 +56,7 @@ internal object ActionAttributionExtras {
                 out[KEY_ACTION_TYPE] = "open_url"
                 out["action_url"] = action.url
                 out["action_open_in_browser"] = action.openInBrowser
+                action.metadata?.forEach { (k, v) -> out[k] = v }
             }
             is Action.CustomAction -> {
                 out[KEY_ACTION_TYPE] = "custom"

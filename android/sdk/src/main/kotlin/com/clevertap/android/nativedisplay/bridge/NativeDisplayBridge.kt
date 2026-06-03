@@ -133,16 +133,13 @@ class NativeDisplayBridge private constructor() {
         internal const val FETCH_TYPE_NATIVE_DISPLAY = 9
 
         /**
-         * Core SDK method name for the new element-level clicked-attribution event.
-         * Signature: `pushDisplayUnitElementClickedEventForID(String unitID, String elementID,
+         * Core SDK method name for the element-level clicked-attribution event.
+         * Signature: `pushDisplayUnitElementClickedEventForID(String unitID,
          * HashMap<String, Object> additionalProperties)`.
          *
-         * Combines the caller-supplied `additionalProperties` (merged into `evtData` first)
-         * with the unit-level `wzrk_*` enrichment layered on top from the cached unit JSON,
-         * plus the element id added to the event as `wzrk_element_id` from the dedicated
-         * parameter. The `wzrk_*` namespace is server-owned — Core SDK always sources those
-         * keys from the cached unit, so client `additionalProperties` should stay in the
-         * `action_*` (and unprefixed) namespace.
+         * Attribution fields (`wzrk_element_id`, `wzrk_btn_text`, etc.) are injected by
+         * the BE into each action's `metadata` field and flow to Core SDK via
+         * `additionalProperties` — no dedicated `elementID` parameter is needed.
          */
         private const val METHOD_ELEMENT_CLICKED = "pushDisplayUnitElementClickedEventForID"
 
@@ -381,17 +378,16 @@ class NativeDisplayBridge private constructor() {
     /**
      * Push a display unit clicked attribution event to the CleverTap Core SDK.
      *
-     * When [extras] carries a `wzrk_btn_id` transport marker (set by
-     * [ActionAttributionExtras.from] from the clicked node id) AND the host Core SDK exposes
-     * `pushDisplayUnitElementClickedEventForID(String unitID, String elementID,
-     * HashMap<String, Object> additionalProperties)`, that method is invoked reflectively —
-     * the element id is extracted from the extras map and passed as the dedicated argument;
-     * the remaining (sanitized) entries become `additionalProperties`.
+     * When the host Core SDK exposes
+     * `pushDisplayUnitElementClickedEventForID(String unitID, HashMap<String, Object> additionalProperties)`,
+     * that method is invoked reflectively with all sanitized [extras] as `additionalProperties`.
+     * Attribution fields (`wzrk_element_id`, `wzrk_btn_text`, etc.) are injected by the BE into
+     * each action's `metadata` and already flow through [extras] via [ActionAttributionExtras.from].
      *
      * On older Core SDK versions without the new method, the legacy single-arg
      * `pushDisplayUnitClickedEventForID(unitId)` fires instead — the campaign click is still
-     * attributed but per-element context is lost (graceful degradation, no namespace
-     * squatting). Clients receive coarse unit-level attribution until they upgrade Core SDK.
+     * attributed but per-element context is lost (graceful degradation). Clients receive coarse
+     * unit-level attribution until they upgrade Core SDK.
      *
      * @param unitId The ID of the display unit that was clicked
      * @param extras Optional event extras built by [ActionAttributionExtras.from]. Non-scalar /
@@ -415,8 +411,8 @@ class NativeDisplayBridge private constructor() {
      * Prefer the new element-aware method when Core SDK exposes it; fall back to the legacy
      * unit-level method otherwise.
      *
-     * The reflection probe targets the exact 3-arg signature
-     * `pushDisplayUnitElementClickedEventForID(String, String, HashMap)` — if it's absent
+     * The reflection probe targets the 2-arg signature
+     * `pushDisplayUnitElementClickedEventForID(String, HashMap)` — if it's absent
      * (older Core SDK), `getMethod` throws and we degrade gracefully.
      */
     private fun invokeClickedEvent(
@@ -424,19 +420,14 @@ class NativeDisplayBridge private constructor() {
         unitId: String,
         extras: Map<String, Any?>?
     ) {
-        val sanitized = ActionAttributionExtras.sanitize(extras)
-        val elementId = sanitized?.get(ActionAttributionExtras.KEY_BUTTON_ID) as? String
-        if (sanitized != null && elementId != null) {
-            val elementMethod = resolveElementClickedMethod(ct)
-            if (elementMethod != null) {
-                // Strip the transport marker — Core SDK adds `wzrk_element_id` to the event
-                // from the dedicated parameter.
-                val additionalProps = HashMap<String, Any>(sanitized).apply {
-                    remove(ActionAttributionExtras.KEY_BUTTON_ID)
-                }
-                elementMethod.invoke(ct, unitId, elementId, additionalProps)
-                return
-            }
+        val elementMethod = resolveElementClickedMethod(ct)
+        if (elementMethod != null) {
+            // Use the element-aware path whenever available, even when extras is empty.
+            // An empty map is a valid additionalProperties argument — Core SDK still
+            // enriches the event from its own cached unit JSON.
+            val sanitized = ActionAttributionExtras.sanitize(extras) ?: emptyMap()
+            elementMethod.invoke(ct, unitId, HashMap<String, Any>(sanitized))
+            return
         }
         // Fallback: legacy unit-level click attribution (no per-element data).
         ct.pushDisplayUnitClickedEventForID(unitId)
@@ -458,12 +449,14 @@ class NativeDisplayBridge private constructor() {
             ct.javaClass.getMethod(
                 METHOD_ELEMENT_CLICKED,
                 String::class.java,
-                String::class.java,
                 HashMap::class.java
             )
+        }.onFailure { e ->
+            Log.d(TAG, "Element-clicked method not found (${ct.javaClass.name}): ${e.message} — using legacy fallback")
         }.getOrNull()
         elementClickedMethod = resolved
         elementClickedResolved = true
+        Log.d(TAG, if (resolved != null) "Element-clicked method resolved: $METHOD_ELEMENT_CLICKED(String, HashMap)" else "Element-clicked method absent — legacy fallback active")
         return resolved
     }
 
@@ -526,12 +519,7 @@ class NativeDisplayBridge private constructor() {
      * supports `setDisplayUnitCache(...)`.
      */
     internal fun coreSdkCacheProxy(): Any? = cache.asProxy(
-        onServerUpdate = { jsonArray ->
-            val jsonStrings = (0 until jsonArray.length()).mapNotNull { i ->
-                try { jsonArray.optJSONObject(i)?.toString() } catch (_: Throwable) { null }
-            }
-            if (jsonStrings.isNotEmpty()) processDisplayUnits(jsonStrings)
-        },
+        onServerUpdate = { jsonStrings -> processDisplayUnits(jsonStrings) },
         onReset = { cache.clear() }
     )
 
