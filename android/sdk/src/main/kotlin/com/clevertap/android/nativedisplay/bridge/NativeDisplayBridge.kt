@@ -420,13 +420,14 @@ class NativeDisplayBridge private constructor() {
         unitId: String,
         extras: Map<String, Any?>?
     ) {
-        val sanitized = ActionAttributionExtras.sanitize(extras)
-        if (sanitized != null) {
-            val elementMethod = resolveElementClickedMethod(ct)
-            if (elementMethod != null) {
-                elementMethod.invoke(ct, unitId, HashMap<String, Any>(sanitized))
-                return
-            }
+        val elementMethod = resolveElementClickedMethod(ct)
+        if (elementMethod != null) {
+            // Use the element-aware path whenever available, even when extras is empty.
+            // An empty map is a valid additionalProperties argument — Core SDK still
+            // enriches the event from its own cached unit JSON.
+            val sanitized = ActionAttributionExtras.sanitize(extras) ?: emptyMap()
+            elementMethod.invoke(ct, unitId, HashMap<String, Any>(sanitized))
+            return
         }
         // Fallback: legacy unit-level click attribution (no per-element data).
         ct.pushDisplayUnitClickedEventForID(unitId)
@@ -450,9 +451,12 @@ class NativeDisplayBridge private constructor() {
                 String::class.java,
                 HashMap::class.java
             )
+        }.onFailure { e ->
+            Log.d(TAG, "Element-clicked method not found (${ct.javaClass.name}): ${e.message} — using legacy fallback")
         }.getOrNull()
         elementClickedMethod = resolved
         elementClickedResolved = true
+        Log.d(TAG, if (resolved != null) "Element-clicked method resolved: $METHOD_ELEMENT_CLICKED(String, HashMap)" else "Element-clicked method absent — legacy fallback active")
         return resolved
     }
 
@@ -515,12 +519,7 @@ class NativeDisplayBridge private constructor() {
      * supports `setDisplayUnitCache(...)`.
      */
     internal fun coreSdkCacheProxy(): Any? = cache.asProxy(
-        onServerUpdate = { jsonArray ->
-            val jsonStrings = (0 until jsonArray.length()).mapNotNull { i ->
-                try { jsonArray.optJSONObject(i)?.toString() } catch (_: Throwable) { null }
-            }
-            if (jsonStrings.isNotEmpty()) processDisplayUnits(jsonStrings)
-        },
+        onServerUpdate = { jsonStrings -> processDisplayUnits(jsonStrings) },
         onReset = { cache.clear() }
     )
 

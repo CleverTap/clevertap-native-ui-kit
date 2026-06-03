@@ -24,11 +24,6 @@ internal class CleverTapAutoWire: NSObject {
     /// Shared observer instance kept alive while auto-wire is active.
     private static var activeObserver: CleverTapAutoWire?
 
-    /// Strong reference to the cache adapter installed via Core SDK v7.x's
-    /// `setDisplayUnitCache:`. Held to keep the adapter alive for the lifetime
-    /// of the wired CleverTap instance.
-    private static var activeCache: NativeDisplayUnitCacheImpl?
-
     /// Whether we've already adopted the CleverTapDisplayUnitDelegate protocol at runtime.
     private static var protocolAdopted = false
 
@@ -117,18 +112,15 @@ internal class CleverTapAutoWire: NSObject {
     }
 
     /// Reflectively invokes `-[CleverTap setDisplayUnitCache:]` if available.
-    /// Returns `true` on success; the cache is retained in `activeCache`.
+    /// Returns `true` on success.
     private static func attachCache(to cleverTap: NSObject, bridge: NativeDisplayBridge) -> Bool {
         let selector = NSSelectorFromString("setDisplayUnitCache:")
         guard cleverTap.responds(to: selector) else { return false }
         let cache = bridge.coreSdkCacheAdapter
         cleverTap.perform(selector, with: cache)
-        activeCache = cache
+        bridge.isCacheAttached = true
         return true
     }
-
-    /// Whether the bridge is wired through the cache-attachment path.
-    static var isCacheAttached: Bool { activeCache != nil }
 
     /// Bind the bridge to a specific CleverTap instance.
     ///
@@ -210,7 +202,6 @@ internal class CleverTapAutoWire: NSObject {
             NotificationCenter.default.removeObserver(observer)
         }
         activeObserver = nil
-        activeCache = nil
     }
 
     // MARK: - Delegate Callback (Obj-C compatible)

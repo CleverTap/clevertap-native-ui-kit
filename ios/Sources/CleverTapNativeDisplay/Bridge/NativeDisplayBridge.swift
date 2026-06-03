@@ -8,6 +8,7 @@
 // Supports both auto-wire (runtime Core SDK detection) and manual JSON input modes.
 
 import Foundation
+import ObjectiveC
 
 // MARK: - Core SDK Selector Constants
 //
@@ -98,6 +99,10 @@ public class NativeDisplayBridge {
     /// Whether auto-wire has been attempted.
     private var isInitialized = false
 
+    /// Set to `true` by `CleverTapAutoWire.attachCache` when `setDisplayUnitCache:` succeeds.
+    /// Used by `seedIfNeeded` to skip reflective seeding — the cache adapter already serves lookups.
+    internal var isCacheAttached = false
+
     /// Weak reference to the CleverTap Core SDK instance.
     /// Stored as NSObject to avoid a compile-time dependency on the CleverTap SDK.
     ///
@@ -141,17 +146,31 @@ public class NativeDisplayBridge {
     /// payload, replaces cache contents (via `replaceAll`) and notifies
     /// listeners — same pipeline as manual `processDisplayUnits(_:)`.
     ///
-    /// Defers all serialization + parse work to the parse queue so we never
-    /// block whatever thread Core SDK happened to call us from.
+    /// Core SDK passes `NSArray<CleverTapDisplayUnit *>` — not raw dictionaries.
+    /// JSON is extracted from each unit via `performSelector("json")` or
+    /// `performSelector("jsonObject")`, matching what `CleverTapAutoWire.displayUnitsUpdated`
+    /// does on the delegate fallback path.
+    ///
+    /// Defers all work to the parse queue so we never block Core SDK's thread.
     private func handleServerCacheUpdate(_ displayUnits: NSArray) {
-        guard let dicts = displayUnits as? [[String: Any]], !dicts.isEmpty else { return }
         parseQueue.async { [weak self] in
             guard let self else { return }
             #if DEBUG
             dispatchPrecondition(condition: .notOnQueue(.main))
             #endif
-            let jsonStrings: [String] = dicts.compactMap { dict in
-                guard let data = try? JSONSerialization.data(withJSONObject: dict) else { return nil }
+            let selJson = NSSelectorFromString("json")
+            let selJsonObject = NSSelectorFromString("jsonObject")
+            let jsonStrings: [String] = displayUnits.compactMap { element in
+                guard let obj = element as? NSObject else { return nil }
+                let dict: [String: Any]?
+                if obj.responds(to: selJson) {
+                    dict = obj.perform(selJson)?.takeUnretainedValue() as? [String: Any]
+                } else if obj.responds(to: selJsonObject) {
+                    dict = obj.perform(selJsonObject)?.takeUnretainedValue() as? [String: Any]
+                } else {
+                    dict = nil
+                }
+                guard let d = dict, let data = try? JSONSerialization.data(withJSONObject: d) else { return nil }
                 return String(data: data, encoding: .utf8)
             }
             if jsonStrings.isEmpty { return }
@@ -414,9 +433,19 @@ public class NativeDisplayBridge {
         unitId: String,
         extras: [String: Any]?
     ) -> Bool {
-        let sanitized = ActionAttributionExtras.sanitize(extras)
-        if let sanitized, isElementClickedAvailable(on: ct) {
-            ct.perform(elementClickedSelector, with: unitId as NSString, with: sanitized as NSDictionary)
+        if isElementClickedAvailable(on: ct) {
+            // Use the element-aware path whenever available, even when extras is empty.
+            // An empty dict is a valid additionalProperties argument — the Core SDK
+            // still enriches the event from its own cached unit JSON.
+            let sanitized = ActionAttributionExtras.sanitize(extras) ?? [:]
+            // perform(_:with:with:) is unsafe for void-returning ObjC methods in Swift —
+            // its Unmanaged<AnyObject>? return type misinterprets the empty return register.
+            // Resolve the IMP directly and call it with the correct C signature.
+            typealias ElementClickedIMP = @convention(c) (AnyObject, Selector, NSString, NSDictionary) -> Void
+            if let imp = class_getMethodImplementation(type(of: ct), elementClickedSelector) {
+                let fn = unsafeBitCast(imp, to: ElementClickedIMP.self)
+                fn(ct, elementClickedSelector, unitId as NSString, sanitized as NSDictionary)
+            }
             return true
         }
         // Fallback: legacy unit-level click attribution (no per-element data).
@@ -425,7 +454,7 @@ public class NativeDisplayBridge {
         return true
     }
 
-    /// Lazily resolve and cache whether the attached Core SDK responds to the
+    /// Lazily resolve and cache whetherin the attached Core SDK responds to the
     /// element-aware click selector. The cache is invalidated whenever
     /// `cleverTapInstance` is (re)set — see its `didSet`.
     ///
@@ -446,7 +475,7 @@ public class NativeDisplayBridge {
     /// No-op when the cache is attached (the cache adapter already serves
     /// lookups).
     private func seedIfNeeded(unitId: String, instance ct: NSObject) {
-        if CleverTapAutoWire.isCacheAttached { return }
+        if isCacheAttached { return }
         guard let raw = getNativeDisplayForId(unitId)?.rawJson,
               let data = raw.data(using: .utf8),
               let dict = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
