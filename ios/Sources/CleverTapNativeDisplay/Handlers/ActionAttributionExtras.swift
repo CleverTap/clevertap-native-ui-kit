@@ -53,6 +53,9 @@ enum ActionAttributionExtras {
             out[keyActionType] = "open_url"
             out["action_url"] = a.url
             out["action_open_in_browser"] = a.openInBrowser
+            if let metadata = a.metadata {
+                for (k, v) in metadata { out[k] = v }
+            }
         case .custom(let a):
             out[keyActionType] = "custom"
             out["action_key"] = a.key

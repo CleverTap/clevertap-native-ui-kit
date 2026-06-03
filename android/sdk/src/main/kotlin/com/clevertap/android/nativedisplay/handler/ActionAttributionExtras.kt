@@ -56,6 +56,7 @@ internal object ActionAttributionExtras {
                 out[KEY_ACTION_TYPE] = "open_url"
                 out["action_url"] = action.url
                 out["action_open_in_browser"] = action.openInBrowser
+                action.metadata?.forEach { (k, v) -> out[k] = v }
             }
             is Action.CustomAction -> {
                 out[KEY_ACTION_TYPE] = "custom"
