@@ -197,6 +197,25 @@ public struct NativeDisplayContainer: Codable, Equatable {
     }
 }
 
+/// Decodes a binding value from JSON, accepting String, Bool, Int, or Double and converting to String.
+private struct AnyStringValue: Codable {
+    let stringValue: String
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.singleValueContainer()
+        if let s = try? c.decode(String.self)      { stringValue = s }
+        else if let b = try? c.decode(Bool.self)   { stringValue = b ? "true" : "false" }
+        else if let i = try? c.decode(Int.self)    { stringValue = String(i) }
+        else if let d = try? c.decode(Double.self) { stringValue = String(d) }
+        else                                        { stringValue = "" }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.singleValueContainer()
+        try c.encode(stringValue)
+    }
+}
+
 /// Element node that displays actual content (leaf node).
 public struct NativeDisplayElement: Codable, Equatable {
     public let id: String
@@ -266,7 +285,8 @@ public struct NativeDisplayElement: Codable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         elementType = try container.decode(ElementType.self, forKey: .elementType)
-        bindings = try container.decodeIfPresent([String: String].self, forKey: .bindings) ?? [:]
+        let rawBindings = try container.decodeIfPresent([String: AnyStringValue].self, forKey: .bindings) ?? [:]
+        bindings = rawBindings.mapValues { $0.stringValue }
         layout = try container.decodeIfPresent(Layout.self, forKey: .layout)
         style = try container.decodeIfPresent(Style.self, forKey: .style)
         styleClass = try container.decodeIfPresent(String.self, forKey: .styleClass)

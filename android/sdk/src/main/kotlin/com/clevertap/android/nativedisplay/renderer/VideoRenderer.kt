@@ -237,11 +237,7 @@ internal fun VideoPlayerWithMedia3(
     val expandPainter = painterResource(R.drawable.ct_ic_expand)
     val actionPainter = painterResource(R.drawable.ct_ic_action)
 
-    Box(
-        modifier = modifier.clickable {
-            if (showControls) showControlsUI = !showControlsUI
-        }
-    ) {
+    Box(modifier = modifier) {
         when {
             errorMessage != null -> {
                 Box(
@@ -265,7 +261,12 @@ internal fun VideoPlayerWithMedia3(
                             useController = false
                         }
                     },
-                    update = { view -> view.player = if (isFullscreen) null else exoPlayer },
+                    update = { view ->
+                        view.player = if (isFullscreen) null else exoPlayer
+                        view.setOnClickListener {
+                            if (showControls) showControlsUI = !showControlsUI
+                        }
+                    },
                     modifier = Modifier.fillMaxSize()
                 )
             }

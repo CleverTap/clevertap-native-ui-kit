@@ -60,12 +60,18 @@ internal class VariableEvaluator(
             
             // Direct boolean variable
             else -> {
-                // Handle plain string literals "true" / "false" sent directly in bindings
+                // Handle plain string literals "true" / "false" / "1" / "0" sent directly in bindings
                 cleaned.toBooleanStrictOrNull()?.let { return it }
+                cleaned.toDoubleOrNull()?.let { return it != 0.0 }
                 // Fall back to variable lookup for {{variableName}} expressions
                 val value = getVariable(cleaned)
                 when (value) {
-                    is JsonPrimitive -> value.booleanOrNull ?: false
+                    is JsonPrimitive -> value.booleanOrNull
+                        ?: value.doubleOrNull?.let { it != 0.0 }
+                        ?: value.contentOrNull?.let { s ->
+                            s.toBooleanStrictOrNull() ?: s.toDoubleOrNull()?.let { it != 0.0 }
+                        }
+                        ?: false
                     else -> false
                 }
             }

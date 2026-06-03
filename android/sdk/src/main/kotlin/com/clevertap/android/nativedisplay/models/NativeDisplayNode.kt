@@ -2,8 +2,15 @@ package com.clevertap.android.nativedisplay.models
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.StructureKind
+import kotlinx.serialization.descriptors.buildSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.*
 
 /**
  * Base sealed class for all display nodes (containers and elements).
@@ -47,6 +54,29 @@ data class NativeDisplayContainer(
 ) : NativeDisplayNode()
 
 /**
+ * Deserializes a bindings map accepting String, Int, Bool, or Double JSON values.
+ * All values are coerced to String via JsonPrimitive.content.
+ */
+internal object FlexibleStringMapSerializer : KSerializer<Map<String, String>> {
+    @OptIn(kotlinx.serialization.InternalSerializationApi::class)
+    override val descriptor: SerialDescriptor =
+        buildSerialDescriptor("FlexibleStringMap", StructureKind.MAP)
+
+    override fun serialize(encoder: Encoder, value: Map<String, String>) {
+        val jsonEncoder = encoder as JsonEncoder
+        jsonEncoder.encodeJsonElement(buildJsonObject {
+            value.forEach { (k, v) -> put(k, JsonPrimitive(v)) }
+        })
+    }
+
+    override fun deserialize(decoder: Decoder): Map<String, String> {
+        val jsonDecoder = decoder as JsonDecoder
+        return jsonDecoder.decodeJsonElement().jsonObject.entries
+            .associate { (key, el) -> key to (if (el is JsonPrimitive) el.content else "") }
+    }
+}
+
+/**
  * Element node that displays actual content (leaf node).
  */
 @Immutable
@@ -55,6 +85,7 @@ data class NativeDisplayContainer(
 data class NativeDisplayElement(
     override val id: String,
     val elementType: ElementType,
+    @Serializable(with = FlexibleStringMapSerializer::class)
     val bindings: Map<String, String> = emptyMap(),  // Template bindings
     override val layout: Layout? = null,
     override val style: Style? = null,
