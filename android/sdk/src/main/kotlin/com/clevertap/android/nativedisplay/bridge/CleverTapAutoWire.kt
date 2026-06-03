@@ -27,12 +27,6 @@ internal object CleverTapAutoWire {
     private var activeListener: DisplayUnitListener? = null
 
     /**
-     * Strong reference to the cache proxy installed via
-     * `CleverTapAPI.setDisplayUnitCache(...)` on Core SDK v7.x+.
-     */
-    private var activeCache: Any? = null
-
-    /**
      * Auto-wire using the default CleverTapAPI instance.
      *
      * @param context Application context for instance lookup
@@ -81,28 +75,27 @@ internal object CleverTapAutoWire {
     }
 
     /**
-     * Register a composite [DisplayUnitListener] that:
-     * 1. Extracts JSON and forwards to the bridge
-     * 2. Forwards the raw units to the optional client listener
+     * Wire the bridge to a CleverTap instance.
      *
-     * This avoids replacing the client's listener since the Core SDK
-     * only supports a single [DisplayUnitListener].
+     * Prefers the cache-attachment API (Core SDK v7.x+): the proxy handles both
+     * "data out" (attribution lookups via [getDisplayUnitForID]) and "data in"
+     * (server updates via [updateDisplayUnits] → [NativeDisplayBridge.processDisplayUnits]).
+     * When cache attachment succeeds no [DisplayUnitListener] is needed.
      *
-     * The listener is stored in [activeListener] to prevent GC, since the
-     * Core SDK holds it via a WeakReference.
+     * Falls back to a composite [DisplayUnitListener] on older Core SDK versions that
+     * don't expose [setDisplayUnitCache]. The listener is stored in [activeListener] to
+     * prevent GC — the Core SDK holds it via WeakReference.
      */
     private fun wireListener(
         ctApi: CleverTapAPI,
         bridge: NativeDisplayBridge,
         clientListener: DisplayUnitListener? = null
     ): Boolean {
-        // Store the CleverTapAPI reference so the bridge can push attribution events
         bridge.cleverTapApi = ctApi
 
-        // Prefer the cache-attachment API (Core SDK v7.x+). When attached, server-driven
-        // updates flow via cache.updateDisplayUnits → bridge.processDisplayUnits, so a
-        // separate DisplayUnitListener is unnecessary. The client's own
-        // setDisplayUnitListener (if any) is forwarded for backward compatibility.
+        // Prefer cache-attachment (Core SDK v7.x+).
+        // updateDisplayUnits on the proxy extracts JSON from CleverTapDisplayUnit objects
+        // via getJsonObject() reflection — no separate DisplayUnitListener needed.
         if (tryAttachCache(ctApi, bridge)) {
             if (clientListener != null) {
                 ctApi.setDisplayUnitListener(clientListener)
@@ -111,8 +104,7 @@ internal object CleverTapAutoWire {
             return true
         }
 
-        // Fallback for older Core SDK without setDisplayUnitCache: register a composite
-        // DisplayUnitListener and rely on ReflectionSeeder per push event for attribution.
+        // Fallback: older Core SDK without setDisplayUnitCache.
         val listener = object : DisplayUnitListener {
             override fun onDisplayUnitsLoaded(units: ArrayList<CleverTapDisplayUnit>?) {
                 if (clientListener != null) {
@@ -138,19 +130,16 @@ internal object CleverTapAutoWire {
             }
         }
 
-        // Keep a strong reference so the Core SDK's WeakReference doesn't lose it
         activeListener = listener
         ctApi.setDisplayUnitListener(listener)
 
-        Log.d(TAG, "Wired to CleverTap via DisplayUnitListener fallback${if (clientListener != null) " (with client listener forwarding)" else ""}")
+        Log.d(TAG, "Wired to CleverTap via DisplayUnitListener fallback${if (clientListener != null) " (client listener forwarded)" else ""}")
         return true
     }
 
     /**
      * Reflectively invokes `CleverTapAPI.setDisplayUnitCache(...)`, returning
-     * `true` only when the method exists and the call succeeds. The cache
-     * proxy is retained in [activeCache] so its identity stays stable for
-     * comparison/detach.
+     * `true` only when the method exists and the call succeeds.
      */
     private fun tryAttachCache(ctApi: CleverTapAPI, bridge: NativeDisplayBridge): Boolean {
         val ifaceClass = try {
@@ -166,7 +155,6 @@ internal object CleverTapAutoWire {
         val proxy = bridge.coreSdkCacheProxy() ?: return false
         return try {
             setter.invoke(ctApi, proxy)
-            activeCache = proxy
             true
         } catch (t: Throwable) {
             Log.w(TAG, "setDisplayUnitCache invocation failed: ${t.message}")

@@ -198,8 +198,7 @@ internal fun RenderNode(
                     onSystemClick = if (isButton) {
                         {
                             val extras = ActionAttributionExtras.from(
-                                action = node.actions?.get(ActionTriggers.ON_CLICK),
-                                nodeId = node.id
+                                action = node.actions?.get(ActionTriggers.ON_CLICK)
                             )
                             actionHandler.fireSystemEvent("Notification Clicked", extras)
                         }

@@ -1101,7 +1101,7 @@ struct RenderElement: View {
             // Fire system event for button click, carrying the click action's KVs
             // so attribution events surface the URL / custom KVs / metadata.
             let onClickAction = element.actions?[ActionTriggers.onClick]
-            let extras = ActionAttributionExtras.from(action: onClickAction, nodeId: element.id)
+            let extras = ActionAttributionExtras.from(action: onClickAction)
             actionHandler?.fireSystemEvent(
                 eventName: "Notification Clicked",
                 properties: extras
