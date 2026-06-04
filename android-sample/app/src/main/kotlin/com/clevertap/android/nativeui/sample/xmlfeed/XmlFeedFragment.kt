@@ -54,6 +54,7 @@ class XmlFeedFragment : Fragment() {
 
     private val bridgeListener = object : NativeDisplayBridgeListener {
         override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
+            viewModel.setUnits(units)
             log("Received ${units.size} unit(s): ${units.joinToString { it.unitId }}")
             renderUnits(units)
         }
@@ -118,6 +119,17 @@ class XmlFeedFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.logEntries.collect { entries ->
                     updateLogView(entries)
+                }
+            }
+        }
+
+        // Re-render units on rotation: ViewModel retains them across configuration changes.
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.receivedUnits.collect { units ->
+                    if (units.isNotEmpty()) {
+                        renderUnits(units)
+                    }
                 }
             }
         }

@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridgeListener
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
 import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
@@ -41,7 +41,9 @@ import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
  * 5. Pull API: getAllNativeDisplays() and getNativeDisplayForId()
  */
 @Composable
-fun BridgeIntegrationScreen() {
+fun BridgeIntegrationScreen(
+    viewModel: BridgeIntegrationViewModel = viewModel()
+) {
     val context = LocalContext.current
 
     // --- Load mock JSON strings from assets ---
@@ -54,19 +56,18 @@ fun BridgeIntegrationScreen() {
         context.assets.open("bridge_mock_notification.json").bufferedReader().readText()
     }
 
-    // --- Bridge state ---
-    // In a real app, you would create the bridge once in Application.onCreate() or Activity.
-    // Here we use DisposableEffect to manage the bridge lifecycle within this demo.
-    val bridge = remember { NativeDisplayBridge.create() }
-    var receivedUnits by remember { mutableStateOf<List<NativeDisplayUnit>>(emptyList()) }
-    var logMessages by remember { mutableStateOf(listOf<String>()) }
-    var listenerRegistered by remember { mutableStateOf(false) }
-    var dataProcessed by remember { mutableStateOf(false) }
+    // --- Bridge state (survives rotation via ViewModel) ---
+    // The bridge is held in the ViewModel so it is not recreated on rotation.
+    val bridge = viewModel.bridge
+    val receivedUnits by viewModel.receivedUnits.collectAsState()
+    val logMessages by viewModel.logMessages.collectAsState()
+    val listenerRegistered by viewModel.listenerRegistered.collectAsState()
+    val dataProcessed by viewModel.dataProcessed.collectAsState()
 
     // Helper to append log messages
     fun log(message: String) {
         Log.d("BridgeDemo", message)
-        logMessages = logMessages + message
+        viewModel.log(message)
     }
 
     // --- Step 1 & 2: Register listener ---
@@ -80,20 +81,19 @@ fun BridgeIntegrationScreen() {
                 //   - unitId: the wzrk_id from the payload
                 //   - config: a ResolvedConfig ready for NativeDisplayView
                 //   - customExtras: key-value pairs from custom_kv
-                receivedUnits = units
-                log("onNativeDisplaysLoaded: received ${units.size} unit(s)")
+                viewModel.onUnitsLoaded(units)
+                viewModel.log("onNativeDisplaysLoaded: received ${units.size} unit(s)")
                 for (unit in units) {
-                    log("  - ${unit.unitId} | extras: ${unit.customExtras}")
+                    viewModel.log("  - ${unit.unitId} | extras: ${unit.customExtras}")
                 }
             }
         }
     }
 
-    // Clean up bridge on dispose
+    // Clean up listener on dispose (bridge itself is cleaned up in ViewModel.onCleared)
     DisposableEffect(bridge) {
         onDispose {
             bridge.removeListener(listener)
-            bridge.clear()
         }
     }
 
@@ -132,7 +132,7 @@ bridge.addListener(myListener)""",
             Button(
                 onClick = {
                     bridge.addListener(listener)
-                    listenerRegistered = true
+                    viewModel.markListenerRegistered()
                     log("Listener registered on bridge")
                 },
                 enabled = !listenerRegistered
@@ -159,7 +159,7 @@ bridge.processDisplayUnits(jsonStrings)""",
                     // Simulate the Core SDK delivering display units.
                     // processDisplayUnits() replaces the entire cache and notifies listeners.
                     bridge.processDisplayUnits(listOf(mockProductJson, mockNotificationJson))
-                    dataProcessed = true
+                    viewModel.markDataProcessed()
                 },
                 enabled = listenerRegistered && !dataProcessed
             ) {
