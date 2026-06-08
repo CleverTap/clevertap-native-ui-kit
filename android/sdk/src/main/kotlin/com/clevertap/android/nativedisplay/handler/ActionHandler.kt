@@ -301,28 +301,30 @@ internal class ActionHandler(
 
     /**
      * Default implementation for opening URLs.
-     * Tries Chrome Custom Tabs first, falls back to browser.
+     * Custom schemes (e.g. myapp://) are handed directly to the OS.
+     * http/https use Chrome Custom Tabs or external browser per action config.
      */
     private fun executeDefaultOpenUrl(action: Action.OpenUrl) {
         try {
             val uri = action.url.toUri()
 
-            // Validate URL scheme (prevent javascript: etc.)
             if (!isValidUrlScheme(uri.scheme)) {
-                Log.w(TAG, "Invalid URL scheme: ${uri.scheme}")
+                Log.w(TAG, "Blocked URL scheme: ${uri.scheme}")
                 return
             }
 
+            val isWebScheme = uri.scheme?.lowercase() in setOf("http", "https")
             when {
-                // Open in external browser
+                !isWebScheme -> {
+                    // Custom schemes (myapp://, tel:, mailto:, etc.) — let OS resolve the handler
+                    openInExternalBrowser(action.url)
+                }
                 action.openInBrowser -> {
                     openInExternalBrowser(action.url)
                 }
-                // Open in Chrome Custom Tab
                 action.customTabsEnabled -> {
                     openInCustomTab(action.url)
                 }
-                // Fallback to external browser
                 else -> {
                     openInExternalBrowser(action.url)
                 }
@@ -358,14 +360,10 @@ internal class ActionHandler(
         openInExternalBrowser(url)
     }
 
-    /**
-     * Validate URL scheme for security.
-     * Only allow http, https, and other safe schemes.
-     */
     private fun isValidUrlScheme(scheme: String?): Boolean {
         return when (scheme?.lowercase()) {
-            "http", "https", "tel", "mailto" -> true
-            else -> false
+            null, "javascript", "data", "file" -> false
+            else -> true
         }
     }
 
