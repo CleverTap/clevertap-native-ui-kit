@@ -3,8 +3,10 @@
 </p>
 
 # CleverTap Native Display SDK
+![API 23+](https://img.shields.io/badge/API-23%2B-blue.svg)
+![Kotlin 1.9+](https://img.shields.io/badge/Kotlin-1.9%2B-blue.svg)
 ![iOS 15.0+](https://img.shields.io/badge/iOS-15.0%2B-blue.svg)
-[![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-compatible-brightgreen.svg)](https://swift.org/package-manager/)
+![Swift 5.9+](https://img.shields.io/badge/Swift-5.9%2B-blue.svg)
 
 Render server-driven native UI campaigns delivered by CleverTap — using Jetpack Compose on Android and SwiftUI on iOS. No WebViews.
 The SDK receives a JSON campaign config from the CleverTap backend and renders it as fully native UI. Layouts, styles, themes, and dynamic variables are all controlled server-side without app updates.
