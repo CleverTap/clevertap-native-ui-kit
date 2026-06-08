@@ -1,565 +1,625 @@
-# CleverTap Native Display Kit
+<p align="center">
+  <img src="https://github.com/CleverTap/clevertap-ios-sdk/blob/master/docs/images/clevertap-logo.png" height="220"/>
+</p>
 
-**Server-driven native UI framework for mobile in-app messaging**
+# CleverTap Native Display SDK
+![iOS 15.0+](https://img.shields.io/badge/iOS-15.0%2B-blue.svg)
+[![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-compatible-brightgreen.svg)](https://swift.org/package-manager/)
 
-Replace HTML/WebView-based in-app messages with true native UI components powered by JSON schemas.
-
----
-
-## 🎯 Project Vision
-
-### Current Problem
-- In-app messages use HTML + WebView
-- Poor performance (WebView overhead)
-- Limited native features
-- Inconsistent UX
-- Hard to maintain
-
-### Solution: Native Display Kit
-- **Server-driven**: JSON schema → Native UI
-- **True native**: Jetpack Compose (Android) + SwiftUI (iOS)
-- **Type-safe**: Compile-time validation
-- **Flexible**: Easy to extend
-- **Performant**: Native rendering
+Render server-driven native UI campaigns delivered by CleverTap — using Jetpack Compose on Android and SwiftUI on iOS. No WebViews.
+The SDK receives a JSON campaign config from the CleverTap backend and renders it as fully native UI. Layouts, styles, themes, and dynamic variables are all controlled server-side without app updates.
 
 ---
 
-## 📋 Architecture Overview
+## Requirements
 
-### High-Level Flow
-
-```
-Backend (Server)
-    ↓ (sends JSON)
-Mobile SDK
-    ↓ (parses JSON)
-Native Display Kit
-    ↓ (renders)
-Native UI (Compose/SwiftUI)
-```
-
-### Components
-
-1. **Schema**: JSON structure defining UI
-2. **Parser**: JSON → Data models
-3. **Renderer**: Data models → Native UI
-4. **Style System**: Theme + Style classes
-5. **Layout Engine**: Positioning & sizing
+| Platform | Minimum |
+|----------|---------|
+| Android | API 23+, Kotlin 1.9+, Jetpack Compose |
+| iOS | iOS 15+, Swift 5.9+, SwiftUI |
 
 ---
 
-## 🏗️ Project Structure
+## Installation
+
+### Android
+
+Add the SDK to your module's `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    implementation("com.clevertap.android:native-display-sdk:<version>")
+
+    // Required only if your campaigns include video elements
+    implementation("androidx.media3:media3-exoplayer:<version>")
+}
+```
+
+### iOS
+
+Add the package in Xcode via **File → Add Package Dependencies**:
 
 ```
-clevertap-native-ui-kit/
-├── android/                    # Android implementation
-│   ├── library/               # Main library
-│   │   └── src/main/kotlin/
-│   │       └── com/clevertap/android/nativedisplay/
-│   │           ├── models/    # Data models
-│   │           ├── parser/    # JSON parsing
-│   │           ├── styling/   # Style resolution
-│   │           ├── layout/    # Layout calculations
-│   │           └── ui/        # Compose rendering
-│   └── sample/                # Demo app
-│
-├── ios/                       # iOS implementation
-│   ├── CleverTapNativeDisplay/     # Main library
-│   │   ├── Models/           # Data models
-│   │   ├── Parser/           # JSON parsing
-│   │   ├── Styling/          # Style resolution
-│   │   ├── Layout/           # Layout calculations
-│   │   └── UI/               # SwiftUI rendering
-│   └── Sample/               # Demo app
-│
-├── schema/                    # JSON schema definitions
-│   ├── examples/             # Example JSON files
-│   └── schema.json           # JSON Schema spec
-│
-├── docs/                      # Documentation
-│   ├── architecture.md
-│   ├── json-schema.md
-│   └── style-guide.md
-│
-└── scripts/                   # Build & utility scripts
+https://github.com/CleverTap/clevertap-native-display-ios
+```
+
+Or add it to your `Package.swift`:
+
+```swift
+.package(url: "https://github.com/CleverTap/clevertap-native-display-ios", from: "<version>")
 ```
 
 ---
 
-## 🎨 JSON Schema Design
+## Quick Start
 
-### Core Concepts
+This section walks you through the full setup from scratch — initialization, listening for campaigns, and rendering them in your UI.
 
-1. **Elements**: UI components (text, image, button, etc.)
-2. **Containers**: Layout managers (vertical, horizontal, box)
-3. **Styles**: Visual properties (colors, fonts, etc.)
-4. **Theme**: Default styles + variables
+### Android — complete example
 
-### Naming Convention: NativeDisplay*
+**Step 1: Initialize in your `Application` class**
 
-All components use the `NativeDisplay` prefix:
-- `NativeDisplayConfig` - Root configuration
-- `NativeDisplayElement` - UI element
-- `NativeDisplayContainer` - Layout container
-- `NativeDisplayStyle` - Style properties
-- `NativeDisplayTheme` - Theme definition
+```kotlin
+// MyApplication.kt
+class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
 
-### Example JSON
-
-```json
-{
-  "version": "1.0",
-  "theme": {
-    "id": "default",
-    "colors": {
-      "primary": "#007AFF",
-      "text": "#000000"
+        // If you use the CleverTap Core SDK, call initialize() to auto-wire
+        // campaign delivery from the backend.
+        NativeDisplayBridge.initialize(this)
     }
-  },
-  "container": {
-    "type": "vertical",
-    "layout": {
-      "width": { "value": 100, "unit": "percent" },
-      "height": { "value": 400, "unit": "dp" },
-      "padding": { "all": 16, "unit": "dp" }
-    }
-  },
-  "elements": [
-    {
-      "id": "title",
-      "type": "text",
-      "content": {
-        "text": "Welcome!"
-      },
-      "style": {
-        "fontSize": 24,
-        "fontWeight": "bold",
-        "textColor": "#000000"
-      }
-    },
-    {
-      "id": "cta-button",
-      "type": "button",
-      "content": {
-        "text": "Get Started"
-      },
-      "styleClass": "button-primary",
-      "actions": {
-        "onClick": {
-          "type": "deeplink",
-          "url": "app://onboarding"
+}
+```
+
+Don't forget to register it in `AndroidManifest.xml`:
+
+```xml
+<application
+    android:name=".MyApplication"
+    ... >
+```
+
+**Step 2: Listen for campaigns and store them in state**
+
+```kotlin
+// HomeViewModel.kt
+class HomeViewModel : ViewModel() {
+
+    private val _campaigns = MutableStateFlow<List<NativeDisplayUnit>>(emptyList())
+    val campaigns: StateFlow<List<NativeDisplayUnit>> = _campaigns.asStateFlow()
+
+    private val bridgeListener = object : NativeDisplayBridgeListener {
+        override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
+            // Called whenever the backend delivers new campaigns.
+            // Update your state so the UI recomposes automatically.
+            _campaigns.value = units
         }
-      }
     }
-  ]
+
+    init {
+        NativeDisplayBridge.getInstance().addListener(bridgeListener)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        NativeDisplayBridge.getInstance().removeListener(bridgeListener)
+    }
+}
+```
+
+**Step 3: Render campaigns in your Composable**
+
+```kotlin
+// HomeScreen.kt
+@Composable
+fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
+    val campaigns by viewModel.campaigns.collectAsState()
+
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+
+        Text("Featured Offers", style = MaterialTheme.typography.headlineSmall)
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Render the first available campaign, if any
+        val campaign = campaigns.firstOrNull()
+        if (campaign != null) {
+            NativeDisplayView(
+                unit = campaign,
+                modifier = Modifier.fillMaxWidth(),
+                actionListener = rememberActionListener()
+            )
+        }
+    }
+}
+
+@Composable
+fun rememberActionListener(): NativeDisplayActionListener {
+    return remember {
+        object : NativeDisplayActionListener {
+            override fun onOpenUrl(url: String, openInBrowser: Boolean): Boolean {
+                // Return false to let the SDK handle it with the default browser.
+                // Return true if your app already handled it (e.g. deep link routing).
+                return false
+            }
+
+            override fun onTrackEvent(eventName: String, properties: Map<String, Any>?) {
+                // Forward to your own analytics if needed.
+                // CleverTap attribution events are tracked automatically.
+            }
+
+            override fun onCustomAction(key: String, value: Any?, metadata: Map<String, String>?) {
+                // Handle any custom actions you defined in the campaign JSON.
+            }
+        }
+    }
 }
 ```
 
 ---
 
-## 🚀 Supported Components
+### iOS — complete example
 
-### Containers (3 types)
+**Step 1: Initialize in your `AppDelegate` or `@main` entry point**
 
-| Type | Description | Use Case |
-|------|-------------|----------|
-| `vertical` | Stack elements vertically | Lists, forms |
-| `horizontal` | Stack elements horizontally | Rows, toolbars |
-| `box` | Absolute positioning | Overlays, cards |
+```swift
+// AppDelegate.swift
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
-### Elements (5 types initially)
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
 
-| Type | Description | Properties |
-|------|-------------|------------|
-| `text` | Text display | text, fontSize, color |
-| `image` | Image display | url, aspectRatio |
-| `button` | Clickable button | text, style, onClick |
-| `spacer` | Empty space | height/width |
-| `video` | Video player | url, autoPlay |
+        // Initialize the SDK. If you use CleverTap Core SDK, pass the instance
+        // to auto-wire campaign delivery from the backend.
+        NativeDisplayBridge.shared.initialize()
+        // NativeDisplayBridge.shared.bind(CleverTap.sharedInstance())  ← with Core SDK
+
+        return true
+    }
+}
+```
+
+Using SwiftUI lifecycle instead? Initialize in your `App` struct:
+
+```swift
+// MyApp.swift
+@main
+struct MyApp: App {
+    init() {
+        NativeDisplayBridge.shared.initialize()
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}
+```
+
+**Step 2: Listen for campaigns and store them in state**
+
+```swift
+// HomeViewModel.swift
+import Combine
+
+class HomeViewModel: ObservableObject {
+
+    @Published var campaigns: [NativeDisplayUnit] = []
+
+    private var listener: NativeDisplayBridgeListener?
+
+    init() {
+        // Keep a strong reference to the listener or it will be deallocated.
+        listener = BridgeListener { [weak self] units in
+            DispatchQueue.main.async {
+                self?.campaigns = units
+            }
+        }
+        NativeDisplayBridge.shared.addListener(listener!)
+    }
+
+    deinit {
+        if let listener { NativeDisplayBridge.shared.removeListener(listener) }
+    }
+}
+
+// A small helper to avoid subclassing in every view model.
+private class BridgeListener: NativeDisplayBridgeListener {
+    let handler: ([NativeDisplayUnit]) -> Void
+    init(_ handler: @escaping ([NativeDisplayUnit]) -> Void) { self.handler = handler }
+
+    func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
+        handler(units)
+    }
+}
+```
+
+**Step 3: Render campaigns in your SwiftUI view**
+
+```swift
+// HomeView.swift
+struct HomeView: View {
+
+    @StateObject private var viewModel = HomeViewModel()
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+
+                Text("Featured Offers")
+                    .font(.headline)
+
+                // Render the first available campaign, if any
+                if let campaign = viewModel.campaigns.first {
+                    NativeDisplayView(
+                        unit: campaign,
+                        actionListener: MyActionListener()
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+            }
+            .padding(16)
+        }
+    }
+}
+
+class MyActionListener: NativeDisplayActionListener {
+
+    func onOpenUrl(url: String, openInBrowser: Bool) -> Bool {
+        // Return false to let the SDK handle it with Safari.
+        // Return true if your app already handled it (e.g. deep link routing).
+        return false
+    }
+
+    func onTrackEvent(eventName: String, properties: [String: Any]?) {
+        // Forward to your own analytics if needed.
+    }
+
+    func onCustomAction(key: String, value: Any?, metadata: [String: String]?) {
+        // Handle any custom actions you defined in the campaign JSON.
+    }
+}
+```
 
 ---
 
-## 🎨 Style System
+## Setup (detailed)
 
-### Priority Hierarchy
+### Android
 
-```
-1. Inline Style    (highest - element.style)
-2. Style Class     (middle - element.styleClass)
-3. Theme Default   (lowest - theme.defaultStyle)
-```
+Initialize the bridge in your `Application.onCreate()`. If you use the CleverTap Core SDK, call `initialize` to auto-wire display unit delivery:
 
-### Style Properties
-
-```json
-{
-  "style": {
-    "textColor": "#000000",
-    "fontSize": 16,
-    "fontWeight": "bold",
-    "backgroundColor": "#FFFFFF",
-    "borderRadius": 8,
-    "borderWidth": 1,
-    "borderColor": "#CCCCCC",
-    "shadowColor": "#00000033",
-    "shadowRadius": 4,
-    "padding": { "all": 16 },
-    "margin": { "all": 8 }
-  }
+```kotlin
+class MyApp : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        NativeDisplayBridge.initialize(this).addListener(myBridgeListener)
+    }
 }
 ```
 
-### Theme Support
+Without the Core SDK, create a standalone bridge and feed JSON manually:
 
-```json
-{
-  "theme": {
-    "colors": {
-      "primary": "#007AFF",
-      "secondary": "#5AC8FA",
-      "danger": "#FF3B30"
-    },
-    "spacing": {
-      "small": 8,
-      "medium": 16,
-      "large": 24
-    }
-  }
+```kotlin
+val bridge = NativeDisplayBridge.create()
+bridge.addListener(myBridgeListener)
+```
+
+### iOS
+
+Initialize the bridge in your `AppDelegate` or app entry point:
+
+```swift
+NativeDisplayBridge.shared.initialize()
+NativeDisplayBridge.shared.addListener(myBridgeListener)
+```
+
+To auto-wire with the CleverTap Core SDK:
+
+```swift
+NativeDisplayBridge.shared.bind(cleverTap)
+```
+
+---
+
+## Rendering a Campaign
+
+### Android
+
+Use `NativeDisplayView` inside any Composable. Pass the `NativeDisplayUnit` received from the bridge for full attribution tracking (`Notification Viewed` / `Notification Clicked`):
+
+```kotlin
+@Composable
+fun MyCampaignSlot(unit: NativeDisplayUnit) {
+    NativeDisplayView(
+        unit = unit,
+        modifier = Modifier.fillMaxWidth(),
+        actionListener = myActionListener
+    )
 }
 ```
 
-### Style Classes (Reusable)
+### iOS
 
-```json
-{
-  "styleClasses": [
-    {
-      "name": "button-primary",
-      "style": {
-        "backgroundColor": "#007AFF",
-        "textColor": "#FFFFFF",
-        "fontSize": 16,
-        "fontWeight": "bold",
-        "borderRadius": 8
-      }
+Use `NativeDisplayView` inside any SwiftUI view:
+
+```swift
+struct MyCampaignSlot: View {
+    let unit: NativeDisplayUnit
+
+    var body: some View {
+        NativeDisplayView(
+            unit: unit,
+            actionListener: myActionListener
+        )
     }
-  ]
 }
 ```
 
 ---
 
-## 📐 Layout System
+## Handling Actions
 
-### Size Units
+Implement `NativeDisplayActionListener` to respond to user interactions and track events.
 
-| Unit | Description | Example | Platform |
-|------|-------------|---------|----------|
-| `dp` | Density-independent | 200dp | Android dp / iOS pt |
-| `percent` | Percentage of parent | 80% | Both |
-| `px` | Absolute pixels | 100px | Both |
-| `wrap_content` | Fit content | - | Both |
-| `match_parent` | Fill parent | - | Both |
+### Android
 
-### Position Types
+```kotlin
+val actionListener = object : NativeDisplayActionListener {
+    override fun onOpenUrl(url: String, openInBrowser: Boolean): Boolean {
+        // Return true if your app handled it, false to use default behaviour
+        return false
+    }
+
+    override fun onTrackEvent(eventName: String, properties: Map<String, Any>?) {
+        // Forward to your analytics layer
+    }
+
+    override fun onCustomAction(key: String, value: Any?, metadata: Map<String, String>?) {
+        // Handle custom actions defined in the campaign JSON
+    }
+}
+```
+
+### iOS
+
+```swift
+class MyActionListener: NativeDisplayActionListener {
+    func onOpenUrl(url: String, openInBrowser: Bool) -> Bool {
+        // Return true if your app handled it, false to use default behaviour
+        return false
+    }
+
+    func onTrackEvent(eventName: String, properties: [String: Any]?) {
+        // Forward to your analytics layer
+    }
+
+    func onCustomAction(key: String, value: Any?, metadata: [String: String]?) {
+        // Handle custom actions defined in the campaign JSON
+    }
+}
+```
+
+---
+
+## Listening for Campaigns
+
+Implement `NativeDisplayBridgeListener` to be notified when campaigns arrive.
+
+### Android
+
+```kotlin
+val bridgeListener = object : NativeDisplayBridgeListener {
+    override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
+        // Units are ready to render — update your UI
+    }
+}
+```
+
+### iOS
+
+```swift
+class MyBridgeListener: NativeDisplayBridgeListener {
+    func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
+        // Units are ready to render — update your UI
+    }
+}
+```
+
+---
+
+## Supported Elements
+
+Campaigns are composed of **containers** (which hold children) and **elements** (leaf nodes):
+
+**Containers**
 
 | Type | Description |
 |------|-------------|
-| `relative` | Relative to previous element |
-| `absolute` | Absolute positioning |
-| `center` | Centered in parent |
+| `VERTICAL` | Stack children vertically |
+| `HORIZONTAL` | Stack children horizontally |
+| `BOX` | Overlay / absolute positioning |
+| `GALLERY` | Scrollable carousel (snapping or free-flow) |
 
-### Gravity/Alignment
+**Elements**
 
-```
-TOP_START    TOP_CENTER    TOP_END
-CENTER_START   CENTER     CENTER_END
-BOTTOM_START BOTTOM_CENTER BOTTOM_END
-```
-
----
-
-## 🔧 Implementation Phases
-
-### Phase 1: Foundation (Weeks 1-2) ✅
-- [x] Project setup (Android + iOS)
-- [x] Basic data models
-- [ ] JSON schema definition
-- [ ] Documentation structure
-
-### Phase 2: Core Features (Weeks 3-4)
-- [ ] JSON parser
-- [ ] Style resolution system
-- [ ] Layout calculator
-- [ ] Basic container rendering
-
-### Phase 3: Elements (Weeks 5-6)
-- [ ] Text element
-- [ ] Image element
-- [ ] Button element
-- [ ] Spacer element
-- [ ] Video element
-
-### Phase 4: Advanced Features (Weeks 7-8)
-- [ ] Action handling (onClick, deeplinks)
-- [ ] Animation support
-- [ ] Form validation
-- [ ] Accessibility
-
-### Phase 5: Polish (Weeks 9-10)
-- [ ] Performance optimization
-- [ ] Error handling
-- [ ] Testing suite
-- [ ] Documentation completion
+| Type | Description |
+|------|-------------|
+| `TEXT` | Styled text, supports `{{variable}}` templates |
+| `IMAGE` | Remote image or GIF |
+| `BUTTON` | Tappable button with actions |
+| `VIDEO` | Inline video with optional controls and autoplay |
+| `HTML` | WebView-rendered rich content |
+| `SPACER` | Fixed or flexible spacing |
+| `DIVIDER` | Visual separator |
 
 ---
 
-## 🎯 Development Approach
+## Campaign JSON
 
-### Separate Native Codebases ✅
+Campaigns are JSON configs served by CleverTap. You create them in the CleverTap dashboard — you do not write these configs manually in your app. The examples below are for reference so you understand what the SDK receives.
 
-**Decision**: Build Android and iOS separately (not KMP)
+### Minimal example — text + button
 
-**Reasoning**:
-- ✅ Full access to platform features
-- ✅ Best performance (no abstraction layer)
-- ✅ Native idioms (Compose Material 3, SwiftUI)
-- ✅ Easier debugging
-- ✅ Platform-specific optimizations
-- ✅ Team expertise (Android devs know Kotlin, iOS devs know Swift)
-
-**Trade-off**:
-- ❌ Some code duplication (models, parsing logic)
-- ✅ But: UI rendering is platform-specific anyway
-- ✅ And: Each platform can move at its own pace
-
-### Shared Concepts, Native Implementation
-
-Both platforms implement the same:
-1. **JSON schema** (identical)
-2. **Data models** (same structure, different language)
-3. **Style resolution** (same logic, native code)
-4. **Layout calculations** (same math, native code)
-
-But render using:
-- **Android**: Jetpack Compose + Material 3
-- **iOS**: SwiftUI + SF Symbols
-
----
-
-## 📦 Deliverables
-
-### Android Library
-```kotlin
-// Usage
-val renderer = NativeDisplayRenderer(context)
-val result = renderer.render(jsonConfig)
-
-// Integration
-class MyActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        setContent {
-            NativeDisplayView(config = jsonConfig)
+```json
+{
+  "theme": {
+    "textColor": "#111111",
+    "fontSize": 16
+  },
+  "variables": {
+    "userName": "Alex"
+  },
+  "root": {
+    "type": "VERTICAL",
+    "layout": { "width": "match_parent", "padding": 16 },
+    "children": [
+      {
+        "type": "TEXT",
+        "bindings": { "text": "Welcome back, {{userName}}!" },
+        "style": { "fontSize": 22, "fontWeight": "bold" }
+      },
+      {
+        "type": "BUTTON",
+        "bindings": { "text": "Shop Now" },
+        "actions": {
+          "onClick": { "type": "open_url", "url": "https://example.com" }
         }
-    }
+      }
+    ]
+  }
 }
 ```
 
-### iOS Library
-```swift
-// Usage
-let renderer = NativeDisplayRenderer()
-let view = renderer.render(jsonConfig: jsonConfig)
+### Image banner with overlay text
 
-// Integration
-struct ContentView: View {
-    var body: some View {
-        NativeDisplayView(config: jsonConfig)
-    }
+```json
+{
+  "root": {
+    "type": "BOX",
+    "layout": { "width": "match_parent", "height": { "value": 200, "unit": "dp" } },
+    "children": [
+      {
+        "type": "IMAGE",
+        "bindings": { "url": "https://example.com/banner.jpg" },
+        "layout": { "width": "match_parent", "height": "match_parent" }
+      },
+      {
+        "type": "TEXT",
+        "bindings": { "text": "Limited Time Offer" },
+        "layout": { "width": "match_parent" },
+        "style": {
+          "textColor": "#FFFFFF",
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "backgroundColor": "#00000066"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Horizontal card row
+
+```json
+{
+  "root": {
+    "type": "HORIZONTAL",
+    "layout": {
+      "width": "match_parent",
+      "padding": 12,
+      "arrangement": { "strategy": "spaced", "spacing": 8 }
+    },
+    "children": [
+      {
+        "type": "IMAGE",
+        "bindings": { "url": "https://example.com/product.jpg" },
+        "layout": { "width": { "value": 80, "unit": "dp" }, "height": { "value": 80, "unit": "dp" } },
+        "style": { "borderRadius": 8 }
+      },
+      {
+        "type": "VERTICAL",
+        "layout": { "width": "match_parent" },
+        "children": [
+          {
+            "type": "TEXT",
+            "bindings": { "text": "Premium Sneakers" },
+            "style": { "fontWeight": "bold", "fontSize": 16 }
+          },
+          {
+            "type": "TEXT",
+            "bindings": { "text": "$79.99" },
+            "style": { "textColor": "#E53935", "fontSize": 14 }
+          },
+          {
+            "type": "BUTTON",
+            "bindings": { "text": "Add to Cart" },
+            "actions": {
+              "onClick": { "type": "custom", "key": "add_to_cart", "value": "sku_123" }
+            }
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
 ---
 
-## 🔐 Security & Validation
-
-### JSON Validation
-- Schema validation on parse
-- Type checking
-- Size limits
-- URL whitelisting
-
-### Security
-- Sanitize all user input
-- Validate URLs before navigation
-- Sandbox rendering
-- No code execution
-
----
-
-## 🎨 Design Principles
-
-1. **Server-Driven**: Backend controls UI
-2. **Type-Safe**: Compile-time validation
-3. **Native-First**: Platform best practices
-4. **Performant**: No WebView overhead
-5. **Extensible**: Easy to add components
-6. **Testable**: Unit + UI testing
-7. **Accessible**: WCAG compliance
-
----
-
-## 📊 Success Metrics
-
-### Performance
-- [ ] Render time < 16ms (60fps)
-- [ ] Memory usage < 50MB
-- [ ] JSON parse < 100ms
-
-### Quality
-- [ ] 80%+ test coverage
-- [ ] Zero crashes
-- [ ] Accessibility score > 90
-
-### Adoption
-- [ ] Replace 50% of HTML messages in 6 months
-- [ ] <5% rollback rate
-- [ ] Positive developer feedback
-
----
-
-## 🛠️ Tech Stack
+## Custom Fonts
 
 ### Android
-- **Language**: Kotlin 1.9.0
-- **UI**: Jetpack Compose + Material 3
-- **JSON**: kotlinx.serialization
-- **Image**: Coil
-- **Video**: ExoPlayer
-- **Testing**: JUnit, Espresso
+
+Pass a `FontFamily` to `NativeDisplayView`:
+
+```kotlin
+NativeDisplayView(
+    unit = unit,
+    fontFamily = FontFamily(Font(R.font.my_font))
+)
+```
 
 ### iOS
-- **Language**: Swift 5.9
-- **UI**: SwiftUI + SF Symbols
-- **JSON**: Codable
-- **Image**: AsyncImage / Kingfisher
-- **Video**: AVPlayer
-- **Testing**: XCTest, SwiftUI Previews
 
----
+Provide a font resolver via the SwiftUI environment:
 
-## 📚 Documentation
-
-| Document | Description |
-|----------|-------------|
-| [Architecture](docs/architecture.md) | System design |
-| [JSON Schema](docs/json-schema.md) | Complete schema spec |
-| [Style Guide](docs/style-guide.md) | Style system details |
-| [Android Setup](android/README.md) | Android dev guide |
-| [iOS Setup](ios/README.md) | iOS dev guide |
-
----
-
-## 🚀 Getting Started
-
-### Android Development
-
-```bash
-cd android
-./gradlew assembleDebug
-./gradlew installDebug
-```
-
-### iOS Development
-
-```bash
-cd ios
-open CleverTapNativeDisplay.xcodeproj
-# Build and run in Xcode
-```
-
-### Run Sample Apps
-
-**Android**:
-```bash
-cd android/sample
-./gradlew installDebug
-```
-
-**iOS**:
-```bash
-cd ios/Sample
-open Sample.xcodeproj
+```swift
+NativeDisplayView(unit: unit)
+    .environment(\.nativeDisplayFontResolver) { name, size, weight in
+        Font.custom(name, size: size).weight(weight)
+    }
 ```
 
 ---
 
-## 🤝 Contributing
+## Common Mistakes
 
-### Code Style
-- **Android**: Kotlin coding conventions
-- **iOS**: Swift API design guidelines
+**Listener not called / campaigns never arrive**
+- On Android, make sure `NativeDisplayBridge.initialize(this)` is called in `Application.onCreate()`, not in an `Activity`.
+- On iOS, initialize before the first view appears — do it in `AppDelegate` or the `App` struct `init()`.
+- Make sure you're holding a strong reference to your listener object. If it's a local variable, it will be garbage-collected before any callback fires.
 
-### Naming Conventions
-- Use `NativeDisplay*` prefix for all public APIs
-- CamelCase for classes
-- camelCase for properties/methods
-- Descriptive names (avoid abbreviations)
+**Layout looks wrong or view has zero height**
+- Always provide `layout.width` on the root node — use `"match_parent"` to fill the available space.
+- `HTML` elements require an explicit `layout.height`; they cannot auto-size.
 
-### Git Workflow
-1. Create feature branch
-2. Make changes
-3. Write tests
-4. Submit PR
-5. Code review
-6. Merge
+**Videos not playing on Android**
+- Add `androidx.media3:media3-exoplayer` to your dependencies. Without it, video elements are silently skipped.
+
+**Text wraps differently on Android vs iOS**
+- Roboto (Android) and San Francisco (iOS) have different character widths. Always specify `lineHeight` in your campaign JSON for consistent results across platforms, and consider supplying the same custom font on both platforms via the custom font APIs.
 
 ---
 
-## 📄 License
+## Support
 
-MIT License - See [LICENSE](LICENSE) file
-
----
-
-## 👥 Team
-
-**Project Lead**: [Your Name]  
-**Android Team**: [Team members]  
-**iOS Team**: [Team members]
-
----
-
-## 🗓️ Roadmap
-
-### Q1 2024
-- ✅ Project setup
-- ⏳ Core framework
-- ⏳ Basic elements
-
-### Q2 2024
-- ⏳ Advanced elements
-- ⏳ Actions & events
-- ⏳ Beta release
-
-### Q3 2024
-- ⏳ Production release
-- ⏳ Migration tools
-- ⏳ Performance optimization
-
-### Q4 2024
-- ⏳ Advanced features
-- ⏳ Analytics integration
-- ⏳ A/B testing support
-
----
-
-## 📞 Support
-
-- **Issues**: GitHub Issues
-- **Slack**: #native-display-kit
+- **Documentation**: [docs.clevertap.com](https://docs.clevertap.com)
+- **Issues**: [GitHub Issues](https://github.com/CleverTap/clevertap-native-display/issues)
 - **Email**: support@clevertap.com
-
----
-
-**Built with ❤️ by the CleverTap team**
