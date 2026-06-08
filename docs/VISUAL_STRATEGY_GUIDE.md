@@ -1,6 +1,6 @@
-# Visual Guide - Arrangement Strategies
+# Arrangement Strategies — Visual Guide
 
-## 📐 Understanding Each Strategy
+## Understanding Each Strategy
 
 This guide shows exactly how each arrangement strategy affects the layout of the three items.
 
@@ -294,7 +294,7 @@ Remaining: 368 - 144 = 224dp (all at top)
 
 ---
 
-## 📊 Quick Comparison Table
+## Quick Comparison Table
 
 | Strategy | Top Space | Between Items | Bottom Space | Total Spacing |
 |----------|-----------|---------------|--------------|---------------|
@@ -308,7 +308,7 @@ Remaining: 368 - 144 = 224dp (all at top)
 
 ---
 
-## 🎯 When to Use Each Strategy
+## When to Use Each Strategy
 
 ### SPACED
 ✅ Standard lists  
@@ -354,60 +354,20 @@ Remaining: 368 - 144 = 224dp (all at top)
 
 ---
 
-## 🔍 Debug Tips
+## Troubleshooting
 
-### How to Verify Spacing
+| Symptom | Likely cause |
+|---------|-------------|
+| Items overlapping | Container height is too small for the content |
+| Too much empty space | Item heights smaller than expected |
+| Uneven spacing with `space_*` | Items have different heights; dynamic strategies distribute space based on remaining room |
+| `spaced` looks identical to `start` | Container has `wrap_content` height — no leftover space for spacing to show |
 
-1. **Measure with borders**: Use the red/blue/green borders
-2. **Check calculations**: Math should add up to 368dp (400 - 32 padding)
-3. **Compare strategies**: Switch between them to see differences
-4. **Test edge cases**: Try with 1, 2, or 10 items
+## Tips
 
-### Common Issues
-
-❌ **Items overlapping**: Check container height is sufficient  
-❌ **Too much space**: Verify item heights are correct  
-❌ **Uneven spacing**: Ensure all items have same height  
-❌ **Borders not visible**: Check borderWidth and borderColor in JSON
-
----
-
-## 💡 Pro Tips
-
-1. **Use SPACED for consistency**: Most predictable
-2. **Use BETWEEN for dashboards**: Fills space nicely
-3. **Use CENTER for heroes**: Draws attention
-4. **Use START/END sparingly**: Can look unbalanced
-5. **Combine with padding**: Use container padding for edges
-6. **Test with real content**: Different item counts behave differently
-
----
-
-## 🎨 Visual Legend
-
-```
-🔴 = Red border (Root container)
-🔵 = Blue border (Box 1)
-🟢 = Green border (Box 2)
-🟠 = Orange border (Box 3)
-🟦 = Dark blue (Text 1)
-🟩 = Dark green (Text 2)
-🟧 = Dark orange (Text 3)
-
-Measurements:
-↕ = Vertical spacing
-← → = Horizontal span
-┌─┐ = Container boundaries
-```
-
----
-
-## 🚀 Next Steps
-
-1. **Run the app** and tap each strategy button
-2. **Observe the changes** in spacing
-3. **Match to diagrams** above
-4. **Experiment** with different item heights
-5. **Try custom spacing** values
-
-**Happy Layout Testing!** 🎉
+1. **Use `spaced` for consistency** — most predictable, fixed gap every time
+2. **Use `space_between` for dashboards** — fills all available height nicely
+3. **Use `center` for hero sections** — draws the eye to the middle
+4. **Use `start`/`end` sparingly** — leaves a large blank area on one side
+5. **Pair with `padding`** — use container padding for edge breathing room instead of relying on `space_evenly`/`space_around`
+6. **Give containers a fixed height** — dynamic strategies (`space_between`, `space_evenly`, `space_around`, `center`, `end`) have no effect when the container is `wrap_content`
