@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.clevertap.android.nativedisplay.listener.InteractionType
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener
@@ -80,9 +79,10 @@ data class InteractionLog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BannerDetailScreen(
-    navController: NavController,
     bannerId: String,
-    filename: String?
+    filename: String?,
+    onBack: () -> Unit,
+    onNavigateToJsonViewer: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -252,7 +252,7 @@ fun BannerDetailScreen(
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { onBack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -268,7 +268,7 @@ fun BannerDetailScreen(
                                 // Navigate to JSON viewer - need to encode the JSON string
                                 // For simplicity, we'll use a shared singleton
                                 JSONViewerStorage.setJsonString(jsonString)
-                                navController.navigate("json_viewer")
+                                onNavigateToJsonViewer()
                             }
                         },
                         enabled = jsonString != null

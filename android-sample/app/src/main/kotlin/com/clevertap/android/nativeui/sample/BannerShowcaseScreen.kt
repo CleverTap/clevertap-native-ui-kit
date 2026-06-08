@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
 import kotlinx.serialization.json.Json
 import java.io.BufferedReader
@@ -72,7 +71,7 @@ object CustomBannerStorage {
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BannerShowcaseScreen(navController: NavController) {
+fun BannerShowcaseScreen(onNavigateToBannerDetail: (bannerId: String, filename: String?) -> Unit) {
     val context = LocalContext.current
 
     // List of pre-defined banners (matching iOS implementation)
@@ -173,7 +172,7 @@ fun BannerShowcaseScreen(navController: NavController) {
                         // Store config and JSON string in singleton
                         CustomBannerStorage.setConfig(config, jsonString)
                         // Navigate to detail screen
-                        navController.navigate("banner_detail/custom?filename=custom")
+                        onNavigateToBannerDetail("custom", "custom")
                     } else {
                         errorMessage = "Invalid JSON: Unable to parse configuration"
                     }
@@ -230,7 +229,7 @@ fun BannerShowcaseScreen(navController: NavController) {
                 BannerListItem(
                     banner = banner,
                     onClick = {
-                        navController.navigate("banner_detail/${banner.id}?filename=${banner.filename}")
+                        onNavigateToBannerDetail(banner.id, banner.filename)
                     }
                 )
             }
