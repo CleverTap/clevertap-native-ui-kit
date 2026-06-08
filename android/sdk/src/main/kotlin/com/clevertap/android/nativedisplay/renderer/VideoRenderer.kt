@@ -2,6 +2,7 @@ package com.clevertap.android.nativedisplay.renderer
 
 import android.content.Intent
 import android.net.Uri
+import android.view.LayoutInflater
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -40,7 +41,10 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
@@ -176,15 +180,23 @@ internal fun VideoPlayerWithMedia3(
 
     val exoPlayer = remember(videoUrl) {
         runCatching {
-            ExoPlayer.Builder(context).build().apply {
-                setMediaItem(MediaItem.fromUri(videoUrl))
-                prepare()
-                playWhenReady = autoPlay
-                repeatMode = if (loop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
-                volume = if (muted) 0f else 1f
-            }.also {
-                android.util.Log.d("VideoPlayer", "✓ Player created for: $videoUrl")
-            }
+            ExoPlayer.Builder(context)
+                .setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(C.USAGE_MEDIA)
+                        .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
+                        .build(),
+                    /* handleAudioFocus= */ true
+                )
+                .build().apply {
+                    setMediaItem(MediaItem.fromUri(videoUrl))
+                    prepare()
+                    playWhenReady = autoPlay
+                    repeatMode = if (loop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
+                    volume = if (muted) 0f else 1f
+                }.also {
+                    android.util.Log.d("VideoPlayer", "✓ Player created for: $videoUrl")
+                }
         }.onFailure { e ->
             errorMessage = "Failed to create player: ${e.message}"
             android.util.Log.e("VideoPlayer", "✗ Player creation failed", e)
@@ -200,28 +212,26 @@ internal fun VideoPlayerWithMedia3(
                     else -> Unit
                 }
             }
+            val listener = object : Player.Listener {
+                override fun onIsPlayingChanged(playing: Boolean) { isPlaying = playing }
+                override fun onVolumeChanged(volume: Float) { isMuted = volume == 0f }
+                override fun onPlaybackStateChanged(state: Int) {
+                    isEnded = state == Player.STATE_ENDED
+                }
+                override fun onPlayerError(error: PlaybackException) {
+                    errorMessage = "Video playback failed"
+                    android.util.Log.e("VideoPlayer", "✗ Playback error (${error.errorCodeName})", error)
+                }
+            }
             lifecycleOwner.lifecycle.addObserver(observer)
+            player.addListener(listener)
             onDispose {
                 lifecycleOwner.lifecycle.removeObserver(observer)
+                player.removeListener(listener)
                 player.release()
                 android.util.Log.d("VideoPlayer", "✓ Player released")
             }
         } ?: onDispose { }
-    }
-
-    LaunchedEffect(exoPlayer) {
-        exoPlayer?.let { player ->
-            while (true) {
-                try {
-                    isPlaying = player.isPlaying
-                    isMuted = player.volume == 0f
-                    isEnded = player.playbackState == Player.STATE_ENDED
-                } catch (_: Exception) {
-                    break
-                }
-                delay(100)
-            }
-        }
     }
 
     LaunchedEffect(showControlsUI) {
@@ -253,22 +263,26 @@ internal fun VideoPlayerWithMedia3(
                 }
             }
             exoPlayer != null -> {
-                // Inline PlayerView — detaches player when fullscreen is active
-                AndroidView(
-                    factory = { ctx ->
-                        PlayerView(ctx).apply {
-                            player = exoPlayer
-                            useController = false
-                        }
-                    },
-                    update = { view ->
-                        view.player = if (isFullscreen) null else exoPlayer
-                        view.setOnClickListener {
-                            if (showControls) showControlsUI = !showControlsUI
-                        }
-                    },
-                    modifier = Modifier.fillMaxSize()
-                )
+                // Removed from the tree entirely while fullscreen is active — no need to
+                // null out player on the view; the fullscreen PlayerView takes ownership.
+                // Inflated from XML so surface_type="texture_view" is applied at construction.
+                if (!isFullscreen) {
+                    AndroidView(
+                        factory = { ctx ->
+                            (LayoutInflater.from(ctx).inflate(
+                                R.layout.ct_player_view, null
+                            ) as PlayerView).apply {
+                                player = exoPlayer
+                            }
+                        },
+                        update = { view ->
+                            view.setOnClickListener {
+                                if (showControls) showControlsUI = !showControlsUI
+                            }
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
             else -> {
                 Box(
@@ -323,7 +337,7 @@ internal fun VideoPlayerWithMedia3(
                         contentDescription = if (isMuted) "Unmute" else "Mute",
                         onClick = {
                             exoPlayer.volume = if (isMuted) 1f else 0f
-                            isMuted = !isMuted
+                            // isMuted is updated by Player.Listener.onVolumeChanged
                         }
                     )
                     if (showFullscreen) {
@@ -359,7 +373,7 @@ internal fun VideoPlayerWithMedia3(
                     },
                     onToggleMute = {
                         exoPlayer.volume = if (isMuted) 1f else 0f
-                        isMuted = !isMuted
+                        // isMuted is updated by Player.Listener.onVolumeChanged
                     }
                 )
             }
@@ -395,9 +409,10 @@ private fun FullscreenVideoContent(
         // Fullscreen PlayerView — receives the player while Dialog is open
         AndroidView(
             factory = { ctx ->
-                PlayerView(ctx).apply {
+                (LayoutInflater.from(ctx).inflate(
+                    R.layout.ct_player_view, null
+                ) as PlayerView).apply {
                     player = exoPlayer
-                    useController = false
                 }
             },
             modifier = Modifier.fillMaxSize().align(Alignment.Center)
