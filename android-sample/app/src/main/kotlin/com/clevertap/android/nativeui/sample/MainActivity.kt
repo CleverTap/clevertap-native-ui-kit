@@ -1,5 +1,6 @@
 package com.clevertap.android.nativeui.sample
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -54,7 +55,9 @@ private object Routes {
     const val DEMO_SCREEN = "demo_screen/{demoType}"
     const val BANNER_SHOWCASE = "banner_showcase"
 
-    fun bannerDetail(bannerId: String, filename: String?) = "banner_detail/$bannerId?filename=$filename"
+    fun bannerDetail(bannerId: String, filename: String?) =
+        if (filename != null) "banner_detail/${Uri.encode(bannerId)}?filename=${Uri.encode(filename)}"
+        else "banner_detail/${Uri.encode(bannerId)}"
     fun demoScreen(type: String) = "demo_screen/$type"
 }
 
@@ -131,6 +134,7 @@ fun NativeUIKitSampleApp() {
 
             // JSON Viewer Screen
             composable(route = Routes.JSON_VIEWER) {
+                // JSONViewerStorage is a static singleton; value persists through rotation.
                 val jsonString = remember { JSONViewerStorage.getJsonString() }
                 JSONViewerScreen(
                     jsonString = jsonString,

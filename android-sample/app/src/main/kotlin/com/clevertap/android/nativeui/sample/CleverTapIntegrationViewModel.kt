@@ -5,6 +5,7 @@ import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -32,7 +33,7 @@ class CleverTapIntegrationViewModel : ViewModel() {
     fun log(message: String) {
         val timestamp = timeFormat.format(Date())
         val entry = "[$timestamp] $message"
-        _logMessages.value = _logMessages.value + entry
+        _logMessages.update { it + entry }
     }
 
     fun clearLog() {

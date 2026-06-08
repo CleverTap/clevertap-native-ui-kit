@@ -90,8 +90,12 @@ fun BridgeIntegrationScreen(
         }
     }
 
-    // Clean up listener on dispose (bridge itself is cleaned up in ViewModel.onCleared)
-    DisposableEffect(bridge) {
+    // Re-register listener after rotation if already enabled (bridge survives in ViewModel,
+    // but the listener object is recreated by remember on each Activity recreation).
+    DisposableEffect(bridge, listenerRegistered) {
+        if (listenerRegistered) {
+            bridge.addListener(listener)
+        }
         onDispose {
             bridge.removeListener(listener)
         }
@@ -131,7 +135,6 @@ bridge.addListener(myListener)""",
         ) {
             Button(
                 onClick = {
-                    bridge.addListener(listener)
                     viewModel.markListenerRegistered()
                     log("Listener registered on bridge")
                 },

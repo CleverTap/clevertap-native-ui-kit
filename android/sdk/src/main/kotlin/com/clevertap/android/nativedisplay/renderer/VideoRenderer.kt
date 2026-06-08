@@ -2,6 +2,7 @@ package com.clevertap.android.nativedisplay.renderer
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -99,9 +100,9 @@ internal fun VideoPlayer(
         runCatching {
             Class.forName("androidx.media3.exoplayer.ExoPlayer")
         }.onSuccess {
-            android.util.Log.d("VideoPlayer", "Media3 is available")
+            Log.d("VideoPlayer", "Media3 is available")
         }.onFailure {
-            android.util.Log.w("VideoPlayer", "Media3 not found - add androidx.media3 dependencies")
+            Log.w("VideoPlayer", "Media3 not found - add androidx.media3 dependencies")
         }.isSuccess
     }
 
@@ -176,7 +177,7 @@ internal fun VideoPlayerWithMedia3(
     var isMuted by remember { mutableStateOf(muted) }
     var isEnded by remember { mutableStateOf(false) }
     var isFullscreen by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var errorMessage by remember(videoUrl) { mutableStateOf<String?>(null) }
 
     val exoPlayer = remember(videoUrl) {
         runCatching {
@@ -195,11 +196,11 @@ internal fun VideoPlayerWithMedia3(
                     repeatMode = if (loop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
                     volume = if (muted) 0f else 1f
                 }.also {
-                    android.util.Log.d("VideoPlayer", "✓ Player created for: $videoUrl")
+                    Log.d("VideoPlayer", "✓ Player created for: $videoUrl")
                 }
         }.onFailure { e ->
             errorMessage = "Failed to create player: ${e.message}"
-            android.util.Log.e("VideoPlayer", "✗ Player creation failed", e)
+            Log.e("VideoPlayer", "✗ Player creation failed", e)
         }.getOrNull()
     }
 
@@ -217,10 +218,11 @@ internal fun VideoPlayerWithMedia3(
                 override fun onVolumeChanged(volume: Float) { isMuted = volume == 0f }
                 override fun onPlaybackStateChanged(state: Int) {
                     isEnded = state == Player.STATE_ENDED
+                    if (state == Player.STATE_READY) errorMessage = null
                 }
                 override fun onPlayerError(error: PlaybackException) {
                     errorMessage = "Video playback failed"
-                    android.util.Log.e("VideoPlayer", "✗ Playback error (${error.errorCodeName})", error)
+                    Log.e("VideoPlayer", "✗ Playback error (${error.errorCodeName})", error)
                 }
             }
             lifecycleOwner.lifecycle.addObserver(observer)
@@ -229,7 +231,7 @@ internal fun VideoPlayerWithMedia3(
                 lifecycleOwner.lifecycle.removeObserver(observer)
                 player.removeListener(listener)
                 player.release()
-                android.util.Log.d("VideoPlayer", "✓ Player released")
+                Log.d("VideoPlayer", "✓ Player released")
             }
         } ?: onDispose { }
     }
@@ -276,6 +278,7 @@ internal fun VideoPlayerWithMedia3(
                             }
                         },
                         update = { view ->
+                            view.player = exoPlayer
                             view.setOnClickListener {
                                 if (showControls) showControlsUI = !showControlsUI
                             }
@@ -415,6 +418,7 @@ private fun FullscreenVideoContent(
                     player = exoPlayer
                 }
             },
+            update = { view -> view.player = exoPlayer },
             modifier = Modifier.fillMaxSize().align(Alignment.Center)
         )
 
