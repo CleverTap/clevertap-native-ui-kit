@@ -230,20 +230,11 @@ class ActionHandler {
             throw ActionError.invalidUrl(action.url)
         }
 
-        guard isValidUrlScheme(url.scheme) else {
-            throw ActionError.invalidUrlScheme(url.scheme ?? "none")
-        }
-
-        let isWebScheme = ["http", "https"].contains(url.scheme?.lowercased())
-        if !isWebScheme {
-            // Custom schemes (myapp://, tel:, mailto:, etc.) — let OS resolve the handler
-            UIApplication.shared.open(url)
-        } else if action.openInBrowser {
-            UIApplication.shared.open(url)
-        } else if action.customTabsEnabled {
+        if action.customTabsEnabled {
             openInSafariViewController(url)
         } else {
-            UIApplication.shared.open(url)
+            // Matches Core SDK CleverTap.m openURL:forModule: behavior exactly.
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
     
@@ -259,11 +250,6 @@ class ActionHandler {
         let safariVC = SFSafariViewController(url: url)
         safariVC.modalPresentationStyle = .pageSheet
         rootViewController.present(safariVC, animated: true)
-    }
-    
-    private func isValidUrlScheme(_ scheme: String?) -> Bool {
-        guard let scheme = scheme?.lowercased() else { return false }
-        return !["javascript", "data", "file"].contains(scheme)
     }
     
     @MainActor

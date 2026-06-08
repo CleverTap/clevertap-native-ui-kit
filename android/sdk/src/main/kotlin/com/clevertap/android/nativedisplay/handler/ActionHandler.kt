@@ -2,6 +2,8 @@ package com.clevertap.android.nativedisplay.handler
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
@@ -27,7 +29,6 @@ import kotlinx.serialization.json.int
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.long
 import kotlinx.serialization.json.longOrNull
-import androidx.core.net.toUri
 import com.clevertap.android.nativedisplay.listener.InteractionType
 import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener
 
@@ -299,72 +300,43 @@ internal class ActionHandler(
         }
     }
 
-    /**
-     * Default implementation for opening URLs.
-     * Custom schemes (e.g. myapp://) are handed directly to the OS.
-     * http/https use Chrome Custom Tabs or external browser per action config.
-     */
     private fun executeDefaultOpenUrl(action: Action.OpenUrl) {
         try {
-            val uri = action.url.toUri()
-
-            if (!isValidUrlScheme(uri.scheme)) {
-                Log.w(TAG, "Blocked URL scheme: ${uri.scheme}")
+            if (action.customTabsEnabled) {
+                openInCustomTab(action.url)
                 return
             }
-
-            val isWebScheme = uri.scheme?.lowercase() in setOf("http", "https")
-            when {
-                !isWebScheme -> {
-                    // Custom schemes (myapp://, tel:, mailto:, etc.) — let OS resolve the handler
-                    openInExternalBrowser(action.url)
-                }
-                action.openInBrowser -> {
-                    openInExternalBrowser(action.url)
-                }
-                action.customTabsEnabled -> {
-                    openInCustomTab(action.url)
-                }
-                else -> {
-                    openInExternalBrowser(action.url)
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to open URL: ${action.url}", e)
-            listener?.onActionError(action, e)
+            openUrl(action.url)
+        } catch (_: Exception) {
+            Log.d(TAG, "No activity found to open url: ${action.url}")
+            listener?.onActionError(action, Exception("No activity found to open url: ${action.url}"))
         }
     }
 
-    /**
-     * Open URL in external browser app.
-     */
-    private fun openInExternalBrowser(url: String) {
-        try {
-            val intent = Intent(Intent.ACTION_VIEW, url.toUri()).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            context.startActivity(intent)
-            Log.d(TAG, "Opened URL in external browser: $url")
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to open external browser", e)
-            throw e
+    // Matches Core SDK InAppActionHandler.openUrl behavior exactly.
+    private fun openUrl(url: String) {
+        val uri = Uri.parse(url.replace("\n", "").replace("\r", ""))
+        val queryBundle = Bundle()
+        uri.queryParameterNames?.forEach { name ->
+            queryBundle.putString(name, uri.getQueryParameter(name))
         }
+        val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            if (!queryBundle.isEmpty) putExtras(queryBundle)
+        }
+        val appPackageName = context.packageName
+        context.packageManager.queryIntentActivities(intent, 0).forEach { resolveInfo ->
+            if (appPackageName == resolveInfo.activityInfo.packageName) {
+                intent.setPackage(appPackageName)
+                return@forEach
+            }
+        }
+        context.startActivity(intent)
+        Log.d(TAG, "Opened URL: $url")
     }
 
-    /**
-     * Open URL in Chrome Custom Tab.
-     * Provides in-app browser experience with better UX.
-     * Falls back to external browser until Custom Tabs dependency is added.
-     */
     private fun openInCustomTab(url: String) {
-        openInExternalBrowser(url)
-    }
-
-    private fun isValidUrlScheme(scheme: String?): Boolean {
-        return when (scheme?.lowercase()) {
-            null, "javascript", "data", "file" -> false
-            else -> true
-        }
+        openUrl(url)
     }
 
     /**
