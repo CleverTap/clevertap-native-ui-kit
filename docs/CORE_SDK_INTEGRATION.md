@@ -8,38 +8,40 @@ The SDK works in two modes: **with** the CleverTap Core SDK (bridge mode) or **w
 
 ## Standalone Mode (Without Core SDK)
 
-When the CleverTap Core SDK is not present, the Native Display SDK works as a pure rendering engine. You provide `ResolvedConfig` JSON directly and render it.
+When the CleverTap Core SDK is not present, the Native Display SDK works as a pure rendering engine. Create a bridge manually and push JSON to it yourself.
 
 ### Android
 
 ```kotlin
-// Load JSON from any source (assets, network, etc.)
-val jsonString = """{ "version": "1.0", "root": { ... } }"""
-val config = Json.decodeFromString<ResolvedConfig>(jsonString)
+// Create a bridge with no Core SDK wiring
+val bridge = NativeDisplayBridge.create()
+bridge.addListener(myListener)
 
-// Render in Compose
-NativeDisplayView(config = config)
+// Feed JSON from any source (assets, network, local file, etc.)
+bridge.processDisplayUnits(listOf(jsonString))
 
-// Or in XML layouts
-val viewGroup = findViewById<NativeDisplayViewGroup>(R.id.native_display)
-viewGroup.setConfig(config)
+// The listener fires and you render as normal
+override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
+    // units[0].config is ready for NativeDisplayView
+}
 ```
 
 ### iOS
 
 ```swift
-// Load JSON from any source
-let config = try ResolvedConfig.from(jsonString: jsonString)
+// Use the shared bridge with no Core SDK binding
+NativeDisplayBridge.shared.addListener(self)
 
-// Render in SwiftUI
-NativeDisplayView(config: config)
+// Feed JSON from any source
+NativeDisplayBridge.shared.processDisplayUnits([jsonString])
 
-// Or in UIKit
-let vc = NativeDisplayViewController(config: config)
-navigationController?.pushViewController(vc, animated: true)
+// The listener fires and you render as normal
+func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
+    // units[0].config is ready for NativeDisplayView
+}
 ```
 
-No bridge initialization is needed. The SDK has zero awareness of the Core SDK in this mode.
+No `initialize()` or `bind()` call is needed — just create the bridge and push JSON directly.
 
 ---
 
