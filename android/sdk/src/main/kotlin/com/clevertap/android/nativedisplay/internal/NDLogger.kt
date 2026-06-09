@@ -41,39 +41,41 @@ internal object NDLogger {
         }
     }
 
+    private val stateLock = Any()
+
     @Volatile
     private var level: Level = Level.INFO
 
-    /**
-     * True once [setLevel] has been called explicitly — prevents [syncFromCoreSdk]
-     * from overwriting a client-supplied preference.
-     */
     @Volatile
     private var explicitlySet: Boolean = false
 
     /** Set the active log level. Marks the level as explicitly set. */
     fun setLevel(l: Level) {
-        level = l
-        explicitlySet = true
+        synchronized(stateLock) {
+            level = l
+            explicitlySet = true
+        }
     }
 
     /** Return the currently active log level. */
     fun getLevel(): Level = level
 
-    /** True if the client (or a prior [syncFromCoreSdk] call) has overridden the default. */
+    /** True if a client call to [setLevel] has already set an explicit preference. */
     fun isExplicitlySet(): Boolean = explicitlySet
 
     /**
      * Sync from the CleverTap Core SDK integer debug level.
      *
-     * Only takes effect when [isExplicitlySet] is false — a client-supplied
-     * level always wins.
+     * Does NOT set [explicitlySet] — allows re-sync on subsequent auto-wire calls
+     * until the client explicitly calls [setLevel].
      *
      * @param coreLevel Integer returned by `CleverTapAPI.getDebugLevel()`
      */
     fun syncFromCoreSdk(coreLevel: Int) {
-        if (!explicitlySet) {
-            level = Level.fromInt(coreLevel)
+        synchronized(stateLock) {
+            if (!explicitlySet) {
+                level = Level.fromInt(coreLevel)
+            }
         }
     }
 

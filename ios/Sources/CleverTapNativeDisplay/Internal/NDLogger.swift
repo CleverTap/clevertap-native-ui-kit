@@ -30,17 +30,28 @@ internal enum NDLogger {
 
     // MARK: - State
 
+    private static let lock = NSLock()
     private static var _level: NDLogLevel = .info
-
-    /// Whether the level has been explicitly set by the client or by Core SDK sync.
-    /// When `false`, Core SDK sync may update `_level` on first auto-wire.
     private static var explicitlySet = false
 
     // MARK: - Configuration
 
+    /// Set the log level explicitly. Marks as explicitly set so Core SDK auto-sync
+    /// will no longer override it.
     static func setLevel(_ level: NDLogLevel) {
+        lock.lock()
+        defer { lock.unlock() }
         _level = level
         explicitlySet = true
+    }
+
+    /// Sync from Core SDK debug level without marking as explicitly set.
+    /// Allows future Core SDK syncs unless the client calls setLevel explicitly.
+    static func syncFromCoreSdk(_ level: NDLogLevel) {
+        lock.lock()
+        defer { lock.unlock() }
+        guard !explicitlySet else { return }
+        _level = level
     }
 
     static func currentLevel() -> NDLogLevel { _level }

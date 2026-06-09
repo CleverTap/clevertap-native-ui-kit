@@ -207,15 +207,14 @@ internal class CleverTapAutoWire: NSObject {
     ///
     /// CleverTap Core SDK integer mapping: -1 OFF, 0 INFO, 2 DEBUG, 3 VERBOSE.
     private static func syncLogLevelFromCoreSdk(_ ctInstance: NSObject) {
-        guard !NDLogger.isExplicitlySet() else { return }
         // Try `debugLevel` (Obj-C property exposed on CleverTap instances).
         guard let rawValue = ctInstance.value(forKey: "debugLevel") as? Int32 else { return }
-        let level = NDLogLevel(rawValue: Int(rawValue)) ?? .info
-        NDLogger.setLevel(level)
-        // Mark as NOT explicitly set so a future explicit call still overrides.
-        // We achieve this by re-reading: setLevel sets explicitlySet=true, which is
-        // intentional — Core SDK sync counts as an explicit initialization so the
-        // level is not overwritten by another auto-wire call on re-initialize.
+        // Fall back to .debug for unknown future Core SDK levels (matches Android behavior).
+        let level = NDLogLevel(rawValue: Int(rawValue)) ?? .debug
+        // Use syncFromCoreSdk so explicitlySet is NOT flipped — a future client call
+        // to NativeDisplayBridge.setLogLevel will still override, and re-initialization
+        // will re-sync from Core SDK if the client never set a level explicitly.
+        NDLogger.syncFromCoreSdk(level)
     }
 
     /// Tear down auto-wire (called from bridge.clear()).
