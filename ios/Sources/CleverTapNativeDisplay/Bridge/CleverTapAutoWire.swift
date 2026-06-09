@@ -39,9 +39,9 @@ internal class CleverTapAutoWire: NSObject {
         if let proto = objc_getProtocol("CleverTapDisplayUnitDelegate") {
             class_addProtocol(CleverTapAutoWire.self, proto)
             protocolAdopted = true
-            NDLogger.d("CleverTapAutoWire", "Adopted CleverTapDisplayUnitDelegate protocol")
+            NDLogger.d(Self.self, "Adopted CleverTapDisplayUnitDelegate protocol")
         } else {
-            NDLogger.w("CleverTapAutoWire", "CleverTapDisplayUnitDelegate protocol not found at runtime")
+            NDLogger.w(Self.self, "CleverTapDisplayUnitDelegate protocol not found at runtime")
         }
     }
 
@@ -57,20 +57,20 @@ internal class CleverTapAutoWire: NSObject {
 
         // 1. Check if CleverTap class exists
         guard let ctClass = NSClassFromString("CleverTap") as? NSObject.Type else {
-            NDLogger.d("CleverTapAutoWire", "CleverTap SDK not found, manual mode only")
+            NDLogger.d(Self.self, "CleverTap SDK not found, manual mode only")
             return false
         }
 
         // 2. Get shared instance
         let sharedSelector = NSSelectorFromString("sharedInstance")
         guard ctClass.responds(to: sharedSelector) else {
-            NDLogger.w("CleverTapAutoWire", "CleverTap class does not respond to sharedInstance")
+            NDLogger.w(Self.self, "CleverTap class does not respond to sharedInstance")
             return false
         }
 
         guard let result = ctClass.perform(sharedSelector),
               let sharedInstance = result.takeUnretainedValue() as? NSObject else {
-            NDLogger.w("CleverTapAutoWire", "Failed to get CleverTap shared instance")
+            NDLogger.w(Self.self, "Failed to get CleverTap shared instance")
             return false
         }
 
@@ -83,7 +83,7 @@ internal class CleverTapAutoWire: NSObject {
         // updates flow via cache.updateDisplayUnits(_:) → bridge.processDisplayUnits, so a
         // separate display-unit delegate is unnecessary.
         if attachCache(to: sharedInstance, bridge: bridge) {
-            NDLogger.d("CleverTapAutoWire", "Auto-wired via setDisplayUnitCache:")
+            NDLogger.d(Self.self, "Auto-wired via setDisplayUnitCache:")
             return true
         }
 
@@ -93,7 +93,7 @@ internal class CleverTapAutoWire: NSObject {
 
         let setDelegateSelector = NSSelectorFromString("setDisplayUnitDelegate:")
         guard sharedInstance.responds(to: setDelegateSelector) else {
-            NDLogger.w("CleverTapAutoWire", "CleverTap instance does not support setDisplayUnitDelegate:")
+            NDLogger.w(Self.self, "CleverTap instance does not support setDisplayUnitDelegate:")
             return false
         }
 
@@ -110,7 +110,7 @@ internal class CleverTapAutoWire: NSObject {
             object: nil
         )
 
-        NDLogger.d("CleverTapAutoWire", "Auto-wired via setDisplayUnitDelegate: fallback")
+        NDLogger.d(Self.self, "Auto-wired via setDisplayUnitDelegate: fallback")
         return true
     }
 
@@ -153,7 +153,7 @@ internal class CleverTapAutoWire: NSObject {
         // Verify this looks like a CleverTap instance
         let className = String(describing: type(of: cleverTap))
         guard className.contains("CleverTap") else {
-            NDLogger.w("CleverTapAutoWire", "bind() called with non-CleverTap object: \(className)")
+            NDLogger.w(Self.self, "bind() called with non-CleverTap object: \(className)")
             return false
         }
 
@@ -175,14 +175,14 @@ internal class CleverTapAutoWire: NSObject {
                     activeObserver = observer
                 }
             }
-            NDLogger.d("CleverTapAutoWire", "Bound via setDisplayUnitCache:" + (clientHandler != nil ? " (with client handler)" : ""))
+            NDLogger.d(Self.self, "Bound via setDisplayUnitCache:" + (clientHandler != nil ? " (with client handler)" : ""))
             return true
         }
 
         // Fallback: register as display-unit delegate (older Core SDK).
         let setDelegateSelector = NSSelectorFromString("setDisplayUnitDelegate:")
         guard cleverTap.responds(to: setDelegateSelector) else {
-            NDLogger.w("CleverTapAutoWire", "CleverTap instance does not support setDisplayUnitDelegate:")
+            NDLogger.w(Self.self, "CleverTap instance does not support setDisplayUnitDelegate:")
             return false
         }
 
@@ -195,7 +195,7 @@ internal class CleverTapAutoWire: NSObject {
         activeObserver = observer
 
         let suffix = clientHandler != nil ? " (with client handler forwarding)" : ""
-        NDLogger.d("CleverTapAutoWire", "Bound via setDisplayUnitDelegate: fallback\(suffix)")
+        NDLogger.d(Self.self, "Bound via setDisplayUnitDelegate: fallback\(suffix)")
         return true
     }
 

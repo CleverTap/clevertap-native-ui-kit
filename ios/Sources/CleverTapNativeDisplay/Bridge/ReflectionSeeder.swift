@@ -61,7 +61,7 @@ enum ReflectionSeeder {
     private static func logOnce(_ message: String) -> Bool {
         guard !loggedFailure else { return false }
         loggedFailure = true
-        NDLogger.w("ReflectionSeeder", "\(message); display unit events may be unattributed.")
+        NDLogger.w(Self.self, "\(message); display unit events may be unattributed.")
         return false
     }
 }

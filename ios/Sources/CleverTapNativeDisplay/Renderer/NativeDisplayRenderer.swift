@@ -186,6 +186,7 @@ public struct NativeDisplayView: View {
 
     private func renderContent(parentSize: CGSize) -> some View {
         let rootHeight = Self.resolveRootHeight(layout: config.root.layout, parentSize: parentSize)
+        NDLogger.d(Self.self, "Rendering config root '\(config.root.id)' — parentSize=\(parentSize), rootHeight=\(rootHeight)")
         return RenderNode(
             node: config.root,
             resolvedStyles: resolvedStyles,

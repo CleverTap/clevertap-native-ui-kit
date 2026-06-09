@@ -21,6 +21,7 @@ class VariableEvaluator {
 
     init(variables: [String: AnyCodable]) {
         self.variables = variables
+        NDLogger.d(Self.self, "VariableEvaluator init: \(variables.count) variable(s)")
     }
     
     /// Evaluate a string template, replacing {{expressions}} with values.
@@ -40,12 +41,13 @@ class VariableEvaluator {
                   let fullRange = Range(match.range, in: template) else {
                 continue
             }
-            
+
             let expression = String(template[expressionRange]).trimmingCharacters(in: .whitespaces)
             let value = evaluateExpression(expression)
+            NDLogger.v(Self.self, "Template substitution: {{\(expression)}} → \(value)")
             result = result.replacingCharacters(in: fullRange, with: "\(value)")
         }
-        
+
         return result
     }
     
