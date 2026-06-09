@@ -2,7 +2,7 @@ package com.clevertap.android.nativedisplay.renderer
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
+
 import android.view.LayoutInflater
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -49,6 +49,7 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import com.clevertap.android.nativeui.R
 import kotlinx.coroutines.delay
 import androidx.compose.ui.text.font.FontWeight as ComposeFontWeight
@@ -100,9 +101,9 @@ internal fun VideoPlayer(
         runCatching {
             Class.forName("androidx.media3.exoplayer.ExoPlayer")
         }.onSuccess {
-            Log.d("VideoPlayer", "Media3 is available")
+            NDLogger.d("VideoPlayer", "Media3 is available")
         }.onFailure {
-            Log.w("VideoPlayer", "Media3 not found - add androidx.media3 dependencies")
+            NDLogger.w("VideoPlayer", "Media3 not found - add androidx.media3 dependencies")
         }.isSuccess
     }
 
@@ -196,11 +197,11 @@ internal fun VideoPlayerWithMedia3(
                     repeatMode = if (loop) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
                     volume = if (muted) 0f else 1f
                 }.also {
-                    Log.d("VideoPlayer", "✓ Player created for: $videoUrl")
+                    NDLogger.d("VideoPlayer", "Player created for: $videoUrl")
                 }
         }.onFailure { e ->
             errorMessage = "Failed to create player: ${e.message}"
-            Log.e("VideoPlayer", "✗ Player creation failed", e)
+            NDLogger.e("VideoPlayer", "Player creation failed", e)
         }.getOrNull()
     }
 
@@ -222,7 +223,7 @@ internal fun VideoPlayerWithMedia3(
                 }
                 override fun onPlayerError(error: PlaybackException) {
                     errorMessage = "Video playback failed"
-                    Log.e("VideoPlayer", "✗ Playback error (${error.errorCodeName})", error)
+                    NDLogger.e("VideoPlayer", "Playback error (${error.errorCodeName})", error)
                 }
             }
             lifecycleOwner.lifecycle.addObserver(observer)
@@ -231,7 +232,7 @@ internal fun VideoPlayerWithMedia3(
                 lifecycleOwner.lifecycle.removeObserver(observer)
                 player.removeListener(listener)
                 player.release()
-                Log.d("VideoPlayer", "✓ Player released")
+                NDLogger.d("VideoPlayer", "Player released")
             }
         } ?: onDispose { }
     }

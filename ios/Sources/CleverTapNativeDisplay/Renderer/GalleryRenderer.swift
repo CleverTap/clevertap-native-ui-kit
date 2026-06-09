@@ -148,16 +148,22 @@ struct SnappingGalleryView: View {
         }
         .onAppear {
             currentPage = min(config.initialPage, max(0, container.children.count - 1))
+            NDLogger.d(Self.self, "Snapping gallery '\(container.id)' appeared — initialPage=\(currentPage)")
             startAutoScrollIfNeeded()
         }
         .onDisappear {
+            NDLogger.d(Self.self, "Snapping gallery '\(container.id)' disappeared — invalidating timer")
             timer?.invalidate()
         }
+        .onChange(of: currentPage) { page in
+            NDLogger.d(Self.self, "Gallery '\(container.id)' page changed to \(page)")
+        }
     }
-    
+
     private func startAutoScrollIfNeeded() {
         guard config.autoScrollInterval > 0, container.children.count > 1 else { return }
-        
+        NDLogger.d(Self.self, "Gallery '\(container.id)' auto-scroll started: interval=\(config.autoScrollInterval)ms infinite=\(config.infiniteScroll)")
+
         timer = Timer.scheduledTimer(withTimeInterval: Double(config.autoScrollInterval) / 1000.0, repeats: true) { _ in
             withAnimation {
                 if config.infiniteScroll {
@@ -326,8 +332,10 @@ struct GalleryArrows: View {
                 Button(action: {
                     withAnimation {
                         if config.infiniteScroll && currentPage == 0 {
+                            NDLogger.d(Self.self, "Gallery arrow: wrap-around to last page \(pageCount - 1)")
                             currentPage = pageCount - 1
                         } else {
+                            NDLogger.d(Self.self, "Gallery arrow: previous page \(currentPage - 1)")
                             currentPage = max(0, currentPage - 1)
                         }
                     }
@@ -335,15 +343,17 @@ struct GalleryArrows: View {
                     arrowIcon(systemName: "chevron.left", style: arrowStyle, color: arrowColor, bgColor: arrowBgColor)
                 }
                 .disabled(!config.infiniteScroll && currentPage == 0)
-                
+
                 Spacer()
-                
+
                 // Next arrow
                 Button(action: {
                     withAnimation {
                         if config.infiniteScroll && currentPage == pageCount - 1 {
+                            NDLogger.d(Self.self, "Gallery arrow: wrap-around to page 0")
                             currentPage = 0
                         } else {
+                            NDLogger.d(Self.self, "Gallery arrow: next page \(currentPage + 1)")
                             currentPage = min(pageCount - 1, currentPage + 1)
                         }
                     }
@@ -359,8 +369,10 @@ struct GalleryArrows: View {
                 Button(action: {
                     withAnimation {
                         if config.infiniteScroll && currentPage == 0 {
+                            NDLogger.d(Self.self, "Gallery arrow (vertical): wrap-around to last page \(pageCount - 1)")
                             currentPage = pageCount - 1
                         } else {
+                            NDLogger.d(Self.self, "Gallery arrow (vertical): previous page \(currentPage - 1)")
                             currentPage = max(0, currentPage - 1)
                         }
                     }
@@ -368,15 +380,17 @@ struct GalleryArrows: View {
                     arrowIcon(systemName: "chevron.up", style: arrowStyle, color: arrowColor, bgColor: arrowBgColor)
                 }
                 .disabled(!config.infiniteScroll && currentPage == 0)
-                
+
                 Spacer()
-                
+
                 // Next arrow
                 Button(action: {
                     withAnimation {
                         if config.infiniteScroll && currentPage == pageCount - 1 {
+                            NDLogger.d(Self.self, "Gallery arrow (vertical): wrap-around to page 0")
                             currentPage = 0
                         } else {
+                            NDLogger.d(Self.self, "Gallery arrow (vertical): next page \(currentPage + 1)")
                             currentPage = min(pageCount - 1, currentPage + 1)
                         }
                     }

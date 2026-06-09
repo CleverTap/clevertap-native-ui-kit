@@ -45,18 +45,18 @@ class ActionHandler {
     ) {
         Task { @MainActor in
             do {
-                print("ActionHandler: Handling action for node: \(nodeId)")
-                
+                NDLogger.d(Self.self, "Handling action for node: \(nodeId)")
+
                 // Notify component listener first (if interested in this node)
                 let shouldProceed = notifyComponentListener(
                     nodeId: nodeId,
                     interactionType: interactionType,
                     hasServerAction: true
                 )
-                
+
                 // If component listener consumed the interaction, stop here
                 guard shouldProceed else {
-                    print("ActionHandler: Component listener consumed interaction for node: \(nodeId)")
+                    NDLogger.d(Self.self, "Component listener consumed interaction for node: \(nodeId)")
                     return
                 }
                 
@@ -74,12 +74,12 @@ class ActionHandler {
                     try await handleCompositeAction(compositeAction, nodeId: nodeId)
                 }
             } catch {
-                print("ActionHandler: Error handling action for node: \(nodeId), error: \(error)")
+                NDLogger.e(Self.self, "Error handling action for node: \(nodeId), error: \(error)")
                 actionListener?.onActionError(action: action, error: error)
             }
         }
     }
-    
+
     /// Execute a lifecycle action (onAppear/onDisappear).
     /// These bypass the component listener since they are not user interactions.
     /// - Parameters:
@@ -91,7 +91,7 @@ class ActionHandler {
     ) {
         Task { @MainActor in
             do {
-                print("ActionHandler: Handling lifecycle action for node: \(nodeId)")
+                NDLogger.d(Self.self, "Handling lifecycle action for node: \(nodeId)")
                 switch action {
                 case .openUrl(let openUrlAction):
                     try await handleOpenUrl(openUrlAction, nodeId: nodeId)
@@ -105,7 +105,7 @@ class ActionHandler {
                     try await handleCompositeAction(compositeAction, nodeId: nodeId)
                 }
             } catch {
-                print("ActionHandler: Error handling lifecycle action for node: \(nodeId) - \(error)")
+                NDLogger.e(Self.self, "Error handling lifecycle action for node: \(nodeId) - \(error)")
                 actionListener?.onActionError(action: action, error: error)
             }
         }
@@ -127,12 +127,12 @@ class ActionHandler {
     func fireSystemEvent(eventName: String, properties: [String: Any]? = nil, deduplicate: Bool = false) {
         if deduplicate {
             guard firedSystemEvents.insert(eventName).inserted else {
-                print("ActionHandler: System event already fired, skipping: \(eventName)")
+                NDLogger.d(Self.self, "System event already fired, skipping: \(eventName)")
                 return
             }
         }
         Task { @MainActor in
-            print("ActionHandler: Firing system event: \(eventName)")
+            NDLogger.d(Self.self, "Firing system event: \(eventName)")
             actionListener?.onTrackEvent(eventName: eventName, properties: properties)
             if let unitId = unitId {
                 switch eventName {
@@ -158,7 +158,7 @@ class ActionHandler {
         interactionType: InteractionType
     ) {
         Task { @MainActor in
-            print("ActionHandler: Handling interaction without action for node: \(nodeId)")
+            NDLogger.d(Self.self, "Handling interaction without action for node: \(nodeId)")
             _ = notifyComponentListener(
                 nodeId: nodeId,
                 interactionType: interactionType,
@@ -197,7 +197,7 @@ class ActionHandler {
         )
         
         if consumed {
-            print("ActionHandler: Component listener consumed interaction for: \(nodeId)")
+            NDLogger.d(Self.self, "Component listener consumed interaction for: \(nodeId)")
         }
         
         return !consumed // Return true if NOT consumed (should proceed)
@@ -207,7 +207,7 @@ class ActionHandler {
     
     @MainActor
     private func handleOpenUrl(_ action: Action.OpenUrlAction, nodeId: String) async throws {
-        print("ActionHandler: Opening URL: \(action.url)")
+        NDLogger.d(Self.self, "Opening URL: \(action.url)")
         
         // Ask listener if they want to handle it
         let handled = actionListener?.onOpenUrl(
@@ -254,7 +254,7 @@ class ActionHandler {
     
     @MainActor
     private func handleCustomAction(_ action: Action.CustomAction, nodeId: String) {
-        print("ActionHandler: Executing custom action: \(action.key)")
+        NDLogger.d(Self.self, "Executing custom action: \(action.key)")
         
         let parsedValue = parseAnyCodableValue(action.value)
         
@@ -267,7 +267,7 @@ class ActionHandler {
     
     @MainActor
     private func handleNavigate(_ action: Action.NavigateAction, nodeId: String) {
-        print("ActionHandler: Navigating to: \(action.destination)")
+        NDLogger.d(Self.self, "Navigating to: \(action.destination)")
         
         actionListener?.onNavigate(
             destination: action.destination,
@@ -277,7 +277,7 @@ class ActionHandler {
     
     @MainActor
     private func handleTrackEvent(_ action: Action.TrackEventAction, nodeId: String) {
-        print("ActionHandler: Tracking event: \(action.eventName)")
+        NDLogger.d(Self.self, "Tracking event: \(action.eventName)")
         
         let parsedProperties = action.properties?.mapValues { parseAnyCodableValue($0) }
         
@@ -289,7 +289,7 @@ class ActionHandler {
     
     @MainActor
     private func handleCompositeAction(_ action: Action.CompositeAction, nodeId: String) async throws {
-        print("ActionHandler: Executing composite action with \(action.actions.count) sub-actions (\(action.executionMode))")
+        NDLogger.d(Self.self, "Executing composite action with \(action.actions.count) sub-actions (\(action.executionMode))")
         
         switch action.executionMode {
         case .sequential:

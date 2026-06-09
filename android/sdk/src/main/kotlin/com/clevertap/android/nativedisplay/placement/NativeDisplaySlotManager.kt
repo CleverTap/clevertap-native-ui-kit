@@ -1,8 +1,8 @@
 package com.clevertap.android.nativedisplay.placement
 
-import android.util.Log
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridgeListener
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
 import com.clevertap.android.sdk.CleverTapAPI
 import java.lang.ref.WeakReference
@@ -116,13 +116,14 @@ class NativeDisplaySlotManager private constructor() : NativeDisplayBridgeListen
             existingUnit = unitIndex[slotId]
         }
 
-        Log.d(TAG, "Registered observer for slot: $slotId")
+        NDLogger.d(TAG, "Registered observer for slot: $slotId")
 
         if (existingUnit != null) {
+            NDLogger.d(TAG, "Cached unit immediately delivered for slot: $slotId (unitId=${existingUnit.unitId})")
             try {
                 observer.onUnitAvailable(existingUnit)
             } catch (e: Exception) {
-                Log.w(TAG, "Observer threw exception during immediate delivery: ${e.message}")
+                NDLogger.w(TAG, "Observer threw exception during immediate delivery: ${e.message}")
             }
         }
     }
@@ -144,7 +145,7 @@ class NativeDisplaySlotManager private constructor() : NativeDisplayBridgeListen
                 activeSlots.remove(slotId)
             }
         }
-        Log.d(TAG, "Unregistered observer for slot: $slotId")
+        NDLogger.d(TAG, "Unregistered observer for slot: $slotId")
     }
 
     // --- Query ---
@@ -182,13 +183,13 @@ class NativeDisplaySlotManager private constructor() : NativeDisplayBridgeListen
             val slotIds = getActiveSlotIds().toList()
             val eventData = mapOf("slots" to slotIds)
             cleverTapApi.pushEvent(WZRK_ND_SLOT_SYNC, eventData)
-            Log.d(TAG, "Synced ${slotIds.size} slot IDs to server: $slotIds")
+            NDLogger.d(TAG, "Synced ${slotIds.size} slot IDs to server: $slotIds")
             true
         } catch (e: NoClassDefFoundError) {
-            Log.w(TAG, "CleverTap Core SDK not available for slot sync")
+            NDLogger.w(TAG, "CleverTap Core SDK not available for slot sync")
             false
         } catch (e: Exception) {
-            Log.w(TAG, "syncCurrentSlotIds() failed: ${e.message}")
+            NDLogger.w(TAG, "syncCurrentSlotIds() failed: ${e.message}")
             false
         }
     }
@@ -196,6 +197,7 @@ class NativeDisplaySlotManager private constructor() : NativeDisplayBridgeListen
     // --- NativeDisplayBridgeListener ---
 
     override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
+        NDLogger.d(TAG, "onNativeDisplaysLoaded: ${units.size} unit(s) received")
         for (unit in units) {
             val slotId = unit.slotId ?: continue
 
@@ -215,12 +217,12 @@ class NativeDisplaySlotManager private constructor() : NativeDisplayBridgeListen
                 }
             }
 
-            Log.d(TAG, "Unit ${unit.unitId} mapped to slot: $slotId")
+            NDLogger.d(TAG, "Unit ${unit.unitId} mapped to slot: $slotId")
             for (observer in activeObservers) {
                 try {
                     observer.onUnitAvailable(unit)
                 } catch (e: Exception) {
-                    Log.w(TAG, "Observer threw exception: ${e.message}")
+                    NDLogger.w(TAG, "Observer threw exception: ${e.message}")
                 }
             }
         }

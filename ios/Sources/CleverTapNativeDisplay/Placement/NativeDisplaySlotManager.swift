@@ -81,6 +81,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     /// Called by the bridge when display units are loaded or updated.
     /// Reads `slotId` from each unit, updates the index, and notifies matching observers.
     public func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
+        NDLogger.d(Self.self, "onNativeDisplaysLoaded: \(units.count) unit(s) received")
         lock.lock()
 
         // Build a map of slotId -> unit for this batch, and collect observers to notify
@@ -88,10 +89,12 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
 
         for unit in units {
             guard let slotId = unit.slotId, !slotId.isEmpty else {
+                NDLogger.v(Self.self, "Unit '\(unit.unitId)' has no slotId, skipping slot routing")
                 continue
             }
 
             unitIndex[slotId] = unit
+            NDLogger.d(Self.self, "Slot '\(slotId)' updated with unit '\(unit.unitId)'")
 
             if let observers = slotRegistry[slotId] {
                 let activeObservers = observers.allObjects.compactMap { $0 as? NativeDisplaySlotObserver }
@@ -124,6 +127,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     ///   - slotId: The slot identifier to observe.
     ///   - observer: The observer to register (held weakly).
     public func registerSlot(_ slotId: String, observer: NativeDisplaySlotObserver) {
+        NDLogger.d(Self.self, "Registering observer for slot '\(slotId)'")
         lock.lock()
 
         let table: NSHashTable<AnyObject>
@@ -140,6 +144,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
 
         // Deliver existing unit immediately if available
         if let unit = existingUnit {
+            NDLogger.d(Self.self, "Slot '\(slotId)': delivering cached unit '\(unit.unitId)' immediately to new observer")
             DispatchQueue.main.async {
                 observer.onUnitAvailable(unit)
             }
@@ -152,6 +157,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     ///   - slotId: The slot identifier to stop observing.
     ///   - observer: The observer to remove.
     public func unregisterSlot(_ slotId: String, observer: NativeDisplaySlotObserver) {
+        NDLogger.d(Self.self, "Unregistering observer for slot '\(slotId)'")
         lock.lock()
         defer { lock.unlock() }
 
@@ -160,6 +166,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
         // Clean up empty tables
         if let table = slotRegistry[slotId], table.count == 0 {
             slotRegistry.removeValue(forKey: slotId)
+            NDLogger.d(Self.self, "Slot '\(slotId)' has no remaining observers — removed from registry")
         }
     }
 
@@ -201,13 +208,13 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     @discardableResult
     public func syncCurrentSlotIds(_ cleverTap: Any?) -> Bool {
         guard let ct = cleverTap as? NSObject else {
-            print("[NativeDisplaySlotManager] syncCurrentSlotIds() called with nil or non-NSObject")
+            NDLogger.w(Self.self, "syncCurrentSlotIds() called with nil or non-NSObject")
             return false
         }
 
         let recordEventSelector = NSSelectorFromString("recordEvent:withProps:")
         guard ct.responds(to: recordEventSelector) else {
-            print("[NativeDisplaySlotManager] CleverTap instance does not support recordEvent:withProps:")
+            NDLogger.w(Self.self, "CleverTap instance does not support recordEvent:withProps:")
             return false
         }
 
@@ -215,7 +222,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
         let props: [String: Any] = ["slot_ids": activeSlots.sorted().joined(separator: ",")]
         ct.perform(recordEventSelector, with: NativeDisplaySlotManager.wzrkSlotSync, with: props)
 
-        print("[NativeDisplaySlotManager] Synced \(activeSlots.count) active slot IDs to server")
+        NDLogger.d(Self.self, "Synced \(activeSlots.count) active slot IDs to server")
         return true
     }
 
@@ -225,6 +232,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     ///
     /// - Parameter slotId: The slot identifier to clear.
     public func clearSlot(_ slotId: String) {
+        NDLogger.d(Self.self, "Clearing slot '\(slotId)'")
         lock.lock()
 
         unitIndex.removeValue(forKey: slotId)
@@ -249,6 +257,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
 
     /// Clear all cached units and notify all observers.
     public func clearAll() {
+        NDLogger.d(Self.self, "Clearing all slots")
         lock.lock()
 
         let allSlotIds = Array(unitIndex.keys)

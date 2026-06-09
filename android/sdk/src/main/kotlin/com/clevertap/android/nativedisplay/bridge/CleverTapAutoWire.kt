@@ -1,7 +1,7 @@
 package com.clevertap.android.nativedisplay.bridge
 
 import android.content.Context
-import android.util.Log
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import com.clevertap.android.sdk.CleverTapAPI
 import com.clevertap.android.sdk.displayunits.DisplayUnitListener
 import com.clevertap.android.sdk.displayunits.model.CleverTapDisplayUnit
@@ -37,15 +37,15 @@ internal object CleverTapAutoWire {
         return try {
             val ctApi = CleverTapAPI.getDefaultInstance(context.applicationContext)
             if (ctApi == null) {
-                Log.w(TAG, "CleverTapAPI.getDefaultInstance() returned null")
+                NDLogger.w(TAG, "CleverTapAPI.getDefaultInstance() returned null")
                 return false
             }
             wireListener(ctApi, bridge)
         } catch (e: NoClassDefFoundError) {
-            Log.d(TAG, "CleverTap Core SDK not found, manual mode only")
+            NDLogger.d(TAG, "CleverTap Core SDK not found, manual mode only")
             false
         } catch (e: Exception) {
-            Log.w(TAG, "Auto-wire failed: ${e.message}")
+            NDLogger.w(TAG, "Auto-wire failed: ${e.message}")
             false
         }
     }
@@ -66,10 +66,10 @@ internal object CleverTapAutoWire {
         return try {
             wireListener(cleverTapApi, bridge, clientListener)
         } catch (e: NoClassDefFoundError) {
-            Log.w(TAG, "CleverTap Core SDK classes not available at runtime")
+            NDLogger.w(TAG, "CleverTap Core SDK classes not available at runtime")
             false
         } catch (e: Exception) {
-            Log.w(TAG, "bind() failed: ${e.message}")
+            NDLogger.w(TAG, "bind() failed: ${e.message}")
             false
         }
     }
@@ -100,7 +100,8 @@ internal object CleverTapAutoWire {
             if (clientListener != null) {
                 ctApi.setDisplayUnitListener(clientListener)
             }
-            Log.d(TAG, "Wired to CleverTap via cache attachment${if (clientListener != null) " (client listener forwarded)" else ""}")
+            NDLogger.d(TAG, "Wired to CleverTap via cache attachment${if (clientListener != null) " (client listener forwarded)" else ""}")
+            syncLogLevelFromCoreSdk(ctApi)
             return true
         }
 
@@ -111,7 +112,7 @@ internal object CleverTapAutoWire {
                     try {
                         clientListener.onDisplayUnitsLoaded(units)
                     } catch (e: Exception) {
-                        Log.w(TAG, "Client listener threw exception: ${e.message}")
+                        NDLogger.w(TAG, "Client listener threw exception: ${e.message}")
                     }
                 }
 
@@ -120,7 +121,7 @@ internal object CleverTapAutoWire {
                     try {
                         unit.jsonObject?.toString()
                     } catch (e: Exception) {
-                        Log.w(TAG, "Failed to extract JSON from display unit: ${e.message}")
+                        NDLogger.w(TAG, "Failed to extract JSON from display unit: ${e.message}")
                         null
                     }
                 }
@@ -133,7 +134,8 @@ internal object CleverTapAutoWire {
         activeListener = listener
         ctApi.setDisplayUnitListener(listener)
 
-        Log.d(TAG, "Wired to CleverTap via DisplayUnitListener fallback${if (clientListener != null) " (client listener forwarded)" else ""}")
+        NDLogger.d(TAG, "Wired to CleverTap via DisplayUnitListener fallback${if (clientListener != null) " (client listener forwarded)" else ""}")
+        syncLogLevelFromCoreSdk(ctApi)
         return true
     }
 
@@ -157,8 +159,28 @@ internal object CleverTapAutoWire {
             setter.invoke(ctApi, proxy)
             true
         } catch (t: Throwable) {
-            Log.w(TAG, "setDisplayUnitCache invocation failed: ${t.message}")
+            NDLogger.w(TAG, "setDisplayUnitCache invocation failed: ${t.message}")
             false
+        }
+    }
+
+    /**
+     * Reflectively reads `CleverTapAPI.getDebugLevel()` and forwards the result to
+     * [NDLogger.syncFromCoreSdk]. Only fires when [NDLogger.isExplicitlySet] is false so
+     * a client-supplied [NativeDisplayBridge.setLogLevel] always takes precedence.
+     *
+     * Uses try/catch — if the method is absent or throws, the SDK default is preserved.
+     */
+    private fun syncLogLevelFromCoreSdk(ctApi: CleverTapAPI) {
+        if (NDLogger.isExplicitlySet()) return
+        try {
+            val level = ctApi.javaClass.getMethod("getDebugLevel").invoke(ctApi)
+            if (level is Int) {
+                NDLogger.syncFromCoreSdk(level)
+                NDLogger.d(TAG, "Log level synced from Core SDK: $level → ${NDLogger.getLevel()}")
+            }
+        } catch (_: Throwable) {
+            // getDebugLevel() unavailable on this Core SDK version — leave the default intact.
         }
     }
 }
