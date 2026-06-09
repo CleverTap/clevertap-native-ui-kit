@@ -229,21 +229,12 @@ class ActionHandler {
         guard let url = URL(string: action.url) else {
             throw ActionError.invalidUrl(action.url)
         }
-        
-        // Validate URL scheme
-        guard isValidUrlScheme(url.scheme) else {
-            throw ActionError.invalidUrlScheme(url.scheme ?? "none")
-        }
-        
-        if action.openInBrowser {
-            // Open in external browser
-            UIApplication.shared.open(url)
-        } else if action.customTabsEnabled {
-            // Open in SFSafariViewController (iOS equivalent of Chrome Custom Tabs)
+
+        if action.customTabsEnabled {
             openInSafariViewController(url)
         } else {
-            // Fallback to external browser
-            UIApplication.shared.open(url)
+            // Matches Core SDK CleverTap.m openURL:forModule: behavior exactly.
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
     
@@ -259,11 +250,6 @@ class ActionHandler {
         let safariVC = SFSafariViewController(url: url)
         safariVC.modalPresentationStyle = .pageSheet
         rootViewController.present(safariVC, animated: true)
-    }
-    
-    private func isValidUrlScheme(_ scheme: String?) -> Bool {
-        guard let scheme = scheme?.lowercased() else { return false }
-        return ["http", "https", "tel", "mailto"].contains(scheme)
     }
     
     @MainActor
