@@ -1018,22 +1018,14 @@ struct RenderElement: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                             .clipped()
                     case .failure:
-                        Image(systemName: "photo")
-                            .foregroundColor(.gray)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        EmptyView()
                     @unknown default:
                         EmptyView()
                     }
                 }
             }
         } else {
-            Rectangle()
-                .fill(Color.gray.opacity(0.3))
-                .overlay(
-                    Text("No Image")
-                        .foregroundColor(.gray)
-                        .font(.caption)
-                )
+            EmptyView()
         }
     }
 
@@ -1691,42 +1683,46 @@ fileprivate class PlayerManager: ObservableObject {
     }
 }
 
+/// UIView subclass that keeps AVPlayerLayer filling its bounds on every layout pass,
+/// including device rotation.
+private final class PlayerLayerView: UIView {
+    let playerLayer = AVPlayerLayer()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .clear
+        playerLayer.videoGravity = .resizeAspect
+        layer.addSublayer(playerLayer)
+    }
+
+    required init?(coder: NSCoder) { fatalError() }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        playerLayer.frame = bounds
+    }
+}
+
 /// UIViewRepresentable wrapper for AVPlayerLayer
 private struct VideoPlayerLayer: UIViewRepresentable {
     let player: AVPlayer?
 
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        view.backgroundColor = .black
-
-        let playerLayer = AVPlayerLayer(player: player)
-        playerLayer.videoGravity = .resizeAspect
-        view.layer.addSublayer(playerLayer)
-
-        context.coordinator.playerLayer = playerLayer
-        return view
+    func makeUIView(context: Context) -> PlayerLayerView {
+        PlayerLayerView()
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {
-        context.coordinator.playerLayer?.player = player
-
-        // Update layer frame to match view bounds
-        DispatchQueue.main.async {
-            context.coordinator.playerLayer?.frame = uiView.bounds
+    func updateUIView(_ uiView: PlayerLayerView, context: Context) {
+        // Only reassign if the player instance actually changed — avoids a black flash
+        // on rotation when SwiftUI rebuilds the view body but the player is the same.
+        if uiView.playerLayer.player !== player {
+            uiView.playerLayer.player = player
         }
     }
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
-
-    static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
-        coordinator.playerLayer?.removeFromSuperlayer()
-        coordinator.playerLayer = nil
-    }
-
-    class Coordinator {
-        var playerLayer: AVPlayerLayer?
+    static func dismantleUIView(_ uiView: PlayerLayerView, coordinator: ()) {
+        // Do not nil out the player here — the PlayerManager's cleanup() handles
+        // release on onDisappear. Nilling here causes a black flash on rotation
+        // because SwiftUI dismantles/remakes UIViewRepresentable during layout rebuilds.
     }
 }
 
