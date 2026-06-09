@@ -235,6 +235,7 @@ class NativeDisplayBridge private constructor() {
 
             cache.replaceAll(parsedUnits)
 
+            NDLogger.d(TAG, "Server cache updated: received ${payload.size} unit(s), parsed ${parsedUnits.size} successfully")
             NDLogger.d(TAG, "Processed ${parsedUnits.size}/${payload.size} display units")
             withContext(Dispatchers.Main) {
                 notifyListeners(parsedUnits)
@@ -300,6 +301,9 @@ class NativeDisplayBridge private constructor() {
             val alreadyRegistered = listeners.any { it.get() === listener }
             if (!alreadyRegistered) {
                 listeners.add(WeakReference(listener))
+                NDLogger.d(TAG, "Listener added: ${listener::class.simpleName}")
+            } else {
+                NDLogger.d(TAG, "Listener already registered, skipping: ${listener::class.simpleName}")
             }
         }
     }
@@ -313,6 +317,7 @@ class NativeDisplayBridge private constructor() {
         synchronized(listenersLock) {
             listeners.removeAll { it.get() === listener || it.get() == null }
         }
+        NDLogger.d(TAG, "Listener removed: ${listener::class.simpleName}")
     }
 
     /**

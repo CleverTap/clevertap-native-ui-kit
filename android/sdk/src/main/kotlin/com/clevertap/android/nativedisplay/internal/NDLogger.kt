@@ -80,28 +80,39 @@ internal object NDLogger {
     }
 
     // ── Log methods ────────────────────────────────────────────────────────
+    //
+    // `tag` is treated as a subtag (class/component name). The actual logcat
+    // tag is always LOGCAT_TAG ("CleverTap"), matching CTLogger convention.
+    // Log lines format: "[NativeDisplay]: <tag>: <msg>"
+    // This mirrors iOS where the logger prepends "[CleverTap]: [NativeDisplay]:"
+    // and appends the caller's class name before the message.
+
+    private const val LOGCAT_TAG = "CleverTap"
+    private const val PREFIX = "[NativeDisplay]"
+
+    private fun format(tag: String, msg: String) = "$PREFIX: $tag: $msg"
 
     fun v(tag: String, msg: String) {
-        if (level.value >= Level.VERBOSE.value) Log.v(tag, msg)
+        if (level.value >= Level.VERBOSE.value) Log.v(LOGCAT_TAG, format(tag, msg))
     }
 
     fun d(tag: String, msg: String) {
-        if (level.value >= Level.DEBUG.value) Log.d(tag, msg)
+        if (level.value >= Level.DEBUG.value) Log.d(LOGCAT_TAG, format(tag, msg))
     }
 
     fun i(tag: String, msg: String) {
-        if (level.value >= Level.INFO.value) Log.i(tag, msg)
+        if (level.value >= Level.INFO.value) Log.i(LOGCAT_TAG, format(tag, msg))
     }
 
     /** Warnings are shown at INFO and above (they are always significant). */
     fun w(tag: String, msg: String) {
-        if (level.value >= Level.INFO.value) Log.w(tag, msg)
+        if (level.value >= Level.INFO.value) Log.w(LOGCAT_TAG, format(tag, msg))
     }
 
     /** Errors are shown at INFO and above (they are always significant). */
     fun e(tag: String, msg: String, t: Throwable? = null) {
         if (level.value >= Level.INFO.value) {
-            if (t != null) Log.e(tag, msg, t) else Log.e(tag, msg)
+            if (t != null) Log.e(LOGCAT_TAG, format(tag, msg), t) else Log.e(LOGCAT_TAG, format(tag, msg))
         }
     }
 }

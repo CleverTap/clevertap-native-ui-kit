@@ -119,6 +119,7 @@ class NativeDisplaySlotManager private constructor() : NativeDisplayBridgeListen
         NDLogger.d(TAG, "Registered observer for slot: $slotId")
 
         if (existingUnit != null) {
+            NDLogger.d(TAG, "Cached unit immediately delivered for slot: $slotId (unitId=${existingUnit.unitId})")
             try {
                 observer.onUnitAvailable(existingUnit)
             } catch (e: Exception) {
@@ -196,6 +197,7 @@ class NativeDisplaySlotManager private constructor() : NativeDisplayBridgeListen
     // --- NativeDisplayBridgeListener ---
 
     override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
+        NDLogger.d(TAG, "onNativeDisplaysLoaded: ${units.size} unit(s) received")
         for (unit in units) {
             val slotId = unit.slotId ?: continue
 
