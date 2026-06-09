@@ -45,6 +45,7 @@
 		B027 /* NativeDisplaySlotTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F027 /* NativeDisplaySlotTableViewCell.swift */; };
 		B028 /* NativeDisplaySlotUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F028 /* NativeDisplaySlotUIView.swift */; };
 		B029 /* GIFImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F029 /* GIFImage.swift */; };
+		B030 /* NDLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F030 /* NDLogger.swift */; };
 		BT01 /* CleverTapNativeDisplayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FT01 /* CleverTapNativeDisplayTests.swift */; };
 		BT02 /* CleverTapNativeDisplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = P001 /* CleverTapNativeDisplay.framework */; };
 /* End PBXBuildFile section */
@@ -98,6 +99,7 @@
 		F027 /* NativeDisplaySlotTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplaySlotTableViewCell.swift; sourceTree = "<group>"; };
 		F028 /* NativeDisplaySlotUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplaySlotUIView.swift; sourceTree = "<group>"; };
 		F029 /* GIFImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFImage.swift; sourceTree = "<group>"; };
+		F030 /* NDLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NDLogger.swift; sourceTree = "<group>"; };
 		FT01 /* CleverTapNativeDisplayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleverTapNativeDisplayTests.swift; sourceTree = "<group>"; };
 		P001 /* CleverTapNativeDisplay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CleverTapNativeDisplay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		P002 /* CleverTapNativeDisplayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CleverTapNativeDisplayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -247,6 +249,14 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		GRP_INT /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				F030 /* NDLogger.swift */,
+			);
+			path = Internal;
+			sourceTree = "<group>";
+		};
 		GRP_SDK /* CleverTapNativeDisplay */ = {
 			isa = PBXGroup;
 			children = (
@@ -261,6 +271,7 @@
 				GRP_BRG /* Bridge */,
 				GRP_PLC /* Placement */,
 				GRP_UTL /* Utilities */,
+				GRP_INT /* Internal */,
 			);
 			path = CleverTapNativeDisplay;
 			sourceTree = "<group>";
@@ -445,6 +456,7 @@
 				B027 /* NativeDisplaySlotTableViewCell.swift in Sources */,
 				B028 /* NativeDisplaySlotUIView.swift in Sources */,
 				B029 /* GIFImage.swift in Sources */,
+				B030 /* NDLogger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
