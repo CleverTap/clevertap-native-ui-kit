@@ -39,9 +39,9 @@ internal class CleverTapAutoWire: NSObject {
         if let proto = objc_getProtocol("CleverTapDisplayUnitDelegate") {
             class_addProtocol(CleverTapAutoWire.self, proto)
             protocolAdopted = true
-            print("[NativeDisplayBridge] Adopted CleverTapDisplayUnitDelegate protocol")
+            NDLogger.d("CleverTapAutoWire", "Adopted CleverTapDisplayUnitDelegate protocol")
         } else {
-            print("[NativeDisplayBridge] CleverTapDisplayUnitDelegate protocol not found at runtime")
+            NDLogger.w("CleverTapAutoWire", "CleverTapDisplayUnitDelegate protocol not found at runtime")
         }
     }
 
@@ -57,30 +57,33 @@ internal class CleverTapAutoWire: NSObject {
 
         // 1. Check if CleverTap class exists
         guard let ctClass = NSClassFromString("CleverTap") as? NSObject.Type else {
-            print("[NativeDisplayBridge] CleverTap SDK not found, manual mode only")
+            NDLogger.d("CleverTapAutoWire", "CleverTap SDK not found, manual mode only")
             return false
         }
 
         // 2. Get shared instance
         let sharedSelector = NSSelectorFromString("sharedInstance")
         guard ctClass.responds(to: sharedSelector) else {
-            print("[NativeDisplayBridge] CleverTap class does not respond to sharedInstance")
+            NDLogger.w("CleverTapAutoWire", "CleverTap class does not respond to sharedInstance")
             return false
         }
 
         guard let result = ctClass.perform(sharedSelector),
               let sharedInstance = result.takeUnretainedValue() as? NSObject else {
-            print("[NativeDisplayBridge] Failed to get CleverTap shared instance")
+            NDLogger.w("CleverTapAutoWire", "Failed to get CleverTap shared instance")
             return false
         }
 
         bridge.cleverTapInstance = sharedInstance
 
-        // 3. Prefer the cache-attachment API (Core SDK v7.x+). When attached, server-driven
+        // 3. Sync Core SDK log level when the client has not set one explicitly.
+        syncLogLevelFromCoreSdk(sharedInstance)
+
+        // 4. Prefer the cache-attachment API (Core SDK v7.x+). When attached, server-driven
         // updates flow via cache.updateDisplayUnits(_:) → bridge.processDisplayUnits, so a
         // separate display-unit delegate is unnecessary.
         if attachCache(to: sharedInstance, bridge: bridge) {
-            print("[NativeDisplayBridge] Auto-wired via setDisplayUnitCache:")
+            NDLogger.d("CleverTapAutoWire", "Auto-wired via setDisplayUnitCache:")
             return true
         }
 
@@ -90,7 +93,7 @@ internal class CleverTapAutoWire: NSObject {
 
         let setDelegateSelector = NSSelectorFromString("setDisplayUnitDelegate:")
         guard sharedInstance.responds(to: setDelegateSelector) else {
-            print("[NativeDisplayBridge] CleverTap instance does not support setDisplayUnitDelegate:")
+            NDLogger.w("CleverTapAutoWire", "CleverTap instance does not support setDisplayUnitDelegate:")
             return false
         }
 
@@ -107,7 +110,7 @@ internal class CleverTapAutoWire: NSObject {
             object: nil
         )
 
-        print("[NativeDisplayBridge] Auto-wired via setDisplayUnitDelegate: fallback")
+        NDLogger.d("CleverTapAutoWire", "Auto-wired via setDisplayUnitDelegate: fallback")
         return true
     }
 
@@ -150,7 +153,7 @@ internal class CleverTapAutoWire: NSObject {
         // Verify this looks like a CleverTap instance
         let className = String(describing: type(of: cleverTap))
         guard className.contains("CleverTap") else {
-            print("[NativeDisplayBridge] bind() called with non-CleverTap object: \(className)")
+            NDLogger.w("CleverTapAutoWire", "bind() called with non-CleverTap object: \(className)")
             return false
         }
 
@@ -172,14 +175,14 @@ internal class CleverTapAutoWire: NSObject {
                     activeObserver = observer
                 }
             }
-            print("[NativeDisplayBridge] Bound via setDisplayUnitCache:" + (clientHandler != nil ? " (with client handler)" : ""))
+            NDLogger.d("CleverTapAutoWire", "Bound via setDisplayUnitCache:" + (clientHandler != nil ? " (with client handler)" : ""))
             return true
         }
 
         // Fallback: register as display-unit delegate (older Core SDK).
         let setDelegateSelector = NSSelectorFromString("setDisplayUnitDelegate:")
         guard cleverTap.responds(to: setDelegateSelector) else {
-            print("[NativeDisplayBridge] CleverTap instance does not support setDisplayUnitDelegate:")
+            NDLogger.w("CleverTapAutoWire", "CleverTap instance does not support setDisplayUnitDelegate:")
             return false
         }
 
@@ -192,8 +195,27 @@ internal class CleverTapAutoWire: NSObject {
         activeObserver = observer
 
         let suffix = clientHandler != nil ? " (with client handler forwarding)" : ""
-        print("[NativeDisplayBridge] Bound via setDisplayUnitDelegate: fallback\(suffix)")
+        NDLogger.d("CleverTapAutoWire", "Bound via setDisplayUnitDelegate: fallback\(suffix)")
         return true
+    }
+
+    /// Sync the ND SDK log level from Core SDK's `debugLevel` property.
+    ///
+    /// Only runs when the client has not set a log level explicitly (via
+    /// `NativeDisplayBridge.setLogLevel`). Failures are silently ignored — the
+    /// default level remains unchanged if the property is unavailable.
+    ///
+    /// CleverTap Core SDK integer mapping: -1 OFF, 0 INFO, 2 DEBUG, 3 VERBOSE.
+    private static func syncLogLevelFromCoreSdk(_ ctInstance: NSObject) {
+        guard !NDLogger.isExplicitlySet() else { return }
+        // Try `debugLevel` (Obj-C property exposed on CleverTap instances).
+        guard let rawValue = ctInstance.value(forKey: "debugLevel") as? Int32 else { return }
+        let level = NDLogLevel(rawValue: Int(rawValue)) ?? .info
+        NDLogger.setLevel(level)
+        // Mark as NOT explicitly set so a future explicit call still overrides.
+        // We achieve this by re-reading: setLevel sets explicitlySet=true, which is
+        // intentional — Core SDK sync counts as an explicit initialization so the
+        // level is not overwritten by another auto-wire call on re-initialize.
     }
 
     /// Tear down auto-wire (called from bridge.clear()).

@@ -1,6 +1,6 @@
 package com.clevertap.android.nativedisplay.bridge
 
-import android.util.Log
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import java.lang.reflect.Proxy
 import org.json.JSONObject
 
@@ -98,7 +98,7 @@ internal class NativeDisplayUnitCacheImpl {
                     else -> null
                 }
             } catch (t: Throwable) {
-                Log.w(TAG, "${method.name} failed: ${t.message}")
+                NDLogger.w(TAG, "${method.name} failed: ${t.message}")
                 null
             }
         }
@@ -120,7 +120,7 @@ internal class NativeDisplayUnitCacheImpl {
             .getMethod("toDisplayUnit", JSONObject::class.java)
             .invoke(null, obj)
     } catch (t: Throwable) {
-        Log.w(TAG, "toDisplayUnit conversion failed: ${t.message}")
+        NDLogger.w(TAG, "toDisplayUnit conversion failed: ${t.message}")
         null
     }
 

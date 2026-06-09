@@ -26,7 +26,7 @@ internal class NativeDisplayConfigParser {
     /// - Returns: A `NativeDisplayUnit` if parsing succeeds, `nil` otherwise.
     func tryParse(_ jsonString: String) -> NativeDisplayUnit? {
         guard let data = jsonString.data(using: .utf8) else {
-            print("[NativeDisplayBridge] Failed to convert JSON string to Data")
+            NDLogger.w("NativeDisplayConfigParser", "Failed to convert JSON string to Data")
             return nil
         }
         return tryParse(data: data, rawJson: jsonString)
@@ -39,13 +39,13 @@ internal class NativeDisplayConfigParser {
     /// - Returns: A `NativeDisplayUnit` if parsing succeeds, `nil` otherwise.
     func tryParse(data: Data, rawJson: String? = nil) -> NativeDisplayUnit? {
         guard let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            print("[NativeDisplayBridge] Failed to deserialize JSON")
+            NDLogger.w("NativeDisplayConfigParser", "Failed to deserialize JSON")
             return nil
         }
 
         // Extract unit ID (required)
         guard let unitId = jsonObject["wzrk_id"] as? String else {
-            print("[NativeDisplayBridge] Missing wzrk_id in display unit JSON")
+            NDLogger.w("NativeDisplayConfigParser", "Missing wzrk_id in display unit JSON")
             return nil
         }
 
@@ -91,7 +91,7 @@ internal class NativeDisplayConfigParser {
             )
         }
 
-        print("[NativeDisplayBridge] JSON does not contain a Native Display config (unitId: \(unitId))")
+        NDLogger.w("NativeDisplayConfigParser", "JSON does not contain a Native Display config (unitId: \(unitId))")
         return nil
     }
 
@@ -131,7 +131,7 @@ internal class NativeDisplayConfigParser {
             let config = try ResolvedConfig.from(jsonData: ndConfigData)
             return config
         } catch {
-            print("[NativeDisplayBridge] Failed to parse native_display_config: \(error.localizedDescription)")
+            NDLogger.w("NativeDisplayConfigParser", "Failed to parse native_display_config: \(error.localizedDescription)")
             return nil
         }
     }
@@ -147,7 +147,7 @@ internal class NativeDisplayConfigParser {
             let config = try ResolvedConfig.from(jsonString: ndConfigString)
             return config
         } catch {
-            print("[NativeDisplayBridge] Failed to parse custom_kv.nd_config: \(error.localizedDescription)")
+            NDLogger.w("NativeDisplayConfigParser", "Failed to parse custom_kv.nd_config: \(error.localizedDescription)")
             return nil
         }
     }
@@ -162,7 +162,7 @@ internal class NativeDisplayConfigParser {
             let config = try ResolvedConfig.from(jsonData: data)
             return config
         } catch {
-            print("[NativeDisplayBridge] Failed to parse JSON as direct ND config: \(error.localizedDescription)")
+            NDLogger.w("NativeDisplayConfigParser", "Failed to parse JSON as direct ND config: \(error.localizedDescription)")
             return nil
         }
     }

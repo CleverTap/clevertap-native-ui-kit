@@ -1,6 +1,5 @@
 package com.clevertap.android.nativedisplay.renderer
 
-import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.runtime.*
@@ -14,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.clevertap.android.nativedisplay.internal.ImageLoaderProvider
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import com.clevertap.android.nativedisplay.models.*
 import kotlin.math.cos
 import kotlin.math.sin
@@ -204,7 +204,7 @@ private fun Modifier.applyStaticImage(bg: Background.Image): Modifier {
         ImageFit.CROP -> ContentScale.Crop
         ImageFit.CONTAIN -> ContentScale.Fit
         ImageFit.FILL -> ContentScale.FillBounds
-        ImageFit.TILE -> { Log.w("NDBackgroundRenderer", "ImageFit.TILE is not yet supported; falling back to CROP"); ContentScale.Crop }
+        ImageFit.TILE -> { NDLogger.w("NDBackgroundRenderer", "ImageFit.TILE is not yet supported; falling back to CROP"); ContentScale.Crop }
     }
 
     val painter = rememberAsyncImagePainter(

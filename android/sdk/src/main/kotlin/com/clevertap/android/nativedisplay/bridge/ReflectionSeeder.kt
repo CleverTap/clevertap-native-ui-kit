@@ -1,6 +1,6 @@
 package com.clevertap.android.nativedisplay.bridge
 
-import android.util.Log
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import org.json.JSONObject
 
 /**
@@ -70,7 +70,7 @@ internal object ReflectionSeeder {
     private fun logOnce(message: String): Boolean {
         if (!loggedFailure) {
             loggedFailure = true
-            Log.w(TAG, "$message; events will be unattributed.")
+            NDLogger.w(TAG, "$message; events will be unattributed.")
         }
         return false
     }

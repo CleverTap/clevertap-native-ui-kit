@@ -201,13 +201,13 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     @discardableResult
     public func syncCurrentSlotIds(_ cleverTap: Any?) -> Bool {
         guard let ct = cleverTap as? NSObject else {
-            print("[NativeDisplaySlotManager] syncCurrentSlotIds() called with nil or non-NSObject")
+            NDLogger.w("NativeDisplaySlotManager", "syncCurrentSlotIds() called with nil or non-NSObject")
             return false
         }
 
         let recordEventSelector = NSSelectorFromString("recordEvent:withProps:")
         guard ct.responds(to: recordEventSelector) else {
-            print("[NativeDisplaySlotManager] CleverTap instance does not support recordEvent:withProps:")
+            NDLogger.w("NativeDisplaySlotManager", "CleverTap instance does not support recordEvent:withProps:")
             return false
         }
 
@@ -215,7 +215,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
         let props: [String: Any] = ["slot_ids": activeSlots.sorted().joined(separator: ",")]
         ct.perform(recordEventSelector, with: NativeDisplaySlotManager.wzrkSlotSync, with: props)
 
-        print("[NativeDisplaySlotManager] Synced \(activeSlots.count) active slot IDs to server")
+        NDLogger.d("NativeDisplaySlotManager", "Synced \(activeSlots.count) active slot IDs to server")
         return true
     }
 

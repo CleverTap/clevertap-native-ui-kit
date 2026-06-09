@@ -1,8 +1,8 @@
 package com.clevertap.android.nativedisplay.bridge
 
 import android.content.Context
-import android.util.Log
 import com.clevertap.android.nativedisplay.handler.ActionAttributionExtras
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import com.clevertap.android.sdk.CleverTapAPI
 import java.lang.ref.WeakReference
 import java.lang.reflect.Method
@@ -189,6 +189,26 @@ class NativeDisplayBridge private constructor() {
          * Get the current bridge instance, or null if not yet initialized.
          */
         fun getInstance(): NativeDisplayBridge? = instance
+
+        /**
+         * Set the SDK log verbosity level.
+         *
+         * Call this before or after initialising the bridge — the level is stored in a
+         * singleton and takes effect immediately.
+         *
+         * ```kotlin
+         * // Silence all SDK logs in production
+         * NativeDisplayBridge.setLogLevel(NDLogLevel.OFF)
+         *
+         * // Enable verbose output while debugging
+         * NativeDisplayBridge.setLogLevel(NDLogLevel.VERBOSE)
+         * ```
+         *
+         * @param level The desired [NDLogLevel]. Overrides any Core SDK auto-sync.
+         */
+        fun setLogLevel(level: NDLogLevel) {
+            NDLogger.setLevel(level.toInternal())
+        }
     }
 
     // --- Manual Mode: accept raw JSON ---
@@ -215,7 +235,7 @@ class NativeDisplayBridge private constructor() {
 
             cache.replaceAll(parsedUnits)
 
-            Log.d(TAG, "Processed ${parsedUnits.size}/${payload.size} display units")
+            NDLogger.d(TAG, "Processed ${parsedUnits.size}/${payload.size} display units")
             withContext(Dispatchers.Main) {
                 notifyListeners(parsedUnits)
             }
@@ -234,13 +254,13 @@ class NativeDisplayBridge private constructor() {
         parseScope.launch {
             val unit = parser.tryParse(displayUnitJsonString)
             if (unit == null) {
-                Log.w(TAG, "Failed to parse display unit, skipping")
+                NDLogger.w(TAG, "Failed to parse display unit, skipping")
                 return@launch
             }
 
             cache.put(unit)
 
-            Log.d(TAG, "Processed display unit: ${unit.unitId}")
+            NDLogger.d(TAG, "Processed display unit: ${unit.unitId}")
             withContext(Dispatchers.Main) {
                 notifyListeners(listOf(unit))
             }
@@ -343,13 +363,13 @@ class NativeDisplayBridge private constructor() {
         return try {
             val eventData = mapOf("t" to FETCH_TYPE_NATIVE_DISPLAY)
             cleverTapApi.pushEvent(WZRK_FETCH, eventData)
-            Log.d(TAG, "Sent wzrk_fetch request for Native Display (type=$FETCH_TYPE_NATIVE_DISPLAY)")
+            NDLogger.d(TAG, "Sent wzrk_fetch request for Native Display (type=$FETCH_TYPE_NATIVE_DISPLAY)")
             true
         } catch (e: NoClassDefFoundError) {
-            Log.w(TAG, "CleverTap Core SDK not available for fetch")
+            NDLogger.w(TAG, "CleverTap Core SDK not available for fetch")
             false
         } catch (e: Exception) {
-            Log.w(TAG, "fetchNativeDisplays() failed: ${e.message}")
+            NDLogger.w(TAG, "fetchNativeDisplays() failed: ${e.message}")
             false
         }
     }
@@ -370,7 +390,7 @@ class NativeDisplayBridge private constructor() {
             ct.pushDisplayUnitViewedEventForID(unitId)
             true
         } catch (e: Exception) {
-            Log.w(TAG, "pushViewedEvent failed: ${e.message}")
+            NDLogger.w(TAG, "pushViewedEvent failed: ${e.message}")
             false
         }
     }
@@ -402,7 +422,7 @@ class NativeDisplayBridge private constructor() {
             invokeClickedEvent(ct, unitId, extras)
             true
         } catch (e: Exception) {
-            Log.w(TAG, "pushClickedEvent failed: ${e.message}")
+            NDLogger.w(TAG, "pushClickedEvent failed: ${e.message}")
             false
         }
     }
@@ -452,11 +472,11 @@ class NativeDisplayBridge private constructor() {
                 HashMap::class.java
             )
         }.onFailure { e ->
-            Log.d(TAG, "Element-clicked method not found (${ct.javaClass.name}): ${e.message} — using legacy fallback")
+            NDLogger.d(TAG, "Element-clicked method not found (${ct.javaClass.name}): ${e.message} — using legacy fallback")
         }.getOrNull()
         elementClickedMethod = resolved
         elementClickedResolved = true
-        Log.d(TAG, if (resolved != null) "Element-clicked method resolved: $METHOD_ELEMENT_CLICKED(String, HashMap)" else "Element-clicked method absent — legacy fallback active")
+        NDLogger.d(TAG, if (resolved != null) "Element-clicked method resolved: $METHOD_ELEMENT_CLICKED(String, HashMap)" else "Element-clicked method absent — legacy fallback active")
         return resolved
     }
 
@@ -509,7 +529,7 @@ class NativeDisplayBridge private constructor() {
         synchronized(listenersLock) {
             listeners.clear()
         }
-        Log.d(TAG, "Bridge cleared")
+        NDLogger.d(TAG, "Bridge cleared")
     }
 
     /**
@@ -557,7 +577,7 @@ class NativeDisplayBridge private constructor() {
             try {
                 listener.onNativeDisplaysLoaded(units)
             } catch (e: Exception) {
-                Log.w(TAG, "Listener threw exception: ${e.message}")
+                NDLogger.w(TAG, "Listener threw exception: ${e.message}")
             }
         }
     }

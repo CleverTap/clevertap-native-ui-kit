@@ -1,6 +1,5 @@
 package com.clevertap.android.nativedisplay.renderer
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.HorizontalDivider
@@ -23,6 +22,7 @@ import coil.request.ImageRequest
 import com.clevertap.android.nativedisplay.evaluator.VariableEvaluator
 import com.clevertap.android.nativedisplay.handler.ActionHandler
 import com.clevertap.android.nativedisplay.internal.ImageLoaderProvider
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import com.clevertap.android.nativedisplay.models.DividerConfig
 import com.clevertap.android.nativedisplay.models.ElementType
 import com.clevertap.android.nativedisplay.models.HtmlConfig
@@ -102,7 +102,7 @@ internal fun RenderElement(
                     contentScale = contentScale
                 )
             } else {
-                Log.w("NDElementRenderer", "IMAGE element '${element.id}' has no url binding — skipping render")
+                NDLogger.w("NDElementRenderer", "IMAGE element '${element.id}' has no url binding — skipping render")
             }
         }
 
@@ -170,7 +170,7 @@ internal fun RenderElement(
                     )
                 }
             } else {
-                Log.w("NDElementRenderer", "VIDEO element '${element.id}' has no url binding — skipping render")
+                NDLogger.w("NDElementRenderer", "VIDEO element '${element.id}' has no url binding — skipping render")
             }
         }
 
@@ -196,7 +196,7 @@ internal fun RenderElement(
                     )
                 }
             } else {
-                Log.w("NDElementRenderer", "HTML element '${element.id}' has no html/url binding — skipping render")
+                NDLogger.w("NDElementRenderer", "HTML element '${element.id}' has no html/url binding — skipping render")
             }
         }
 

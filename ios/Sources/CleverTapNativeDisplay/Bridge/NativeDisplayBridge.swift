@@ -62,10 +62,46 @@ private let legacyClickedSelector: Selector = NSSelectorFromString(
 ///     }
 /// }
 /// ```
+// MARK: - Public Log Level
+
+/// Public log level enum for the Native Display SDK.
+///
+/// Maps 1-to-1 to CleverTap Core SDK debug levels:
+/// - `off`     (-1) — suppress all SDK log output
+/// - `info`    (0)  — lifecycle milestones, warnings, errors
+/// - `debug`   (2)  — standard development output (default in DEBUG builds)
+/// - `verbose` (3)  — fine-grained diagnostic detail
+///
+/// Pass to `NativeDisplayBridge.setLogLevel(_:)`:
+/// ```swift
+/// NativeDisplayBridge.setLogLevel(.off) // silence SDK in production
+/// ```
+public typealias CTNDLogLevel = NDLogLevel
+
 public class NativeDisplayBridge {
 
     /// Shared singleton instance.
     public static let shared = NativeDisplayBridge()
+
+    // MARK: - Log Level API
+
+    /// Set the Native Display SDK log level.
+    ///
+    /// Call this before `initialize()` to ensure all startup messages respect the level.
+    /// The default level is `.info`; when auto-wired the Core SDK's level is used as the default.
+    ///
+    /// ```swift
+    /// // Silence all SDK output in production
+    /// NativeDisplayBridge.setLogLevel(.off)
+    ///
+    /// // Match CleverTap Core SDK's own debug level
+    /// NativeDisplayBridge.setLogLevel(.debug)
+    /// ```
+    ///
+    /// - Parameter level: The desired log level.
+    public static func setLogLevel(_ level: CTNDLogLevel) {
+        NDLogger.setLevel(level)
+    }
 
     // MARK: - Private State
 
@@ -190,7 +226,7 @@ public class NativeDisplayBridge {
         defer { lock.unlock() }
 
         guard !isInitialized else {
-            print("[NativeDisplayBridge] Already initialized")
+            NDLogger.d("NativeDisplayBridge", "Already initialized")
             return
         }
         isInitialized = true
@@ -225,7 +261,7 @@ public class NativeDisplayBridge {
     @discardableResult
     public func bind(_ cleverTap: Any?, forwardTo clientHandler: (([AnyObject]) -> Void)? = nil) -> Bool {
         guard let instance = cleverTap as? NSObject else {
-            print("[NativeDisplayBridge] bind() called with nil or non-NSObject, ignoring")
+            NDLogger.w("NativeDisplayBridge", "bind() called with nil or non-NSObject, ignoring")
             return false
         }
         return CleverTapAutoWire.bindToInstance(instance, bridge: self, clientHandler: clientHandler)
@@ -248,20 +284,20 @@ public class NativeDisplayBridge {
     @discardableResult
     public func fetchNativeDisplays(_ cleverTap: Any?) -> Bool {
         guard let ct = cleverTap as? NSObject else {
-            print("[NativeDisplayBridge] fetchNativeDisplays() called with nil or non-NSObject")
+            NDLogger.w("NativeDisplayBridge", "fetchNativeDisplays() called with nil or non-NSObject")
             return false
         }
 
         let recordEventSelector = NSSelectorFromString("recordEvent:withProps:")
         guard ct.responds(to: recordEventSelector) else {
-            print("[NativeDisplayBridge] CleverTap instance does not support recordEvent:withProps:")
+            NDLogger.w("NativeDisplayBridge", "CleverTap instance does not support recordEvent:withProps:")
             return false
         }
 
         let props: [String: Any] = ["t": NativeDisplayBridge.fetchTypeNativeDisplay]
         ct.perform(recordEventSelector, with: NativeDisplayBridge.wzrkFetch, with: props)
 
-        print("[NativeDisplayBridge] Sent wzrk_fetch request for Native Display (type=\(NativeDisplayBridge.fetchTypeNativeDisplay))")
+        NDLogger.d("NativeDisplayBridge", "Sent wzrk_fetch request for Native Display (type=\(NativeDisplayBridge.fetchTypeNativeDisplay))")
         return true
     }
 
@@ -502,7 +538,7 @@ public class NativeDisplayBridge {
         lock.unlock()
 
         CleverTapAutoWire.tearDown()
-        print("[NativeDisplayBridge] Cleared all cached units and listeners")
+        NDLogger.d("NativeDisplayBridge", "Cleared all cached units and listeners")
     }
 
     // MARK: - Private

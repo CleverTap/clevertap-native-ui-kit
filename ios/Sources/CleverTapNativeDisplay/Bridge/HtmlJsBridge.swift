@@ -33,14 +33,14 @@ internal class HtmlJsBridge {
     static func tryInjectBridge(userContentController: WKUserContentController) -> Bool {
         // Look for CleverTap's JS interface class
         guard let jsInterfaceClass = NSClassFromString("CleverTapJSInterface") as? NSObject.Type else {
-            print("[HtmlJsBridge] CleverTap JS interface not found, skipping bridge injection")
+            NDLogger.d("HtmlJsBridge", "CleverTap JS interface not found, skipping bridge injection")
             return false
         }
 
         // CleverTapJSInterface requires initWithConfig: — try to get the config from the default instance
         // Step 1: Get CleverTap shared instance
         guard let ctClass = NSClassFromString("CleverTap") as? NSObject.Type else {
-            print("[HtmlJsBridge] CleverTap class not found")
+            NDLogger.w("HtmlJsBridge", "CleverTap class not found")
             return false
         }
 
@@ -48,7 +48,7 @@ internal class HtmlJsBridge {
         guard ctClass.responds(to: sharedSelector),
               let result = ctClass.perform(sharedSelector),
               let ctInstance = result.takeUnretainedValue() as? NSObject else {
-            print("[HtmlJsBridge] Failed to get CleverTap shared instance")
+            NDLogger.w("HtmlJsBridge", "Failed to get CleverTap shared instance")
             return false
         }
 
@@ -57,7 +57,7 @@ internal class HtmlJsBridge {
         guard ctInstance.responds(to: configSelector),
               let configResult = ctInstance.perform(configSelector),
               let config = configResult.takeUnretainedValue() as? NSObject else {
-            print("[HtmlJsBridge] Failed to get CleverTap instance config")
+            NDLogger.w("HtmlJsBridge", "Failed to get CleverTap instance config")
             return false
         }
 
@@ -66,19 +66,19 @@ internal class HtmlJsBridge {
         guard let handler = jsInterfaceClass.perform(NSSelectorFromString("alloc"))?
                 .takeUnretainedValue() as? NSObject,
               handler.responds(to: initWithConfigSelector) else {
-            print("[HtmlJsBridge] CleverTapJSInterface does not respond to initWithConfig:")
+            NDLogger.w("HtmlJsBridge", "CleverTapJSInterface does not respond to initWithConfig:")
             return false
         }
 
         guard let initializedHandler = handler.perform(initWithConfigSelector, with: config)?
                 .takeUnretainedValue() as? NSObject else {
-            print("[HtmlJsBridge] Failed to initialize CleverTapJSInterface with config")
+            NDLogger.w("HtmlJsBridge", "Failed to initialize CleverTapJSInterface with config")
             return false
         }
 
         // Step 4: Verify it conforms to WKScriptMessageHandler
         guard let scriptHandler = initializedHandler as? WKScriptMessageHandler else {
-            print("[HtmlJsBridge] CleverTapJSInterface does not conform to WKScriptMessageHandler")
+            NDLogger.w("HtmlJsBridge", "CleverTapJSInterface does not conform to WKScriptMessageHandler")
             return false
         }
 
@@ -93,7 +93,7 @@ internal class HtmlJsBridge {
         )
         userContentController.addUserScript(shimScript)
 
-        print("[HtmlJsBridge] CleverTap JS bridge injected successfully")
+        NDLogger.d("HtmlJsBridge", "CleverTap JS bridge injected successfully")
         return true
     }
 
