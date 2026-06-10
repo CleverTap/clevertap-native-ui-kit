@@ -149,6 +149,9 @@ tools/tools/comparison_report/
 signing.properties
 keystore.properties
 
+# Firebase — contains project credentials, never commit
+google-services.json
+
 android-sample/app/configs
 .claude/worktrees/
 .claude/scheduled_tasks.lock

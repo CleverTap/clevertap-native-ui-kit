@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.roborazzi)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -101,7 +102,11 @@ tasks.register("campaignScreenshots") {
 dependencies {
     // Local SDK
     implementation("com.clevertap.android:native-display-sdk")
-    implementation("com.clevertap.android:clevertap-android-sdk:8.0.0")
+    implementation("com.clevertap.android:clevertap-android-sdk:8.3.0")
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
 
     // AndroidX
     implementation(libs.androidx.core.ktx)
