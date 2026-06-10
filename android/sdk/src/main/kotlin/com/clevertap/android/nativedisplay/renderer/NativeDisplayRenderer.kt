@@ -196,15 +196,24 @@ internal fun RenderNode(
                     actions = node.actions,
                     actionHandler = actionHandler,
                     componentListener = componentListener,
-                    onSystemClick = if (isButton || isImage) {
-                        {
-                            val extras = ActionAttributionExtras.from(
-                                action = node.actions?.get(ActionTriggers.ON_CLICK)
-                            )
-                            actionHandler.fireSystemEvent("Notification Clicked", extras)
+                    onSystemClick = when {
+                        isButton -> {
+                            {
+                                val extras = ActionAttributionExtras.from(
+                                    action = node.actions?.get(ActionTriggers.ON_CLICK)
+                                )
+                                actionHandler.fireSystemEvent("Notification Clicked", extras)
+                            }
                         }
-                    } else {
-                        null
+                        isImage && node.actions?.get(ActionTriggers.ON_CLICK) != null -> {
+                            {
+                                val extras = ActionAttributionExtras.from(
+                                    action = node.actions?.get(ActionTriggers.ON_CLICK)
+                                )
+                                actionHandler.fireSystemEvent("Notification Clicked", extras)
+                            }
+                        }
+                        else -> null
                     }
                 )
             } else mod

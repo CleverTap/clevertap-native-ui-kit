@@ -373,9 +373,8 @@ struct RenderNode: View {
                 actionHandler: actionHandler,
                 componentListener: (!isButton && !isVideo) ? componentListener : nil,
                 onSystemClick: isImage ? {
-                    let extras = ActionAttributionExtras.from(
-                        action: node.actions?[ActionTriggers.onClick]
-                    )
+                    guard let onClick = node.actions?[ActionTriggers.onClick] else { return }
+                    let extras = ActionAttributionExtras.from(action: onClick)
                     actionHandler?.fireSystemEvent(eventName: "Notification Clicked", properties: extras)
                 } : nil
             )
