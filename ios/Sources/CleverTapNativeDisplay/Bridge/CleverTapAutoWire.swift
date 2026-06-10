@@ -205,7 +205,7 @@ internal class CleverTapAutoWire: NSObject {
     /// `NativeDisplayBridge.setLogLevel`). Failures are silently ignored — the
     /// default level remains unchanged if the property is unavailable.
     ///
-    /// CleverTap Core SDK integer mapping: -1 OFF, 0 INFO, 2 DEBUG, 3 VERBOSE.
+    /// CleverTap Core SDK integer mapping: -1 OFF, 0 INFO, 1 DEBUG, 2 VERBOSE.
     private static func syncLogLevelFromCoreSdk(_ ctInstance: NSObject) {
         // Fall back to .debug for unknown future Core SDK levels (matches Android behavior).
         let cleverTapClass: AnyClass = type(of: ctInstance)
