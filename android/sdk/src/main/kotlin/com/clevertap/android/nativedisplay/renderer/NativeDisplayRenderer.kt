@@ -177,6 +177,7 @@ internal fun RenderNode(
     val isClientInterested = componentListener?.getInterestedNodeIds()?.contains(node.id) ?: (componentListener != null)  // If getInterestedNodeIds returns null, listen to all
 
     val isButton = node is NativeDisplayElement && node.elementType == ElementType.BUTTON
+    val isImage = node is NativeDisplayElement && node.elementType == ElementType.IMAGE
 
     // Buttons are always clickable (for "Notification Clicked" system event)
     val shouldApplyClickable = hasServerActions || isClientInterested || isButton
@@ -195,15 +196,24 @@ internal fun RenderNode(
                     actions = node.actions,
                     actionHandler = actionHandler,
                     componentListener = componentListener,
-                    onSystemClick = if (isButton) {
-                        {
-                            val extras = ActionAttributionExtras.from(
-                                action = node.actions?.get(ActionTriggers.ON_CLICK)
-                            )
-                            actionHandler.fireSystemEvent("Notification Clicked", extras)
+                    onSystemClick = when {
+                        isButton -> {
+                            {
+                                val extras = ActionAttributionExtras.from(
+                                    action = node.actions?.get(ActionTriggers.ON_CLICK)
+                                )
+                                actionHandler.fireSystemEvent("Notification Clicked", extras)
+                            }
                         }
-                    } else {
-                        null
+                        isImage && node.actions?.get(ActionTriggers.ON_CLICK) != null -> {
+                            {
+                                val extras = ActionAttributionExtras.from(
+                                    action = node.actions?.get(ActionTriggers.ON_CLICK)
+                                )
+                                actionHandler.fireSystemEvent("Notification Clicked", extras)
+                            }
+                        }
+                        else -> null
                     }
                 )
             } else mod

@@ -288,6 +288,7 @@ struct RenderNode: View {
         let isClientInterested = componentListener?.getInterestedNodeIds()?.contains(node.id) ?? (componentListener != nil)
         let shouldApplyTappable = hasServerActions || isClientInterested
         let isButton = node.elementType == .button
+        let isImage = node.elementType == .image
         
         switch node {
         case .container(let container):
@@ -370,7 +371,12 @@ struct RenderNode: View {
                 nodeId: node.id,
                 actions: !isButton && shouldApplyTappable ? node.actions : nil,
                 actionHandler: actionHandler,
-                componentListener: (!isButton && !isVideo) ? componentListener : nil
+                componentListener: (!isButton && !isVideo) ? componentListener : nil,
+                onSystemClick: isImage ? {
+                    guard let onClick = node.actions?[ActionTriggers.onClick] else { return }
+                    let extras = ActionAttributionExtras.from(action: onClick)
+                    actionHandler?.fireSystemEvent(eventName: "Notification Clicked", properties: extras)
+                } : nil
             )
             .onAppear {
                 if isRoot {
