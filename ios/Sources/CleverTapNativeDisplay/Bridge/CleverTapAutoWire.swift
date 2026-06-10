@@ -207,9 +207,15 @@ internal class CleverTapAutoWire: NSObject {
     ///
     /// CleverTap Core SDK integer mapping: -1 OFF, 0 INFO, 2 DEBUG, 3 VERBOSE.
     private static func syncLogLevelFromCoreSdk(_ ctInstance: NSObject) {
-        // Try `debugLevel` (Obj-C property exposed on CleverTap instances).
-        guard let rawValue = ctInstance.value(forKey: "debugLevel") as? Int32 else { return }
         // Fall back to .debug for unknown future Core SDK levels (matches Android behavior).
+        let cleverTapClass: AnyClass = type(of: ctInstance)
+        let selector = Selector(("getDebugLevel"))
+        guard let method = class_getClassMethod(cleverTapClass, selector) else { return }
+        typealias GetDebugLevelIMP = @convention(c) (AnyClass, Selector) -> Int32
+        let imp = method_getImplementation(method)
+        let fn = unsafeBitCast(imp, to: GetDebugLevelIMP.self)
+        let rawValue = fn(cleverTapClass, selector)
+
         let level = NDLogLevel(rawValue: Int(rawValue)) ?? .debug
         // Use syncFromCoreSdk so explicitlySet is NOT flipped — a future client call
         // to NativeDisplayBridge.setLogLevel will still override, and re-initialization
