@@ -19,8 +19,8 @@ import os.log
 public enum NDLogLevel: Int, Comparable {
     case off = -1
     case info = 0
-    case debug = 2
-    case verbose = 3
+    case debug = 1
+    case verbose = 2
 
     public static func < (lhs: NDLogLevel, rhs: NDLogLevel) -> Bool {
         lhs.rawValue < rhs.rawValue

@@ -433,6 +433,7 @@
 		41F1AD602F2B7D420018C5EA /* JsonLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonLoader.swift; sourceTree = "<group>"; };
 		53ABB20AE02B4A2E9AB5BE00 /* test-175-gallery-box-snapping-navbtns-only.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-175-gallery-box-snapping-navbtns-only.json"; sourceTree = "<group>"; };
 		56A884EDEB4D4F459BC3B4BB /* test-172-gallery-box-grid2col-vertical.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-172-gallery-box-grid2col-vertical.json"; sourceTree = "<group>"; };
+		57BB831A2FD93760002193A6 /* NativeDisplaySample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NativeDisplaySample.entitlements; sourceTree = "<group>"; };
 		6371017E9C314A05807F35E3 /* test-162-gallery-box-freeflow-video-items.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-162-gallery-box-freeflow-video-items.json"; sourceTree = "<group>"; };
 		6FB82056B44E4A3F97601A10 /* test-171-gallery-box-grid2col-video.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-171-gallery-box-grid2col-video.json"; sourceTree = "<group>"; };
 		7F6254B5184B47E6BD59E17B /* test-159-gallery-box-freeflow-navbtns-only.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-159-gallery-box-freeflow-navbtns-only.json"; sourceTree = "<group>"; };
@@ -700,6 +701,7 @@
 		GRP_APP /* NativeDisplaySample */ = {
 			isa = PBXGroup;
 			children = (
+				57BB831A2FD93760002193A6 /* NativeDisplaySample.entitlements */,
 				41E6E6DB2F7A50940004B077 /* Info.plist */,
 				414DA94E2F6001EC00714978 /* ImagePreloader.swift */,
 				41C5EB1D2F34E6FC0066BE34 /* JSONViewerView.swift */,
@@ -1146,6 +1148,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = NativeDisplaySample/NativeDisplaySample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -1177,6 +1180,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = NativeDisplaySample/NativeDisplaySample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";

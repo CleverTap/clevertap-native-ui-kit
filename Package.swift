@@ -4,8 +4,7 @@ import PackageDescription
 let package = Package(
     name: "CleverTapNativeDisplay",
     platforms: [
-        .iOS(.v15),
-        .tvOS(.v15)
+        .iOS(.v15)
     ],
     products: [
         .library(
@@ -18,12 +17,12 @@ let package = Package(
         .target(
             name: "CleverTapNativeDisplay",
             dependencies: [],
-            path: "Sources/CleverTapNativeDisplay"
+            path: "ios/Sources/CleverTapNativeDisplay"
         ),
         .testTarget(
             name: "CleverTapNativeDisplayTests",
             dependencies: ["CleverTapNativeDisplay"],
-            path: "Tests/CleverTapNativeDisplayTests"
+            path: "ios/Tests/CleverTapNativeDisplayTests"
         ),
     ]
 )
