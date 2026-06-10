@@ -10,10 +10,11 @@ struct TappableModifier: ViewModifier {
     let actions: [String: Action]?
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
-    
+    let onSystemClick: (() -> Void)?
+
     func body(content: Content) -> some View {
         // Early exit if nothing to do
-        guard actions != nil || componentListener != nil else {
+        guard actions != nil || componentListener != nil || onSystemClick != nil else {
             return AnyView(content)
         }
         
@@ -159,6 +160,10 @@ struct TappableModifier: ViewModifier {
             return
         }
 
+        if interactionType == .click {
+            onSystemClick?()
+        }
+
         if let action = action {
             actionHandler?.handleAction(action, nodeId: nodeId, interactionType: interactionType)
         }
@@ -197,13 +202,15 @@ extension View {
         nodeId: String,
         actions: [String: Action]?,
         actionHandler: ActionHandler?,
-        componentListener: NativeDisplayComponentListener?
+        componentListener: NativeDisplayComponentListener?,
+        onSystemClick: (() -> Void)? = nil
     ) -> some View {
         self.modifier(TappableModifier(
             nodeId: nodeId,
             actions: actions,
             actionHandler: actionHandler,
-            componentListener: componentListener
+            componentListener: componentListener,
+            onSystemClick: onSystemClick
         ))
     }
 }
