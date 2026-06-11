@@ -1,6 +1,8 @@
 [versions]
 agp = "8.9.1"
 kotlin = "2.1.0"
+googleServices = "4.4.2"
+firebaseBom = "33.7.0"
 composeBom = "2024.12.01"
 kotlinxSerialization = "1.7.3"
 coroutines = "1.9.0"
@@ -82,8 +84,13 @@ roborazzi-junit = { group = "io.github.takahirom.roborazzi", name = "roborazzi-j
 roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi-compose", version.ref = "roborazzi" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
 
+# Firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

@@ -151,6 +151,12 @@ struct TappableModifier: ViewModifier {
     
     /// Handle tap gesture with component listener and action execution
     private func handleTap(action: Action?, interactionType: InteractionType) {
+        // Fire attribution unconditionally before component listener can consume the event,
+        // matching Android where onSystemClick?.invoke() runs before handleAction.
+        if interactionType == .click {
+            onSystemClick?()
+        }
+
         let shouldProceed = notifyComponentListener(
             interactionType: interactionType,
             hasServerAction: action != nil
