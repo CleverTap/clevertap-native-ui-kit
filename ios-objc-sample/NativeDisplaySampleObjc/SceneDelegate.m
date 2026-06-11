@@ -6,8 +6,7 @@
 //
 
 #import "SceneDelegate.h"
-#import "BannerShowcaseViewController.h"
-#import "DemoMenuViewController.h"
+#import "RootTabBarController.h"
 
 @interface SceneDelegate ()
 
@@ -17,16 +16,12 @@
 
 
 - (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions {
-    // Programmatically set up the navigation stack, ignoring the storyboard root.
-    // BannerShowcaseViewController is the root; the "..." button pushes DemoMenuViewController.
     if (![scene isKindOfClass:[UIWindowScene class]]) { return; }
     UIWindowScene *windowScene = (UIWindowScene *)scene;
 
-    BannerShowcaseViewController *rootVC = [BannerShowcaseViewController new];
-    UINavigationController *navCtrl = [[UINavigationController alloc] initWithRootViewController:rootVC];
-
+    RootTabBarController *tabBar = [RootTabBarController new];
     UIWindow *window = [[UIWindow alloc] initWithWindowScene:windowScene];
-    window.rootViewController = navCtrl;
+    window.rootViewController = tabBar;
     self.window = window;
     [window makeKeyAndVisible];
 }

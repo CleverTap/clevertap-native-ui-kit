@@ -8,21 +8,21 @@ Pod::Spec.new do |spec|
     styling, galleries, background effects, and variable interpolation.
   DESC
 
-  spec.homepage     = "https://github.com/CleverTap/clevertap-native-display-ios"
-  spec.license      = { :type => "MIT", :file => "LICENSE" }
+  spec.homepage     = "https://github.com/CleverTap/clevertap-native-ui-kit"
+  spec.license      = { :type => "MIT", :file => "../LICENSE" }
   spec.author       = { "CleverTap" => "support@clevertap.com" }
   
   spec.platform     = :ios, "15.0"
   spec.swift_version = "5.9"
-  
-  spec.source       = { 
-    :git => "https://github.com/CleverTap/clevertap-native-display-ios.git", 
-    :tag => "#{spec.version}" 
+
+  spec.source = {
+    :git => "https://github.com/CleverTap/clevertap-native-ui-kit.git",
+    :tag => "#{spec.version}"
   }
   
   spec.source_files = "Sources/CleverTapNativeDisplay/**/*.swift"
   
-  spec.frameworks   = "SwiftUI", "Foundation"
+  spec.frameworks = "SwiftUI", "Foundation", "UIKit", "WebKit", "AVKit"
   
   # Build settings for framework distribution
   spec.pod_target_xcconfig = {

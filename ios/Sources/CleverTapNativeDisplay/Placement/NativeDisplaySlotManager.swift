@@ -51,10 +51,10 @@ public protocol NativeDisplaySlotObserver: AnyObject {
 /// // Sync slot IDs to server
 /// NativeDisplaySlotManager.shared.syncCurrentSlotIds(cleverTapInstance)
 /// ```
-public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
+@objc public class NativeDisplaySlotManager: NSObject, NativeDisplayBridgeListener {
 
     /// Shared singleton instance.
-    public static let shared = NativeDisplaySlotManager()
+    @objc public static let shared = NativeDisplaySlotManager()
 
     // MARK: - Private State
 
@@ -72,7 +72,8 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
 
     // MARK: - Init
 
-    private init() {
+    private override init() {
+        super.init()
         NativeDisplayBridge.shared.addListener(self)
     }
 
@@ -205,7 +206,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     ///
     /// - Parameter cleverTap: A `CleverTap` instance (passed as `Any?` to avoid compile dependency).
     /// - Returns: `true` if the event was sent, `false` otherwise.
-    @discardableResult
+    @discardableResult @objc
     public func syncCurrentSlotIds(_ cleverTap: Any?) -> Bool {
         guard let ct = cleverTap as? NSObject else {
             NDLogger.w(Self.self, "syncCurrentSlotIds() called with nil or non-NSObject")
@@ -231,7 +232,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     /// Clear a specific slot's cached unit and notify observers.
     ///
     /// - Parameter slotId: The slot identifier to clear.
-    public func clearSlot(_ slotId: String) {
+    @objc public func clearSlot(_ slotId: String) {
         NDLogger.d(Self.self, "Clearing slot '\(slotId)'")
         lock.lock()
 
@@ -256,7 +257,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     }
 
     /// Clear all cached units and notify all observers.
-    public func clearAll() {
+    @objc public func clearAll() {
         NDLogger.d(Self.self, "Clearing all slots")
         lock.lock()
 
