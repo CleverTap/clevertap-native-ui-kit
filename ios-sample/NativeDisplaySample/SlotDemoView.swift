@@ -88,7 +88,7 @@ struct SlotDemoView: View {
                 
                 Button(action: {
                     if let cleverTap = CleverTap.sharedInstance() {
-                        cleverTap.recordEvent("Footer1")
+                        cleverTap.recordEvent("asd")
                         cleverTap.recordEvent("Footer5")
                         cleverTap.recordEvent("Header1")
                         cleverTap.recordEvent("Header2")
@@ -181,10 +181,13 @@ struct AppContentCardView: View {
                     Rectangle()
                         .fill(Color(.systemGray5))
                         .overlay(ProgressView())
+                        .frame(height: 180)
                 case .success(let image):
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
+                        .frame(maxWidth: .infinity, minHeight: 180, maxHeight: 180)
+                        .clipped()
                 case .failure:
                     Rectangle()
                         .fill(Color(.systemGray5))
@@ -192,12 +195,11 @@ struct AppContentCardView: View {
                             Image(systemName: "photo")
                                 .foregroundColor(.secondary)
                         )
+                        .frame(height: 180)
                 @unknown default:
                     EmptyView()
                 }
             }
-            .frame(height: 180)
-            .clipped()
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(item.title)

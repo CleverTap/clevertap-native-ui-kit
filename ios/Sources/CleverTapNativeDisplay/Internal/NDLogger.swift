@@ -16,12 +16,14 @@ import os.log
 /// - `-1` OFF, `0` INFO, `2` DEBUG, `3` VERBOSE
 ///
 /// Aliased publicly as `CTNDLogLevel` — use `NativeDisplayBridge.setLogLevel(_:)` to configure.
-public enum NDLogLevel: Int, Comparable {
+@objc public enum NDLogLevel: Int {
     case off = -1
     case info = 0
     case debug = 1
     case verbose = 2
+}
 
+extension NDLogLevel: Comparable {
     public static func < (lhs: NDLogLevel, rhs: NDLogLevel) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
