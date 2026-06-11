@@ -225,6 +225,18 @@ internal fun VideoPlayerWithMedia3(
                     errorMessage = "Video playback failed"
                     NDLogger.e("VideoPlayer", "Playback error (${error.errorCodeName})", error)
                 }
+                // Explicit no-op overrides guard against AbstractMethodError on API < 24.
+                // With compileOnly media3, D8 only generates $DefaultImpls bridge methods for
+                // interface methods that existed when the SDK was last compiled. Any method
+                // added in a newer media3 version that a client app depends on will be missing
+                // the bridge, causing a crash the first time ExoPlayer calls it. Explicit
+                // overrides bypass $DefaultImpls entirely and are safe across all versions.
+                override fun onSurfaceSizeChanged(width: Int, height: Int) {}
+                override fun onVideoSizeChanged(videoSize: androidx.media3.common.VideoSize) {}
+                override fun onRenderedFirstFrame() {}
+                override fun onTracksChanged(tracks: androidx.media3.common.Tracks) {}
+                override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {}
+                override fun onEvents(player: Player, events: Player.Events) {}
             }
             lifecycleOwner.lifecycle.addObserver(observer)
             player.addListener(listener)
