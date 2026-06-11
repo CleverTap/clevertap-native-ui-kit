@@ -107,6 +107,7 @@ dependencies {
     compileOnly("com.clevertap.android:clevertap-android-sdk:7.5.0")
     // Fragment is a transitive dep of Core SDK; K1 compiler requires it on the
     // classpath to resolve supertypes of Core SDK classes (FragmentActivity, Fragment).
+    // Not used directly in SDK code — removing this breaks compilation, not runtime.
     compileOnly("androidx.fragment:fragment-ktx:1.8.5")
 
     // Testing

@@ -24,6 +24,11 @@ The SDK receives a JSON campaign config from the CleverTap backend and renders i
 
 ## Installation
 
+> **Prerequisite — CleverTap Core SDK.** The Native Display SDK is a renderer; it expects display units to be delivered by the CleverTap Core SDK. Install and initialize it first:
+> [Android Core SDK](https://github.com/CleverTap/clevertap-android-sdk) · [iOS Core SDK](https://github.com/CleverTap/clevertap-ios-sdk) · [General docs](https://docs.clevertap.com)
+>
+> You can also run the Display SDK in standalone mode (no Core SDK) and feed JSON manually — see [Approach 2](#approach-2--custom-rendering) below.
+
 ### Android
 
 Add the SDK to your module's `build.gradle.kts`:
@@ -53,384 +58,248 @@ Or add it to your `Package.swift`:
 
 ---
 
-## Quick Start
+## Integration
 
-This section walks you through the full setup from scratch — initialization, listening for campaigns, and rendering them in your UI.
+### Prerequisite: CleverTap Core SDK
 
-### Android — complete example
+The Native Display SDK is a renderer — display unit JSON is delivered by the CleverTap Core SDK. Install and initialize it before going further: [Android Core SDK](https://github.com/CleverTap/clevertap-android-sdk) · [iOS Core SDK](https://github.com/CleverTap/clevertap-ios-sdk).
 
-**Step 1: Initialize in your `Application` class**
+Two integration paths are supported. **Approach 1** (slot-based) is recommended for most apps. **Approach 2** (custom rendering) is for hosts that need to inspect units, place them in custom layouts, or run standalone without the Core SDK.
 
+---
+
+### Approach 1 — Slot-based integration (recommended)
+
+The slot flow is the shortest path to a working integration. The SDK manages discovery, listening, attribution, and lifecycle — your only job is to declare *where* a unit can appear and *which* slot ID maps to it.
+
+**Step 1 — Initialize the bridge** in your app entry point.
+
+Android — `Application.onCreate()`:
 ```kotlin
-// MyApplication.kt
 class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-
-        // If you use the CleverTap Core SDK, call initialize() to auto-wire
-        // campaign delivery from the backend.
         NativeDisplayBridge.initialize(this)
     }
 }
 ```
 
-Don't forget to register it in `AndroidManifest.xml`:
-
-```xml
-<application
-    android:name=".MyApplication"
-    ... >
-```
-
-**Step 2: Listen for campaigns and store them in state**
-
-```kotlin
-// HomeViewModel.kt
-class HomeViewModel : ViewModel() {
-
-    private val _campaigns = MutableStateFlow<List<NativeDisplayUnit>>(emptyList())
-    val campaigns: StateFlow<List<NativeDisplayUnit>> = _campaigns.asStateFlow()
-
-    private val bridgeListener = object : NativeDisplayBridgeListener {
-        override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
-            // Called whenever the backend delivers new campaigns.
-            // Update your state so the UI recomposes automatically.
-            _campaigns.value = units
-        }
-    }
-
-    init {
-        NativeDisplayBridge.getInstance().addListener(bridgeListener)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        NativeDisplayBridge.getInstance().removeListener(bridgeListener)
-    }
-}
-```
-
-**Step 3: Render campaigns in your Composable**
-
-```kotlin
-// HomeScreen.kt
-@Composable
-fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
-    val campaigns by viewModel.campaigns.collectAsState()
-
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-
-        Text("Featured Offers", style = MaterialTheme.typography.headlineSmall)
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Render the first available campaign, if any
-        val campaign = campaigns.firstOrNull()
-        if (campaign != null) {
-            NativeDisplayView(
-                unit = campaign,
-                modifier = Modifier.fillMaxWidth(),
-                actionListener = rememberActionListener()
-            )
-        }
-    }
-}
-
-@Composable
-fun rememberActionListener(): NativeDisplayActionListener {
-    return remember {
-        object : NativeDisplayActionListener {
-            override fun onOpenUrl(url: String, openInBrowser: Boolean): Boolean {
-                // Return false to let the SDK handle it with the default browser.
-                // Return true if your app already handled it (e.g. deep link routing).
-                return false
-            }
-
-            override fun onTrackEvent(eventName: String, properties: Map<String, Any>?) {
-                // Forward to your own analytics if needed.
-                // CleverTap attribution events are tracked automatically.
-            }
-
-            override fun onCustomAction(key: String, value: Any?, metadata: Map<String, String>?) {
-                // Handle any custom actions you defined in the campaign JSON.
-            }
-        }
-    }
-}
-```
-
----
-
-### iOS — complete example
-
-**Step 1: Initialize in your `AppDelegate` or `@main` entry point**
-
+iOS — `AppDelegate` or SwiftUI `App.init()`:
 ```swift
-// AppDelegate.swift
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    func application(
-        _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-    ) -> Bool {
-
-        // Initialize the SDK. If you use CleverTap Core SDK, pass the instance
-        // to auto-wire campaign delivery from the backend.
-        NativeDisplayBridge.shared.initialize()
-        // NativeDisplayBridge.shared.bind(CleverTap.sharedInstance())  ← with Core SDK
-
-        return true
-    }
-}
-```
-
-Using SwiftUI lifecycle instead? Initialize in your `App` struct:
-
-```swift
-// MyApp.swift
 @main
 struct MyApp: App {
     init() {
         NativeDisplayBridge.shared.initialize()
     }
-
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-    }
+    var body: some Scene { WindowGroup { ContentView() } }
 }
 ```
 
-**Step 2: Listen for campaigns and store them in state**
+**Step 2 — Link with CleverTap Core** so server-pushed units flow into the bridge.
+
+- **Android**: `NativeDisplayBridge.initialize(context)` auto-detects the Core SDK on the classpath via reflection — Step 1 already linked you, no extra call needed.
+- **iOS**: explicitly bind the Core SDK instance once it's available:
 
 ```swift
-// HomeViewModel.swift
-import Combine
-
-class HomeViewModel: ObservableObject {
-
-    @Published var campaigns: [NativeDisplayUnit] = []
-
-    private var listener: NativeDisplayBridgeListener?
-
-    init() {
-        // Keep a strong reference to the listener or it will be deallocated.
-        listener = BridgeListener { [weak self] units in
-            DispatchQueue.main.async {
-                self?.campaigns = units
-            }
-        }
-        NativeDisplayBridge.shared.addListener(listener!)
-    }
-
-    deinit {
-        if let listener { NativeDisplayBridge.shared.removeListener(listener) }
-    }
-}
-
-// A small helper to avoid subclassing in every view model.
-private class BridgeListener: NativeDisplayBridgeListener {
-    let handler: ([NativeDisplayUnit]) -> Void
-    init(_ handler: @escaping ([NativeDisplayUnit]) -> Void) { self.handler = handler }
-
-    func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
-        handler(units)
-    }
+if let cleverTap = CleverTap.sharedInstance() {
+    NativeDisplayBridge.shared.bind(cleverTap)
 }
 ```
 
-**Step 3: Render campaigns in your SwiftUI view**
+**Step 3 — Drop a slot view** in your UI with the slot ID configured on the dashboard. The SDK looks it up, picks the matching unit, and renders it. While no unit is present, the slot shows your placeholder (or stays empty by default).
 
+Android — Jetpack Compose:
+```kotlin
+NativeDisplaySlot(
+    slotId = "hero_banner",
+    modifier = Modifier.fillMaxWidth(),
+    loading = { /* optional placeholder, e.g. shimmer or Box */ },
+)
+```
+
+Android — XML:
+```xml
+<com.clevertap.android.nativedisplay.placement.NativeDisplaySlotView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:slotId="hero_banner" />
+```
+
+iOS — SwiftUI:
 ```swift
-// HomeView.swift
-struct HomeView: View {
-
-    @StateObject private var viewModel = HomeViewModel()
-
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-
-                Text("Featured Offers")
-                    .font(.headline)
-
-                // Render the first available campaign, if any
-                if let campaign = viewModel.campaigns.first {
-                    NativeDisplayView(
-                        unit: campaign,
-                        actionListener: MyActionListener()
-                    )
-                    .frame(maxWidth: .infinity)
-                }
-            }
-            .padding(16)
-        }
-    }
-}
-
-class MyActionListener: NativeDisplayActionListener {
-
-    func onOpenUrl(url: String, openInBrowser: Bool) -> Bool {
-        // Return false to let the SDK handle it with Safari.
-        // Return true if your app already handled it (e.g. deep link routing).
-        return false
-    }
-
-    func onTrackEvent(eventName: String, properties: [String: Any]?) {
-        // Forward to your own analytics if needed.
-    }
-
-    func onCustomAction(key: String, value: Any?, metadata: [String: String]?) {
-        // Handle any custom actions you defined in the campaign JSON.
-    }
+NativeDisplaySlot(slotId: "hero_banner") {
+    // optional placeholder view, e.g. ProgressView()
 }
 ```
+
+iOS — UIKit:
+```swift
+let slot = NativeDisplaySlotUIView(slotId: "hero_banner")
+view.addSubview(slot)
+```
+
+For list-driven UIs, the SDK ships cell wrappers: `NativeDisplaySlotTableViewCell.configure(slotId:)` for `UITableView` and `NativeDisplaySlotCollectionViewCell.configure(slotId:)` for `UICollectionView`.
+
+Slot views auto-register with the bridge on attach and auto-unregister on detach — there's no listener to manage.
 
 ---
 
-## Setup (detailed)
+### Approach 2 — Custom rendering
 
-### Android
+Choose this when you need to inspect units before rendering, place them in custom layouts (carousels, RecyclerViews, dynamic Compose graphs), filter by metadata, or run standalone without the Core SDK.
 
-Initialize the bridge in your `Application.onCreate()`. If you use the CleverTap Core SDK, call `initialize` to auto-wire display unit delivery:
+After Steps 1 & 2 above, attach a `NativeDisplayBridgeListener` and render each unit with the renderer that fits your UI layer.
 
+**Step A — attach the listener**
+
+Android:
 ```kotlin
-class MyApp : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        NativeDisplayBridge.initialize(this).addListener(myBridgeListener)
+val bridgeListener = object : NativeDisplayBridgeListener {
+    override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
+        // Store in your state, then render with one of the options below
     }
 }
+NativeDisplayBridge.getInstance().addListener(bridgeListener)
 ```
 
-Without the Core SDK, create a standalone bridge and feed JSON manually:
-
-```kotlin
-val bridge = NativeDisplayBridge.create()
-bridge.addListener(myBridgeListener)
-```
-
-### iOS
-
-Initialize the bridge in your `AppDelegate` or app entry point:
-
+iOS:
 ```swift
-NativeDisplayBridge.shared.initialize()
+class MyBridgeListener: NativeDisplayBridgeListener {
+    func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
+        // Store in your state, then render with one of the options below
+    }
+}
 NativeDisplayBridge.shared.addListener(myBridgeListener)
 ```
 
-To auto-wire with the CleverTap Core SDK:
+Hold a strong reference to your listener — if it's a local variable, it will be released before any callback fires.
 
-```swift
-NativeDisplayBridge.shared.bind(cleverTap)
-```
+**Step B — render each unit**
 
----
-
-## Rendering a Campaign
-
-### Android
-
-Use `NativeDisplayView` inside any Composable. Pass the `NativeDisplayUnit` received from the bridge for full attribution tracking (`Notification Viewed` / `Notification Clicked`):
-
+Android — Jetpack Compose:
 ```kotlin
 @Composable
-fun MyCampaignSlot(unit: NativeDisplayUnit) {
+fun CampaignBanner(unit: NativeDisplayUnit) {
     NativeDisplayView(
         unit = unit,
         modifier = Modifier.fillMaxWidth(),
-        actionListener = myActionListener
+        actionListener = myActionListener,
     )
 }
 ```
 
-### iOS
+Android — XML / View system. Add `NativeDisplayViewGroup` to your layout, then call `setUnit(...)` when a unit arrives:
+```xml
+<com.clevertap.android.nativedisplay.view.NativeDisplayViewGroup
+    android:id="@+id/campaign_banner"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+```
+```kotlin
+findViewById<NativeDisplayViewGroup>(R.id.campaign_banner)
+    .setUnit(unit, actionListener = myActionListener)
+```
 
-Use `NativeDisplayView` inside any SwiftUI view:
-
+iOS — SwiftUI:
 ```swift
-struct MyCampaignSlot: View {
+struct CampaignBanner: View {
     let unit: NativeDisplayUnit
-
     var body: some View {
-        NativeDisplayView(
-            unit: unit,
-            actionListener: myActionListener
-        )
+        NativeDisplayView(unit: unit, actionListener: myActionListener)
     }
 }
+```
+
+iOS — UIKit. Instantiate `NativeDisplayUIView` with the unit and add it as a subview:
+```swift
+let banner = NativeDisplayUIView(
+    unit: unit,
+    actionListener: myActionListener
+)
+view.addSubview(banner)
+```
+
+**Standalone mode** (no Core SDK): feed units yourself. Same `onNativeDisplaysLoaded` callback fires.
+
+```kotlin
+// Android
+val bridge = NativeDisplayBridge.create()
+bridge.addListener(bridgeListener)
+bridge.processDisplayUnits(jsonStrings)
+```
+
+```swift
+// iOS
+NativeDisplayBridge.shared.addListener(myBridgeListener)
+NativeDisplayBridge.shared.processDisplayUnits(jsonStrings)
 ```
 
 ---
 
-## Handling Actions
+### Augmenting either approach — Fetch on demand
 
-Implement `NativeDisplayActionListener` to respond to user interactions and track events.
-
-### Android
+By default the Core SDK pushes units when they're ready. To pull on demand (e.g. screen open, pull-to-refresh):
 
 ```kotlin
-val actionListener = object : NativeDisplayActionListener {
-    override fun onOpenUrl(url: String, openInBrowser: Boolean): Boolean {
-        // Return true if your app handled it, false to use default behaviour
-        return false
-    }
-
-    override fun onTrackEvent(eventName: String, properties: Map<String, Any>?) {
-        // Forward to your analytics layer
-    }
-
-    override fun onCustomAction(key: String, value: Any?, metadata: Map<String, String>?) {
-        // Handle custom actions defined in the campaign JSON
-    }
-}
+// Android
+NativeDisplayBridge.getInstance().fetchNativeDisplays(cleverTapApi)
 ```
-
-### iOS
 
 ```swift
-class MyActionListener: NativeDisplayActionListener {
-    func onOpenUrl(url: String, openInBrowser: Bool) -> Bool {
-        // Return true if your app handled it, false to use default behaviour
-        return false
-    }
-
-    func onTrackEvent(eventName: String, properties: [String: Any]?) {
-        // Forward to your analytics layer
-    }
-
-    func onCustomAction(key: String, value: Any?, metadata: [String: String]?) {
-        // Handle custom actions defined in the campaign JSON
-    }
-}
+// iOS
+NativeDisplayBridge.shared.fetchNativeDisplays(CleverTap.sharedInstance())
 ```
+
+Both calls return a `Bool` indicating that the **request was dispatched** — not that the fetch completed. Results arrive asynchronously via the same `onNativeDisplaysLoaded` callback. This works orthogonally to either approach above: slots in Approach 1 refresh automatically, custom listeners in Approach 2 fire again.
 
 ---
 
-## Listening for Campaigns
+## Event hooks
 
-Implement `NativeDisplayBridgeListener` to be notified when campaigns arrive.
+The renderer surfaces two listeners. Attach one or both to a slot or to `NativeDisplayView` to react to user interactions and run your own logic.
 
-### Android
+### NativeDisplayActionListener — high-level outcomes
+
+Semantic callbacks that describe what the user did:
+
+| Callback | Purpose |
+|----------|---------|
+| `onOpenUrl(url, openInBrowser) -> Bool` | Return `true` if your app handled it (e.g. deep-link router); `false` to let the SDK open it. |
+| `onCustomAction(key, value, metadata)` | Handle custom actions defined in the campaign JSON. |
+| `onNavigate(destination, params)` | In-app navigation actions. |
+| `onTrackEvent(eventName, properties)` | Forward to your analytics layer if needed. |
+| `onDisplayUnitViewed(unitId)` / `onDisplayUnitClicked(unitId)` | Attribution callbacks — Core SDK already tracks these automatically; implement only if you need a copy. |
+
+### NativeDisplayComponentListener — low-level node interactions
+
+Raw gestures on specific nodes by ID. Use this when you need to intercept individual taps, long presses, or double-taps before the SDK handles them.
+
+| Member | Purpose |
+|--------|---------|
+| `onComponentInteraction(nodeId, interactionType, hasServerAction) -> Bool` | Return `true` to consume the interaction; `false` to let the SDK proceed with default behavior. |
+| `getInterestedNodeIds(): Set<String>?` | Narrow callbacks to specific node IDs; `null` (default) means all nodes. |
+| `InteractionType` | `CLICK` / `LONG_PRESS` / `DOUBLE_TAP` (Android) · `.click` / `.longPress` / `.doubleTap` (iOS). |
+
+### Attaching listeners
+
+Both listeners can be attached to a slot view or directly to `NativeDisplayView`:
 
 ```kotlin
-val bridgeListener = object : NativeDisplayBridgeListener {
-    override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
-        // Units are ready to render — update your UI
-    }
-}
+// Android
+NativeDisplaySlot(
+    slotId = "hero_banner",
+    actionListener = myActionListener,
+    componentListener = myComponentListener,
+)
 ```
 
-### iOS
-
 ```swift
-class MyBridgeListener: NativeDisplayBridgeListener {
-    func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
-        // Units are ready to render — update your UI
-    }
-}
+// iOS
+NativeDisplaySlot(
+    slotId: "hero_banner",
+    actionListener: myActionListener,
+    componentListener: myComponentListener,
+)
 ```
 
 ---
@@ -604,9 +473,8 @@ NativeDisplayView(unit: unit)
 ## Common Mistakes
 
 **Listener not called / campaigns never arrive**
-- On Android, make sure `NativeDisplayBridge.initialize(this)` is called in `Application.onCreate()`, not in an `Activity`.
-- On iOS, initialize before the first view appears — do it in `AppDelegate` or the `App` struct `init()`.
-- Make sure you're holding a strong reference to your listener object. If it's a local variable, it will be garbage-collected before any callback fires.
+- Confirm Step 2 of Approach 1 is complete — without a Core SDK link, no units will be pushed. For standalone testing, feed JSON yourself via `processDisplayUnits(...)` (Approach 2).
+- Hold a strong reference to your listener. If it's a local variable, it will be released before any callback fires.
 
 **Layout looks wrong or view has zero height**
 - Always provide `layout.width` on the root node — use `"match_parent"` to fill the available space.
