@@ -37,6 +37,8 @@ class SampleApplication : Application() {
             // 4. Request Native Display units from server
             bridge.fetchNativeDisplays(cleverTapApi)
             Log.d(TAG, "Bridge initialized, bound, and fetch requested")
+
+            cleverTapApi.onUserLogin(mutableMapOf<String, Any>("Name" to "Lalit P", "Email" to "lalit@lalit@nfndnnsf.com"))
         } else {
             Log.w(TAG, "CleverTapAPI.getDefaultInstance() returned null — check manifest metadata")
         }
