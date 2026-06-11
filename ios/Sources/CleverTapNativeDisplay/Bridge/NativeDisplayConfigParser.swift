@@ -43,10 +43,10 @@ internal class NativeDisplayConfigParser {
             return nil
         }
 
-        // Extract unit ID (required)
-        guard let unitId = jsonObject["wzrk_id"] as? String else {
-            NDLogger.w(Self.self, "Missing wzrk_id in display unit JSON")
-            return nil
+        // Extract unit ID; fall back to a sentinel when absent so the campaign still renders
+        let unitId = (jsonObject["wzrk_id"] as? String) ?? "0_0"
+        if unitId == "0_0" {
+            NDLogger.w(Self.self, "Missing wzrk_id in display unit JSON, using fallback id '0_0'")
         }
 
         // Slot ID lives at the root, alongside `wzrk_id` and `native_display_config`.
