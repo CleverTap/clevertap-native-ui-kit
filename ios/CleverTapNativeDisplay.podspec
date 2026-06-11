@@ -22,7 +22,7 @@ Pod::Spec.new do |spec|
   
   spec.source_files = "Sources/CleverTapNativeDisplay/**/*.swift"
   
-  spec.frameworks   = "SwiftUI", "Foundation"
+  spec.frameworks = "SwiftUI", "Foundation", "UIKit", "WebKit", "AVKit"
   
   # Build settings for framework distribution
   spec.pod_target_xcconfig = {

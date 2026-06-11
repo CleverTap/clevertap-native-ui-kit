@@ -203,6 +203,8 @@
 		4B08E4C20BD64AF4B3F1FF0F /* test-158-gallery-box-freeflow-indicators-only.json in Resources */ = {isa = PBXBuildFile; fileRef = CE27615A6EED4B039CA1BEF0 /* test-158-gallery-box-freeflow-indicators-only.json */; };
 		4BC24769CC4E49119396B753 /* test-168-gallery-box-grid2col-minimal.json in Resources */ = {isa = PBXBuildFile; fileRef = C8A1CC8F14AA4AD58768F31D /* test-168-gallery-box-grid2col-minimal.json */; };
 		5314047399FD46588D2A203F /* MoreMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8377811EF07E4E86844D4D7E /* MoreMenuView.swift */; };
+		57C008322FDAC81E00003B5E /* CleverTapNativeDisplay in Frameworks */ = {isa = PBXBuildFile; productRef = 57C008312FDAC81E00003B5E /* CleverTapNativeDisplay */; };
+		57C008352FDAC82D00003B5E /* CleverTapSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 57C008342FDAC82D00003B5E /* CleverTapSDK */; };
 		57C0F6DB2FD9771B00003B5E /* CleverTapSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 57C0F6DA2FD9771B00003B5E /* CleverTapSDK */; };
 		57C0F6EF2FD97FCD00003B5E /* CleverTapNativeDisplay in Frameworks */ = {isa = PBXBuildFile; productRef = 57C0F6EE2FD97FCD00003B5E /* CleverTapNativeDisplay */; };
 		5850BD150D4947F19C844DA7 /* test-164-gallery-box-freeflow-5items.json in Resources */ = {isa = PBXBuildFile; fileRef = EDE728627F324FF4A7B1FE6B /* test-164-gallery-box-freeflow-5items.json */; };
@@ -476,6 +478,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B004 /* CleverTapNativeDisplay in Frameworks */,
+				57C008322FDAC81E00003B5E /* CleverTapNativeDisplay in Frameworks */,
+				57C008352FDAC82D00003B5E /* CleverTapSDK in Frameworks */,
 				57C0F6DB2FD9771B00003B5E /* CleverTapSDK in Frameworks */,
 				57C0F6EF2FD97FCD00003B5E /* CleverTapNativeDisplay in Frameworks */,
 			);
@@ -801,6 +805,8 @@
 				PKG001 /* CleverTapNativeDisplay */,
 				57C0F6DA2FD9771B00003B5E /* CleverTapSDK */,
 				57C0F6EE2FD97FCD00003B5E /* CleverTapNativeDisplay */,
+				57C008312FDAC81E00003B5E /* CleverTapNativeDisplay */,
+				57C008342FDAC82D00003B5E /* CleverTapSDK */,
 			);
 			productName = NativeDisplaySample;
 			productReference = P001 /* NativeDisplaySample.app */;
@@ -835,8 +841,8 @@
 			);
 			mainGroup = ROOT;
 			packageReferences = (
-				57C0F6D92FD9771B00003B5E /* XCLocalSwiftPackageReference "../../ct-ios" */,
-				57C0F6ED2FD97FCD00003B5E /* XCLocalSwiftPackageReference "../../ct-native-ui-kit" */,
+				57C008302FDAC81E00003B5E /* XCRemoteSwiftPackageReference "clevertap-native-ui-kit" */,
+				57C008332FDAC82D00003B5E /* XCRemoteSwiftPackageReference "clevertap-ios-sdk" */,
 			);
 			productRefGroup = GRP_PRD /* Products */;
 			projectDirPath = "";
@@ -1363,18 +1369,36 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		57C0F6D92FD9771B00003B5E /* XCLocalSwiftPackageReference "../../ct-ios" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../ct-ios";
+/* Begin XCRemoteSwiftPackageReference section */
+		57C008302FDAC81E00003B5E /* XCRemoteSwiftPackageReference "clevertap-native-ui-kit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CleverTap/clevertap-native-ui-kit.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
 		};
-		57C0F6ED2FD97FCD00003B5E /* XCLocalSwiftPackageReference "../../ct-native-ui-kit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../ct-native-ui-kit";
+		57C008332FDAC82D00003B5E /* XCRemoteSwiftPackageReference "clevertap-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CleverTap/clevertap-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.7.1;
+			};
 		};
-/* End XCLocalSwiftPackageReference section */
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		57C008312FDAC81E00003B5E /* CleverTapNativeDisplay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 57C008302FDAC81E00003B5E /* XCRemoteSwiftPackageReference "clevertap-native-ui-kit" */;
+			productName = CleverTapNativeDisplay;
+		};
+		57C008342FDAC82D00003B5E /* CleverTapSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 57C008332FDAC82D00003B5E /* XCRemoteSwiftPackageReference "clevertap-ios-sdk" */;
+			productName = CleverTapSDK;
+		};
 		57C0F6DA2FD9771B00003B5E /* CleverTapSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CleverTapSDK;

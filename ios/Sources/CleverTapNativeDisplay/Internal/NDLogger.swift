@@ -13,7 +13,7 @@ import os.log
 /// Log level for the Native Display SDK, matching CleverTap Core SDK conventions.
 ///
 /// Mirrors `CleverTap.setDebugLevel(Int32)` raw values:
-/// - `-1` OFF, `0` INFO, `2` DEBUG, `3` VERBOSE
+/// - `-1` OFF, `0` INFO, `1` DEBUG, `2` VERBOSE
 ///
 /// Aliased publicly as `CTNDLogLevel` — use `NativeDisplayBridge.setLogLevel(_:)` to configure.
 @objc public enum NDLogLevel: Int {

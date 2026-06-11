@@ -69,8 +69,8 @@ private let legacyClickedSelector: Selector = NSSelectorFromString(
 /// Maps 1-to-1 to CleverTap Core SDK debug levels:
 /// - `off`     (-1) — suppress all SDK log output
 /// - `info`    (0)  — lifecycle milestones, warnings, errors
-/// - `debug`   (2)  — standard development output (default in DEBUG builds)
-/// - `verbose` (3)  — fine-grained diagnostic detail
+/// - `debug`   (1)  — standard development output (default in DEBUG builds)
+/// - `verbose` (2)  — fine-grained diagnostic detail
 ///
 /// Pass to `NativeDisplayBridge.setLogLevel(_:)`:
 /// ```swift
