@@ -11,16 +11,17 @@ import Foundation
 /// - Ternary expressions: {{isPremium ? 'Premium' : 'Free'}}
 ///
 /// Phase 2+ will add reactive state management.
-public class VariableEvaluator {
-    
+class VariableEvaluator {
+
     private let variables: [String: AnyCodable]
     private static let templatePattern = try! NSRegularExpression(
         pattern: "\\{\\{([^}]+)\\}\\}",
         options: []
     )
-    
-    public init(variables: [String: AnyCodable]) {
+
+    init(variables: [String: AnyCodable]) {
         self.variables = variables
+        NDLogger.d(Self.self, "VariableEvaluator init: \(variables.count) variable(s)")
     }
     
     /// Evaluate a string template, replacing {{expressions}} with values.
@@ -28,7 +29,7 @@ public class VariableEvaluator {
     /// Examples:
     /// - "Hello {{userName}}" → "Hello John"
     /// - "{{itemCount}} items" → "5 items"
-    public func evaluateString(_ template: String) -> String {
+    func evaluateString(_ template: String) -> String {
         var result = template
         let range = NSRange(template.startIndex..., in: template)
         
@@ -40,12 +41,13 @@ public class VariableEvaluator {
                   let fullRange = Range(match.range, in: template) else {
                 continue
             }
-            
+
             let expression = String(template[expressionRange]).trimmingCharacters(in: .whitespaces)
             let value = evaluateExpression(expression)
+            NDLogger.v(Self.self, "Template substitution: {{\(expression)}} → \(value)")
             result = result.replacingCharacters(in: fullRange, with: "\(value)")
         }
-        
+
         return result
     }
     
@@ -54,7 +56,7 @@ public class VariableEvaluator {
     /// Examples:
     /// - "{{itemCount > 0}}" → true/false
     /// - "{{isPremium}}" → true/false
-    public func evaluateBoolean(_ expression: String) -> Bool {
+    func evaluateBoolean(_ expression: String) -> Bool {
         let cleaned = expression
             .trimmingCharacters(in: .whitespaces)
             .replacingOccurrences(of: "{{", with: "")
@@ -76,12 +78,13 @@ public class VariableEvaluator {
             return evaluateEquality(cleaned, operator: "!=")
         }
         
-        // Handle plain string literals "true" / "false" sent directly in bindings
+        // Handle plain string literals "true" / "false" / "1" / "0" sent directly in bindings
         switch cleaned.lowercased() {
         case "true": return true
         case "false": return false
         default: break
         }
+        if let number = Double(cleaned) { return number != 0 }
 
         // Fall back to variable lookup for {{variableName}} expressions
         if let value = getVariable(cleaned) {
@@ -218,7 +221,10 @@ public class VariableEvaluator {
             return bool
         case let int as Int:
             return int != 0
+        case let double as Double:
+            return double != 0
         case let string as String:
+            if let number = Double(string) { return number != 0 }
             return string.lowercased() == "true"
         default:
             return nil

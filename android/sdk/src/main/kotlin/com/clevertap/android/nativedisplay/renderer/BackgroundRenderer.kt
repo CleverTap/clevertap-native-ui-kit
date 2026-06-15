@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.clevertap.android.nativedisplay.internal.ImageLoaderProvider
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import com.clevertap.android.nativedisplay.models.*
 import kotlin.math.cos
 import kotlin.math.sin
@@ -29,7 +30,7 @@ import kotlin.random.Random
  * @return Modified Modifier with background applied
  */
 @Composable
-fun Modifier.applyBackground(background: Background?): Modifier {
+internal fun Modifier.applyBackground(background: Background?): Modifier {
     if (background == null) return this
     
     return when (background) {
@@ -203,7 +204,7 @@ private fun Modifier.applyStaticImage(bg: Background.Image): Modifier {
         ImageFit.CROP -> ContentScale.Crop
         ImageFit.CONTAIN -> ContentScale.Fit
         ImageFit.FILL -> ContentScale.FillBounds
-        ImageFit.TILE -> ContentScale.Crop
+        ImageFit.TILE -> { NDLogger.w("NDBackgroundRenderer", "ImageFit.TILE is not yet supported; falling back to CROP"); ContentScale.Crop }
     }
 
     val painter = rememberAsyncImagePainter(
@@ -391,8 +392,8 @@ private fun Modifier.applyAnimatedParticles(bg: Background.Particles): Modifier 
         drawContent()
         
         particles.forEach { particle ->
-            val x = ((particle.x + particle.vx * time * 0.001f) % 1f) * size.width
-            val y = ((particle.y + particle.vy * time * 0.001f) % 1f) * size.height
+            val x = (particle.x + particle.vx * time * 0.001f).mod(1f) * size.width
+            val y = (particle.y + particle.vy * time * 0.001f).mod(1f) * size.height
             
             drawCircle(
                 color = particleColor,

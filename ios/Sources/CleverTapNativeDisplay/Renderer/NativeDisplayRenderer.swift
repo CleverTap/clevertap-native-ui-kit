@@ -10,8 +10,8 @@ import ImageIO
 // MARK: - Environment Key for Parent Size
 
 /// Environment key for explicitly setting parent size (overrides GeometryReader)
-public struct ParentSizeEnvironmentKey: EnvironmentKey {
-    public static let defaultValue: CGSize? = nil
+struct ParentSizeEnvironmentKey: EnvironmentKey {
+    static let defaultValue: CGSize? = nil
 }
 
 extension EnvironmentValues {
@@ -26,14 +26,14 @@ extension EnvironmentValues {
 // MARK: - Environment Keys for Font Customization
 
 /// Environment key for client-provided default font family name (HIGHEST priority).
-public struct DefaultFontFamilyKey: EnvironmentKey {
-    public static let defaultValue: String? = nil
+struct DefaultFontFamilyKey: EnvironmentKey {
+    static let defaultValue: String? = nil
 }
 
 /// Environment key for a custom font resolver closure.
 /// Called when JSON specifies a fontFamily and no client default overrides it.
-public struct FontFamilyResolverKey: EnvironmentKey {
-    public static let defaultValue: ((String, CGFloat, Font.Weight) -> Font)? = nil
+struct FontFamilyResolverKey: EnvironmentKey {
+    static let defaultValue: ((String, CGFloat, Font.Weight) -> Font)? = nil
 }
 
 extension EnvironmentValues {
@@ -65,19 +65,51 @@ public struct NativeDisplayView: View {
     private let componentListener: NativeDisplayComponentListener?
     private let unitId: String?
 
+    /// Render-only initializer. No `unitId` is wired, so attribution events
+    /// (`Notification Viewed` / `Notification Clicked`) do not fire. Use this for
+    /// previews, tests, and raw-JSON browsers that do not have a parsed
+    /// `NativeDisplayUnit`. For bridge- or placement-delivered content, prefer
+    /// `init(unit:actionListener:componentListener:)`.
     public init(
         config: ResolvedConfig,
         actionListener: NativeDisplayActionListener? = nil,
-        componentListener: NativeDisplayComponentListener? = nil,
-        unitId: String? = nil,
-        preResolvedStyles: [String: Style]? = nil
+        componentListener: NativeDisplayComponentListener? = nil
+    ) {
+        self.init(
+            config: config,
+            actionListener: actionListener,
+            componentListener: componentListener,
+            unitId: nil,
+            preResolvedStyles: nil
+        )
+    }
+
+    /// Attribution-aware initializer. Uses the unit's pre-resolved style map
+    /// (computed off-main by the bridge parser) and the `unitId` needed to fire
+    /// `Notification Viewed` / `Notification Clicked` events.
+    public init(
+        unit: NativeDisplayUnit,
+        actionListener: NativeDisplayActionListener? = nil,
+        componentListener: NativeDisplayComponentListener? = nil
+    ) {
+        self.init(
+            config: unit.config,
+            actionListener: actionListener,
+            componentListener: componentListener,
+            unitId: unit.unitId,
+            preResolvedStyles: unit.resolvedStyles
+        )
+    }
+
+    private init(
+        config: ResolvedConfig,
+        actionListener: NativeDisplayActionListener?,
+        componentListener: NativeDisplayComponentListener?,
+        unitId: String?,
+        preResolvedStyles: [String: Style]?
     ) {
         self.config = config
         self.unitId = unitId
-        // Prefer the pre-resolved style map produced by the bridge parser (off-main).
-        // Falls back to resolving inline on the main thread for direct callers
-        // (e.g. tests, `CleverTapNativeDisplay.createView(from:)`) that don't go
-        // through the bridge.
         if let preResolvedStyles {
             self.resolvedStyles = preResolvedStyles
         } else {
@@ -91,23 +123,6 @@ public struct NativeDisplayView: View {
             unitId: unitId
         )
         self.componentListener = componentListener
-    }
-
-    /// Convenience initializer for rendering a `NativeDisplayUnit` produced by
-    /// `NativeDisplayBridge`. Uses the unit's pre-resolved style map when
-    /// available so the SwiftUI view init runs no recursive style work on main.
-    public init(
-        unit: NativeDisplayUnit,
-        actionListener: NativeDisplayActionListener? = nil,
-        componentListener: NativeDisplayComponentListener? = nil
-    ) {
-        self.init(
-            config: unit.config,
-            actionListener: actionListener,
-            componentListener: componentListener,
-            unitId: unit.unitId,
-            preResolvedStyles: unit.resolvedStyles
-        )
     }
 
     public var body: some View {
@@ -141,35 +156,37 @@ public struct NativeDisplayView: View {
             // → Skip GeometryReader (performance win)
             let screenSize = UIScreen.main.bounds.size
             renderContent(parentSize: screenSize)
+        } else if let ar = config.root.layout?.aspectRatio, ar > 0 {
+            // Priority 3.5: Aspect ratio present → derive height from offered width.
+            // .frame(maxWidth: .infinity) fills the parent's offered width.
+            // .aspectRatio(.fit) in a vertical ScrollView sets height = width / ar.
+            // GeometryReader is constrained by both, so geo.size is always accurate —
+            // avoids the unreliable initial-pass sizes of a bare GeometryReader in LazyVStack.
+            // This respects host-applied padding / safe-area / multi-column insets,
+            // which a UIScreen.main.bounds fallback would ignore.
+            GeometryReader { geo in
+                renderContent(parentSize: geo.size)
+            }
+            .aspectRatio(ar, contentMode: .fit)
+            .frame(maxWidth: .infinity)
         } else {
             // Priority 4: GeometryReader (ONLY when truly needed)
             // Conditions to reach here:
             // - NO environment override AND
+            // - Root has no aspect ratio AND
             // - Root uses percentages/match_parent/wrap_content AND
             // - Config contains percentages somewhere
             // → MUST use GeometryReader to measure parent constraints
-            //
-            // When the root has an aspectRatio, apply .aspectRatio() to the GeometryReader
-            // so SwiftUI knows the view's natural height. Without this, GeometryReader reports
-            // height=0 inside a ScrollView and greedily expands, causing views to overlap.
-            let rootAspectRatio = config.root.layout?.aspectRatio
-            if let ar = rootAspectRatio, ar > 0 {
-                GeometryReader { geometry in
-                    renderContent(parentSize: geometry.size)
-                        .frame(width: geometry.size.width, alignment: .center)
-                }
-                .aspectRatio(ar, contentMode: .fit)
-            } else {
-                GeometryReader { geometry in
-                    renderContent(parentSize: geometry.size)
-                        .frame(width: geometry.size.width, alignment: .center)
-                }
+            GeometryReader { geometry in
+                renderContent(parentSize: geometry.size)
+                    .frame(width: geometry.size.width, alignment: .center)
             }
         }
     }
 
     private func renderContent(parentSize: CGSize) -> some View {
         let rootHeight = Self.resolveRootHeight(layout: config.root.layout, parentSize: parentSize)
+        NDLogger.d(Self.self, "Rendering config root '\(config.root.id)' — parentSize=\(parentSize), rootHeight=\(rootHeight)")
         return RenderNode(
             node: config.root,
             resolvedStyles: resolvedStyles,
@@ -243,6 +260,10 @@ struct RenderNode: View {
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
     var isRoot: Bool = false
+    /// True when this node is a direct child of a BOX container.
+    /// The parent BOX applies the offset externally via padding overlay, so this node
+    /// must NOT also apply offset internally (which would double it).
+    var inBoxContainer: Bool = false
     
     var body: some View {
         // Check visibility condition
@@ -267,13 +288,14 @@ struct RenderNode: View {
         let isClientInterested = componentListener?.getInterestedNodeIds()?.contains(node.id) ?? (componentListener != nil)
         let shouldApplyTappable = hasServerActions || isClientInterested
         let isButton = node.elementType == .button
+        let isImage = node.elementType == .image
         
         switch node {
         case .container(let container):
             let layoutMod = LayoutModifier(layout: node.layout, parentSize: parentSize, nodeId: node.id)
             let offsetValue = layoutMod.calculateOffset()
 
-            RenderContainer(
+            let containerView = RenderContainer(
                 container: container,
                 resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
@@ -285,7 +307,14 @@ struct RenderNode: View {
             )
             .modifier(layoutMod)
             .modifier(DecorationModifier(style: resolvedStyle, rootHeight: rootHeight))
-            .offset(x: offsetValue.width, y: offsetValue.height)
+
+            Group {
+                if inBoxContainer {
+                    containerView
+                } else {
+                    containerView.offset(x: offsetValue.width, y: offsetValue.height)
+                }
+            }
             .applyEntranceAnimation(node.animation)
             .applyTappable(
                 nodeId: node.id,
@@ -311,8 +340,12 @@ struct RenderNode: View {
         case .element(let element):
             let layoutMod = LayoutModifier(layout: node.layout, parentSize: parentSize, nodeId: node.id)
             let offsetValue = layoutMod.calculateOffset()
+            // Video elements handle their own tap interaction (controls show/hide) internally.
+            // Passing a componentListener here would add a competing gesture that blocks the
+            // internal Color.clear tap layer. Explicit onClick actions still work via `actions`.
+            let isVideo = element.elementType == .video
 
-            RenderElement(
+            let elementView = RenderElement(
                 element: element,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
@@ -322,13 +355,28 @@ struct RenderNode: View {
             )
             .modifier(layoutMod)
             .modifier(DecorationModifier(style: resolvedStyle, rootHeight: rootHeight))
-            .offset(x: offsetValue.width, y: offsetValue.height)
+
+            // BOX container children: offset is applied externally via padding overlay
+            // in RenderContainer.box, so hit-testing and visual position always align.
+            // Non-BOX children: use .offset() for visual-only displacement.
+            Group {
+                if inBoxContainer {
+                    elementView
+                } else {
+                    elementView.offset(x: offsetValue.width, y: offsetValue.height)
+                }
+            }
             .applyEntranceAnimation(node.animation)
             .applyTappable(
                 nodeId: node.id,
                 actions: !isButton && shouldApplyTappable ? node.actions : nil,
                 actionHandler: actionHandler,
-                componentListener: !isButton ? componentListener : nil
+                componentListener: (!isButton && !isVideo) ? componentListener : nil,
+                onSystemClick: isImage ? {
+                    guard let onClick = node.actions?[ActionTriggers.onClick] else { return }
+                    let extras = ActionAttributionExtras.from(action: onClick)
+                    actionHandler?.fireSystemEvent(eventName: "Notification Clicked", properties: extras)
+                } : nil
             )
             .onAppear {
                 if isRoot {
@@ -393,19 +441,34 @@ struct RenderContainer: View {
                 .padding(paddingInsets)
 
         case .box:
-            // For BOX containers, use ZStack with topLeading alignment
-            // Children use .offset() (applied in LayoutModifier) to move from their natural position
+            // BOX uses absolute positioning. Each child is placed on a full-size transparent
+            // canvas via .overlay + .padding. This approach correctly aligns both visual
+            // rendering and hit-testing, unlike .offset() (visual only) or .position()
+            // (unreliable hit-test alignment for UIViewRepresentable subtrees).
             ZStack(alignment: .topLeading) {
                 ForEach(container.children, id: \.id) { child in
-                    RenderNode(
-                        node: child,
-                        resolvedStyles: resolvedStyles,
-                        evaluator: evaluator,
+                    let childOffset = LayoutModifier(
+                        layout: child.layout,
                         parentSize: containerSize,
-                        rootHeight: rootHeight,
-                        actionHandler: actionHandler,
-                        componentListener: componentListener
-                    )
+                        nodeId: child.id
+                    ).calculateOffset()
+
+                    Color.clear
+                        .frame(width: containerSize.width, height: containerSize.height)
+                        .overlay(alignment: .topLeading) {
+                            RenderNode(
+                                node: child,
+                                resolvedStyles: resolvedStyles,
+                                evaluator: evaluator,
+                                parentSize: containerSize,
+                                rootHeight: rootHeight,
+                                actionHandler: actionHandler,
+                                componentListener: componentListener,
+                                inBoxContainer: true
+                            )
+                            .padding(.top, childOffset.height)
+                            .padding(.leading, childOffset.width)
+                        }
                 }
             }
             .frame(
@@ -486,9 +549,10 @@ struct RenderContainer: View {
                 width = rawWidth
                 height = rawHeight
             } else {
-                // Aspect ratio constrains: width is primary, derive height
-                width = rawWidth
-                height = rawWidth / aspectRatio
+                // Aspect ratio present + non-fixed width → fill parent width.
+                // Matches resolveRootWidth(): percent is ignored when aspectRatio is set.
+                width = widthIsFixed ? rawWidth : parentSize.width
+                height = width / aspectRatio
             }
         } else {
             width = rawWidth
@@ -961,22 +1025,14 @@ struct RenderElement: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                             .clipped()
                     case .failure:
-                        Image(systemName: "photo")
-                            .foregroundColor(.gray)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        EmptyView()
                     @unknown default:
                         EmptyView()
                     }
                 }
             }
         } else {
-            Rectangle()
-                .fill(Color.gray.opacity(0.3))
-                .overlay(
-                    Text("No Image")
-                        .foregroundColor(.gray)
-                        .font(.caption)
-                )
+            EmptyView()
         }
     }
 
@@ -1041,12 +1097,15 @@ struct RenderElement: View {
         }()
 
         Button(action: {
-            // Fire system event for button click
+            // Fire system event for button click, carrying the click action's KVs
+            // so attribution events surface the URL / custom KVs / metadata.
+            let onClickAction = element.actions?[ActionTriggers.onClick]
+            let extras = ActionAttributionExtras.from(action: onClickAction)
             actionHandler?.fireSystemEvent(
                 eventName: "Notification Clicked",
-                properties: ["nodeId": element.id]
+                properties: extras
             )
-            if let onClick = element.actions?[ActionTriggers.onClick] {
+            if let onClick = onClickAction {
                 actionHandler?.handleAction(onClick, nodeId: element.id, interactionType: .click)
             }
         }) {
@@ -1280,8 +1339,10 @@ struct LayoutModifier: ViewModifier {
         }
 
         if let w = explicitWidth {
-            // Width known → derive height from aspect ratio
-            return (w, w / ratio, false)
+            // When width is percent (not fixed dp/px/sp), aspect ratio wins: fill parent width.
+            // Matches resolveRootWidth() rule: "Aspect ratio present → percent is ignored, width fills parent."
+            let frameWidth = widthIsFixed ? w : parentSize.width
+            return (frameWidth, frameWidth / ratio, false)
         }
         if let h = explicitHeight {
             // Height known → derive width from aspect ratio
@@ -1511,11 +1572,11 @@ private struct DecorationView<Content: View>: View {
 
 /// Utility to parse hex color strings to SwiftUI Color.
 /// Supports #RRGGBB (6 chars) and #RRGGBBAA (8 chars, RGBA format).
-public struct ColorParser {
+struct ColorParser {
     /// Parse hex color string to SwiftUI Color.
     /// - #RRGGBB: 6-character RGB (full opacity)
     /// - #RRGGBBAA: 8-character RGBA (alpha in last byte)
-    public static func parse(_ colorString: String?) -> Color? {
+    static func parse(_ colorString: String?) -> Color? {
         guard let colorString = colorString else { return nil }
 
         var hex = colorString.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -1629,42 +1690,46 @@ fileprivate class PlayerManager: ObservableObject {
     }
 }
 
+/// UIView subclass that keeps AVPlayerLayer filling its bounds on every layout pass,
+/// including device rotation.
+private final class PlayerLayerView: UIView {
+    let playerLayer = AVPlayerLayer()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .clear
+        playerLayer.videoGravity = .resizeAspect
+        layer.addSublayer(playerLayer)
+    }
+
+    required init?(coder: NSCoder) { fatalError() }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        playerLayer.frame = bounds
+    }
+}
+
 /// UIViewRepresentable wrapper for AVPlayerLayer
 private struct VideoPlayerLayer: UIViewRepresentable {
     let player: AVPlayer?
 
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        view.backgroundColor = .black
-
-        let playerLayer = AVPlayerLayer(player: player)
-        playerLayer.videoGravity = .resizeAspect
-        view.layer.addSublayer(playerLayer)
-
-        context.coordinator.playerLayer = playerLayer
-        return view
+    func makeUIView(context: Context) -> PlayerLayerView {
+        PlayerLayerView()
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {
-        context.coordinator.playerLayer?.player = player
-
-        // Update layer frame to match view bounds
-        DispatchQueue.main.async {
-            context.coordinator.playerLayer?.frame = uiView.bounds
+    func updateUIView(_ uiView: PlayerLayerView, context: Context) {
+        // Only reassign if the player instance actually changed — avoids a black flash
+        // on rotation when SwiftUI rebuilds the view body but the player is the same.
+        if uiView.playerLayer.player !== player {
+            uiView.playerLayer.player = player
         }
     }
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
-
-    static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
-        coordinator.playerLayer?.removeFromSuperlayer()
-        coordinator.playerLayer = nil
-    }
-
-    class Coordinator {
-        var playerLayer: AVPlayerLayer?
+    static func dismantleUIView(_ uiView: PlayerLayerView, coordinator: ()) {
+        // Do not nil out the player here — the PlayerManager's cleanup() handles
+        // release on onDisappear. Nilling here causes a black flash on rotation
+        // because SwiftUI dismantles/remakes UIViewRepresentable during layout rebuilds.
     }
 }
 
@@ -1699,25 +1764,26 @@ private struct VideoPlayerView: View {
 
     @StateObject private var playerManager = PlayerManager()
     @State private var showControlsUI = false
-    @State private var controlsOpacity: Double = 0
     @State private var isFullscreen = false
+    @State private var hideControlsWorkItem: DispatchWorkItem?
 
     var body: some View {
         ZStack {
             // Custom AVPlayerLayer — hidden when fullscreen (shared AVPlayer instance)
             VideoPlayerLayer(player: playerManager.player)
                 .opacity(isFullscreen ? 0 : 1)
-                .onTapGesture {
-                    if showControls {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            showControlsUI.toggle()
-                            controlsOpacity = showControlsUI ? 1.0 : 0.0
-                        }
+
+            // Transparent tap layer — detects taps reliably as a pure SwiftUI view
+            if showControls && !isFullscreen {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        showControlsUI.toggle()
                     }
-                }
+            }
 
             // Custom controls overlay
-            if showControls && controlsOpacity > 0 {
+            if showControls {
                 VStack {
                     Spacer()
                     HStack(spacing: 12) {
@@ -1755,7 +1821,9 @@ private struct VideoPlayerView: View {
                     }
                     .padding(12)
                 }
-                .opacity(controlsOpacity)
+                .opacity(showControlsUI ? 1.0 : 0.0)
+                .animation(.easeInOut(duration: 0.3), value: showControlsUI)
+                .allowsHitTesting(showControlsUI)
             }
         }
         .fullScreenCover(isPresented: $isFullscreen) {
@@ -1772,15 +1840,11 @@ private struct VideoPlayerView: View {
             playerManager.cleanup()
         }
         .onChange(of: showControlsUI) { isShown in
-            if isShown {
-                // Auto-hide after 3 seconds
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        showControlsUI = false
-                        controlsOpacity = 0
-                    }
-                }
-            }
+            hideControlsWorkItem?.cancel()
+            guard isShown else { return }
+            let workItem = DispatchWorkItem { showControlsUI = false }
+            hideControlsWorkItem = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: workItem)
         }
     }
 }
@@ -1790,6 +1854,7 @@ private struct VideoFullscreenView: View {
     let openUrl: String?
     @Binding var isPresented: Bool
     @State private var showControlsUI = true
+    @State private var hideControlsWorkItem: DispatchWorkItem?
 
     var body: some View {
         ZStack {
@@ -1797,10 +1862,12 @@ private struct VideoFullscreenView: View {
 
             VideoPlayerLayer(player: playerManager.player)
                 .ignoresSafeArea()
+
+            Color.clear
+                .contentShape(Rectangle())
+                .ignoresSafeArea()
                 .onTapGesture {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        showControlsUI.toggle()
-                    }
+                    showControlsUI.toggle()
                 }
 
             if showControlsUI {
@@ -1855,21 +1922,24 @@ private struct VideoFullscreenView: View {
             }
         }
         .onChange(of: showControlsUI) { isShown in
-            if isShown {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        showControlsUI = false
-                    }
-                }
-            }
-        }
-        .onAppear {
-            // Auto-hide controls after 3 seconds when fullscreen opens
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            hideControlsWorkItem?.cancel()
+            guard isShown else { return }
+            let workItem = DispatchWorkItem {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     showControlsUI = false
                 }
             }
+            hideControlsWorkItem = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: workItem)
+        }
+        .onAppear {
+            let workItem = DispatchWorkItem {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    showControlsUI = false
+                }
+            }
+            hideControlsWorkItem = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: workItem)
         }
     }
 }

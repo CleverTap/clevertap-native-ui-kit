@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+
 package com.clevertap.android.nativedisplay.renderer
 
 import androidx.compose.foundation.background
@@ -43,6 +45,8 @@ import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListen
 import com.clevertap.android.nativedisplay.models.ArrowStyle
 import com.clevertap.android.nativedisplay.models.GalleryConfig
 import com.clevertap.android.nativedisplay.models.GalleryMode
+import com.clevertap.android.nativedisplay.models.IndicatorPosition
+import com.clevertap.android.nativedisplay.models.IndicatorShape
 import com.clevertap.android.nativedisplay.models.IndicatorStyle
 import com.clevertap.android.nativedisplay.models.NativeDisplayContainer
 import com.clevertap.android.nativedisplay.models.Orientation
@@ -55,7 +59,7 @@ import kotlinx.coroutines.launch
  * Main gallery renderer that routes to the appropriate implementation based on mode.
  */
 @Composable
-fun RenderGallery(
+internal fun RenderGallery(
     container: NativeDisplayContainer,
     resolvedStyles: PersistentMap<String, Style>,
     evaluator: VariableEvaluator,
@@ -133,10 +137,7 @@ internal fun RenderSnappingGallery(
     )
     val scope = rememberCoroutineScope()
 
-    BoxWithConstraints(modifier = modifier) {
-        val containerWidth = this.maxWidth
-        val containerHeight = this.maxHeight
-
+    Box(modifier = modifier) {
         // Calculate peek padding from dp-based PeekConfig
         val peekBefore = config.peek.before.dp
         val peekAfter = config.peek.after.dp
@@ -166,7 +167,6 @@ internal fun RenderSnappingGallery(
                     contentPadding = if (hasPeek) PaddingValues(start = peekBefore, end = peekAfter)
                                      else PaddingValues(0.dp),
                     pageSpacing = config.spacing.dp,
-                    beyondViewportPageCount = if (container.children.size > 1) 1 else 0
                 ) { page ->
                     container.children.getOrNull(page)?.let { child ->
                         RenderNode(
@@ -187,7 +187,6 @@ internal fun RenderSnappingGallery(
                     contentPadding = if (hasPeek) PaddingValues(top = peekBefore, bottom = peekAfter)
                                      else PaddingValues(0.dp),
                     pageSpacing = config.spacing.dp,
-                    beyondViewportPageCount = if (container.children.size > 1) 1 else 0
                 ) { page ->
                     container.children.getOrNull(page)?.let { child ->
                         RenderNode(
@@ -240,9 +239,9 @@ internal fun RenderSnappingGallery(
                     pageCount = container.children.size,
                     modifier = Modifier.align(
                         when (config.indicatorStyle?.position) {
-                            "top" -> Alignment.TopCenter
-                            "left" -> Alignment.CenterStart
-                            "right" -> Alignment.CenterEnd
+                            IndicatorPosition.TOP -> Alignment.TopCenter
+                            IndicatorPosition.LEFT -> Alignment.CenterStart
+                            IndicatorPosition.RIGHT -> Alignment.CenterEnd
                             else -> Alignment.BottomCenter
                         }
                     )
@@ -518,11 +517,7 @@ internal fun RenderGalleryIndicators(
     val activeColor = parseColor(indicatorStyle.activeColor) ?: Color.Blue
     val inactiveColor = parseColor(indicatorStyle.inactiveColor) ?: Color.LightGray
 
-    val arrangement = if (config.orientation == Orientation.HORIZONTAL) {
-        Arrangement.spacedBy(indicatorStyle.spacing.dp)
-    } else {
-        Arrangement.spacedBy(indicatorStyle.spacing.dp)
-    }
+    val arrangement = Arrangement.spacedBy(indicatorStyle.spacing.dp)
 
     if (config.orientation == Orientation.HORIZONTAL) {
         Row(
@@ -535,7 +530,7 @@ internal fun RenderGalleryIndicators(
                         .size(indicatorStyle.size.dp)
                         .background(
                             color = if (pagerState.currentPage == index) activeColor else inactiveColor,
-                            shape = if (indicatorStyle.shape == "circle") CircleShape else RoundedCornerShape(
+                            shape = if (indicatorStyle.shape == IndicatorShape.CIRCLE) CircleShape else RoundedCornerShape(
                                 2.dp
                             )
                         )
@@ -553,7 +548,7 @@ internal fun RenderGalleryIndicators(
                         .size(indicatorStyle.size.dp)
                         .background(
                             color = if (pagerState.currentPage == index) activeColor else inactiveColor,
-                            shape = if (indicatorStyle.shape == "circle") CircleShape else RoundedCornerShape(
+                            shape = if (indicatorStyle.shape == IndicatorShape.CIRCLE) CircleShape else RoundedCornerShape(
                                 2.dp
                             )
                         )

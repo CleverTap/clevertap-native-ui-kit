@@ -117,13 +117,14 @@ struct CleverTapIntegrationView: View {
                     VStack(spacing: 12) {
                         ForEach(viewModel.displayUnits, id: \.unitId) { unit in
                             NativeDisplayView(
-                                config: unit.config,
+                                unit: unit,
                                 actionListener: viewModel
                             )
                             .frame(maxWidth: .infinity)
                         }
                     }
                     .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 10)
                 }
                 .frame(maxWidth: .infinity)
                 .accessibilityIdentifier("ct-display-canvas")
@@ -257,9 +258,6 @@ class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBr
             dict.map { "\($0.key)=\($0.value)" }.joined(separator: ", ")
         } ?? ""
         log("EVENT \(eventName)\(propsStr.isEmpty ? "" : " [\(propsStr)]")")
-        
-        // Forward system events to CleverTap
-        cleverTapInstance?.recordEvent(eventName, withProps: properties ?? [:])
     }
 
     func onActionError(action: Action, error: Error) {

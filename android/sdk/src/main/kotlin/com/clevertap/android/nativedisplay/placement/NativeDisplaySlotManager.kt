@@ -1,8 +1,8 @@
 package com.clevertap.android.nativedisplay.placement
 
-import android.util.Log
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridgeListener
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
 import com.clevertap.android.sdk.CleverTapAPI
 import java.lang.ref.WeakReference
@@ -83,13 +83,15 @@ class NativeDisplaySlotManager private constructor() : NativeDisplayBridgeListen
         }
     }
 
+    // Single lock guards both activeSlots and unitIndex to prevent double-delivery
+    // races when registerSlot and onNativeDisplaysLoaded run concurrently.
+    private val lock = Any()
+
     // slot_id → list of weak observers
     private val activeSlots = mutableMapOf<String, MutableList<WeakReference<SlotObserver>>>()
-    private val slotsLock = Any()
 
     // slot_id → latest unit for that slot
     private val unitIndex = mutableMapOf<String, NativeDisplayUnit>()
-    private val unitIndexLock = Any()
 
     // --- Registration ---
 
@@ -103,27 +105,25 @@ class NativeDisplaySlotManager private constructor() : NativeDisplayBridgeListen
      * @param observer The observer to notify
      */
     fun registerSlot(slotId: String, observer: SlotObserver) {
-        synchronized(slotsLock) {
+        // Atomically register the observer and snapshot the existing unit under
+        // the same lock to eliminate the race with onNativeDisplaysLoaded.
+        val existingUnit: NativeDisplayUnit?
+        synchronized(lock) {
             val observers = activeSlots.getOrPut(slotId) { mutableListOf() }
-            // Avoid duplicate registration
-            val alreadyRegistered = observers.any { it.get() === observer }
-            if (!alreadyRegistered) {
+            if (!observers.any { it.get() === observer }) {
                 observers.add(WeakReference(observer))
             }
-        }
-
-        Log.d(TAG, "Registered observer for slot: $slotId")
-
-        // Deliver existing unit immediately if available
-        val existingUnit: NativeDisplayUnit?
-        synchronized(unitIndexLock) {
             existingUnit = unitIndex[slotId]
         }
+
+        NDLogger.d(TAG, "Registered observer for slot: $slotId")
+
         if (existingUnit != null) {
+            NDLogger.d(TAG, "Cached unit immediately delivered for slot: $slotId (unitId=${existingUnit.unitId})")
             try {
                 observer.onUnitAvailable(existingUnit)
             } catch (e: Exception) {
-                Log.w(TAG, "Observer threw exception during immediate delivery: ${e.message}")
+                NDLogger.w(TAG, "Observer threw exception during immediate delivery: ${e.message}")
             }
         }
     }
@@ -138,14 +138,14 @@ class NativeDisplaySlotManager private constructor() : NativeDisplayBridgeListen
      * @param observer The observer to remove
      */
     fun unregisterSlot(slotId: String, observer: SlotObserver) {
-        synchronized(slotsLock) {
+        synchronized(lock) {
             val observers = activeSlots[slotId] ?: return
             observers.removeAll { it.get() === observer || it.get() == null }
             if (observers.isEmpty()) {
                 activeSlots.remove(slotId)
             }
         }
-        Log.d(TAG, "Unregistered observer for slot: $slotId")
+        NDLogger.d(TAG, "Unregistered observer for slot: $slotId")
     }
 
     // --- Query ---
@@ -158,14 +158,11 @@ class NativeDisplaySlotManager private constructor() : NativeDisplayBridgeListen
      * @return Set of active slot IDs
      */
     fun getActiveSlotIds(): Set<String> {
-        synchronized(slotsLock) {
-            // Prune dead references while collecting
+        synchronized(lock) {
             val deadSlots = mutableListOf<String>()
             for ((slotId, observers) in activeSlots) {
                 observers.removeAll { it.get() == null }
-                if (observers.isEmpty()) {
-                    deadSlots.add(slotId)
-                }
+                if (observers.isEmpty()) deadSlots.add(slotId)
             }
             deadSlots.forEach { activeSlots.remove(it) }
             return activeSlots.keys.toSet()
@@ -186,13 +183,13 @@ class NativeDisplaySlotManager private constructor() : NativeDisplayBridgeListen
             val slotIds = getActiveSlotIds().toList()
             val eventData = mapOf("slots" to slotIds)
             cleverTapApi.pushEvent(WZRK_ND_SLOT_SYNC, eventData)
-            Log.d(TAG, "Synced ${slotIds.size} slot IDs to server: $slotIds")
+            NDLogger.d(TAG, "Synced ${slotIds.size} slot IDs to server: $slotIds")
             true
         } catch (e: NoClassDefFoundError) {
-            Log.w(TAG, "CleverTap Core SDK not available for slot sync")
+            NDLogger.w(TAG, "CleverTap Core SDK not available for slot sync")
             false
         } catch (e: Exception) {
-            Log.w(TAG, "syncCurrentSlotIds() failed: ${e.message}")
+            NDLogger.w(TAG, "syncCurrentSlotIds() failed: ${e.message}")
             false
         }
     }
@@ -200,43 +197,33 @@ class NativeDisplaySlotManager private constructor() : NativeDisplayBridgeListen
     // --- NativeDisplayBridgeListener ---
 
     override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
-        // Index units by slotId and notify matching observers
+        NDLogger.d(TAG, "onNativeDisplaysLoaded: ${units.size} unit(s) received")
         for (unit in units) {
             val slotId = unit.slotId ?: continue
 
-            synchronized(unitIndexLock) {
+            // Index the unit and snapshot active observers atomically under the same
+            // lock used by registerSlot, so a concurrent registration sees either the
+            // unit in the index (and delivers via the immediate-delivery path) or is
+            // included in the observer snapshot below — never both.
+            val activeObservers: List<SlotObserver>
+            synchronized(lock) {
                 unitIndex[slotId] = unit
-            }
-
-            Log.d(TAG, "Unit ${unit.unitId} mapped to slot: $slotId")
-            notifyObservers(slotId, unit)
-        }
-    }
-
-    // --- Internal ---
-
-    /**
-     * Notify all active observers for a given slot. Cleans up dead weak references.
-     */
-    private fun notifyObservers(slotId: String, unit: NativeDisplayUnit) {
-        val activeObservers: List<SlotObserver>
-        synchronized(slotsLock) {
-            val observers = activeSlots[slotId] ?: return
-            val dead = mutableListOf<WeakReference<SlotObserver>>()
-            activeObservers = observers.mapNotNull { ref ->
-                ref.get() ?: run {
-                    dead.add(ref)
-                    null
+                val refs = activeSlots[slotId]
+                if (refs == null) {
+                    activeObservers = emptyList()
+                } else {
+                    refs.removeAll { it.get() == null }
+                    activeObservers = refs.mapNotNull { it.get() }
                 }
             }
-            observers.removeAll(dead)
-        }
 
-        for (observer in activeObservers) {
-            try {
-                observer.onUnitAvailable(unit)
-            } catch (e: Exception) {
-                Log.w(TAG, "Observer threw exception: ${e.message}")
+            NDLogger.d(TAG, "Unit ${unit.unitId} mapped to slot: $slotId")
+            for (observer in activeObservers) {
+                try {
+                    observer.onUnitAvailable(unit)
+                } catch (e: Exception) {
+                    NDLogger.w(TAG, "Observer threw exception: ${e.message}")
+                }
             }
         }
     }

@@ -10,10 +10,11 @@ struct TappableModifier: ViewModifier {
     let actions: [String: Action]?
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
-    
+    let onSystemClick: (() -> Void)?
+
     func body(content: Content) -> some View {
         // Early exit if nothing to do
-        guard actions != nil || componentListener != nil else {
+        guard actions != nil || componentListener != nil || onSystemClick != nil else {
             return AnyView(content)
         }
         
@@ -150,6 +151,12 @@ struct TappableModifier: ViewModifier {
     
     /// Handle tap gesture with component listener and action execution
     private func handleTap(action: Action?, interactionType: InteractionType) {
+        // Fire attribution unconditionally before component listener can consume the event,
+        // matching Android where onSystemClick?.invoke() runs before handleAction.
+        if interactionType == .click {
+            onSystemClick?()
+        }
+
         let shouldProceed = notifyComponentListener(
             interactionType: interactionType,
             hasServerAction: action != nil
@@ -157,6 +164,10 @@ struct TappableModifier: ViewModifier {
 
         guard shouldProceed else {
             return
+        }
+
+        if interactionType == .click {
+            onSystemClick?()
         }
 
         if let action = action {
@@ -197,13 +208,15 @@ extension View {
         nodeId: String,
         actions: [String: Action]?,
         actionHandler: ActionHandler?,
-        componentListener: NativeDisplayComponentListener?
+        componentListener: NativeDisplayComponentListener?,
+        onSystemClick: (() -> Void)? = nil
     ) -> some View {
         self.modifier(TappableModifier(
             nodeId: nodeId,
             actions: actions,
             actionHandler: actionHandler,
-            componentListener: componentListener
+            componentListener: componentListener,
+            onSystemClick: onSystemClick
         ))
     }
 }

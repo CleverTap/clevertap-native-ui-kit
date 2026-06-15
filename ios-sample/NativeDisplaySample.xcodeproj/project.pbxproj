@@ -174,7 +174,6 @@
 		414DA94C2F59B35E00714978 /* test-082-shadows-heavy.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8642F59B35E00714978 /* test-082-shadows-heavy.json */; };
 		414DA94D2F59B35E00714978 /* test-034-vertical-space-around.json in Resources */ = {isa = PBXBuildFile; fileRef = 414DA8342F59B35E00714978 /* test-034-vertical-space-around.json */; };
 		414DA94F2F6001EC00714978 /* ImagePreloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 414DA94E2F6001EC00714978 /* ImagePreloader.swift */; };
-		414DA9A62F7505DF00714978 /* CleverTapSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 414DA9A52F7505DF00714978 /* CleverTapSDK */; };
 		41969A622EFE48010050EB83 /* arrangement_demo.json in Resources */ = {isa = PBXBuildFile; fileRef = 41969A612EFE48010050EB83 /* arrangement_demo.json */; };
 		41969A752F0E6A4B0050EB83 /* animation_container_and_children.json in Resources */ = {isa = PBXBuildFile; fileRef = 41969A722F0E6A4B0050EB83 /* animation_container_and_children.json */; };
 		41969A762F0E6A4B0050EB83 /* animation_container_fade.json in Resources */ = {isa = PBXBuildFile; fileRef = 41969A732F0E6A4B0050EB83 /* animation_container_fade.json */; };
@@ -204,6 +203,8 @@
 		4B08E4C20BD64AF4B3F1FF0F /* test-158-gallery-box-freeflow-indicators-only.json in Resources */ = {isa = PBXBuildFile; fileRef = CE27615A6EED4B039CA1BEF0 /* test-158-gallery-box-freeflow-indicators-only.json */; };
 		4BC24769CC4E49119396B753 /* test-168-gallery-box-grid2col-minimal.json in Resources */ = {isa = PBXBuildFile; fileRef = C8A1CC8F14AA4AD58768F31D /* test-168-gallery-box-grid2col-minimal.json */; };
 		5314047399FD46588D2A203F /* MoreMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8377811EF07E4E86844D4D7E /* MoreMenuView.swift */; };
+		57C009F92FDACA4D00003B5E /* CleverTapSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 57C009F82FDACA4D00003B5E /* CleverTapSDK */; };
+		57C009FC2FDACA5800003B5E /* CleverTapNativeDisplay in Frameworks */ = {isa = PBXBuildFile; productRef = 57C009FB2FDACA5800003B5E /* CleverTapNativeDisplay */; };
 		5850BD150D4947F19C844DA7 /* test-164-gallery-box-freeflow-5items.json in Resources */ = {isa = PBXBuildFile; fileRef = EDE728627F324FF4A7B1FE6B /* test-164-gallery-box-freeflow-5items.json */; };
 		6922B2D8D9B7411BB5DBD10B /* test-170-gallery-box-grid3col-navbtns.json in Resources */ = {isa = PBXBuildFile; fileRef = BF5F19EE4EE342AE99BC8729 /* test-170-gallery-box-grid3col-navbtns.json */; };
 		6A10C50176CF4C489D1CA3E6 /* test-161-gallery-box-freeflow-tall-images.json in Resources */ = {isa = PBXBuildFile; fileRef = 930987B748C14557B5AECCD4 /* test-161-gallery-box-freeflow-tall-images.json */; };
@@ -217,7 +218,6 @@
 		B001 /* NativeDisplaySampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F001 /* NativeDisplaySampleApp.swift */; };
 		B002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F002 /* ContentView.swift */; };
 		B003 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F003 /* Assets.xcassets */; };
-		B004 /* CleverTapNativeDisplay in Frameworks */ = {isa = PBXBuildFile; productRef = PKG001 /* CleverTapNativeDisplay */; };
 		B005 /* home_screen.json in Resources */ = {isa = PBXBuildFile; fileRef = F004 /* home_screen.json */; };
 		C2747DBE595B4454B00DECD6 /* test-167-gallery-box-grid2col-navbtns-only.json in Resources */ = {isa = PBXBuildFile; fileRef = 25971AABCF9F4A2F8DEFAC80 /* test-167-gallery-box-grid2col-navbtns-only.json */; };
 		C71E089EFA7A411E9AB2C2D0 /* RootTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 101EC9E0C1884FBF8FFB4BF9 /* RootTabBarController.swift */; };
@@ -433,6 +433,7 @@
 		41F1AD602F2B7D420018C5EA /* JsonLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonLoader.swift; sourceTree = "<group>"; };
 		53ABB20AE02B4A2E9AB5BE00 /* test-175-gallery-box-snapping-navbtns-only.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-175-gallery-box-snapping-navbtns-only.json"; sourceTree = "<group>"; };
 		56A884EDEB4D4F459BC3B4BB /* test-172-gallery-box-grid2col-vertical.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-172-gallery-box-grid2col-vertical.json"; sourceTree = "<group>"; };
+		57BB831A2FD93760002193A6 /* NativeDisplaySample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NativeDisplaySample.entitlements; sourceTree = "<group>"; };
 		6371017E9C314A05807F35E3 /* test-162-gallery-box-freeflow-video-items.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-162-gallery-box-freeflow-video-items.json"; sourceTree = "<group>"; };
 		6FB82056B44E4A3F97601A10 /* test-171-gallery-box-grid2col-video.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-171-gallery-box-grid2col-video.json"; sourceTree = "<group>"; };
 		7F6254B5184B47E6BD59E17B /* test-159-gallery-box-freeflow-navbtns-only.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-159-gallery-box-freeflow-navbtns-only.json"; sourceTree = "<group>"; };
@@ -473,8 +474,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				414DA9A62F7505DF00714978 /* CleverTapSDK in Frameworks */,
-				B004 /* CleverTapNativeDisplay in Frameworks */,
+				57C009F92FDACA4D00003B5E /* CleverTapSDK in Frameworks */,
+				57C009FC2FDACA5800003B5E /* CleverTapNativeDisplay in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -700,6 +701,7 @@
 		GRP_APP /* NativeDisplaySample */ = {
 			isa = PBXGroup;
 			children = (
+				57BB831A2FD93760002193A6 /* NativeDisplaySample.entitlements */,
 				41E6E6DB2F7A50940004B077 /* Info.plist */,
 				414DA94E2F6001EC00714978 /* ImagePreloader.swift */,
 				41C5EB1D2F34E6FC0066BE34 /* JSONViewerView.swift */,
@@ -795,7 +797,10 @@
 			name = NativeDisplaySample;
 			packageProductDependencies = (
 				PKG001 /* CleverTapNativeDisplay */,
-				414DA9A52F7505DF00714978 /* CleverTapSDK */,
+				57C0F6DA2FD9771B00003B5E /* CleverTapSDK */,
+				57C0F6EE2FD97FCD00003B5E /* CleverTapNativeDisplay */,
+				57C009F82FDACA4D00003B5E /* CleverTapSDK */,
+				57C009FB2FDACA5800003B5E /* CleverTapNativeDisplay */,
 			);
 			productName = NativeDisplaySample;
 			productReference = P001 /* NativeDisplaySample.app */;
@@ -830,8 +835,8 @@
 			);
 			mainGroup = ROOT;
 			packageReferences = (
-				PKGREF001 /* XCLocalSwiftPackageReference "../ios" */,
-				414DA9A42F7505DE00714978 /* XCRemoteSwiftPackageReference "clevertap-ios-sdk" */,
+				57C009F72FDACA4D00003B5E /* XCRemoteSwiftPackageReference "clevertap-ios-sdk" */,
+				57C009FA2FDACA5800003B5E /* XCRemoteSwiftPackageReference "clevertap-native-ui-kit" */,
 			);
 			productRefGroup = GRP_PRD /* Products */;
 			projectDirPath = "";
@@ -1105,10 +1110,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevertap.nativedisplayuikit.NativeDisplaySampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1125,10 +1130,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevertap.nativedisplayuikit.NativeDisplaySampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1146,9 +1151,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = NativeDisplaySample/NativeDisplaySample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = A5J34NR598;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NativeDisplaySample/Info.plist;
@@ -1161,7 +1168,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevertap.nativedisplay.sample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1177,9 +1184,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = NativeDisplaySample/NativeDisplaySample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = A5J34NR598;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NativeDisplaySample/Info.plist;
@@ -1192,7 +1201,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.clevertap.nativedisplay.sample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1354,29 +1363,43 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		PKGREF001 /* XCLocalSwiftPackageReference "../ios" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../ios;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
-		414DA9A42F7505DE00714978 /* XCRemoteSwiftPackageReference "clevertap-ios-sdk" */ = {
+		57C009F72FDACA4D00003B5E /* XCRemoteSwiftPackageReference "clevertap-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/CleverTap/clevertap-ios-sdk.git";
+			repositoryURL = "https://github.com/CleverTap/clevertap-ios-sdk";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 7.5.1;
+				minimumVersion = 7.7.1;
+			};
+		};
+		57C009FA2FDACA5800003B5E /* XCRemoteSwiftPackageReference "clevertap-native-ui-kit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CleverTap/clevertap-native-ui-kit.git";
+			requirement = {
+				branch = main;
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		414DA9A52F7505DF00714978 /* CleverTapSDK */ = {
+		57C009F82FDACA4D00003B5E /* CleverTapSDK */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 414DA9A42F7505DE00714978 /* XCRemoteSwiftPackageReference "clevertap-ios-sdk" */;
+			package = 57C009F72FDACA4D00003B5E /* XCRemoteSwiftPackageReference "clevertap-ios-sdk" */;
 			productName = CleverTapSDK;
+		};
+		57C009FB2FDACA5800003B5E /* CleverTapNativeDisplay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 57C009FA2FDACA5800003B5E /* XCRemoteSwiftPackageReference "clevertap-native-ui-kit" */;
+			productName = CleverTapNativeDisplay;
+		};
+		57C0F6DA2FD9771B00003B5E /* CleverTapSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CleverTapSDK;
+		};
+		57C0F6EE2FD97FCD00003B5E /* CleverTapNativeDisplay */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CleverTapNativeDisplay;
 		};
 		PKG001 /* CleverTapNativeDisplay */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -1,5 +1,6 @@
 package com.clevertap.android.nativeui.sample
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -19,14 +20,11 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.zIndex
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
@@ -40,7 +38,28 @@ import com.clevertap.android.nativedisplay.models.ChildArrangement
 import com.clevertap.android.nativedisplay.models.NativeDisplayContainer
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
 import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
-import com.clevertap.android.nativedisplay.samples.*
+import com.clevertap.android.nativeui.sample.samples.*
+
+private enum class MainTab(val icon: String, val label: String) {
+    EVENTS("📡", "Events"),
+    SLOTS("🎰", "Slots"),
+    XML("🖥️", "XML Test"),
+    BROWSER("🧪", "Browser"),
+    MORE("⚙️", "More")
+}
+
+private object Routes {
+    const val MAIN = "main"
+    const val JSON_VIEWER = "json_viewer"
+    const val BANNER_DETAIL = "banner_detail/{bannerId}?filename={filename}"
+    const val DEMO_SCREEN = "demo_screen/{demoType}"
+    const val BANNER_SHOWCASE = "banner_showcase"
+
+    fun bannerDetail(bannerId: String, filename: String?) =
+        if (filename != null) "banner_detail/${Uri.encode(bannerId)}?filename=${Uri.encode(filename)}"
+        else "banner_detail/${Uri.encode(bannerId)}"
+    fun demoScreen(type: String) = "demo_screen/$type"
+}
 
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,57 +77,35 @@ fun NativeUIKitSampleApp() {
         val navController = rememberNavController()
 
         // Bottom navigation selected tab index (0=Events, 1=Slots, 2=XML Test, 3=Browser, 4=More)
-        var selectedTab by remember { mutableStateOf(0) }
+        var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
         NavHost(
             navController = navController,
-            startDestination = "main"
+            startDestination = Routes.MAIN
         ) {
             // Main screen with bottom navigation
-            composable("main") {
+            composable(Routes.MAIN) {
                 Scaffold(
                     bottomBar = {
                         NavigationBar {
-                            NavigationBarItem(
-                                selected = selectedTab == 0,
-                                onClick = { selectedTab = 0 },
-                                icon = { Text("📡") },
-                                label = { Text("Events") }
-                            )
-                            NavigationBarItem(
-                                selected = selectedTab == 1,
-                                onClick = { selectedTab = 1 },
-                                icon = { Text("🎰") },
-                                label = { Text("Slots") }
-                            )
-                            NavigationBarItem(
-                                selected = selectedTab == 2,
-                                onClick = { selectedTab = 2 },
-                                icon = { Text("🖥️") },
-                                label = { Text("XML Test") }
-                            )
-                            NavigationBarItem(
-                                selected = selectedTab == 3,
-                                onClick = { selectedTab = 3 },
-                                icon = { Text("🧪") },
-                                label = { Text("Browser") }
-                            )
-                            NavigationBarItem(
-                                selected = selectedTab == 4,
-                                onClick = { selectedTab = 4 },
-                                icon = { Text("⚙️") },
-                                label = { Text("More") }
-                            )
+                            MainTab.entries.forEachIndexed { index, tab ->
+                                NavigationBarItem(
+                                    selected = selectedTab == index,
+                                    onClick = { selectedTab = index },
+                                    icon = { Text(tab.icon) },
+                                    label = { Text(tab.label) }
+                                )
+                            }
                         }
                     }
                 ) { paddingValues ->
                     Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
-                        TabContent(visible = selectedTab == 0) { CleverTapIntegrationScreen() }
-                        TabContent(visible = selectedTab == 1) { SlotDemoScreen() }
-                        TabContent(visible = selectedTab == 2) { XmlFeedScreen(modifier = Modifier.fillMaxSize()) }
-                        TabContent(visible = selectedTab == 3) { TestBrowserScreen() }
-                        TabContent(visible = selectedTab == 4) {
-                            MoreMenuScreen(onNavigate = { route -> navController.navigate(route) })
+                        when (selectedTab) {
+                            MainTab.EVENTS.ordinal -> CleverTapIntegrationScreen()
+                            MainTab.SLOTS.ordinal -> SlotDemoScreen()
+                            MainTab.XML.ordinal -> XmlFeedScreen(modifier = Modifier.fillMaxSize())
+                            MainTab.BROWSER.ordinal -> TestBrowserScreen()
+                            MainTab.MORE.ordinal -> MoreMenuScreen(onNavigate = { navController.navigate(it) })
                         }
                     }
                 }
@@ -116,7 +113,7 @@ fun NativeUIKitSampleApp() {
 
             // Banner Detail Screen (navigated from Banners in More tab)
             composable(
-                route = "banner_detail/{bannerId}?filename={filename}",
+                route = Routes.BANNER_DETAIL,
                 arguments = listOf(
                     navArgument("bannerId") { type = NavType.StringType },
                     navArgument("filename") {
@@ -128,53 +125,50 @@ fun NativeUIKitSampleApp() {
                 val bannerId = backStackEntry.arguments?.getString("bannerId") ?: ""
                 val filename = backStackEntry.arguments?.getString("filename")
                 BannerDetailScreen(
-                    navController = navController,
                     bannerId = bannerId,
-                    filename = filename
+                    filename = filename,
+                    onBack = { navController.popBackStack() },
+                    onNavigateToJsonViewer = { navController.navigate(Routes.JSON_VIEWER) }
                 )
             }
 
             // JSON Viewer Screen
-            composable(route = "json_viewer") {
+            composable(route = Routes.JSON_VIEWER) {
+                // JSONViewerStorage is a static singleton; value persists through rotation.
                 val jsonString = remember { JSONViewerStorage.getJsonString() }
-                JSONViewerScreen(navController = navController, jsonString = jsonString)
+                JSONViewerScreen(
+                    jsonString = jsonString,
+                    onBack = { navController.popBackStack() }
+                )
             }
 
             // Demo Screens (accessed via More tab)
             composable(
-                route = "demo_screen/{demoType}",
+                route = Routes.DEMO_SCREEN,
                 arguments = listOf(navArgument("demoType") { type = NavType.StringType })
             ) { backStackEntry ->
                 val demoType = backStackEntry.arguments?.getString("demoType") ?: "home"
-                DemoScreenContainer(navController = navController, demoType = demoType)
+                DemoScreenContainer(
+                    demoType = demoType,
+                    onBack = { navController.popBackStack() },
+                    onNavigateToBannerDetail = { bannerId, filename ->
+                        navController.navigate(Routes.bannerDetail(bannerId, filename))
+                    }
+                )
             }
 
             // Banner Showcase (accessed via More tab)
-            composable("banner_showcase") {
-                DemoScreenContainer(navController = navController, demoType = "banners")
+            composable(Routes.BANNER_SHOWCASE) {
+                DemoScreenContainer(
+                    demoType = "banners",
+                    onBack = { navController.popBackStack() },
+                    onNavigateToBannerDetail = { bannerId, filename ->
+                        navController.navigate(Routes.bannerDetail(bannerId, filename))
+                    }
+                )
             }
         }
     }
-}
-
-@Composable
-private fun TabContent(visible: Boolean, content: @Composable () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .zIndex(if (visible) 1f else 0f)
-            .graphicsLayer { alpha = if (visible) 1f else 0f }
-            .then(
-                if (!visible) Modifier.pointerInput(Unit) {
-                    awaitPointerEventScope {
-                        while (true) {
-                            awaitPointerEvent(PointerEventPass.Initial)
-                                .changes.forEach { it.consume() }
-                        }
-                    }
-                } else Modifier
-            )
-    ) { content() }
 }
 
 /**
@@ -244,7 +238,7 @@ fun MoreMenuScreen(onNavigate: (String) -> Unit) {
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DemoScreenContainer(navController: androidx.navigation.NavController, demoType: String) {
+fun DemoScreenContainer(demoType: String, onBack: () -> Unit, onNavigateToBannerDetail: (bannerId: String, filename: String?) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -267,7 +261,7 @@ fun DemoScreenContainer(navController: androidx.navigation.NavController, demoTy
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { onBack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -313,7 +307,7 @@ fun DemoScreenContainer(navController: androidx.navigation.NavController, demoTy
                 "clevertap" -> CleverTapIntegrationScreen()
                 "slots" -> SlotDemoScreen()
                 "fonts" -> FontDemoScreen()
-                "banners" -> BannerShowcaseScreen(navController = navController)
+                "banners" -> BannerShowcaseScreen(onNavigateToBannerDetail = onNavigateToBannerDetail)
                 "other" -> OtherDemosScreen()
             }
         }

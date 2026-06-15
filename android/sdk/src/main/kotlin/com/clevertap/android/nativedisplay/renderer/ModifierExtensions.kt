@@ -49,7 +49,7 @@ import com.clevertap.android.nativedisplay.models.Style
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Modifier.applyClickable(
+internal fun Modifier.applyClickable(
     nodeId: String,
     actions: Map<String, Action>?,
     actionHandler: ActionHandler,
@@ -92,10 +92,14 @@ fun Modifier.applyClickable(
 /**
  * Apply width and height from layout.
  * Aspect ratio is applied when one or both dimensions are flexible.
+ *
+ * [density] is the screen density (pixels per dp) used to convert PX values correctly.
  */
-internal fun Modifier.applySizing(layout: Layout?): Modifier {
+internal fun Modifier.applySizing(layout: Layout?, density: Float): Modifier {
     if (layout == null) return this
     var modifier = this
+
+    fun Float.pxToDp() = if (density > 0f) (this / density).dp else this.dp
 
     // Determine if dimensions are fixed (DP/SP/PX, not special)
     val hasFixedWidth = layout.width?.let {
@@ -125,7 +129,7 @@ internal fun Modifier.applySizing(layout: Layout?): Modifier {
             else -> when (width.unit) {
                 DimensionUnit.DP -> modifier.width(width.value.dp)
                 DimensionUnit.PERCENT -> modifier.fillMaxWidth(width.value / 100f)
-                DimensionUnit.PX -> modifier.width(width.value.dp) // todo check pixel assignment
+                DimensionUnit.PX -> modifier.width(width.value.pxToDp())
                 else -> modifier.width(width.value.dp)
             }
         }
@@ -139,7 +143,7 @@ internal fun Modifier.applySizing(layout: Layout?): Modifier {
             else -> when (height.unit) {
                 DimensionUnit.DP -> modifier.height(height.value.dp)
                 DimensionUnit.PERCENT -> modifier.fillMaxHeight(height.value / 100f)
-                DimensionUnit.PX -> modifier.height(height.value.dp)
+                DimensionUnit.PX -> modifier.height(height.value.pxToDp())
                 else -> modifier.height(height.value.dp)
             }
         }
@@ -213,7 +217,7 @@ internal fun Modifier.percentageOffset(xPercent: Float, yPercent: Float): Modifi
  * Pattern follows BackgroundRenderer.kt - composable when needed for animations.
  */
 @Composable
-fun Modifier.applyEntranceAnimation(animation: Animation?): Modifier {
+internal fun Modifier.applyEntranceAnimation(animation: Animation?): Modifier {
     // No animation configured
     if (animation == null || animation.type == AnimationType.NONE) {
         return this
@@ -238,6 +242,9 @@ fun Modifier.applyEntranceAnimation(animation: Animation?): Modifier {
         hasAnimated = true
     }
 
+    // 100dp converted to px for graphicsLayer (which operates in pixels)
+    val slideDistancePx = with(LocalDensity.current) { 100.dp.toPx() }
+
     // Apply animation transform based on type
     return this.graphicsLayer {
         when (animation.type) {
@@ -246,22 +253,22 @@ fun Modifier.applyEntranceAnimation(animation: Animation?): Modifier {
             }
 
             AnimationType.SLIDE_IN_LEFT -> {
-                translationX = -(1f - animatedValue) * 300f
+                translationX = -(1f - animatedValue) * slideDistancePx
                 alpha = animatedValue  // Subtle fade for polish
             }
 
             AnimationType.SLIDE_IN_RIGHT -> {
-                translationX = (1f - animatedValue) * 300f
+                translationX = (1f - animatedValue) * slideDistancePx
                 alpha = animatedValue
             }
 
             AnimationType.SLIDE_IN_TOP -> {
-                translationY = -(1f - animatedValue) * 300f
+                translationY = -(1f - animatedValue) * slideDistancePx
                 alpha = animatedValue
             }
 
             AnimationType.SLIDE_IN_BOTTOM -> {
-                translationY = (1f - animatedValue) * 300f
+                translationY = (1f - animatedValue) * slideDistancePx
                 alpha = animatedValue
             }
 

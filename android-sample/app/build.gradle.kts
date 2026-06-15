@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.roborazzi)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -14,8 +15,8 @@ android {
         applicationId = "com.clevertap.android.nativeui.sample"
         minSdk = 23
         targetSdk = 36
-        versionCode = 8
-        versionName = "1.7"
+        versionCode = 15
+        versionName = "2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -34,14 +35,14 @@ android {
     }
     
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
-    
+
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "11"
     }
-    
+
     buildFeatures {
         compose = true
         viewBinding = true
@@ -101,11 +102,16 @@ tasks.register("campaignScreenshots") {
 dependencies {
     // Local SDK
     implementation("com.clevertap.android:native-display-sdk")
-    implementation("com.clevertap.android:clevertap-android-sdk:8.0.0")
+    implementation("com.clevertap.android:clevertap-android-sdk:8.3.0")
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
 
     // AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
     
     // Compose

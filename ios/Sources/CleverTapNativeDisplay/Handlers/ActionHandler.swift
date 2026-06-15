@@ -14,17 +14,14 @@ import SafariServices
 import UIKit
 
 /// Handles execution of actions triggered by Native Display components.
-public class ActionHandler {
-    
+class ActionHandler {
+
     private weak var actionListener: NativeDisplayActionListener?
     private weak var componentListener: NativeDisplayComponentListener?
     private var firedSystemEvents = Set<String>()
     private let unitId: String?
 
-    /// Whether an action listener is attached (for callers to skip unnecessary work)
-    public var hasActionListener: Bool { actionListener != nil }
-
-    public init(
+    init(
         actionListener: NativeDisplayActionListener?,
         componentListener: NativeDisplayComponentListener?,
         unitId: String? = nil
@@ -41,25 +38,25 @@ public class ActionHandler {
     ///   - action: The action to execute
     ///   - nodeId: The ID of the node that triggered this action
     ///   - interactionType: The type of interaction that triggered this action
-    public func handleAction(
+    func handleAction(
         _ action: Action,
         nodeId: String,
         interactionType: InteractionType = .click
     ) {
         Task { @MainActor in
             do {
-                print("ActionHandler: Handling action for node: \(nodeId)")
-                
+                NDLogger.d(Self.self, "Handling action for node: \(nodeId)")
+
                 // Notify component listener first (if interested in this node)
                 let shouldProceed = notifyComponentListener(
                     nodeId: nodeId,
                     interactionType: interactionType,
                     hasServerAction: true
                 )
-                
+
                 // If component listener consumed the interaction, stop here
                 guard shouldProceed else {
-                    print("ActionHandler: Component listener consumed interaction for node: \(nodeId)")
+                    NDLogger.d(Self.self, "Component listener consumed interaction for node: \(nodeId)")
                     return
                 }
                 
@@ -77,24 +74,24 @@ public class ActionHandler {
                     try await handleCompositeAction(compositeAction, nodeId: nodeId)
                 }
             } catch {
-                print("ActionHandler: Error handling action for node: \(nodeId), error: \(error)")
+                NDLogger.e(Self.self, "Error handling action for node: \(nodeId), error: \(error)")
                 actionListener?.onActionError(action: action, error: error)
             }
         }
     }
-    
+
     /// Execute a lifecycle action (onAppear/onDisappear).
     /// These bypass the component listener since they are not user interactions.
     /// - Parameters:
     ///   - action: The action to execute
     ///   - nodeId: The ID of the node that triggered this action
-    public func handleLifecycleAction(
+    func handleLifecycleAction(
         _ action: Action,
         nodeId: String
     ) {
         Task { @MainActor in
             do {
-                print("ActionHandler: Handling lifecycle action for node: \(nodeId)")
+                NDLogger.d(Self.self, "Handling lifecycle action for node: \(nodeId)")
                 switch action {
                 case .openUrl(let openUrlAction):
                     try await handleOpenUrl(openUrlAction, nodeId: nodeId)
@@ -108,34 +105,43 @@ public class ActionHandler {
                     try await handleCompositeAction(compositeAction, nodeId: nodeId)
                 }
             } catch {
-                print("ActionHandler: Error handling lifecycle action for node: \(nodeId) - \(error)")
+                NDLogger.e(Self.self, "Error handling lifecycle action for node: \(nodeId) - \(error)")
                 actionListener?.onActionError(action: action, error: error)
             }
         }
     }
 
-    /// Fire a hardcoded system event through the action listener.
+    /// Fire a hardcoded system event through the action listener and, when a
+    /// CleverTap Core SDK instance is wired into `NativeDisplayBridge.shared`,
+    /// auto-forward `Notification Viewed` / `Notification Clicked` to Core SDK's
+    /// attribution APIs (`-[CleverTap recordDisplayUnitViewedEventForID:]` /
+    /// `-[CleverTap recordDisplayUnitClickedEventForID:]`).
+    ///
     /// System events are SDK-level events that always fire (not server-driven).
+    /// Bridge push methods short-circuit when no Core SDK instance is attached,
+    /// so this stays a graceful no-op in standalone use.
+    ///
     /// - Parameters:
     ///   - eventName: The system event name (e.g., "Notification Viewed")
     ///   - properties: Optional event properties
-    public func fireSystemEvent(eventName: String, properties: [String: Any]? = nil, deduplicate: Bool = false) {
-        guard hasActionListener else { return }
+    func fireSystemEvent(eventName: String, properties: [String: Any]? = nil, deduplicate: Bool = false) {
         if deduplicate {
             guard firedSystemEvents.insert(eventName).inserted else {
-                print("ActionHandler: System event already fired, skipping: \(eventName)")
+                NDLogger.d(Self.self, "System event already fired, skipping: \(eventName)")
                 return
             }
         }
         Task { @MainActor in
-            print("ActionHandler: Firing system event: \(eventName)")
+            NDLogger.d(Self.self, "Firing system event: \(eventName)")
             actionListener?.onTrackEvent(eventName: eventName, properties: properties)
             if let unitId = unitId {
                 switch eventName {
                 case "Notification Viewed":
                     actionListener?.onDisplayUnitViewed?(unitId: unitId)
+                    NativeDisplayBridge.shared.pushViewedEvent(unitId: unitId)
                 case "Notification Clicked":
                     actionListener?.onDisplayUnitClicked?(unitId: unitId)
+                    NativeDisplayBridge.shared.pushClickedEvent(unitId: unitId, extras: properties)
                 default:
                     break
                 }
@@ -147,12 +153,12 @@ public class ActionHandler {
     /// - Parameters:
     ///   - nodeId: The ID of the component
     ///   - interactionType: The type of interaction
-    public func handleInteractionWithoutAction(
+    func handleInteractionWithoutAction(
         nodeId: String,
         interactionType: InteractionType
     ) {
         Task { @MainActor in
-            print("ActionHandler: Handling interaction without action for node: \(nodeId)")
+            NDLogger.d(Self.self, "Handling interaction without action for node: \(nodeId)")
             _ = notifyComponentListener(
                 nodeId: nodeId,
                 interactionType: interactionType,
@@ -191,7 +197,7 @@ public class ActionHandler {
         )
         
         if consumed {
-            print("ActionHandler: Component listener consumed interaction for: \(nodeId)")
+            NDLogger.d(Self.self, "Component listener consumed interaction for: \(nodeId)")
         }
         
         return !consumed // Return true if NOT consumed (should proceed)
@@ -201,7 +207,7 @@ public class ActionHandler {
     
     @MainActor
     private func handleOpenUrl(_ action: Action.OpenUrlAction, nodeId: String) async throws {
-        print("ActionHandler: Opening URL: \(action.url)")
+        NDLogger.d(Self.self, "Opening URL: \(action.url)")
         
         // Ask listener if they want to handle it
         let handled = actionListener?.onOpenUrl(
@@ -223,21 +229,12 @@ public class ActionHandler {
         guard let url = URL(string: action.url) else {
             throw ActionError.invalidUrl(action.url)
         }
-        
-        // Validate URL scheme
-        guard isValidUrlScheme(url.scheme) else {
-            throw ActionError.invalidUrlScheme(url.scheme ?? "none")
-        }
-        
-        if action.openInBrowser {
-            // Open in external browser
-            UIApplication.shared.open(url)
-        } else if action.customTabsEnabled {
-            // Open in SFSafariViewController (iOS equivalent of Chrome Custom Tabs)
+
+        if action.customTabsEnabled {
             openInSafariViewController(url)
         } else {
-            // Fallback to external browser
-            UIApplication.shared.open(url)
+            // Matches Core SDK CleverTap.m openURL:forModule: behavior exactly.
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
     
@@ -255,14 +252,9 @@ public class ActionHandler {
         rootViewController.present(safariVC, animated: true)
     }
     
-    private func isValidUrlScheme(_ scheme: String?) -> Bool {
-        guard let scheme = scheme?.lowercased() else { return false }
-        return ["http", "https", "tel", "mailto"].contains(scheme)
-    }
-    
     @MainActor
     private func handleCustomAction(_ action: Action.CustomAction, nodeId: String) {
-        print("ActionHandler: Executing custom action: \(action.key)")
+        NDLogger.d(Self.self, "Executing custom action: \(action.key)")
         
         let parsedValue = parseAnyCodableValue(action.value)
         
@@ -275,7 +267,7 @@ public class ActionHandler {
     
     @MainActor
     private func handleNavigate(_ action: Action.NavigateAction, nodeId: String) {
-        print("ActionHandler: Navigating to: \(action.destination)")
+        NDLogger.d(Self.self, "Navigating to: \(action.destination)")
         
         actionListener?.onNavigate(
             destination: action.destination,
@@ -285,7 +277,7 @@ public class ActionHandler {
     
     @MainActor
     private func handleTrackEvent(_ action: Action.TrackEventAction, nodeId: String) {
-        print("ActionHandler: Tracking event: \(action.eventName)")
+        NDLogger.d(Self.self, "Tracking event: \(action.eventName)")
         
         let parsedProperties = action.properties?.mapValues { parseAnyCodableValue($0) }
         
@@ -297,7 +289,7 @@ public class ActionHandler {
     
     @MainActor
     private func handleCompositeAction(_ action: Action.CompositeAction, nodeId: String) async throws {
-        print("ActionHandler: Executing composite action with \(action.actions.count) sub-actions (\(action.executionMode))")
+        NDLogger.d(Self.self, "Executing composite action with \(action.actions.count) sub-actions (\(action.executionMode))")
         
         switch action.executionMode {
         case .sequential:

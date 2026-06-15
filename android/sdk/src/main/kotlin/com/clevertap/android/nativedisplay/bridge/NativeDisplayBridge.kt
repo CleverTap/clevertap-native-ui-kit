@@ -1,10 +1,11 @@
 package com.clevertap.android.nativedisplay.bridge
 
 import android.content.Context
-import android.util.Log
+import com.clevertap.android.nativedisplay.handler.ActionAttributionExtras
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import com.clevertap.android.sdk.CleverTapAPI
-import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import java.lang.ref.WeakReference
+import java.lang.reflect.Method
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -69,8 +70,57 @@ class NativeDisplayBridge private constructor() {
             CoroutineName("nd-parse")
     )
 
-    /** CleverTapAPI instance used to push display unit attribution events. */
+    /**
+     * CleverTapAPI instance used to push display unit attribution events.
+     *
+     * Reassignment (including back to `null`) invalidates the memoised reflection probes
+     * below so a new attached instance is re-probed once on its first event. Both probes
+     * depend only on the loaded `CleverTapAPI` class identity — which is invariant for a
+     * given attached instance — so caching per-bridge is safe.
+     */
     internal var cleverTapApi: CleverTapAPI? = null
+        set(value) {
+            field = value
+            resetReflectionCaches()
+        }
+
+    /**
+     * Resolved `pushDisplayUnitElementClickedEventForID` reflection target, or `null` when
+     * the host Core SDK is too old to expose it. Written exactly once per attached
+     * CleverTapAPI instance; subsequent reads return the cached value without re-probing.
+     *
+     * `@Volatile` plus the "write value before flag" ordering in [resolveElementClickedMethod]
+     * gives a safe happens-before guarantee for readers without explicit synchronisation,
+     * mirroring the one-shot probe pattern used in [CleverTapAutoWire].
+     */
+    @Volatile
+    private var elementClickedMethod: Method? = null
+
+    /**
+     * Flips to `true` the first time [resolveElementClickedMethod] runs the probe, even when
+     * the method is absent. Distinguishes "absent" (cached `null`) from "not yet probed"
+     * (uninitialised) so absence does not get re-probed on every click.
+     */
+    @Volatile
+    private var elementClickedResolved: Boolean = false
+
+    /**
+     * Memoised `CleverTapAPI.setDisplayUnitCache` availability probe used by [seedIfNeeded].
+     * `null` means "not yet probed"; `true`/`false` are sticky cached results for the
+     * lifetime of the currently attached CleverTapAPI instance.
+     */
+    @Volatile
+    private var setDisplayUnitCacheAvailable: Boolean? = null
+
+    /**
+     * Clear both reflection caches. Invoked from the [cleverTapApi] setter so a freshly
+     * attached instance gets a single fresh probe on its first event.
+     */
+    private fun resetReflectionCaches() {
+        elementClickedMethod = null
+        elementClickedResolved = false
+        setDisplayUnitCacheAvailable = null
+    }
 
 
     companion object {
@@ -81,6 +131,17 @@ class NativeDisplayBridge private constructor() {
 
         /** Fetch type constant for Native Display units. */
         internal const val FETCH_TYPE_NATIVE_DISPLAY = 9
+
+        /**
+         * Core SDK method name for the element-level clicked-attribution event.
+         * Signature: `pushDisplayUnitElementClickedEventForID(String unitID,
+         * HashMap<String, Object> additionalProperties)`.
+         *
+         * Attribution fields (`wzrk_element_id`, `wzrk_btn_text`, etc.) are injected by
+         * the BE into each action's `metadata` field and flow to Core SDK via
+         * `additionalProperties` — no dedicated `elementID` parameter is needed.
+         */
+        private const val METHOD_ELEMENT_CLICKED = "pushDisplayUnitElementClickedEventForID"
 
         @Volatile
         private var instance: NativeDisplayBridge? = null
@@ -128,6 +189,26 @@ class NativeDisplayBridge private constructor() {
          * Get the current bridge instance, or null if not yet initialized.
          */
         fun getInstance(): NativeDisplayBridge? = instance
+
+        /**
+         * Set the SDK log verbosity level.
+         *
+         * Call this before or after initialising the bridge — the level is stored in a
+         * singleton and takes effect immediately.
+         *
+         * ```kotlin
+         * // Silence all SDK logs in production
+         * NativeDisplayBridge.setLogLevel(NDLogLevel.OFF)
+         *
+         * // Enable verbose output while debugging
+         * NativeDisplayBridge.setLogLevel(NDLogLevel.VERBOSE)
+         * ```
+         *
+         * @param level The desired [NDLogLevel]. Overrides any Core SDK auto-sync.
+         */
+        fun setLogLevel(level: NDLogLevel) {
+            NDLogger.setLevel(level.toInternal())
+        }
     }
 
     // --- Manual Mode: accept raw JSON ---
@@ -154,7 +235,8 @@ class NativeDisplayBridge private constructor() {
 
             cache.replaceAll(parsedUnits)
 
-            Log.d(TAG, "Processed ${parsedUnits.size}/${payload.size} display units")
+            NDLogger.d(TAG, "Server cache updated: received ${payload.size} unit(s), parsed ${parsedUnits.size} successfully")
+            NDLogger.d(TAG, "Processed ${parsedUnits.size}/${payload.size} display units")
             withContext(Dispatchers.Main) {
                 notifyListeners(parsedUnits)
             }
@@ -173,13 +255,13 @@ class NativeDisplayBridge private constructor() {
         parseScope.launch {
             val unit = parser.tryParse(displayUnitJsonString)
             if (unit == null) {
-                Log.w(TAG, "Failed to parse display unit, skipping")
+                NDLogger.w(TAG, "Failed to parse display unit, skipping")
                 return@launch
             }
 
             cache.put(unit)
 
-            Log.d(TAG, "Processed display unit: ${unit.unitId}")
+            NDLogger.d(TAG, "Processed display unit: ${unit.unitId}")
             withContext(Dispatchers.Main) {
                 notifyListeners(listOf(unit))
             }
@@ -219,6 +301,9 @@ class NativeDisplayBridge private constructor() {
             val alreadyRegistered = listeners.any { it.get() === listener }
             if (!alreadyRegistered) {
                 listeners.add(WeakReference(listener))
+                NDLogger.d(TAG, "Listener added: ${listener::class.simpleName}")
+            } else {
+                NDLogger.d(TAG, "Listener already registered, skipping: ${listener::class.simpleName}")
             }
         }
     }
@@ -232,6 +317,7 @@ class NativeDisplayBridge private constructor() {
         synchronized(listenersLock) {
             listeners.removeAll { it.get() === listener || it.get() == null }
         }
+        NDLogger.d(TAG, "Listener removed: ${listener::class.simpleName}")
     }
 
     /**
@@ -282,13 +368,13 @@ class NativeDisplayBridge private constructor() {
         return try {
             val eventData = mapOf("t" to FETCH_TYPE_NATIVE_DISPLAY)
             cleverTapApi.pushEvent(WZRK_FETCH, eventData)
-            Log.d(TAG, "Sent wzrk_fetch request for Native Display (type=$FETCH_TYPE_NATIVE_DISPLAY)")
+            NDLogger.d(TAG, "Sent wzrk_fetch request for Native Display (type=$FETCH_TYPE_NATIVE_DISPLAY)")
             true
         } catch (e: NoClassDefFoundError) {
-            Log.w(TAG, "CleverTap Core SDK not available for fetch")
+            NDLogger.w(TAG, "CleverTap Core SDK not available for fetch")
             false
         } catch (e: Exception) {
-            Log.w(TAG, "fetchNativeDisplays() failed: ${e.message}")
+            NDLogger.w(TAG, "fetchNativeDisplays() failed: ${e.message}")
             false
         }
     }
@@ -296,8 +382,8 @@ class NativeDisplayBridge private constructor() {
     /**
      * Push a display unit viewed (impression) attribution event to the CleverTap Core SDK.
      *
-     * Calls `CleverTapAPI.pushDisplayUnitViewedEventForID(unitId)` if a [CleverTapAPI]
-     * instance has been stored (set automatically when using auto-wire or [bind]).
+     * Always calls `pushDisplayUnitViewedEventForID(unitId)`. Impressions are inherently
+     * unit-level in ND (the root mount fires once); there is no per-element view event.
      *
      * @param unitId The ID of the display unit that was viewed
      * @return true if the event was pushed successfully, false if no CleverTapAPI is available
@@ -309,7 +395,7 @@ class NativeDisplayBridge private constructor() {
             ct.pushDisplayUnitViewedEventForID(unitId)
             true
         } catch (e: Exception) {
-            Log.w(TAG, "pushViewedEvent failed: ${e.message}")
+            NDLogger.w(TAG, "pushViewedEvent failed: ${e.message}")
             false
         }
     }
@@ -317,22 +403,86 @@ class NativeDisplayBridge private constructor() {
     /**
      * Push a display unit clicked attribution event to the CleverTap Core SDK.
      *
-     * Calls `CleverTapAPI.pushDisplayUnitClickedEventForID(unitId)` if a [CleverTapAPI]
-     * instance has been stored (set automatically when using auto-wire or [bind]).
+     * When the host Core SDK exposes
+     * `pushDisplayUnitElementClickedEventForID(String unitID, HashMap<String, Object> additionalProperties)`,
+     * that method is invoked reflectively with all sanitized [extras] as `additionalProperties`.
+     * Attribution fields (`wzrk_element_id`, `wzrk_btn_text`, etc.) are injected by the BE into
+     * each action's `metadata` and already flow through [extras] via [ActionAttributionExtras.from].
+     *
+     * On older Core SDK versions without the new method, the legacy single-arg
+     * `pushDisplayUnitClickedEventForID(unitId)` fires instead — the campaign click is still
+     * attributed but per-element context is lost (graceful degradation). Clients receive coarse
+     * unit-level attribution until they upgrade Core SDK.
      *
      * @param unitId The ID of the display unit that was clicked
+     * @param extras Optional event extras built by [ActionAttributionExtras.from]. Non-scalar /
+     *               null values are dropped by [ActionAttributionExtras.sanitize].
      * @return true if the event was pushed successfully, false if no CleverTapAPI is available
      */
-    fun pushClickedEvent(unitId: String): Boolean {
+    @JvmOverloads
+    fun pushClickedEvent(unitId: String, extras: Map<String, Any?>? = null): Boolean {
         val ct = cleverTapApi ?: return false
         return try {
             seedIfNeeded(unitId)
-            ct.pushDisplayUnitClickedEventForID(unitId)
+            invokeClickedEvent(ct, unitId, extras)
             true
         } catch (e: Exception) {
-            Log.w(TAG, "pushClickedEvent failed: ${e.message}")
+            NDLogger.w(TAG, "pushClickedEvent failed: ${e.message}")
             false
         }
+    }
+
+    /**
+     * Prefer the new element-aware method when Core SDK exposes it; fall back to the legacy
+     * unit-level method otherwise.
+     *
+     * The reflection probe targets the 2-arg signature
+     * `pushDisplayUnitElementClickedEventForID(String, HashMap)` — if it's absent
+     * (older Core SDK), `getMethod` throws and we degrade gracefully.
+     */
+    private fun invokeClickedEvent(
+        ct: CleverTapAPI,
+        unitId: String,
+        extras: Map<String, Any?>?
+    ) {
+        val elementMethod = resolveElementClickedMethod(ct)
+        if (elementMethod != null) {
+            // Use the element-aware path whenever available, even when extras is empty.
+            // An empty map is a valid additionalProperties argument — Core SDK still
+            // enriches the event from its own cached unit JSON.
+            val sanitized = ActionAttributionExtras.sanitize(extras) ?: emptyMap()
+            elementMethod.invoke(ct, unitId, HashMap<String, Any>(sanitized))
+            return
+        }
+        // Fallback: legacy unit-level click attribution (no per-element data).
+        ct.pushDisplayUnitClickedEventForID(unitId)
+    }
+
+    /**
+     * Memoised lookup of the new element-clicked Core SDK method. Probes the class exactly
+     * once per attached CleverTapAPI instance — the result (including `null` for absent)
+     * is cached until [resetReflectionCaches] runs.
+     *
+     * The write order — value before the resolved flag — keeps concurrent readers safe with
+     * `@Volatile` alone (a reader that observes `elementClickedResolved == true` is
+     * guaranteed to observe the prior write to `elementClickedMethod`). Mirrors the
+     * one-shot probe pattern in [CleverTapAutoWire.tryAttachCache].
+     */
+    private fun resolveElementClickedMethod(ct: CleverTapAPI): Method? {
+        if (elementClickedResolved) return elementClickedMethod
+        val resolved = runCatching {
+            ct.javaClass.getMethod(
+                METHOD_ELEMENT_CLICKED,
+                String::class.java,
+                HashMap::class.java
+            )
+        }.onFailure { e ->
+            NDLogger.d(TAG, "Element-clicked method not found (${ct.javaClass.name}): ${e.message} — using legacy fallback")
+        }.getOrNull()
+        elementClickedMethod = resolved
+        elementClickedResolved = true
+        NDLogger.d(TAG, if (resolved != null) "Element-clicked method resolved: $METHOD_ELEMENT_CLICKED(String, HashMap)" else "Element-clicked method absent — legacy fallback active")
+        return resolved
     }
 
     /**
@@ -347,14 +497,7 @@ class NativeDisplayBridge private constructor() {
      */
     private fun seedIfNeeded(unitId: String) {
         val ct = cleverTapApi ?: return
-        val cacheAttached = try {
-            val ifaceClass = Class.forName("com.clevertap.android.sdk.displayunits.DisplayUnitCache")
-            ct.javaClass.getMethod("setDisplayUnitCache", ifaceClass)
-            true
-        } catch (_: Throwable) {
-            false
-        }
-        if (cacheAttached) return
+        if (isSetDisplayUnitCacheAvailable(ct)) return
         val raw = cache.get(unitId)?.rawJson ?: return
         try {
             ReflectionSeeder.seed(ct, listOf(org.json.JSONObject(raw)))
@@ -364,46 +507,23 @@ class NativeDisplayBridge private constructor() {
     }
 
     /**
-     * Create a [NativeDisplayActionListener] that automatically forwards display unit
-     * attribution events to the CleverTap Core SDK via [pushViewedEvent] and [pushClickedEvent].
-     *
-     * An optional [base] listener is invoked first so that the client's own handling
-     * is preserved. This listener can be passed as the `actionListener` parameter to
-     * [NativeDisplayView] or [NativeDisplayViewGroup.setConfig].
-     *
-     * ```kotlin
-     * val listener = bridge.createEventForwardingListener(base = myListener)
-     * NativeDisplayView(config = config, actionListener = listener, unitId = unit.unitId)
-     * ```
-     *
-     * @param base Optional client listener to delegate all callbacks to first
-     * @return A [NativeDisplayActionListener] that forwards attribution events to the Core SDK
+     * Memoised lookup of `CleverTapAPI.setDisplayUnitCache(DisplayUnitCache)`. Probes the
+     * class (including the `Class.forName` interface lookup) exactly once per attached
+     * CleverTapAPI instance and caches the result — including `false` for absent — until
+     * [resetReflectionCaches] runs. Previously this probe ran on every click, even on the
+     * upgraded-Core-SDK happy path where it always returns `true`.
      */
-    fun createEventForwardingListener(
-        base: NativeDisplayActionListener? = null
-    ): NativeDisplayActionListener {
-        return object : NativeDisplayActionListener {
-            override fun onCustomAction(key: String, value: Any?, metadata: Map<String, String>?) {
-                base?.onCustomAction(key, value, metadata)
-            }
-            override fun onNavigate(destination: String, params: Map<String, String>?) {
-                base?.onNavigate(destination, params)
-            }
-            override fun onTrackEvent(eventName: String, properties: Map<String, Any?>?) {
-                base?.onTrackEvent(eventName, properties)
-            }
-            override fun onOpenUrl(url: String, openInBrowser: Boolean): Boolean {
-                return base?.onOpenUrl(url, openInBrowser) ?: false
-            }
-            override fun onDisplayUnitViewed(unitId: String) {
-                base?.onDisplayUnitViewed(unitId)
-                pushViewedEvent(unitId)
-            }
-            override fun onDisplayUnitClicked(unitId: String) {
-                base?.onDisplayUnitClicked(unitId)
-                pushClickedEvent(unitId)
-            }
+    private fun isSetDisplayUnitCacheAvailable(ct: CleverTapAPI): Boolean {
+        setDisplayUnitCacheAvailable?.let { return it }
+        val available = try {
+            val ifaceClass = Class.forName("com.clevertap.android.sdk.displayunits.DisplayUnitCache")
+            ct.javaClass.getMethod("setDisplayUnitCache", ifaceClass)
+            true
+        } catch (_: Throwable) {
+            false
         }
+        setDisplayUnitCacheAvailable = available
+        return available
     }
 
     /**
@@ -414,7 +534,7 @@ class NativeDisplayBridge private constructor() {
         synchronized(listenersLock) {
             listeners.clear()
         }
-        Log.d(TAG, "Bridge cleared")
+        NDLogger.d(TAG, "Bridge cleared")
     }
 
     /**
@@ -424,12 +544,7 @@ class NativeDisplayBridge private constructor() {
      * supports `setDisplayUnitCache(...)`.
      */
     internal fun coreSdkCacheProxy(): Any? = cache.asProxy(
-        onServerUpdate = { jsonArray ->
-            val jsonStrings = (0 until jsonArray.length()).mapNotNull { i ->
-                try { jsonArray.optJSONObject(i)?.toString() } catch (_: Throwable) { null }
-            }
-            if (jsonStrings.isNotEmpty()) processDisplayUnits(jsonStrings)
-        },
+        onServerUpdate = { jsonStrings -> processDisplayUnits(jsonStrings) },
         onReset = { cache.clear() }
     )
 
@@ -459,22 +574,15 @@ class NativeDisplayBridge private constructor() {
     private fun notifyListeners(units: List<NativeDisplayUnit>) {
         val activeListeners: List<NativeDisplayBridgeListener>
         synchronized(listenersLock) {
-            // Collect active listeners and prune dead references
-            val dead = mutableListOf<WeakReference<NativeDisplayBridgeListener>>()
-            activeListeners = listeners.mapNotNull { ref ->
-                ref.get() ?: run {
-                    dead.add(ref)
-                    null
-                }
-            }
-            listeners.removeAll(dead)
+            listeners.removeAll { it.get() == null }
+            activeListeners = listeners.mapNotNull { it.get() }
         }
 
         for (listener in activeListeners) {
             try {
                 listener.onNativeDisplaysLoaded(units)
             } catch (e: Exception) {
-                Log.w(TAG, "Listener threw exception: ${e.message}")
+                NDLogger.w(TAG, "Listener threw exception: ${e.message}")
             }
         }
     }

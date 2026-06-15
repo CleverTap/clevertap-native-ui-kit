@@ -18,6 +18,7 @@ import com.clevertap.android.nativedisplay.models.ChildArrangement
 import com.clevertap.android.nativedisplay.models.DimensionUnit
 import com.clevertap.android.nativedisplay.models.Easing
 import com.clevertap.android.nativedisplay.models.FontWeight
+import com.clevertap.android.nativedisplay.models.TextAlign as NDTextAlign
 import androidx.compose.ui.text.font.FontStyle as ComposeFontStyle
 import androidx.compose.ui.text.font.FontWeight as ComposeFontWeight
 import androidx.compose.ui.text.style.TextOverflow as ComposeTextOverflow
@@ -25,7 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow as ComposeTextOverflow
 /**
  * Parse hex color string to Compose Color.
  */
-fun parseColor(colorString: String?): Color? {
+internal fun parseColor(colorString: String?): Color? {
     if (colorString == null) return null
 
     return try {
@@ -94,15 +95,15 @@ internal fun resolveTextDecoration(decoration: ndtd?): TextDecoration {
 }
 
 /**
- * Resolve text alignment from string to Compose.
+ * Resolve text alignment from model to Compose.
  */
-internal fun resolveTextAlign(align: String?): TextAlign {
-    return when (align?.lowercase()) {
-        "left" -> TextAlign.Left
-        "center" -> TextAlign.Center
-        "right" -> TextAlign.Right
-        "justify" -> TextAlign.Justify
-        else -> TextAlign.Start
+internal fun resolveTextAlign(align: NDTextAlign?): TextAlign {
+    return when (align) {
+        NDTextAlign.LEFT -> TextAlign.Left
+        NDTextAlign.CENTER -> TextAlign.Center
+        NDTextAlign.RIGHT -> TextAlign.Right
+        NDTextAlign.JUSTIFY -> TextAlign.Justify
+        null -> TextAlign.Start
     }
 }
 
@@ -181,7 +182,6 @@ internal fun resolveEasing(easing: Easing): androidx.compose.animation.core.Easi
         Easing.EASE_IN_OUT -> FastOutSlowInEasing
         Easing.EASE_IN_BACK -> EaseInBack
         Easing.EASE_OUT_BACK -> EaseOutBack
-        Easing.SPRING -> LinearEasing  // Spring handled differently
     }
 }
 

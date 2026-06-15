@@ -412,17 +412,26 @@ Flutter: clevertap_native_display
 ```
 
 **Public API:**
+
+Each platform exposes two entry points: `unit:` (attribution-aware — fires
+Notification Viewed/Clicked when paired with the CleverTap bridge) and
+`config:` (render-only).
+
 ```kotlin
 // Android
-NativeDisplayView(config: ResolvedConfig)
+NativeDisplayView(unit: NativeDisplayUnit)   // attribution-aware
+NativeDisplayView(config: ResolvedConfig)    // render-only
 
 // iOS
-NativeDisplayView(config: ResolvedConfig)
+NativeDisplayView(unit: NativeDisplayUnit)   // attribution-aware
+NativeDisplayView(config: ResolvedConfig)    // render-only
 
 // React Native
+<NativeDisplayView unit={nativeDisplayUnit} />
 <NativeDisplayView config={resolvedConfig} />
 
 // Flutter
+NativeDisplayView(unit: nativeDisplayUnit)
 NativeDisplayView(config: resolvedConfig)
 ```
 

@@ -9,12 +9,12 @@ import Foundation
 /// 1. Inline style (node.style)
 /// 2. Style class (node.styleClass)
 /// 3. Theme default style
-public class StyleResolver {
-    
+class StyleResolver {
+
     private let theme: Theme
     private let styleClassMap: [String: StyleClass]
-    
-    public init(theme: Theme, styleClasses: [StyleClass]) {
+
+    init(theme: Theme, styleClasses: [StyleClass]) {
         self.theme = theme
         self.styleClassMap = Dictionary(uniqueKeysWithValues: styleClasses.map { ($0.name, $0) })
     }
@@ -24,7 +24,7 @@ public class StyleResolver {
     /// - Parameters:
     ///   - node: The node to resolve style for
     /// - Returns: Fully resolved style
-    public func resolve(node: NativeDisplayNode) -> Style {
+    func resolve(node: NativeDisplayNode) -> Style {
         // Start with theme default
         var resolvedStyle = theme.defaultStyle
 
@@ -44,7 +44,7 @@ public class StyleResolver {
     
     /// Resolve style for an element with color palette support.
     /// Replaces color names with actual color values from theme.
-    public func resolveWithColors(node: NativeDisplayNode) -> Style {
+    func resolveWithColors(node: NativeDisplayNode) -> Style {
         let style = resolve(node: node)
         
         return Style(
@@ -52,9 +52,12 @@ public class StyleResolver {
             fontSize: style.fontSize,
             fontFamily: style.fontFamily,
             fontWeight: style.fontWeight,
+            fontStyle: style.fontStyle,
             lineHeight: style.lineHeight,
             textDecoration: style.textDecoration,
             textAlign: style.textAlign,
+            textShadow: style.textShadow,
+            textGradient: style.textGradient,
             background: style.background,
             backgroundColor: resolveColor(style.backgroundColor),
             borderRadius: style.borderRadius,
@@ -78,7 +81,7 @@ public class StyleResolver {
     ///   - node: Root node to start resolution from
     ///   - parentCascadingStyle: Cascading text style from parent (nil for root)
     /// - Returns: Dictionary from node ID → fully resolved Style (including cascading)
-    public func resolveAll(
+    func resolveAll(
         node: NativeDisplayNode,
         parentCascadingStyle: Style? = nil
     ) -> [String: Style] {

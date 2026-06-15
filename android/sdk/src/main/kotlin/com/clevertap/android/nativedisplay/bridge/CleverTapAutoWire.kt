@@ -1,7 +1,7 @@
 package com.clevertap.android.nativedisplay.bridge
 
 import android.content.Context
-import android.util.Log
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import com.clevertap.android.sdk.CleverTapAPI
 import com.clevertap.android.sdk.displayunits.DisplayUnitListener
 import com.clevertap.android.sdk.displayunits.model.CleverTapDisplayUnit
@@ -15,7 +15,7 @@ import com.clevertap.android.sdk.displayunits.model.CleverTapDisplayUnit
  */
 internal object CleverTapAutoWire {
 
-    private const val TAG = "NativeDisplayBridge"
+    private const val TAG = "CleverTapAutoWire"
 
     /**
      * Strong reference to the listener we register with the Core SDK.
@@ -25,12 +25,6 @@ internal object CleverTapAutoWire {
      * collected and the Core SDK would log "No registered listener, failed to notify".
      */
     private var activeListener: DisplayUnitListener? = null
-
-    /**
-     * Strong reference to the cache proxy installed via
-     * `CleverTapAPI.setDisplayUnitCache(...)` on Core SDK v7.x+.
-     */
-    private var activeCache: Any? = null
 
     /**
      * Auto-wire using the default CleverTapAPI instance.
@@ -43,15 +37,15 @@ internal object CleverTapAutoWire {
         return try {
             val ctApi = CleverTapAPI.getDefaultInstance(context.applicationContext)
             if (ctApi == null) {
-                Log.w(TAG, "CleverTapAPI.getDefaultInstance() returned null")
+                NDLogger.w(TAG, "CleverTapAPI.getDefaultInstance() returned null")
                 return false
             }
             wireListener(ctApi, bridge)
         } catch (e: NoClassDefFoundError) {
-            Log.d(TAG, "CleverTap Core SDK not found, manual mode only")
+            NDLogger.d(TAG, "CleverTap Core SDK not found, manual mode only")
             false
         } catch (e: Exception) {
-            Log.w(TAG, "Auto-wire failed: ${e.message}")
+            NDLogger.w(TAG, "Auto-wire failed: ${e.message}")
             false
         }
     }
@@ -72,54 +66,53 @@ internal object CleverTapAutoWire {
         return try {
             wireListener(cleverTapApi, bridge, clientListener)
         } catch (e: NoClassDefFoundError) {
-            Log.w(TAG, "CleverTap Core SDK classes not available at runtime")
+            NDLogger.w(TAG, "CleverTap Core SDK classes not available at runtime")
             false
         } catch (e: Exception) {
-            Log.w(TAG, "bind() failed: ${e.message}")
+            NDLogger.w(TAG, "bind() failed: ${e.message}")
             false
         }
     }
 
     /**
-     * Register a composite [DisplayUnitListener] that:
-     * 1. Extracts JSON and forwards to the bridge
-     * 2. Forwards the raw units to the optional client listener
+     * Wire the bridge to a CleverTap instance.
      *
-     * This avoids replacing the client's listener since the Core SDK
-     * only supports a single [DisplayUnitListener].
+     * Prefers the cache-attachment API (Core SDK v7.x+): the proxy handles both
+     * "data out" (attribution lookups via [getDisplayUnitForID]) and "data in"
+     * (server updates via [updateDisplayUnits] → [NativeDisplayBridge.processDisplayUnits]).
+     * When cache attachment succeeds no [DisplayUnitListener] is needed.
      *
-     * The listener is stored in [activeListener] to prevent GC, since the
-     * Core SDK holds it via a WeakReference.
+     * Falls back to a composite [DisplayUnitListener] on older Core SDK versions that
+     * don't expose [setDisplayUnitCache]. The listener is stored in [activeListener] to
+     * prevent GC — the Core SDK holds it via WeakReference.
      */
     private fun wireListener(
         ctApi: CleverTapAPI,
         bridge: NativeDisplayBridge,
         clientListener: DisplayUnitListener? = null
     ): Boolean {
-        // Store the CleverTapAPI reference so the bridge can push attribution events
         bridge.cleverTapApi = ctApi
 
-        // Prefer the cache-attachment API (Core SDK v7.x+). When attached, server-driven
-        // updates flow via cache.updateDisplayUnits → bridge.processDisplayUnits, so a
-        // separate DisplayUnitListener is unnecessary. The client's own
-        // setDisplayUnitListener (if any) is forwarded for backward compatibility.
+        // Prefer cache-attachment (Core SDK v7.x+).
+        // updateDisplayUnits on the proxy extracts JSON from CleverTapDisplayUnit objects
+        // via getJsonObject() reflection — no separate DisplayUnitListener needed.
         if (tryAttachCache(ctApi, bridge)) {
             if (clientListener != null) {
                 ctApi.setDisplayUnitListener(clientListener)
             }
-            Log.d(TAG, "Wired to CleverTap via cache attachment${if (clientListener != null) " (client listener forwarded)" else ""}")
+            NDLogger.d(TAG, "Wired to CleverTap via cache attachment${if (clientListener != null) " (client listener forwarded)" else ""}")
+            syncLogLevelFromCoreSdk(ctApi)
             return true
         }
 
-        // Fallback for older Core SDK without setDisplayUnitCache: register a composite
-        // DisplayUnitListener and rely on ReflectionSeeder per push event for attribution.
+        // Fallback: older Core SDK without setDisplayUnitCache.
         val listener = object : DisplayUnitListener {
             override fun onDisplayUnitsLoaded(units: ArrayList<CleverTapDisplayUnit>?) {
                 if (clientListener != null) {
                     try {
                         clientListener.onDisplayUnitsLoaded(units)
                     } catch (e: Exception) {
-                        Log.w(TAG, "Client listener threw exception: ${e.message}")
+                        NDLogger.w(TAG, "Client listener threw exception: ${e.message}")
                     }
                 }
 
@@ -128,7 +121,7 @@ internal object CleverTapAutoWire {
                     try {
                         unit.jsonObject?.toString()
                     } catch (e: Exception) {
-                        Log.w(TAG, "Failed to extract JSON from display unit: ${e.message}")
+                        NDLogger.w(TAG, "Failed to extract JSON from display unit: ${e.message}")
                         null
                     }
                 }
@@ -138,19 +131,17 @@ internal object CleverTapAutoWire {
             }
         }
 
-        // Keep a strong reference so the Core SDK's WeakReference doesn't lose it
         activeListener = listener
         ctApi.setDisplayUnitListener(listener)
 
-        Log.d(TAG, "Wired to CleverTap via DisplayUnitListener fallback${if (clientListener != null) " (with client listener forwarding)" else ""}")
+        NDLogger.d(TAG, "Wired to CleverTap via DisplayUnitListener fallback${if (clientListener != null) " (client listener forwarded)" else ""}")
+        syncLogLevelFromCoreSdk(ctApi)
         return true
     }
 
     /**
      * Reflectively invokes `CleverTapAPI.setDisplayUnitCache(...)`, returning
-     * `true` only when the method exists and the call succeeds. The cache
-     * proxy is retained in [activeCache] so its identity stays stable for
-     * comparison/detach.
+     * `true` only when the method exists and the call succeeds.
      */
     private fun tryAttachCache(ctApi: CleverTapAPI, bridge: NativeDisplayBridge): Boolean {
         val ifaceClass = try {
@@ -166,11 +157,30 @@ internal object CleverTapAutoWire {
         val proxy = bridge.coreSdkCacheProxy() ?: return false
         return try {
             setter.invoke(ctApi, proxy)
-            activeCache = proxy
             true
         } catch (t: Throwable) {
-            Log.w(TAG, "setDisplayUnitCache invocation failed: ${t.message}")
+            NDLogger.w(TAG, "setDisplayUnitCache invocation failed: ${t.message}")
             false
+        }
+    }
+
+    /**
+     * Reflectively reads `CleverTapAPI.getDebugLevel()` and forwards the result to
+     * [NDLogger.syncFromCoreSdk]. Only fires when [NDLogger.isExplicitlySet] is false so
+     * a client-supplied [NativeDisplayBridge.setLogLevel] always takes precedence.
+     *
+     * Uses try/catch — if the method is absent or throws, the SDK default is preserved.
+     */
+    private fun syncLogLevelFromCoreSdk(ctApi: CleverTapAPI) {
+        if (NDLogger.isExplicitlySet()) return
+        try {
+            val level = ctApi.javaClass.getMethod("getDebugLevel").invoke(ctApi)
+            if (level is Int) {
+                NDLogger.syncFromCoreSdk(level)
+                NDLogger.d(TAG, "Log level synced from Core SDK: $level → ${NDLogger.getLevel()}")
+            }
+        } catch (_: Throwable) {
+            // getDebugLevel() unavailable on this Core SDK version — leave the default intact.
         }
     }
 }

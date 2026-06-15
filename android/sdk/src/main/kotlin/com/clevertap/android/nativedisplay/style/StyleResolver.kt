@@ -12,7 +12,7 @@ import kotlinx.collections.immutable.toPersistentMap
  * 2. Style class (node.styleClass)
  * 3. Theme default style
  */
-class StyleResolver(
+internal class StyleResolver(
     private val theme: Theme,
     private val styleClasses: List<StyleClass>
 ) {

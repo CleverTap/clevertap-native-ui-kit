@@ -1,8 +1,7 @@
 package com.clevertap.android.nativedisplay.bridge
 
-import android.util.Log
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import java.lang.reflect.Proxy
-import org.json.JSONArray
 import org.json.JSONObject
 
 /**
@@ -63,7 +62,7 @@ internal class NativeDisplayUnitCacheImpl {
      * bridge's parser and listener machinery still fire.
      */
     fun asProxy(
-        onServerUpdate: (JSONArray) -> Unit,
+        onServerUpdate: (List<String>) -> Unit,
         onReset: () -> Unit
     ): Any? {
         val ifaceClass = try {
@@ -77,7 +76,20 @@ internal class NativeDisplayUnitCacheImpl {
                     "getDisplayUnitForID" -> resolveAsCt(args?.firstOrNull() as? String)
                     "getAllDisplayUnits" -> allAsCt()
                     "updateDisplayUnits" -> {
-                        (args?.firstOrNull() as? JSONArray)?.let(onServerUpdate); null
+                        // Core SDK passes ArrayList<CleverTapDisplayUnit> — extract raw JSON
+                        // from each unit via getJsonObject() and forward as JSON strings.
+                        @Suppress("UNCHECKED_CAST")
+                        val list = args?.firstOrNull() as? List<*>
+                        if (!list.isNullOrEmpty()) {
+                            val jsonStrings = list.mapNotNull { unit ->
+                                try {
+                                    (unit!!.javaClass.getMethod("getJsonObject").invoke(unit)
+                                        as? org.json.JSONObject)?.toString()
+                                } catch (_: Throwable) { null }
+                            }
+                            if (jsonStrings.isNotEmpty()) onServerUpdate(jsonStrings)
+                        }
+                        null
                     }
                     "reset" -> { onReset(); null }
                     "equals" -> args?.firstOrNull() === proxy
@@ -86,7 +98,7 @@ internal class NativeDisplayUnitCacheImpl {
                     else -> null
                 }
             } catch (t: Throwable) {
-                Log.w(TAG, "${method.name} failed: ${t.message}")
+                NDLogger.w(TAG, "${method.name} failed: ${t.message}")
                 null
             }
         }
@@ -108,7 +120,7 @@ internal class NativeDisplayUnitCacheImpl {
             .getMethod("toDisplayUnit", JSONObject::class.java)
             .invoke(null, obj)
     } catch (t: Throwable) {
-        Log.w(TAG, "toDisplayUnit conversion failed: ${t.message}")
+        NDLogger.w(TAG, "toDisplayUnit conversion failed: ${t.message}")
         null
     }
 

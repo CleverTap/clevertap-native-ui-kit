@@ -1,4 +1,4 @@
-package com.clevertap.nativedisplay.utils
+package com.clevertap.android.nativedisplay.utils
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView

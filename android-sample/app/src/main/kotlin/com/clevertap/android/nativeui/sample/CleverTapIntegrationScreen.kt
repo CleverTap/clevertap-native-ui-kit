@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridgeListener
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
@@ -29,25 +30,20 @@ import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.models.Action
 import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
 import com.clevertap.android.sdk.CleverTapAPI
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
-fun CleverTapIntegrationScreen() {
+fun CleverTapIntegrationScreen(
+    viewModel: CleverTapIntegrationViewModel = viewModel()
+) {
     val context = LocalContext.current
 
-    var receivedUnits by remember { mutableStateOf<List<NativeDisplayUnit>>(emptyList()) }
-    var logMessages by remember { mutableStateOf(listOf<String>()) }
+    val receivedUnits by viewModel.receivedUnits.collectAsState()
+    val logMessages by viewModel.logMessages.collectAsState()
     var eventName by remember { mutableStateOf("") }
 
-    val timeFormat = remember { SimpleDateFormat("HH:mm:ss", Locale.US) }
-
     fun log(message: String) {
-        val timestamp = timeFormat.format(Date())
-        val entry = "[$timestamp] $message"
-        Log.d("CleverTapIntegration", entry)
-        logMessages = logMessages + entry
+        Log.d("CleverTapIntegration", message)
+        viewModel.log(message)
     }
 
     val actionListener = remember {
@@ -83,10 +79,10 @@ fun CleverTapIntegrationScreen() {
     val bridgeListener = remember {
         object : NativeDisplayBridgeListener {
             override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
-                receivedUnits = units
-                log("Received ${units.size} Native Display unit(s)")
+                viewModel.onUnitsLoaded(units)
+                viewModel.log("Received ${units.size} Native Display unit(s)")
                 for (unit in units) {
-                    log("  Unit: ${unit.unitId}")
+                    viewModel.log("  Unit: ${unit.unitId}")
                 }
             }
         }
@@ -129,7 +125,7 @@ fun CleverTapIntegrationScreen() {
                 )
                 EventLogFooter(
                     logMessages = logMessages,
-                    onClear = { logMessages = emptyList() },
+                    onClear = { viewModel.clearLog() },
                     modifier = Modifier.weight(1f),
                     fillHeight = true
                 )
@@ -170,7 +166,7 @@ fun CleverTapIntegrationScreen() {
             )
             EventLogFooter(
                 logMessages = logMessages,
-                onClear = { logMessages = emptyList() }
+                onClear = { viewModel.clearLog() }
             )
         }
     }
@@ -252,9 +248,9 @@ private fun CanvasContent(
         ) {
             items(receivedUnits, key = { it.unitId }) { unit ->
                 NativeDisplayView(
-                    config = unit.config,
+                    unit = unit,
                     modifier = Modifier.fillMaxWidth(),
-                    actionListener = actionListener
+                    actionListener = actionListener,
                 )
             }
         }

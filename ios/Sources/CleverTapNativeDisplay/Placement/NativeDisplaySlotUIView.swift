@@ -29,7 +29,7 @@ import SwiftUI
 /// ])
 /// ```
 @available(iOS 15.0, *)
-open class NativeDisplaySlotUIView: UIView, NativeDisplaySlotObserver {
+public final class NativeDisplaySlotUIView: UIView, NativeDisplaySlotObserver {
 
     // MARK: - Properties
 
@@ -71,7 +71,7 @@ open class NativeDisplaySlotUIView: UIView, NativeDisplaySlotObserver {
 
     // MARK: - Lifecycle
 
-    open override func didMoveToWindow() {
+    public override func didMoveToWindow() {
         super.didMoveToWindow()
 
         if window != nil && !isRegistered {
@@ -113,7 +113,7 @@ open class NativeDisplaySlotUIView: UIView, NativeDisplaySlotObserver {
 
     // MARK: - Intrinsic Content Size
 
-    open override var intrinsicContentSize: CGSize {
+    public override var intrinsicContentSize: CGSize {
         displayView?.intrinsicContentSize ?? .zero
     }
 }

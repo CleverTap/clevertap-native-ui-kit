@@ -127,6 +127,14 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+# Python
+**/*.pyc
+**/__pycache__/
+*.py[cod]
+
+# Test / screenshot comparison output
+tools/tools/comparison_report/
+
 # Temporary files
 *.tmp
 *.bak
@@ -141,4 +149,9 @@ yarn-error.log
 signing.properties
 keystore.properties
 
+# Firebase — contains project credentials, never commit
+google-services.json
+
 android-sample/app/configs
+.claude/worktrees/
+.claude/scheduled_tasks.lock

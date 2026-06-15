@@ -28,12 +28,14 @@ internal class SlotViewModel: ObservableObject, NativeDisplaySlotObserver {
     // MARK: - NativeDisplaySlotObserver
 
     func onUnitAvailable(_ unit: NativeDisplayUnit) {
+        NDLogger.d(Self.self, "Slot '\(slotId)': unit '\(unit.unitId)' available — updating view")
         DispatchQueue.main.async { [weak self] in
             self?.unit = unit
         }
     }
 
     func onUnitCleared(slotId: String) {
+        NDLogger.d(Self.self, "Slot '\(slotId)' cleared — removing rendered view")
         DispatchQueue.main.async { [weak self] in
             self?.unit = nil
         }

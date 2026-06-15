@@ -22,7 +22,11 @@ data class TextDimension(
 ) {
     fun resolve(rootHeightPx: Float): Float = when (unit) {
         TextDimensionUnit.PLATFORM -> value
-        TextDimensionUnit.PERCENT -> rootHeightPx * value / 1000f
+        TextDimensionUnit.PERCENT -> rootHeightPx * value / PERCENT_DIVISOR
+    }
+
+    companion object {
+        private const val PERCENT_DIVISOR = 1000f
     }
 }
 

@@ -1,6 +1,7 @@
 package com.clevertap.android.nativedisplay.bridge
 
-import android.util.Log
+import androidx.annotation.VisibleForTesting
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import com.clevertap.android.nativedisplay.models.NativeDisplayConfig
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
 import com.clevertap.android.nativedisplay.models.Style
@@ -10,7 +11,9 @@ import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
@@ -24,7 +27,7 @@ import kotlinx.serialization.json.jsonPrimitive
  *
  * Returns `null` if the JSON is not a Native Display unit or if parsing fails.
  */
-internal open class NativeDisplayConfigParser {
+internal class NativeDisplayConfigParser {
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -32,12 +35,23 @@ internal open class NativeDisplayConfigParser {
     }
 
     /**
+     * Test-only seam. When non-null, invoked at the start of every [tryParse]
+     * call with the executing thread. Production callers must not set this —
+     * exposed solely so unit tests (e.g. NativeDisplayBridgeOffMainParseTest)
+     * can verify parsing happens off the caller's thread without needing to
+     * subclass this class.
+     */
+    @VisibleForTesting
+    internal var threadObserver: ((Thread) -> Unit)? = null
+
+    /**
      * Attempt to parse a raw JSON string into a [NativeDisplayUnit].
      *
      * @param jsonString Raw JSON string from a display unit payload
      * @return A parsed [NativeDisplayUnit], or null if not an ND unit or parse fails
      */
-    open fun tryParse(jsonString: String): NativeDisplayUnit? {
+    fun tryParse(jsonString: String): NativeDisplayUnit? {
+        threadObserver?.invoke(Thread.currentThread())
         return try {
             val jsonObj = json.parseToJsonElement(jsonString).jsonObject
             val unitId = extractUnitId(jsonObj) ?: return null
@@ -46,7 +60,7 @@ internal open class NativeDisplayConfigParser {
 
             val resolvedConfig = tryParseNativeDisplayConfig(jsonObj)
                 ?: tryParseFromCustomKv(jsonObj)
-                ?: tryParseAsRootConfig(jsonString, jsonObj)
+                ?: tryParseAsRootConfig(jsonObj)
                 ?: return null
 
             // Pre-resolve the entire node-tree style map here, on the parse dispatcher,
@@ -63,7 +77,7 @@ internal open class NativeDisplayConfigParser {
                 rawJson = jsonString
             )
         } catch (e: Exception) {
-            Log.w(TAG, "Failed to parse display unit JSON: ${e.message}")
+            NDLogger.w(TAG, "Failed to parse display unit JSON: ${e.message}")
             null
         }
     }
@@ -80,7 +94,7 @@ internal open class NativeDisplayConfigParser {
             )
             ndConfig.toResolvedConfig()
         } catch (e: Exception) {
-            Log.w(TAG, "Failed to parse native_display_config: ${e.message}")
+            NDLogger.w(TAG, "Failed to parse native_display_config: ${e.message}")
             null
         }
     }
@@ -95,7 +109,7 @@ internal open class NativeDisplayConfigParser {
             val ndConfig = json.decodeFromString(NativeDisplayConfig.serializer(), ndConfigStr)
             ndConfig.toResolvedConfig()
         } catch (e: Exception) {
-            Log.w(TAG, "Failed to parse custom_kv.nd_config: ${e.message}")
+            NDLogger.w(TAG, "Failed to parse custom_kv.nd_config: ${e.message}")
             null
         }
     }
@@ -103,13 +117,13 @@ internal open class NativeDisplayConfigParser {
     /**
      * Strategy 3: If `root` key is present, treat the entire JSON as an ND config.
      */
-    private fun tryParseAsRootConfig(jsonString: String, jsonObj: JsonObject): ResolvedConfig? {
+    private fun tryParseAsRootConfig(jsonObj: JsonObject): ResolvedConfig? {
         if (!jsonObj.containsKey("root")) return null
         return try {
-            val ndConfig = json.decodeFromString(NativeDisplayConfig.serializer(), jsonString)
+            val ndConfig = json.decodeFromJsonElement(NativeDisplayConfig.serializer(), jsonObj)
             ndConfig.toResolvedConfig()
         } catch (e: Exception) {
-            Log.w(TAG, "Failed to parse JSON as NativeDisplayConfig: ${e.message}")
+            NDLogger.w(TAG, "Failed to parse JSON as NativeDisplayConfig: ${e.message}")
             null
         }
     }
@@ -135,7 +149,7 @@ internal open class NativeDisplayConfigParser {
     private fun extractCustomExtras(jsonObj: JsonObject): Map<String, String> {
         val customKv = jsonObj["custom_kv"]?.jsonObject ?: return emptyMap()
         return customKv.entries.associate { (key, value) ->
-            key to (value.jsonPrimitive.contentOrNull ?: value.toString())
+            key to ((value as? JsonPrimitive)?.contentOrNull ?: value.toString())
         }
     }
 
@@ -149,7 +163,7 @@ internal open class NativeDisplayConfigParser {
         return try {
             StyleResolver(config.theme, config.styleClasses).resolveAll(config.root)
         } catch (e: Exception) {
-            Log.w(TAG, "Style pre-resolution failed: ${e.message}")
+            NDLogger.w(TAG, "Style pre-resolution failed: ${e.message}")
             persistentMapOf()
         }
     }
@@ -160,7 +174,7 @@ internal open class NativeDisplayConfigParser {
      */
     private fun NativeDisplayConfig.toResolvedConfig(): ResolvedConfig? {
         val rootNode = this.root ?: run {
-            Log.w(TAG, "NativeDisplayConfig has no root node, skipping")
+            NDLogger.w(TAG, "NativeDisplayConfig has no root node, skipping")
             return null
         }
         return ResolvedConfig(
@@ -172,6 +186,6 @@ internal open class NativeDisplayConfigParser {
     }
 
     companion object {
-        private const val TAG = "NativeDisplayBridge"
+        private const val TAG = "NDConfigParser"
     }
 }

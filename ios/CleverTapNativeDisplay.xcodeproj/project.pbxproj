@@ -10,6 +10,7 @@
 		41969A672F0BC8790050EB83 /* NativeDisplayActionListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A662F0BC8790050EB83 /* NativeDisplayActionListener.swift */; };
 		41969A692F0BC8EC0050EB83 /* InteractionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A682F0BC8EC0050EB83 /* InteractionType.swift */; };
 		41969A6C2F0BCA390050EB83 /* ActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A6B2F0BCA390050EB83 /* ActionHandler.swift */; };
+		B0AAE001 /* ActionAttributionExtras.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0AAE001 /* ActionAttributionExtras.swift */; };
 		41969A6F2F0BDB420050EB83 /* TappableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A6E2F0BDB420050EB83 /* TappableModifier.swift */; };
 		41969A712F0BE6410050EB83 /* ActionTriggers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41969A702F0BE6410050EB83 /* ActionTriggers.swift */; };
 		41F1ACEA2F18E9DA0018C5EA /* NativeDisplayUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F1ACE82F18E9DA0018C5EA /* NativeDisplayUIView.swift */; };
@@ -28,9 +29,23 @@
 		B010 /* BackgroundRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F010 /* BackgroundRenderer.swift */; };
 		B011 /* VariableEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F011 /* VariableEvaluator.swift */; };
 		B012 /* StyleResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F012 /* StyleResolver.swift */; };
-		B013 /* CleverTapNativeDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F013 /* CleverTapNativeDisplay.swift */; };
 		B014 /* HtmlJsBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F014 /* HtmlJsBridge.swift */; };
 		B015 /* HtmlWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F015 /* HtmlWebView.swift */; };
+		B016 /* AnimationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = F016 /* AnimationModifier.swift */; };
+		B017 /* CleverTapAutoWire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F017 /* CleverTapAutoWire.swift */; };
+		B018 /* NativeDisplayBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = F018 /* NativeDisplayBridge.swift */; };
+		B019 /* NativeDisplayBridgeListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = F019 /* NativeDisplayBridgeListener.swift */; };
+		B020 /* NativeDisplayConfigParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F020 /* NativeDisplayConfigParser.swift */; };
+		B021 /* NativeDisplayUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F021 /* NativeDisplayUnit.swift */; };
+		B022 /* NativeDisplayUnitCacheImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = F022 /* NativeDisplayUnitCacheImpl.swift */; };
+		B023 /* ReflectionSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F023 /* ReflectionSeeder.swift */; };
+		B024 /* NativeDisplaySlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = F024 /* NativeDisplaySlot.swift */; };
+		B025 /* NativeDisplaySlotCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F025 /* NativeDisplaySlotCollectionViewCell.swift */; };
+		B026 /* NativeDisplaySlotManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F026 /* NativeDisplaySlotManager.swift */; };
+		B027 /* NativeDisplaySlotTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F027 /* NativeDisplaySlotTableViewCell.swift */; };
+		B028 /* NativeDisplaySlotUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F028 /* NativeDisplaySlotUIView.swift */; };
+		B029 /* GIFImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F029 /* GIFImage.swift */; };
+		B030 /* NDLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F030 /* NDLogger.swift */; };
 		BT01 /* CleverTapNativeDisplayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FT01 /* CleverTapNativeDisplayTests.swift */; };
 		BT02 /* CleverTapNativeDisplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = P001 /* CleverTapNativeDisplay.framework */; };
 /* End PBXBuildFile section */
@@ -49,6 +64,7 @@
 		41969A662F0BC8790050EB83 /* NativeDisplayActionListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayActionListener.swift; sourceTree = "<group>"; };
 		41969A682F0BC8EC0050EB83 /* InteractionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractionType.swift; sourceTree = "<group>"; };
 		41969A6B2F0BCA390050EB83 /* ActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionHandler.swift; sourceTree = "<group>"; };
+		F0AAE001 /* ActionAttributionExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionAttributionExtras.swift; sourceTree = "<group>"; };
 		41969A6E2F0BDB420050EB83 /* TappableModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TappableModifier.swift; sourceTree = "<group>"; };
 		41969A702F0BE6410050EB83 /* ActionTriggers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTriggers.swift; sourceTree = "<group>"; };
 		41F1ACE62F18E9DA0018C5EA /* NativeDisplayCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -67,9 +83,23 @@
 		F010 /* BackgroundRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundRenderer.swift; sourceTree = "<group>"; };
 		F011 /* VariableEvaluator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableEvaluator.swift; sourceTree = "<group>"; };
 		F012 /* StyleResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StyleResolver.swift; sourceTree = "<group>"; };
-		F013 /* CleverTapNativeDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleverTapNativeDisplay.swift; sourceTree = "<group>"; };
 		F014 /* HtmlJsBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HtmlJsBridge.swift; sourceTree = "<group>"; };
 		F015 /* HtmlWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HtmlWebView.swift; sourceTree = "<group>"; };
+		F016 /* AnimationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationModifier.swift; sourceTree = "<group>"; };
+		F017 /* CleverTapAutoWire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleverTapAutoWire.swift; sourceTree = "<group>"; };
+		F018 /* NativeDisplayBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayBridge.swift; sourceTree = "<group>"; };
+		F019 /* NativeDisplayBridgeListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayBridgeListener.swift; sourceTree = "<group>"; };
+		F020 /* NativeDisplayConfigParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayConfigParser.swift; sourceTree = "<group>"; };
+		F021 /* NativeDisplayUnit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayUnit.swift; sourceTree = "<group>"; };
+		F022 /* NativeDisplayUnitCacheImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplayUnitCacheImpl.swift; sourceTree = "<group>"; };
+		F023 /* ReflectionSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReflectionSeeder.swift; sourceTree = "<group>"; };
+		F024 /* NativeDisplaySlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplaySlot.swift; sourceTree = "<group>"; };
+		F025 /* NativeDisplaySlotCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplaySlotCollectionViewCell.swift; sourceTree = "<group>"; };
+		F026 /* NativeDisplaySlotManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplaySlotManager.swift; sourceTree = "<group>"; };
+		F027 /* NativeDisplaySlotTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplaySlotTableViewCell.swift; sourceTree = "<group>"; };
+		F028 /* NativeDisplaySlotUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDisplaySlotUIView.swift; sourceTree = "<group>"; };
+		F029 /* GIFImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFImage.swift; sourceTree = "<group>"; };
+		F030 /* NDLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NDLogger.swift; sourceTree = "<group>"; };
 		FT01 /* CleverTapNativeDisplayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleverTapNativeDisplayTests.swift; sourceTree = "<group>"; };
 		P001 /* CleverTapNativeDisplay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CleverTapNativeDisplay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		P002 /* CleverTapNativeDisplayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CleverTapNativeDisplayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -107,6 +137,7 @@
 			isa = PBXGroup;
 			children = (
 				41969A6B2F0BCA390050EB83 /* ActionHandler.swift */,
+				F0AAE001 /* ActionAttributionExtras.swift */,
 			);
 			path = Handlers;
 			sourceTree = "<group>";
@@ -174,20 +205,56 @@
 		GRP_BRG /* Bridge */ = {
 			isa = PBXGroup;
 			children = (
+				F017 /* CleverTapAutoWire.swift */,
 				F014 /* HtmlJsBridge.swift */,
+				F018 /* NativeDisplayBridge.swift */,
+				F019 /* NativeDisplayBridgeListener.swift */,
+				F020 /* NativeDisplayConfigParser.swift */,
+				F021 /* NativeDisplayUnit.swift */,
+				F022 /* NativeDisplayUnitCacheImpl.swift */,
+				F023 /* ReflectionSeeder.swift */,
 			);
 			path = Bridge;
+			sourceTree = "<group>";
+		};
+		GRP_PLC /* Placement */ = {
+			isa = PBXGroup;
+			children = (
+				F024 /* NativeDisplaySlot.swift */,
+				F025 /* NativeDisplaySlotCollectionViewCell.swift */,
+				F026 /* NativeDisplaySlotManager.swift */,
+				F027 /* NativeDisplaySlotTableViewCell.swift */,
+				F028 /* NativeDisplaySlotUIView.swift */,
+			);
+			path = Placement;
 			sourceTree = "<group>";
 		};
 		GRP_RND /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
-				F008 /* NativeDisplayRenderer.swift */,
-				F009 /* GalleryRenderer.swift */,
+				F016 /* AnimationModifier.swift */,
 				F010 /* BackgroundRenderer.swift */,
+				F009 /* GalleryRenderer.swift */,
 				F015 /* HtmlWebView.swift */,
+				F008 /* NativeDisplayRenderer.swift */,
 			);
 			path = Renderer;
+			sourceTree = "<group>";
+		};
+		GRP_UTL /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				F029 /* GIFImage.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		GRP_INT /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				F030 /* NDLogger.swift */,
+			);
+			path = Internal;
 			sourceTree = "<group>";
 		};
 		GRP_SDK /* CleverTapNativeDisplay */ = {
@@ -197,12 +264,14 @@
 				41969A6D2F0BDB380050EB83 /* Modifiers */,
 				41969A6A2F0BCA2A0050EB83 /* Handlers */,
 				41969A652F0BC86B0050EB83 /* Listeners */,
-				F013 /* CleverTapNativeDisplay.swift */,
 				GRP_MDL /* Models */,
 				GRP_RND /* Renderer */,
 				GRP_EVL /* Evaluator */,
 				GRP_STY /* Style */,
 				GRP_BRG /* Bridge */,
+				GRP_PLC /* Placement */,
+				GRP_UTL /* Utilities */,
+				GRP_INT /* Internal */,
 			);
 			path = CleverTapNativeDisplay;
 			sourceTree = "<group>";
@@ -370,9 +439,24 @@
 				B012 /* StyleResolver.swift in Sources */,
 				41969A6F2F0BDB420050EB83 /* TappableModifier.swift in Sources */,
 				41969A6C2F0BCA390050EB83 /* ActionHandler.swift in Sources */,
-				B013 /* CleverTapNativeDisplay.swift in Sources */,
+				B0AAE001 /* ActionAttributionExtras.swift in Sources */,
 				B014 /* HtmlJsBridge.swift in Sources */,
 				B015 /* HtmlWebView.swift in Sources */,
+				B016 /* AnimationModifier.swift in Sources */,
+				B017 /* CleverTapAutoWire.swift in Sources */,
+				B018 /* NativeDisplayBridge.swift in Sources */,
+				B019 /* NativeDisplayBridgeListener.swift in Sources */,
+				B020 /* NativeDisplayConfigParser.swift in Sources */,
+				B021 /* NativeDisplayUnit.swift in Sources */,
+				B022 /* NativeDisplayUnitCacheImpl.swift in Sources */,
+				B023 /* ReflectionSeeder.swift in Sources */,
+				B024 /* NativeDisplaySlot.swift in Sources */,
+				B025 /* NativeDisplaySlotCollectionViewCell.swift in Sources */,
+				B026 /* NativeDisplaySlotManager.swift in Sources */,
+				B027 /* NativeDisplaySlotTableViewCell.swift in Sources */,
+				B028 /* NativeDisplaySlotUIView.swift in Sources */,
+				B029 /* GIFImage.swift in Sources */,
+				B030 /* NDLogger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
