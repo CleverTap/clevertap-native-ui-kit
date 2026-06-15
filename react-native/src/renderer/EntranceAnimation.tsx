@@ -31,7 +31,6 @@ function AnimatedWrapper({ animation, reanimated, children }: AnimatedWrapperPro
     useSharedValue,
     useAnimatedStyle,
     withTiming,
-    withSpring,
     Easing,
   } = reanimated;
   const Animated = reanimated.default ?? reanimated;
@@ -58,13 +57,11 @@ function AnimatedWrapper({ animation, reanimated, children }: AnimatedWrapperPro
   useEffect(() => {
     if (animation.type === 'none') return;
 
-    const config = animation.easing === 'spring'
-      ? undefined
-      : { duration, easing, delay };
-
-    const animate = animation.easing === 'spring'
-      ? (to: number) => withSpring(to, { damping: 15, stiffness: 100, delay })
-      : (to: number) => withTiming(to, config);
+    // Matches Android + iOS PR (Easing.SPRING dropped): all entrance
+    // animations run through `withTiming` with a curve picked by
+    // `resolveEasing`. Spring physics are not in the public schema.
+    const config = { duration, easing, delay };
+    const animate = (to: number) => withTiming(to, config);
 
     opacity.value = animate(1);
     translateY.value = animate(0);

@@ -44,8 +44,7 @@ export type EasingType =
   | 'ease_out'
   | 'ease_in_out'
   | 'ease_in_back'
-  | 'ease_out_back'
-  | 'spring';
+  | 'ease_out_back';
 
 export type ImageFit = 'crop' | 'contain' | 'fill' | 'tile';
 
