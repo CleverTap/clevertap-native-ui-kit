@@ -1,5 +1,34 @@
 const TEMPLATE_PATTERN = /\{\{([^}]+)\}\}/g;
 
+/**
+ * Coerce a JS value into a boolean using FE-renderer / native-renderer
+ * semantics. Returns `null` when the value can't be mapped, so callers can
+ * fall back to their own default.
+ *
+ *   - `boolean` → identity.
+ *   - `"true"` / `"false"` strings → literal.
+ *   - `"1"` / `"0"` strings → true / false (BE often ships numeric flags
+ *     as strings; matches Android + iOS behavior after PR #9 / PR #11).
+ *   - finite `number` → `n !== 0`.
+ *   - everything else (other strings, null, undefined, objects) → `null`.
+ *
+ * Critically, `"0"` is treated as `false` here. The JS default
+ * (`Boolean("0")` → `true`) is the opposite of what the FE renderer does,
+ * so without this coercion a node with `visible: "{{flag}}"` and
+ * `variables: { flag: 0 }` would render on RN but not on iOS/Android.
+ */
+function coerceToBool(value: unknown): boolean | null {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number' && Number.isFinite(value)) return value !== 0;
+  if (typeof value === 'string') {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    if (value === '1') return true;
+    if (value === '0') return false;
+  }
+  return null;
+}
+
 export class VariableEvaluator {
   constructor(private variables: Record<string, unknown>) {}
 
@@ -20,9 +49,8 @@ export class VariableEvaluator {
     const singleVarMatch = /^\{\{([^}]+)\}\}$/.exec(trimmed);
     if (singleVarMatch) {
       const value = this._getVariable(singleVarMatch[1]!.trim());
-      if (typeof value === 'boolean') return value;
-      if (value === 'true') return true;
-      if (value === 'false') return false;
+      const coerced = coerceToBool(value);
+      if (coerced != null) return coerced;
       return Boolean(value);
     }
 
@@ -35,7 +63,8 @@ export class VariableEvaluator {
     if (trimmed.includes('==')) return this._evaluateBinaryExpr(trimmed, '==');
 
     const value = this._resolveOperand(trimmed);
-    if (typeof value === 'boolean') return value;
+    const coerced = coerceToBool(value);
+    if (coerced != null) return coerced;
     const b = this._strictBool(String(value));
     return b ?? false;
   }
