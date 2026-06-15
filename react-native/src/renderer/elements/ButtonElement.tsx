@@ -56,7 +56,10 @@ export const ButtonElement = React.memo(function ButtonElement({ node, resolvedS
 
     // Always fire the unit-clicked event - matches Android which fires
     // "Notification Clicked" on every button press regardless of action type.
-    actionHandler.fireClickedEvent(node.id);
+    // Pass the `onClick` action so element-attribution extras (action_type,
+    // wzrk_*, etc.) ride along even when there's no double-tap involved.
+    const clickAction = node.actions?.onClick;
+    actionHandler.fireClickedEvent(node.id, clickAction);
 
     // Double-tap: if the second tap lands within the window, fire onDoubleTap.
     // A single tap always fires onClick (matches Android combinedClickable
@@ -69,7 +72,6 @@ export const ButtonElement = React.memo(function ButtonElement({ node, resolvedS
       }
     }
 
-    const clickAction = node.actions?.onClick;
     if (clickAction) {
       actionHandler.handle(clickAction, node.id, 'click');
     }

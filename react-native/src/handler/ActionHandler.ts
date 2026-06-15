@@ -9,6 +9,7 @@ function isValidUrlScheme(url: string): boolean {
   return ['http', 'https', 'tel', 'mailto'].includes(scheme ?? '');
 }
 import { resolveOpenUrl } from '../models/Action';
+import { attributionExtrasFor } from './ActionAttributionExtras';
 import type { NativeDisplayActionListener } from '../listener/NativeDisplayActionListener';
 import type { NativeDisplayComponentListener, InteractionType } from '../listener/NativeDisplayComponentListener';
 
@@ -16,19 +17,32 @@ export class ActionHandler {
   constructor(
     private readonly actionListener: NativeDisplayActionListener | null,
     private readonly componentListener: NativeDisplayComponentListener | null,
-    private readonly bridge: { pushClickedEvent(unitId: string): void } | null,
+    private readonly bridge: {
+      pushClickedEvent(unitId: string, extras?: Record<string, unknown>): void;
+    } | null,
     private readonly unitId: string,
   ) {}
 
   /**
    * Fire the unit-clicked event without dispatching any action.
-   * Call this on every button press so analytics always records the click.
-   * Matches Android behavior, which fires "Notification Clicked" on every press.
+   *
+   * Called on every button press so analytics always records the click,
+   * even when no action is configured. When the press carries a concrete
+   * action (i.e. the node has `actions.onClick` set), pass it in so we can
+   * build the element-attribution extras that the CleverTap dashboard uses
+   * to slice clicks by element / c2a / btn_text / wzrk_* fields - matches
+   * Android + iOS PR #12 behavior. Passing `action` is optional: the helper
+   * returns an empty extras object when omitted, so older call-sites keep
+   * working with the single-arg signature.
    */
-  fireClickedEvent(nodeId: string): void {
-    this.bridge?.pushClickedEvent(this.unitId);
+  fireClickedEvent(nodeId: string, action?: Action): void {
+    const extras: Record<string, unknown> = {
+      node_id: nodeId,
+      ...attributionExtrasFor(action),
+    };
+    this.bridge?.pushClickedEvent(this.unitId, extras);
     this.actionListener?.onDisplayUnitClicked?.(this.unitId);
-    this.actionListener?.onTrackEvent('Notification Clicked', { nodeId });
+    this.actionListener?.onTrackEvent('Notification Clicked', extras);
   }
 
   /**

@@ -141,12 +141,44 @@ export class NativeDisplayBridge {
     }
   }
 
-  pushClickedEvent(unitId: string): void {
+  /**
+   * Push a "Notification Clicked" event to CleverTap with optional
+   * element-level attribution extras.
+   *
+   * When `extras` is non-empty we prefer the element-aware Core SDK method
+   * (`pushDisplayUnitElementClickedEventForID(id, additionalProperties)`)
+   * so the dashboard can slice by `action_type`, `action_url`, `wzrk_*`
+   * fields, etc. - same behavior as Android / iOS after PR #12.
+   *
+   * Falls back to the legacy `pushDisplayUnitClickedEventForID(id)` if the
+   * element-aware method isn't exposed by the installed
+   * `clevertap-react-native` version, so older host SDKs keep working at
+   * the cost of dropped attribution.
+   */
+  pushClickedEvent(unitId: string, extras?: Record<string, unknown>): void {
     const ct = this._cleverTap;
     if (!ct) return;
+    const hasExtras = extras && Object.keys(extras).length > 0;
+
+    if (hasExtras && typeof ct['pushDisplayUnitElementClickedEventForID'] === 'function') {
+      console.log(`[NativeDisplayBridge] Pushing element-clicked event for unit: ${unitId}`);
+      (ct['pushDisplayUnitElementClickedEventForID'] as (id: string, props: Record<string, unknown>) => void)(
+        unitId,
+        extras as Record<string, unknown>,
+      );
+      return;
+    }
+
     if (typeof ct['pushDisplayUnitClickedEventForID'] === 'function') {
       console.log(`[NativeDisplayBridge] Pushing clicked event for unit: ${unitId}`);
       (ct['pushDisplayUnitClickedEventForID'] as (id: string) => void)(unitId);
+      if (hasExtras) {
+        console.warn(
+          '[NativeDisplayBridge] pushDisplayUnitElementClickedEventForID not available; ' +
+          'element attribution extras were not forwarded to Core SDK. ' +
+          'Update `@clevertap/clevertap-react-native` to receive attribution data.',
+        );
+      }
     } else {
       console.warn(`[NativeDisplayBridge] pushDisplayUnitClickedEventForID not available. Clicked event for ${unitId} not sent.`);
     }
