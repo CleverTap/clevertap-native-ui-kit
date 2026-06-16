@@ -222,7 +222,7 @@ class NativeDisplayConfigParserTest {
     // -- Missing wzrk_id --
 
     @Test
-    fun `tryParse without wzrk_id returns null`() {
+    fun `tryParse without wzrk_id uses fallback id`() {
         val json = """
             {
                 "native_display_config": {
@@ -242,7 +242,8 @@ class NativeDisplayConfigParserTest {
 
         val unit = parser.tryParse(json)
 
-        assertNull(unit)
+        assertNotNull(unit)
+        assertEquals("0_0", unit?.unitId)
     }
 
     // -- Malformed JSON --
