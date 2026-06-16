@@ -71,7 +71,7 @@ public final class NativeDisplaySlotTableViewCell: UITableViewCell, NativeDispla
     ///   - slotId: The slot identifier to observe.
     ///   - actionListener: Optional listener for action events.
     ///   - componentListener: Optional listener for component interactions.
-    public func configure(
+    @objc public func configure(
         slotId: String,
         actionListener: NativeDisplayActionListener? = nil,
         componentListener: NativeDisplayComponentListener? = nil

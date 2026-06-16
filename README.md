@@ -74,7 +74,9 @@ The slot flow is the shortest path to a working integration. The SDK manages dis
 
 **Step 1 — Initialize the bridge** in your app entry point.
 
-Android — `Application.onCreate()`:
+> The snippets below show the recommended path — **Jetpack Compose** on Android and **SwiftUI** on iOS. Pick a different stack from the collapsible sections.
+
+Android — Kotlin (`Application.onCreate()`):
 ```kotlin
 class MyApplication : Application() {
     override fun onCreate() {
@@ -84,7 +86,7 @@ class MyApplication : Application() {
 }
 ```
 
-iOS — `AppDelegate` or SwiftUI `App.init()`:
+iOS — SwiftUI (`App.init()`):
 ```swift
 @main
 struct MyApp: App {
@@ -95,16 +97,54 @@ struct MyApp: App {
 }
 ```
 
+<details>
+<summary><b>iOS — UIKit (Swift, AppDelegate)</b></summary>
+
+```swift
+func application(_ application: UIApplication,
+                 didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    NativeDisplayBridge.shared.initialize()
+    return true
+}
+```
+</details>
+
+<details>
+<summary><b>iOS — Objective-C (AppDelegate.m)</b></summary>
+
+```objc
+#import <CleverTapNativeDisplay/CleverTapNativeDisplay-Swift.h>
+
+- (BOOL)application:(UIApplication *)application
+    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [[NativeDisplayBridge shared] initialize];
+    return YES;
+}
+```
+</details>
+
 **Step 2 — Link with CleverTap Core** so server-pushed units flow into the bridge.
 
 - **Android**: `NativeDisplayBridge.initialize(context)` auto-detects the Core SDK on the classpath via reflection — Step 1 already linked you, no extra call needed.
-- **iOS**: explicitly bind the Core SDK instance once it's available:
+- **iOS**: explicitly bind the Core SDK instance once it's available.
 
+iOS — Swift:
 ```swift
 if let cleverTap = CleverTap.sharedInstance() {
     NativeDisplayBridge.shared.bind(cleverTap)
 }
 ```
+
+<details>
+<summary><b>iOS — Objective-C</b></summary>
+
+```objc
+CleverTap *cleverTap = [CleverTap sharedInstance];
+if (cleverTap != nil) {
+    [[NativeDisplayBridge shared] bind:cleverTap forwardTo:nil];
+}
+```
+</details>
 
 **Step 3 — Drop a slot view** in your UI with the slot ID configured on the dashboard. The SDK looks it up, picks the matching unit, and renders it. While no unit is present, the slot shows your placeholder (or stays empty by default).
 
@@ -117,14 +157,6 @@ NativeDisplaySlot(
 )
 ```
 
-Android — XML:
-```xml
-<com.clevertap.android.nativedisplay.placement.NativeDisplaySlotView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:slotId="hero_banner" />
-```
-
 iOS — SwiftUI:
 ```swift
 NativeDisplaySlot(slotId: "hero_banner") {
@@ -132,13 +164,73 @@ NativeDisplaySlot(slotId: "hero_banner") {
 }
 ```
 
-iOS — UIKit:
-```swift
-let slot = NativeDisplaySlotUIView(slotId: "hero_banner")
-view.addSubview(slot)
+<details>
+<summary><b>Android — XML / Views (no Compose)</b></summary>
+
+Declare the slot in your layout:
+```xml
+<com.clevertap.android.nativedisplay.placement.NativeDisplaySlotView
+    android:id="@+id/hero_slot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:slotId="hero_banner" />
 ```
 
-For list-driven UIs, the SDK ships cell wrappers: `NativeDisplaySlotTableViewCell.configure(slotId:)` for `UITableView` and `NativeDisplaySlotCollectionViewCell.configure(slotId:)` for `UICollectionView`.
+Then optionally wire listeners from your Activity/Fragment:
+```kotlin
+findViewById<NativeDisplaySlotView>(R.id.hero_slot).apply {
+    setActionListener(myActionListener)
+    setComponentListener(myComponentListener)
+}
+```
+</details>
+
+<details>
+<summary><b>iOS — UIKit (Swift)</b></summary>
+
+`NativeDisplaySlotUIView` is a regular `UIView` — no `UIHostingController` needed:
+```swift
+final class HomeViewController: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let slot = NativeDisplaySlotUIView(slotId: "hero_banner")
+        slot.actionListener = myActionListener
+        slot.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(slot)
+        NSLayoutConstraint.activate([
+            slot.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            slot.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            slot.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        ])
+    }
+}
+```
+</details>
+
+<details>
+<summary><b>iOS — UIKit (Objective-C)</b></summary>
+
+```objc
+#import <CleverTapNativeDisplay/CleverTapNativeDisplay-Swift.h>
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    NativeDisplaySlotUIView *slot = [[NativeDisplaySlotUIView alloc] initWithSlotId:@"hero_banner"];
+    slot.actionListener = self.myActionListener;
+    slot.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:slot];
+    [NSLayoutConstraint activateConstraints:@[
+        [slot.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor],
+        [slot.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
+        [slot.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
+    ]];
+}
+```
+</details>
+
+For list-driven UIs, the SDK ships cell wrappers: `NativeDisplaySlotTableViewCell.configure(slotId:)` for `UITableView` and `NativeDisplaySlotCollectionViewCell.configure(slotId:)` for `UICollectionView`. Both are usable from Swift and Objective-C, e.g. `[cell configureWithSlotId:@"hero_banner" actionListener:nil componentListener:nil];`.
+
+> **When do I need `UIHostingController`?** Only if you want to embed the SwiftUI `NativeDisplayView` directly in a UIKit screen. The UIKit wrappers above (`NativeDisplaySlotUIView`, `NativeDisplayUIView`, and the cell variants) are real `UIView`/`UITableViewCell`/`UICollectionViewCell` subclasses — they already wrap a `UIHostingController` internally, so you don't have to.
 
 Slot views auto-register with the bridge on attach and auto-unregister on detach — there's no listener to manage.
 
@@ -147,6 +239,8 @@ Slot views auto-register with the bridge on attach and auto-unregister on detach
 ### Approach 2 — Custom rendering
 
 Choose this when you need to inspect units before rendering, place them in custom layouts (carousels, RecyclerViews, dynamic Compose graphs), filter by metadata, or run standalone without the Core SDK.
+
+> **iOS — Swift only.** `NativeDisplayUnit` is a Swift `struct`, so the `NativeDisplayBridgeListener` API and the unit-based `NativeDisplayView` / `NativeDisplayUIView` initializers cannot be called from Objective-C. Pure Obj-C apps that need this level of control should stay on **Approach 1** (slot-based) — the slot view does the listening for you.
 
 After Steps 1 & 2 above, attach a `NativeDisplayBridgeListener` and render each unit with the renderer that fits your UI layer.
 
@@ -188,18 +282,6 @@ fun CampaignBanner(unit: NativeDisplayUnit) {
 }
 ```
 
-Android — XML / View system. Add `NativeDisplayViewGroup` to your layout, then call `setUnit(...)` when a unit arrives:
-```xml
-<com.clevertap.android.nativedisplay.view.NativeDisplayViewGroup
-    android:id="@+id/campaign_banner"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
-```
-```kotlin
-findViewById<NativeDisplayViewGroup>(R.id.campaign_banner)
-    .setUnit(unit, actionListener = myActionListener)
-```
-
 iOS — SwiftUI:
 ```swift
 struct CampaignBanner: View {
@@ -210,14 +292,44 @@ struct CampaignBanner: View {
 }
 ```
 
-iOS — UIKit. Instantiate `NativeDisplayUIView` with the unit and add it as a subview:
-```swift
-let banner = NativeDisplayUIView(
-    unit: unit,
-    actionListener: myActionListener
-)
-view.addSubview(banner)
+<details>
+<summary><b>Android — XML / Views (no Compose)</b></summary>
+
+Add `NativeDisplayViewGroup` to your layout:
+```xml
+<com.clevertap.android.nativedisplay.view.NativeDisplayViewGroup
+    android:id="@+id/campaign_banner"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
 ```
+Then, inside the listener you attached in Step A, push each unit into the view:
+```kotlin
+override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
+    val unit = units.firstOrNull() ?: return
+    findViewById<NativeDisplayViewGroup>(R.id.campaign_banner)
+        .setUnit(unit, actionListener = myActionListener)
+}
+```
+</details>
+
+<details>
+<summary><b>iOS — UIKit (Swift)</b></summary>
+
+`NativeDisplayUIView` is a regular `UIView`, so you can drop it into any view hierarchy. Instantiate it in your listener callback:
+```swift
+func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
+    guard let unit = units.first else { return }
+    let banner = NativeDisplayUIView(unit: unit, actionListener: myActionListener)
+    banner.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(banner)
+    NSLayoutConstraint.activate([
+        banner.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+        banner.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+        banner.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+    ])
+}
+```
+</details>
 
 **Standalone mode** (no Core SDK): feed units yourself. Same `onNativeDisplaysLoaded` callback fires.
 
@@ -246,9 +358,17 @@ NativeDisplayBridge.getInstance().fetchNativeDisplays(cleverTapApi)
 ```
 
 ```swift
-// iOS
+// iOS (Swift)
 NativeDisplayBridge.shared.fetchNativeDisplays(CleverTap.sharedInstance())
 ```
+
+<details>
+<summary><b>iOS — Objective-C</b></summary>
+
+```objc
+[[NativeDisplayBridge shared] fetchNativeDisplays:[CleverTap sharedInstance]];
+```
+</details>
 
 Both calls return a `Bool` indicating that the **request was dispatched** — not that the fetch completed. Results arrive asynchronously via the same `onNativeDisplaysLoaded` callback. This works orthogonally to either approach above: slots in Approach 1 refresh automatically, custom listeners in Approach 2 fire again.
 
@@ -285,7 +405,7 @@ Raw gestures on specific nodes by ID. Use this when you need to intercept indivi
 Both listeners can be attached to a slot view or directly to `NativeDisplayView`:
 
 ```kotlin
-// Android
+// Android — Jetpack Compose
 NativeDisplaySlot(
     slotId = "hero_banner",
     actionListener = myActionListener,
@@ -294,13 +414,76 @@ NativeDisplaySlot(
 ```
 
 ```swift
-// iOS
+// iOS — SwiftUI
 NativeDisplaySlot(
     slotId: "hero_banner",
     actionListener: myActionListener,
     componentListener: myComponentListener,
 )
 ```
+
+<details>
+<summary><b>Android — XML / Views</b></summary>
+
+```kotlin
+findViewById<NativeDisplaySlotView>(R.id.hero_slot).apply {
+    setActionListener(myActionListener)
+    setComponentListener(myComponentListener)
+}
+```
+</details>
+
+<details>
+<summary><b>iOS — UIKit (Swift)</b></summary>
+
+```swift
+let slot = NativeDisplaySlotUIView(slotId: "hero_banner")
+slot.actionListener = myActionListener
+slot.componentListener = myComponentListener
+```
+</details>
+
+<details>
+<summary><b>iOS — UIKit (Objective-C)</b></summary>
+
+```objc
+NativeDisplaySlotUIView *slot = [[NativeDisplaySlotUIView alloc] initWithSlotId:@"hero_banner"];
+slot.actionListener = self.myActionListener;
+slot.componentListener = self.myComponentListener;
+```
+</details>
+
+<details>
+<summary><b>Implementing a listener in Objective-C</b></summary>
+
+Both `NativeDisplayActionListener` and `NativeDisplayComponentListener` are `@objc` protocols — implement them from an `NSObject` subclass:
+
+```objc
+@interface MyActionListener : NSObject <NativeDisplayActionListener>
+@end
+
+@implementation MyActionListener
+
+- (BOOL)onOpenUrlWithUrl:(NSString *)url openInBrowser:(BOOL)openInBrowser {
+    // return YES if you handled it; NO to let the SDK open it
+    return NO;
+}
+
+- (void)onCustomActionWithKey:(NSString *)key
+                        value:(id)value
+                     metadata:(NSDictionary<NSString *,NSString *> *)metadata {
+    // handle custom action
+}
+
+- (void)onNavigateWithDestination:(NSString *)destination
+                           params:(NSDictionary<NSString *,NSString *> *)params { }
+
+- (void)onTrackEventWithEventName:(NSString *)eventName
+                       properties:(NSDictionary<NSString *,id> *)properties { }
+
+@end
+```
+</details>
 
 ---
 
@@ -331,9 +514,25 @@ Campaigns are composed of **containers** (which hold children) and **elements** 
 
 ---
 
+## Creating a Native Display campaign
+
+This SDK is the **renderer**. The most complete way to drive it is the **Native Display** feature of the CleverTap Core SDK — authored on the dashboard, delivered by the Core SDK at runtime. Going through the dashboard gives you targeting, scheduling, A/B testing, and end-to-end attribution out of the box.
+
+To create one:
+
+1. Sign in to the CleverTap dashboard and open **Campaigns → Create → Native Display**.
+2. Use the **Advanced Builder** to compose the layout — pick containers (`VERTICAL`, `HORIZONTAL`, `BOX`, `GALLERY`), drop in elements (`TEXT`, `IMAGE`, `BUTTON`, `VIDEO`, `HTML`), and bind variables.
+3. Target the slot ID (or audience segment) and publish — the campaign reaches users through the Core SDK's display unit pipeline that this SDK listens to.
+
+Full dashboard documentation: **[Native Display — CleverTap docs](https://docs.clevertap.com/docs/native-display)**.
+
+If your use case calls for it, you can also feed JSON to the renderer directly — see [Approach 2 — Custom rendering](#approach-2--custom-rendering) for standalone mode. You'll lose the dashboard-side targeting and attribution loop, so this is rarely the right call.
+
+---
+
 ## Campaign JSON
 
-Campaigns are JSON configs served by CleverTap. You create them in the CleverTap dashboard — you do not write these configs manually in your app. The examples below are for reference so you understand what the SDK receives.
+The examples below show the JSON shape this SDK consumes. In a typical setup you won't hand-write these — the CleverTap dashboard authors them and the Core SDK delivers them — but the format is open and you can feed JSON to the renderer directly (see [Approach 2 — Custom rendering](#approach-2--custom-rendering)) if you need to.
 
 ### Minimal example — text + button
 
