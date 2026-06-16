@@ -1,6 +1,8 @@
 package com.clevertap.android.nativeui.sample
 
+import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -39,6 +41,7 @@ import com.clevertap.android.nativedisplay.models.NativeDisplayContainer
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
 import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
 import com.clevertap.android.nativeui.sample.samples.*
+import com.clevertap.android.sdk.CleverTapAPI
 
 private enum class MainTab(val icon: String, val label: String) {
     EVENTS("📡", "Events"),
@@ -62,10 +65,22 @@ private object Routes {
 }
 
 class MainActivity : FragmentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             NativeUIKitSampleApp()
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        // On Android 12+, raise Notification Clicked event when Activity is already
+        // running in the back stack (CleverTap does not auto-fire it in this case).
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val cleverTapApi = CleverTapAPI.getDefaultInstance(applicationContext)
+            cleverTapApi?.pushNotificationClickedEvent(intent.extras)
+            Log.d("MainActivity", "onNewIntent: pushNotificationClickedEvent fired (Android 12+)")
         }
     }
 }

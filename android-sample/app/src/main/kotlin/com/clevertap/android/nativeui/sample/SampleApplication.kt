@@ -1,6 +1,9 @@
 package com.clevertap.android.nativeui.sample
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 import android.util.Log
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge
 import com.clevertap.android.sdk.ActivityLifecycleCallback
@@ -17,6 +20,7 @@ class SampleApplication : Application() {
 
     companion object {
         private const val TAG = "SampleApplication"
+        private const val NOTIFICATION_CHANNEL_ID = "BRTesting"
     }
 
     override fun onCreate() {
@@ -24,6 +28,8 @@ class SampleApplication : Application() {
         CleverTapAPI.setDebugLevel(VERBOSE)
         ActivityLifecycleCallback.register(this)
         super.onCreate()
+
+        createNotificationChannel()
 
         // 1. Initialize NativeDisplayBridge (auto-wire mode)
         val bridge = NativeDisplayBridge.initialize(this)
@@ -41,6 +47,21 @@ class SampleApplication : Application() {
             cleverTapApi.onUserLogin(mutableMapOf<String, Any>("Name" to "Lalit P", "Email" to "lalit@lalit@nfndnnsf.com"))
         } else {
             Log.w(TAG, "CleverTapAPI.getDefaultInstance() returned null — check manifest metadata")
+        }
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                "BR Testing",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Channel for BR testing push notifications"
+            }
+            val manager = getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(channel)
+            Log.d(TAG, "Notification channel created: $NOTIFICATION_CHANNEL_ID")
         }
     }
 }
