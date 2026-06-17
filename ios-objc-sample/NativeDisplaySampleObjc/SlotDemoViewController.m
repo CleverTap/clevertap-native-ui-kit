@@ -295,8 +295,8 @@ static char const kAssociatedShapeLayerKey;
         [adLabel.centerYAnchor constraintEqualToAnchor:placeholder.centerYAnchor],
     ]];
 
-    // Create slot view with placeholder using NDDisplayHelper
-    UIView *slotView = [NDDisplayHelper createSlotViewWithSlotId:slotId placeholder:placeholder];
+    // Create slot view with placeholder
+    UIView *slotView = [[NDSlotPlaceholderView alloc] initWithSlotId:slotId placeholder:placeholder];
     if (slotView) {
         slotView.translatesAutoresizingMaskIntoConstraints = NO;
         // We need to store the shape layer for dashed border — done via layoutSubviews override trick.
