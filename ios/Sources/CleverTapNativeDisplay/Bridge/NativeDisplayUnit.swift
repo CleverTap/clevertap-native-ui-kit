@@ -3,30 +3,31 @@
 //  CleverTapNativeDisplay
 //
 
-// MARK: - Native Display Unit
-// Represents a single native display unit delivered via the bridge
-
 import Foundation
 
 /// A native display unit containing a parsed configuration and metadata.
 /// Created by the bridge when processing display unit JSON from CleverTap Core SDK
 /// or from manual JSON input.
-public struct NativeDisplayUnit {
+///
+/// `unitId`, `slotId`, `customExtras`, and `rawJson` are accessible from Objective-C.
+/// `config` and `resolvedStyles` are Swift-only (used internally by the SDK for rendering).
+@objc public final class NativeDisplayUnit: NSObject {
+
     /// Unique identifier for this display unit (maps to `wzrk_id` in the JSON payload).
-    public let unitId: String
+    @objc public let unitId: String
 
     /// The resolved configuration ready for rendering with `NativeDisplayView`.
     public let config: ResolvedConfig
 
     /// Slot identifier from the top-level `slot_id` key in the display unit JSON,
     /// or `nil` when the unit is not bound to a placement slot.
-    public let slotId: String?
+    @objc public let slotId: String?
 
     /// Custom key-value pairs extracted from the `custom_kv` field in the display unit JSON.
-    public let customExtras: [String: String]
+    @objc public let customExtras: [String: String]
 
     /// The original raw JSON string, retained for debugging or re-serialization.
-    public let rawJson: String?
+    @objc public let rawJson: String?
 
     /// Pre-resolved per-node styles produced at parse time, off the main thread.
     /// When non-nil, `NativeDisplayView` skips the on-main `StyleResolver.resolveAll`
@@ -47,5 +48,6 @@ public struct NativeDisplayUnit {
         self.customExtras = customExtras
         self.rawJson = rawJson
         self.resolvedStyles = resolvedStyles
+        super.init()
     }
 }

@@ -219,3 +219,62 @@ public final class NativeDisplayUIView: UIView {
         return nil
     }
 }
+
+// MARK: - ObjC Compatibility
+
+public extension NativeDisplayUIView {
+
+    /// Convenience initializer that creates a view from a `NativeDisplayUnit`.
+    ///
+    /// Use this from Objective-C to render a unit received in `onNativeDisplaysLoaded:`.
+    ///
+    /// ```objc
+    /// NativeDisplayUIView *view = [[NativeDisplayUIView alloc]
+    ///     initWithUnit:unit
+    ///     parentWidth:self.view.bounds.size.width
+    ///     actionListener:self
+    ///     componentListener:nil];
+    /// ```
+    @objc convenience init(
+        unit: NativeDisplayUnit,
+        parentWidth: CGFloat,
+        actionListener: NativeDisplayActionListener?,
+        componentListener: NativeDisplayComponentListener?
+    ) {
+        let parentSize: CGSize? = parentWidth > 0 ? CGSize(width: parentWidth, height: 0) : nil
+        self.init(
+            unit: unit,
+            parentSize: parentSize,
+            actionListener: actionListener,
+            componentListener: componentListener
+        )
+    }
+
+    /// Convenience initializer that parses raw JSON data and renders the result.
+    ///
+    /// Returns `nil` if the JSON cannot be parsed. Use this from Objective-C where
+    /// `ResolvedConfig` (a Swift type) is not directly accessible.
+    ///
+    /// ```objc
+    /// NativeDisplayUIView *view = [[NativeDisplayUIView alloc]
+    ///     initWithJsonData:jsonData
+    ///     parentWidth:self.view.bounds.size.width
+    ///     actionListener:self
+    ///     componentListener:nil];
+    /// ```
+    @objc convenience init?(
+        jsonData: Data,
+        parentWidth: CGFloat,
+        actionListener: NativeDisplayActionListener?,
+        componentListener: NativeDisplayComponentListener?
+    ) {
+        guard let config = try? ResolvedConfig.from(jsonData: jsonData) else { return nil }
+        let parentSize: CGSize? = parentWidth > 0 ? CGSize(width: parentWidth, height: 0) : nil
+        self.init(
+            config: config,
+            parentSize: parentSize,
+            actionListener: actionListener,
+            componentListener: componentListener
+        )
+    }
+}

@@ -3,7 +3,7 @@
 @import CleverTapSDK;
 @import CleverTapNativeDisplay;
 
-@interface CleverTapIntegrationViewController () <NDBridgeListenerObjc, NativeDisplayActionListener, UITextFieldDelegate>
+@interface CleverTapIntegrationViewController () <NativeDisplayBridgeListener, NativeDisplayActionListener, UITextFieldDelegate>
 
 // UI elements
 @property (nonatomic, strong) UITextField *eventNameField;
@@ -21,8 +21,7 @@
 @property (nonatomic, strong) NSArray<NSLayoutConstraint *> *portraitConstraints;
 @property (nonatomic, strong) NSArray<NSLayoutConstraint *> *landscapeConstraints;
 
-// Bridge
-@property (nonatomic, strong) NDBridgeListenerToken *listenerToken;
+// (listener is self)
 
 @end
 
@@ -34,7 +33,7 @@
     self.view.backgroundColor = [UIColor systemGroupedBackgroundColor];
     [self buildLayout];
     [self applyLayoutForSize:self.view.bounds.size];
-    _listenerToken = [NDDisplayHelper bridgeAddListener:self];
+    [NativeDisplayBridge.shared addListener:self];
     [self appendLog:@"Bridge listener registered"];
 
     CleverTap *ct = [CleverTap sharedInstance];
@@ -53,9 +52,7 @@
 }
 
 - (void)dealloc {
-    if (_listenerToken) {
-        [NDDisplayHelper bridgeRemoveListener:_listenerToken];
-    }
+    [NativeDisplayBridge.shared removeListener:self];
 }
 
 // MARK: - Layout
@@ -287,9 +284,9 @@
     _sendEventButton.enabled = hasText;
 }
 
-// MARK: - NDBridgeListenerObjc
+// MARK: - NativeDisplayBridgeListener
 
-- (void)onNativeDisplaysLoaded:(NSArray<NSString *> *)unitIds {
+- (void)onNativeDisplaysLoaded:(NSArray<NativeDisplayUnit *> *)units {
     dispatch_async(dispatch_get_main_queue(), ^{
         // Clear existing canvas views
         NSArray *views = [self->_canvasStack.arrangedSubviews copy];
@@ -298,8 +295,9 @@
             [v removeFromSuperview];
         }
 
-        for (NSString *unitId in unitIds) {
-            NativeDisplayUIView *displayView = [NDDisplayHelper createViewForUnitId:unitId
+        for (NativeDisplayUnit *unit in units) {
+            NativeDisplayUIView *displayView = [[NativeDisplayUIView alloc]
+                initWithUnit:unit
                 parentWidth:self->_canvasScrollView.bounds.size.width
                 actionListener:self
                 componentListener:nil];
@@ -309,10 +307,10 @@
             }
         }
 
-        self->_emptyCanvasLabel.hidden = (unitIds.count > 0);
-        [self appendLog:[NSString stringWithFormat:@"[Received] %lu display unit(s)", (unsigned long)unitIds.count]];
-        for (NSString *uid in unitIds) {
-            [self appendLog:[NSString stringWithFormat:@"  unit: %@", uid]];
+        self->_emptyCanvasLabel.hidden = (units.count > 0);
+        [self appendLog:[NSString stringWithFormat:@"[Received] %lu display unit(s)", (unsigned long)units.count]];
+        for (NativeDisplayUnit *unit in units) {
+            [self appendLog:[NSString stringWithFormat:@"  unit: %@", unit.unitId]];
         }
 
         [self->_canvasScrollView setNeedsLayout];
