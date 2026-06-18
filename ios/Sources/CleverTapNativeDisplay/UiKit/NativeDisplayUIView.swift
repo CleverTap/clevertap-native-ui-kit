@@ -133,6 +133,15 @@ public final class NativeDisplayUIView: UIView {
         )
         let hostingController = UIHostingController(rootView: rootView)
         hostingController.view.backgroundColor = .clear
+        // Tell UIHostingController to expose the SwiftUI root's preferred
+        // size via `view.intrinsicContentSize` independent of its current
+        // bounds. Without this, the intrinsic size reflects whatever size
+        // the hosting view has already been laid out at — which breaks
+        // self-sizing UITableView/UICollectionView cells whose initial
+        // (empty) measurement caches a near-zero height. iOS 16+ only.
+        if #available(iOS 16.0, *) {
+            hostingController.sizingOptions = [.intrinsicContentSize]
+        }
         addSubview(hostingController.view)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([

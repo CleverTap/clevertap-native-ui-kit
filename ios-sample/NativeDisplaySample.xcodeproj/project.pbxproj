@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0051F63963A94A48AB3A8EF9 /* test-159-gallery-box-freeflow-navbtns-only.json in Resources */ = {isa = PBXBuildFile; fileRef = 7F6254B5184B47E6BD59E17B /* test-159-gallery-box-freeflow-navbtns-only.json */; };
 		036107E9AD234ED9BB5EEAAC /* UIKitTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92256EDB1A19444DA4496980 /* UIKitTestViewController.swift */; };
+		036107EA1A4B4ED9BB5EEAAC /* UIKitSlotDemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92256EDC2B5A1A4FDA4496981 /* UIKitSlotDemoViewController.swift */; };
 		08376C9EB98E41F6A08BFB61 /* test-176-gallery-box-snapping-minimal.json in Resources */ = {isa = PBXBuildFile; fileRef = 15F76B946BFA4E8586890136 /* test-176-gallery-box-snapping-minimal.json */; };
 		117ED25EABA74C31A0AE60F1 /* test-166-gallery-box-grid2col-indicators-only.json in Resources */ = {isa = PBXBuildFile; fileRef = AE5BC3356FA54F87A4034CB2 /* test-166-gallery-box-grid2col-indicators-only.json */; };
 		18D9E4C143324F96893142EA /* test-163-gallery-box-freeflow-button-items.json in Resources */ = {isa = PBXBuildFile; fileRef = 03801AE84D464BBFB85416C0 /* test-163-gallery-box-freeflow-button-items.json */; };
@@ -439,6 +440,7 @@
 		7F6254B5184B47E6BD59E17B /* test-159-gallery-box-freeflow-navbtns-only.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-159-gallery-box-freeflow-navbtns-only.json"; sourceTree = "<group>"; };
 		8377811EF07E4E86844D4D7E /* MoreMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreMenuView.swift; sourceTree = "<group>"; };
 		92256EDB1A19444DA4496980 /* UIKitTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKitTestViewController.swift; sourceTree = "<group>"; };
+		92256EDC2B5A1A4FDA4496981 /* UIKitSlotDemoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKitSlotDemoViewController.swift; sourceTree = "<group>"; };
 		930987B748C14557B5AECCD4 /* test-161-gallery-box-freeflow-tall-images.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-161-gallery-box-freeflow-tall-images.json"; sourceTree = "<group>"; };
 		A2C5A89EB9CA43999EFA40B4 /* test-157-gallery-box-freeflow-indicators-navbtns.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-157-gallery-box-freeflow-indicators-navbtns.json"; sourceTree = "<group>"; };
 		A4390197357E4CFE8A7DC635 /* test-165-gallery-box-grid2col-indicators-navbtns.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "test-165-gallery-box-grid2col-indicators-navbtns.json"; sourceTree = "<group>"; };
@@ -694,6 +696,7 @@
 				CD2A02B97CEB476F914EB18F /* UITabHostView.swift */,
 				101EC9E0C1884FBF8FFB4BF9 /* RootTabBarController.swift */,
 				92256EDB1A19444DA4496980 /* UIKitTestViewController.swift */,
+				92256EDC2B5A1A4FDA4496981 /* UIKitSlotDemoViewController.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -1090,6 +1093,7 @@
 				A9E240D7AB6C4AC49AB33B78 /* UITabHostView.swift in Sources */,
 				C71E089EFA7A411E9AB2C2D0 /* RootTabBarController.swift in Sources */,
 				036107E9AD234ED9BB5EEAAC /* UIKitTestViewController.swift in Sources */,
+				036107EA1A4B4ED9BB5EEAAC /* UIKitSlotDemoViewController.swift in Sources */,
 				B002 /* ContentView.swift in Sources */,
 				41F1AD5F2F2B7D330018C5EA /* TestConfigBrowserView.swift in Sources */,
 			);

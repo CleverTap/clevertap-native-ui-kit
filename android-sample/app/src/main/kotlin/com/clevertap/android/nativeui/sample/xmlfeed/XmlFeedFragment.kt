@@ -11,11 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ViewCompositionStrategy
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -26,21 +22,26 @@ import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridgeListener
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.models.Action
-import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
+import com.clevertap.android.nativedisplay.view.NativeDisplayViewGroup
 import com.clevertap.android.nativeui.sample.databinding.FragmentXmlFeedBinding
 import com.clevertap.android.sdk.CleverTapAPI
 import com.google.android.material.R as MaterialR
 import kotlinx.coroutines.launch
 
 /**
- * XML-based integration test screen.
+ * XML-based integration demo (Approach 2 — custom rendering via Views).
  *
- * Mirrors CleverTapIntegrationScreen but implemented entirely with XML layouts + Fragment,
- * to verify the SDK works correctly in a View/XML-based host (not just Compose Activity).
+ * Mirrors `CleverTapIntegrationScreen` (Compose) but implemented entirely with XML +
+ * the Views system. Demonstrates [NativeDisplayViewGroup] — the View-system equivalent
+ * of the Compose `NativeDisplayView`.
  *
- * - Fires CleverTap events via EditText + button
- * - Renders received NativeDisplayUnits via ComposeView embedded in the XML layout
- * - Shows an event log at the bottom
+ *  - Fires CleverTap events via EditText + button.
+ *  - Listens on [NativeDisplayBridge] and, for each [NativeDisplayUnit] that arrives,
+ *    adds a fresh [NativeDisplayViewGroup] to the canvas and feeds the unit into it.
+ *  - Shows an event log at the bottom.
+ *
+ * For the slot-based ([Approach 1][com.clevertap.android.nativedisplay.placement.NativeDisplaySlotView])
+ * Views demo, see `XmlSlotsFragment`.
  */
 class XmlFeedFragment : Fragment() {
 
@@ -112,7 +113,6 @@ class XmlFeedFragment : Fragment() {
         bridge?.addListener(bridgeListener)
 
         setupEventInput()
-        setupCanvas()
         setupClearLog()
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -159,12 +159,6 @@ class XmlFeedFragment : Fragment() {
         binding.eventNameInput.setText("")
     }
 
-    private fun setupCanvas() {
-        binding.displayCanvas.setViewCompositionStrategy(
-            ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
-        )
-    }
-
     private fun setupClearLog() {
         binding.clearLogButton.setOnClickListener {
             viewModel.clearLog()
@@ -172,25 +166,30 @@ class XmlFeedFragment : Fragment() {
     }
 
     private fun renderUnits(units: List<NativeDisplayUnit>) {
+        val canvas = binding.displayCanvas
         if (units.isEmpty()) {
             binding.emptyCanvasText.visibility = View.VISIBLE
-            binding.displayCanvas.visibility = View.GONE
+            canvas.visibility = View.GONE
+            canvas.removeAllViews()
             return
         }
         binding.emptyCanvasText.visibility = View.GONE
-        binding.displayCanvas.visibility = View.VISIBLE
-        binding.displayCanvas.setContent {
-            MaterialTheme {
-                Column {
-                    units.forEach { unit ->
-                        NativeDisplayView(
-                            config = unit.config,
-                            modifier = Modifier.fillMaxWidth(),
-                            actionListener = actionListener
-                        )
-                    }
+        canvas.visibility = View.VISIBLE
+        canvas.removeAllViews()
+
+        // One NativeDisplayViewGroup per received unit, stacked vertically.
+        val spacingPx = (12 * resources.displayMetrics.density).toInt()
+        units.forEachIndexed { index, unit ->
+            val widget = NativeDisplayViewGroup(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).also {
+                    if (index > 0) it.topMargin = spacingPx
                 }
+                setUnit(unit, actionListener = actionListener)
             }
+            canvas.addView(widget)
         }
     }
 

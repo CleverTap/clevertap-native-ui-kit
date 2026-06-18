@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Landscape variant of fragment_xml_feed.xml.
-  Android automatically uses this file when orientation == landscape.
   View IDs are identical to the portrait layout so ViewBinding/Fragment code is unchanged.
 
   Two-column layout:
-    Left  40%  — event input (top) + event log (fills remaining height)
-    Right 60%  — native display canvas (full height)
+    Left  33%  — event input (top) + event log (fills remaining height)
+    Right 67%  — Native Display canvas (NativeDisplayViewGroup instances added programmatically)
 -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -15,7 +14,7 @@
     android:orientation="horizontal"
     android:background="#F5F5F5">
 
-    <!-- ── LEFT PANEL (40%) ── -->
+    <!-- LEFT PANEL (33%) -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -68,7 +67,6 @@
             android:paddingTop="6dp"
             android:paddingBottom="8dp">
 
-            <!-- Log header row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -94,7 +92,6 @@
 
             </LinearLayout>
 
-            <!-- Log scroll view fills remaining space — no fixed 160dp height -->
             <ScrollView
                 android:id="@+id/logScrollView"
                 android:layout_width="match_parent"
@@ -125,7 +122,7 @@
         android:layout_height="match_parent"
         android:background="#E0E0E0" />
 
-    <!-- ── RIGHT PANEL (60%) ── -->
+    <!-- RIGHT PANEL (67%) — Native Display canvas -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -152,10 +149,13 @@
                     android:textSize="14sp"
                     android:visibility="visible" />
 
-                <androidx.compose.ui.platform.ComposeView
+                <LinearLayout
                     android:id="@+id/displayCanvas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="12dp"
                     android:visibility="gone" />
 
             </LinearLayout>

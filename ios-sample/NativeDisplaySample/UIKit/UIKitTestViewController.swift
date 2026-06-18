@@ -3,18 +3,28 @@ import CleverTapNativeDisplay
 import CleverTapSDK
 
 /// Pure UIKit view controller that mirrors the Android XML Test screen.
-/// Demonstrates using NativeDisplayUIView in a traditional UIKit layout.
+/// Demonstrates the **non-slot** (Approach 2 — custom rendering) flow using
+/// the SDK's `NativeDisplayTableViewCell`. Each bridge-delivered unit is
+/// rendered in its own self-sizing table row.
 ///
 /// Portrait layout (top → bottom):
 ///   [TextField + Fire Event button]   — fixed header
-///   [Canvas label + ScrollView]       — flexible, takes remaining space
+///   [Canvas label + UITableView]      — flexible, takes remaining space
 ///   [Event Log label + Clear button]
 ///   [Log TextView]                    — fixed 160pt footer
 ///
 /// Landscape layout (left → right):
-///   Left panel 40%: [TextField + button] + [Event Log label + TextView]
-///   Right panel 60%: [Canvas ScrollView] full height
+///   Left panel 33%: [TextField + button] + [Event Log label + TextView]
+///   Right panel 67%: [Canvas UITableView] full height
 final class UIKitTestViewController: UIViewController {
+
+    // MARK: - Reuse identifier
+
+    private static let cellReuseId = "NDCell"
+
+    // MARK: - State
+
+    private var units: [NativeDisplayUnit] = []
 
     // MARK: - UI elements
 
@@ -46,19 +56,23 @@ final class UIKitTestViewController: UIViewController {
         return lbl
     }()
 
-    private let canvasScrollView: UIScrollView = {
-        let sv = UIScrollView()
-        sv.translatesAutoresizingMaskIntoConstraints = false
-        sv.alwaysBounceVertical = true
-        return sv
-    }()
-
-    private let canvasStack: UIStackView = {
-        let sv = UIStackView()
-        sv.axis = .vertical
-        sv.spacing = 12
-        sv.translatesAutoresizingMaskIntoConstraints = false
-        return sv
+    /// Canvas: a self-sizing `UITableView` driven by `units`. Each row hosts
+    /// a `NativeDisplayTableViewCell` — the SDK's utility cell that
+    /// internally wraps `NativeDisplayUIView` and handles SwiftUI hosting,
+    /// sizing, and re-measurement on content arrival.
+    private lazy var canvasTableView: UITableView = {
+        let tv = UITableView(frame: .zero, style: .plain)
+        tv.translatesAutoresizingMaskIntoConstraints = false
+        tv.separatorStyle = .none
+        tv.backgroundColor = .systemGroupedBackground
+        tv.rowHeight = UITableView.automaticDimension
+        tv.estimatedRowHeight = 200
+        tv.alwaysBounceVertical = true
+        tv.contentInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+        tv.register(NativeDisplayTableViewCell.self, forCellReuseIdentifier: Self.cellReuseId)
+        tv.dataSource = self
+        tv.delegate = self
+        return tv
     }()
 
     private let emptyCanvasLabel: UILabel = {
@@ -68,7 +82,6 @@ final class UIKitTestViewController: UIViewController {
         lbl.font = .systemFont(ofSize: 14)
         lbl.textAlignment = .center
         lbl.numberOfLines = 0
-        lbl.translatesAutoresizingMaskIntoConstraints = false
         return lbl
     }()
 
@@ -143,6 +156,7 @@ final class UIKitTestViewController: UIViewController {
         buildLayout()
         applyLayout(for: view.bounds.size)
         wireActions()
+        updateEmptyState()
         NativeDisplayBridge.shared.addListener(self)
     }
 
@@ -165,36 +179,24 @@ final class UIKitTestViewController: UIViewController {
         headerStack.spacing = 8
         headerStack.translatesAutoresizingMaskIntoConstraints = false
 
-        canvasScrollView.addSubview(canvasStack)
-        canvasScrollView.addSubview(emptyCanvasLabel)
-
         logHeaderStack.addArrangedSubview(logLabel)
         logHeaderStack.addArrangedSubview(UIView()) // flexible spacer
         logHeaderStack.addArrangedSubview(clearLogButton)
 
+        // Empty-state label is rendered behind the table view's rows; UITableView
+        // hides it automatically when sections > 0 — we just have to set
+        // backgroundView once.
+        canvasTableView.backgroundView = emptyCanvasLabel
+
         view.addSubview(headerStack)
         view.addSubview(canvasLabel)
-        view.addSubview(canvasScrollView)
+        view.addSubview(canvasTableView)
         view.addSubview(logHeaderStack)
         view.addSubview(logTextView)
         view.addSubview(panelSeparator)
         view.addSubview(leftPanelAnchor)
 
         let guide = view.safeAreaLayoutGuide
-
-        // Always-active: canvas stack pinned inside its scroll view.
-        NSLayoutConstraint.activate([
-            canvasStack.topAnchor.constraint(equalTo: canvasScrollView.topAnchor, constant: 8),
-            canvasStack.bottomAnchor.constraint(equalTo: canvasScrollView.bottomAnchor, constant: -8),
-            canvasStack.leadingAnchor.constraint(equalTo: canvasScrollView.leadingAnchor),
-            canvasStack.trailingAnchor.constraint(equalTo: canvasScrollView.trailingAnchor),
-            canvasStack.widthAnchor.constraint(equalTo: canvasScrollView.widthAnchor),
-
-            emptyCanvasLabel.centerXAnchor.constraint(equalTo: canvasScrollView.centerXAnchor),
-            emptyCanvasLabel.centerYAnchor.constraint(equalTo: canvasScrollView.centerYAnchor),
-            emptyCanvasLabel.leadingAnchor.constraint(greaterThanOrEqualTo: canvasScrollView.leadingAnchor, constant: 32),
-            emptyCanvasLabel.trailingAnchor.constraint(lessThanOrEqualTo: canvasScrollView.trailingAnchor, constant: -32),
-        ])
 
         // Portrait: stacked vertically, log TextView fixed at 160pt.
         portraitConstraints = [
@@ -206,10 +208,10 @@ final class UIKitTestViewController: UIViewController {
             canvasLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             canvasLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
 
-            canvasScrollView.topAnchor.constraint(equalTo: canvasLabel.bottomAnchor, constant: 8),
-            canvasScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            canvasScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            canvasScrollView.bottomAnchor.constraint(equalTo: logHeaderStack.topAnchor, constant: -8),
+            canvasTableView.topAnchor.constraint(equalTo: canvasLabel.bottomAnchor, constant: 8),
+            canvasTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            canvasTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            canvasTableView.bottomAnchor.constraint(equalTo: logHeaderStack.topAnchor, constant: -8),
 
             logHeaderStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             logHeaderStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -221,45 +223,37 @@ final class UIKitTestViewController: UIViewController {
             logTextView.heightAnchor.constraint(equalToConstant: 160),
         ]
 
-        // Landscape: two-column split at 33/67.
-        // leftPanelAnchor is an invisible view that takes 33% of the root width.
-        // panelSeparator.leading is then pinned to leftPanelAnchor.trailing —
-        // a valid position↔position pairing that avoids the NSInvalidArgumentException
-        // caused by pairing .leading (position) with .width (size).
+        // Landscape: two-column split at 33/67. See companion comment in the
+        // pre-refactor file for the invisible-anchor trick that avoids the
+        // .leading ↔ .width NSLayoutConstraint invalid-pairing crash.
         landscapeConstraints = [
-            // Invisible anchor occupies the left 33%
             leftPanelAnchor.topAnchor.constraint(equalTo: view.topAnchor),
             leftPanelAnchor.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             leftPanelAnchor.heightAnchor.constraint(equalToConstant: 1),
             leftPanelAnchor.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.33),
 
-            // Separator at the trailing edge of the anchor (= 33% of view width)
             panelSeparator.topAnchor.constraint(equalTo: guide.topAnchor),
             panelSeparator.bottomAnchor.constraint(equalTo: guide.bottomAnchor),
             panelSeparator.widthAnchor.constraint(equalToConstant: 0.5),
             panelSeparator.leadingAnchor.constraint(equalTo: leftPanelAnchor.trailingAnchor),
 
-            // Left panel — header at top
             headerStack.topAnchor.constraint(equalTo: guide.topAnchor, constant: 12),
             headerStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             headerStack.trailingAnchor.constraint(equalTo: panelSeparator.leadingAnchor, constant: -8),
 
-            // Left panel — log header below event header
             logHeaderStack.topAnchor.constraint(equalTo: headerStack.bottomAnchor, constant: 12),
             logHeaderStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             logHeaderStack.trailingAnchor.constraint(equalTo: panelSeparator.leadingAnchor, constant: -8),
 
-            // Left panel — log TextView fills remaining height (no fixed height constraint)
             logTextView.topAnchor.constraint(equalTo: logHeaderStack.bottomAnchor, constant: 4),
             logTextView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             logTextView.trailingAnchor.constraint(equalTo: panelSeparator.leadingAnchor, constant: -8),
             logTextView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -8),
 
-            // Right panel — canvas full height
-            canvasScrollView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 8),
-            canvasScrollView.leadingAnchor.constraint(equalTo: panelSeparator.trailingAnchor),
-            canvasScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            canvasScrollView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -8),
+            canvasTableView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 8),
+            canvasTableView.leadingAnchor.constraint(equalTo: panelSeparator.trailingAnchor),
+            canvasTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            canvasTableView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -8),
         ]
     }
 
@@ -274,11 +268,6 @@ final class UIKitTestViewController: UIViewController {
         }
         canvasLabel.isHidden = isLandscape
         panelSeparator.isHidden = !isLandscape
-        // Force the canvas scroll view and its hosted SwiftUI views to re-measure
-        // after the constraint swap. Without this the NativeDisplayUIView instances
-        // keep their pre-rotation frames until the next user-triggered layout pass.
-        canvasScrollView.setNeedsLayout()
-        canvasScrollView.layoutIfNeeded()
     }
 
     private func wireActions() {
@@ -320,7 +309,36 @@ final class UIKitTestViewController: UIViewController {
     }
 
     private func updateEmptyState() {
-        emptyCanvasLabel.isHidden = !canvasStack.arrangedSubviews.isEmpty
+        emptyCanvasLabel.isHidden = !units.isEmpty
+    }
+}
+
+// MARK: - UITableViewDataSource / Delegate
+
+extension UIKitTestViewController: UITableViewDataSource, UITableViewDelegate {
+
+    // One section per unit so we can use `heightForFooterInSection` for 12pt
+    // inter-row spacing — UITableView has no native row-spacing knob.
+    func numberOfSections(in tableView: UITableView) -> Int { units.count }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { 1 }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellReuseId, for: indexPath)
+            as! NativeDisplayTableViewCell
+        // Use `unit.config` until the next SDK release ships the new
+        // `configure(with: NativeDisplayUnit, ...)` overload. Behaviour
+        // matches the pre-refactor code path.
+        cell.configure(with: units[indexPath.section].config, actionListener: self)
+        return cell
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        .leastNormalMagnitude
+    }
+
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        section == units.count - 1 ? .leastNormalMagnitude : 12
     }
 }
 
@@ -339,21 +357,8 @@ extension UIKitTestViewController: NativeDisplayBridgeListener {
     func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-
-            self.canvasStack.arrangedSubviews.forEach {
-                self.canvasStack.removeArrangedSubview($0)
-                $0.removeFromSuperview()
-            }
-
-            for unit in units {
-                let displayView = NativeDisplayUIView(
-                    config: unit.config,
-                    actionListener: self
-                )
-                displayView.translatesAutoresizingMaskIntoConstraints = false
-                self.canvasStack.addArrangedSubview(displayView)
-            }
-
+            self.units = units
+            self.canvasTableView.reloadData()
             self.updateEmptyState()
             self.appendLog("📦 Received \(units.count) display unit(s)")
         }
