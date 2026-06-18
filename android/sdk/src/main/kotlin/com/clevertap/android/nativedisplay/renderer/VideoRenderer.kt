@@ -510,8 +510,14 @@ open class Media3PlayerListener : Player.Listener {
     override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {}
     override fun onPlaylistMetadataChanged(mediaMetadata: MediaMetadata) {}
     override fun onIsLoadingChanged(isLoading: Boolean) {}
+    @Deprecated("Deprecated in Java") override fun onLoadingChanged(isLoading: Boolean) {}
+
     override fun onAvailableCommandsChanged(availableCommands: Player.Commands) {}
     override fun onTrackSelectionParametersChanged(parameters: TrackSelectionParameters) {}
+    @Deprecated("Deprecated in Java") override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {}
+
+    override fun onPlaybackStateChanged(playbackState: Int) {}
+
     override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {}
     override fun onPlaybackSuppressionReasonChanged(playbackSuppressionReason: Int) {}
     override fun onIsPlayingChanged(isPlaying: Boolean) {}
@@ -519,6 +525,8 @@ open class Media3PlayerListener : Player.Listener {
     override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {}
     override fun onPlayerError(error: PlaybackException) {}
     override fun onPlayerErrorChanged(error: PlaybackException?) {}
+    @Deprecated("Deprecated in Java") override fun onPositionDiscontinuity(reason: Int) {}
+
     override fun onPositionDiscontinuity(
         oldPosition: Player.PositionInfo,
         newPosition: Player.PositionInfo,
