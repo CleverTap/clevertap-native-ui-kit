@@ -3,6 +3,7 @@
 package com.clevertap.android.nativedisplay.renderer
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -17,12 +18,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.VerticalPager
-import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -34,6 +34,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -117,6 +120,18 @@ internal fun RenderGallery(
  * - Full-size items with snap behavior
  * - Peek shows partial adjacent items via contentPadding
  * - Supports auto-scroll, indicators, arrows
+ *
+ * Implementation note: this used to be built on `HorizontalPager` / `VerticalPager`
+ * + `rememberPagerState`. Those APIs had an ABI break between compose-foundation
+ * 1.6 and 1.7 (`beyondBoundsPageCount` → `beyondViewportPageCount`) — different
+ * Kotlin mangled symbols, so the SDK's compiled bytecode crashed with
+ * `NoSuchMethodError` against any client running a different Compose minor
+ * version. To keep the SDK Compose-version-agnostic we rebuild the snapping
+ * behavior on top of `LazyRow` / `LazyColumn` + `rememberSnapFlingBehavior`,
+ * all of which have been signature-stable across compose-foundation 1.5+.
+ *
+ * Close-enough parity with Pager: snap timing/inertia differ slightly because
+ * the fling behavior is the foundation snap fling, not Pager's custom decay.
  */
 @Composable
 internal fun RenderSnappingGallery(
@@ -131,100 +146,118 @@ internal fun RenderSnappingGallery(
 ) {
     if (container.children.isEmpty()) return
 
-    val pagerState = rememberPagerState(
-        initialPage = config.initialPage.coerceIn(0, maxOf(0, container.children.size - 1)),
-        pageCount = { container.children.size }
-    )
+    val pageCount = container.children.size
+    val initialPage = config.initialPage.coerceIn(0, maxOf(0, pageCount - 1))
+    val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = initialPage)
+    val flingBehavior = rememberSnapFlingBehavior(lazyListState = lazyListState)
     val scope = rememberCoroutineScope()
 
+    // "Current page" is the item whose extent covers the viewport center. With
+    // peek enabled, the first visible index lags behind by one — using the
+    // viewport-center calculation keeps indicator/arrow state correct for both
+    // peek and non-peek configurations.
+    val currentPage by remember(lazyListState) {
+        derivedStateOf { lazyListState.currentPageByViewportCenter() }
+    }
+
     Box(modifier = modifier) {
-        // Calculate peek padding from dp-based PeekConfig
         val peekBefore = config.peek.before.dp
         val peekAfter = config.peek.after.dp
-        val hasPeek = container.children.size > 1 && (peekBefore > 0.dp || peekAfter > 0.dp)
+        val hasPeek = pageCount > 1 && (peekBefore > 0.dp || peekAfter > 0.dp)
 
         // Auto-scroll
-        if (config.autoScrollInterval > 0 && container.children.size > 1) {
-            LaunchedEffect(pagerState.currentPage) {
+        if (config.autoScrollInterval > 0 && pageCount > 1) {
+            LaunchedEffect(currentPage) {
                 delay(config.autoScrollInterval)
                 val nextPage = if (config.infiniteScroll) {
-                    (pagerState.currentPage + 1) % container.children.size
+                    (currentPage + 1) % pageCount
                 } else {
-                    (pagerState.currentPage + 1).coerceAtMost(container.children.size - 1)
+                    (currentPage + 1).coerceAtMost(pageCount - 1)
                 }
-                if (nextPage != pagerState.currentPage) {
-                    pagerState.animateScrollToPage(nextPage)
+                if (nextPage != currentPage) {
+                    lazyListState.animateScrollToItem(nextPage)
                 }
             }
         }
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            // Pager
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            // Each "page" is sized to the container's full extent minus the
+            // peek padding — exactly what `HorizontalPager` did automatically.
+            val pageWidth = (maxWidth - peekBefore - peekAfter).coerceAtLeast(0.dp)
+            val pageHeight = (maxHeight - peekBefore - peekAfter).coerceAtLeast(0.dp)
+
             if (config.orientation == Orientation.HORIZONTAL) {
-                HorizontalPager(
-                    state = pagerState,
+                LazyRow(
+                    state = lazyListState,
                     modifier = Modifier.fillMaxWidth(),
                     contentPadding = if (hasPeek) PaddingValues(start = peekBefore, end = peekAfter)
                                      else PaddingValues(0.dp),
-                    pageSpacing = config.spacing.dp,
-                ) { page ->
-                    container.children.getOrNull(page)?.let { child ->
-                        RenderNode(
-                            node = child,
-                            resolvedStyles = resolvedStyles,
-                            evaluator = evaluator,
-                            modifier = Modifier.fillMaxWidth(),
-                            actionHandler = actionHandler,
-                            componentListener = componentListener,
-                            rootHeightPx = rootHeightPx,
-                        )
+                    horizontalArrangement = Arrangement.spacedBy(config.spacing.dp),
+                    flingBehavior = flingBehavior,
+                ) {
+                    itemsIndexed(container.children, key = { _, child -> child.id }) { _, child ->
+                        Box(modifier = Modifier.width(pageWidth)) {
+                            RenderNode(
+                                node = child,
+                                resolvedStyles = resolvedStyles,
+                                evaluator = evaluator,
+                                modifier = Modifier.fillMaxWidth(),
+                                actionHandler = actionHandler,
+                                componentListener = componentListener,
+                                rootHeightPx = rootHeightPx,
+                            )
+                        }
                     }
                 }
             } else {
-                VerticalPager(
-                    state = pagerState,
+                LazyColumn(
+                    state = lazyListState,
                     modifier = Modifier.fillMaxHeight(),
                     contentPadding = if (hasPeek) PaddingValues(top = peekBefore, bottom = peekAfter)
                                      else PaddingValues(0.dp),
-                    pageSpacing = config.spacing.dp,
-                ) { page ->
-                    container.children.getOrNull(page)?.let { child ->
-                        RenderNode(
-                            node = child,
-                            resolvedStyles = resolvedStyles,
-                            evaluator = evaluator,
-                            modifier = Modifier.fillMaxHeight(),
-                            actionHandler = actionHandler,
-                            componentListener = componentListener,
-                            rootHeightPx = rootHeightPx,
-                        )
+                    verticalArrangement = Arrangement.spacedBy(config.spacing.dp),
+                    flingBehavior = flingBehavior,
+                ) {
+                    itemsIndexed(container.children, key = { _, child -> child.id }) { _, child ->
+                        Box(modifier = Modifier.height(pageHeight)) {
+                            RenderNode(
+                                node = child,
+                                resolvedStyles = resolvedStyles,
+                                evaluator = evaluator,
+                                modifier = Modifier.fillMaxHeight(),
+                                actionHandler = actionHandler,
+                                componentListener = componentListener,
+                                rootHeightPx = rootHeightPx,
+                            )
+                        }
                     }
                 }
             }
 
             // Navigation arrows
-            if (config.showArrows && container.children.size > 1) {
+            if (config.showArrows && pageCount > 1) {
                 RenderGalleryArrows(
-                    pagerState = pagerState,
+                    currentPage = currentPage,
+                    pageCount = pageCount,
                     config = config,
                     onPrevious = {
                         scope.launch {
-                            val prevPage = if (config.infiniteScroll && pagerState.currentPage == 0) {
-                                container.children.size - 1
+                            val prevPage = if (config.infiniteScroll && currentPage == 0) {
+                                pageCount - 1
                             } else {
-                                (pagerState.currentPage - 1).coerceAtLeast(0)
+                                (currentPage - 1).coerceAtLeast(0)
                             }
-                            pagerState.animateScrollToPage(prevPage)
+                            lazyListState.animateScrollToItem(prevPage)
                         }
                     },
                     onNext = {
                         scope.launch {
-                            val nextPage = if (config.infiniteScroll && pagerState.currentPage == container.children.size - 1) {
+                            val nextPage = if (config.infiniteScroll && currentPage == pageCount - 1) {
                                 0
                             } else {
-                                (pagerState.currentPage + 1).coerceAtMost(container.children.size - 1)
+                                (currentPage + 1).coerceAtMost(pageCount - 1)
                             }
-                            pagerState.animateScrollToPage(nextPage)
+                            lazyListState.animateScrollToItem(nextPage)
                         }
                     },
                     modifier = Modifier.align(Alignment.Center)
@@ -232,11 +265,11 @@ internal fun RenderSnappingGallery(
             }
 
             // Page indicators
-            if (config.showIndicators && container.children.size > 1) {
+            if (config.showIndicators && pageCount > 1) {
                 RenderGalleryIndicators(
-                    pagerState = pagerState,
+                    currentPage = currentPage,
+                    pageCount = pageCount,
                     config = config,
-                    pageCount = container.children.size,
                     modifier = Modifier.align(
                         when (config.indicatorStyle?.position) {
                             IndicatorPosition.TOP -> Alignment.TopCenter
@@ -249,6 +282,24 @@ internal fun RenderSnappingGallery(
             }
         }
     }
+}
+
+/**
+ * The item whose extent covers the viewport center. Replaces
+ * `PagerState.currentPage`, which Pager exposed but LazyListState doesn't.
+ *
+ * Falls back to `firstVisibleItemIndex` if the viewport is empty (e.g. while
+ * the list is still measuring). Works for both horizontal and vertical
+ * orientations because `LazyListItemInfo.offset` is in the scroll direction.
+ */
+private fun LazyListState.currentPageByViewportCenter(): Int {
+    val info = layoutInfo
+    val visible = info.visibleItemsInfo
+    if (visible.isEmpty()) return firstVisibleItemIndex
+    val viewportCenter = (info.viewportStartOffset + info.viewportEndOffset) / 2
+    return visible.firstOrNull { item ->
+        item.offset <= viewportCenter && item.offset + item.size > viewportCenter
+    }?.index ?: firstVisibleItemIndex
 }
 
 /**
@@ -405,10 +456,16 @@ internal fun RenderFreeFlowGridGallery(
 
 /**
  * Render gallery navigation arrows.
+ *
+ * Takes `currentPage` + `pageCount` as plain Ints instead of a `PagerState` so
+ * the snapping gallery can drive arrows from a `LazyListState`-derived index —
+ * keeps this surface independent of which scroll-state primitive the parent
+ * is using.
  */
 @Composable
 internal fun RenderGalleryArrows(
-    pagerState: PagerState,
+    currentPage: Int,
+    pageCount: Int,
     config: GalleryConfig,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
@@ -441,7 +498,7 @@ internal fun RenderGalleryArrows(
             IconButton(
                 onClick = onPrevious,
                 modifier = arrowModifier,
-                enabled = config.infiniteScroll || pagerState.currentPage > 0
+                enabled = config.infiniteScroll || currentPage > 0
             ) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowLeft,
@@ -455,7 +512,7 @@ internal fun RenderGalleryArrows(
             IconButton(
                 onClick = onNext,
                 modifier = arrowModifier,
-                enabled = config.infiniteScroll || pagerState.currentPage < pagerState.pageCount - 1
+                enabled = config.infiniteScroll || currentPage < pageCount - 1
             ) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowRight,
@@ -476,7 +533,7 @@ internal fun RenderGalleryArrows(
             IconButton(
                 onClick = onPrevious,
                 modifier = arrowModifier,
-                enabled = config.infiniteScroll || pagerState.currentPage > 0
+                enabled = config.infiniteScroll || currentPage > 0
             ) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowUp,
@@ -490,7 +547,7 @@ internal fun RenderGalleryArrows(
             IconButton(
                 onClick = onNext,
                 modifier = arrowModifier,
-                enabled = config.infiniteScroll || pagerState.currentPage < pagerState.pageCount - 1
+                enabled = config.infiniteScroll || currentPage < pageCount - 1
             ) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
@@ -505,12 +562,15 @@ internal fun RenderGalleryArrows(
 
 /**
  * Render gallery page indicators.
+ *
+ * Takes `currentPage` + `pageCount` as plain Ints — see companion comment on
+ * `RenderGalleryArrows` for why.
  */
 @Composable
 internal fun RenderGalleryIndicators(
-    pagerState: PagerState,
-    config: GalleryConfig,
+    currentPage: Int,
     pageCount: Int,
+    config: GalleryConfig,
     modifier: Modifier = Modifier
 ) {
     val indicatorStyle = config.indicatorStyle ?: IndicatorStyle()
@@ -529,7 +589,7 @@ internal fun RenderGalleryIndicators(
                     modifier = Modifier
                         .size(indicatorStyle.size.dp)
                         .background(
-                            color = if (pagerState.currentPage == index) activeColor else inactiveColor,
+                            color = if (currentPage == index) activeColor else inactiveColor,
                             shape = if (indicatorStyle.shape == IndicatorShape.CIRCLE) CircleShape else RoundedCornerShape(
                                 2.dp
                             )
@@ -547,7 +607,7 @@ internal fun RenderGalleryIndicators(
                     modifier = Modifier
                         .size(indicatorStyle.size.dp)
                         .background(
-                            color = if (pagerState.currentPage == index) activeColor else inactiveColor,
+                            color = if (currentPage == index) activeColor else inactiveColor,
                             shape = if (indicatorStyle.shape == IndicatorShape.CIRCLE) CircleShape else RoundedCornerShape(
                                 2.dp
                             )

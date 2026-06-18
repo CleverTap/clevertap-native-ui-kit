@@ -2,7 +2,7 @@
 agp = "8.9.1"
 kotlin = "1.9.25"
 composeCompilerExtension = "1.5.15"
-composeBom = "2024.12.01"
+composeBom = "2024.06.00"
 kotlinxSerialization = "1.6.3"
 coroutines = "1.9.0"
 lifecycle = "2.8.7"
