@@ -2,8 +2,8 @@
 
 package com.clevertap.android.nativedisplay.renderer
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -38,6 +38,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,6 +57,7 @@ import com.clevertap.android.nativedisplay.models.Orientation
 import com.clevertap.android.nativedisplay.models.Style
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 /**
@@ -133,6 +135,7 @@ internal fun RenderGallery(
  * Close-enough parity with Pager: snap timing/inertia differ slightly because
  * the fling behavior is the foundation snap fling, not Pager's custom decay.
  */
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 internal fun RenderSnappingGallery(
     container: NativeDisplayContainer,
@@ -149,7 +152,6 @@ internal fun RenderSnappingGallery(
     val pageCount = container.children.size
     val initialPage = config.initialPage.coerceIn(0, maxOf(0, pageCount - 1))
     val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = initialPage)
-    val flingBehavior = rememberSnapFlingBehavior(lazyListState = lazyListState)
     val scope = rememberCoroutineScope()
 
     // "Current page" is the item whose extent covers the viewport center. With
@@ -158,6 +160,31 @@ internal fun RenderSnappingGallery(
     // peek and non-peek configurations.
     val currentPage by remember(lazyListState) {
         derivedStateOf { lazyListState.currentPageByViewportCenter() }
+    }
+
+    // Manual snap-to-nearest-item after fling settles. We DON'T use
+    // `rememberSnapFlingBehavior` because its return type was widened from
+    // `FlingBehavior` to `TargetedFlingBehavior` between compose-foundation
+    // 1.6 → 1.7 — JVM treats return type as part of the method signature, so
+    // a call compiled against 1.6 doesn't resolve at runtime against 1.7.
+    //
+    // Instead: observe `isScrollInProgress` via `snapshotFlow`, and when the
+    // list settles (scroll stops, fling decay complete) animate to the
+    // nearest item. `snapshotFlow` + `isScrollInProgress` + `animateScrollToItem`
+    // have all been signature-stable since Compose 1.0. The cost is a small
+    // post-fling correction jump instead of a smoothly-snapped fling, which
+    // is acceptable for a gallery slideshow.
+    LaunchedEffect(lazyListState) {
+        snapshotFlow { lazyListState.isScrollInProgress }
+            .filter { scrolling -> !scrolling }
+            .collect {
+                val target = lazyListState.currentPageByViewportCenter()
+                val atTarget = lazyListState.firstVisibleItemIndex == target &&
+                               lazyListState.firstVisibleItemScrollOffset == 0
+                if (!atTarget) {
+                    lazyListState.animateScrollToItem(target)
+                }
+            }
     }
 
     Box(modifier = modifier) {
@@ -193,7 +220,6 @@ internal fun RenderSnappingGallery(
                     contentPadding = if (hasPeek) PaddingValues(start = peekBefore, end = peekAfter)
                                      else PaddingValues(0.dp),
                     horizontalArrangement = Arrangement.spacedBy(config.spacing.dp),
-                    flingBehavior = flingBehavior,
                 ) {
                     itemsIndexed(container.children, key = { _, child -> child.id }) { _, child ->
                         Box(modifier = Modifier.width(pageWidth)) {
@@ -216,7 +242,6 @@ internal fun RenderSnappingGallery(
                     contentPadding = if (hasPeek) PaddingValues(top = peekBefore, bottom = peekAfter)
                                      else PaddingValues(0.dp),
                     verticalArrangement = Arrangement.spacedBy(config.spacing.dp),
-                    flingBehavior = flingBehavior,
                 ) {
                     itemsIndexed(container.children, key = { _, child -> child.id }) { _, child ->
                         Box(modifier = Modifier.height(pageHeight)) {
