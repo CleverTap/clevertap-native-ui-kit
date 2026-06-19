@@ -64,6 +64,14 @@ public protocol NativeDisplaySlotObserver: AnyObject {
     /// Latest unit per slotId for immediate delivery to late registrants.
     private var unitIndex: [String: NativeDisplayUnit] = [:]
 
+    /// Last-measured rendered height per slotId. Populated by
+    /// `NativeDisplaySlotTableViewCell` after each successful self-sizing
+    /// pass; consumed by the same cell on subsequent reuse to install a
+    /// placeholder height constraint, so a recycled cell starts at the
+    /// correct size instead of `estimatedRowHeight` and grows visibly on
+    /// the next runloop tick. Main-thread-only — no lock needed.
+    private var measuredHeights: [String: CGFloat] = [:]
+
     /// Thread-safety lock for all mutable state.
     private let lock = NSLock()
 
@@ -225,6 +233,22 @@ public protocol NativeDisplaySlotObserver: AnyObject {
 
         NDLogger.d(Self.self, "Synced \(activeSlots.count) active slot IDs to server")
         return true
+    }
+
+    // MARK: - Measured Height Cache
+
+    /// Look up the last-measured height for a slot, if any. Used by the
+    /// table-view cell to pre-size on reuse and avoid a visible jump.
+    /// Main-thread only.
+    func measuredHeight(forSlotId slotId: String) -> CGFloat? {
+        measuredHeights[slotId]
+    }
+
+    /// Record the measured height for a slot. Called by the table-view cell
+    /// after the self-sizing pass settles. Main-thread only.
+    func setMeasuredHeight(_ height: CGFloat, forSlotId slotId: String) {
+        guard height > 0 else { return }
+        measuredHeights[slotId] = height
     }
 
     // MARK: - Clear

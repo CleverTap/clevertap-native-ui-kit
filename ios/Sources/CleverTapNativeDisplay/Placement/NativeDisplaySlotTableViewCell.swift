@@ -39,6 +39,13 @@ public final class NativeDisplaySlotTableViewCell: UITableViewCell, NativeDispla
     /// `sizingOptions = .intrinsicContentSize` (iOS 16+).
     private var displayView: NativeDisplayUIView?
 
+    /// Temporary height constraint installed when the manager has a cached
+    /// measurement for the current slot. Pins the cell to the last-known
+    /// height before any unit arrives, eliminating the visible jump from
+    /// `estimatedRowHeight` to the real size on cell reuse. Deactivated as
+    /// soon as the displayView's own intrinsic size has settled.
+    private var placeholderHeightConstraint: NSLayoutConstraint?
+
     // MARK: - Initialization
 
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -92,7 +99,32 @@ public final class NativeDisplaySlotTableViewCell: UITableViewCell, NativeDispla
         cleanupContent()
 
         currentSlotId = slotId
+
+        // If we've previously measured this slot, pin the cell to that
+        // height before content arrives so a recycled cell starts at the
+        // right size instead of `estimatedRowHeight`. The constraint is
+        // torn down once the displayView's own intrinsic size has settled.
+        installPlaceholderHeightIfCached(for: slotId)
+
         NativeDisplaySlotManager.shared.registerSlot(slotId, observer: self)
+    }
+
+    private func installPlaceholderHeightIfCached(for slotId: String) {
+        removePlaceholderHeight()
+        guard let cached = NativeDisplaySlotManager.shared.measuredHeight(forSlotId: slotId), cached > 0 else { return }
+        let c = contentView.heightAnchor.constraint(equalToConstant: cached)
+        // Just below `.required` so AutoLayout never has to break the
+        // table-view's own `UIView-Encapsulated-Layout-Height`, but well
+        // above the displayView's intrinsic-content priority (750) — wins
+        // until we explicitly deactivate it.
+        c.priority = UILayoutPriority(999)
+        c.isActive = true
+        placeholderHeightConstraint = c
+    }
+
+    private func removePlaceholderHeight() {
+        placeholderHeightConstraint?.isActive = false
+        placeholderHeightConstraint = nil
     }
 
     // MARK: - NativeDisplaySlotObserver
@@ -196,6 +228,20 @@ public final class NativeDisplaySlotTableViewCell: UITableViewCell, NativeDispla
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.invalidateIntrinsicContentSize()
+
+            // Record the measured height so the next time this slot is
+            // displayed in a recycled cell, we can pre-size via the
+            // placeholder constraint and skip the visible jump.
+            if let slotId = self.currentSlotId,
+               let measured = self.displayView?.intrinsicContentSize.height,
+               measured > 0 {
+                NativeDisplaySlotManager.shared.setMeasuredHeight(measured, forSlotId: slotId)
+            }
+            // The displayView now owns the height via its intrinsic size —
+            // the placeholder has served its purpose and would only fight
+            // future size changes if left active.
+            self.removePlaceholderHeight()
+
             var view: UIView? = self.superview
             while view != nil {
                 if let tableView = view as? UITableView {
@@ -218,6 +264,7 @@ public final class NativeDisplaySlotTableViewCell: UITableViewCell, NativeDispla
             NativeDisplaySlotManager.shared.unregisterSlot(slotId, observer: self)
             currentSlotId = nil
         }
+        removePlaceholderHeight()
         cleanupContent()
     }
 
