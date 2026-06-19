@@ -17,6 +17,16 @@ internal object CleverTapAutoWire {
 
     private const val TAG = "CleverTapAutoWire"
 
+    /** Library name reported to the Core SDK via [CleverTapAPI.setLibrary]. */
+    private const val CUSTOM_SDK_NAME = "NativeDisplay"
+
+    /**
+     * Version code reported to the Core SDK via [CleverTapAPI.setCustomSdkVersion].
+     * Bump on each release. Format: major*10000 + minor*100 + patch
+     * (e.g. v1.00.00 -> 10000, v4.02.00 -> 40200).
+     */
+    private const val CUSTOM_SDK_VERSION = 10000
+
     /**
      * Strong reference to the listener we register with the Core SDK.
      *
@@ -93,6 +103,9 @@ internal object CleverTapAutoWire {
     ): Boolean {
         bridge.cleverTapApi = ctApi
 
+        // Identify this wrapper SDK to the Core SDK. Best-effort: never blocks wiring.
+        reportSdkVersion(ctApi)
+
         // Prefer cache-attachment (Core SDK v7.x+).
         // updateDisplayUnits on the proxy extracts JSON from CleverTapDisplayUnit objects
         // via getJsonObject() reflection — no separate DisplayUnitListener needed.
@@ -137,6 +150,21 @@ internal object CleverTapAutoWire {
         NDLogger.d(TAG, "Wired to CleverTap via DisplayUnitListener fallback${if (clientListener != null) " (client listener forwarded)" else ""}")
         syncLogLevelFromCoreSdk(ctApi)
         return true
+    }
+
+    /**
+     * Reports the Native Display SDK version to the Core SDK so it can be attributed
+     * as a custom/wrapper SDK. Best-effort — wrapped in try/catch so a missing API or
+     * any failure never breaks the actual display-unit wiring.
+     */
+    private fun reportSdkVersion(ctApi: CleverTapAPI) {
+        try {
+            ctApi.setLibrary(CUSTOM_SDK_NAME)
+            ctApi.setCustomSdkVersion(CUSTOM_SDK_NAME, CUSTOM_SDK_VERSION)
+            NDLogger.d(TAG, "Reported custom SDK version: $CUSTOM_SDK_NAME $CUSTOM_SDK_VERSION")
+        } catch (t: Throwable) {
+            NDLogger.d(TAG, "setCustomSdkVersion unavailable on this Core SDK: ${t.message}")
+        }
     }
 
     /**

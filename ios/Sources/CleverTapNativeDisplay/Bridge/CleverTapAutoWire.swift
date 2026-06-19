@@ -15,6 +15,14 @@ import ObjectiveC
 /// as a display unit delegate. If the Core SDK is not present, this is a silent no-op.
 internal class CleverTapAutoWire: NSObject {
 
+    /// Library name reported to the Core SDK via `setLibrary:`.
+    private static let customSdkName = "NativeDisplay"
+
+    /// Version code reported to the Core SDK via `setCustomSdkVersion:version:`.
+    /// Bump on each release. Format: major*10000 + minor*100 + patch
+    /// (e.g. v1.00.00 -> 10000, v4.02.00 -> 40200).
+    private static let customSdkVersion: Int32 = 10000
+
     /// The bridge instance to forward display units to.
     private weak var bridge: NativeDisplayBridge?
 
@@ -78,6 +86,9 @@ internal class CleverTapAutoWire: NSObject {
 
         // 3. Sync Core SDK log level when the client has not set one explicitly.
         syncLogLevelFromCoreSdk(sharedInstance)
+
+        // Identify this wrapper SDK to the Core SDK. Best-effort: never blocks wiring.
+        reportSdkVersion(to: sharedInstance)
 
         // 4. Prefer the cache-attachment API (Core SDK v7.x+). When attached, server-driven
         // updates flow via cache.updateDisplayUnits(_:) → bridge.processDisplayUnits, so a
@@ -159,6 +170,9 @@ internal class CleverTapAutoWire: NSObject {
 
         bridge.cleverTapInstance = cleverTap
 
+        // Identify this wrapper SDK to the Core SDK. Best-effort: never blocks binding.
+        reportSdkVersion(to: cleverTap)
+
         // Prefer cache-attachment path (Core SDK v7.x+).
         if attachCache(to: cleverTap, bridge: bridge) {
             // Keep client's existing display-unit delegate intact when the cache
@@ -221,6 +235,37 @@ internal class CleverTapAutoWire: NSObject {
         // to NativeDisplayBridge.setLogLevel will still override, and re-initialization
         // will re-sync from Core SDK if the client never set a level explicitly.
         NDLogger.syncFromCoreSdk(level)
+    }
+
+    /// Report the Native Display SDK version to the Core SDK so it can be attributed
+    /// as a custom/wrapper SDK.
+    ///
+    /// Targets the instance selector `setCustomSdkVersion:version:` (NSString, int32),
+    /// mirroring Android's `CleverTapAPI.setCustomSdkVersion(String, int)`. Resolved via
+    /// the Obj-C runtime (no compile-time dependency) using the same IMP-cast pattern as
+    /// `syncLogLevelFromCoreSdk`. Best-effort — guarded by `responds(to:)` so a missing
+    /// API on older Core SDK versions is a silent no-op and never breaks wiring.
+    private static func reportSdkVersion(to ctInstance: NSObject) {
+        // Set the wrapper library name (`-[CleverTap setLibrary:]`).
+        let setLibrarySelector = NSSelectorFromString("setLibrary:")
+        if ctInstance.responds(to: setLibrarySelector) {
+            ctInstance.perform(setLibrarySelector, with: customSdkName)
+        }
+
+        // Set the custom SDK version (`-[CleverTap setCustomSdkVersion:version:]`).
+        // perform(_:with:) can't pass the `int` argument, so resolve the IMP and call it
+        // directly with the (NSString, Int32) signature — same pattern as syncLogLevelFromCoreSdk.
+        let selector = NSSelectorFromString("setCustomSdkVersion:version:")
+        guard ctInstance.responds(to: selector) else {
+            NDLogger.d(Self.self, "setCustomSdkVersion:version: unavailable on this Core SDK")
+            return
+        }
+        guard let method = class_getInstanceMethod(type(of: ctInstance), selector) else { return }
+        typealias SetCustomSdkVersionIMP = @convention(c) (NSObject, Selector, NSString, Int32) -> Void
+        let imp = method_getImplementation(method)
+        let fn = unsafeBitCast(imp, to: SetCustomSdkVersionIMP.self)
+        fn(ctInstance, selector, customSdkName as NSString, customSdkVersion)
+        NDLogger.d(Self.self, "Reported custom SDK version: \(customSdkName) \(customSdkVersion)")
     }
 
     /// Tear down auto-wire (called from bridge.clear()).
