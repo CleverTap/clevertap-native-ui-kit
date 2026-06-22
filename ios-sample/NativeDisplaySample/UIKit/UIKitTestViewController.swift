@@ -3,18 +3,28 @@ import CleverTapNativeDisplay
 import CleverTapSDK
 
 /// Pure UIKit view controller that mirrors the Android XML Test screen.
-/// Demonstrates using NativeDisplayUIView in a traditional UIKit layout.
+/// Demonstrates the **non-slot** (Approach 2 — custom rendering) flow using
+/// the SDK's `NativeDisplayTableViewCell`. Each bridge-delivered unit is
+/// rendered in its own self-sizing table row.
 ///
 /// Portrait layout (top → bottom):
 ///   [TextField + Fire Event button]   — fixed header
-///   [Canvas label + ScrollView]       — flexible, takes remaining space
+///   [Canvas label + UITableView]      — flexible, takes remaining space
 ///   [Event Log label + Clear button]
 ///   [Log TextView]                    — fixed 160pt footer
 ///
 /// Landscape layout (left → right):
-///   Left panel 40%: [TextField + button] + [Event Log label + TextView]
-///   Right panel 60%: [Canvas ScrollView] full height
+///   Left panel 33%: [TextField + button] + [Event Log label + TextView]
+///   Right panel 67%: [Canvas UITableView] full height
 final class UIKitTestViewController: UIViewController {
+
+    // MARK: - Reuse identifier
+
+    private static let cellReuseId = "NDCell"
+
+    // MARK: - State
+
+    private var units: [NativeDisplayUnit] = []
 
     // MARK: - UI elements
 
@@ -24,6 +34,9 @@ final class UIKitTestViewController: UIViewController {
         tf.borderStyle = .roundedRect
         tf.returnKeyType = .send
         tf.translatesAutoresizingMaskIntoConstraints = false
+        // Matches the SwiftUI Events screen so XCUITest helpers can drive
+        // both screens through the same identifier.
+        tf.accessibilityIdentifier = "ct-event-input"
         return tf
     }()
 
@@ -34,6 +47,8 @@ final class UIKitTestViewController: UIViewController {
         let btn = UIButton(configuration: config)
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.isEnabled = false
+        // Matches the SwiftUI Events screen send button id.
+        btn.accessibilityIdentifier = "ct-send-event-btn"
         return btn
     }()
 
@@ -46,19 +61,26 @@ final class UIKitTestViewController: UIViewController {
         return lbl
     }()
 
-    private let canvasScrollView: UIScrollView = {
-        let sv = UIScrollView()
-        sv.translatesAutoresizingMaskIntoConstraints = false
-        sv.alwaysBounceVertical = true
-        return sv
-    }()
-
-    private let canvasStack: UIStackView = {
-        let sv = UIStackView()
-        sv.axis = .vertical
-        sv.spacing = 12
-        sv.translatesAutoresizingMaskIntoConstraints = false
-        return sv
+    /// Canvas: a self-sizing `UITableView` driven by `units`. Each row hosts
+    /// a `NativeDisplayTableViewCell` — the SDK's utility cell that
+    /// internally wraps `NativeDisplayUIView` and handles SwiftUI hosting,
+    /// sizing, and re-measurement on content arrival.
+    private lazy var canvasTableView: UITableView = {
+        let tv = UITableView(frame: .zero, style: .plain)
+        tv.translatesAutoresizingMaskIntoConstraints = false
+        tv.separatorStyle = .none
+        tv.backgroundColor = .systemGroupedBackground
+        tv.rowHeight = UITableView.automaticDimension
+        tv.estimatedRowHeight = 200
+        tv.alwaysBounceVertical = true
+        // Horizontal margins live on the table view's leading/trailing
+        // constraints so they align with the canvasLabel above (16pt). Only
+        // the vertical content insets are applied here.
+        tv.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+        tv.register(NativeDisplayTableViewCell.self, forCellReuseIdentifier: Self.cellReuseId)
+        tv.dataSource = self
+        tv.delegate = self
+        return tv
     }()
 
     private let emptyCanvasLabel: UILabel = {
@@ -68,7 +90,6 @@ final class UIKitTestViewController: UIViewController {
         lbl.font = .systemFont(ofSize: 14)
         lbl.textAlignment = .center
         lbl.numberOfLines = 0
-        lbl.translatesAutoresizingMaskIntoConstraints = false
         return lbl
     }()
 
@@ -97,6 +118,18 @@ final class UIKitTestViewController: UIViewController {
         return btn
     }()
 
+    /// Eye-icon toggle that hides/shows the log text view so screenshots
+    /// can be captured without the log obscuring the canvas.
+    private let logToggleButton: UIButton = {
+        var config = UIButton.Configuration.plain()
+        config.image = UIImage(systemName: "eye.slash")
+        config.baseForegroundColor = .systemBlue
+        let btn = UIButton(configuration: config)
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.accessibilityIdentifier = "event-log-toggle"
+        return btn
+    }()
+
     private let logTextView: UITextView = {
         let tv = UITextView()
         tv.isEditable = false
@@ -106,7 +139,29 @@ final class UIKitTestViewController: UIViewController {
         tv.layer.cornerRadius = 8
         tv.translatesAutoresizingMaskIntoConstraints = false
         tv.text = ""
+        tv.accessibilityIdentifier = "event-log-content"
         return tv
+    }()
+
+    /// True when the log is showing. Default visible so humans see the
+    /// log as before; tests flip it off via the toggle button.
+    private var eventLogVisible = true
+
+    /// Portrait-only height = 160 constraint, captured so we can deactivate
+    /// it when collapsing (which lets the height=0 collapse constraint win).
+    private var portraitLogHeightConstraint: NSLayoutConstraint!
+
+    /// Landscape-only bottom pin to the safe-area guide, captured so we can
+    /// deactivate it when collapsing (landscape has no explicit height, so
+    /// the bottom pin is what stretches the log to fill the panel).
+    private var landscapeLogBottomConstraint: NSLayoutConstraint!
+
+    /// Height = 0 constraint applied when the log is collapsed. Stays
+    /// deactivated by default so the log renders at its normal size.
+    private lazy var collapsedLogHeightConstraint: NSLayoutConstraint = {
+        let c = logTextView.heightAnchor.constraint(equalToConstant: 0)
+        c.priority = .required
+        return c
     }()
 
     /// Hairline vertical separator shown only in landscape to divide left/right panels.
@@ -143,6 +198,7 @@ final class UIKitTestViewController: UIViewController {
         buildLayout()
         applyLayout(for: view.bounds.size)
         wireActions()
+        updateEmptyState()
         NativeDisplayBridge.shared.addListener(self)
     }
 
@@ -165,16 +221,19 @@ final class UIKitTestViewController: UIViewController {
         headerStack.spacing = 8
         headerStack.translatesAutoresizingMaskIntoConstraints = false
 
-        canvasScrollView.addSubview(canvasStack)
-        canvasScrollView.addSubview(emptyCanvasLabel)
-
         logHeaderStack.addArrangedSubview(logLabel)
         logHeaderStack.addArrangedSubview(UIView()) // flexible spacer
         logHeaderStack.addArrangedSubview(clearLogButton)
+        logHeaderStack.addArrangedSubview(logToggleButton)
+
+        // Empty-state label is rendered behind the table view's rows; UITableView
+        // hides it automatically when sections > 0 — we just have to set
+        // backgroundView once.
+        canvasTableView.backgroundView = emptyCanvasLabel
 
         view.addSubview(headerStack)
         view.addSubview(canvasLabel)
-        view.addSubview(canvasScrollView)
+        view.addSubview(canvasTableView)
         view.addSubview(logHeaderStack)
         view.addSubview(logTextView)
         view.addSubview(panelSeparator)
@@ -182,84 +241,72 @@ final class UIKitTestViewController: UIViewController {
 
         let guide = view.safeAreaLayoutGuide
 
-        // Always-active: canvas stack pinned inside its scroll view.
-        NSLayoutConstraint.activate([
-            canvasStack.topAnchor.constraint(equalTo: canvasScrollView.topAnchor, constant: 8),
-            canvasStack.bottomAnchor.constraint(equalTo: canvasScrollView.bottomAnchor, constant: -8),
-            canvasStack.leadingAnchor.constraint(equalTo: canvasScrollView.leadingAnchor),
-            canvasStack.trailingAnchor.constraint(equalTo: canvasScrollView.trailingAnchor),
-            canvasStack.widthAnchor.constraint(equalTo: canvasScrollView.widthAnchor),
-
-            emptyCanvasLabel.centerXAnchor.constraint(equalTo: canvasScrollView.centerXAnchor),
-            emptyCanvasLabel.centerYAnchor.constraint(equalTo: canvasScrollView.centerYAnchor),
-            emptyCanvasLabel.leadingAnchor.constraint(greaterThanOrEqualTo: canvasScrollView.leadingAnchor, constant: 32),
-            emptyCanvasLabel.trailingAnchor.constraint(lessThanOrEqualTo: canvasScrollView.trailingAnchor, constant: -32),
-        ])
+        // Captured so the toggle button can deactivate it when collapsing the log.
+        portraitLogHeightConstraint = logTextView.heightAnchor.constraint(equalToConstant: 160)
 
         // Portrait: stacked vertically, log TextView fixed at 160pt.
+        // All horizontal anchors pin to the safe-area guide so the layout
+        // respects Dynamic Island / notch insets even if the view is ever
+        // shown without a tab bar (e.g. modally presented).
         portraitConstraints = [
-            headerStack.topAnchor.constraint(equalTo: guide.topAnchor, constant: 12),
-            headerStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            headerStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            headerStack.topAnchor.constraint(equalTo: guide.topAnchor, constant: 16),
+            headerStack.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 16),
+            headerStack.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -16),
 
             canvasLabel.topAnchor.constraint(equalTo: headerStack.bottomAnchor, constant: 12),
-            canvasLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            canvasLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            canvasLabel.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 16),
+            canvasLabel.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -16),
 
-            canvasScrollView.topAnchor.constraint(equalTo: canvasLabel.bottomAnchor, constant: 8),
-            canvasScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            canvasScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            canvasScrollView.bottomAnchor.constraint(equalTo: logHeaderStack.topAnchor, constant: -8),
+            canvasTableView.topAnchor.constraint(equalTo: canvasLabel.bottomAnchor, constant: 8),
+            canvasTableView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 16),
+            canvasTableView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -16),
+            canvasTableView.bottomAnchor.constraint(equalTo: logHeaderStack.topAnchor, constant: -8),
 
-            logHeaderStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            logHeaderStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            logHeaderStack.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 16),
+            logHeaderStack.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -16),
 
             logTextView.topAnchor.constraint(equalTo: logHeaderStack.bottomAnchor, constant: 4),
-            logTextView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            logTextView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            logTextView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 16),
+            logTextView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -16),
             logTextView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -8),
-            logTextView.heightAnchor.constraint(equalToConstant: 160),
+            portraitLogHeightConstraint,
         ]
 
-        // Landscape: two-column split at 33/67.
-        // leftPanelAnchor is an invisible view that takes 33% of the root width.
-        // panelSeparator.leading is then pinned to leftPanelAnchor.trailing —
-        // a valid position↔position pairing that avoids the NSInvalidArgumentException
-        // caused by pairing .leading (position) with .width (size).
-        landscapeConstraints = [
-            // Invisible anchor occupies the left 33%
-            leftPanelAnchor.topAnchor.constraint(equalTo: view.topAnchor),
-            leftPanelAnchor.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            leftPanelAnchor.heightAnchor.constraint(equalToConstant: 1),
-            leftPanelAnchor.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.33),
+        // Landscape: two-column split at 33/67. See companion comment in the
+        // pre-refactor file for the invisible-anchor trick that avoids the
+        // .leading ↔ .width NSLayoutConstraint invalid-pairing crash.
+        // Captured so the toggle button can deactivate it when collapsing
+        // (landscape has no fixed log height — it stretches via this pin).
+        landscapeLogBottomConstraint = logTextView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -8)
 
-            // Separator at the trailing edge of the anchor (= 33% of view width)
+        landscapeConstraints = [
+            leftPanelAnchor.topAnchor.constraint(equalTo: view.topAnchor),
+            leftPanelAnchor.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
+            leftPanelAnchor.heightAnchor.constraint(equalToConstant: 1),
+            leftPanelAnchor.widthAnchor.constraint(equalTo: guide.widthAnchor, multiplier: 0.33),
+
             panelSeparator.topAnchor.constraint(equalTo: guide.topAnchor),
             panelSeparator.bottomAnchor.constraint(equalTo: guide.bottomAnchor),
             panelSeparator.widthAnchor.constraint(equalToConstant: 0.5),
             panelSeparator.leadingAnchor.constraint(equalTo: leftPanelAnchor.trailingAnchor),
 
-            // Left panel — header at top
-            headerStack.topAnchor.constraint(equalTo: guide.topAnchor, constant: 12),
-            headerStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            headerStack.topAnchor.constraint(equalTo: guide.topAnchor, constant: 16),
+            headerStack.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 16),
             headerStack.trailingAnchor.constraint(equalTo: panelSeparator.leadingAnchor, constant: -8),
 
-            // Left panel — log header below event header
             logHeaderStack.topAnchor.constraint(equalTo: headerStack.bottomAnchor, constant: 12),
-            logHeaderStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            logHeaderStack.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 16),
             logHeaderStack.trailingAnchor.constraint(equalTo: panelSeparator.leadingAnchor, constant: -8),
 
-            // Left panel — log TextView fills remaining height (no fixed height constraint)
             logTextView.topAnchor.constraint(equalTo: logHeaderStack.bottomAnchor, constant: 4),
-            logTextView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            logTextView.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 16),
             logTextView.trailingAnchor.constraint(equalTo: panelSeparator.leadingAnchor, constant: -8),
-            logTextView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -8),
+            landscapeLogBottomConstraint,
 
-            // Right panel — canvas full height
-            canvasScrollView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 8),
-            canvasScrollView.leadingAnchor.constraint(equalTo: panelSeparator.trailingAnchor),
-            canvasScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            canvasScrollView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -8),
+            canvasTableView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 8),
+            canvasTableView.leadingAnchor.constraint(equalTo: panelSeparator.trailingAnchor, constant: 8),
+            canvasTableView.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -16),
+            canvasTableView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -8),
         ]
     }
 
@@ -274,16 +321,21 @@ final class UIKitTestViewController: UIViewController {
         }
         canvasLabel.isHidden = isLandscape
         panelSeparator.isHidden = !isLandscape
-        // Force the canvas scroll view and its hosted SwiftUI views to re-measure
-        // after the constraint swap. Without this the NativeDisplayUIView instances
-        // keep their pre-rotation frames until the next user-triggered layout pass.
-        canvasScrollView.setNeedsLayout()
-        canvasScrollView.layoutIfNeeded()
+
+        // If the user collapsed the log before rotating, the orientation-swap
+        // above re-activated the sizing constraint from the constraint array.
+        // Re-apply the collapsed state so the log stays hidden across rotations.
+        if !eventLogVisible {
+            portraitLogHeightConstraint.isActive = false
+            landscapeLogBottomConstraint.isActive = false
+            collapsedLogHeightConstraint.isActive = true
+        }
     }
 
     private func wireActions() {
         fireButton.addTarget(self, action: #selector(fireEvent), for: .touchUpInside)
         clearLogButton.addTarget(self, action: #selector(clearLog), for: .touchUpInside)
+        logToggleButton.addTarget(self, action: #selector(toggleLogVisibility), for: .touchUpInside)
         eventNameField.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
         eventNameField.delegate = self
     }
@@ -304,6 +356,37 @@ final class UIKitTestViewController: UIViewController {
         logTextView.text = ""
     }
 
+    /// Collapse the log down to just the header bar (eye icon toggles back).
+    /// Keeps both portrait and landscape layouts honest by toggling whichever
+    /// constraint is dictating the log's vertical extent.
+    @objc private func toggleLogVisibility() {
+        eventLogVisible.toggle()
+        let icon = eventLogVisible ? "eye.slash" : "eye"
+        var config = logToggleButton.configuration ?? UIButton.Configuration.plain()
+        config.image = UIImage(systemName: icon)
+        logToggleButton.configuration = config
+
+        logTextView.isHidden = !eventLogVisible
+        clearLogButton.isHidden = !eventLogVisible
+
+        if eventLogVisible {
+            collapsedLogHeightConstraint.isActive = false
+            // Restore whichever sizing constraint matches the current orientation.
+            if view.bounds.width > view.bounds.height {
+                landscapeLogBottomConstraint.isActive = true
+            } else {
+                portraitLogHeightConstraint.isActive = true
+            }
+        } else {
+            // Deactivate the orientation-specific sizer first so the
+            // height=0 constraint we activate next doesn't conflict.
+            portraitLogHeightConstraint.isActive = false
+            landscapeLogBottomConstraint.isActive = false
+            collapsedLogHeightConstraint.isActive = true
+        }
+        view.layoutIfNeeded()
+    }
+
     @objc private func textFieldChanged() {
         let hasText = !(eventNameField.text?.trimmingCharacters(in: .whitespaces).isEmpty ?? true)
         fireButton.isEnabled = hasText
@@ -320,7 +403,36 @@ final class UIKitTestViewController: UIViewController {
     }
 
     private func updateEmptyState() {
-        emptyCanvasLabel.isHidden = !canvasStack.arrangedSubviews.isEmpty
+        emptyCanvasLabel.isHidden = !units.isEmpty
+    }
+}
+
+// MARK: - UITableViewDataSource / Delegate
+
+extension UIKitTestViewController: UITableViewDataSource, UITableViewDelegate {
+
+    // One section per unit so we can use `heightForFooterInSection` for 12pt
+    // inter-row spacing — UITableView has no native row-spacing knob.
+    func numberOfSections(in tableView: UITableView) -> Int { units.count }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { 1 }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: Self.cellReuseId, for: indexPath)
+            as! NativeDisplayTableViewCell
+        // Use `unit.config` until the next SDK release ships the new
+        // `configure(with: NativeDisplayUnit, ...)` overload. Behaviour
+        // matches the pre-refactor code path.
+        cell.configure(with: units[indexPath.section].config, actionListener: self)
+        return cell
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        .leastNormalMagnitude
+    }
+
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        section == units.count - 1 ? .leastNormalMagnitude : 12
     }
 }
 
@@ -339,21 +451,8 @@ extension UIKitTestViewController: NativeDisplayBridgeListener {
     func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-
-            self.canvasStack.arrangedSubviews.forEach {
-                self.canvasStack.removeArrangedSubview($0)
-                $0.removeFromSuperview()
-            }
-
-            for unit in units {
-                let displayView = NativeDisplayUIView(
-                    config: unit.config,
-                    actionListener: self
-                )
-                displayView.translatesAutoresizingMaskIntoConstraints = false
-                self.canvasStack.addArrangedSubview(displayView)
-            }
-
+            self.units = units
+            self.canvasTableView.reloadData()
             self.updateEmptyState()
             self.appendLog("📦 Received \(units.count) display unit(s)")
         }

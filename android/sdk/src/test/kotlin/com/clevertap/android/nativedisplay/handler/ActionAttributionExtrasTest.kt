@@ -1,5 +1,6 @@
 package com.clevertap.android.nativedisplay.handler
 
+import com.clevertap.android.nativeui.BuildConfig
 import com.clevertap.android.nativedisplay.models.Action
 import com.clevertap.android.nativedisplay.models.ExecutionMode
 import kotlinx.serialization.json.JsonPrimitive
@@ -7,7 +8,6 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -180,9 +180,19 @@ class ActionAttributionExtrasTest {
     // sanitize
 
     @Test
-    fun `sanitize returns null for empty or null input`() {
-        assertNull(ActionAttributionExtras.sanitize(null))
-        assertNull(ActionAttributionExtras.sanitize(emptyMap()))
+    fun `sanitize on null input returns only the ND lib version stamp`() {
+        val out = ActionAttributionExtras.sanitize(null)
+        assertEquals(BuildConfig.ND_LIB_VERSION_NAME, out["nd_lib_v_name"])
+        assertEquals(BuildConfig.ND_LIB_VERSION_CODE, out["nd_lib_v_code"])
+        assertEquals(setOf("nd_lib_v_name", "nd_lib_v_code"), out.keys)
+    }
+
+    @Test
+    fun `sanitize on empty input returns only the ND lib version stamp`() {
+        val out = ActionAttributionExtras.sanitize(emptyMap())
+        assertEquals(BuildConfig.ND_LIB_VERSION_NAME, out["nd_lib_v_name"])
+        assertEquals(BuildConfig.ND_LIB_VERSION_CODE, out["nd_lib_v_code"])
+        assertEquals(setOf("nd_lib_v_name", "nd_lib_v_code"), out.keys)
     }
 
     @Test
@@ -196,7 +206,7 @@ class ActionAttributionExtrasTest {
             "arr" to listOf(1, 2, 3),
             "obj" to mapOf("k" to "v")
         )
-        val out = ActionAttributionExtras.sanitize(input)!!
+        val out = ActionAttributionExtras.sanitize(input)
         assertEquals("x", out["s"])
         assertEquals(1, out["i"])
         assertEquals(true, out["b"])
@@ -204,5 +214,29 @@ class ActionAttributionExtrasTest {
         assertFalse(out.containsKey(""))
         assertEquals(listOf(1, 2, 3), out["arr"])
         assertEquals(mapOf("k" to "v"), out["obj"])
+        // Version stamp is always present alongside caller-supplied keys.
+        assertEquals(BuildConfig.ND_LIB_VERSION_NAME, out["nd_lib_v_name"])
+        assertEquals(BuildConfig.ND_LIB_VERSION_CODE, out["nd_lib_v_code"])
+    }
+
+    @Test
+    fun `sanitize does not overwrite caller-supplied version keys`() {
+        val input: Map<String, Any?> = mapOf(
+            "nd_lib_v_name" to "caller-wins",
+            "nd_lib_v_code" to 999_999
+        )
+        val out = ActionAttributionExtras.sanitize(input)
+        assertEquals("caller-wins", out["nd_lib_v_name"])
+        assertEquals(999_999, out["nd_lib_v_code"])
+    }
+
+    // versionStamp
+
+    @Test
+    fun `versionStamp returns exactly the ND lib version keys`() {
+        val out = ActionAttributionExtras.versionStamp()
+        assertEquals(BuildConfig.ND_LIB_VERSION_NAME, out["nd_lib_v_name"])
+        assertEquals(BuildConfig.ND_LIB_VERSION_CODE, out["nd_lib_v_code"])
+        assertEquals(setOf("nd_lib_v_name", "nd_lib_v_code"), out.keys)
     }
 }

@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SwiftUI
 
 /// UITableViewCell that automatically renders the display unit assigned to a named slot.
 ///
@@ -31,14 +30,21 @@ public final class NativeDisplaySlotTableViewCell: UITableViewCell, NativeDispla
 
     // MARK: - Properties
 
-    private var slotView: NativeDisplaySlotUIView?
     private var currentSlotId: String?
     private var actionListener: NativeDisplayActionListener?
     private var componentListener: NativeDisplayComponentListener?
 
-    /// Hosting controller for direct SwiftUI rendering.
-    private var hostingController: UIHostingController<AnyView>?
-    private weak var parentViewController: UIViewController?
+    /// The SDK's UIKit-friendly SwiftUI host. Owns the `UIHostingController`
+    /// lifecycle, parent-VC chaining, and SwiftUI → UIKit size bridging via
+    /// `sizingOptions = .intrinsicContentSize` (iOS 16+).
+    private var displayView: NativeDisplayUIView?
+
+    /// Temporary height constraint installed when the manager has a cached
+    /// measurement for the current slot. Pins the cell to the last-known
+    /// height before any unit arrives, eliminating the visible jump from
+    /// `estimatedRowHeight` to the real size on cell reuse. Deactivated as
+    /// soon as the displayView's own intrinsic size has settled.
+    private var placeholderHeightConstraint: NSLayoutConstraint?
 
     // MARK: - Initialization
 
@@ -93,46 +99,159 @@ public final class NativeDisplaySlotTableViewCell: UITableViewCell, NativeDispla
         cleanupContent()
 
         currentSlotId = slotId
+
+        // If we've previously measured this slot, pin the cell to that
+        // height before content arrives so a recycled cell starts at the
+        // right size instead of `estimatedRowHeight`. The constraint is
+        // torn down once the displayView's own intrinsic size has settled.
+        installPlaceholderHeightIfCached(for: slotId)
+
         NativeDisplaySlotManager.shared.registerSlot(slotId, observer: self)
+    }
+
+    private func installPlaceholderHeightIfCached(for slotId: String) {
+        removePlaceholderHeight()
+        guard let cached = NativeDisplaySlotManager.shared.measuredHeight(forSlotId: slotId), cached > 0 else { return }
+        let c = contentView.heightAnchor.constraint(equalToConstant: cached)
+        // Just below `.required` so AutoLayout never has to break the
+        // table-view's own `UIView-Encapsulated-Layout-Height`, but well
+        // above the displayView's intrinsic-content priority (750) — wins
+        // until we explicitly deactivate it.
+        c.priority = UILayoutPriority(999)
+        c.isActive = true
+        placeholderHeightConstraint = c
+    }
+
+    private func removePlaceholderHeight() {
+        placeholderHeightConstraint?.isActive = false
+        placeholderHeightConstraint = nil
     }
 
     // MARK: - NativeDisplaySlotObserver
 
     public func onUnitAvailable(_ unit: NativeDisplayUnit) {
-        // Reuse the unit's pre-resolved style map (computed off-main by the bridge).
-        let swiftUIView = NativeDisplayView(
-            unit: unit,
-            actionListener: actionListener,
-            componentListener: componentListener
-        )
-
-        if let hostingController = hostingController {
-            hostingController.rootView = AnyView(swiftUIView)
+        if let displayView = displayView {
+            // Re-use the existing wrapper. Preserves the hosting controller
+            // and its parent-VC relationship; only the SwiftUI rootView is
+            // swapped to point at the new unit.
+            displayView.updateUnit(unit)
         } else {
-            let hc = UIHostingController(rootView: AnyView(swiftUIView))
-            hc.view.backgroundColor = .clear
-
-            contentView.addSubview(hc.view)
-            hc.view.translatesAutoresizingMaskIntoConstraints = false
+            // Seed the renderer's `nativeDisplayParentSize` environment via
+            // the explicit parentSize init. Without it, the renderer's
+            // `GeometryReader` fallback measures the freshly-attached
+            // wrapper while its bounds are still ~0 (the empty-cell size),
+            // so any percent-width / aspect-ratio child in the campaign
+            // locks in against zero and the content renders permanently
+            // tiny. The enclosing scroll view's bounds are the real
+            // container width at this moment — pass them through.
+            let parentSize = resolveContainerSize()
+            let view = NativeDisplayUIView(
+                unit: unit,
+                parentSize: parentSize,
+                actionListener: actionListener,
+                componentListener: componentListener
+            )
+            view.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview(view)
             NSLayoutConstraint.activate([
-                hc.view.topAnchor.constraint(equalTo: contentView.topAnchor),
-                hc.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                hc.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-                hc.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+                view.topAnchor.constraint(equalTo: contentView.topAnchor),
+                view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+                view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
             ])
-
-            self.hostingController = hc
-
-            if let parentVC = findViewController() {
-                self.parentViewController = parentVC
-                parentVC.addChild(hc)
-                hc.didMove(toParent: parentVC)
-            }
+            self.displayView = view
         }
+
+        notifyEnclosingTableViewOfHeightChange()
+    }
+
+    /// Resolve the layout-context size that SwiftUI should treat as its
+    /// parent. Walks up to the nearest `UIScrollView` (both `UITableView`
+    /// and `UICollectionView` subclass it) and uses its bounds. Falls back
+    /// to the cell's own bounds, then to the screen — in that order — so a
+    /// cell used outside a recycler still gets sensible defaults.
+    private func resolveContainerSize() -> CGSize {
+        var view: UIView? = self.superview
+        while view != nil {
+            if let scrollView = view as? UIScrollView, scrollView.bounds.width > 0 {
+                return scrollView.bounds.size
+            }
+            view = view?.superview
+        }
+        if bounds.width > 0 {
+            return bounds.size
+        }
+        return UIScreen.main.bounds.size
     }
 
     public func onUnitCleared(slotId: String) {
         cleanupContent()
+        notifyEnclosingTableViewOfHeightChange()
+    }
+
+    /// Force the enclosing `UITableView` to re-measure this cell's row.
+    ///
+    /// The cell's content is `NativeDisplayUIView`, which hosts SwiftUI. Its
+    /// preferred height isn't known until SwiftUI has laid out at the cell's
+    /// real width; by the time `onUnitAvailable` fires, the table view has
+    /// already cached this row at its empty height, so the cell renders
+    /// undersized until something forces a re-measure.
+    ///
+    /// Two-stage recipe:
+    ///
+    ///  1. **Synchronously** `layoutIfNeeded()` on the cell. Adding the
+    ///     `NativeDisplayUIView` above marked the cell's layout dirty;
+    ///     `layoutIfNeeded` runs the pending pass right now — resolving the
+    ///     4-edge constraints so the embedded view's bounds match the
+    ///     cell's full width, then driving SwiftUI to lay out at that
+    ///     width. With `sizingOptions = .intrinsicContentSize` set on the
+    ///     hosting controller inside `NativeDisplayUIView`, SwiftUI's
+    ///     preferred size flows up through `intrinsicContentSize`.
+    ///
+    ///     A measurement-only call like `systemLayoutSizeFitting` doesn't
+    ///     work here — it can return based on incomplete state without
+    ///     actually triggering the layout pipeline. Only a real
+    ///     `layoutIfNeeded` drives SwiftUI.
+    ///
+    ///  2. **Asynchronously** invalidate this cell's intrinsic size and
+    ///     call `beginUpdates()` / `endUpdates()` on the enclosing table
+    ///     view — the canonical "re-query row heights without animating
+    ///     any other change" idiom. By this runloop tick the intrinsic
+    ///     size reflects SwiftUI's real preferred size, so the solver
+    ///     picks the correct row height.
+    private func notifyEnclosingTableViewOfHeightChange() {
+        // Stage 1 — drive SwiftUI's layout pass now.
+        setNeedsLayout()
+        layoutIfNeeded()
+
+        // Stage 2 — re-query row heights on the next runloop tick.
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.invalidateIntrinsicContentSize()
+
+            // Record the measured height so the next time this slot is
+            // displayed in a recycled cell, we can pre-size via the
+            // placeholder constraint and skip the visible jump.
+            if let slotId = self.currentSlotId,
+               let measured = self.displayView?.intrinsicContentSize.height,
+               measured > 0 {
+                NativeDisplaySlotManager.shared.setMeasuredHeight(measured, forSlotId: slotId)
+            }
+            // The displayView now owns the height via its intrinsic size —
+            // the placeholder has served its purpose and would only fight
+            // future size changes if left active.
+            self.removePlaceholderHeight()
+
+            var view: UIView? = self.superview
+            while view != nil {
+                if let tableView = view as? UITableView {
+                    tableView.beginUpdates()
+                    tableView.endUpdates()
+                    return
+                }
+                view = view?.superview
+            }
+        }
     }
 
     // MARK: - Lifecycle
@@ -145,6 +264,7 @@ public final class NativeDisplaySlotTableViewCell: UITableViewCell, NativeDispla
             NativeDisplaySlotManager.shared.unregisterSlot(slotId, observer: self)
             currentSlotId = nil
         }
+        removePlaceholderHeight()
         cleanupContent()
     }
 
@@ -152,27 +272,12 @@ public final class NativeDisplaySlotTableViewCell: UITableViewCell, NativeDispla
         if let slotId = currentSlotId {
             NativeDisplaySlotManager.shared.unregisterSlot(slotId, observer: self)
         }
-        hostingController?.willMove(toParent: nil)
-        hostingController?.removeFromParent()
     }
 
     // MARK: - Private
 
     private func cleanupContent() {
-        hostingController?.view.removeFromSuperview()
-        hostingController?.willMove(toParent: nil)
-        hostingController?.removeFromParent()
-        hostingController = nil
-    }
-
-    private func findViewController() -> UIViewController? {
-        var responder: UIResponder? = self
-        while let nextResponder = responder?.next {
-            if let viewController = nextResponder as? UIViewController {
-                return viewController
-            }
-            responder = nextResponder
-        }
-        return nil
+        displayView?.removeFromSuperview()
+        displayView = nil
     }
 }

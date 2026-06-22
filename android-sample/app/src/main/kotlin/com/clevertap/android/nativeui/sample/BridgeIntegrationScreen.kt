@@ -9,12 +9,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -290,31 +294,52 @@ val unit = bridge.getNativeDisplayForId("demo_unit_product")"""
         }
 
         // --- Log Output ---
+        // Default to visible so humans see the log; tests can flip this via the toggle button.
+        var logVisible by remember { mutableStateOf(true) }
         AnimatedVisibility(
             visible = logMessages.isNotEmpty(),
             enter = fadeIn() + expandVertically()
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 HorizontalDivider()
-                Text(
-                    text = "Event Log",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Card(
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF263238)),
-                    shape = RoundedCornerShape(8.dp)
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
-                        for (msg in logMessages) {
-                            Text(
-                                text = "> $msg",
-                                style = MaterialTheme.typography.bodySmall,
-                                fontFamily = FontFamily.Monospace,
-                                color = Color(0xFF80CBC4),
-                                lineHeight = 18.sp
-                            )
+                    Text(
+                        text = "Event Log",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    IconButton(
+                        onClick = { logVisible = !logVisible },
+                        modifier = Modifier.testTag("event-log-toggle")
+                    ) {
+                        Icon(
+                            imageVector = if (logVisible) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
+                            contentDescription = if (logVisible) "Hide event log" else "Show event log"
+                        )
+                    }
+                }
+                if (logVisible) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("event-log-content"),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF263238)),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            for (msg in logMessages) {
+                                Text(
+                                    text = "> $msg",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontFamily = FontFamily.Monospace,
+                                    color = Color(0xFF80CBC4),
+                                    lineHeight = 18.sp
+                                )
+                            }
                         }
                     }
                 }

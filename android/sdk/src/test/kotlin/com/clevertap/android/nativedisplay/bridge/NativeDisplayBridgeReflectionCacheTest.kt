@@ -56,6 +56,47 @@ class NativeDisplayBridgeReflectionCacheTest {
         Dispatchers.resetMain()
     }
 
+    // --- viewed-with-extras method probe ---
+
+    @Test
+    fun `viewed with-extras method probe runs exactly once across multiple viewed events`() {
+        assertFalse(
+            "viewedWithExtrasResolved should start false",
+            readBoolean("viewedWithExtrasResolved")
+        )
+        assertNull(
+            "viewedWithExtrasMethod should start null",
+            readMethod("viewedWithExtrasMethod")
+        )
+
+        // First viewed event probes the class and caches the result. Core SDK 7.5.0
+        // on the test classpath has no 2-arg pushDisplayUnitViewedEventForID, so the
+        // resolved value is null — but the resolved flag flips to true.
+        bridge.pushViewedEvent("unit-1")
+
+        assertTrue(
+            "viewedWithExtrasResolved should be true after first probe",
+            readBoolean("viewedWithExtrasResolved")
+        )
+        assertNull(
+            "Core SDK 7.5.0 does not expose the 2-arg viewed method",
+            readMethod("viewedWithExtrasMethod")
+        )
+
+        // Stamp a sentinel directly into the cache. If a subsequent viewed event re-
+        // probes, the sentinel gets overwritten with null and assertSame fails.
+        val sentinel = String::class.java.getMethod("length")
+        writeMethod("viewedWithExtrasMethod", sentinel)
+
+        repeat(3) { bridge.pushViewedEvent("unit-1") }
+
+        assertSame(
+            "Cached method must survive N subsequent viewed events (no re-probe)",
+            sentinel,
+            readMethod("viewedWithExtrasMethod")
+        )
+    }
+
     // --- element-clicked method probe ---
 
     @Test
@@ -128,14 +169,17 @@ class NativeDisplayBridgeReflectionCacheTest {
     // --- cache invalidation on cleverTapApi (re)assignment ---
 
     @Test
-    fun `reassigning cleverTapApi invalidates both caches`() {
+    fun `reassigning cleverTapApi invalidates all reflection caches`() {
         bridge.pushClickedEvent("unit-1", mapOf("wzrk_btn_id" to "btn"))
+        bridge.pushViewedEvent("unit-1")
         assertTrue(readBoolean("elementClickedResolved"))
+        assertTrue(readBoolean("viewedWithExtrasResolved"))
         assertNotNull(readNullableBoolean("setDisplayUnitCacheAvailable"))
 
         // Stamp sentinels so we can prove they get cleared on reassignment.
         val sentinel = String::class.java.getMethod("length")
         writeMethod("elementClickedMethod", sentinel)
+        writeMethod("viewedWithExtrasMethod", sentinel)
         writeNullableBoolean("setDisplayUnitCacheAvailable", true)
 
         bridge.cleverTapApi = newCleverTapShell()
@@ -148,6 +192,14 @@ class NativeDisplayBridgeReflectionCacheTest {
             "elementClickedMethod should clear on reassignment",
             readMethod("elementClickedMethod")
         )
+        assertFalse(
+            "viewedWithExtrasResolved should reset on reassignment",
+            readBoolean("viewedWithExtrasResolved")
+        )
+        assertNull(
+            "viewedWithExtrasMethod should clear on reassignment",
+            readMethod("viewedWithExtrasMethod")
+        )
         assertNull(
             "setDisplayUnitCacheAvailable should clear on reassignment",
             readNullableBoolean("setDisplayUnitCacheAvailable")
@@ -155,15 +207,19 @@ class NativeDisplayBridgeReflectionCacheTest {
     }
 
     @Test
-    fun `clearing cleverTapApi to null invalidates both caches`() {
+    fun `clearing cleverTapApi to null invalidates all reflection caches`() {
         bridge.pushClickedEvent("unit-1", mapOf("wzrk_btn_id" to "btn"))
+        bridge.pushViewedEvent("unit-1")
         writeMethod("elementClickedMethod", String::class.java.getMethod("length"))
+        writeMethod("viewedWithExtrasMethod", String::class.java.getMethod("length"))
         writeNullableBoolean("setDisplayUnitCacheAvailable", true)
 
         bridge.cleverTapApi = null
 
         assertFalse(readBoolean("elementClickedResolved"))
         assertNull(readMethod("elementClickedMethod"))
+        assertFalse(readBoolean("viewedWithExtrasResolved"))
+        assertNull(readMethod("viewedWithExtrasMethod"))
         assertNull(readNullableBoolean("setDisplayUnitCacheAvailable"))
     }
 

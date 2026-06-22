@@ -18,9 +18,19 @@ import XCTest
     var clickedUnitIds: [String] = []
     /// `(unitId, additionalProperties)` captured per new-selector call.
     var elementClicks: [(String, [String: Any])] = []
+    /// `(unitId, additionalProperties)` captured per new viewed-with-extras call.
+    var viewedWithExtras: [(String, [String: Any])] = []
 
     @objc func recordDisplayUnitViewedEventForID(_ unitId: String) {
         viewedUnitIds.append(unitId)
+    }
+
+    @objc(recordDisplayUnitViewedEventForID:additionalProperties:)
+    func recordDisplayUnitViewedEventForID(
+        _ unitId: String,
+        additionalProperties props: NSDictionary
+    ) {
+        viewedWithExtras.append((unitId, props as? [String: Any] ?? [:]))
     }
 
     @objc func recordDisplayUnitClickedEventForID(_ unitId: String) {
@@ -60,12 +70,21 @@ import XCTest
     var viewedUnitIds: [String] = []
     var clickedUnitIds: [String] = []
     var elementClicks: [(String, [String: Any])] = []
+    var viewedWithExtras: [(String, [String: Any])] = []
 
     /// Per-selector call count from `responds(to:)`. Read by tests.
     var respondsProbeCounts: [Selector: Int] = [:]
 
     @objc func recordDisplayUnitViewedEventForID(_ unitId: String) {
         viewedUnitIds.append(unitId)
+    }
+
+    @objc(recordDisplayUnitViewedEventForID:additionalProperties:)
+    func recordDisplayUnitViewedEventForID(
+        _ unitId: String,
+        additionalProperties props: NSDictionary
+    ) {
+        viewedWithExtras.append((unitId, props as? [String: Any] ?? [:]))
     }
 
     @objc func recordDisplayUnitClickedEventForID(_ unitId: String) {
@@ -169,7 +188,10 @@ final class AttributionTests: XCTestCase {
         await waitForMainActor()
 
         XCTAssertEqual(mockListener.viewedUnitIds, ["unit_v_1"], "Listener should receive viewed callback")
-        XCTAssertEqual(mockCt.viewedUnitIds, ["unit_v_1"], "Bridge should forward to Core SDK")
+        // The bridge always stamps the ND SDK version on viewed events, so the
+        // viewed-with-extras selector is used (not the legacy single-arg path).
+        XCTAssertTrue(mockCt.viewedUnitIds.isEmpty)
+        XCTAssertEqual(mockCt.viewedWithExtras.map { $0.0 }, ["unit_v_1"])
         XCTAssertTrue(mockCt.clickedUnitIds.isEmpty)
         XCTAssertEqual(mockListener.trackedEvents.first?.name, "Notification Viewed")
     }
@@ -188,7 +210,10 @@ final class AttributionTests: XCTestCase {
         await waitForMainActor()
 
         XCTAssertEqual(mockListener.clickedUnitIds, ["unit_c_1"])
-        XCTAssertEqual(mockCt.clickedUnitIds, ["unit_c_1"])
+        // The bridge always carries an ND SDK version stamp on clicked events, so
+        // the element-aware selector is used (not the legacy single-arg path).
+        XCTAssertTrue(mockCt.clickedUnitIds.isEmpty)
+        XCTAssertEqual(mockCt.elementClicks.map { $0.0 }, ["unit_c_1"])
         XCTAssertTrue(mockCt.viewedUnitIds.isEmpty)
     }
 
@@ -206,11 +231,10 @@ final class AttributionTests: XCTestCase {
         handler.fireSystemEvent(eventName: "Notification Viewed")
         await waitForMainActor()
 
-        XCTAssertEqual(
-            mockCt.viewedUnitIds,
-            ["unit_v_2"],
-            "Bridge push must fire even when client supplied no NativeDisplayActionListener"
-        )
+        // Bridge push must fire even without a NativeDisplayActionListener.
+        // Version stamp always rides → viewed-with-extras selector path.
+        XCTAssertTrue(mockCt.viewedUnitIds.isEmpty)
+        XCTAssertEqual(mockCt.viewedWithExtras.map { $0.0 }, ["unit_v_2"])
     }
 
     func test_clicked_firesBridgeOnly_whenNoListenerButCleverTapWired() async {
@@ -225,7 +249,9 @@ final class AttributionTests: XCTestCase {
         handler.fireSystemEvent(eventName: "Notification Clicked")
         await waitForMainActor()
 
-        XCTAssertEqual(mockCt.clickedUnitIds, ["unit_c_2"])
+        // ND SDK version stamp always rides on clicked events → element-aware path.
+        XCTAssertTrue(mockCt.clickedUnitIds.isEmpty)
+        XCTAssertEqual(mockCt.elementClicks.map { $0.0 }, ["unit_c_2"])
     }
 
     // MARK: - Listener present + bridge NOT wired (standalone mode)
@@ -279,6 +305,7 @@ final class AttributionTests: XCTestCase {
         await waitForMainActor()
 
         XCTAssertTrue(mockCt.viewedUnitIds.isEmpty, "Unwired Core SDK instance must never be invoked")
+        XCTAssertTrue(mockCt.viewedWithExtras.isEmpty, "Unwired Core SDK instance must never be invoked")
     }
 
     // MARK: - Dedup short-circuits BOTH paths
@@ -301,7 +328,8 @@ final class AttributionTests: XCTestCase {
         await waitForMainActor()
 
         XCTAssertEqual(mockListener.viewedUnitIds, ["unit_dd_1"], "Listener should only fire once with dedup")
-        XCTAssertEqual(mockCt.viewedUnitIds, ["unit_dd_1"], "Bridge push should only fire once with dedup")
+        // Viewed events ride the viewed-with-extras selector because of the version stamp.
+        XCTAssertEqual(mockCt.viewedWithExtras.map { $0.0 }, ["unit_dd_1"], "Bridge push should only fire once with dedup")
     }
 
     func test_dedup_independentBetweenViewedAndClicked() async {
@@ -320,8 +348,9 @@ final class AttributionTests: XCTestCase {
         handler.fireSystemEvent(eventName: "Notification Clicked", deduplicate: true)
         await waitForMainActor()
 
-        XCTAssertEqual(mockCt.viewedUnitIds, ["unit_dd_2"])
-        XCTAssertEqual(mockCt.clickedUnitIds, ["unit_dd_2"])
+        // Both events ride their respective with-extras selectors because of the version stamp.
+        XCTAssertEqual(mockCt.viewedWithExtras.map { $0.0 }, ["unit_dd_2"])
+        XCTAssertEqual(mockCt.elementClicks.map { $0.0 }, ["unit_dd_2"])
     }
 
     // MARK: - Element-aware selector (new Core SDK method)
@@ -362,27 +391,103 @@ final class AttributionTests: XCTestCase {
         // Graceful degradation — element id and action context are dropped.
     }
 
-    func test_clicked_fallsBackToLegacySelector_whenExtrasNilOrEmpty() {
+    func test_clicked_usesElementSelector_whenExtrasNil_carryingOnlyVersionStamp() {
         let mockCt = MockCleverTapInstance()
         bridge.cleverTapInstance = mockCt
 
-        // nil extras → sanitize returns nil → legacy path
+        // sanitize always returns a non-empty dict containing the ND SDK version
+        // stamp, so the element-aware selector is used even with nil extras.
         let ok = bridge.pushClickedEvent(unitId: "unit_y", extras: nil)
 
         XCTAssertTrue(ok)
-        XCTAssertEqual(mockCt.clickedUnitIds, ["unit_y"])
-        XCTAssertTrue(mockCt.elementClicks.isEmpty)
+        XCTAssertTrue(mockCt.clickedUnitIds.isEmpty, "Legacy single-arg path should not run when the new selector is available")
+        XCTAssertEqual(mockCt.elementClicks.count, 1)
+        let (unitId, props) = mockCt.elementClicks[0]
+        XCTAssertEqual(unitId, "unit_y")
+        XCTAssertEqual(props["nd_lib_v_name"] as? String, NativeDisplaySDKVersion.name)
+        XCTAssertEqual(props["nd_lib_v_code"] as? Int, NativeDisplaySDKVersion.code)
     }
 
-    func test_clicked_singleArgPath_whenExtrasNil() {
-        let mockCt = MockCleverTapInstance()
-        bridge.cleverTapInstance = mockCt
+    func test_clicked_fallsBackToLegacySelector_whenElementSelectorAbsent_andExtrasNil() {
+        let legacyCt = LegacyMockCleverTapInstance()
+        bridge.cleverTapInstance = legacyCt
 
+        // With nil extras AND no element-aware selector, the bridge must still
+        // attribute the click via the legacy unit-level path. The version stamp
+        // is dropped — older Core SDK has no extras channel for it.
         let ok = bridge.pushClickedEvent(unitId: "u_c", extras: nil)
 
         XCTAssertTrue(ok)
-        XCTAssertEqual(mockCt.clickedUnitIds, ["u_c"])
-        XCTAssertTrue(mockCt.elementClicks.isEmpty, "Element selector must not be used when extras are nil")
+        XCTAssertEqual(legacyCt.clickedUnitIds, ["u_c"])
+    }
+
+    // MARK: - Viewed selector dispatch (with-extras vs. legacy)
+
+    func test_viewed_prefersWithExtrasSelector_whenAvailable_carryingVersionStamp() {
+        let mockCt = MockCleverTapInstance()
+        bridge.cleverTapInstance = mockCt
+
+        let ok = bridge.pushViewedEvent(unitId: "unit_v_we")
+
+        XCTAssertTrue(ok)
+        XCTAssertTrue(mockCt.viewedUnitIds.isEmpty, "Legacy single-arg path should not run when the new selector is available")
+        XCTAssertEqual(mockCt.viewedWithExtras.count, 1)
+        let (unitId, props) = mockCt.viewedWithExtras[0]
+        XCTAssertEqual(unitId, "unit_v_we")
+        XCTAssertEqual(props["nd_lib_v_name"] as? String, NativeDisplaySDKVersion.name)
+        XCTAssertEqual(props["nd_lib_v_code"] as? Int, NativeDisplaySDKVersion.code)
+    }
+
+    func test_viewed_fallsBackToLegacySelector_whenWithExtrasSelectorAbsent() {
+        let legacyCt = LegacyMockCleverTapInstance()
+        bridge.cleverTapInstance = legacyCt
+
+        // Older Core SDK lacks the viewed-with-extras selector — bridge must still
+        // attribute the impression via the legacy unit-level path (version stamp dropped).
+        let ok = bridge.pushViewedEvent(unitId: "unit_v_legacy")
+
+        XCTAssertTrue(ok)
+        XCTAssertEqual(legacyCt.viewedUnitIds, ["unit_v_legacy"])
+    }
+
+    func test_pushViewedEvent_probesViewedWithExtrasSelectorOnceAcrossRepeatedCalls() {
+        let mockCt = ProbeCountingCleverTapInstance()
+        bridge.cleverTapInstance = mockCt
+        let viewedSel = NSSelectorFromString(
+            "recordDisplayUnitViewedEventForID:additionalProperties:"
+        )
+
+        bridge.pushViewedEvent(unitId: "u1")
+        bridge.pushViewedEvent(unitId: "u2")
+        bridge.pushViewedEvent(unitId: "u3")
+
+        XCTAssertEqual(mockCt.viewedWithExtras.count, 3, "Each viewed event should dispatch the new selector")
+        XCTAssertEqual(
+            mockCt.respondsProbeCounts[viewedSel] ?? 0, 1,
+            "Viewed-with-extras selector availability should be probed at most once across N calls"
+        )
+    }
+
+    func test_rebindingCleverTapInstance_reprobesViewedWithExtrasOnNextCall() {
+        let firstCt = ProbeCountingCleverTapInstance()
+        let secondCt = ProbeCountingCleverTapInstance()
+        let viewedSel = NSSelectorFromString(
+            "recordDisplayUnitViewedEventForID:additionalProperties:"
+        )
+
+        bridge.cleverTapInstance = firstCt
+        bridge.pushViewedEvent(unitId: "u1")
+        bridge.pushViewedEvent(unitId: "u2")
+        XCTAssertEqual(firstCt.respondsProbeCounts[viewedSel] ?? 0, 1)
+
+        bridge.cleverTapInstance = secondCt
+        bridge.pushViewedEvent(unitId: "u3")
+        bridge.pushViewedEvent(unitId: "u4")
+        XCTAssertEqual(
+            secondCt.respondsProbeCounts[viewedSel] ?? 0, 1,
+            "After rebinding the cache must be reset and the new instance probed exactly once"
+        )
+        XCTAssertEqual(secondCt.viewedWithExtras.count, 2, "New instance receives the post-rebind viewed events")
     }
 
     // MARK: - Element-clicked selector availability cache

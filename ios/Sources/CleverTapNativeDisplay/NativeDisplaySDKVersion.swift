@@ -1,0 +1,24 @@
+//
+//  NativeDisplaySDKVersion.swift
+//  CleverTapNativeDisplay
+//
+//  Runtime version constants for the Native Display SDK. These are stamped onto
+//  every clicked-event payload that the bridge sends to Core SDK so the server
+//  can attribute analytics back to a specific SDK build.
+//
+//  Keep these in lockstep with `/VERSION` at the repo root and
+//  `CleverTapNativeDisplay.podspec` `spec.version`. iOS cannot reliably read its
+//  own version from `Bundle.infoDictionary` across SPM / static-framework /
+//  CocoaPods distributions, so we mirror the value as a Swift constant.
+//
+
+import Foundation
+
+enum NativeDisplaySDKVersion {
+    /// Semver name, mirrors `/VERSION` and the podspec.
+    static let name: String = "1.0.0"
+
+    /// Monotonic integer derived as `major * 10000 + minor * 100 + patch`.
+    /// For `1.0.0` this is `10000`. Bump whenever `name` changes.
+    static let code: Int = 10_000
+}
