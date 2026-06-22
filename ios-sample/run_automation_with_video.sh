@@ -4,8 +4,9 @@
 #
 # XCUITest sandbox forbids the test target from launching `xcrun simctl io recordVideo`
 # directly (Foundation.Process is unavailable). So we record at the simctl layer instead:
-# this wrapper boots a sim if needed, starts `simctl io booted recordVideo` per test class,
-# invokes `xcodebuild test`, stops the recorder, and copies the MP4 + screenshots to
+# this wrapper resolves the simulator's UDID, boots it if needed, starts
+# `simctl io <UDID> recordVideo` per test class, invokes `xcodebuild test` against
+# that same UDID, stops the recorder, and copies the MP4 + screenshots to
 # ~/Desktop/nd-automation-output/ios/.
 #
 # Usage:
@@ -26,13 +27,15 @@ RUN_DIR="$OUT_DIR/$TIMESTAMP"
 mkdir -p "$RUN_DIR"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-cd "$SCRIPT_DIR"
+cd "$SCRIPT_DIR" || exit 1
 
 echo "📂  Output directory : $RUN_DIR"
 echo "📱  Simulator        : $DEVICE"
 echo ""
 
-# Boot the simulator if not already booted.
+# Resolve a single UDID up front. Using the device name for boot/destination but
+# `booted` for `simctl io recordVideo` can record the wrong sim when multiple
+# are booted on a dev machine. Pin everything to one UDID.
 DEVICE_STATE=$(xcrun simctl list devices "$DEVICE" | grep -E "$DEVICE \(" | head -1 || true)
 if [[ -z "$DEVICE_STATE" ]]; then
     echo "❌  Simulator not found: $DEVICE"
@@ -41,9 +44,17 @@ if [[ -z "$DEVICE_STATE" ]]; then
     exit 1
 fi
 
+UDID=$(echo "$DEVICE_STATE" | sed -nE 's/.*\(([0-9A-Fa-f-]{36})\).*/\1/p')
+if [[ -z "$UDID" ]]; then
+    echo "❌  Could not resolve UDID for simulator: $DEVICE"
+    echo "    DEVICE_STATE: $DEVICE_STATE"
+    exit 1
+fi
+echo "🆔  UDID             : $UDID"
+
 if ! echo "$DEVICE_STATE" | grep -q "Booted"; then
     echo "🔌  Booting $DEVICE..."
-    xcrun simctl boot "$DEVICE" 2>/dev/null || true
+    xcrun simctl boot "$UDID" 2>/dev/null || true
     sleep 5
 fi
 
@@ -60,14 +71,16 @@ for TEST_CLASS in "${TEST_CLASSES[@]}"; do
     echo "▶️   Running $TEST_CLASS"
     VIDEO_FILE="$RUN_DIR/${TEST_CLASS}.mp4"
 
-    # Start screen recording in the background.
-    xcrun simctl io booted recordVideo --codec=h264 --force "$VIDEO_FILE" &
+    # Start screen recording in the background. Pin to the resolved UDID so
+    # the recorder and `xcodebuild` target the same simulator even when multiple
+    # are booted.
+    xcrun simctl io "$UDID" recordVideo --codec=h264 --force "$VIDEO_FILE" &
     REC_PID=$!
     sleep 1  # let the recorder spin up before tests start
 
     xcodebuild test \
         -scheme "$SCHEME" \
-        -destination "platform=iOS Simulator,name=$DEVICE" \
+        -destination "platform=iOS Simulator,id=$UDID" \
         -only-testing "NativeDisplaySampleUITests/$TEST_CLASS" \
         -resultBundlePath "$RUN_DIR/${TEST_CLASS}.xcresult" \
         2>&1 | tail -60

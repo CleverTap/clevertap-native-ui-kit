@@ -116,8 +116,13 @@ tasks.register("automationScreenshots") {
             .filter { it.isFile && (it.extension == "png" || it.extension == "mp4") }
             .toList()
 
+        // Preserve the relative path from AGP's output dir so identically-named
+        // PNGs/MP4s from different test classes don't silently overwrite each
+        // other on a flat copy.
         mediaFiles.forEach { src ->
-            src.copyTo(File(dest, src.name), overwrite = true)
+            val target = File(dest, src.relativeTo(buildOutput).path)
+            target.parentFile?.mkdirs()
+            src.copyTo(target, overwrite = true)
         }
         println("Automation artifacts (${mediaFiles.size} files) copied to: $automationDesktopPath")
     }
