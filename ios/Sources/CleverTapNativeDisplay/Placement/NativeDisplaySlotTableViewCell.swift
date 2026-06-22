@@ -133,8 +133,15 @@ public final class NativeDisplaySlotTableViewCell: UITableViewCell, NativeDispla
         if let displayView = displayView {
             // Re-use the existing wrapper. Preserves the hosting controller
             // and its parent-VC relationship; only the SwiftUI rootView is
-            // swapped to point at the new unit.
-            displayView.updateUnit(unit)
+            // swapped to point at the new unit. Pass through the cell's
+            // current listeners so a re-`configure(slotId:)` with new listeners
+            // (same slot id) is honored — `NativeDisplayUIView`'s plain
+            // `updateUnit(_:)` would keep the listeners from the initial bind.
+            displayView.updateUnit(
+                unit,
+                actionListener: actionListener,
+                componentListener: componentListener
+            )
         } else {
             // Seed the renderer's `nativeDisplayParentSize` environment via
             // the explicit parentSize init. Without it, the renderer's

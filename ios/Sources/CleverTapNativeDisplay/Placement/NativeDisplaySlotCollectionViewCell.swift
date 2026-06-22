@@ -100,8 +100,14 @@ public final class NativeDisplaySlotCollectionViewCell: UICollectionViewCell, Na
         if let displayView = displayView {
             // Re-use the existing wrapper. Preserves the hosting controller
             // and its parent-VC relationship; only the SwiftUI rootView is
-            // swapped to point at the new unit.
-            displayView.updateUnit(unit)
+            // swapped to point at the new unit. See sibling
+            // `NativeDisplaySlotTableViewCell.onUnitAvailable` for the
+            // listener-passthrough rationale.
+            displayView.updateUnit(
+                unit,
+                actionListener: actionListener,
+                componentListener: componentListener
+            )
         } else {
             // Seed the renderer's `nativeDisplayParentSize` environment via
             // the explicit parentSize init — see the companion docs in

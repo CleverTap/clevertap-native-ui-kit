@@ -469,13 +469,14 @@ public typealias CTNDLogLevel = NDLogLevel
             return false
         }
         seedIfNeeded(unitId: unitId, instance: ct)
-        return invokeViewedEvent(unitId: unitId)
+        return invokeViewedEvent(on: ct, unitId: unitId)
     }
 
     /// Prefer the new viewed-with-extras selector when Core SDK exposes it; fall
     /// back to the legacy unit-level selector otherwise. Mirrors `invokeClickedEvent`.
-    private func invokeViewedEvent(unitId: String) -> Bool {
-        guard let ct = cleverTapInstance else { return false }
+    /// Takes `ct` as a parameter so the caller's already-captured instance flows
+    /// through — re-reading `cleverTapInstance` here would race with `attach`/`detach`.
+    private func invokeViewedEvent(on ct: NSObject, unitId: String) -> Bool {
         if isViewedWithExtrasAvailable(on: ct) {
             let stamp = ActionAttributionExtras.versionStamp()
             // perform(_:with:with:) misinterprets the return register for void ObjC

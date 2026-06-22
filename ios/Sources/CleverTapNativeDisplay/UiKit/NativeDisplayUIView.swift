@@ -59,10 +59,15 @@ public final class NativeDisplayUIView: UIView {
     
     // MARK: - Properties
 
-    private let config: ResolvedConfig
+    private var config: ResolvedConfig
     private var unit: NativeDisplayUnit?
-    private let actionListener: NativeDisplayActionListener?
-    private let componentListener: NativeDisplayComponentListener?
+    // Mutable so cell-reuse callers can swap listeners via the
+    // `updateConfig(_:actionListener:componentListener:)` /
+    // `updateUnit(_:actionListener:componentListener:)` overloads. Without that,
+    // a recycled cell keeps routing taps to whichever listeners the initial
+    // `init` saw.
+    private var actionListener: NativeDisplayActionListener?
+    private var componentListener: NativeDisplayComponentListener?
     private let parentSize: CGSize?
     private var hostingController: UIHostingController<_NativeDisplayRoot>?
     private weak var parentViewController: UIViewController?
@@ -183,26 +188,64 @@ public final class NativeDisplayUIView: UIView {
     
     /// Update the configuration dynamically. Clears any previously set unit, so
     /// attribution events stop firing for this view until `updateUnit(_:)` is called.
+    /// Keeps the listeners supplied at `init` — use the
+    /// `updateConfig(_:actionListener:componentListener:)` overload to also
+    /// rebind listeners (needed when reusing this view across hosts with
+    /// different listener instances, e.g. recycled `UITableViewCell`s).
     /// - Parameter config: New configuration to display
     public func updateConfig(_ newConfig: ResolvedConfig) {
+        self.config = newConfig
         self.unit = nil
-        hostingController?.rootView = _NativeDisplayRoot(
-            unit: nil,
-            config: newConfig,
-            parentSize: parentSize,
-            actionListener: actionListener,
-            componentListener: componentListener
-        )
+        rebuildRootView()
+    }
+
+    /// Update configuration *and* swap the action/component listeners. Required
+    /// when the host reconfigures a recycled cell with different listeners on
+    /// the same `NativeDisplayUIView` — the single-arg `updateConfig(_:)` keeps
+    /// the original listeners, so taps would route to the previous host.
+    public func updateConfig(
+        _ newConfig: ResolvedConfig,
+        actionListener: NativeDisplayActionListener?,
+        componentListener: NativeDisplayComponentListener?
+    ) {
+        self.config = newConfig
+        self.unit = nil
+        self.actionListener = actionListener
+        self.componentListener = componentListener
+        rebuildRootView()
     }
 
     /// Update the displayed unit dynamically. Preserves attribution wiring —
-    /// `Notification Viewed` / `Notification Clicked` events fire for the new unit's id.
+    /// `Notification Viewed` / `Notification Clicked` events fire for the new
+    /// unit's id. Keeps the listeners supplied at `init` — use the
+    /// `updateUnit(_:actionListener:componentListener:)` overload to also
+    /// rebind listeners.
     /// - Parameter newUnit: New display unit to render
     public func updateUnit(_ newUnit: NativeDisplayUnit) {
+        self.config = newUnit.config
         self.unit = newUnit
+        rebuildRootView()
+    }
+
+    /// Update unit *and* swap the action/component listeners. Mirrors
+    /// `updateConfig(_:actionListener:componentListener:)` for the attribution-
+    /// aware path.
+    public func updateUnit(
+        _ newUnit: NativeDisplayUnit,
+        actionListener: NativeDisplayActionListener?,
+        componentListener: NativeDisplayComponentListener?
+    ) {
+        self.config = newUnit.config
+        self.unit = newUnit
+        self.actionListener = actionListener
+        self.componentListener = componentListener
+        rebuildRootView()
+    }
+
+    private func rebuildRootView() {
         hostingController?.rootView = _NativeDisplayRoot(
-            unit: newUnit,
-            config: newUnit.config,
+            unit: unit,
+            config: config,
             parentSize: parentSize,
             actionListener: actionListener,
             componentListener: componentListener

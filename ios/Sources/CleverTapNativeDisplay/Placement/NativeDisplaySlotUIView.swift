@@ -87,7 +87,11 @@ public final class NativeDisplaySlotUIView: UIView, NativeDisplaySlotObserver {
 
     public func onUnitAvailable(_ unit: NativeDisplayUnit) {
         if let existing = displayView {
-            existing.updateConfig(unit.config)
+            existing.updateConfig(
+                unit.config,
+                actionListener: actionListener,
+                componentListener: componentListener
+            )
         } else {
             let view = NativeDisplayUIView(
                 config: unit.config,

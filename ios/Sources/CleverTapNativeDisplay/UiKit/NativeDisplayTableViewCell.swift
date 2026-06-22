@@ -72,7 +72,11 @@ public final class NativeDisplayTableViewCell: UITableViewCell {
         componentListener: NativeDisplayComponentListener? = nil
     ) {
         if let displayView = displayView {
-            displayView.updateConfig(config)
+            displayView.updateConfig(
+                config,
+                actionListener: actionListener,
+                componentListener: componentListener
+            )
         } else {
             installDisplayView(
                 NativeDisplayUIView(
@@ -95,7 +99,11 @@ public final class NativeDisplayTableViewCell: UITableViewCell {
         componentListener: NativeDisplayComponentListener? = nil
     ) {
         if let displayView = displayView {
-            displayView.updateUnit(unit)
+            displayView.updateUnit(
+                unit,
+                actionListener: actionListener,
+                componentListener: componentListener
+            )
         } else {
             installDisplayView(
                 NativeDisplayUIView(
