@@ -10,6 +10,7 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
@@ -114,6 +115,7 @@ class XmlFeedFragment : Fragment() {
 
         setupEventInput()
         setupClearLog()
+        setupLogToggle()
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -165,6 +167,47 @@ class XmlFeedFragment : Fragment() {
         }
     }
 
+    /**
+     * Wires the show/hide toggle on the event log header. Defaults to "visible" so humans
+     * see the log; tests can tap [R.id.event_log_toggle] to hide the log content before
+     * screenshotting so it doesn't obstruct the rendered UI.
+     *
+     * When hidden, the log content ScrollView is gone AND the container's layout params are
+     * collapsed to wrap_content (with weight=0 in landscape) so the panel shrinks to just the
+     * header row instead of leaving a big empty rectangle.
+     */
+    private fun setupLogToggle() {
+        // Cache the layout params from the inflated XML so we can restore them when re-shown.
+        // Portrait: container is wrap_content; landscape: container has weight=1.
+        val originalParams = binding.eventLogContainer.layoutParams as LinearLayout.LayoutParams
+        val originalHeight = originalParams.height
+        val originalWeight = originalParams.weight
+
+        var logVisible = true
+        binding.eventLogToggle.setOnClickListener {
+            logVisible = !logVisible
+            binding.eventLogContent.visibility = if (logVisible) View.VISIBLE else View.GONE
+            binding.clearLogButton.visibility = if (logVisible) View.VISIBLE else View.GONE
+            val lp = binding.eventLogContainer.layoutParams as LinearLayout.LayoutParams
+            if (logVisible) {
+                lp.height = originalHeight
+                lp.weight = originalWeight
+            } else {
+                lp.height = WRAP_CONTENT
+                lp.weight = 0f
+            }
+            binding.eventLogContainer.layoutParams = lp
+            binding.eventLogToggle.contentDescription =
+                if (logVisible) "Hide event log" else "Show event log"
+            // Toggle the icon between "view" (eye) and "view-off" (closed-eye-ish stand-in;
+            // framework drawables don't ship a true VisibilityOff so we reuse close_clear_cancel).
+            binding.eventLogToggle.setImageResource(
+                if (logVisible) android.R.drawable.ic_menu_view
+                else android.R.drawable.ic_menu_close_clear_cancel
+            )
+        }
+    }
+
     private fun renderUnits(units: List<NativeDisplayUnit>) {
         val canvas = binding.displayCanvas
         if (units.isEmpty()) {
@@ -205,7 +248,7 @@ class XmlFeedFragment : Fragment() {
         }
         binding.logTextView.text = entries.joinToString("\n")
         binding.logTextView.setTextColor(Color.parseColor("#80CBC4"))
-        binding.logScrollView.post { binding.logScrollView.fullScroll(View.FOCUS_DOWN) }
+        binding.eventLogContent.post { binding.eventLogContent.fullScroll(View.FOCUS_DOWN) }
     }
 
     override fun onDestroyView() {
