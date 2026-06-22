@@ -1,5 +1,6 @@
 package com.clevertap.android.nativedisplay.handler
 
+import com.clevertap.android.nativeui.BuildConfig
 import com.clevertap.android.nativedisplay.models.Action
 import com.clevertap.android.nativedisplay.models.ExecutionMode
 import kotlinx.serialization.json.JsonArray
@@ -42,6 +43,12 @@ import kotlinx.serialization.json.longOrNull
 internal object ActionAttributionExtras {
 
     private const val KEY_ACTION_TYPE = "action_type"
+
+    // ND SDK version attribution — attached on every clicked event so the server can
+    // identify which ND SDK build produced the analytics. Non-`wzrk_` namespace
+    // because the `wzrk_*` namespace is owned by the Core SDK / BE enrichment path.
+    private const val KEY_ND_LIB_VERSION_NAME = "nd_lib_v_name"
+    private const val KEY_ND_LIB_VERSION_CODE = "nd_lib_v_code"
 
     fun from(action: Action?): Map<String, Any?> {
         val out = linkedMapOf<String, Any?>()
@@ -122,16 +129,32 @@ internal object ActionAttributionExtras {
      * Keeps `Number` / `Boolean` / `String` / nested `Map` & `List` (Core SDK serializes those)
      * and drops everything else.
      */
-    fun sanitize(extras: Map<String, Any?>?): Map<String, Any>? {
-        if (extras.isNullOrEmpty()) return null
+    fun sanitize(extras: Map<String, Any?>?): Map<String, Any> {
         val out = linkedMapOf<String, Any>()
-        for ((k, v) in extras) {
-            if (k.isEmpty() || v == null) continue
-            when (v) {
-                is String, is Number, is Boolean, is Map<*, *>, is List<*> -> out[k] = v
-                else -> out[k] = v.toString()
+        if (!extras.isNullOrEmpty()) {
+            for ((k, v) in extras) {
+                if (k.isEmpty() || v == null) continue
+                when (v) {
+                    is String, is Number, is Boolean, is Map<*, *>, is List<*> -> out[k] = v
+                    else -> out[k] = v.toString()
+                }
             }
         }
-        return if (out.isEmpty()) null else out
+        // Always stamp the ND SDK version on the outgoing payload so the server can
+        // attribute the click to a specific SDK build. Caller-supplied keys win — we
+        // never overwrite an existing entry under the same key.
+        out.putIfAbsent(KEY_ND_LIB_VERSION_NAME, BuildConfig.ND_LIB_VERSION_NAME)
+        out.putIfAbsent(KEY_ND_LIB_VERSION_CODE, BuildConfig.ND_LIB_VERSION_CODE)
+        return out
     }
+
+    /**
+     * Standalone ND SDK version stamp used by event paths that have no other extras
+     * to send (e.g. viewed events). The clicked-event path injects the same keys
+     * inside [sanitize] alongside the action-derived extras.
+     */
+    fun versionStamp(): Map<String, Any> = linkedMapOf(
+        KEY_ND_LIB_VERSION_NAME to BuildConfig.ND_LIB_VERSION_NAME,
+        KEY_ND_LIB_VERSION_CODE to BuildConfig.ND_LIB_VERSION_CODE
+    )
 }

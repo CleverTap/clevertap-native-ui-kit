@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Header row of the XML Slots feed. Mirrors the header section of
+  `SlotDemoScreen.kt`: title + description + full-width "Fetch Slot Data"
+  button. Click is wired by `SlotFeedAdapter.HeaderViewHolder`.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="4dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Slot Demo"
+        android:textColor="#222222"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:paddingBottom="4dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="This feed contains 4 NativeDisplaySlot views at fixed positions. Tap the button below to fire a CleverTap event that fetches real server data for the slots."
+        android:textColor="#666666"
+        android:textSize="14sp"
+        android:paddingBottom="12dp" />
+
+    <Button
+        android:id="@+id/fetchSlotDataButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Fetch Slot Data" />
+
+</LinearLayout>

@@ -6,6 +6,25 @@ plugins {
     id("maven-publish")
 }
 
+// Read version from root VERSION file
+val versionFile = rootProject.file("../VERSION")
+val libraryVersion = if (versionFile.exists()) {
+    versionFile.readText().trim()
+} else {
+    "0.1.0"
+}
+
+// Derive monotonic versionCode from semver M.m.p as M*10000 + m*100 + p so a single
+// /VERSION bump updates both runtime BuildConfig fields in lockstep.
+val libraryVersionCode: Int = libraryVersion.split(".")
+    .map { it.toIntOrNull() ?: 0 }
+    .let { parts ->
+        val major = parts.getOrElse(0) { 0 }
+        val minor = parts.getOrElse(1) { 0 }
+        val patch = parts.getOrElse(2) { 0 }
+        major * 10_000 + minor * 100 + patch
+    }
+
 android {
     namespace = "com.clevertap.android.nativeui"
     compileSdk = 36
@@ -14,10 +33,13 @@ android {
         minSdk = 23
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-        
+
         aarMetadata {
             minCompileSdk = 23
         }
+
+        buildConfigField("String", "ND_LIB_VERSION_NAME", "\"$libraryVersion\"")
+        buildConfigField("int", "ND_LIB_VERSION_CODE", "$libraryVersionCode")
     }
 
     buildTypes {
@@ -44,6 +66,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
@@ -107,6 +130,7 @@ dependencies {
     compileOnly("com.clevertap.android:clevertap-android-sdk:7.5.0")
     // Fragment is a transitive dep of Core SDK; K1 compiler requires it on the
     // classpath to resolve supertypes of Core SDK classes (FragmentActivity, Fragment).
+    // Not used directly in SDK code — removing this breaks compilation, not runtime.
     compileOnly("androidx.fragment:fragment-ktx:1.8.5")
 
     // Testing
@@ -129,14 +153,6 @@ dependencies {
 
     // RecyclerView (for NativeDisplayViewGroup)
     api("androidx.recyclerview:recyclerview:1.3.2")
-}
-
-// Read version from root VERSION file
-val versionFile = rootProject.file("../VERSION")
-val libraryVersion = if (versionFile.exists()) {
-    versionFile.readText().trim()
-} else {
-    "0.1.0"
 }
 
 afterEvaluate {

@@ -105,6 +105,22 @@ class NativeDisplayBridge private constructor() {
     private var elementClickedResolved: Boolean = false
 
     /**
+     * Resolved 2-arg viewed-with-extras Core SDK method
+     * (`pushDisplayUnitViewedEventForID(String, HashMap)`), or `null` when the host
+     * Core SDK only exposes the legacy 1-arg overload. Same one-shot probe / sticky
+     * cache contract as [elementClickedMethod].
+     */
+    @Volatile
+    private var viewedWithExtrasMethod: Method? = null
+
+    /**
+     * Flips to `true` the first time [resolveViewedWithExtrasMethod] runs, even when
+     * the 2-arg overload is absent. Distinguishes "absent" from "not yet probed".
+     */
+    @Volatile
+    private var viewedWithExtrasResolved: Boolean = false
+
+    /**
      * Memoised `CleverTapAPI.setDisplayUnitCache` availability probe used by [seedIfNeeded].
      * `null` means "not yet probed"; `true`/`false` are sticky cached results for the
      * lifetime of the currently attached CleverTapAPI instance.
@@ -119,6 +135,8 @@ class NativeDisplayBridge private constructor() {
     private fun resetReflectionCaches() {
         elementClickedMethod = null
         elementClickedResolved = false
+        viewedWithExtrasMethod = null
+        viewedWithExtrasResolved = false
         setDisplayUnitCacheAvailable = null
     }
 
@@ -142,6 +160,16 @@ class NativeDisplayBridge private constructor() {
          * `additionalProperties` — no dedicated `elementID` parameter is needed.
          */
         private const val METHOD_ELEMENT_CLICKED = "pushDisplayUnitElementClickedEventForID"
+
+        /**
+         * Core SDK method name for the viewed-attribution event. The 1-arg overload
+         * `pushDisplayUnitViewedEventForID(String unitID)` is the legacy entry point
+         * present on every Core SDK version; the 2-arg overload
+         * `pushDisplayUnitViewedEventForID(String unitID, HashMap<String, Object> additionalProperties)`
+         * is assumed to exist on newer Core SDK builds and is invoked reflectively
+         * when present so we can stamp the ND SDK version onto the event.
+         */
+        private const val METHOD_VIEWED = "pushDisplayUnitViewedEventForID"
 
         @Volatile
         private var instance: NativeDisplayBridge? = null
@@ -382,22 +410,46 @@ class NativeDisplayBridge private constructor() {
     /**
      * Push a display unit viewed (impression) attribution event to the CleverTap Core SDK.
      *
-     * Always calls `pushDisplayUnitViewedEventForID(unitId)`. Impressions are inherently
-     * unit-level in ND (the root mount fires once); there is no per-element view event.
+     * When the host Core SDK exposes the 2-arg overload
+     * `pushDisplayUnitViewedEventForID(String unitID, HashMap<String, Object> additionalProperties)`,
+     * it is invoked reflectively with the ND SDK version stamp (`nd_lib_v_name` /
+     * `nd_lib_v_code`) so the server can attribute the impression to a specific SDK
+     * build. On older Core SDK versions without the new overload, the legacy
+     * single-arg `pushDisplayUnitViewedEventForID(unitId)` fires instead (graceful
+     * degradation — version stamp is dropped).
+     *
+     * Impressions are inherently unit-level in ND (the root mount fires once); there
+     * is no per-element view event, so no caller-supplied extras flow through here.
      *
      * @param unitId The ID of the display unit that was viewed
      * @return true if the event was pushed successfully, false if no CleverTapAPI is available
      */
     fun pushViewedEvent(unitId: String): Boolean {
-        val ct = cleverTapApi ?: return false
+        if (cleverTapApi == null) return false
         return try {
             seedIfNeeded(unitId)
-            ct.pushDisplayUnitViewedEventForID(unitId)
+            invokeViewedEvent(unitId)
             true
         } catch (e: Exception) {
             NDLogger.w(TAG, "pushViewedEvent failed: ${e.message}")
             false
         }
+    }
+
+    /**
+     * Prefer the new 2-arg viewed-event overload when Core SDK exposes it; fall back
+     * to the legacy 1-arg overload otherwise. Mirrors [invokeClickedEvent].
+     */
+    private fun invokeViewedEvent(unitId: String) {
+        val ct = cleverTapApi ?: return
+        val viewedMethod = resolveViewedWithExtrasMethod(ct)
+        if (viewedMethod != null) {
+            val stamp = HashMap<String, Any>(ActionAttributionExtras.versionStamp())
+            viewedMethod.invoke(ct, unitId, stamp)
+            return
+        }
+        // Fallback: legacy unit-level viewed attribution (version stamp dropped).
+        ct.pushDisplayUnitViewedEventForID(unitId)
     }
 
     /**
@@ -450,7 +502,7 @@ class NativeDisplayBridge private constructor() {
             // Use the element-aware path whenever available, even when extras is empty.
             // An empty map is a valid additionalProperties argument — Core SDK still
             // enriches the event from its own cached unit JSON.
-            val sanitized = ActionAttributionExtras.sanitize(extras) ?: emptyMap()
+            val sanitized = ActionAttributionExtras.sanitize(extras)
             elementMethod.invoke(ct, unitId, HashMap<String, Any>(sanitized))
             return
         }
@@ -482,6 +534,29 @@ class NativeDisplayBridge private constructor() {
         elementClickedMethod = resolved
         elementClickedResolved = true
         NDLogger.d(TAG, if (resolved != null) "Element-clicked method resolved: $METHOD_ELEMENT_CLICKED(String, HashMap)" else "Element-clicked method absent — legacy fallback active")
+        return resolved
+    }
+
+    /**
+     * Memoised lookup of the 2-arg viewed-event Core SDK overload. Same one-shot
+     * probe / sticky cache contract as [resolveElementClickedMethod] — runs once per
+     * attached CleverTapAPI instance and caches the result (including "absent"),
+     * cleared only by [resetReflectionCaches].
+     */
+    private fun resolveViewedWithExtrasMethod(ct: CleverTapAPI): Method? {
+        if (viewedWithExtrasResolved) return viewedWithExtrasMethod
+        val resolved = runCatching {
+            ct.javaClass.getMethod(
+                METHOD_VIEWED,
+                String::class.java,
+                HashMap::class.java
+            )
+        }.onFailure { e ->
+            NDLogger.d(TAG, "Viewed-with-extras method not found (${ct.javaClass.name}): ${e.message} — using legacy 1-arg fallback")
+        }.getOrNull()
+        viewedWithExtrasMethod = resolved
+        viewedWithExtrasResolved = true
+        NDLogger.d(TAG, if (resolved != null) "Viewed-with-extras method resolved: $METHOD_VIEWED(String, HashMap)" else "Viewed-with-extras method absent — legacy 1-arg fallback active")
         return resolved
     }
 

@@ -139,7 +139,13 @@ public struct NativeDisplayView: View {
         // - Works even if config has percentages, dynamic root, etc.
         // - This is the ONLY way to avoid GeometryReader when needed
         if let explicitSize = environmentParentSize {
+            // Mirror the GeometryReader path's `.frame(width:)` wrapper so the
+            // rendered root occupies the offered width even when its layout
+            // spec doesn't intrinsically claim it (e.g. wrap_content root).
+            // Without this, SwiftUI sizes the content to its small intrinsic
+            // width and centers it inside the hosting view.
             renderContent(parentSize: explicitSize)
+                .frame(width: explicitSize.width, alignment: .center)
         }
         // ═══════════════════════════════════════════════════════════════
         // Below logic only runs if NO environment override

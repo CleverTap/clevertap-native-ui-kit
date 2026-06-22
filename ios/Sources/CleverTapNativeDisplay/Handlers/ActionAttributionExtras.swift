@@ -39,6 +39,13 @@ enum ActionAttributionExtras {
 
     static let keyActionType = "action_type"
 
+    // ND SDK version attribution — attached on every clicked event so the server
+    // can identify which ND SDK build produced the analytics. Non-`wzrk_`
+    // namespace because the `wzrk_*` namespace is owned by the Core SDK / BE
+    // enrichment path.
+    static let keyNDLibVersionName = "nd_lib_v_name"
+    static let keyNDLibVersionCode = "nd_lib_v_code"
+
     static func from(action: Action?) -> [String: Any] {
         var out: [String: Any] = [:]
         if let action = action {
@@ -130,21 +137,37 @@ enum ActionAttributionExtras {
 
     /// Strip keys whose values are not Core-SDK-friendly before handing the dict to the
     /// reflective call. Keeps strings/numbers/bools/NSNumber and drops Void/nil entries.
-    static func sanitize(_ extras: [String: Any]?) -> [String: Any]? {
-        guard let extras = extras, !extras.isEmpty else { return nil }
+    /// Always returns a non-empty dict — the ND SDK version is stamped on every payload
+    /// so the server can attribute analytics to a specific SDK build.
+    static func sanitize(_ extras: [String: Any]?) -> [String: Any] {
         var out: [String: Any] = [:]
-        for (k, v) in extras where !k.isEmpty {
-            if v is Void { continue }
-            if v is String || v is NSNumber || v is Bool || v is Int || v is Double || v is Float {
-                out[k] = v
-            } else if let arr = v as? [Any] {
-                out[k] = arr
-            } else if let dict = v as? [String: Any] {
-                out[k] = dict
-            } else {
-                out[k] = String(describing: v)
+        if let extras = extras {
+            for (k, v) in extras where !k.isEmpty {
+                if v is Void { continue }
+                if v is String || v is NSNumber || v is Bool || v is Int || v is Double || v is Float {
+                    out[k] = v
+                } else if let arr = v as? [Any] {
+                    out[k] = arr
+                } else if let dict = v as? [String: Any] {
+                    out[k] = dict
+                } else {
+                    out[k] = String(describing: v)
+                }
             }
         }
-        return out.isEmpty ? nil : out
+        // Caller-supplied keys win — only set if absent.
+        if out[keyNDLibVersionName] == nil { out[keyNDLibVersionName] = NativeDisplaySDKVersion.name }
+        if out[keyNDLibVersionCode] == nil { out[keyNDLibVersionCode] = NativeDisplaySDKVersion.code }
+        return out
+    }
+
+    /// Standalone ND SDK version stamp used by event paths that have no other extras
+    /// to send (e.g. viewed events). The clicked-event path injects the same keys
+    /// inside `sanitize(_:)` alongside the action-derived extras.
+    static func versionStamp() -> [String: Any] {
+        return [
+            keyNDLibVersionName: NativeDisplaySDKVersion.name,
+            keyNDLibVersionCode: NativeDisplaySDKVersion.code
+        ]
     }
 }

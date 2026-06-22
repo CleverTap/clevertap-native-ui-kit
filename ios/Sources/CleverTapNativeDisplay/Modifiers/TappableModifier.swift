@@ -166,10 +166,6 @@ struct TappableModifier: ViewModifier {
             return
         }
 
-        if interactionType == .click {
-            onSystemClick?()
-        }
-
         if let action = action {
             actionHandler?.handleAction(action, nodeId: nodeId, interactionType: interactionType)
         }

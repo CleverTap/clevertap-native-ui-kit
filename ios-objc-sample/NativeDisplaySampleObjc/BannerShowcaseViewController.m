@@ -9,6 +9,7 @@
 #import "BannerDetailViewController.h"
 #import "DemoMenuViewController.h"
 #import "NativeDisplaySampleObjc-Swift.h"
+@import CleverTapNativeDisplay;
 @import UniformTypeIdentifiers;
 
 // ---------------------------------------------------------------------------
@@ -149,15 +150,12 @@ static NSInteger  const kSectionBanners = 1;
     }
 
     // Validate by attempting to create a view (will fail if JSON is bad)
-    NSError *parseError = nil;
-    UIView *testView = [NDDisplayHelper createViewFrom:data
-                                                         parentWidth:0
-                                                  componentListener:nil
-                                                     actionListener:nil
-                                                              error:&parseError];
-    if (!testView || parseError) {
-        NSString *msg = [NSString stringWithFormat:@"Invalid JSON format:\n\n%@", parseError.localizedDescription ?: @"Unknown error"];
-        [self showErrorTitle:@"Upload Error" message:msg];
+    UIView *testView = [[NativeDisplayUIView alloc] initWithJsonData:data
+                                                                parentWidth:0
+                                                            actionListener:nil
+                                                         componentListener:nil];
+    if (!testView) {
+        [self showErrorTitle:@"Upload Error" message:@"Invalid JSON format"];
         return;
     }
 
@@ -330,7 +328,7 @@ static NSInteger  const kSectionBanners = 1;
     }
 
     BannerItem *banner = self.banners[(NSUInteger)indexPath.row];
-    NSData *data = [NDDisplayHelper loadJSONDataWithFilename:banner.filename directory:@"Banners"];
+    NSData *data = [NDSampleHelpers loadJSONDataWithFilename:banner.filename directory:@"Banners"];
     if (!data) {
         [self showErrorTitle:@"Error" message:[NSString stringWithFormat:@"Could not load %@.json", banner.filename]];
         return;

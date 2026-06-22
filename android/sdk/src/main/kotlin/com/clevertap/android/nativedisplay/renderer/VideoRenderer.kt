@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 
 import android.view.LayoutInflater
+import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -44,9 +45,20 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
+import androidx.media3.common.DeviceInfo
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Metadata
 import androidx.media3.common.PlaybackException
+import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
+import androidx.media3.common.Timeline
+import androidx.media3.common.TrackSelectionParameters
+import androidx.media3.common.Tracks
+import androidx.media3.common.VideoSize
+import androidx.media3.common.text.Cue
+import androidx.media3.common.text.CueGroup
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.clevertap.android.nativedisplay.internal.NDLogger
@@ -83,6 +95,7 @@ private fun VideoControlIcon(
  * Video player composable with custom controls.
  * Supports Media3 ExoPlayer with runtime detection and graceful degradation.
  */
+@OptIn(UnstableApi::class)
 @Composable
 internal fun VideoPlayer(
     videoUrl: String,
@@ -159,6 +172,7 @@ internal fun VideoPlayer(
  * PlayerView and the fullscreen PlayerView — the inactive surface sets player=null
  * to detach cleanly.
  */
+@UnstableApi // added due to media3 overrides.
 @Composable
 internal fun VideoPlayerWithMedia3(
     context: android.content.Context,
@@ -214,7 +228,7 @@ internal fun VideoPlayerWithMedia3(
                     else -> Unit
                 }
             }
-            val listener = object : Player.Listener {
+            val listener = object : Media3PlayerListener() {
                 override fun onIsPlayingChanged(playing: Boolean) { isPlaying = playing }
                 override fun onVolumeChanged(volume: Float) { isMuted = volume == 0f }
                 override fun onPlaybackStateChanged(state: Int) {
@@ -473,4 +487,60 @@ private fun FullscreenVideoContent(
             )
         }
     }
+
+
+}
+
+@UnstableApi
+/**
+ * This class addresses an AbstractMethodError because of the Java 8 feature of default methods in interfaces.
+ * Default methods are somewhat not supported if minSDKVersion < 24
+ */
+open class Media3PlayerListener : Player.Listener {
+    override fun onSurfaceSizeChanged(width: Int, height: Int) {}
+    override fun onRenderedFirstFrame() {}
+    @Deprecated("Deprecated in Java")
+    override fun onCues(cues: MutableList<Cue>) {}
+    override fun onCues(cueGroup: CueGroup) {}
+    override fun onMetadata(metadata: Metadata) {}
+    override fun onEvents(player: Player, events: Player.Events) {}
+    override fun onTimelineChanged(timeline: Timeline, reason: Int) {}
+    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {}
+    override fun onTracksChanged(tracks: Tracks) {}
+    override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {}
+    override fun onPlaylistMetadataChanged(mediaMetadata: MediaMetadata) {}
+    override fun onIsLoadingChanged(isLoading: Boolean) {}
+    @Deprecated("Deprecated in Java") override fun onLoadingChanged(isLoading: Boolean) {}
+
+    override fun onAvailableCommandsChanged(availableCommands: Player.Commands) {}
+    override fun onTrackSelectionParametersChanged(parameters: TrackSelectionParameters) {}
+    @Deprecated("Deprecated in Java") override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {}
+
+    override fun onPlaybackStateChanged(playbackState: Int) {}
+
+    override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {}
+    override fun onPlaybackSuppressionReasonChanged(playbackSuppressionReason: Int) {}
+    override fun onIsPlayingChanged(isPlaying: Boolean) {}
+    override fun onRepeatModeChanged(repeatMode: Int) {}
+    override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {}
+    override fun onPlayerError(error: PlaybackException) {}
+    override fun onPlayerErrorChanged(error: PlaybackException?) {}
+    @Deprecated("Deprecated in Java") override fun onPositionDiscontinuity(reason: Int) {}
+
+    override fun onPositionDiscontinuity(
+        oldPosition: Player.PositionInfo,
+        newPosition: Player.PositionInfo,
+        reason: Int
+    ) {}
+    override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {}
+    override fun onSeekBackIncrementChanged(seekBackIncrementMs: Long) {}
+    override fun onSeekForwardIncrementChanged(seekForwardIncrementMs: Long) {}
+    override fun onMaxSeekToPreviousPositionChanged(maxSeekToPreviousPositionMs: Long) {}
+    override fun onAudioSessionIdChanged(audioSessionId: Int) {}
+    override fun onAudioAttributesChanged(audioAttributes: AudioAttributes) {}
+    override fun onVolumeChanged(volume: Float) {}
+    override fun onSkipSilenceEnabledChanged(skipSilenceEnabled: Boolean) {}
+    override fun onDeviceInfoChanged(deviceInfo: DeviceInfo) {}
+    override fun onDeviceVolumeChanged(volume: Int, muted: Boolean) {}
+    override fun onVideoSizeChanged(videoSize: VideoSize) {}
 }

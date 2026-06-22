@@ -44,6 +44,7 @@ private enum class MainTab(val icon: String, val label: String) {
     EVENTS("📡", "Events"),
     SLOTS("🎰", "Slots"),
     XML("🖥️", "XML Test"),
+    XML_SLOTS("🧩", "XML Slots"),
     BROWSER("🧪", "Browser"),
     MORE("⚙️", "More")
 }
@@ -104,6 +105,7 @@ fun NativeUIKitSampleApp() {
                             MainTab.EVENTS.ordinal -> CleverTapIntegrationScreen()
                             MainTab.SLOTS.ordinal -> SlotDemoScreen()
                             MainTab.XML.ordinal -> XmlFeedScreen(modifier = Modifier.fillMaxSize())
+                            MainTab.XML_SLOTS.ordinal -> XmlSlotsScreen(modifier = Modifier.fillMaxSize())
                             MainTab.BROWSER.ordinal -> TestBrowserScreen()
                             MainTab.MORE.ordinal -> MoreMenuScreen(onNavigate = { navController.navigate(it) })
                         }
