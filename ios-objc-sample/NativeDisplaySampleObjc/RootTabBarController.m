@@ -1,7 +1,6 @@
 #import "RootTabBarController.h"
 #import "CleverTapIntegrationViewController.h"
 #import "SlotDemoViewController.h"
-#import "UIKitDemoViewController.h"
 #import "DemoMenuViewController.h"
 
 @implementation RootTabBarController
@@ -11,7 +10,6 @@
     self.viewControllers = @[
         [self makeTab:[CleverTapIntegrationViewController new] title:@"Events" sfSymbol:@"antenna.radiowaves.left.and.right"],
         [self makeTab:[SlotDemoViewController new] title:@"Slots" sfSymbol:@"square.stack.3d.up"],
-        [self makeTab:[UIKitDemoViewController new] title:@"UIKit" sfSymbol:@"macwindow"],
         [self makeMoreTab],
     ];
 }
