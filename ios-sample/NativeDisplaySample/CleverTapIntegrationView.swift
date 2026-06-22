@@ -9,6 +9,8 @@ import CleverTapSDK
 struct CleverTapIntegrationView: View {
     @StateObject private var viewModel = CleverTapIntegrationViewModel()
     @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @State private var eventLogVisible = true
+    @FocusState private var eventInputFocused: Bool
 
     var body: some View {
         Group {
@@ -77,10 +79,13 @@ struct CleverTapIntegrationView: View {
             HStack(spacing: 8) {
                 TextField("Enter event name", text: $viewModel.eventName)
                     .textFieldStyle(.roundedBorder)
+                    .focused($eventInputFocused)
+                    .submitLabel(.send)
+                    .onSubmit { sendEventAndDismissKeyboard() }
                     .accessibilityIdentifier("ct-event-input")
 
                 Button("Send Event") {
-                    viewModel.sendEvent()
+                    sendEventAndDismissKeyboard()
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(viewModel.eventName.trimmingCharacters(in: .whitespaces).isEmpty
@@ -146,45 +151,63 @@ struct CleverTapIntegrationView: View {
                         .fontWeight(.semibold)
                 }
                 Spacer()
-                if !viewModel.eventLog.isEmpty {
+                if eventLogVisible && !viewModel.eventLog.isEmpty {
                     Button("Clear") {
                         viewModel.eventLog.removeAll()
                     }
                     .font(.system(size: 12))
                 }
+                Button {
+                    eventLogVisible.toggle()
+                } label: {
+                    Image(systemName: eventLogVisible ? "eye.slash" : "eye")
+                        .font(.system(size: 14, weight: .semibold))
+                }
+                .accessibilityIdentifier("event-log-toggle")
             }
 
-            ScrollViewReader { proxy in
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 2) {
-                        if viewModel.eventLog.isEmpty {
-                            Text("No events yet")
-                                .font(.system(size: 11, design: .monospaced))
-                                .foregroundColor(Color(.systemGray))
-                        } else {
-                            ForEach(viewModel.eventLog.indices, id: \.self) { index in
-                                Text(viewModel.eventLog[index])
+            if eventLogVisible {
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 2) {
+                            if viewModel.eventLog.isEmpty {
+                                Text("No events yet")
                                     .font(.system(size: 11, design: .monospaced))
-                                    .foregroundColor(logColor(for: viewModel.eventLog[index]))
-                                    .id(index)
+                                    .foregroundColor(Color(.systemGray))
+                            } else {
+                                ForEach(viewModel.eventLog.indices, id: \.self) { index in
+                                    Text(viewModel.eventLog[index])
+                                        .font(.system(size: 11, design: .monospaced))
+                                        .foregroundColor(logColor(for: viewModel.eventLog[index]))
+                                        .id(index)
+                                }
                             }
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(10)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(10)
-                }
-                .onChange(of: viewModel.eventLog.count) { _ in
-                    if let last = viewModel.eventLog.indices.last {
-                        proxy.scrollTo(last)
+                    .onChange(of: viewModel.eventLog.count) { _ in
+                        if let last = viewModel.eventLog.indices.last {
+                            proxy.scrollTo(last)
+                        }
                     }
                 }
+                .frame(minHeight: 80, maxHeight: verticalSizeClass == .compact ? .infinity : 160)
+                .background(Color(red: 0.15, green: 0.19, blue: 0.22))
+                .cornerRadius(8)
+                .accessibilityIdentifier("event-log-content")
             }
-            .frame(minHeight: 80, maxHeight: verticalSizeClass == .compact ? .infinity : 160)
-            .background(Color(red: 0.15, green: 0.19, blue: 0.22))
-            .cornerRadius(8)
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 8)
+    }
+
+    /// Fires the event via the view model and immediately resigns first
+    /// responder on the text field. Tied to both the Send button tap and
+    /// the keyboard return key (`.submitLabel(.send)`).
+    private func sendEventAndDismissKeyboard() {
+        viewModel.sendEvent()
+        eventInputFocused = false
     }
 
     private func logColor(for message: String) -> Color {

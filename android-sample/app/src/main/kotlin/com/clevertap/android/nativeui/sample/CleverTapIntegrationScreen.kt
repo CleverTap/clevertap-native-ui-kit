@@ -10,6 +10,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -264,6 +267,9 @@ private fun EventLogFooter(
     modifier: Modifier = Modifier,
     fillHeight: Boolean = false
 ) {
+    // Default to visible so humans see the log; tests can flip this via the toggle button.
+    var logVisible by remember { mutableStateOf(true) }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -282,59 +288,76 @@ private fun EventLogFooter(
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold
             )
-            if (logMessages.isNotEmpty()) {
-                TextButton(onClick = onClear) {
-                    Text("Clear", fontSize = 12.sp)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (logVisible && logMessages.isNotEmpty()) {
+                    TextButton(onClick = onClear) {
+                        Text("Clear", fontSize = 12.sp)
+                    }
+                }
+                IconButton(
+                    onClick = { logVisible = !logVisible },
+                    modifier = Modifier.testTag("event-log-toggle")
+                ) {
+                    Icon(
+                        imageVector = if (logVisible) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
+                        contentDescription = if (logVisible) "Hide event log" else "Show event log"
+                    )
                 }
             }
         }
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .then(
-                    if (fillHeight) Modifier.fillMaxHeight()
-                    else Modifier.heightIn(min = 80.dp, max = 160.dp)
-                ),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF263238)),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            val logListState = rememberLazyListState()
-
-            LaunchedEffect(logMessages.size) {
-                if (logMessages.isNotEmpty()) {
-                    logListState.animateScrollToItem(logMessages.size - 1)
-                }
-            }
-
-            LazyColumn(
-                state = logListState,
-                modifier = Modifier.padding(10.dp),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
+        if (logVisible) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("event-log-content")
+                    .then(
+                        if (fillHeight) Modifier.fillMaxHeight()
+                        else Modifier.heightIn(min = 80.dp, max = 160.dp)
+                    ),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF263238)),
+                shape = RoundedCornerShape(8.dp)
             ) {
-                if (logMessages.isEmpty()) {
-                    item {
-                        Text(
-                            text = "No events yet",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontFamily = FontFamily.Monospace,
-                            color = Color(0xFF607D8B)
-                        )
+                val logListState = rememberLazyListState()
+
+                LaunchedEffect(logMessages.size) {
+                    if (logMessages.isNotEmpty()) {
+                        logListState.animateScrollToItem(logMessages.size - 1)
                     }
-                } else {
-                    items(logMessages) { msg ->
-                        Text(
-                            text = msg,
-                            style = MaterialTheme.typography.bodySmall,
-                            fontFamily = FontFamily.Monospace,
-                            color = when {
-                                "EVENT" in msg -> Color(0xFFFFD54F)
-                                "ACTION" in msg -> Color(0xFF81D4FA)
-                                "ERROR" in msg -> Color(0xFFEF9A9A)
-                                "Received" in msg -> Color(0xFFA5D6A7)
-                                else -> Color(0xFF80CBC4)
-                            },
-                            lineHeight = 16.sp
-                        )
+                }
+
+                LazyColumn(
+                    state = logListState,
+                    modifier = Modifier.padding(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    if (logMessages.isEmpty()) {
+                        item {
+                            Text(
+                                text = "No events yet",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = FontFamily.Monospace,
+                                color = Color(0xFF607D8B)
+                            )
+                        }
+                    } else {
+                        items(logMessages) { msg ->
+                            Text(
+                                text = msg,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontFamily = FontFamily.Monospace,
+                                color = when {
+                                    "EVENT" in msg -> Color(0xFFFFD54F)
+                                    "ACTION" in msg -> Color(0xFF81D4FA)
+                                    "ERROR" in msg -> Color(0xFFEF9A9A)
+                                    "Received" in msg -> Color(0xFFA5D6A7)
+                                    else -> Color(0xFF80CBC4)
+                                },
+                                lineHeight = 16.sp
+                            )
+                        }
                     }
                 }
             }
