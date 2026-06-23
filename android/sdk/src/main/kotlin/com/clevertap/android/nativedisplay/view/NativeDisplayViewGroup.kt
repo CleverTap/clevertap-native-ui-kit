@@ -1,6 +1,8 @@
 package com.clevertap.android.nativedisplay.view
 
 import android.content.Context
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ViewConfiguration
@@ -15,6 +17,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
+import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener
@@ -362,21 +365,84 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-
-        // Clear state if not recycled
-        if (!isRecycled) {
-            configState.value = null
-            actionListenerState.value = null
-            componentListenerState.value = null
-        }
+        // State is intentionally preserved across detach. The lifecycle observer
+        // in [setupLifecycleObserver] clears it on actual destruction; clearing
+        // here breaks transient detach/re-attach paths (ViewPager page changes,
+        // animations, dialogs covering the host) where the same VG instance is
+        // expected to re-render its existing unit on re-attach. RecyclerView
+        // recycling uses the explicit [onRecycled] entry point.
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-
         // Request layout when attached
         if (configState.value != null) {
             requestLayout()
+        }
+    }
+
+    // MARK: - State Save / Restore
+
+    /**
+     * Persist enough state to rehydrate the displayed unit across Activity
+     * recreation (rotation, process restore). Only the [unitId] is saved —
+     * the actual unit is looked up from the bridge cache on restore, which
+     * keeps the Parcel small and avoids serialising large parsed configs.
+     *
+     * **Requires a stable `android:id`** on this view — Android's
+     * `saveHierarchyState` skips Views with `NO_ID`. A VG declared inline in
+     * XML with `android:id="@+id/..."` survives rotation automatically;
+     * programmatically-created VGs that are added/removed from a container
+     * each lifecycle do not, and should use a host-side state holder
+     * (e.g. a ViewModel) instead.
+     *
+     * **Listeners are not restored.** `NativeDisplayActionListener` and
+     * `NativeDisplayComponentListener` are closures over the host
+     * Activity/Fragment and are not safe to persist. After restore, the
+     * caller must re-attach them via [setUnit] / [setConfig] if they need
+     * to handle interactions; the unit will still render correctly without
+     * them.
+     */
+    override fun onSaveInstanceState(): Parcelable? {
+        val superState = super.onSaveInstanceState()
+        val savedUnitId = unitIdState.value ?: return superState
+        return SavedState(superState, savedUnitId)
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state !is SavedState) {
+            super.onRestoreInstanceState(state)
+            return
+        }
+        super.onRestoreInstanceState(state.superState)
+        val unit = NativeDisplayBridge.getInstance()?.getNativeDisplayForId(state.unitId)
+        if (unit != null) {
+            setUnit(unit)
+        }
+    }
+
+    private class SavedState : BaseSavedState {
+        val unitId: String
+
+        constructor(superState: Parcelable?, unitId: String) : super(superState) {
+            this.unitId = unitId
+        }
+
+        private constructor(parcel: Parcel) : super(parcel) {
+            unitId = parcel.readString().orEmpty()
+        }
+
+        override fun writeToParcel(out: Parcel, flags: Int) {
+            super.writeToParcel(out, flags)
+            out.writeString(unitId)
+        }
+
+        companion object {
+            @JvmField
+            val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
+                override fun createFromParcel(parcel: Parcel): SavedState = SavedState(parcel)
+                override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
+            }
         }
     }
 }

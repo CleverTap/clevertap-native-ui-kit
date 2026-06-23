@@ -308,9 +308,9 @@ final class AttributionTests: XCTestCase {
         XCTAssertTrue(mockCt.viewedWithExtras.isEmpty, "Unwired Core SDK instance must never be invoked")
     }
 
-    // MARK: - Dedup short-circuits BOTH paths
+    // MARK: - Per-impression semantics — no internal dedupe
 
-    func test_dedup_shortCircuitsListenerAndBridge_acrossViewedEvents() async {
+    func test_repeatedViewed_firesEveryTime_onBothListenerAndBridge() async {
         let mockCt = MockCleverTapInstance()
         let mockListener = MockActionListener()
         bridge.cleverTapInstance = mockCt
@@ -318,39 +318,63 @@ final class AttributionTests: XCTestCase {
         let handler = ActionHandler(
             actionListener: mockListener,
             componentListener: nil,
-            unitId: "unit_dd_1"
+            unitId: "unit_imp_1"
         )
-        handler.fireSystemEvent(eventName: "Notification Viewed", deduplicate: true)
+        handler.fireSystemEvent(eventName: "Notification Viewed")
         await waitForMainActor()
-        handler.fireSystemEvent(eventName: "Notification Viewed", deduplicate: true)
+        handler.fireSystemEvent(eventName: "Notification Viewed")
         await waitForMainActor()
-        handler.fireSystemEvent(eventName: "Notification Viewed", deduplicate: true)
+        handler.fireSystemEvent(eventName: "Notification Viewed")
         await waitForMainActor()
 
-        XCTAssertEqual(mockListener.viewedUnitIds, ["unit_dd_1"], "Listener should only fire once with dedup")
-        // Viewed events ride the viewed-with-extras selector because of the version stamp.
-        XCTAssertEqual(mockCt.viewedWithExtras.map { $0.0 }, ["unit_dd_1"], "Bridge push should only fire once with dedup")
+        // Per-impression contract — the caller (renderer's .onAppear) controls
+        // cadence. The handler must NOT suppress repeats.
+        XCTAssertEqual(mockListener.viewedUnitIds, ["unit_imp_1", "unit_imp_1", "unit_imp_1"])
+        XCTAssertEqual(mockCt.viewedWithExtras.map { $0.0 }, ["unit_imp_1", "unit_imp_1", "unit_imp_1"])
     }
 
-    func test_dedup_independentBetweenViewedAndClicked() async {
+    func test_repeatedClicked_firesEveryTime_onBothListenerAndBridge() async {
         let mockCt = MockCleverTapInstance()
+        let mockListener = MockActionListener()
         bridge.cleverTapInstance = mockCt
 
         let handler = ActionHandler(
-            actionListener: nil,
+            actionListener: mockListener,
             componentListener: nil,
-            unitId: "unit_dd_2"
+            unitId: "unit_imp_2"
         )
-        handler.fireSystemEvent(eventName: "Notification Viewed", deduplicate: true)
-        handler.fireSystemEvent(eventName: "Notification Clicked", deduplicate: true)
-        // Repeat — both should be deduped individually
-        handler.fireSystemEvent(eventName: "Notification Viewed", deduplicate: true)
-        handler.fireSystemEvent(eventName: "Notification Clicked", deduplicate: true)
+        handler.fireSystemEvent(eventName: "Notification Clicked")
+        await waitForMainActor()
+        handler.fireSystemEvent(eventName: "Notification Clicked")
         await waitForMainActor()
 
-        // Both events ride their respective with-extras selectors because of the version stamp.
-        XCTAssertEqual(mockCt.viewedWithExtras.map { $0.0 }, ["unit_dd_2"])
-        XCTAssertEqual(mockCt.elementClicks.map { $0.0 }, ["unit_dd_2"])
+        XCTAssertEqual(mockListener.clickedUnitIds, ["unit_imp_2", "unit_imp_2"])
+        XCTAssertEqual(mockCt.elementClicks.map { $0.0 }, ["unit_imp_2", "unit_imp_2"])
+    }
+
+    func test_listenerRebind_isLiveOnNextEvent_withoutRebuildingHandler() async {
+        let mockCt = MockCleverTapInstance()
+        let first = MockActionListener()
+        let second = MockActionListener()
+        bridge.cleverTapInstance = mockCt
+
+        let handler = ActionHandler(
+            actionListener: first,
+            componentListener: nil,
+            unitId: "unit_rebind"
+        )
+        handler.fireSystemEvent(eventName: "Notification Viewed")
+        await waitForMainActor()
+
+        // Swap listener on the existing handler — no rebuild required.
+        handler.actionListener = second
+        handler.fireSystemEvent(eventName: "Notification Viewed")
+        await waitForMainActor()
+
+        XCTAssertEqual(first.viewedUnitIds, ["unit_rebind"])
+        XCTAssertEqual(second.viewedUnitIds, ["unit_rebind"])
+        // Bridge fires for every impression regardless of listener identity.
+        XCTAssertEqual(mockCt.viewedWithExtras.map { $0.0 }, ["unit_rebind", "unit_rebind"])
     }
 
     // MARK: - Element-aware selector (new Core SDK method)
