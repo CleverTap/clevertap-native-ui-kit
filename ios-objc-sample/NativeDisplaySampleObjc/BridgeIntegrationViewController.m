@@ -434,8 +434,8 @@ static NSString * const kMockStatsCard = @"{"
 // MARK: - NativeDisplayBridgeListener
 
 - (void)onNativeDisplaysLoaded:(NSArray<NativeDisplayUnit *> *)units {
-    NSArray<NSString *> *unitIds = [units valueForKey:@"unitId"];
     dispatch_async(dispatch_get_main_queue(), ^{
+        NSArray<NSString *> *unitIds = [units valueForKey:@"unitId"];
         self->_currentUnitIds = [unitIds mutableCopy];
         [self refreshRenderedUnits];
         [self appendLog:[NSString stringWithFormat:@"onNativeDisplaysLoaded: received %lu unit(s)", (unsigned long)units.count]];

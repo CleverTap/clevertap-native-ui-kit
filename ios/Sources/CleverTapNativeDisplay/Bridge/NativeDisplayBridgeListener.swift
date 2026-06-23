@@ -14,5 +14,5 @@ import Foundation
 @objc public protocol NativeDisplayBridgeListener: AnyObject {
     /// Called when native display units are loaded or updated.
     /// - Parameter units: The array of parsed native display units.
-    func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit])
+    @objc func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit])
 }

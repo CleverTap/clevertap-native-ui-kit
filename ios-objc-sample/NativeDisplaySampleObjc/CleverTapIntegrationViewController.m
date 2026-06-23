@@ -20,9 +20,6 @@
 // Constraint sets
 @property (nonatomic, strong) NSArray<NSLayoutConstraint *> *portraitConstraints;
 @property (nonatomic, strong) NSArray<NSLayoutConstraint *> *landscapeConstraints;
-
-// (listener is self)
-
 @end
 
 @implementation CleverTapIntegrationViewController
@@ -288,6 +285,7 @@
 
 - (void)onNativeDisplaysLoaded:(NSArray<NativeDisplayUnit *> *)units {
     dispatch_async(dispatch_get_main_queue(), ^{
+        NSArray<NSString *> *unitIds = [units valueForKey:@"unitId"];
         // Clear existing canvas views
         NSArray *views = [self->_canvasStack.arrangedSubviews copy];
         for (UIView *v in views) {
