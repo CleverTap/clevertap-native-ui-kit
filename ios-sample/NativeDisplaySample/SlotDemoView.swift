@@ -88,7 +88,7 @@ struct SlotDemoView: View {
                 
                 Button(action: {
                     if let cleverTap = CleverTap.sharedInstance() {
-                        cleverTap.recordEvent("asd")
+                        cleverTap.recordEvent("Footer1")
                         cleverTap.recordEvent("Footer5")
                         cleverTap.recordEvent("Header1")
                         cleverTap.recordEvent("Header2")
