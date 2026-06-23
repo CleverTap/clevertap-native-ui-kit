@@ -30,8 +30,6 @@
     self.view.backgroundColor = [UIColor systemGroupedBackgroundColor];
     [self buildLayout];
     [self applyLayoutForSize:self.view.bounds.size];
-    [NativeDisplayBridge.shared addListener:self];
-    [self appendLog:@"Bridge listener registered"];
 
     CleverTap *ct = [CleverTap sharedInstance];
     if (ct) {
@@ -39,6 +37,21 @@
     } else {
         [self appendLog:@"CleverTap not configured — check Info.plist credentials"];
     }
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    // Listen only while visible — mirrors the SwiftUI sample's onAppear/onDisappear.
+    // The Events tab lives in a UITabBarController and stays alive; if it listened
+    // permanently, slot campaigns fetched on the Slots tab would replay into this
+    // canvas (the bridge notifies listeners with the entire cache).
+    [NativeDisplayBridge.shared addListener:self];
+    [self appendLog:@"Bridge listener registered"];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [NativeDisplayBridge.shared removeListener:self];
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
@@ -285,7 +298,6 @@
 
 - (void)onNativeDisplaysLoaded:(NSArray<NativeDisplayUnit *> *)units {
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSArray<NSString *> *unitIds = [units valueForKey:@"unitId"];
         // Clear existing canvas views
         NSArray *views = [self->_canvasStack.arrangedSubviews copy];
         for (UIView *v in views) {

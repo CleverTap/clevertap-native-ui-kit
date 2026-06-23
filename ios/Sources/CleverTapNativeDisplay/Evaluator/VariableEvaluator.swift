@@ -21,7 +21,6 @@ class VariableEvaluator {
 
     init(variables: [String: AnyCodable]) {
         self.variables = variables
-        NDLogger.d(Self.self, "VariableEvaluator init: \(variables.count) variable(s)")
     }
     
     /// Evaluate a string template, replacing {{expressions}} with values.
