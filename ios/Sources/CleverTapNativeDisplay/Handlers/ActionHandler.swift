@@ -16,14 +16,17 @@ import UIKit
 /// Handles execution of actions triggered by Native Display components.
 class ActionHandler {
 
-    private weak var actionListener: NativeDisplayActionListener?
-    private weak var componentListener: NativeDisplayComponentListener?
-    private var firedSystemEvents = Set<String>()
+    /// Mutable so the surrounding view/cell can rebind listeners without
+    /// rebuilding the handler. Stable handler identity is required for the
+    /// per-impression contract of `fireSystemEvent` — recreating it on every
+    /// listener change would defeat that.
+    weak var actionListener: NativeDisplayActionListener?
+    weak var componentListener: NativeDisplayComponentListener?
     private let unitId: String?
 
     init(
-        actionListener: NativeDisplayActionListener?,
-        componentListener: NativeDisplayComponentListener?,
+        actionListener: NativeDisplayActionListener? = nil,
+        componentListener: NativeDisplayComponentListener? = nil,
         unitId: String? = nil
     ) {
         self.actionListener = actionListener
@@ -121,16 +124,14 @@ class ActionHandler {
     /// Bridge push methods short-circuit when no Core SDK instance is attached,
     /// so this stays a graceful no-op in standalone use.
     ///
+    /// Per-impression cadence is the caller's responsibility — the renderer
+    /// gates `Notification Viewed` on the root view's `.onAppear` so each
+    /// appearance produces one event. This method itself does NOT dedupe.
+    ///
     /// - Parameters:
     ///   - eventName: The system event name (e.g., "Notification Viewed")
     ///   - properties: Optional event properties
-    func fireSystemEvent(eventName: String, properties: [String: Any]? = nil, deduplicate: Bool = false) {
-        if deduplicate {
-            guard firedSystemEvents.insert(eventName).inserted else {
-                NDLogger.d(Self.self, "System event already fired, skipping: \(eventName)")
-                return
-            }
-        }
+    func fireSystemEvent(eventName: String, properties: [String: Any]? = nil) {
         Task { @MainActor in
             NDLogger.d(Self.self, "Firing system event: \(eventName)")
             actionListener?.onTrackEvent(eventName: eventName, properties: properties)

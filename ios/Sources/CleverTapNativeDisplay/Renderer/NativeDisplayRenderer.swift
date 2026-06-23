@@ -330,7 +330,7 @@ struct RenderNode: View {
             )
             .onAppear {
                 if isRoot {
-                    actionHandler?.fireSystemEvent(eventName: "Notification Viewed", deduplicate: true)
+                    actionHandler?.fireSystemEvent(eventName: "Notification Viewed")
                 }
                 if let action = node.actions?[ActionTriggers.onAppear] {
                     actionHandler?.handleLifecycleAction(action, nodeId: node.id)
@@ -386,7 +386,7 @@ struct RenderNode: View {
             )
             .onAppear {
                 if isRoot {
-                    actionHandler?.fireSystemEvent(eventName: "Notification Viewed", deduplicate: true)
+                    actionHandler?.fireSystemEvent(eventName: "Notification Viewed")
                 }
                 if let action = node.actions?[ActionTriggers.onAppear] {
                     actionHandler?.handleLifecycleAction(action, nodeId: node.id)

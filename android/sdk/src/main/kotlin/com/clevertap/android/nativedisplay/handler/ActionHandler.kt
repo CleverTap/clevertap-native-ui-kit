@@ -42,9 +42,10 @@ import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListen
  * - Providing default implementations for certain actions (like opening URLs)
  * - Managing coroutine lifecycle for async operations
  *
+ * Listener properties are mutable so the renderer can rebind them across recompositions
+ * without rebuilding the handler — handler identity is tied to [unitId] only.
+ *
  * @param context Android context for starting intents, opening URLs, etc.
- * @param listener Client's callback interface for handling actions
- * @param componentListener Optional component interaction listener
  * @param unitId The CleverTap display unit ID (`wzrk_id`) for attribution events; null when
  *        the config did not come from a Core SDK display unit payload
  * @param pushViewedEvent Test seam invoked when "Notification Viewed" fires. Production
@@ -56,15 +57,18 @@ import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListen
  */
 internal class ActionHandler(
     private val context: Context,
-    private val listener: NativeDisplayActionListener?,
-    private val componentListener: NativeDisplayComponentListener? = null,
-    private val unitId: String? = null,
+    internal val unitId: String? = null,
     private val pushViewedEvent: (String) -> Unit = DEFAULT_PUSH_VIEWED,
     private val pushClickedEvent: (String, Map<String, Any?>?) -> Unit = DEFAULT_PUSH_CLICKED,
 ) {
 
+    /** Client's callback interface for handling actions. Rebound by the renderer on recomposition. */
+    internal var listener: NativeDisplayActionListener? = null
+
+    /** Optional component interaction listener. Rebound by the renderer on recomposition. */
+    internal var componentListener: NativeDisplayComponentListener? = null
+
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-    private val firedSystemEvents = mutableSetOf<String>()
 
     companion object {
         private const val TAG = "ActionHandler"
@@ -247,16 +251,18 @@ internal class ActionHandler(
      * so attribution flows to Core SDK automatically whenever it is integrated —
      * the client does not have to opt in by attaching a listener.
      *
+     * The handler does not deduplicate fires: each call results in one delivery to
+     * the listener and bridge. Callers control cadence — the renderer's
+     * `TrackNotificationViewed` composable (keyed on `unitId`, gated by the
+     * process-level [com.clevertap.android.nativedisplay.bridge.ViewedUnitsTracker])
+     * produces exactly one `Notification Viewed` per real impression, suppresses
+     * Activity-configuration-change re-fires, and lets a unit scrolled out and back
+     * in legitimately fire again as a fresh impression.
+     *
      * @param eventName The system event name (e.g., "Notification Viewed")
      * @param properties Optional event properties
-     * @param deduplicate When true, skips firing if this event name was already fired
-     *                    by this handler instance
      */
-    fun fireSystemEvent(eventName: String, properties: Map<String, Any?>? = null, deduplicate: Boolean = false) {
-        if (deduplicate && !firedSystemEvents.add(eventName)) {
-            NDLogger.d(TAG, "System event already fired, skipping: $eventName")
-            return
-        }
+    fun fireSystemEvent(eventName: String, properties: Map<String, Any?>? = null) {
         coroutineScope.launch {
             try {
                 NDLogger.d(TAG, "Firing system event: $eventName")

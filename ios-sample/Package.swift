@@ -10,7 +10,7 @@ let package = Package(
         // Reference the local SDK package
         .package(name: "CleverTapNativeDisplay", path: "../ios"),
         // CleverTap iOS SDK for real integration demo
-        .package(url: "https://github.com/CleverTap/clevertap-ios-sdk", .upToNextMajor(from: "7.0.0"))
+        .package(url: "https://github.com/CleverTap/clevertap-ios-sdk", .upToNextMajor(from: "7.7.1"))
     ],
     targets: [
         .executableTarget(

@@ -13,8 +13,9 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
+import androidx.core.view.doOnAttach
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -27,6 +28,7 @@ import com.clevertap.android.nativedisplay.view.NativeDisplayViewGroup
 import com.clevertap.android.nativeui.sample.databinding.FragmentXmlFeedBinding
 import com.clevertap.android.sdk.CleverTapAPI
 import com.google.android.material.R as MaterialR
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 /**
@@ -49,16 +51,23 @@ class XmlFeedFragment : Fragment() {
     private var _binding: FragmentXmlFeedBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: XmlFeedViewModel by viewModels()
+    // Activity-scoped so the cached units / log survive the remove+add that
+    // XmlFeedScreen performs on rotation (a fragment-scoped VM would be cleared
+    // because the fragment instance is destroyed during that transition).
+    private val viewModel: XmlFeedViewModel by activityViewModels()
 
     private var bridge: NativeDisplayBridge? = null
     private var cleverTapApi: CleverTapAPI? = null
 
     private val bridgeListener = object : NativeDisplayBridgeListener {
+        // Only push into the VM. Rendering is driven exclusively by the
+        // repeatOnLifecycle(STARTED) collector in onViewCreated — that gate
+        // ensures the view tree is actually attached before canvas.addView
+        // runs. Calling renderUnits directly here used to race ahead of the
+        // attach pass on rotation and produced a blank screen.
         override fun onNativeDisplaysLoaded(units: List<NativeDisplayUnit>) {
             viewModel.setUnits(units)
             log("Received ${units.size} unit(s): ${units.joinToString { it.unitId }}")
-            renderUnits(units)
         }
     }
 
@@ -125,14 +134,21 @@ class XmlFeedFragment : Fragment() {
             }
         }
 
-        // Re-render units on rotation: ViewModel retains them across configuration changes.
+        // VM is the single source of truth: bridgeListener only writes here, the
+        // collector below is the only render entry point. distinctUntilChanged keyed
+        // on unit ids absorbs Core SDK redeliveries that carry the same logical
+        // payload (same wzrk_id) re-parsed into a structurally-different list — those
+        // would otherwise trigger a wasteful second renderUnits on every rotation.
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.receivedUnits.collect { units ->
-                    if (units.isNotEmpty()) {
+                viewModel.receivedUnits
+                    .distinctUntilChanged { old, new -> old.map { it.unitId } == new.map { it.unitId } }
+                    .collect { units ->
+                        // Pass empty lists through too — renderUnits clears the canvas
+                        // and surfaces emptyCanvasText so stale widgets don't linger
+                        // when the bridge / VM transitions back to no units.
                         renderUnits(units)
                     }
-                }
             }
         }
     }
@@ -210,6 +226,17 @@ class XmlFeedFragment : Fragment() {
 
     private fun renderUnits(units: List<NativeDisplayUnit>) {
         val canvas = binding.displayCanvas
+
+        // On rotation the StateFlow collector can fire as soon as the fragment
+        // reaches STARTED, which on some devices precedes the canvas finishing
+        // its first layout pass — addView against an unattached parent would
+        // leave the widget orphaned (no onAttachedToWindow → no Compose start →
+        // blank). Defer until the canvas actually attaches.
+        if (!canvas.isAttachedToWindow) {
+            canvas.doOnAttach { renderUnits(units) }
+            return
+        }
+
         if (units.isEmpty()) {
             binding.emptyCanvasText.visibility = View.VISIBLE
             canvas.visibility = View.GONE
