@@ -252,10 +252,12 @@ internal class ActionHandler(
      * the client does not have to opt in by attaching a listener.
      *
      * The handler does not deduplicate fires: each call results in one delivery to
-     * the listener and bridge. Callers control cadence — the renderer relies on
-     * Compose's `LaunchedEffect(node.id)` so each unit mount produces exactly one
-     * `Notification Viewed`, and a unit scrolled out and back in legitimately fires
-     * again as a fresh impression.
+     * the listener and bridge. Callers control cadence — the renderer's
+     * `TrackNotificationViewed` composable (keyed on `unitId`, gated by the
+     * process-level [com.clevertap.android.nativedisplay.bridge.ViewedUnitsTracker])
+     * produces exactly one `Notification Viewed` per real impression, suppresses
+     * Activity-configuration-change re-fires, and lets a unit scrolled out and back
+     * in legitimately fire again as a fresh impression.
      *
      * @param eventName The system event name (e.g., "Notification Viewed")
      * @param properties Optional event properties

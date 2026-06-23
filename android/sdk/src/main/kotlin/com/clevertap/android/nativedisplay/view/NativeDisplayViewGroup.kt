@@ -375,7 +375,14 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        // Request layout when attached
+        // Retry a pending rehydrate when restore ran before the bridge cache was ready
+        // (host's NativeDisplayBridge.initialize hadn't been called yet, or the unit
+        // hadn't landed in the cache yet). Safe no-op when the unit is already applied
+        // or still absent from the bridge.
+        val pendingUnitId = unitIdState.value
+        if (configState.value == null && pendingUnitId != null) {
+            rehydrateFromBridge(pendingUnitId)
+        }
         if (configState.value != null) {
             requestLayout()
         }
@@ -415,10 +422,18 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
             return
         }
         super.onRestoreInstanceState(state.superState)
-        val unit = NativeDisplayBridge.getInstance()?.getNativeDisplayForId(state.unitId)
-        if (unit != null) {
-            setUnit(unit)
-        }
+        // Stash the restored id even if the bridge can't resolve it right now:
+        // [onAttachedToWindow] retries when the parent enters the window, and a
+        // host-driven [setUnit] will overwrite this value if the host gets there
+        // first. Without this, an early restore (bridge not yet initialized, or
+        // unit not yet loaded into the cache) would silently drop the saved id.
+        unitIdState.value = state.unitId
+        rehydrateFromBridge(state.unitId)
+    }
+
+    private fun rehydrateFromBridge(unitId: String) {
+        val unit = NativeDisplayBridge.getInstance()?.getNativeDisplayForId(unitId) ?: return
+        setUnit(unit)
     }
 
     private class SavedState : BaseSavedState {

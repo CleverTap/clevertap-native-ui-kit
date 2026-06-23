@@ -144,9 +144,10 @@ class XmlFeedFragment : Fragment() {
                 viewModel.receivedUnits
                     .distinctUntilChanged { old, new -> old.map { it.unitId } == new.map { it.unitId } }
                     .collect { units ->
-                        if (units.isNotEmpty()) {
-                            renderUnits(units)
-                        }
+                        // Pass empty lists through too — renderUnits clears the canvas
+                        // and surfaces emptyCanvasText so stale widgets don't linger
+                        // when the bridge / VM transitions back to no units.
+                        renderUnits(units)
                     }
             }
         }
