@@ -72,7 +72,7 @@ static NSString * const kMockStatsCard = @"{"
 
 // MARK: - BridgeIntegrationViewController
 
-@interface BridgeIntegrationViewController () <NDBridgeListenerObjc>
+@interface BridgeIntegrationViewController () <NativeDisplayBridgeListener>
 
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) UIStackView *contentStack;
@@ -82,9 +82,6 @@ static NSString * const kMockStatsCard = @"{"
 @property (nonatomic, strong) UILabel *renderedUnitsTitleLabel;
 @property (nonatomic, strong) UITextView *eventLogTextView;
 @property (nonatomic, strong) UILabel *pullResultLabel;
-
-// Bridge listener token
-@property (nonatomic, strong) NDBridgeListenerToken *listenerToken;
 
 // Unit IDs currently displayed
 @property (nonatomic, strong) NSMutableArray<NSString *> *currentUnitIds;
@@ -102,21 +99,18 @@ static NSString * const kMockStatsCard = @"{"
     self.view.backgroundColor = [UIColor systemGroupedBackgroundColor];
     _currentUnitIds = [NSMutableArray array];
     [self buildLayout];
-    _listenerToken = [NDDisplayHelper bridgeAddListener:self];
+    [NativeDisplayBridge.shared addListener:self];
     [self appendLog:@"Listener registered on NativeDisplayBridge.shared"];
 }
 
 - (void)dealloc {
-    if (_listenerToken) {
-        [NDDisplayHelper bridgeRemoveListener:_listenerToken];
-    }
+    [NativeDisplayBridge.shared removeListener:self];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     if (self.isMovingFromParentViewController) {
-        [NDDisplayHelper bridgeRemoveListener:_listenerToken];
-        _listenerToken = nil;
+        [NativeDisplayBridge.shared removeListener:self];
         [self appendLog:@"Listener removed"];
     }
 }
@@ -408,15 +402,13 @@ static NSString * const kMockStatsCard = @"{"
     [self refreshRenderedUnits];
     _pullResultLabel.hidden = YES;
     [self appendLog:@"Bridge cleared. Re-registering listener..."];
-    if (_listenerToken) {
-        [NDDisplayHelper bridgeRemoveListener:_listenerToken];
-    }
-    _listenerToken = [NDDisplayHelper bridgeAddListener:self];
+    [NativeDisplayBridge.shared removeListener:self];
+    [NativeDisplayBridge.shared addListener:self];
     [self appendLog:@"Listener re-registered"];
 }
 
 - (void)fetchAllUnits {
-    NSArray<NSString *> *ids = [NDDisplayHelper bridgeGetAllUnitIds];
+    NSArray<NSString *> *ids = [[NativeDisplayBridge.shared getAllNativeDisplays] valueForKey:@"unitId"];
     NSString *result = [NSString stringWithFormat:@"getAllNativeDisplays() returned %lu unit(s): [%@]",
         (unsigned long)ids.count, [ids componentsJoinedByString:@", "]];
     _pullResultLabel.text = result;
@@ -426,7 +418,8 @@ static NSString * const kMockStatsCard = @"{"
 
 - (void)fetchUnitById {
     NSString *unitId = [_unitIdTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-    NativeDisplayUIView *view = [NDDisplayHelper createViewForUnitId:unitId parentWidth:self.view.bounds.size.width actionListener:nil componentListener:nil];
+    NativeDisplayUnit *unit = [NativeDisplayBridge.shared getNativeDisplayForId:unitId];
+    NativeDisplayUIView *view = unit ? [[NativeDisplayUIView alloc] initWithUnit:unit parentWidth:self.view.bounds.size.width actionListener:nil componentListener:nil] : nil;
     NSString *result;
     if (view) {
         result = [NSString stringWithFormat:@"Found unit '%@'", unitId];
@@ -438,10 +431,11 @@ static NSString * const kMockStatsCard = @"{"
     [self appendLog:[NSString stringWithFormat:@"Pull API: %@", result]];
 }
 
-// MARK: - NDBridgeListenerObjc
+// MARK: - NativeDisplayBridgeListener
 
-- (void)onNativeDisplaysLoaded:(NSArray<NSString *> *)unitIds {
+- (void)onNativeDisplaysLoaded:(NSArray<NativeDisplayUnit *> *)units {
     dispatch_async(dispatch_get_main_queue(), ^{
+        NSArray<NSString *> *unitIds = [units valueForKey:@"unitId"];
         self->_currentUnitIds = [unitIds mutableCopy];
         [self refreshRenderedUnits];
         [self appendLog:[NSString stringWithFormat:@"onNativeDisplaysLoaded: received %lu unit(s)", (unsigned long)unitIds.count]];
@@ -499,7 +493,8 @@ static NSString * const kMockStatsCard = @"{"
     inner.translatesAutoresizingMaskIntoConstraints = NO;
 
     CGFloat parentWidth = self.view.bounds.size.width - 64; // account for card padding
-    NativeDisplayUIView *displayView = [NDDisplayHelper createViewForUnitId:unitId parentWidth:parentWidth actionListener:nil componentListener:nil];
+    NativeDisplayUnit *unit = [NativeDisplayBridge.shared getNativeDisplayForId:unitId];
+    NativeDisplayUIView *displayView = unit ? [[NativeDisplayUIView alloc] initWithUnit:unit parentWidth:parentWidth actionListener:nil componentListener:nil] : nil;
     if (displayView) {
         displayView.translatesAutoresizingMaskIntoConstraints = NO;
         [displayView.heightAnchor constraintEqualToConstant:380].active = YES;

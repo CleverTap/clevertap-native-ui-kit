@@ -3,7 +3,7 @@
 @import CleverTapSDK;
 @import CleverTapNativeDisplay;
 
-@interface UIKitDemoViewController () <NDBridgeListenerObjc, NativeDisplayActionListener, UITextFieldDelegate>
+@interface UIKitDemoViewController () <NativeDisplayBridgeListener, NativeDisplayActionListener, UITextFieldDelegate>
 
 // UI elements (mirroring UIKitTestViewController.swift)
 @property (nonatomic, strong) UITextField *eventNameField;
@@ -24,9 +24,6 @@
 @property (nonatomic, strong) NSArray<NSLayoutConstraint *> *portraitConstraints;
 @property (nonatomic, strong) NSArray<NSLayoutConstraint *> *landscapeConstraints;
 
-// Bridge
-@property (nonatomic, strong) NDBridgeListenerToken *listenerToken;
-
 @end
 
 @implementation UIKitDemoViewController
@@ -38,7 +35,7 @@
     [self buildLayout];
     [self applyLayoutForSize:self.view.bounds.size];
     [self wireActions];
-    _listenerToken = [NDDisplayHelper bridgeAddListener:self];
+    [NativeDisplayBridge.shared addListener:self];
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
@@ -49,9 +46,7 @@
 }
 
 - (void)dealloc {
-    if (_listenerToken) {
-        [NDDisplayHelper bridgeRemoveListener:_listenerToken];
-    }
+    [NativeDisplayBridge.shared removeListener:self];
 }
 
 // MARK: - Layout
@@ -285,18 +280,19 @@
     return YES;
 }
 
-// MARK: - NDBridgeListenerObjc
+// MARK: - NativeDisplayBridgeListener
 
-- (void)onNativeDisplaysLoaded:(NSArray<NSString *> *)unitIds {
+- (void)onNativeDisplaysLoaded:(NSArray<NativeDisplayUnit *> *)units {
     dispatch_async(dispatch_get_main_queue(), ^{
+        NSArray<NSString *> *unitIds = [units valueForKey:@"unitId"];
         NSArray *views = [self->_canvasStack.arrangedSubviews copy];
         for (UIView *v in views) {
             [self->_canvasStack removeArrangedSubview:v];
             [v removeFromSuperview];
         }
 
-        for (NSString *unitId in unitIds) {
-            NativeDisplayUIView *displayView = [NDDisplayHelper createViewForUnitId:unitId
+        for (NativeDisplayUnit *unit in units) {
+            NativeDisplayUIView *displayView = [[NativeDisplayUIView alloc] initWithUnit:unit
                 parentWidth:self->_canvasScrollView.bounds.size.width
                 actionListener:self
                 componentListener:nil];

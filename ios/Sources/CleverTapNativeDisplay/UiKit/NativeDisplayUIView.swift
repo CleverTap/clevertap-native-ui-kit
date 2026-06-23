@@ -228,3 +228,47 @@ public final class NativeDisplayUIView: UIView {
         return nil
     }
 }
+
+// MARK: - Objective-C Compatibility
+
+@available(iOS 13.0, *)
+public extension NativeDisplayUIView {
+
+    /// Objective-C entry point for bridge-delivered content. Renders a
+    /// `NativeDisplayUnit` (received via `NativeDisplayBridgeListener` /
+    /// `NativeDisplaySlotObserver` or `NativeDisplayBridge.getNativeDisplayForId:`).
+    /// Uses an Obj-C-friendly `CGFloat` width instead of `CGSize?`.
+    @objc convenience init(
+        unit: NativeDisplayUnit,
+        parentWidth: CGFloat,
+        actionListener: NativeDisplayActionListener?,
+        componentListener: NativeDisplayComponentListener?
+    ) {
+        let size: CGSize? = parentWidth > 0 ? CGSize(width: parentWidth, height: 0) : nil
+        self.init(
+            unit: unit,
+            parentSize: size,
+            actionListener: actionListener,
+            componentListener: componentListener
+        )
+    }
+
+    /// Objective-C entry point that parses raw JSON and renders the result.
+    /// Returns `nil` if the JSON cannot be parsed — Obj-C never has to touch
+    /// the Swift-only `ResolvedConfig`.
+    @objc convenience init?(
+        jsonData: Data,
+        parentWidth: CGFloat,
+        actionListener: NativeDisplayActionListener?,
+        componentListener: NativeDisplayComponentListener?
+    ) {
+        guard let config = try? ResolvedConfig.from(jsonData: jsonData) else { return nil }
+        let size: CGSize? = parentWidth > 0 ? CGSize(width: parentWidth, height: 0) : nil
+        self.init(
+            config: config,
+            parentSize: size,
+            actionListener: actionListener,
+            componentListener: componentListener
+        )
+    }
+}

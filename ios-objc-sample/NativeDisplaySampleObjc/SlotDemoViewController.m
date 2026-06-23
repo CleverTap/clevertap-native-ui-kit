@@ -366,12 +366,11 @@ static char const kAssociatedShapeLayerKey;
 
 - (void)fetchSlotData {
     CleverTap *ct = [CleverTap sharedInstance];
-    [ct recordEvent:@"asd"];
+    [ct recordEvent:@"Footer1"];
     [ct recordEvent:@"Footer5"];
     [ct recordEvent:@"Header1"];
     [ct recordEvent:@"Header2"];
     [ct recordEvent:@"Header4"];
-    [ct recordEvent:@"lalit"];
 }
 
 @end

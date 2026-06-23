@@ -17,14 +17,14 @@ import Foundation
 /// or is cleared for a specific slot. Observers are held weakly by the
 /// `NativeDisplaySlotManager` — no need to unregister on deallocation,
 /// though explicit unregistration is recommended for deterministic cleanup.
-public protocol NativeDisplaySlotObserver: AnyObject {
+@objc public protocol NativeDisplaySlotObserver: AnyObject {
     /// Called when a display unit becomes available for the observed slot.
     /// - Parameter unit: The native display unit ready for rendering.
-    func onUnitAvailable(_ unit: NativeDisplayUnit)
+    @objc func onUnitAvailable(_ unit: NativeDisplayUnit)
 
     /// Called when the display unit for the observed slot is cleared.
     /// - Parameter slotId: The slot identifier that was cleared.
-    func onUnitCleared(slotId: String)
+    @objc func onUnitCleared(slotId: String)
 }
 
 // MARK: - Slot Manager
@@ -135,7 +135,7 @@ public protocol NativeDisplaySlotObserver: AnyObject {
     /// - Parameters:
     ///   - slotId: The slot identifier to observe.
     ///   - observer: The observer to register (held weakly).
-    public func registerSlot(_ slotId: String, observer: NativeDisplaySlotObserver) {
+    @objc public func registerSlot(_ slotId: String, observer: NativeDisplaySlotObserver) {
         NDLogger.d(Self.self, "Registering observer for slot '\(slotId)'")
         lock.lock()
 
@@ -165,7 +165,7 @@ public protocol NativeDisplaySlotObserver: AnyObject {
     /// - Parameters:
     ///   - slotId: The slot identifier to stop observing.
     ///   - observer: The observer to remove.
-    public func unregisterSlot(_ slotId: String, observer: NativeDisplaySlotObserver) {
+    @objc public func unregisterSlot(_ slotId: String, observer: NativeDisplaySlotObserver) {
         NDLogger.d(Self.self, "Unregistering observer for slot '\(slotId)'")
         lock.lock()
         defer { lock.unlock() }
@@ -195,11 +195,18 @@ public protocol NativeDisplaySlotObserver: AnyObject {
         return activeIds
     }
 
+    /// Objective-C-friendly variant of `getActiveSlotIds()` returning an array.
+    /// Objective-C cannot represent `Set<String>`, so this exposes the same
+    /// data as an `NSArray<NSString *>` (order is unspecified).
+    @objc public func activeSlotIds() -> [String] {
+        Array(getActiveSlotIds())
+    }
+
     /// Returns the currently indexed unit for a given slot, if any.
     ///
     /// - Parameter slotId: The slot identifier to look up.
     /// - Returns: The latest `NativeDisplayUnit` for the slot, or `nil`.
-    public func getUnit(forSlot slotId: String) -> NativeDisplayUnit? {
+    @objc public func getUnit(forSlot slotId: String) -> NativeDisplayUnit? {
         lock.lock()
         defer { lock.unlock() }
         return unitIndex[slotId]

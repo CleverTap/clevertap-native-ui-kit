@@ -388,14 +388,14 @@ public typealias CTNDLogLevel = NDLogLevel
 
     /// Get all currently cached native display units.
     /// - Returns: Array of all parsed native display units.
-    public func getAllNativeDisplays() -> [NativeDisplayUnit] {
+    @objc public func getAllNativeDisplays() -> [NativeDisplayUnit] {
         return cache.getAll()
     }
 
     /// Get a specific native display unit by its ID.
     /// - Parameter unitId: The `wzrk_id` of the display unit.
     /// - Returns: The matching `NativeDisplayUnit`, or `nil` if not found.
-    public func getNativeDisplayForId(_ unitId: String) -> NativeDisplayUnit? {
+    @objc public func getNativeDisplayForId(_ unitId: String) -> NativeDisplayUnit? {
         return cache.get(unitId)
     }
 
@@ -404,7 +404,7 @@ public typealias CTNDLogLevel = NDLogLevel
     /// Add a listener to receive native display unit updates.
     /// Listeners are held as weak references — no need to remove on deallocation.
     /// - Parameter listener: The listener to add.
-    public func addListener(_ listener: NativeDisplayBridgeListener) {
+    @objc public func addListener(_ listener: NativeDisplayBridgeListener) {
         lock.lock(); defer { lock.unlock() }
         listeners.add(listener)
         NDLogger.d(Self.self, "Listener added: \(type(of: listener))")
@@ -412,7 +412,7 @@ public typealias CTNDLogLevel = NDLogLevel
 
     /// Remove a previously added listener.
     /// - Parameter listener: The listener to remove.
-    public func removeListener(_ listener: NativeDisplayBridgeListener) {
+    @objc public func removeListener(_ listener: NativeDisplayBridgeListener) {
         lock.lock(); defer { lock.unlock() }
         listeners.remove(listener)
         NDLogger.d(Self.self, "Listener removed: \(type(of: listener))")

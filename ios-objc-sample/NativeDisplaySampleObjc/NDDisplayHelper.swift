@@ -6,6 +6,11 @@
 //  NativeDisplayUIView instances from JSON data. ObjC files import this
 //  via #import "NativeDisplaySampleObjc-Swift.h".
 //
+//  The font-demo and slot-placeholder paths now delegate straight to the
+//  SDK's own @objc APIs (`NativeDisplayUIView(jsonData:parentWidth:fontFamily:…)`
+//  and `NativeDisplaySlotUIView(slotId:placeholder:)`) — the sample no longer
+//  carries its own SwiftUI font host or slot-observer shim.
+//
 
 import Foundation
 import UIKit
@@ -154,26 +159,6 @@ import CleverTapNativeDisplay
         }
     }
 
-    // MARK: - Bridge helpers (used by demo view controllers)
-
-    /// Returns unit IDs of all cached units in NativeDisplayBridge.shared.
-    @objc public static func bridgeGetAllUnitIds() -> [String] {
-        NativeDisplayBridge.shared.getAllNativeDisplays().map { $0.unitId }
-    }
-
-    /// Register an ObjC-compatible bridge listener. Returns an opaque token that must
-    /// be passed to `bridgeRemoveListener(_:)` to unregister.
-    @objc public static func bridgeAddListener(_ listener: NDBridgeListenerObjc) -> NDBridgeListenerToken {
-        let token = NDBridgeListenerToken(listener: listener)
-        NativeDisplayBridge.shared.addListener(token)
-        return token
-    }
-
-    /// Unregister a listener token obtained from `bridgeAddListener(_:)`.
-    @objc public static func bridgeRemoveListener(_ token: NDBridgeListenerToken) {
-        NativeDisplayBridge.shared.removeListener(token)
-    }
-
     // MARK: - Slot helpers
 
     /// Create a NativeDisplaySlotUIView for the given slot ID.
@@ -192,23 +177,6 @@ import CleverTapNativeDisplay
             return NDSlotPlaceholderView(slotId: slotId, placeholder: placeholder)
         }
         return nil
-    }
-
-    /// Render a cached NativeDisplayUnit by ID into a UIView.
-    @objc public static func createView(
-        forUnitId unitId: String,
-        parentWidth: CGFloat,
-        actionListener: NativeDisplayActionListener?,
-        componentListener: NativeDisplayComponentListener?
-    ) -> NativeDisplayUIView? {
-        guard let unit = NativeDisplayBridge.shared.getNativeDisplayForId(unitId) else { return nil }
-        let parentSize: CGSize? = parentWidth > 0 ? CGSize(width: parentWidth - 32, height: 0) : nil
-        return NativeDisplayUIView(
-            config: unit.config,
-            parentSize: parentSize,
-            actionListener: actionListener,
-            componentListener: componentListener
-        )
     }
 
 }
@@ -317,31 +285,6 @@ final class NDSlotPlaceholderView: UIView, NativeDisplaySlotObserver {
 
     override var intrinsicContentSize: CGSize {
         displayView?.intrinsicContentSize ?? placeholderView.intrinsicContentSize
-    }
-}
-
-// MARK: - ObjC-compatible bridge listener protocol
-
-/// ObjC classes implement this protocol to receive bridge callbacks.
-/// Unit IDs are passed instead of NativeDisplayUnit (which is not ObjC-representable).
-/// Use `NDDisplayHelper.createView(forUnitId:...)` to render a unit by its ID.
-@objc public protocol NDBridgeListenerObjc: AnyObject {
-    func onNativeDisplaysLoaded(_ unitIds: [String])
-}
-
-// MARK: - Bridge listener token (Swift adapter)
-
-/// Adapts NDBridgeListenerObjc to the Swift NativeDisplayBridgeListener protocol.
-/// Returned as an opaque token from NDDisplayHelper.bridgeAddListener(_:).
-@objc public class NDBridgeListenerToken: NSObject, NativeDisplayBridgeListener {
-    private weak var objcListener: NDBridgeListenerObjc?
-
-    init(listener: NDBridgeListenerObjc) {
-        self.objcListener = listener
-    }
-
-    public func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
-        objcListener?.onNativeDisplaysLoaded(units.map { $0.unitId })
     }
 }
 

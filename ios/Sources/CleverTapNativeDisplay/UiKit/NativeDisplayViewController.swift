@@ -102,3 +102,25 @@ public final class NativeDisplayViewController: UIViewController {
         hostingController?.rootView = swiftUIView
     }
 }
+
+// MARK: - Objective-C Compatibility
+
+@available(iOS 13.0, *)
+public extension NativeDisplayViewController {
+
+    /// Objective-C entry point that parses raw JSON and renders the result.
+    /// Returns `nil` if the JSON cannot be parsed — Obj-C never has to touch
+    /// the Swift-only `ResolvedConfig`.
+    @objc convenience init?(
+        jsonData: Data,
+        actionListener: NativeDisplayActionListener?,
+        componentListener: NativeDisplayComponentListener?
+    ) {
+        guard let config = try? ResolvedConfig.from(jsonData: jsonData) else { return nil }
+        self.init(
+            config: config,
+            actionListener: actionListener,
+            componentListener: componentListener
+        )
+    }
+}
