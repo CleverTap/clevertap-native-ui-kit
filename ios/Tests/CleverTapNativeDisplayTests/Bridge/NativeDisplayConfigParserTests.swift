@@ -22,6 +22,7 @@ final class NativeDisplayConfigParserTests: XCTestCase {
     {
         "root": {
             "type": "element",
+            "id": "root",
             "elementType": "text",
             "bindings": { "text": "Hello" },
             "layout": {
@@ -146,6 +147,7 @@ final class NativeDisplayConfigParserTests: XCTestCase {
             "wzrk_id": "unit_root",
             "root": {
                 "type": "element",
+                "id": "root",
                 "elementType": "text",
                 "bindings": { "text": "Direct" },
                 "layout": {

@@ -441,6 +441,14 @@ public typealias CTNDLogLevel = NDLogLevel
         return parseQueue.sync(execute: block)
     }
 
+    /// Test-only helper: asynchronously runs `block` on the parse queue. Tests
+    /// that inspect thread identity must use this — `parseQueue.sync` from the
+    /// main thread can be GCD-optimized to execute inline on the caller, which
+    /// would defeat any `Thread.isMainThread` check.
+    internal func _runOnParseQueueAsync(_ block: @escaping () -> Void) {
+        parseQueue.async(execute: block)
+    }
+
     /// Test-only constant: the parse queue label. Must match the label used
     /// when constructing `parseQueue`.
     internal static let _parseQueueLabel = "com.clevertap.nativedisplay.parse"
