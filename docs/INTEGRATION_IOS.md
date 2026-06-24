@@ -35,7 +35,7 @@ Render server-driven native UI campaigns on iOS using SwiftUI — with first-cla
 Add the package in Xcode via **File → Add Package Dependencies**:
 
 ```
-https://github.com/CleverTap/clevertap-native-display-ios
+https://github.com/CleverTap/clevertap-native-ui-kit
 ```
 
 Or add it to your `Package.swift`:
