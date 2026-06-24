@@ -1,7 +1,6 @@
 package com.clevertap.android.nativedisplay.renderer
 
 import android.content.Intent
-import android.net.Uri
 
 import android.view.TextureView
 import androidx.annotation.OptIn
@@ -39,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
+import androidx.core.net.toUri
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -98,13 +98,13 @@ private fun VideoControlIcon(
 @Composable
 internal fun VideoPlayer(
     videoUrl: String,
+    modifier: Modifier = Modifier,
     autoPlay: Boolean = false,
     loop: Boolean = false,
     muted: Boolean = false,
     showControls: Boolean = true,
     showFullscreen: Boolean = true,
-    openUrl: String? = null,
-    modifier: Modifier = Modifier
+    openUrl: String? = null
 ) {
     val context = LocalContext.current
 
@@ -342,7 +342,7 @@ internal fun VideoPlayerWithMedia3(
                             onClick = {
                                 runCatching {
                                     context.startActivity(
-                                        Intent(Intent.ACTION_VIEW, Uri.parse(openUrl))
+                                        Intent(Intent.ACTION_VIEW, openUrl.toUri())
                                     )
                                 }
                             }
@@ -464,7 +464,7 @@ private fun FullscreenVideoContent(
                     onClick = {
                         runCatching {
                             context.startActivity(
-                                Intent(Intent.ACTION_VIEW, Uri.parse(openUrl))
+                                Intent(Intent.ACTION_VIEW, openUrl.toUri())
                             )
                         }
                     }

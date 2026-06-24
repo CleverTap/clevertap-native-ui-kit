@@ -84,7 +84,7 @@ internal class NativeDisplayUnitCacheImpl {
                             val jsonStrings = list.mapNotNull { unit ->
                                 try {
                                     (unit!!.javaClass.getMethod("getJsonObject").invoke(unit)
-                                        as? org.json.JSONObject)?.toString()
+                                        as? JSONObject)?.toString()
                                 } catch (_: Throwable) { null }
                             }
                             if (jsonStrings.isNotEmpty()) onServerUpdate(jsonStrings)

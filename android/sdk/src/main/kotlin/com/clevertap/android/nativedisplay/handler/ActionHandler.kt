@@ -2,7 +2,7 @@ package com.clevertap.android.nativedisplay.handler
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import androidx.core.net.toUri
 import android.os.Bundle
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge
 import com.clevertap.android.nativedisplay.internal.NDLogger
@@ -321,7 +321,7 @@ internal class ActionHandler(
 
     // Matches Core SDK InAppActionHandler.openUrl behavior exactly.
     private fun openUrl(url: String) {
-        val uri = Uri.parse(url.replace("\n", "").replace("\r", ""))
+        val uri = url.replace("\n", "").replace("\r", "").toUri()
         val queryBundle = Bundle()
         uri.queryParameterNames?.forEach { name ->
             queryBundle.putString(name, uri.getQueryParameter(name))

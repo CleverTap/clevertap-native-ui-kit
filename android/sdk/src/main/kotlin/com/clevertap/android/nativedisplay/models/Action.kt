@@ -18,7 +18,6 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 
 /**
@@ -159,9 +158,9 @@ internal object OpenUrlSerializer : KSerializer<Action.OpenUrl> {
         if (urlElement is JsonPrimitive) return urlElement.content
         if (urlElement !is JsonObject) return ""
         val platformEl = urlElement["android"] ?: return ""
-        return when {
-            platformEl is JsonPrimitive -> platformEl.content
-            platformEl is JsonObject -> (platformEl["text"] as? JsonPrimitive)?.content ?: ""
+        return when (platformEl) {
+            is JsonPrimitive -> platformEl.content
+            is JsonObject -> (platformEl["text"] as? JsonPrimitive)?.content ?: ""
             else -> ""
         }
     }
@@ -203,9 +202,9 @@ internal fun parseMetadataToStringMap(obj: JsonObject): Map<String, String>? {
     val metaEl = obj["metadata"] as? JsonObject ?: return null
     val result = mutableMapOf<String, String>()
     for ((k, v) in metaEl) {
-        when {
-            v is JsonNull -> Unit
-            v is JsonPrimitive -> result[k] = v.content
+        when (v) {
+            is JsonNull -> Unit
+            is JsonPrimitive -> result[k] = v.content
             else -> result[k] = v.toString()  // JsonObject / JsonArray → compact JSON string
         }
     }

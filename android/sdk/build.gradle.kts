@@ -60,6 +60,11 @@ android {
             minCompileSdk = 23
         }
 
+        // Backport `android:fillType="evenOdd"` (API 24+) to API 23 via the
+        // androidx VectorDrawable compat path. Required for the volume-off /
+        // volume-on tint icons which use evenOdd-fill paths.
+        vectorDrawables.useSupportLibrary = true
+
         buildConfigField("String", "ND_LIB_VERSION_NAME", "\"$libraryVersion\"")
         buildConfigField("int", "ND_LIB_VERSION_CODE", "$libraryVersionCode")
     }
@@ -144,11 +149,11 @@ dependencies {
     compileOnly(libs.androidx.media3.hls)
 
     // CleverTap Core SDK (optional - for bridge adapter)
-    compileOnly("com.clevertap.android:clevertap-android-sdk:7.5.0")
+    compileOnly(libs.clevertap.android.sdk)
     // Fragment is a transitive dep of Core SDK; K1 compiler requires it on the
     // classpath to resolve supertypes of Core SDK classes (FragmentActivity, Fragment).
     // Not used directly in SDK code — removing this breaks compilation, not runtime.
-    compileOnly("androidx.fragment:fragment-ktx:1.8.5")
+    compileOnly(libs.androidx.fragment.ktx)
 
     // Testing
     testImplementation(libs.junit)
@@ -157,11 +162,11 @@ dependencies {
     // type is `CleverTapAPI`. `getDeclaredFields0` resolves all field types
     // during reflection, so the Core SDK class must be on the unit-test
     // classpath even though it is `compileOnly` for production.
-    testImplementation("com.clevertap.android:clevertap-android-sdk:7.5.0")
+    testImplementation(libs.clevertap.android.sdk)
     // play-services-tasks is a transitive dep of CleverTapAPI that surfaces
     // when the test classpath tries to load CleverTapAPI (e.g. for
     // Unsafe.allocateInstance in NativeDisplayBridgeReflectionCacheTest).
-    testImplementation("com.google.android.gms:play-services-tasks:18.2.0")
+    testImplementation(libs.play.services.tasks)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -169,7 +174,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // RecyclerView (for NativeDisplayViewGroup)
-    api("androidx.recyclerview:recyclerview:1.3.2")
+    api(libs.androidx.recyclerview)
 }
 
 mavenPublishing {

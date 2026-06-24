@@ -143,8 +143,9 @@ internal object ActionAttributionExtras {
         // Always stamp the ND SDK version on the outgoing payload so the server can
         // attribute the click to a specific SDK build. Caller-supplied keys win — we
         // never overwrite an existing entry under the same key.
-        out.putIfAbsent(KEY_ND_LIB_VERSION_NAME, BuildConfig.ND_LIB_VERSION_NAME)
-        out.putIfAbsent(KEY_ND_LIB_VERSION_CODE, BuildConfig.ND_LIB_VERSION_CODE)
+        // (Map.putIfAbsent requires API 24; minSdk is 23, so we hand-roll the check.)
+        if (KEY_ND_LIB_VERSION_NAME !in out) out[KEY_ND_LIB_VERSION_NAME] = BuildConfig.ND_LIB_VERSION_NAME
+        if (KEY_ND_LIB_VERSION_CODE !in out) out[KEY_ND_LIB_VERSION_CODE] = BuildConfig.ND_LIB_VERSION_CODE
         return out
     }
 

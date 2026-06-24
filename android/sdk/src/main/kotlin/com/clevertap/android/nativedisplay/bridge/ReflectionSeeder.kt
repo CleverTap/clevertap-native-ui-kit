@@ -67,6 +67,9 @@ internal object ReflectionSeeder {
         obj.javaClass.getDeclaredField(name).apply { isAccessible = true }.get(obj)
             ?: throw IllegalStateException("Field '$name' on ${obj.javaClass.simpleName} was null")
 
+    // Always returns `false` so callers can `return logOnce(...)` as a "log once
+    // and signal failure" shortcut from a Boolean-returning function.
+    @Suppress("FunctionOnlyReturningConstant")
     private fun logOnce(message: String): Boolean {
         if (!loggedFailure) {
             loggedFailure = true

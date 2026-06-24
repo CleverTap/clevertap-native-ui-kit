@@ -86,6 +86,10 @@ internal object CleverTapAutoWire {
      * don't expose [setDisplayUnitCache]. The listener is stored in [activeListener] to
      * prevent GC — the Core SDK holds it via WeakReference.
      */
+    // Returns `true` on success; the public callers map thrown exceptions to
+    // `false` so the Boolean is the success contract even though every explicit
+    // return in this body is `true`.
+    @Suppress("FunctionOnlyReturningConstant")
     private fun wireListener(
         ctApi: CleverTapAPI,
         bridge: NativeDisplayBridge,
