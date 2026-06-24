@@ -280,7 +280,7 @@ class ActionHandler {
     private func handleTrackEvent(_ action: Action.TrackEventAction, nodeId: String) {
         NDLogger.d(Self.self, "Tracking event: \(action.eventName)")
         
-        let parsedProperties = action.properties?.mapValues { parseAnyCodableValue($0) }
+        let parsedProperties = action.properties?.compactMapValues { parseAnyCodableValue($0) }
         
         actionListener?.onTrackEvent(
             eventName: action.eventName,
