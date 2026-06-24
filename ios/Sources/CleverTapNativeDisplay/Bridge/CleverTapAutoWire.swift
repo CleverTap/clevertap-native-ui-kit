@@ -261,7 +261,7 @@ internal class CleverTapAutoWire: NSObject {
     // MARK: - Notification Handler
 
     @objc private func handleDisplayUnitsNotification(_ notification: Notification) {
-        guard let bridge = bridge,
+        guard bridge != nil,
               let displayUnits = notification.userInfo?["displayUnits"] as? [AnyObject] else {
             return
         }

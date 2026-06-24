@@ -41,10 +41,11 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    // Listen only while visible — mirrors the SwiftUI sample's onAppear/onDisappear.
-    // The Events tab lives in a UITabBarController and stays alive; if it listened
-    // permanently, slot campaigns fetched on the Slots tab would replay into this
-    // canvas (the bridge notifies listeners with the entire cache).
+    // Listen only while this screen is visible — mirrors the SwiftUI sample's
+    // onAppear/onDisappear. This VC is a permanent tab in a UITabBarController,
+    // so registering once in viewDidLoad would keep it listening forever: slot
+    // campaigns fetched on the Slots tab would replay into this canvas, because
+    // the bridge notifies every registered listener with the whole unit set.
     [NativeDisplayBridge.shared addListener:self];
     [self appendLog:@"Bridge listener registered"];
 }
