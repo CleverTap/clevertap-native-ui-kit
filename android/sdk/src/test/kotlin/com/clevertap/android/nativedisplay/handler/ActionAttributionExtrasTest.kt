@@ -1,6 +1,5 @@
 package com.clevertap.android.nativedisplay.handler
 
-import com.clevertap.android.nativeui.BuildConfig
 import com.clevertap.android.nativedisplay.models.Action
 import com.clevertap.android.nativedisplay.models.ExecutionMode
 import kotlinx.serialization.json.JsonPrimitive

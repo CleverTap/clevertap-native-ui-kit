@@ -1,17 +1,39 @@
+import com.vanniktech.maven.publish.SonatypeHost
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.dokka)
-    id("maven-publish")
+    alias(libs.plugins.vanniktech.maven.publish)
 }
 
-// Read version from root VERSION file
-val versionFile = rootProject.file("../VERSION")
-val libraryVersion = if (versionFile.exists()) {
-    versionFile.readText().trim()
-} else {
-    "0.1.0"
+// Android SDK version — owned independently of iOS. Bump here when cutting an
+// Android release; the value flows into the Maven coordinate, BuildConfig
+// fields (ND_LIB_VERSION_NAME / ND_LIB_VERSION_CODE), and AGP versionName.
+val libraryVersion = "1.0.0"
+
+// Load credentials from local.properties for publishing (gitignored, dev-only).
+// CI should pass these as ORG_GRADLE_PROJECT_<key> env vars instead.
+// Keys read by Vanniktech Maven Publish + Central Portal:
+//   mavenCentralUsername=<sonatype user token>
+//   mavenCentralPassword=<sonatype password token>
+//   signing.keyId=<gpg key id, last 8 chars>
+//   signing.password=<gpg key password>
+//   signing.secretKeyRingFile=<absolute path to secring.gpg>
+val localProperties = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) f.inputStream().use { stream -> load(stream) }
+}
+listOf(
+    "mavenCentralUsername",
+    "mavenCentralPassword",
+    "signing.keyId",
+    "signing.password",
+    "signing.secretKeyRingFile",
+).forEach { key ->
+    localProperties.getProperty(key)?.let { value -> extra.set(key, value) }
 }
 
 // Derive monotonic versionCode from semver M.m.p as M*10000 + m*100 + p so a single
@@ -26,7 +48,7 @@ val libraryVersionCode: Int = libraryVersion.split(".")
     }
 
 android {
-    namespace = "com.clevertap.android.nativeui"
+    namespace = "com.clevertap.android.nativedisplay"
     compileSdk = 36
 
     defaultConfig {
@@ -82,13 +104,6 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-            withJavadocJar()
-        }
-    }
 }
 
 dependencies {
@@ -121,9 +136,11 @@ dependencies {
     implementation(libs.io.coil.compose)
     implementation(libs.io.coil.gif)  // GIF animation support
 
-    // Video playback (optional - host apps must provide)
+    // Video playback (optional - host apps must provide).
+    // media3-ui is intentionally NOT depended on — VideoRenderer uses a plain
+    // TextureView + ExoPlayer.setVideoTextureView() instead of media3 PlayerView,
+    // so consumers who don't need video can skip the media3-ui artifact entirely.
     compileOnly(libs.androidx.media3.exoplayer)
-    compileOnly(libs.androidx.media3.ui)
     compileOnly(libs.androidx.media3.hls)
 
     // CleverTap Core SDK (optional - for bridge adapter)
@@ -155,43 +172,36 @@ dependencies {
     api("androidx.recyclerview:recyclerview:1.3.2")
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("release") {
-                from(components["release"])
-                
-                groupId = "com.clevertap.android"
-                artifactId = "clevertap-native-ui-kit"
-                version = libraryVersion
-                
-                pom {
-                    name.set("CleverTap Native UI Kit")
-                    description.set("Native UI rendering for in-app messages using Jetpack Compose")
-                    url.set("https://github.com/CleverTap/clevertap-native-ui-kit")
-                    
-                    licenses {
-                        license {
-                            name.set("MIT License")
-                            url.set("https://opensource.org/licenses/MIT")
-                        }
-                    }
-                    
-                    developers {
-                        developer {
-                            id.set("clevertap")
-                            name.set("CleverTap")
-                            email.set("support@clevertap.com")
-                        }
-                    }
-                    
-                    scm {
-                        connection.set("scm:git:git://github.com/CleverTap/clevertap-native-ui-kit.git")
-                        developerConnection.set("scm:git:ssh://git@github.com/CleverTap/clevertap-native-ui-kit.git")
-                        url.set("https://github.com/CleverTap/clevertap-native-ui-kit")
-                    }
-                }
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
+
+    coordinates("com.clevertap.android", "clevertap-native-display-sdk", libraryVersion)
+
+    pom {
+        name.set("CleverTap Native UI Kit")
+        description.set("Native UI rendering for in-app messages using Jetpack Compose")
+        url.set("https://github.com/CleverTap/clevertap-native-ui-kit")
+
+        licenses {
+            license {
+                name.set("MIT License")
+                url.set("https://opensource.org/licenses/MIT")
             }
+        }
+
+        developers {
+            developer {
+                id.set("clevertap")
+                name.set("CleverTap")
+                email.set("support@clevertap.com")
+            }
+        }
+
+        scm {
+            connection.set("scm:git:git://github.com/CleverTap/clevertap-native-ui-kit.git")
+            developerConnection.set("scm:git:ssh://git@github.com/CleverTap/clevertap-native-ui-kit.git")
+            url.set("https://github.com/CleverTap/clevertap-native-ui-kit")
         }
     }
 }

@@ -3,7 +3,7 @@ package com.clevertap.android.nativedisplay.renderer
 import android.content.Intent
 import android.net.Uri
 
-import android.view.LayoutInflater
+import android.view.TextureView
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -60,9 +60,8 @@ import androidx.media3.common.text.Cue
 import androidx.media3.common.text.CueGroup
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.PlayerView
 import com.clevertap.android.nativedisplay.internal.NDLogger
-import com.clevertap.android.nativeui.R
+import com.clevertap.android.nativedisplay.R
 import kotlinx.coroutines.delay
 import androidx.compose.ui.text.font.FontWeight as ComposeFontWeight
 
@@ -280,20 +279,19 @@ internal fun VideoPlayerWithMedia3(
                 }
             }
             exoPlayer != null -> {
-                // Removed from the tree entirely while fullscreen is active — no need to
-                // null out player on the view; the fullscreen PlayerView takes ownership.
-                // Inflated from XML so surface_type="texture_view" is applied at construction.
+                // Removed from the tree entirely while fullscreen is active — the
+                // fullscreen TextureView takes ownership of the player surface via
+                // setVideoTextureView(). TextureView lives in the normal view hierarchy
+                // so the Compose control overlay z-orders above it without SurfaceView
+                // hole-punching. Custom controls are drawn by this composable, so we
+                // don't need PlayerView's built-in controller.
                 if (!isFullscreen) {
                     AndroidView(
                         factory = { ctx ->
-                            (LayoutInflater.from(ctx).inflate(
-                                R.layout.ct_player_view, null
-                            ) as PlayerView).apply {
-                                player = exoPlayer
-                            }
+                            TextureView(ctx).also { exoPlayer.setVideoTextureView(it) }
                         },
                         update = { view ->
-                            view.player = exoPlayer
+                            exoPlayer.setVideoTextureView(view)
                             view.setOnClickListener {
                                 if (showControls) showControlsUI = !showControlsUI
                             }
@@ -424,16 +422,13 @@ private fun FullscreenVideoContent(
     Box(
         modifier = Modifier.fillMaxSize().background(Color.Black)
     ) {
-        // Fullscreen PlayerView — receives the player while Dialog is open
+        // Fullscreen TextureView — receives the player surface while Dialog is open.
+        // setVideoTextureView() automatically detaches the prior inline TextureView.
         AndroidView(
             factory = { ctx ->
-                (LayoutInflater.from(ctx).inflate(
-                    R.layout.ct_player_view, null
-                ) as PlayerView).apply {
-                    player = exoPlayer
-                }
+                TextureView(ctx).also { exoPlayer.setVideoTextureView(it) }
             },
-            update = { view -> view.player = exoPlayer },
+            update = { view -> exoPlayer.setVideoTextureView(view) },
             modifier = Modifier.fillMaxSize().align(Alignment.Center)
         )
 

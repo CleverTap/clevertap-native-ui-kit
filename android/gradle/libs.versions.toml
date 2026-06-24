@@ -14,6 +14,7 @@ androidxTest = "1.2.1"
 espresso = "3.6.1"
 binaryCompatibilityValidator = "0.18.0"
 dokka = "1.9.20"
+vanniktechMavenPublish = "0.32.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.15.0" }
@@ -64,3 +65,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompatibilityValidator" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktechMavenPublish" }

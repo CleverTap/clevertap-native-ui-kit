@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import com.clevertap.android.nativedisplay.internal.NDLogger
-import com.clevertap.android.nativeui.R
+import com.clevertap.android.nativedisplay.R
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener

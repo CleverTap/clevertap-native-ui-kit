@@ -6,10 +6,11 @@
 //  every clicked-event payload that the bridge sends to Core SDK so the server
 //  can attribute analytics back to a specific SDK build.
 //
-//  Keep these in lockstep with `/VERSION` at the repo root and
-//  `CleverTapNativeDisplay.podspec` `spec.version`. iOS cannot reliably read its
-//  own version from `Bundle.infoDictionary` across SPM / static-framework /
-//  CocoaPods distributions, so we mirror the value as a Swift constant.
+//  iOS version is owned independently of Android. Keep `name` and `code` in
+//  lockstep with `CleverTapNativeDisplay.podspec` `spec.version`. iOS cannot
+//  reliably read its own version from `Bundle.infoDictionary` across SPM /
+//  static-framework / CocoaPods distributions, so we mirror the value as a
+//  Swift constant.
 //
 
 import Foundation
