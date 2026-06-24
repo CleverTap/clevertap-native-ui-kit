@@ -41,7 +41,7 @@ https://github.com/CleverTap/clevertap-native-display-ios
 Or add it to your `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/CleverTap/clevertap-native-display-ios", from: "<version>")
+.package(url: "https://github.com/CleverTap/clevertap-native-ui-kit.git", from: "<version>")
 ```
 
 ---
