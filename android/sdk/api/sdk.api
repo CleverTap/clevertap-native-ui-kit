@@ -1,3 +1,12 @@
+public final class com/clevertap/android/nativedisplay/BuildConfig {
+	public static final field BUILD_TYPE Ljava/lang/String;
+	public static final field DEBUG Z
+	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
+	public static final field ND_LIB_VERSION_CODE I
+	public static final field ND_LIB_VERSION_NAME Ljava/lang/String;
+	public fun <init> ()V
+}
+
 public final class com/clevertap/android/nativedisplay/bridge/NDLogLevel : java/lang/Enum {
 	public static final field DEBUG Lcom/clevertap/android/nativedisplay/bridge/NDLogLevel;
 	public static final field INFO Lcom/clevertap/android/nativedisplay/bridge/NDLogLevel;
@@ -2301,48 +2310,6 @@ public abstract interface class com/clevertap/android/nativedisplay/placement/Sl
 	public abstract fun onUnitCleared (Ljava/lang/String;)V
 }
 
-public class com/clevertap/android/nativedisplay/renderer/Media3PlayerListener : androidx/media3/common/Player$Listener {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun onAudioAttributesChanged (Landroidx/media3/common/AudioAttributes;)V
-	public fun onAudioSessionIdChanged (I)V
-	public fun onAvailableCommandsChanged (Landroidx/media3/common/Player$Commands;)V
-	public fun onCues (Landroidx/media3/common/text/CueGroup;)V
-	public fun onCues (Ljava/util/List;)V
-	public fun onDeviceInfoChanged (Landroidx/media3/common/DeviceInfo;)V
-	public fun onDeviceVolumeChanged (IZ)V
-	public fun onEvents (Landroidx/media3/common/Player;Landroidx/media3/common/Player$Events;)V
-	public fun onIsLoadingChanged (Z)V
-	public fun onIsPlayingChanged (Z)V
-	public fun onLoadingChanged (Z)V
-	public fun onMaxSeekToPreviousPositionChanged (J)V
-	public fun onMediaItemTransition (Landroidx/media3/common/MediaItem;I)V
-	public fun onMediaMetadataChanged (Landroidx/media3/common/MediaMetadata;)V
-	public fun onMetadata (Landroidx/media3/common/Metadata;)V
-	public fun onPlayWhenReadyChanged (ZI)V
-	public fun onPlaybackParametersChanged (Landroidx/media3/common/PlaybackParameters;)V
-	public fun onPlaybackStateChanged (I)V
-	public fun onPlaybackSuppressionReasonChanged (I)V
-	public fun onPlayerError (Landroidx/media3/common/PlaybackException;)V
-	public fun onPlayerErrorChanged (Landroidx/media3/common/PlaybackException;)V
-	public fun onPlayerStateChanged (ZI)V
-	public fun onPlaylistMetadataChanged (Landroidx/media3/common/MediaMetadata;)V
-	public fun onPositionDiscontinuity (I)V
-	public fun onPositionDiscontinuity (Landroidx/media3/common/Player$PositionInfo;Landroidx/media3/common/Player$PositionInfo;I)V
-	public fun onRenderedFirstFrame ()V
-	public fun onRepeatModeChanged (I)V
-	public fun onSeekBackIncrementChanged (J)V
-	public fun onSeekForwardIncrementChanged (J)V
-	public fun onShuffleModeEnabledChanged (Z)V
-	public fun onSkipSilenceEnabledChanged (Z)V
-	public fun onSurfaceSizeChanged (II)V
-	public fun onTimelineChanged (Landroidx/media3/common/Timeline;I)V
-	public fun onTrackSelectionParametersChanged (Landroidx/media3/common/TrackSelectionParameters;)V
-	public fun onTracksChanged (Landroidx/media3/common/Tracks;)V
-	public fun onVideoSizeChanged (Landroidx/media3/common/VideoSize;)V
-	public fun onVolumeChanged (F)V
-}
-
 public final class com/clevertap/android/nativedisplay/renderer/NativeDisplayLocalsKt {
 	public static final fun getLocalFontFamily ()Landroidx/compose/runtime/ProvidableCompositionLocal;
 	public static final fun getLocalFontFamilyResolver ()Landroidx/compose/runtime/ProvidableCompositionLocal;
@@ -2420,14 +2387,5 @@ public final class com/clevertap/android/nativedisplay/view/NativeDisplayViewGro
 	public final fun setUnit (Lcom/clevertap/android/nativedisplay/bridge/NativeDisplayUnit;Lcom/clevertap/android/nativedisplay/listener/NativeDisplayActionListener;)V
 	public final fun setUnit (Lcom/clevertap/android/nativedisplay/bridge/NativeDisplayUnit;Lcom/clevertap/android/nativedisplay/listener/NativeDisplayActionListener;Lcom/clevertap/android/nativedisplay/listener/NativeDisplayComponentListener;)V
 	public static synthetic fun setUnit$default (Lcom/clevertap/android/nativedisplay/view/NativeDisplayViewGroup;Lcom/clevertap/android/nativedisplay/bridge/NativeDisplayUnit;Lcom/clevertap/android/nativedisplay/listener/NativeDisplayActionListener;Lcom/clevertap/android/nativedisplay/listener/NativeDisplayComponentListener;ILjava/lang/Object;)V
-}
-
-public final class com/clevertap/android/nativeui/BuildConfig {
-	public static final field BUILD_TYPE Ljava/lang/String;
-	public static final field DEBUG Z
-	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
-	public static final field ND_LIB_VERSION_CODE I
-	public static final field ND_LIB_VERSION_NAME Ljava/lang/String;
-	public fun <init> ()V
 }
 

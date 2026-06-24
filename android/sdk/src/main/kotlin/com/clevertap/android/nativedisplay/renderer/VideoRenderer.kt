@@ -520,10 +520,11 @@ private fun FullscreenVideoContent(
 
 @UnstableApi
 /**
- * This class addresses an AbstractMethodError because of the Java 8 feature of default methods in interfaces.
- * Default methods are somewhat not supported if minSDKVersion < 24
+ * Internal Media3 compatibility shim — addresses an AbstractMethodError because
+ * the Java 8 default methods on Player.Listener aren't supported on minSdk < 24.
+ * Kept package-internal so consumers don't subclass the SDK's renderer internals.
  */
-open class Media3PlayerListener : Player.Listener {
+internal open class Media3PlayerListener : Player.Listener {
     override fun onSurfaceSizeChanged(width: Int, height: Int) {}
     override fun onRenderedFirstFrame() {}
     @Deprecated("Deprecated in Java")

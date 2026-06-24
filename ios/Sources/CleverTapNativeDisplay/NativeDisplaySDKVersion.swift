@@ -16,7 +16,8 @@
 import Foundation
 
 enum NativeDisplaySDKVersion {
-    /// Semver name, mirrors `/VERSION` and the podspec.
+    /// Semver name, kept in lockstep with `CleverTapNativeDisplay.podspec`
+    /// `spec.version`. iOS version is owned independently of Android.
     static let name: String = "1.0.0"
 
     /// Monotonic integer derived as `major * 10000 + minor * 100 + patch`.
