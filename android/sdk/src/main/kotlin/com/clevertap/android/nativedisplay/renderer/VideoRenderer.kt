@@ -4,6 +4,7 @@ import android.content.Intent
 
 import android.view.TextureView
 import androidx.annotation.OptIn
+import androidx.compose.foundation.Image
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -81,7 +83,7 @@ private fun VideoControlIcon(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    androidx.compose.foundation.Image(
+    Image(
         painter = painter,
         contentDescription = contentDescription,
         modifier = modifier
@@ -173,7 +175,7 @@ internal fun VideoPlayer(
  */
 @UnstableApi // added due to media3 overrides.
 @Composable
-internal fun VideoPlayerWithMedia3(
+private fun VideoPlayerWithMedia3(
     context: android.content.Context,
     videoUrl: String,
     autoPlay: Boolean,
@@ -192,6 +194,13 @@ internal fun VideoPlayerWithMedia3(
     var isEnded by remember { mutableStateOf(false) }
     var isFullscreen by remember { mutableStateOf(false) }
     var errorMessage by remember(videoUrl) { mutableStateOf<String?>(null) }
+    // Video aspect ratio, updated from Player.Listener.onVideoSizeChanged once
+    // the source's resolution is known. Drives Modifier.aspectRatio on the
+    // TextureView so the video letter/pillar-boxes inside its container —
+    // restores the FIT behaviour media3-ui's PlayerView used to provide via
+    // its internal AspectRatioFrameLayout. 16:9 is the default until the
+    // first frame is decoded.
+    var videoAspect by remember { mutableStateOf(16f / 9f) }
 
     val exoPlayer = remember(videoUrl) {
         runCatching {
@@ -237,6 +246,17 @@ internal fun VideoPlayerWithMedia3(
                 override fun onPlayerError(error: PlaybackException) {
                     errorMessage = "Video playback failed"
                     NDLogger.e("VideoPlayer", "Playback error (${error.errorCodeName})", error)
+                }
+                override fun onVideoSizeChanged(videoSize: VideoSize) {
+                    // pixelWidthHeightRatio handles non-square pixels (rare on modern
+                    // devices but emitted for some legacy / anamorphic content). Guard
+                    // against zero/NaN — keep the prior ratio in those degenerate cases.
+                    val w = videoSize.width
+                    val h = videoSize.height
+                    if (w > 0 && h > 0) {
+                        val ratio = (w * videoSize.pixelWidthHeightRatio) / h
+                        if (ratio.isFinite() && ratio > 0f) videoAspect = ratio
+                    }
                 }
             }
             lifecycleOwner.lifecycle.addObserver(observer)
@@ -286,18 +306,26 @@ internal fun VideoPlayerWithMedia3(
                 // hole-punching. Custom controls are drawn by this composable, so we
                 // don't need PlayerView's built-in controller.
                 if (!isFullscreen) {
-                    AndroidView(
-                        factory = { ctx ->
-                            TextureView(ctx).also { exoPlayer.setVideoTextureView(it) }
-                        },
-                        update = { view ->
-                            exoPlayer.setVideoTextureView(view)
-                            view.setOnClickListener {
-                                if (showControls) showControlsUI = !showControlsUI
-                            }
-                        },
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    // aspectRatio sizes the TextureView to the largest area inside
+                    // the parent that preserves the video's intrinsic ratio; align
+                    // centres any leftover letter/pillarbox bands.
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AndroidView(
+                            factory = { ctx ->
+                                TextureView(ctx).also { exoPlayer.setVideoTextureView(it) }
+                            },
+                            update = { view ->
+                                exoPlayer.setVideoTextureView(view)
+                                view.setOnClickListener {
+                                    if (showControls) showControlsUI = !showControlsUI
+                                }
+                            },
+                            modifier = Modifier.aspectRatio(videoAspect)
+                        )
+                    }
                 }
             }
             else -> {
@@ -379,6 +407,7 @@ internal fun VideoPlayerWithMedia3(
                     isPlaying = isPlaying,
                     isMuted = isMuted,
                     openUrl = openUrl,
+                    videoAspect = videoAspect,
                     onDismiss = { isFullscreen = false },
                     onTogglePlay = {
                         if (isPlaying) exoPlayer.pause()
@@ -409,6 +438,7 @@ private fun FullscreenVideoContent(
     isPlaying: Boolean,
     isMuted: Boolean,
     openUrl: String?,
+    videoAspect: Float,
     onDismiss: () -> Unit,
     onTogglePlay: () -> Unit,
     onToggleMute: () -> Unit
@@ -424,12 +454,14 @@ private fun FullscreenVideoContent(
     ) {
         // Fullscreen TextureView — receives the player surface while Dialog is open.
         // setVideoTextureView() automatically detaches the prior inline TextureView.
+        // aspectRatio + align preserves the source ratio so the video letter- or
+        // pillar-boxes inside the black backdrop instead of stretching to fill.
         AndroidView(
             factory = { ctx ->
                 TextureView(ctx).also { exoPlayer.setVideoTextureView(it) }
             },
             update = { view -> exoPlayer.setVideoTextureView(view) },
-            modifier = Modifier.fillMaxSize().align(Alignment.Center)
+            modifier = Modifier.aspectRatio(videoAspect).align(Alignment.Center)
         )
 
         // Close (X) button — top end corner
