@@ -328,7 +328,7 @@ static NSInteger  const kSectionBanners = 1;
     }
 
     BannerItem *banner = self.banners[(NSUInteger)indexPath.row];
-    NSData *data = [NDSampleHelpers loadJSONDataWithFilename:banner.filename directory:@"Banners"];
+    NSData *data = [NDDisplayHelper loadJSONDataWithFilename:banner.filename directory:@"Banners"];
     if (!data) {
         [self showErrorTitle:@"Error" message:[NSString stringWithFormat:@"Could not load %@.json", banner.filename]];
         return;

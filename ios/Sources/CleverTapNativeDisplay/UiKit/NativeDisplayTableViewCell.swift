@@ -117,6 +117,20 @@ public final class NativeDisplayTableViewCell: UITableViewCell {
         notifyEnclosingTableViewOfHeightChange()
     }
 
+    /// Objective-C entry point: parse raw JSON and render it. Returns `false`
+    /// if the JSON cannot be parsed. No attribution events fire on this path
+    /// (there is no `NativeDisplayUnit`); use a bridge/unit flow for attribution.
+    @discardableResult
+    @objc public func configure(
+        withJsonData jsonData: Data,
+        actionListener: NativeDisplayActionListener? = nil,
+        componentListener: NativeDisplayComponentListener? = nil
+    ) -> Bool {
+        guard let config = try? ResolvedConfig.from(jsonData: jsonData) else { return false }
+        configure(with: config, actionListener: actionListener, componentListener: componentListener)
+        return true
+    }
+
     // MARK: - Lifecycle
 
     public override func prepareForReuse() {

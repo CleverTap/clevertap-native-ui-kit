@@ -296,7 +296,7 @@ static char const kAssociatedShapeLayerKey;
     ]];
 
     // Create slot view with placeholder
-    UIView *slotView = [[NDSlotPlaceholderView alloc] initWithSlotId:slotId placeholder:placeholder];
+    UIView *slotView = [NDDisplayHelper createSlotViewWithSlotId:slotId placeholder:placeholder];
     if (slotView) {
         slotView.translatesAutoresizingMaskIntoConstraints = NO;
         // We need to store the shape layer for dashed border — done via layoutSubviews override trick.
@@ -366,12 +366,11 @@ static char const kAssociatedShapeLayerKey;
 
 - (void)fetchSlotData {
     CleverTap *ct = [CleverTap sharedInstance];
-    [ct recordEvent:@"asd"];
+    [ct recordEvent:@"Footer1"];
     [ct recordEvent:@"Footer5"];
     [ct recordEvent:@"Header1"];
     [ct recordEvent:@"Header2"];
     [ct recordEvent:@"Header4"];
-    [ct recordEvent:@"lalit"];
 }
 
 @end
