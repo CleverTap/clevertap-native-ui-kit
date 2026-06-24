@@ -184,7 +184,7 @@ mavenPublishing {
     coordinates("com.clevertap.android", "clevertap-native-display-sdk", libraryVersion)
 
     pom {
-        name.set("CleverTap Native UI Kit")
+        name.set("CleverTap Native Display SDK")
         description.set("Native UI rendering for in-app messages using Jetpack Compose")
         url.set("https://github.com/CleverTap/clevertap-native-ui-kit")
 
