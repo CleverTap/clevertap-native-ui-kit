@@ -245,7 +245,7 @@ private fun VideoPlayerWithMedia3(
                 }
                 override fun onPlayerError(error: PlaybackException) {
                     errorMessage = "Video playback failed"
-                    NDLogger.e("VideoPlayer", "Playback error (${error.errorCodeName})", error)
+                    NDLogger.e("VideoPlayer", "Playback error: ${error.errorCodeName} — ${error.message ?: "unknown error"}", error)
                 }
                 override fun onVideoSizeChanged(videoSize: VideoSize) {
                     // pixelWidthHeightRatio handles non-square pixels (rare on modern

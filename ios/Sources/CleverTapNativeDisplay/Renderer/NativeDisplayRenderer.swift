@@ -1628,7 +1628,6 @@ fileprivate class PlayerManager: ObservableObject {
 
     var player: AVPlayer?
     private var playerObserver: NSObjectProtocol?
-    private var failureObserver: NSObjectProtocol?
     private var statusObservation: NSKeyValueObservation?
     private var timeObserver: Any?
 
@@ -1661,24 +1660,11 @@ fileprivate class PlayerManager: ObservableObject {
         // @Published state.
         statusObservation = playerItem.observe(\.status, options: [.new]) { [weak self] item, _ in
             guard item.status == .failed else { return }
-            let message = item.error?.localizedDescription ?? "Video playback failed"
+            let detail = item.error?.localizedDescription ?? "unknown error"
             DispatchQueue.main.async {
-                self?.errorMessage = message
-                NDLogger.e(Self.self, "AVPlayerItem failed: \(message)")
+                self?.errorMessage = "Video playback failed"
+                NDLogger.e(Self.self, "Playback error: \(detail)")
             }
-        }
-
-        // Mid-playback failures (network drop, decoder error after start) come
-        // via AVPlayerItemFailedToPlayToEndTime rather than a status change.
-        failureObserver = NotificationCenter.default.addObserver(
-            forName: .AVPlayerItemFailedToPlayToEndTime,
-            object: playerItem,
-            queue: .main
-        ) { [weak self] notification in
-            let err = notification.userInfo?[AVPlayerItemFailedToPlayToEndTimeErrorKey] as? Error
-            let message = err?.localizedDescription ?? "Video playback failed"
-            self?.errorMessage = message
-            NDLogger.e(Self.self, "AVPlayerItem failed to play to end: \(message)")
         }
 
         // Observe playback state
@@ -1717,11 +1703,6 @@ fileprivate class PlayerManager: ObservableObject {
         if let observer = playerObserver {
             NotificationCenter.default.removeObserver(observer)
             playerObserver = nil
-        }
-
-        if let observer = failureObserver {
-            NotificationCenter.default.removeObserver(observer)
-            failureObserver = nil
         }
 
         statusObservation?.invalidate()
