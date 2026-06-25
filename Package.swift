@@ -17,7 +17,12 @@ let package = Package(
         .target(
             name: "CleverTapNativeDisplay",
             dependencies: [],
-            path: "ios/Sources/CleverTapNativeDisplay"
+            path: "ios/Sources/CleverTapNativeDisplay",
+            resources: [
+                // Apple privacy manifest. .copy keeps it verbatim (no processing)
+                // so it ships in the SDK's resource bundle for App Store review.
+                .copy("PrivacyInfo.xcprivacy")
+            ]
         ),
         .testTarget(
             name: "CleverTapNativeDisplayTests",
