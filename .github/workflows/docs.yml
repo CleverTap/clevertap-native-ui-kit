@@ -5,7 +5,7 @@ name: Docs site
 # Triggers:
 #   • pull_request             → build & verify (no deploy) — surfaces in PR Checks
 #   • push to main             → build + deploy to /next/  (in-progress docs)
-#   • push of tag v*.*.*       → snapshot the version, build + deploy to /<version>/
+#   • push of tag *.*.*        → snapshot the version, build + deploy to /<version>/
 #   • workflow_dispatch        → manual rebuild (only available once the workflow lands on the default branch)
 #
 # Three jobs run in parallel; a final deploy job downloads their artifacts and
@@ -28,7 +28,7 @@ on:
       - 'test-configs/**'
   push:
     branches: [main]
-    tags: ['v*.*.*']
+    tags: ['*.*.*']
   workflow_dispatch:
 
 permissions:
