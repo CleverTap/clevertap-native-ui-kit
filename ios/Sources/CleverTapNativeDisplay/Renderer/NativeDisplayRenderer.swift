@@ -1619,9 +1619,17 @@ fileprivate class PlayerManager: ObservableObject {
     @Published var isPlaying: Bool = false
     @Published var isMuted: Bool = false
     @Published var isEnded: Bool = false
+    /// Non-nil when the AVPlayerItem reports `.failed` status. Drives the
+    /// error overlay in VideoPlayerView / VideoFullscreenView. Mirrors the
+    /// Android side's `errorMessage` state for cross-platform parity —
+    /// without this, unsupported formats (e.g. .webm, .mkv) and unreachable
+    /// URLs render as a silent black surface on iOS.
+    @Published var errorMessage: String?
 
     var player: AVPlayer?
     private var playerObserver: NSObjectProtocol?
+    private var failureObserver: NSObjectProtocol?
+    private var statusObservation: NSKeyValueObservation?
     private var timeObserver: Any?
 
     func setupPlayer(url: URL, autoPlay: Bool, loop: Bool, muted: Bool) {
@@ -1629,6 +1637,8 @@ fileprivate class PlayerManager: ObservableObject {
         player = AVPlayer(playerItem: playerItem)
         player?.isMuted = muted
         self.isMuted = muted
+        // Reset any prior error state when reattaching to a new URL.
+        self.errorMessage = nil
 
         // Setup end-of-video observer (used for both loop and ended-state tracking)
         playerObserver = NotificationCenter.default.addObserver(
@@ -1642,6 +1652,33 @@ fileprivate class PlayerManager: ObservableObject {
             } else {
                 self?.isEnded = true
             }
+        }
+
+        // Surface AVPlayerItem.status transitions to `.failed` — covers
+        // unsupported formats, network errors, decoder failures. Without this,
+        // bad URLs produce a silent black surface with no UX feedback. KVO
+        // closures can fire on any thread, so hop to main before mutating
+        // @Published state.
+        statusObservation = playerItem.observe(\.status, options: [.new]) { [weak self] item, _ in
+            guard item.status == .failed else { return }
+            let message = item.error?.localizedDescription ?? "Video playback failed"
+            DispatchQueue.main.async {
+                self?.errorMessage = message
+                NDLogger.e(Self.self, "AVPlayerItem failed: \(message)")
+            }
+        }
+
+        // Mid-playback failures (network drop, decoder error after start) come
+        // via AVPlayerItemFailedToPlayToEndTime rather than a status change.
+        failureObserver = NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemFailedToPlayToEndTime,
+            object: playerItem,
+            queue: .main
+        ) { [weak self] notification in
+            let err = notification.userInfo?[AVPlayerItemFailedToPlayToEndTimeErrorKey] as? Error
+            let message = err?.localizedDescription ?? "Video playback failed"
+            self?.errorMessage = message
+            NDLogger.e(Self.self, "AVPlayerItem failed to play to end: \(message)")
         }
 
         // Observe playback state
@@ -1681,6 +1718,14 @@ fileprivate class PlayerManager: ObservableObject {
             NotificationCenter.default.removeObserver(observer)
             playerObserver = nil
         }
+
+        if let observer = failureObserver {
+            NotificationCenter.default.removeObserver(observer)
+            failureObserver = nil
+        }
+
+        statusObservation?.invalidate()
+        statusObservation = nil
 
         if let timeObs = timeObserver {
             player?.removeTimeObserver(timeObs)
@@ -1778,6 +1823,21 @@ private struct VideoPlayerView: View {
             VideoPlayerLayer(player: playerManager.player)
                 .opacity(isFullscreen ? 0 : 1)
 
+            // Error overlay — mirrors Android's failure UI. Shown when the
+            // AVPlayerItem reports `.failed` (unsupported format, 404, decoder
+            // error, etc.). Suppresses the otherwise-silent black surface.
+            if let message = playerManager.errorMessage, !isFullscreen {
+                Rectangle()
+                    .fill(Color(.darkGray))
+                    .overlay(
+                        Text(message)
+                            .foregroundColor(.white)
+                            .font(.system(size: 12))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 16)
+                    )
+            }
+
             // Transparent tap layer — detects taps reliably as a pure SwiftUI view
             if showControls && !isFullscreen {
                 Color.clear
@@ -1788,7 +1848,7 @@ private struct VideoPlayerView: View {
             }
 
             // Custom controls overlay
-            if showControls {
+            if showControls && playerManager.errorMessage == nil {
                 VStack {
                     Spacer()
                     HStack(spacing: 12) {
@@ -1868,6 +1928,15 @@ private struct VideoFullscreenView: View {
             VideoPlayerLayer(player: playerManager.player)
                 .ignoresSafeArea()
 
+            // Fullscreen error overlay (same source of truth as the inline view).
+            if let message = playerManager.errorMessage {
+                Text(message)
+                    .foregroundColor(.white)
+                    .font(.system(size: 14))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
+            }
+
             Color.clear
                 .contentShape(Rectangle())
                 .ignoresSafeArea()
@@ -1875,7 +1944,7 @@ private struct VideoFullscreenView: View {
                     showControlsUI.toggle()
                 }
 
-            if showControlsUI {
+            if showControlsUI && playerManager.errorMessage == nil {
                 // Close — top right
                 VStack {
                     HStack {
