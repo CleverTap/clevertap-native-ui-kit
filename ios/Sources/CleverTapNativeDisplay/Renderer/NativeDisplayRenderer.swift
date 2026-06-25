@@ -1767,6 +1767,11 @@ private struct VideoPlayerLayer: UIViewRepresentable {
 private struct VideoControlIcon: View {
     let systemName: String
     let accessibilityLabel: String
+    /// Stable XCUITest identifier. Distinct from `accessibilityLabel` (which
+    /// VoiceOver reads aloud and flips with state — "Play" ↔ "Pause"); this
+    /// is the state-independent automation handle, e.g.
+    /// `app.buttons[NDVideoAccessibilityID.play]` in XCUITest.
+    let accessibilityIdentifier: String
     var size: CGFloat = 32
     let action: () -> Void
 
@@ -1780,7 +1785,31 @@ private struct VideoControlIcon: View {
             .contentShape(Rectangle())
             .onTapGesture(perform: action)
             .accessibilityLabel(accessibilityLabel)
+            .accessibilityIdentifier(accessibilityIdentifier)
     }
+}
+
+// MARK: - Public test identifiers
+//
+// Stable XCUITest accessibility identifiers applied to the VIDEO element's
+// control buttons. Public API so consumers can identify controls in XCUITest
+// (`app.buttons[NDVideoAccessibilityID.play]`) and cross-platform automation
+// (Maestro, Appium) without depending on the user-visible accessibilityLabel
+// (which flips with state — "Play" ↔ "Pause" — and localizes).
+//
+// String values match the Android side's `ND_VIDEO_TEST_TAG_*` constants
+// verbatim so cross-platform Appium/Maestro suites use one ID per control.
+//
+// Inline and fullscreen modes are mutually exclusive at any moment, so
+// `play`, `mute` and `actionUrl` re-use the same identifier across both
+// modes — a test "tap play" works regardless of which mode the player is in.
+public enum NDVideoAccessibilityID {
+    public static let play: String       = "nd_video_play"
+    public static let mute: String       = "nd_video_mute"
+    public static let actionUrl: String  = "nd_video_action_url"
+    public static let expand: String     = "nd_video_expand"
+    public static let close: String      = "nd_video_close"
+    public static let collapse: String   = "nd_video_collapse"
 }
 
 /// Main video player view with custom controls
@@ -1835,14 +1864,16 @@ private struct VideoPlayerView: View {
                     HStack(spacing: 12) {
                         VideoControlIcon(
                             systemName: playerManager.isPlaying ? "pause.fill" : "play.fill",
-                            accessibilityLabel: playerManager.isPlaying ? "Pause" : "Play"
+                            accessibilityLabel: playerManager.isPlaying ? "Pause" : "Play",
+                            accessibilityIdentifier: NDVideoAccessibilityID.play
                         ) {
                             playerManager.togglePlayPause()
                         }
                         if let url = openUrl {
                             VideoControlIcon(
                                 systemName: "arrow.up.right.square",
-                                accessibilityLabel: "Open URL"
+                                accessibilityLabel: "Open URL",
+                                accessibilityIdentifier: NDVideoAccessibilityID.actionUrl
                             ) {
                                 if let u = URL(string: url) {
                                     UIApplication.shared.open(u)
@@ -1851,14 +1882,16 @@ private struct VideoPlayerView: View {
                         }
                         VideoControlIcon(
                             systemName: playerManager.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill",
-                            accessibilityLabel: playerManager.isMuted ? "Unmute" : "Mute"
+                            accessibilityLabel: playerManager.isMuted ? "Unmute" : "Mute",
+                            accessibilityIdentifier: NDVideoAccessibilityID.mute
                         ) {
                             playerManager.toggleMute()
                         }
                         if showFullscreen {
                             VideoControlIcon(
                                 systemName: "arrow.up.left.and.arrow.down.right",
-                                accessibilityLabel: "Enter fullscreen"
+                                accessibilityLabel: "Enter fullscreen",
+                                accessibilityIdentifier: NDVideoAccessibilityID.expand
                             ) {
                                 isFullscreen = true
                             }
@@ -1930,7 +1963,11 @@ private struct VideoFullscreenView: View {
                 VStack {
                     HStack {
                         Spacer()
-                        VideoControlIcon(systemName: "xmark", accessibilityLabel: "Close fullscreen") {
+                        VideoControlIcon(
+                            systemName: "xmark",
+                            accessibilityLabel: "Close fullscreen",
+                            accessibilityIdentifier: NDVideoAccessibilityID.close
+                        ) {
                             isPresented = false
                         }
                         .padding(12)
@@ -1942,6 +1979,7 @@ private struct VideoFullscreenView: View {
                 VideoControlIcon(
                     systemName: playerManager.isPlaying ? "pause.fill" : "play.fill",
                     accessibilityLabel: playerManager.isPlaying ? "Pause" : "Play",
+                    accessibilityIdentifier: NDVideoAccessibilityID.play,
                     size: 40
                 ) {
                     playerManager.togglePlayPause()
@@ -1954,20 +1992,23 @@ private struct VideoFullscreenView: View {
                         if let urlStr = openUrl, let url = URL(string: urlStr) {
                             VideoControlIcon(
                                 systemName: "arrow.up.right.square",
-                                accessibilityLabel: "Open URL"
+                                accessibilityLabel: "Open URL",
+                                accessibilityIdentifier: NDVideoAccessibilityID.actionUrl
                             ) {
                                 UIApplication.shared.open(url)
                             }
                         }
                         VideoControlIcon(
                             systemName: playerManager.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill",
-                            accessibilityLabel: playerManager.isMuted ? "Unmute" : "Mute"
+                            accessibilityLabel: playerManager.isMuted ? "Unmute" : "Mute",
+                            accessibilityIdentifier: NDVideoAccessibilityID.mute
                         ) {
                             playerManager.toggleMute()
                         }
                         VideoControlIcon(
                             systemName: "arrow.down.right.and.arrow.up.left",
-                            accessibilityLabel: "Exit fullscreen"
+                            accessibilityLabel: "Exit fullscreen",
+                            accessibilityIdentifier: NDVideoAccessibilityID.collapse
                         ) {
                             isPresented = false
                         }

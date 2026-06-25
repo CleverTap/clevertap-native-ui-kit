@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -67,6 +68,30 @@ import com.clevertap.android.nativedisplay.R
 import kotlinx.coroutines.delay
 import androidx.compose.ui.text.font.FontWeight as ComposeFontWeight
 
+// ---------------------------------------------------------------------------
+// Stable Compose `testTag` values applied to the VIDEO element's control
+// buttons. Public API so consumers can identify controls in Espresso /
+// Compose-UI / UI Automator / Maestro / Appium tests without depending on
+// the user-visible `contentDescription` (which flips with state — "Play" ↔
+// "Pause" — and localizes).
+//
+// In Compose UI tests:
+//     composeTestRule.onNodeWithTag(ND_VIDEO_TEST_TAG_PLAY).performClick()
+//
+// In Espresso (via androidx.compose.ui.test.espresso):
+//     onView(withTestTag(ND_VIDEO_TEST_TAG_PLAY)).perform(click())
+//
+// Inline and fullscreen modes are mutually exclusive at any moment, so PLAY,
+// MUTE and ACTION_URL re-use the same tag across both modes — a test "tap
+// play" works regardless of which mode the player is in.
+// ---------------------------------------------------------------------------
+public const val ND_VIDEO_TEST_TAG_PLAY: String = "nd_video_play"
+public const val ND_VIDEO_TEST_TAG_MUTE: String = "nd_video_mute"
+public const val ND_VIDEO_TEST_TAG_ACTION_URL: String = "nd_video_action_url"
+public const val ND_VIDEO_TEST_TAG_EXPAND: String = "nd_video_expand"
+public const val ND_VIDEO_TEST_TAG_CLOSE: String = "nd_video_close"
+public const val ND_VIDEO_TEST_TAG_COLLAPSE: String = "nd_video_collapse"
+
 /**
  * Private helper composable to render a control icon using a vector drawable.
  *
@@ -79,15 +104,20 @@ import androidx.compose.ui.text.font.FontWeight as ComposeFontWeight
 private fun VideoControlIcon(
     painter: Painter,
     contentDescription: String,
+    testTag: String,
     size: Dp = 32.dp,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    // contentDescription drives TalkBack ("Play" / "Pause" — flips with state and
+    // localizes). testTag is the stable, state-independent automation identifier
+    // (Espresso `onView(withTestTag(...))`, UI Automator, Maestro, Appium).
     Image(
         painter = painter,
         contentDescription = contentDescription,
         modifier = modifier
             .size(size)
+            .testTag(testTag)
             .clickable(onClick = onClick)
     )
 }
@@ -354,6 +384,7 @@ private fun VideoPlayerWithMedia3(
                     VideoControlIcon(
                         painter = playPainter,
                         contentDescription = if (isPlaying) "Pause" else "Play",
+                        testTag = ND_VIDEO_TEST_TAG_PLAY,
                         onClick = {
                             if (isPlaying) {
                                 exoPlayer.pause()
@@ -367,6 +398,7 @@ private fun VideoPlayerWithMedia3(
                         VideoControlIcon(
                             painter = actionPainter,
                             contentDescription = "Open URL",
+                            testTag = ND_VIDEO_TEST_TAG_ACTION_URL,
                             onClick = {
                                 runCatching {
                                     context.startActivity(
@@ -379,6 +411,7 @@ private fun VideoPlayerWithMedia3(
                     VideoControlIcon(
                         painter = mutePainter,
                         contentDescription = if (isMuted) "Unmute" else "Mute",
+                        testTag = ND_VIDEO_TEST_TAG_MUTE,
                         onClick = {
                             exoPlayer.volume = if (isMuted) 1f else 0f
                             // isMuted is updated by Player.Listener.onVolumeChanged
@@ -388,6 +421,7 @@ private fun VideoPlayerWithMedia3(
                         VideoControlIcon(
                             painter = expandPainter,
                             contentDescription = "Enter fullscreen",
+                            testTag = ND_VIDEO_TEST_TAG_EXPAND,
                             onClick = { isFullscreen = true }
                         )
                     }
@@ -468,6 +502,7 @@ private fun FullscreenVideoContent(
         VideoControlIcon(
             painter = closePainter,
             contentDescription = "Close fullscreen",
+            testTag = ND_VIDEO_TEST_TAG_CLOSE,
             modifier = Modifier.align(Alignment.TopEnd).padding(12.dp),
             onClick = onDismiss
         )
@@ -476,6 +511,7 @@ private fun FullscreenVideoContent(
         VideoControlIcon(
             painter = playPainter,
             contentDescription = if (isPlaying) "Pause" else "Play",
+            testTag = ND_VIDEO_TEST_TAG_PLAY,
             size = 40.dp,
             modifier = Modifier.align(Alignment.Center),
             onClick = onTogglePlay
@@ -493,6 +529,7 @@ private fun FullscreenVideoContent(
                 VideoControlIcon(
                     painter = actionPainter,
                     contentDescription = "Open URL",
+                    testTag = ND_VIDEO_TEST_TAG_ACTION_URL,
                     onClick = {
                         runCatching {
                             context.startActivity(
@@ -505,11 +542,13 @@ private fun FullscreenVideoContent(
             VideoControlIcon(
                 painter = mutePainter,
                 contentDescription = if (isMuted) "Unmute" else "Mute",
+                testTag = ND_VIDEO_TEST_TAG_MUTE,
                 onClick = onToggleMute
             )
             VideoControlIcon(
                 painter = collapsePainter,
                 contentDescription = "Exit fullscreen",
+                testTag = ND_VIDEO_TEST_TAG_COLLAPSE,
                 onClick = onDismiss
             )
         }

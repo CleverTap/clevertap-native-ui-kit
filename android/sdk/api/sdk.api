@@ -2323,6 +2323,15 @@ public final class com/clevertap/android/nativedisplay/renderer/NativeDisplayRen
 	public static final fun NativeDisplayView (Lcom/clevertap/android/nativedisplay/models/ResolvedConfig;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/text/font/FontFamily;Lcom/clevertap/android/nativedisplay/listener/NativeDisplayActionListener;Lcom/clevertap/android/nativedisplay/listener/NativeDisplayComponentListener;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class com/clevertap/android/nativedisplay/renderer/VideoRendererKt {
+	public static final field ND_VIDEO_TEST_TAG_ACTION_URL Ljava/lang/String;
+	public static final field ND_VIDEO_TEST_TAG_CLOSE Ljava/lang/String;
+	public static final field ND_VIDEO_TEST_TAG_COLLAPSE Ljava/lang/String;
+	public static final field ND_VIDEO_TEST_TAG_EXPAND Ljava/lang/String;
+	public static final field ND_VIDEO_TEST_TAG_MUTE Ljava/lang/String;
+	public static final field ND_VIDEO_TEST_TAG_PLAY Ljava/lang/String;
+}
+
 public final class com/clevertap/android/nativedisplay/utils/ExtensionsKt {
 	public static final fun configureForSDUI (Landroidx/recyclerview/widget/RecyclerView;II)V
 	public static synthetic fun configureForSDUI$default (Landroidx/recyclerview/widget/RecyclerView;IIILjava/lang/Object;)V
