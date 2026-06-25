@@ -6,7 +6,7 @@
 ![API 23+](https://img.shields.io/badge/API-23%2B-blue.svg)
 ![Kotlin 1.9+](https://img.shields.io/badge/Kotlin-1.9%2B-blue.svg)
 ![iOS 15.0+](https://img.shields.io/badge/iOS-15.0%2B-blue.svg)
-![Swift 5.9+](https://img.shields.io/badge/Swift-5.9%2B-blue.svg)
+![Swift 5.5+](https://img.shields.io/badge/Swift-5.5%2B-blue.svg)
 
 Render server-driven native UI campaigns delivered by CleverTap — using Jetpack Compose on Android and SwiftUI on iOS. No WebViews.
 The SDK receives a JSON campaign config from the CleverTap backend and renders it as fully native UI. Layouts, styles, themes, and dynamic variables are all controlled server-side without app updates.
@@ -34,7 +34,9 @@ Integration is documented per platform. Pick your stack and follow the guide end
 | Platform | Minimum |
 |----------|---------|
 | Android | API 23+, Kotlin 1.9+, Jetpack Compose |
-| iOS | iOS 15+, Swift 5.9+, SwiftUI |
+| iOS | iOS 15+, Swift 5.5+, SwiftUI |
+
+> The SDK renders with Compose (Android) and SwiftUI (iOS) *internally* — the XML/View wrappers host a `ComposeView` and the UIKit wrappers host a `UIHostingController`, so Compose/SwiftUI are transitive implementation details, not requirements on your UI layer.
 
 > **Prerequisite — CleverTap Core SDK.** The Native Display SDK is a renderer; it expects display units to be delivered by the CleverTap Core SDK. Install and initialize it first:
 > [Android Core SDK](https://github.com/CleverTap/clevertap-android-sdk) · [iOS Core SDK](https://github.com/CleverTap/clevertap-ios-sdk) · [General docs](https://docs.clevertap.com)

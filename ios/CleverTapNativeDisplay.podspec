@@ -13,7 +13,7 @@ Pod::Spec.new do |spec|
   spec.author       = { "CleverTap" => "support@clevertap.com" }
   
   spec.platform     = :ios, "15.0"
-  spec.swift_version = "5.9"
+  spec.swift_version = "5.5"
 
   spec.source = {
     :git => "https://github.com/CleverTap/clevertap-native-ui-kit.git",
