@@ -13,7 +13,7 @@ Pod::Spec.new do |spec|
   spec.author       = { "CleverTap" => "support@clevertap.com" }
   
   spec.platform     = :ios, "15.0"
-  spec.swift_version = "5.9"
+  spec.swift_version = "5.5"
 
   spec.source = {
     :git => "https://github.com/CleverTap/clevertap-native-ui-kit.git",
@@ -21,7 +21,13 @@ Pod::Spec.new do |spec|
   }
   
   spec.source_files = "Sources/CleverTapNativeDisplay/**/*.swift"
-  
+
+  # Apple privacy manifest. resource_bundles (not resources) ensures it is
+  # bundled even when the pod is linked statically.
+  spec.resource_bundles = {
+    "CleverTapNativeDisplay" => ["Sources/CleverTapNativeDisplay/PrivacyInfo.xcprivacy"]
+  }
+
   spec.frameworks = "SwiftUI", "Foundation", "UIKit", "WebKit", "AVKit"
   
   # Build settings for framework distribution
