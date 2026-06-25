@@ -129,8 +129,8 @@ tasks.register("automationScreenshots") {
 }
 
 dependencies {
-    // Local SDK
-    implementation("com.clevertap.android:native-display-sdk")
+    // Local SDK (resolved via includeBuild substitution in settings.gradle.kts)
+    implementation("com.clevertap.android:clevertap-native-display-sdk")
     implementation("com.clevertap.android:clevertap-android-sdk:8.3.0")
 
     // Firebase

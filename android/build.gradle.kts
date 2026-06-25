@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.binary.compatibility.validator)
+    alias(libs.plugins.vanniktech.maven.publish) apply false
 }
 
 // Track only the public API of the :sdk module. This locks the SDK's public

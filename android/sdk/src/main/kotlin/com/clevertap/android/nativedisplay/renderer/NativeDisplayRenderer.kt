@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
 import com.clevertap.android.nativedisplay.evaluator.VariableEvaluator
 import com.clevertap.android.nativedisplay.handler.ActionAttributionExtras
@@ -134,8 +134,12 @@ internal fun NativeDisplayView(
 
     val content = @Composable {
         BoxWithConstraints(modifier = modifier) {
-            val parentWidthPx = if (constraints.maxWidth != Constraints.Infinity) constraints.maxWidth.toFloat() else 0f
-            val parentHeightPx = if (constraints.maxHeight != Constraints.Infinity) constraints.maxHeight.toFloat() else 0f
+            // Read the scope's first-class Dp shortcuts so lint sees the receiver
+            // being used. `maxWidth`/`maxHeight` are Dp.Infinity when unbounded,
+            // matching the prior `Constraints.Infinity` guard.
+            val density = LocalDensity.current
+            val parentWidthPx = if (maxWidth != Dp.Infinity) with(density) { maxWidth.toPx() } else 0f
+            val parentHeightPx = if (maxHeight != Dp.Infinity) with(density) { maxHeight.toPx() } else 0f
             val rootHeightPx = resolveRootHeightPx(config.root.layout, parentWidthPx, parentHeightPx, context)
             RenderNode(
                 node = config.root,

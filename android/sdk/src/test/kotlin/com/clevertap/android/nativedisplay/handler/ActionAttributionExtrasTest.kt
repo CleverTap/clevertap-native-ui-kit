@@ -1,6 +1,6 @@
 package com.clevertap.android.nativedisplay.handler
 
-import com.clevertap.android.nativeui.BuildConfig
+import com.clevertap.android.nativedisplay.BuildConfig
 import com.clevertap.android.nativedisplay.models.Action
 import com.clevertap.android.nativedisplay.models.ExecutionMode
 import kotlinx.serialization.json.JsonPrimitive
@@ -167,7 +167,7 @@ class ActionAttributionExtrasTest {
     fun `from composite emits count and mode`() {
         val action = Action.CompositeAction(
             actions = listOf(
-                Action.OpenUrl("https://a", false, true),
+                Action.OpenUrl("https://a", openInBrowser = false, customTabsEnabled = true),
                 Action.Navigate("home", null)
             ),
             executionMode = ExecutionMode.PARALLEL

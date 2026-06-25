@@ -44,6 +44,7 @@ final class NativeDisplayBridgeTests: XCTestCase {
             "native_display_config": {
                 "root": {
                     "type": "element",
+                    "id": "root",
                     "elementType": "text",
                     "bindings": { "text": "\(text)" },
                     "layout": {
@@ -288,15 +289,24 @@ final class NativeDisplayBridgeTests: XCTestCase {
     }
 
     /// Parse work runs on the bridge's labelled serial queue, not on main.
-    /// We assert this by hopping onto the parse queue ourselves and inspecting
-    /// queue label + thread identity.
+    /// We assert this via an async dispatch — `parseQueue.sync` from the main
+    /// thread can be GCD-optimized to run inline on the caller, which would
+    /// make a `Thread.isMainThread` check meaningless. The production code
+    /// always submits parse work via `parseQueue.async`, so we mirror that
+    /// here and capture the queue label + main-thread state on the actual
+    /// worker thread.
     func testParseQueueIsNonMainAndLabelled() {
         XCTAssertTrue(Thread.isMainThread, "test driver should start on main")
 
-        let label: String = bridge._runOnParseQueue {
-            String(cString: __dispatch_queue_get_label(nil))
+        let captured = expectation(description: "parse queue runs block off-main")
+        var label: String = ""
+        var isMainOnQueue: Bool = true
+        bridge._runOnParseQueueAsync {
+            label = String(cString: __dispatch_queue_get_label(nil))
+            isMainOnQueue = Thread.isMainThread
+            captured.fulfill()
         }
-        let isMainOnQueue: Bool = bridge._runOnParseQueue { Thread.isMainThread }
+        waitForExpectations(timeout: 2)
 
         XCTAssertEqual(label, NativeDisplayBridge._parseQueueLabel,
                        "Parse queue label must match the documented identifier")

@@ -363,14 +363,16 @@ class NativeDisplayViewGroup @JvmOverloads constructor(
 
     // MARK: - Lifecycle Handling
 
+    // Empty override is intentional — documents that we deliberately DO NOT
+    // clear state on detach. The lifecycle observer in [setupLifecycleObserver]
+    // clears state on actual destruction; clearing here breaks transient
+    // detach/re-attach paths (ViewPager page changes, animations, dialogs
+    // covering the host) where the same VG instance is expected to re-render
+    // its existing unit on re-attach. RecyclerView recycling uses the explicit
+    // [onRecycled] entry point.
+    @Suppress("RedundantOverride")
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        // State is intentionally preserved across detach. The lifecycle observer
-        // in [setupLifecycleObserver] clears it on actual destruction; clearing
-        // here breaks transient detach/re-attach paths (ViewPager page changes,
-        // animations, dialogs covering the host) where the same VG instance is
-        // expected to re-render its existing unit on re-attach. RecyclerView
-        // recycling uses the explicit [onRecycled] entry point.
     }
 
     override fun onAttachedToWindow() {

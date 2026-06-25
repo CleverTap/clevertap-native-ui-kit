@@ -1619,9 +1619,16 @@ fileprivate class PlayerManager: ObservableObject {
     @Published var isPlaying: Bool = false
     @Published var isMuted: Bool = false
     @Published var isEnded: Bool = false
+    /// Non-nil when the AVPlayerItem reports `.failed` status. Drives the
+    /// error overlay in VideoPlayerView / VideoFullscreenView. Mirrors the
+    /// Android side's `errorMessage` state for cross-platform parity —
+    /// without this, unsupported formats (e.g. .webm, .mkv) and unreachable
+    /// URLs render as a silent black surface on iOS.
+    @Published var errorMessage: String?
 
     var player: AVPlayer?
     private var playerObserver: NSObjectProtocol?
+    private var statusObservation: NSKeyValueObservation?
     private var timeObserver: Any?
 
     func setupPlayer(url: URL, autoPlay: Bool, loop: Bool, muted: Bool) {
@@ -1629,6 +1636,8 @@ fileprivate class PlayerManager: ObservableObject {
         player = AVPlayer(playerItem: playerItem)
         player?.isMuted = muted
         self.isMuted = muted
+        // Reset any prior error state when reattaching to a new URL.
+        self.errorMessage = nil
 
         // Setup end-of-video observer (used for both loop and ended-state tracking)
         playerObserver = NotificationCenter.default.addObserver(
@@ -1641,6 +1650,21 @@ fileprivate class PlayerManager: ObservableObject {
                 self?.player?.play()
             } else {
                 self?.isEnded = true
+            }
+        }
+
+        // Surface AVPlayerItem.status transitions to `.failed` — covers
+        // unsupported formats, network errors, decoder failures. Without this,
+        // bad URLs produce a silent black surface with no UX feedback. KVO
+        // closures can fire on any thread, so hop to main before mutating
+        // @Published state.
+        statusObservation = playerItem.observe(\.status, options: [.new]) { [weak self] item, _ in
+            guard item.status == .failed else { return }
+            let detail = item.error?.localizedDescription ?? "unknown error"
+            DispatchQueue.main.async {
+                guard let self = self, self.player?.currentItem === item else { return }
+                self.errorMessage = "Video playback failed"
+                NDLogger.e(Self.self, "Playback error: \(detail)")
             }
         }
 
@@ -1681,6 +1705,9 @@ fileprivate class PlayerManager: ObservableObject {
             NotificationCenter.default.removeObserver(observer)
             playerObserver = nil
         }
+
+        statusObservation?.invalidate()
+        statusObservation = nil
 
         if let timeObs = timeObserver {
             player?.removeTimeObserver(timeObs)
@@ -1741,6 +1768,11 @@ private struct VideoPlayerLayer: UIViewRepresentable {
 private struct VideoControlIcon: View {
     let systemName: String
     let accessibilityLabel: String
+    /// Stable XCUITest identifier. Distinct from `accessibilityLabel` (which
+    /// VoiceOver reads aloud and flips with state — "Play" ↔ "Pause"); this
+    /// is the state-independent automation handle, e.g.
+    /// `app.buttons[NDVideoAccessibilityID.play]` in XCUITest.
+    let accessibilityIdentifier: String
     var size: CGFloat = 32
     let action: () -> Void
 
@@ -1754,7 +1786,31 @@ private struct VideoControlIcon: View {
             .contentShape(Rectangle())
             .onTapGesture(perform: action)
             .accessibilityLabel(accessibilityLabel)
+            .accessibilityIdentifier(accessibilityIdentifier)
     }
+}
+
+// MARK: - Public test identifiers
+//
+// Stable XCUITest accessibility identifiers applied to the VIDEO element's
+// control buttons. Public API so consumers can identify controls in XCUITest
+// (`app.buttons[NDVideoAccessibilityID.play]`) and cross-platform automation
+// (Maestro, Appium) without depending on the user-visible accessibilityLabel
+// (which flips with state — "Play" ↔ "Pause" — and localizes).
+//
+// String values match the Android side's `ND_VIDEO_TEST_TAG_*` constants
+// verbatim so cross-platform Appium/Maestro suites use one ID per control.
+//
+// Inline and fullscreen modes are mutually exclusive at any moment, so
+// `play`, `mute` and `actionUrl` re-use the same identifier across both
+// modes — a test "tap play" works regardless of which mode the player is in.
+public enum NDVideoAccessibilityID {
+    public static let play: String       = "nd_video_play"
+    public static let mute: String       = "nd_video_mute"
+    public static let actionUrl: String  = "nd_video_action_url"
+    public static let expand: String     = "nd_video_expand"
+    public static let close: String      = "nd_video_close"
+    public static let collapse: String   = "nd_video_collapse"
 }
 
 /// Main video player view with custom controls
@@ -1778,6 +1834,21 @@ private struct VideoPlayerView: View {
             VideoPlayerLayer(player: playerManager.player)
                 .opacity(isFullscreen ? 0 : 1)
 
+            // Error overlay — mirrors Android's failure UI. Shown when the
+            // AVPlayerItem reports `.failed` (unsupported format, 404, decoder
+            // error, etc.). Suppresses the otherwise-silent black surface.
+            if let message = playerManager.errorMessage, !isFullscreen {
+                Rectangle()
+                    .fill(Color(.darkGray))
+                    .overlay(
+                        Text(message)
+                            .foregroundColor(.white)
+                            .font(.system(size: 12))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 16)
+                    )
+            }
+
             // Transparent tap layer — detects taps reliably as a pure SwiftUI view
             if showControls && !isFullscreen {
                 Color.clear
@@ -1788,20 +1859,22 @@ private struct VideoPlayerView: View {
             }
 
             // Custom controls overlay
-            if showControls {
+            if showControls && playerManager.errorMessage == nil {
                 VStack {
                     Spacer()
                     HStack(spacing: 12) {
                         VideoControlIcon(
                             systemName: playerManager.isPlaying ? "pause.fill" : "play.fill",
-                            accessibilityLabel: playerManager.isPlaying ? "Pause" : "Play"
+                            accessibilityLabel: playerManager.isPlaying ? "Pause" : "Play",
+                            accessibilityIdentifier: NDVideoAccessibilityID.play
                         ) {
                             playerManager.togglePlayPause()
                         }
                         if let url = openUrl {
                             VideoControlIcon(
                                 systemName: "arrow.up.right.square",
-                                accessibilityLabel: "Open URL"
+                                accessibilityLabel: "Open URL",
+                                accessibilityIdentifier: NDVideoAccessibilityID.actionUrl
                             ) {
                                 if let u = URL(string: url) {
                                     UIApplication.shared.open(u)
@@ -1810,14 +1883,16 @@ private struct VideoPlayerView: View {
                         }
                         VideoControlIcon(
                             systemName: playerManager.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill",
-                            accessibilityLabel: playerManager.isMuted ? "Unmute" : "Mute"
+                            accessibilityLabel: playerManager.isMuted ? "Unmute" : "Mute",
+                            accessibilityIdentifier: NDVideoAccessibilityID.mute
                         ) {
                             playerManager.toggleMute()
                         }
                         if showFullscreen {
                             VideoControlIcon(
                                 systemName: "arrow.up.left.and.arrow.down.right",
-                                accessibilityLabel: "Enter fullscreen"
+                                accessibilityLabel: "Enter fullscreen",
+                                accessibilityIdentifier: NDVideoAccessibilityID.expand
                             ) {
                                 isFullscreen = true
                             }
@@ -1868,6 +1943,15 @@ private struct VideoFullscreenView: View {
             VideoPlayerLayer(player: playerManager.player)
                 .ignoresSafeArea()
 
+            // Fullscreen error overlay (same source of truth as the inline view).
+            if let message = playerManager.errorMessage {
+                Text(message)
+                    .foregroundColor(.white)
+                    .font(.system(size: 14))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
+            }
+
             Color.clear
                 .contentShape(Rectangle())
                 .ignoresSafeArea()
@@ -1875,12 +1959,16 @@ private struct VideoFullscreenView: View {
                     showControlsUI.toggle()
                 }
 
-            if showControlsUI {
+            if showControlsUI && playerManager.errorMessage == nil {
                 // Close — top right
                 VStack {
                     HStack {
                         Spacer()
-                        VideoControlIcon(systemName: "xmark", accessibilityLabel: "Close fullscreen") {
+                        VideoControlIcon(
+                            systemName: "xmark",
+                            accessibilityLabel: "Close fullscreen",
+                            accessibilityIdentifier: NDVideoAccessibilityID.close
+                        ) {
                             isPresented = false
                         }
                         .padding(12)
@@ -1892,6 +1980,7 @@ private struct VideoFullscreenView: View {
                 VideoControlIcon(
                     systemName: playerManager.isPlaying ? "pause.fill" : "play.fill",
                     accessibilityLabel: playerManager.isPlaying ? "Pause" : "Play",
+                    accessibilityIdentifier: NDVideoAccessibilityID.play,
                     size: 40
                 ) {
                     playerManager.togglePlayPause()
@@ -1904,20 +1993,23 @@ private struct VideoFullscreenView: View {
                         if let urlStr = openUrl, let url = URL(string: urlStr) {
                             VideoControlIcon(
                                 systemName: "arrow.up.right.square",
-                                accessibilityLabel: "Open URL"
+                                accessibilityLabel: "Open URL",
+                                accessibilityIdentifier: NDVideoAccessibilityID.actionUrl
                             ) {
                                 UIApplication.shared.open(url)
                             }
                         }
                         VideoControlIcon(
                             systemName: playerManager.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill",
-                            accessibilityLabel: playerManager.isMuted ? "Unmute" : "Mute"
+                            accessibilityLabel: playerManager.isMuted ? "Unmute" : "Mute",
+                            accessibilityIdentifier: NDVideoAccessibilityID.mute
                         ) {
                             playerManager.toggleMute()
                         }
                         VideoControlIcon(
                             systemName: "arrow.down.right.and.arrow.up.left",
-                            accessibilityLabel: "Exit fullscreen"
+                            accessibilityLabel: "Exit fullscreen",
+                            accessibilityIdentifier: NDVideoAccessibilityID.collapse
                         ) {
                             isPresented = false
                         }

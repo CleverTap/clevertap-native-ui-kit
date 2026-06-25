@@ -19,9 +19,9 @@ include(":app")
 
 includeBuild("../android") {
     dependencySubstitution {
-        // This maps the library coordinate to the local included project
-        // Replace "com.clevertap.android:native-display" with the actual group:artifact of your SDK
-        substitute(module("com.clevertap.android:native-display-sdk")).using(project(":sdk"))
+        // Maps the published Maven coordinate to the local included `:sdk` project so
+        // the sample builds against working-tree SDK changes without needing a publish.
+        substitute(module("com.clevertap.android:clevertap-native-display-sdk")).using(project(":sdk"))
     }
 }
 
