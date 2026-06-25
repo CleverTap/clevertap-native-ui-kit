@@ -25,8 +25,8 @@ Render server-driven native UI campaigns on iOS using SwiftUI — with first-cla
 | | Minimum |
 |----------|---------|
 | iOS | 15.0+ |
-| UI | SwiftUI (UIKit and Objective-C supported via wrappers) |
 | Swift | 5.5+ |
+| UI | SwiftUI (UIKit and Objective-C supported via wrappers) |
 
 ---
 
