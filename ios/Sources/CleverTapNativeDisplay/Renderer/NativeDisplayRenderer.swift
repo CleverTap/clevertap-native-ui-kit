@@ -1662,7 +1662,8 @@ fileprivate class PlayerManager: ObservableObject {
             guard item.status == .failed else { return }
             let detail = item.error?.localizedDescription ?? "unknown error"
             DispatchQueue.main.async {
-                self?.errorMessage = "Video playback failed"
+                guard let self = self, self.player?.currentItem === item else { return }
+                self.errorMessage = "Video playback failed"
                 NDLogger.e(Self.self, "Playback error: \(detail)")
             }
         }
