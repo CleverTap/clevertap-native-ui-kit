@@ -155,10 +155,18 @@ final class ActionAttributionExtrasTests: XCTestCase {
 
     // MARK: - sanitize
 
-    func test_sanitize_dropsEmptyAndNilStripsEmptyKeys() {
+    func test_sanitize_onNilInput_returnsOnlyTheNDLibVersionStamp() {
+        let sanitized = ActionAttributionExtras.sanitize(nil)
+        XCTAssertEqual(sanitized["nd_lib_v_name"] as? String, NativeDisplaySDKVersion.name)
+        XCTAssertEqual(sanitized["nd_lib_v_code"] as? Int, NativeDisplaySDKVersion.code)
+        XCTAssertEqual(Set(sanitized.keys), Set(["nd_lib_v_name", "nd_lib_v_code"]))
+    }
+
+    func test_sanitize_onEmptyInput_returnsOnlyTheNDLibVersionStamp() {
         let sanitized = ActionAttributionExtras.sanitize([:])
-        XCTAssertNil(sanitized)
-        XCTAssertNil(ActionAttributionExtras.sanitize(nil))
+        XCTAssertEqual(sanitized["nd_lib_v_name"] as? String, NativeDisplaySDKVersion.name)
+        XCTAssertEqual(sanitized["nd_lib_v_code"] as? Int, NativeDisplaySDKVersion.code)
+        XCTAssertEqual(Set(sanitized.keys), Set(["nd_lib_v_name", "nd_lib_v_code"]))
     }
 
     func test_sanitize_keepsScalarsAndCollections() {
@@ -171,17 +179,39 @@ final class ActionAttributionExtrasTests: XCTestCase {
             "obj": ["k": "v"]
         ]
         let sanitized = ActionAttributionExtras.sanitize(input)
-        XCTAssertEqual(sanitized?["s"] as? String, "x")
-        XCTAssertEqual(sanitized?["i"] as? Int, 1)
-        XCTAssertEqual(sanitized?["d"] as? Double, 1.5)
-        XCTAssertEqual(sanitized?["b"] as? Bool, true)
-        XCTAssertEqual((sanitized?["arr"] as? [Int]) ?? [], [1, 2, 3])
-        XCTAssertEqual((sanitized?["obj"] as? [String: String])?["k"], "v")
+        XCTAssertEqual(sanitized["s"] as? String, "x")
+        XCTAssertEqual(sanitized["i"] as? Int, 1)
+        XCTAssertEqual(sanitized["d"] as? Double, 1.5)
+        XCTAssertEqual(sanitized["b"] as? Bool, true)
+        XCTAssertEqual((sanitized["arr"] as? [Int]) ?? [], [1, 2, 3])
+        XCTAssertEqual((sanitized["obj"] as? [String: String])?["k"], "v")
+        // Version stamp is always present alongside caller-supplied keys.
+        XCTAssertEqual(sanitized["nd_lib_v_name"] as? String, NativeDisplaySDKVersion.name)
+        XCTAssertEqual(sanitized["nd_lib_v_code"] as? Int, NativeDisplaySDKVersion.code)
     }
 
     func test_sanitize_dropsEmptyStringKeys() {
         let sanitized = ActionAttributionExtras.sanitize(["": "ignored", "k": "kept"])
-        XCTAssertNil(sanitized?[""])
-        XCTAssertEqual(sanitized?["k"] as? String, "kept")
+        XCTAssertNil(sanitized[""])
+        XCTAssertEqual(sanitized["k"] as? String, "kept")
+    }
+
+    func test_sanitize_doesNotOverwriteCallerSuppliedVersionKeys() {
+        let input: [String: Any] = [
+            "nd_lib_v_name": "caller-wins",
+            "nd_lib_v_code": 999_999
+        ]
+        let sanitized = ActionAttributionExtras.sanitize(input)
+        XCTAssertEqual(sanitized["nd_lib_v_name"] as? String, "caller-wins")
+        XCTAssertEqual(sanitized["nd_lib_v_code"] as? Int, 999_999)
+    }
+
+    // MARK: - versionStamp
+
+    func test_versionStamp_returnsExactlyTheNDLibVersionKeys() {
+        let stamp = ActionAttributionExtras.versionStamp()
+        XCTAssertEqual(stamp["nd_lib_v_name"] as? String, NativeDisplaySDKVersion.name)
+        XCTAssertEqual(stamp["nd_lib_v_code"] as? Int, NativeDisplaySDKVersion.code)
+        XCTAssertEqual(Set(stamp.keys), Set(["nd_lib_v_name", "nd_lib_v_code"]))
     }
 }

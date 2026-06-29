@@ -21,7 +21,6 @@ class VariableEvaluator {
 
     init(variables: [String: AnyCodable]) {
         self.variables = variables
-        NDLogger.d(Self.self, "VariableEvaluator init: \(variables.count) variable(s)")
     }
     
     /// Evaluate a string template, replacing {{expressions}} with values.
@@ -204,7 +203,20 @@ class VariableEvaluator {
         if let variable = getVariable(value) {
             return extractValue(variable)
         }
-        
+
+        // Unquoted numeric and boolean literals must be typed so that
+        // `{{count == 10}}` compares Int-to-Int instead of Int-to-String.
+        // Quoted strings (e.g. `"10"`) keep their string form below.
+        if !value.hasPrefix("'") && !value.hasPrefix("\"") {
+            if let intValue = Int(value) { return intValue }
+            if let doubleValue = Double(value) { return doubleValue }
+            switch value.lowercased() {
+            case "true": return true
+            case "false": return false
+            default: break
+            }
+        }
+
         // Return as literal (removing quotes)
         return value.trimmingCharacters(in: CharacterSet(charactersIn: "'\""))
     }

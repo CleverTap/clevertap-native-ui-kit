@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import type { ViewStyle, LayoutChangeEvent } from 'react-native';
 import type { NativeDisplayUnit } from '../bridge/NativeDisplayUnit';
@@ -45,7 +45,6 @@ export function NativeDisplayView(props: NativeDisplayViewProps): React.ReactEle
 
   // Hooks must always be called, regardless of props
   const [measuredSize, setMeasuredSize] = useState<{ width: number; height: number } | null>(null);
-  const viewedRef = useRef(false);
 
   let unitId: string;
   let root: NativeDisplayNode | undefined;
@@ -78,8 +77,13 @@ export function NativeDisplayView(props: NativeDisplayViewProps): React.ReactEle
   const rootSize = availableSize ?? measuredSize;
 
   useEffect(() => {
-    if (viewedRef.current || !unitId || !root) return;
-    viewedRef.current = true;
+    if (!unitId || !root) return;
+    // Dedupe is now handled by the bridge's process-scoped viewed-units
+    // tracker - calling this from a remount is safe; the bridge will no-op
+    // if the unit has already fired Viewed in this JS session. Listener
+    // callbacks fire alongside the bridge call so hosts that care about
+    // every mount still receive a notification (the wzrk_id stays the
+    // same, so they can dedupe themselves if they want).
     NativeDisplayBridge.shared.pushViewedEvent(unitId);
     actionListener?.onDisplayUnitViewed?.(unitId);
     actionListener?.onTrackEvent?.('Notification Viewed', undefined);

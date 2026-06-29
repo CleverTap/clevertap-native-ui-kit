@@ -106,7 +106,20 @@ export class VariableEvaluator {
       }
     }
 
-    // Equality check: convert both sides to string before comparing
+    // Equality check.
+    //
+    // If either side is already a boolean, fold both through `coerceToBool`
+    // so the comparison treats `true == 1` and `false == "0"` as equal -
+    // matches iOS / Android / the FE renderer. When neither side coerces
+    // to a boolean, fall back to string comparison, which already covers
+    // string×number equality (`"10" == 10` → true).
+    if (typeof leftVal === 'boolean' || typeof rightVal === 'boolean') {
+      const lb = coerceToBool(leftVal);
+      const rb = coerceToBool(rightVal);
+      if (lb != null && rb != null) {
+        return operator === '==' ? lb === rb : lb !== rb;
+      }
+    }
     const leftStr = String(leftVal ?? '');
     const rightStr = String(rightVal ?? '');
     return operator === '==' ? leftStr === rightStr : leftStr !== rightStr;

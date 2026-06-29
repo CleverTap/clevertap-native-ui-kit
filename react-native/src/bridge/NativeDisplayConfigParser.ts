@@ -8,11 +8,10 @@ export class NativeDisplayConfigParser {
     try {
       const jsonObj = JSON.parse(jsonString) as Record<string, unknown>;
 
+      // _extractUnitId never returns null - it falls back to "0_0" when
+      // wzrk_id is absent. Mirrors Android + iOS so payloads stripped of
+      // identifiers during local testing still render.
       const unitId = this._extractUnitId(jsonObj);
-      if (!unitId) {
-        console.warn('[NativeDisplayConfigParser] Missing required field wzrk_id. Skipping unit.');
-        return null;
-      }
 
       const slotId = this._extractSlotId(jsonObj);
       const customExtras = this._extractCustomExtras(jsonObj);
@@ -99,10 +98,19 @@ export class NativeDisplayConfigParser {
     }
   }
 
-  private _extractUnitId(jsonObj: Record<string, unknown>): string | null {
+  /**
+   * Extract `wzrk_id` (the unit identifier the dashboard uses for
+   * attribution). Falls back to the sentinel `"0_0"` when the field is
+   * missing or empty - matches Android + iOS so a payload stripped of
+   * identifiers during local testing still renders. The dashboard will
+   * group all `"0_0"` events together; that's fine for local dev and
+   * harmless in production (where the BE always supplies a real id).
+   */
+  private _extractUnitId(jsonObj: Record<string, unknown>): string {
     const id = jsonObj['wzrk_id'];
     if (typeof id === 'string' && id.length > 0) return id;
-    return null;
+    console.warn('[NativeDisplayConfigParser] Missing wzrk_id; using sentinel "0_0".');
+    return '0_0';
   }
 
   private _extractSlotId(jsonObj: Record<string, unknown>): string | undefined {

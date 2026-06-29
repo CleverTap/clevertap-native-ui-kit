@@ -3,14 +3,12 @@ package com.clevertap.android.nativedisplay.renderer
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
-import android.net.Uri
 import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.clevertap.android.nativedisplay.bridge.HtmlJsBridge
 import com.clevertap.android.nativedisplay.models.HtmlConfig
@@ -28,8 +26,6 @@ internal fun HtmlElementView(
     config: HtmlConfig,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-
     AndroidView(
         factory = { ctx ->
             WebView(ctx).apply {
@@ -94,7 +90,7 @@ internal fun HtmlElementView(
                     // Wrap with responsive body sizing (aligned with CT Core SDK pattern)
                     // If HTML already has <head>, inject sizing style there;
                     // otherwise wrap in a full document with viewport meta
-                    val finalHtml = wrapHtmlWithResponsiveSizing(html, webView)
+                    val finalHtml = wrapHtmlWithResponsiveSizing(html)
                     webView.loadDataWithBaseURL(
                         config.baseUrl,
                         finalHtml,
@@ -126,7 +122,7 @@ internal fun HtmlElementView(
  * - If the HTML already has a <head> tag, injects responsive styles into it.
  * - Otherwise, wraps in a full HTML document with viewport meta and body sizing.
  */
-private fun wrapHtmlWithResponsiveSizing(html: String, @Suppress("UNUSED_PARAMETER") webView: WebView): String {
+private fun wrapHtmlWithResponsiveSizing(html: String): String {
     val responsiveStyle = "<style>body{margin:0;padding:0;width:100%;height:100%;}</style>" +
         "<meta name='viewport' content='width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no'>"
 

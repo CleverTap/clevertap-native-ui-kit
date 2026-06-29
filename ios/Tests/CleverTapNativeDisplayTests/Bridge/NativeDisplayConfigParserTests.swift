@@ -22,6 +22,7 @@ final class NativeDisplayConfigParserTests: XCTestCase {
     {
         "root": {
             "type": "element",
+            "id": "root",
             "elementType": "text",
             "bindings": { "text": "Hello" },
             "layout": {
@@ -146,6 +147,7 @@ final class NativeDisplayConfigParserTests: XCTestCase {
             "wzrk_id": "unit_root",
             "root": {
                 "type": "element",
+                "id": "root",
                 "elementType": "text",
                 "bindings": { "text": "Direct" },
                 "layout": {
@@ -180,8 +182,8 @@ final class NativeDisplayConfigParserTests: XCTestCase {
 
     // MARK: - Missing wzrk_id
 
-    func testMissingWzrkIdReturnsNil() {
-        // Valid ND config but no wzrk_id
+    func testMissingWzrkIdUsesFallbackId() {
+        // Valid ND config but no wzrk_id — should still parse using fallback id '0_0'
         let json = """
         {
             "native_display_config": \(Self.minimalConfigJson)
@@ -190,7 +192,8 @@ final class NativeDisplayConfigParserTests: XCTestCase {
 
         let unit = parser.tryParse(json)
 
-        XCTAssertNil(unit, "Missing wzrk_id should return nil")
+        XCTAssertNotNil(unit, "Missing wzrk_id should still return a unit with fallback id")
+        XCTAssertEqual(unit?.unitId, "0_0", "Fallback unit id should be '0_0'")
     }
 
     // MARK: - Malformed JSON

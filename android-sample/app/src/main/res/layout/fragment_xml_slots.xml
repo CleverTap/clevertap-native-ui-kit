@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  XML Slots demo. The whole screen is a single RecyclerView driven by
+  SlotFeedAdapter: row 0 is the "Slot Demo" header (title + description +
+  "Fetch Slot Data" button), followed by 19 interleaved rows (4 slots +
+  15 app cards) matching SlotDemoScreen.kt exactly.
+-->
+<androidx.recyclerview.widget.RecyclerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/slotRecycler"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="12dp"
+    android:clipToPadding="false" />

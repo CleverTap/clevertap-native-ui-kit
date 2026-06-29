@@ -2,125 +2,187 @@
 //  NativeDisplayCollectionViewCell.swift
 //  CleverTapNativeDisplay
 //
-//  UICollectionViewCell wrapper for SwiftUI NativeDisplayView
+//  UICollectionViewCell wrapper for direct (non-slot) rendering of a
+//  ResolvedConfig / NativeDisplayUnit via the SwiftUI NativeDisplayView.
 //
 
 import UIKit
-import SwiftUI
 
-/// UICollectionViewCell that hosts the SwiftUI NativeDisplayView.
-/// Use this to display native display content in UICollectionView.
+/// UICollectionViewCell that hosts the SDK's SwiftUI renderer via
+/// `NativeDisplayUIView`. Use this when you want to drive a
+/// `UICollectionView` directly off the bridge listener (Approach 2) — feed
+/// each cell a `ResolvedConfig` or `NativeDisplayUnit` and the cell handles
+/// the SwiftUI → UIKit hosting, lifecycle, sizing, and re-measurement.
+///
+/// For the slot-based (Approach 1) flow, see
+/// `NativeDisplaySlotCollectionViewCell`.
 ///
 /// Example usage:
 /// ```swift
-/// collectionView.register(NativeDisplayCollectionViewCell.self, forCellWithReuseIdentifier: "SDUICell")
+/// collectionView.register(NativeDisplayCollectionViewCell.self, forCellWithReuseIdentifier: "ND")
 ///
 /// func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-///     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SDUICell", for: indexPath) as! NativeDisplayCollectionViewCell
-///     cell.configure(with: config, actionListener: listener)
+///     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ND", for: indexPath)
+///         as! NativeDisplayCollectionViewCell
+///     cell.configure(with: units[indexPath.item], actionListener: listener)
 ///     return cell
 /// }
 /// ```
 @available(iOS 13.0, *)
 public final class NativeDisplayCollectionViewCell: UICollectionViewCell {
-    
+
     // MARK: - Properties
-    
-    private var hostingController: UIHostingController<AnyView>?
-    private weak var parentViewController: UIViewController?
-    
+
+    private var displayView: NativeDisplayUIView?
+
     // MARK: - Initialization
-    
+
     public override init(frame: CGRect) {
         super.init(frame: frame)
         setupCell()
     }
-    
+
     required public init?(coder: NSCoder) {
         super.init(coder: coder)
         setupCell()
     }
-    
+
     // MARK: - Setup
-    
+
     private func setupCell() {
         backgroundColor = .clear
         contentView.backgroundColor = .clear
     }
-    
+
     // MARK: - Configuration
-    
-    /// Configure the cell with a display configuration
-    /// - Parameters:
-    ///   - config: The resolved display configuration
-    ///   - actionListener: Optional listener for action events
-    ///   - componentListener: Optional listener for component interactions
+
+    /// Configure the cell with a `ResolvedConfig`. No attribution events
+    /// fire on this path — use `configure(with: unit, ...)` for bridge-
+    /// delivered content.
     public func configure(
         with config: ResolvedConfig,
         actionListener: NativeDisplayActionListener? = nil,
         componentListener: NativeDisplayComponentListener? = nil
     ) {
-        // Create SwiftUI view
-        let swiftUIView = NativeDisplayView(
-            config: config,
-            actionListener: actionListener,
-            componentListener: componentListener
-        )
-        
-        // If hosting controller already exists, update it
-        if let hostingController = hostingController {
-            hostingController.rootView = AnyView(swiftUIView)
+        if let displayView = displayView {
+            displayView.updateConfig(
+                config,
+                actionListener: actionListener,
+                componentListener: componentListener
+            )
         } else {
-            // Create new hosting controller
-            let hostingController = UIHostingController(rootView: AnyView(swiftUIView))
-            hostingController.view.backgroundColor = .clear
-            
-            // Add hosting controller's view
-            contentView.addSubview(hostingController.view)
-            
-            // Setup constraints
-            hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                hostingController.view.topAnchor.constraint(equalTo: contentView.topAnchor),
-                hostingController.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                hostingController.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-                hostingController.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-            ])
-            
-            self.hostingController = hostingController
-            
-            // Find and add to parent view controller
-            if let parentVC = findViewController() {
-                self.parentViewController = parentVC
-                parentVC.addChild(hostingController)
-                hostingController.didMove(toParent: parentVC)
-            }
+            installDisplayView(
+                NativeDisplayUIView(
+                    config: config,
+                    parentSize: resolveContainerSize(),
+                    actionListener: actionListener,
+                    componentListener: componentListener
+                )
+            )
         }
+        notifyEnclosingCollectionViewOfSizeChange()
     }
-    
+
+    /// Configure the cell with a `NativeDisplayUnit`. Preferred overload for
+    /// bridge-delivered content — `Notification Viewed` / `Notification
+    /// Clicked` attribution events fire for the unit's id.
+    public func configure(
+        with unit: NativeDisplayUnit,
+        actionListener: NativeDisplayActionListener? = nil,
+        componentListener: NativeDisplayComponentListener? = nil
+    ) {
+        if let displayView = displayView {
+            displayView.updateUnit(
+                unit,
+                actionListener: actionListener,
+                componentListener: componentListener
+            )
+        } else {
+            installDisplayView(
+                NativeDisplayUIView(
+                    unit: unit,
+                    parentSize: resolveContainerSize(),
+                    actionListener: actionListener,
+                    componentListener: componentListener
+                )
+            )
+        }
+        notifyEnclosingCollectionViewOfSizeChange()
+    }
+
+    /// Objective-C entry point: parse raw JSON and render it. Returns `false`
+    /// if the JSON cannot be parsed. No attribution events fire on this path
+    /// (there is no `NativeDisplayUnit`); use a bridge/unit flow for attribution.
+    @discardableResult
+    @objc public func configure(
+        withJsonData jsonData: Data,
+        actionListener: NativeDisplayActionListener? = nil,
+        componentListener: NativeDisplayComponentListener? = nil
+    ) -> Bool {
+        guard let config = try? ResolvedConfig.from(jsonData: jsonData) else { return false }
+        configure(with: config, actionListener: actionListener, componentListener: componentListener)
+        return true
+    }
+
     // MARK: - Lifecycle
-    
+
     public override func prepareForReuse() {
         super.prepareForReuse()
-        // Note: We keep the hosting controller for reuse
-        // The configure method will update its content
+        // Keep `displayView` across reuse — see companion comment in
+        // `NativeDisplayTableViewCell.prepareForReuse`.
     }
-    
-    deinit {
-        hostingController?.willMove(toParent: nil)
-        hostingController?.removeFromParent()
+
+    // MARK: - Private
+
+    private func installDisplayView(_ view: NativeDisplayUIView) {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(view)
+        NSLayoutConstraint.activate([
+            view.topAnchor.constraint(equalTo: contentView.topAnchor),
+            view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+        ])
+        self.displayView = view
     }
-    
-    // MARK: - Helper Methods
-    
-    private func findViewController() -> UIViewController? {
-        var responder: UIResponder? = self
-        while let nextResponder = responder?.next {
-            if let viewController = nextResponder as? UIViewController {
-                return viewController
+
+    /// Resolve the layout-context size SwiftUI should treat as its parent.
+    /// Walks up to the enclosing `UIScrollView` (which `UICollectionView`
+    /// subclasses) so the renderer's `nativeDisplayParentSize` environment
+    /// is seeded with the real container width.
+    private func resolveContainerSize() -> CGSize {
+        var view: UIView? = self.superview
+        while view != nil {
+            if let scrollView = view as? UIScrollView, scrollView.bounds.width > 0 {
+                return scrollView.bounds.size
             }
-            responder = nextResponder
+            view = view?.superview
         }
-        return nil
+        if bounds.width > 0 {
+            return bounds.size
+        }
+        return UIScreen.main.bounds.size
+    }
+
+    /// Force the enclosing `UICollectionView` to re-measure this cell. Same
+    /// two-stage recipe as the table-view variant — `layoutIfNeeded`
+    /// synchronously drives SwiftUI's first layout, then async
+    /// `invalidateLayout()` tells the flow layout to recompute.
+    private func notifyEnclosingCollectionViewOfSizeChange() {
+        setNeedsLayout()
+        layoutIfNeeded()
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.invalidateIntrinsicContentSize()
+            var view: UIView? = self.superview
+            while view != nil {
+                if let collectionView = view as? UICollectionView {
+                    collectionView.collectionViewLayout.invalidateLayout()
+                    return
+                }
+                view = view?.superview
+            }
+        }
     }
 }

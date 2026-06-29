@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SwiftUI
 
 /// UICollectionViewCell that automatically renders the display unit assigned to a named slot.
 ///
@@ -35,9 +34,10 @@ public final class NativeDisplaySlotCollectionViewCell: UICollectionViewCell, Na
     private var actionListener: NativeDisplayActionListener?
     private var componentListener: NativeDisplayComponentListener?
 
-    /// Hosting controller for direct SwiftUI rendering.
-    private var hostingController: UIHostingController<AnyView>?
-    private weak var parentViewController: UIViewController?
+    /// The SDK's UIKit-friendly SwiftUI host. Owns the `UIHostingController`
+    /// lifecycle, parent-VC chaining, and SwiftUI → UIKit size bridging via
+    /// `sizingOptions = .intrinsicContentSize` (iOS 16+).
+    private var displayView: NativeDisplayUIView?
 
     // MARK: - Initialization
 
@@ -69,7 +69,7 @@ public final class NativeDisplaySlotCollectionViewCell: UICollectionViewCell, Na
     ///   - slotId: The slot identifier to observe.
     ///   - actionListener: Optional listener for action events.
     ///   - componentListener: Optional listener for component interactions.
-    public func configure(
+    @objc public func configure(
         slotId: String,
         actionListener: NativeDisplayActionListener? = nil,
         componentListener: NativeDisplayComponentListener? = nil
@@ -97,40 +97,99 @@ public final class NativeDisplaySlotCollectionViewCell: UICollectionViewCell, Na
     // MARK: - NativeDisplaySlotObserver
 
     public func onUnitAvailable(_ unit: NativeDisplayUnit) {
-        // Reuse the unit's pre-resolved style map (computed off-main by the bridge).
-        let swiftUIView = NativeDisplayView(
-            unit: unit,
-            actionListener: actionListener,
-            componentListener: componentListener
-        )
-
-        if let hostingController = hostingController {
-            hostingController.rootView = AnyView(swiftUIView)
+        if let displayView = displayView {
+            // Re-use the existing wrapper. Preserves the hosting controller
+            // and its parent-VC relationship; only the SwiftUI rootView is
+            // swapped to point at the new unit. See sibling
+            // `NativeDisplaySlotTableViewCell.onUnitAvailable` for the
+            // listener-passthrough rationale.
+            displayView.updateUnit(
+                unit,
+                actionListener: actionListener,
+                componentListener: componentListener
+            )
         } else {
-            let hc = UIHostingController(rootView: AnyView(swiftUIView))
-            hc.view.backgroundColor = .clear
-
-            contentView.addSubview(hc.view)
-            hc.view.translatesAutoresizingMaskIntoConstraints = false
+            // Seed the renderer's `nativeDisplayParentSize` environment via
+            // the explicit parentSize init — see the companion docs in
+            // `NativeDisplaySlotTableViewCell.onUnitAvailable` for why.
+            // Without this, any percent-width / aspect-ratio child renders
+            // against the empty cell's near-zero bounds and stays tiny.
+            let parentSize = resolveContainerSize()
+            let view = NativeDisplayUIView(
+                unit: unit,
+                parentSize: parentSize,
+                actionListener: actionListener,
+                componentListener: componentListener
+            )
+            view.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview(view)
             NSLayoutConstraint.activate([
-                hc.view.topAnchor.constraint(equalTo: contentView.topAnchor),
-                hc.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                hc.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-                hc.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+                view.topAnchor.constraint(equalTo: contentView.topAnchor),
+                view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+                view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
             ])
-
-            self.hostingController = hc
-
-            if let parentVC = findViewController() {
-                self.parentViewController = parentVC
-                parentVC.addChild(hc)
-                hc.didMove(toParent: parentVC)
-            }
+            self.displayView = view
         }
+
+        notifyEnclosingCollectionViewOfSizeChange()
+    }
+
+    /// Resolve the layout-context size SwiftUI should treat as its parent.
+    /// Walks up to the nearest `UIScrollView` (which both `UITableView`
+    /// and `UICollectionView` subclass) and uses its bounds. Falls back to
+    /// the cell's own bounds, then to the screen.
+    private func resolveContainerSize() -> CGSize {
+        var view: UIView? = self.superview
+        while view != nil {
+            if let scrollView = view as? UIScrollView, scrollView.bounds.width > 0 {
+                return scrollView.bounds.size
+            }
+            view = view?.superview
+        }
+        if bounds.width > 0 {
+            return bounds.size
+        }
+        return UIScreen.main.bounds.size
     }
 
     public func onUnitCleared(slotId: String) {
         cleanupContent()
+        notifyEnclosingCollectionViewOfSizeChange()
+    }
+
+    /// Force the enclosing `UICollectionView` to re-measure this cell.
+    ///
+    /// Mirror of the table-view variant — see its docs for the why.
+    ///
+    ///  1. **Synchronously** `layoutIfNeeded()` on the cell so the freshly-
+    ///     added `NativeDisplayUIView` runs its first layout pass — Auto
+    ///     Layout resolves the 4-edge constraints, the hosting view lays
+    ///     out at the correct width, SwiftUI lays out, and SwiftUI's
+    ///     preferred size populates the hosting view's
+    ///     `intrinsicContentSize` via `sizingOptions =
+    ///     .intrinsicContentSize` (set inside `NativeDisplayUIView`).
+    ///  2. **Asynchronously** invalidate this cell's intrinsic size and
+    ///     call `collectionViewLayout.invalidateLayout()` so the flow
+    ///     layout recomputes using the now-correct preferred size.
+    private func notifyEnclosingCollectionViewOfSizeChange() {
+        // Stage 1 — drive SwiftUI's layout pass now.
+        setNeedsLayout()
+        layoutIfNeeded()
+
+        // Stage 2 — invalidate the flow layout on the next runloop tick.
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.invalidateIntrinsicContentSize()
+            var view: UIView? = self.superview
+            while view != nil {
+                if let collectionView = view as? UICollectionView {
+                    collectionView.collectionViewLayout.invalidateLayout()
+                    return
+                }
+                view = view?.superview
+            }
+        }
     }
 
     // MARK: - Lifecycle
@@ -150,27 +209,12 @@ public final class NativeDisplaySlotCollectionViewCell: UICollectionViewCell, Na
         if let slotId = currentSlotId {
             NativeDisplaySlotManager.shared.unregisterSlot(slotId, observer: self)
         }
-        hostingController?.willMove(toParent: nil)
-        hostingController?.removeFromParent()
     }
 
     // MARK: - Private
 
     private func cleanupContent() {
-        hostingController?.view.removeFromSuperview()
-        hostingController?.willMove(toParent: nil)
-        hostingController?.removeFromParent()
-        hostingController = nil
-    }
-
-    private func findViewController() -> UIViewController? {
-        var responder: UIResponder? = self
-        while let nextResponder = responder?.next {
-            if let viewController = nextResponder as? UIViewController {
-                return viewController
-            }
-            responder = nextResponder
-        }
-        return nil
+        displayView?.removeFromSuperview()
+        displayView = nil
     }
 }

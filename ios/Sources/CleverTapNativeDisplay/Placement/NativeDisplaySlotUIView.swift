@@ -34,13 +34,13 @@ public final class NativeDisplaySlotUIView: UIView, NativeDisplaySlotObserver {
     // MARK: - Properties
 
     /// The slot identifier this view observes.
-    public let slotId: String
+    @objc public let slotId: String
 
     /// Optional listener for action events.
-    public var actionListener: NativeDisplayActionListener?
+    @objc public var actionListener: NativeDisplayActionListener?
 
     /// Optional listener for component interaction events.
-    public var componentListener: NativeDisplayComponentListener?
+    @objc public var componentListener: NativeDisplayComponentListener?
 
     /// The internal display view currently showing content.
     private var displayView: NativeDisplayUIView?
@@ -53,7 +53,7 @@ public final class NativeDisplaySlotUIView: UIView, NativeDisplaySlotObserver {
     /// Create a slot UIView for the given slot identifier.
     ///
     /// - Parameter slotId: The slot identifier to observe.
-    public init(slotId: String) {
+    @objc public init(slotId: String) {
         self.slotId = slotId
         super.init(frame: .zero)
         backgroundColor = .clear
@@ -87,7 +87,11 @@ public final class NativeDisplaySlotUIView: UIView, NativeDisplaySlotObserver {
 
     public func onUnitAvailable(_ unit: NativeDisplayUnit) {
         if let existing = displayView {
-            existing.updateConfig(unit.config)
+            existing.updateConfig(
+                unit.config,
+                actionListener: actionListener,
+                componentListener: componentListener
+            )
         } else {
             let view = NativeDisplayUIView(
                 config: unit.config,

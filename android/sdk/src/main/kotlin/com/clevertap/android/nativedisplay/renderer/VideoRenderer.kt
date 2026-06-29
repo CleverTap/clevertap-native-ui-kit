@@ -1,9 +1,10 @@
 package com.clevertap.android.nativedisplay.renderer
 
 import android.content.Intent
-import android.net.Uri
 
-import android.view.LayoutInflater
+import android.view.TextureView
+import androidx.annotation.OptIn
+import androidx.compose.foundation.Image
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -38,21 +41,56 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
+import androidx.core.net.toUri
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
+import androidx.media3.common.DeviceInfo
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Metadata
 import androidx.media3.common.PlaybackException
+import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
+import androidx.media3.common.Timeline
+import androidx.media3.common.TrackSelectionParameters
+import androidx.media3.common.Tracks
+import androidx.media3.common.VideoSize
+import androidx.media3.common.text.Cue
+import androidx.media3.common.text.CueGroup
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.PlayerView
 import com.clevertap.android.nativedisplay.internal.NDLogger
-import com.clevertap.android.nativeui.R
+import com.clevertap.android.nativedisplay.R
 import kotlinx.coroutines.delay
 import androidx.compose.ui.text.font.FontWeight as ComposeFontWeight
+
+// ---------------------------------------------------------------------------
+// Stable Compose `testTag` values applied to the VIDEO element's control
+// buttons. Public API so consumers can identify controls in Espresso /
+// Compose-UI / UI Automator / Maestro / Appium tests without depending on
+// the user-visible `contentDescription` (which flips with state — "Play" ↔
+// "Pause" — and localizes).
+//
+// In Compose UI tests:
+//     composeTestRule.onNodeWithTag(ND_VIDEO_TEST_TAG_PLAY).performClick()
+//
+// In Espresso (via androidx.compose.ui.test.espresso):
+//     onView(withTestTag(ND_VIDEO_TEST_TAG_PLAY)).perform(click())
+//
+// Inline and fullscreen modes are mutually exclusive at any moment, so PLAY,
+// MUTE and ACTION_URL re-use the same tag across both modes — a test "tap
+// play" works regardless of which mode the player is in.
+// ---------------------------------------------------------------------------
+public const val ND_VIDEO_TEST_TAG_PLAY: String = "nd_video_play"
+public const val ND_VIDEO_TEST_TAG_MUTE: String = "nd_video_mute"
+public const val ND_VIDEO_TEST_TAG_ACTION_URL: String = "nd_video_action_url"
+public const val ND_VIDEO_TEST_TAG_EXPAND: String = "nd_video_expand"
+public const val ND_VIDEO_TEST_TAG_CLOSE: String = "nd_video_close"
+public const val ND_VIDEO_TEST_TAG_COLLAPSE: String = "nd_video_collapse"
 
 /**
  * Private helper composable to render a control icon using a vector drawable.
@@ -66,15 +104,20 @@ import androidx.compose.ui.text.font.FontWeight as ComposeFontWeight
 private fun VideoControlIcon(
     painter: Painter,
     contentDescription: String,
+    testTag: String,
     size: Dp = 32.dp,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    androidx.compose.foundation.Image(
+    // contentDescription drives TalkBack ("Play" / "Pause" — flips with state and
+    // localizes). testTag is the stable, state-independent automation identifier
+    // (Espresso `onView(withTestTag(...))`, UI Automator, Maestro, Appium).
+    Image(
         painter = painter,
         contentDescription = contentDescription,
         modifier = modifier
             .size(size)
+            .testTag(testTag)
             .clickable(onClick = onClick)
     )
 }
@@ -83,16 +126,17 @@ private fun VideoControlIcon(
  * Video player composable with custom controls.
  * Supports Media3 ExoPlayer with runtime detection and graceful degradation.
  */
+@OptIn(UnstableApi::class)
 @Composable
 internal fun VideoPlayer(
     videoUrl: String,
+    modifier: Modifier = Modifier,
     autoPlay: Boolean = false,
     loop: Boolean = false,
     muted: Boolean = false,
     showControls: Boolean = true,
     showFullscreen: Boolean = true,
-    openUrl: String? = null,
-    modifier: Modifier = Modifier
+    openUrl: String? = null
 ) {
     val context = LocalContext.current
 
@@ -159,8 +203,9 @@ internal fun VideoPlayer(
  * PlayerView and the fullscreen PlayerView — the inactive surface sets player=null
  * to detach cleanly.
  */
+@UnstableApi // added due to media3 overrides.
 @Composable
-internal fun VideoPlayerWithMedia3(
+private fun VideoPlayerWithMedia3(
     context: android.content.Context,
     videoUrl: String,
     autoPlay: Boolean,
@@ -179,6 +224,13 @@ internal fun VideoPlayerWithMedia3(
     var isEnded by remember { mutableStateOf(false) }
     var isFullscreen by remember { mutableStateOf(false) }
     var errorMessage by remember(videoUrl) { mutableStateOf<String?>(null) }
+    // Video aspect ratio, updated from Player.Listener.onVideoSizeChanged once
+    // the source's resolution is known. Drives Modifier.aspectRatio on the
+    // TextureView so the video letter/pillar-boxes inside its container —
+    // restores the FIT behaviour media3-ui's PlayerView used to provide via
+    // its internal AspectRatioFrameLayout. 16:9 is the default until the
+    // first frame is decoded.
+    var videoAspect by remember { mutableStateOf(16f / 9f) }
 
     val exoPlayer = remember(videoUrl) {
         runCatching {
@@ -214,7 +266,7 @@ internal fun VideoPlayerWithMedia3(
                     else -> Unit
                 }
             }
-            val listener = object : Player.Listener {
+            val listener = object : Media3PlayerListener() {
                 override fun onIsPlayingChanged(playing: Boolean) { isPlaying = playing }
                 override fun onVolumeChanged(volume: Float) { isMuted = volume == 0f }
                 override fun onPlaybackStateChanged(state: Int) {
@@ -223,7 +275,18 @@ internal fun VideoPlayerWithMedia3(
                 }
                 override fun onPlayerError(error: PlaybackException) {
                     errorMessage = "Video playback failed"
-                    NDLogger.e("VideoPlayer", "Playback error (${error.errorCodeName})", error)
+                    NDLogger.e("VideoPlayer", "Playback error: ${error.errorCodeName} — ${error.message ?: "unknown error"}", error)
+                }
+                override fun onVideoSizeChanged(videoSize: VideoSize) {
+                    // pixelWidthHeightRatio handles non-square pixels (rare on modern
+                    // devices but emitted for some legacy / anamorphic content). Guard
+                    // against zero/NaN — keep the prior ratio in those degenerate cases.
+                    val w = videoSize.width
+                    val h = videoSize.height
+                    if (w > 0 && h > 0) {
+                        val ratio = (w * videoSize.pixelWidthHeightRatio) / h
+                        if (ratio.isFinite() && ratio > 0f) videoAspect = ratio
+                    }
                 }
             }
             lifecycleOwner.lifecycle.addObserver(observer)
@@ -266,26 +329,33 @@ internal fun VideoPlayerWithMedia3(
                 }
             }
             exoPlayer != null -> {
-                // Removed from the tree entirely while fullscreen is active — no need to
-                // null out player on the view; the fullscreen PlayerView takes ownership.
-                // Inflated from XML so surface_type="texture_view" is applied at construction.
+                // Removed from the tree entirely while fullscreen is active — the
+                // fullscreen TextureView takes ownership of the player surface via
+                // setVideoTextureView(). TextureView lives in the normal view hierarchy
+                // so the Compose control overlay z-orders above it without SurfaceView
+                // hole-punching. Custom controls are drawn by this composable, so we
+                // don't need PlayerView's built-in controller.
                 if (!isFullscreen) {
-                    AndroidView(
-                        factory = { ctx ->
-                            (LayoutInflater.from(ctx).inflate(
-                                R.layout.ct_player_view, null
-                            ) as PlayerView).apply {
-                                player = exoPlayer
-                            }
-                        },
-                        update = { view ->
-                            view.player = exoPlayer
-                            view.setOnClickListener {
-                                if (showControls) showControlsUI = !showControlsUI
-                            }
-                        },
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    // aspectRatio sizes the TextureView to the largest area inside
+                    // the parent that preserves the video's intrinsic ratio; align
+                    // centres any leftover letter/pillarbox bands.
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AndroidView(
+                            factory = { ctx ->
+                                TextureView(ctx).also { exoPlayer.setVideoTextureView(it) }
+                            },
+                            update = { view ->
+                                exoPlayer.setVideoTextureView(view)
+                                view.setOnClickListener {
+                                    if (showControls) showControlsUI = !showControlsUI
+                                }
+                            },
+                            modifier = Modifier.aspectRatio(videoAspect)
+                        )
+                    }
                 }
             }
             else -> {
@@ -314,6 +384,7 @@ internal fun VideoPlayerWithMedia3(
                     VideoControlIcon(
                         painter = playPainter,
                         contentDescription = if (isPlaying) "Pause" else "Play",
+                        testTag = ND_VIDEO_TEST_TAG_PLAY,
                         onClick = {
                             if (isPlaying) {
                                 exoPlayer.pause()
@@ -327,10 +398,11 @@ internal fun VideoPlayerWithMedia3(
                         VideoControlIcon(
                             painter = actionPainter,
                             contentDescription = "Open URL",
+                            testTag = ND_VIDEO_TEST_TAG_ACTION_URL,
                             onClick = {
                                 runCatching {
                                     context.startActivity(
-                                        Intent(Intent.ACTION_VIEW, Uri.parse(openUrl))
+                                        Intent(Intent.ACTION_VIEW, openUrl.toUri())
                                     )
                                 }
                             }
@@ -339,6 +411,7 @@ internal fun VideoPlayerWithMedia3(
                     VideoControlIcon(
                         painter = mutePainter,
                         contentDescription = if (isMuted) "Unmute" else "Mute",
+                        testTag = ND_VIDEO_TEST_TAG_MUTE,
                         onClick = {
                             exoPlayer.volume = if (isMuted) 1f else 0f
                             // isMuted is updated by Player.Listener.onVolumeChanged
@@ -348,6 +421,7 @@ internal fun VideoPlayerWithMedia3(
                         VideoControlIcon(
                             painter = expandPainter,
                             contentDescription = "Enter fullscreen",
+                            testTag = ND_VIDEO_TEST_TAG_EXPAND,
                             onClick = { isFullscreen = true }
                         )
                     }
@@ -367,6 +441,7 @@ internal fun VideoPlayerWithMedia3(
                     isPlaying = isPlaying,
                     isMuted = isMuted,
                     openUrl = openUrl,
+                    videoAspect = videoAspect,
                     onDismiss = { isFullscreen = false },
                     onTogglePlay = {
                         if (isPlaying) exoPlayer.pause()
@@ -397,6 +472,7 @@ private fun FullscreenVideoContent(
     isPlaying: Boolean,
     isMuted: Boolean,
     openUrl: String?,
+    videoAspect: Float,
     onDismiss: () -> Unit,
     onTogglePlay: () -> Unit,
     onToggleMute: () -> Unit
@@ -410,23 +486,23 @@ private fun FullscreenVideoContent(
     Box(
         modifier = Modifier.fillMaxSize().background(Color.Black)
     ) {
-        // Fullscreen PlayerView — receives the player while Dialog is open
+        // Fullscreen TextureView — receives the player surface while Dialog is open.
+        // setVideoTextureView() automatically detaches the prior inline TextureView.
+        // aspectRatio + align preserves the source ratio so the video letter- or
+        // pillar-boxes inside the black backdrop instead of stretching to fill.
         AndroidView(
             factory = { ctx ->
-                (LayoutInflater.from(ctx).inflate(
-                    R.layout.ct_player_view, null
-                ) as PlayerView).apply {
-                    player = exoPlayer
-                }
+                TextureView(ctx).also { exoPlayer.setVideoTextureView(it) }
             },
-            update = { view -> view.player = exoPlayer },
-            modifier = Modifier.fillMaxSize().align(Alignment.Center)
+            update = { view -> exoPlayer.setVideoTextureView(view) },
+            modifier = Modifier.aspectRatio(videoAspect).align(Alignment.Center)
         )
 
         // Close (X) button — top end corner
         VideoControlIcon(
             painter = closePainter,
             contentDescription = "Close fullscreen",
+            testTag = ND_VIDEO_TEST_TAG_CLOSE,
             modifier = Modifier.align(Alignment.TopEnd).padding(12.dp),
             onClick = onDismiss
         )
@@ -435,6 +511,7 @@ private fun FullscreenVideoContent(
         VideoControlIcon(
             painter = playPainter,
             contentDescription = if (isPlaying) "Pause" else "Play",
+            testTag = ND_VIDEO_TEST_TAG_PLAY,
             size = 40.dp,
             modifier = Modifier.align(Alignment.Center),
             onClick = onTogglePlay
@@ -452,10 +529,11 @@ private fun FullscreenVideoContent(
                 VideoControlIcon(
                     painter = actionPainter,
                     contentDescription = "Open URL",
+                    testTag = ND_VIDEO_TEST_TAG_ACTION_URL,
                     onClick = {
                         runCatching {
                             context.startActivity(
-                                Intent(Intent.ACTION_VIEW, Uri.parse(openUrl))
+                                Intent(Intent.ACTION_VIEW, openUrl.toUri())
                             )
                         }
                     }
@@ -464,13 +542,72 @@ private fun FullscreenVideoContent(
             VideoControlIcon(
                 painter = mutePainter,
                 contentDescription = if (isMuted) "Unmute" else "Mute",
+                testTag = ND_VIDEO_TEST_TAG_MUTE,
                 onClick = onToggleMute
             )
             VideoControlIcon(
                 painter = collapsePainter,
                 contentDescription = "Exit fullscreen",
+                testTag = ND_VIDEO_TEST_TAG_COLLAPSE,
                 onClick = onDismiss
             )
         }
     }
+
+
+}
+
+@UnstableApi
+/**
+ * Internal Media3 compatibility shim — addresses an AbstractMethodError because
+ * the Java 8 default methods on Player.Listener aren't supported on minSdk < 24.
+ * Kept package-internal so consumers don't subclass the SDK's renderer internals.
+ */
+internal open class Media3PlayerListener : Player.Listener {
+    override fun onSurfaceSizeChanged(width: Int, height: Int) {}
+    override fun onRenderedFirstFrame() {}
+    @Deprecated("Deprecated in Java")
+    override fun onCues(cues: MutableList<Cue>) {}
+    override fun onCues(cueGroup: CueGroup) {}
+    override fun onMetadata(metadata: Metadata) {}
+    override fun onEvents(player: Player, events: Player.Events) {}
+    override fun onTimelineChanged(timeline: Timeline, reason: Int) {}
+    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {}
+    override fun onTracksChanged(tracks: Tracks) {}
+    override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {}
+    override fun onPlaylistMetadataChanged(mediaMetadata: MediaMetadata) {}
+    override fun onIsLoadingChanged(isLoading: Boolean) {}
+    @Deprecated("Deprecated in Java") override fun onLoadingChanged(isLoading: Boolean) {}
+
+    override fun onAvailableCommandsChanged(availableCommands: Player.Commands) {}
+    override fun onTrackSelectionParametersChanged(parameters: TrackSelectionParameters) {}
+    @Deprecated("Deprecated in Java") override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {}
+
+    override fun onPlaybackStateChanged(playbackState: Int) {}
+
+    override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {}
+    override fun onPlaybackSuppressionReasonChanged(playbackSuppressionReason: Int) {}
+    override fun onIsPlayingChanged(isPlaying: Boolean) {}
+    override fun onRepeatModeChanged(repeatMode: Int) {}
+    override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {}
+    override fun onPlayerError(error: PlaybackException) {}
+    override fun onPlayerErrorChanged(error: PlaybackException?) {}
+    @Deprecated("Deprecated in Java") override fun onPositionDiscontinuity(reason: Int) {}
+
+    override fun onPositionDiscontinuity(
+        oldPosition: Player.PositionInfo,
+        newPosition: Player.PositionInfo,
+        reason: Int
+    ) {}
+    override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {}
+    override fun onSeekBackIncrementChanged(seekBackIncrementMs: Long) {}
+    override fun onSeekForwardIncrementChanged(seekForwardIncrementMs: Long) {}
+    override fun onMaxSeekToPreviousPositionChanged(maxSeekToPreviousPositionMs: Long) {}
+    override fun onAudioSessionIdChanged(audioSessionId: Int) {}
+    override fun onAudioAttributesChanged(audioAttributes: AudioAttributes) {}
+    override fun onVolumeChanged(volume: Float) {}
+    override fun onSkipSilenceEnabledChanged(skipSilenceEnabled: Boolean) {}
+    override fun onDeviceInfoChanged(deviceInfo: DeviceInfo) {}
+    override fun onDeviceVolumeChanged(volume: Int, muted: Boolean) {}
+    override fun onVideoSizeChanged(videoSize: VideoSize) {}
 }

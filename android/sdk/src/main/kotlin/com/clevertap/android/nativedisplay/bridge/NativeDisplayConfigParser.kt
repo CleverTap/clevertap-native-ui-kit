@@ -13,7 +13,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
-import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
@@ -54,7 +53,10 @@ internal class NativeDisplayConfigParser {
         threadObserver?.invoke(Thread.currentThread())
         return try {
             val jsonObj = json.parseToJsonElement(jsonString).jsonObject
-            val unitId = extractUnitId(jsonObj) ?: return null
+            val unitId = extractUnitId(jsonObj) ?: run {
+                NDLogger.w(TAG, "Missing wzrk_id in display unit JSON, using fallback id '0_0'")
+                "0_0"
+            }
             val slotId = extractSlotId(jsonObj)
             val customExtras = extractCustomExtras(jsonObj)
 

@@ -29,6 +29,18 @@ private let legacyClickedSelector: Selector = NSSelectorFromString(
     "recordDisplayUnitClickedEventForID:"
 )
 
+/// New viewed-with-extras attribution selector (assumed on newer Core SDK builds).
+/// Signature: `-recordDisplayUnitViewedEventForID:additionalProperties:`.
+private let viewedWithExtrasSelector: Selector = NSSelectorFromString(
+    "recordDisplayUnitViewedEventForID:additionalProperties:"
+)
+
+/// Legacy unit-level viewed attribution selector (all Core SDK versions).
+/// Signature: `-recordDisplayUnitViewedEventForID:`.
+private let legacyViewedSelector: Selector = NSSelectorFromString(
+    "recordDisplayUnitViewedEventForID:"
+)
+
 /// Bridge between CleverTap Core SDK and the Native Display SDK.
 ///
 /// Provides two integration modes:
@@ -149,6 +161,7 @@ public typealias CTNDLogLevel = NDLogLevel
         didSet {
             // main-thread only; bind/unbind paths and tests assign on main.
             elementClickedResponds = nil
+            viewedWithExtrasResponds = nil
         }
     }
 
@@ -162,6 +175,10 @@ public typealias CTNDLogLevel = NDLogLevel
     /// Read/written on the main thread only (gesture handler call sites). The
     /// legacy fallback selector is not cached — it's on the rare slow path.
     private var elementClickedResponds: Bool?
+
+    /// Cached result of `cleverTapInstance.responds(to: viewedWithExtrasSelector)`.
+    /// Same three-state contract and threading model as `elementClickedResponds`.
+    private var viewedWithExtrasResponds: Bool?
 
     /// Event name for server fetch requests.
     static let wzrkFetch = "wzrk_fetch"
@@ -371,14 +388,14 @@ public typealias CTNDLogLevel = NDLogLevel
 
     /// Get all currently cached native display units.
     /// - Returns: Array of all parsed native display units.
-    public func getAllNativeDisplays() -> [NativeDisplayUnit] {
+    @objc public func getAllNativeDisplays() -> [NativeDisplayUnit] {
         return cache.getAll()
     }
 
     /// Get a specific native display unit by its ID.
     /// - Parameter unitId: The `wzrk_id` of the display unit.
     /// - Returns: The matching `NativeDisplayUnit`, or `nil` if not found.
-    public func getNativeDisplayForId(_ unitId: String) -> NativeDisplayUnit? {
+    @objc public func getNativeDisplayForId(_ unitId: String) -> NativeDisplayUnit? {
         return cache.get(unitId)
     }
 
@@ -387,7 +404,7 @@ public typealias CTNDLogLevel = NDLogLevel
     /// Add a listener to receive native display unit updates.
     /// Listeners are held as weak references — no need to remove on deallocation.
     /// - Parameter listener: The listener to add.
-    public func addListener(_ listener: NativeDisplayBridgeListener) {
+    @objc public func addListener(_ listener: NativeDisplayBridgeListener) {
         lock.lock(); defer { lock.unlock() }
         listeners.add(listener)
         NDLogger.d(Self.self, "Listener added: \(type(of: listener))")
@@ -395,7 +412,7 @@ public typealias CTNDLogLevel = NDLogLevel
 
     /// Remove a previously added listener.
     /// - Parameter listener: The listener to remove.
-    public func removeListener(_ listener: NativeDisplayBridgeListener) {
+    @objc public func removeListener(_ listener: NativeDisplayBridgeListener) {
         lock.lock(); defer { lock.unlock() }
         listeners.remove(listener)
         NDLogger.d(Self.self, "Listener removed: \(type(of: listener))")
@@ -424,6 +441,14 @@ public typealias CTNDLogLevel = NDLogLevel
         return parseQueue.sync(execute: block)
     }
 
+    /// Test-only helper: asynchronously runs `block` on the parse queue. Tests
+    /// that inspect thread identity must use this — `parseQueue.sync` from the
+    /// main thread can be GCD-optimized to execute inline on the caller, which
+    /// would defeat any `Thread.isMainThread` check.
+    internal func _runOnParseQueueAsync(_ block: @escaping () -> Void) {
+        parseQueue.async(execute: block)
+    }
+
     /// Test-only constant: the parse queue label. Must match the label used
     /// when constructing `parseQueue`.
     internal static let _parseQueueLabel = "com.clevertap.nativedisplay.parse"
@@ -432,8 +457,16 @@ public typealias CTNDLogLevel = NDLogLevel
 
     /// Push a display unit viewed event to the CleverTap Core SDK.
     ///
-    /// Always calls `-recordDisplayUnitViewedEventForID:`. Impressions are inherently
-    /// unit-level in ND (the root mount fires once); there is no per-element view event.
+    /// When the host Core SDK responds to the new selector
+    /// `-recordDisplayUnitViewedEventForID:additionalProperties:`, that selector is
+    /// invoked with the ND SDK version stamp (`nd_lib_v_name` / `nd_lib_v_code`) so
+    /// the server can attribute the impression to a specific SDK build. On older
+    /// Core SDK versions without the new selector, the legacy
+    /// `-recordDisplayUnitViewedEventForID:` fires instead (graceful degradation —
+    /// version stamp is dropped).
+    ///
+    /// Impressions are inherently unit-level in ND (the root mount fires once);
+    /// there is no per-element view event, so no caller-supplied extras flow here.
     ///
     /// - Parameter unitId: The `wzrk_id` of the display unit that was viewed.
     /// - Returns: `true` if the event was sent, `false` if no CleverTap instance is available.
@@ -444,14 +477,42 @@ public typealias CTNDLogLevel = NDLogLevel
             return false
         }
         seedIfNeeded(unitId: unitId, instance: ct)
-        let sel = NSSelectorFromString("recordDisplayUnitViewedEventForID:")
-        guard ct.responds(to: sel) else {
+        return invokeViewedEvent(on: ct, unitId: unitId)
+    }
+
+    /// Prefer the new viewed-with-extras selector when Core SDK exposes it; fall
+    /// back to the legacy unit-level selector otherwise. Mirrors `invokeClickedEvent`.
+    /// Takes `ct` as a parameter so the caller's already-captured instance flows
+    /// through — re-reading `cleverTapInstance` here would race with `attach`/`detach`.
+    private func invokeViewedEvent(on ct: NSObject, unitId: String) -> Bool {
+        if isViewedWithExtrasAvailable(on: ct) {
+            let stamp = ActionAttributionExtras.versionStamp()
+            // perform(_:with:with:) misinterprets the return register for void ObjC
+            // methods — resolve the IMP directly and call with the correct signature.
+            typealias ViewedWithExtrasIMP = @convention(c) (AnyObject, Selector, NSString, NSDictionary) -> Void
+            if let imp = class_getMethodImplementation(type(of: ct), viewedWithExtrasSelector) {
+                let fn = unsafeBitCast(imp, to: ViewedWithExtrasIMP.self)
+                fn(ct, viewedWithExtrasSelector, unitId as NSString, stamp as NSDictionary)
+            }
+            return true
+        }
+        // Fallback: legacy unit-level viewed attribution (version stamp dropped).
+        guard ct.responds(to: legacyViewedSelector) else {
             NDLogger.w(Self.self, "pushViewedEvent: CleverTap instance does not respond to recordDisplayUnitViewedEventForID:")
             return false
         }
-        NDLogger.d(Self.self, "Pushing viewed event to Core SDK (unitId: \(unitId))")
-        ct.perform(sel, with: unitId)
+        ct.perform(legacyViewedSelector, with: unitId)
         return true
+    }
+
+    /// Lazily resolve and cache whether the attached Core SDK responds to the
+    /// viewed-with-extras selector. Same threading and invalidation contract as
+    /// `isElementClickedAvailable`.
+    private func isViewedWithExtrasAvailable(on ct: NSObject) -> Bool {
+        if let cached = viewedWithExtrasResponds { return cached }
+        let responds = ct.responds(to: viewedWithExtrasSelector)
+        viewedWithExtrasResponds = responds
+        return responds
     }
 
     /// Push a display unit clicked event to the CleverTap Core SDK.
@@ -494,7 +555,7 @@ public typealias CTNDLogLevel = NDLogLevel
             // Use the element-aware path whenever available, even when extras is empty.
             // An empty dict is a valid additionalProperties argument — the Core SDK
             // still enriches the event from its own cached unit JSON.
-            let sanitized = ActionAttributionExtras.sanitize(extras) ?? [:]
+            let sanitized = ActionAttributionExtras.sanitize(extras)
             // perform(_:with:with:) is unsafe for void-returning ObjC methods in Swift —
             // its Unmanaged<AnyObject>? return type misinterprets the empty return register.
             // Resolve the IMP directly and call it with the correct C signature.

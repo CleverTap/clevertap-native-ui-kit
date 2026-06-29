@@ -1,5 +1,9 @@
 # Core SDK Integration Guide
 
+← Back to the [project README](../README.md) · For step-by-step setup see [iOS Integration](INTEGRATION_IOS.md) / [Android Integration](INTEGRATION_ANDROID.md) · For the campaign JSON schema see [JSON Structure Reference](JSON_STRUCTURE_REFERENCE.md).
+
+> **This is a deeper reference for the bridge layer.** If you just want to wire the SDK up, start with the platform integration guides above — they cover the recommended slot-based and custom-rendering paths. Come here when you need the full picture of how the bridge talks to the CleverTap Core SDK: bind/initialize/manual wiring options, the server JSON format, the push/pull listener APIs, and standalone mode.
+
 The Native Display SDK includes a bridge adapter for integrating with the CleverTap Core SDK. The bridge parses display unit responses from the Core SDK and converts them into `ResolvedConfig` objects ready for rendering.
 
 The SDK works in two modes: **with** the CleverTap Core SDK (bridge mode) or **without** it (standalone mode).
@@ -287,6 +291,31 @@ class MyViewController: UIViewController, NativeDisplayBridgeListener {
 
 Listeners are held as weak references — they are automatically cleaned up when the owning object is deallocated. You do not need to call `removeListener()` on deallocation, though you can if you want to stop receiving updates early.
 
+**iOS — Objective-C:** `NativeDisplayBridgeListener` is an `@objc` protocol and `NativeDisplayUnit` is an `@objc` class, so Obj-C hosts can implement the listener directly:
+
+```objc
+@interface MyViewController () <NativeDisplayBridgeListener>
+@end
+
+@implementation MyViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [[NativeDisplayBridge shared] addListener:self];
+    [[NativeDisplayBridge shared] bind:[CleverTap sharedInstance] forwardTo:nil];
+}
+
+- (void)onNativeDisplaysLoaded:(NSArray<NativeDisplayUnit *> *)units {
+    for (NativeDisplayUnit *unit in units) {
+        // unit.unitId, unit.slotId, unit.customExtras — render with NativeDisplayUIView
+    }
+}
+
+@end
+```
+
+> If the listener lives on a long-lived screen (e.g. a `UITabBarController` tab), add it in `viewWillAppear:` and remove it in `viewWillDisappear:` — the bridge replays its whole cache to every listener, so units fetched elsewhere would otherwise appear on your screen.
+
 ### Pull API (Fetch on Demand)
 
 Retrieve cached units at any time without waiting for a callback.
@@ -372,8 +401,28 @@ struct NativeDisplayList: View {
 
 ```swift
 let unit = bridge.getNativeDisplayForId("unit_123")!
-let vc = NativeDisplayViewController(config: unit.config)
-navigationController?.pushViewController(vc, animated: true)
+// NativeDisplayUIView has a unit: initializer, so Notification Viewed / Clicked
+// attribution fires automatically. NativeDisplayViewController is config:/jsonData:
+// only (render-only — no attribution).
+let banner = NativeDisplayUIView(unit: unit, actionListener: myActionListener)
+view.addSubview(banner)
+```
+
+**iOS (UIKit — Objective-C):** `NativeDisplayUIView` exposes an `@objc` unit-based initializer for the attributed path, and the UIKit components also expose `@objc` JSON entry points for rendering raw config data directly (render-only — no `NativeDisplayUnit`, so no attribution):
+
+```objc
+// Attributed — from a NativeDisplayUnit delivered by the bridge:
+NativeDisplayUIView *banner = [[NativeDisplayUIView alloc]
+    initWithUnit:unit
+     parentWidth:self.view.bounds.size.width
+  actionListener:self.myActionListener
+componentListener:nil];
+
+// Render-only — straight from JSON (no attribution events fire):
+NativeDisplayViewController *vc = [[NativeDisplayViewController alloc]
+    initWithJsonData:jsonData actionListener:nil componentListener:nil];
+[tableCell      configureWithJsonData:jsonData actionListener:nil componentListener:nil];
+[collectionCell configureWithJsonData:jsonData actionListener:nil componentListener:nil];
 ```
 
 ---

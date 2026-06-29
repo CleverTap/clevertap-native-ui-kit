@@ -1,5 +1,11 @@
 import type { Action } from '../models/Action';
 import { resolveOpenUrl } from '../models/Action';
+import {
+  CODE as ND_LIB_VERSION_CODE,
+  KEY_ND_LIB_VERSION_CODE,
+  KEY_ND_LIB_VERSION_NAME,
+  NAME as ND_LIB_VERSION_NAME,
+} from '../NativeDisplaySdkVersion';
 
 /**
  * Pure helper that turns an `Action` into a flat `Record<string, unknown>`
@@ -123,21 +129,30 @@ function spreadInto(out: Record<string, unknown>, source: Record<string, unknown
 
 /**
  * Drop entries whose values can't be transported across the JS/native
- * bridge cleanly. Kept separate so callers can opt in only when handing
- * the payload to native code.
+ * bridge cleanly, then unconditionally stamp the ND SDK version onto the
+ * payload. Callers should pipe their raw extras through this helper before
+ * handing them to the Core SDK so every event the dashboard sees can be
+ * attributed to a specific SDK build.
+ *
+ * Always returns a non-empty object - even an `undefined` / empty input
+ * produces `{ nd_lib_v_name, nd_lib_v_code }`. Caller-supplied keys win on
+ * collision (we set the version keys last only if absent).
  */
-export function sanitizeExtras(extras: Record<string, unknown> | undefined): Record<string, unknown> | undefined {
-  if (!extras) return undefined;
+export function sanitizeExtras(extras: Record<string, unknown> | undefined): Record<string, unknown> {
   const out: Record<string, unknown> = {};
-  for (const [k, v] of Object.entries(extras)) {
-    if (!k || v == null) continue;
-    if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') {
-      out[k] = v;
-    } else if (Array.isArray(v) || isPlainObject(v)) {
-      out[k] = v;
-    } else {
-      out[k] = String(v);
+  if (extras) {
+    for (const [k, v] of Object.entries(extras)) {
+      if (!k || v == null) continue;
+      if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') {
+        out[k] = v;
+      } else if (Array.isArray(v) || isPlainObject(v)) {
+        out[k] = v;
+      } else {
+        out[k] = String(v);
+      }
     }
   }
-  return Object.keys(out).length > 0 ? out : undefined;
+  if (!(KEY_ND_LIB_VERSION_NAME in out)) out[KEY_ND_LIB_VERSION_NAME] = ND_LIB_VERSION_NAME;
+  if (!(KEY_ND_LIB_VERSION_CODE in out)) out[KEY_ND_LIB_VERSION_CODE] = ND_LIB_VERSION_CODE;
+  return out;
 }

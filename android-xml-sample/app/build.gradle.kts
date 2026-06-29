@@ -42,7 +42,7 @@ android {
 }
 
 dependencies {
-    implementation("com.clevertap.android:native-display-sdk")
+    implementation("com.clevertap.android:clevertap-native-display-sdk")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

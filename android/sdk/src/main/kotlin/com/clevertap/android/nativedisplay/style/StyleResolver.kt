@@ -14,7 +14,7 @@ import kotlinx.collections.immutable.toPersistentMap
  */
 internal class StyleResolver(
     private val theme: Theme,
-    private val styleClasses: List<StyleClass>
+    styleClasses: List<StyleClass>
 ) {
     private val styleClassMap = styleClasses.associateBy { it.name }
     

@@ -1,23 +1,72 @@
+import com.vanniktech.maven.publish.SonatypeHost
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.dokka)
-    id("maven-publish")
+    alias(libs.plugins.vanniktech.maven.publish)
 }
 
+// Android SDK version — owned independently of iOS. Bump here when cutting an
+// Android release; the value flows into the Maven coordinate, BuildConfig
+// fields (ND_LIB_VERSION_NAME / ND_LIB_VERSION_CODE), and AGP versionName.
+val libraryVersion = "1.0.0"
+
+// Load credentials from local.properties for publishing (gitignored, dev-only).
+// CI should pass these as ORG_GRADLE_PROJECT_<key> env vars instead.
+// Keys read by Vanniktech Maven Publish + Central Portal:
+//   mavenCentralUsername=<sonatype user token>
+//   mavenCentralPassword=<sonatype password token>
+//   signing.keyId=<gpg key id, last 8 chars>
+//   signing.password=<gpg key password>
+//   signing.secretKeyRingFile=<absolute path to secring.gpg>
+val localProperties = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) f.inputStream().use { stream -> load(stream) }
+}
+listOf(
+    "mavenCentralUsername",
+    "mavenCentralPassword",
+    "signing.keyId",
+    "signing.password",
+    "signing.secretKeyRingFile",
+).forEach { key ->
+    localProperties.getProperty(key)?.let { value -> extra.set(key, value) }
+}
+
+// Derive monotonic versionCode from semver M.m.p as M*10000 + m*100 + p so a single
+// /VERSION bump updates both runtime BuildConfig fields in lockstep.
+val libraryVersionCode: Int = libraryVersion.split(".")
+    .map { it.toIntOrNull() ?: 0 }
+    .let { parts ->
+        val major = parts.getOrElse(0) { 0 }
+        val minor = parts.getOrElse(1) { 0 }
+        val patch = parts.getOrElse(2) { 0 }
+        major * 10_000 + minor * 100 + patch
+    }
+
 android {
-    namespace = "com.clevertap.android.nativeui"
+    namespace = "com.clevertap.android.nativedisplay"
     compileSdk = 36
 
     defaultConfig {
         minSdk = 23
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-        
+
         aarMetadata {
             minCompileSdk = 23
         }
+
+        // Backport `android:fillType="evenOdd"` (API 24+) to API 23 via the
+        // androidx VectorDrawable compat path. Required for the volume-off /
+        // volume-on tint icons which use evenOdd-fill paths.
+        vectorDrawables.useSupportLibrary = true
+
+        buildConfigField("String", "ND_LIB_VERSION_NAME", "\"$libraryVersion\"")
+        buildConfigField("int", "ND_LIB_VERSION_CODE", "$libraryVersionCode")
     }
 
     buildTypes {
@@ -44,6 +93,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
@@ -57,13 +107,6 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-            withJavadocJar()
         }
     }
 }
@@ -98,16 +141,19 @@ dependencies {
     implementation(libs.io.coil.compose)
     implementation(libs.io.coil.gif)  // GIF animation support
 
-    // Video playback (optional - host apps must provide)
+    // Video playback (optional - host apps must provide).
+    // media3-ui is intentionally NOT depended on — VideoRenderer uses a plain
+    // TextureView + ExoPlayer.setVideoTextureView() instead of media3 PlayerView,
+    // so consumers who don't need video can skip the media3-ui artifact entirely.
     compileOnly(libs.androidx.media3.exoplayer)
-    compileOnly(libs.androidx.media3.ui)
     compileOnly(libs.androidx.media3.hls)
 
     // CleverTap Core SDK (optional - for bridge adapter)
-    compileOnly("com.clevertap.android:clevertap-android-sdk:7.5.0")
+    compileOnly(libs.clevertap.android.sdk)
     // Fragment is a transitive dep of Core SDK; K1 compiler requires it on the
     // classpath to resolve supertypes of Core SDK classes (FragmentActivity, Fragment).
-    compileOnly("androidx.fragment:fragment-ktx:1.8.5")
+    // Not used directly in SDK code — removing this breaks compilation, not runtime.
+    compileOnly(libs.androidx.fragment.ktx)
 
     // Testing
     testImplementation(libs.junit)
@@ -116,11 +162,11 @@ dependencies {
     // type is `CleverTapAPI`. `getDeclaredFields0` resolves all field types
     // during reflection, so the Core SDK class must be on the unit-test
     // classpath even though it is `compileOnly` for production.
-    testImplementation("com.clevertap.android:clevertap-android-sdk:7.5.0")
+    testImplementation(libs.clevertap.android.sdk)
     // play-services-tasks is a transitive dep of CleverTapAPI that surfaces
     // when the test classpath tries to load CleverTapAPI (e.g. for
     // Unsafe.allocateInstance in NativeDisplayBridgeReflectionCacheTest).
-    testImplementation("com.google.android.gms:play-services-tasks:18.2.0")
+    testImplementation(libs.play.services.tasks)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -128,54 +174,39 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // RecyclerView (for NativeDisplayViewGroup)
-    api("androidx.recyclerview:recyclerview:1.3.2")
+    api(libs.androidx.recyclerview)
 }
 
-// Read version from root VERSION file
-val versionFile = rootProject.file("../VERSION")
-val libraryVersion = if (versionFile.exists()) {
-    versionFile.readText().trim()
-} else {
-    "0.1.0"
-}
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
 
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("release") {
-                from(components["release"])
-                
-                groupId = "com.clevertap.android"
-                artifactId = "clevertap-native-ui-kit"
-                version = libraryVersion
-                
-                pom {
-                    name.set("CleverTap Native UI Kit")
-                    description.set("Native UI rendering for in-app messages using Jetpack Compose")
-                    url.set("https://github.com/CleverTap/clevertap-native-ui-kit")
-                    
-                    licenses {
-                        license {
-                            name.set("MIT License")
-                            url.set("https://opensource.org/licenses/MIT")
-                        }
-                    }
-                    
-                    developers {
-                        developer {
-                            id.set("clevertap")
-                            name.set("CleverTap")
-                            email.set("support@clevertap.com")
-                        }
-                    }
-                    
-                    scm {
-                        connection.set("scm:git:git://github.com/CleverTap/clevertap-native-ui-kit.git")
-                        developerConnection.set("scm:git:ssh://git@github.com/CleverTap/clevertap-native-ui-kit.git")
-                        url.set("https://github.com/CleverTap/clevertap-native-ui-kit")
-                    }
-                }
+    coordinates("com.clevertap.android", "clevertap-native-display-sdk", libraryVersion)
+
+    pom {
+        name.set("CleverTap Native Display SDK")
+        description.set("Native UI rendering for in-app messages using Jetpack Compose")
+        url.set("https://github.com/CleverTap/clevertap-native-ui-kit")
+
+        licenses {
+            license {
+                name.set("MIT License")
+                url.set("https://opensource.org/licenses/MIT")
             }
+        }
+
+        developers {
+            developer {
+                id.set("clevertap")
+                name.set("CleverTap")
+                email.set("support@clevertap.com")
+            }
+        }
+
+        scm {
+            connection.set("scm:git:git://github.com/CleverTap/clevertap-native-ui-kit.git")
+            developerConnection.set("scm:git:ssh://git@github.com/CleverTap/clevertap-native-ui-kit.git")
+            url.set("https://github.com/CleverTap/clevertap-native-ui-kit")
         }
     }
 }

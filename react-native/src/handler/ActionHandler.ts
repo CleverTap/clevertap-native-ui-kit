@@ -111,7 +111,11 @@ export class ActionHandler {
       }
       case 'event': {
         console.log(`[ActionHandler] Dispatching track event: ${action.eventName}`);
-        this.actionListener?.onTrackEvent(action.eventName, action.properties);
+        // Drop properties whose values are null/undefined. Matches iOS
+        // `compactMapValues` - some host bridges choke on `undefined`
+        // entries when serializing the props dict.
+        const props = filterNullishValues(action.properties);
+        this.actionListener?.onTrackEvent(action.eventName, props);
         break;
       }
       case 'composite': {
@@ -127,4 +131,21 @@ export class ActionHandler {
         break;
     }
   }
+}
+
+/**
+ * Drop entries whose values are `null` or `undefined` from a properties dict.
+ * Matches iOS `compactMapValues`. Returns `undefined` for an empty input or
+ * if every value was nullish so callers can pass it straight through to a
+ * listener that expects `Record<string, unknown> | undefined`.
+ */
+function filterNullishValues(
+  props: Record<string, unknown> | undefined,
+): Record<string, unknown> | undefined {
+  if (!props) return undefined;
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(props)) {
+    if (v != null) out[k] = v;
+  }
+  return Object.keys(out).length > 0 ? out : undefined;
 }

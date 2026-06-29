@@ -15,6 +15,23 @@ import ObjectiveC
 /// as a display unit delegate. If the Core SDK is not present, this is a silent no-op.
 internal class CleverTapAutoWire: NSObject {
 
+    /// Wrapper SDK identifier passed to `-[CleverTap setCustomSdkVersion:withVersion:]`.
+    /// The Core SDK uses this to attribute analytics events back to the Native Display
+    /// SDK rather than the host integration. Mirrors `CUSTOM_SDK_NAME` in the Android
+    /// `CleverTapAutoWire`.
+    private static let customSdkName = "Native Display"
+
+    /// Selector for `-[CleverTap setCustomSdkVersion:version:]` resolved once at
+    /// module load. Signature on Core SDK (per `CleverTap.h`):
+    /// `- (void)setCustomSdkVersion:(NSString *)name version:(int)version;`.
+    /// Note the second arg label is `version:` (NOT `withVersion:`) and the type is
+    /// `int` (32-bit, fixed-width) rather than `NSInteger` (pointer-sized). We can't
+    /// use `perform(_:with:with:)` for the primitive — we resolve the IMP and call it
+    /// via `@convention(c)` with the exact `Int32` width.
+    private static let setCustomSdkVersionSelector: Selector = NSSelectorFromString(
+        "setCustomSdkVersion:version:"
+    )
+
     /// The bridge instance to forward display units to.
     private weak var bridge: NativeDisplayBridge?
 
@@ -26,6 +43,16 @@ internal class CleverTapAutoWire: NSObject {
 
     /// Whether we've already adopted the CleverTapDisplayUnitDelegate protocol at runtime.
     private static var protocolAdopted = false
+
+    /// Identity reference to the CleverTap instance we last stamped via
+    /// `tagCustomSdkVersion`. Guards against re-tagging when wiring runs more than
+    /// once for the same instance (e.g. clients calling `bind(_:)` twice). When a
+    /// different instance arrives, the tag fires again.
+    ///
+    /// Held weakly so we don't extend the Core SDK instance's lifetime, and so
+    /// pointer identity comparison via `===` remains meaningful for the lifetime
+    /// of the attached instance only.
+    private static weak var taggedInstance: NSObject?
 
     // MARK: - Protocol Adoption
 
@@ -76,7 +103,11 @@ internal class CleverTapAutoWire: NSObject {
 
         bridge.cleverTapInstance = sharedInstance
 
-        // 3. Sync Core SDK log level when the client has not set one explicitly.
+        // 3. Tag the Core SDK with the ND wrapper SDK identifier so server-side
+        // analytics can attribute events back to a specific Native Display SDK build.
+        tagCustomSdkVersion(sharedInstance)
+
+        // 4. Sync Core SDK log level when the client has not set one explicitly.
         syncLogLevelFromCoreSdk(sharedInstance)
 
         // 4. Prefer the cache-attachment API (Core SDK v7.x+). When attached, server-driven
@@ -99,7 +130,7 @@ internal class CleverTapAutoWire: NSObject {
 
         sharedInstance.perform(setDelegateSelector, with: observer)
 
-        // 5. Keep observer alive
+        // 5. Keep observer aliverandom
         activeObserver = observer
 
         // 6. Register for notification-based updates as a fallback
@@ -159,6 +190,10 @@ internal class CleverTapAutoWire: NSObject {
 
         bridge.cleverTapInstance = cleverTap
 
+        // Tag the Core SDK with the ND wrapper identifier before any further
+        // wiring so subsequent events carry the version stamp.
+        tagCustomSdkVersion(cleverTap)
+
         // Prefer cache-attachment path (Core SDK v7.x+).
         if attachCache(to: cleverTap, bridge: bridge) {
             // Keep client's existing display-unit delegate intact when the cache
@@ -199,6 +234,66 @@ internal class CleverTapAutoWire: NSObject {
         return true
     }
 
+    /// Tag the attached Core SDK instance with the Native Display wrapper identifier
+    /// via `-[CleverTap setCustomSdkVersion:withVersion:]`.
+    ///
+    /// The Core SDK uses this to attribute analytics events back to a specific
+    /// wrapper SDK build (e.g. server can distinguish ND 1.0.0 from a host app's
+    /// own events).
+    ///
+    /// One-shot per instance: we hold a weak reference to the last-tagged instance
+    /// and skip re-tagging when the same instance is re-wired (e.g. clients calling
+    /// `bind(_:)` twice). Re-tagging fires when a different instance arrives.
+    ///
+    /// Defensive reflection: when the selector is absent (older Core SDK that
+    /// predates wrapper SDK support), we log at warning level and continue —
+    /// attribution falls back to the host-app namespace.
+    ///
+    /// IMP-cast invocation: `setCustomSdkVersion:withVersion:` takes a primitive
+    /// `NSInteger` second argument; `perform(_:with:with:)` can only pass `Any`
+    /// (id) values and would garble the integer register. Resolving the IMP and
+    /// calling it through a `@convention(c)` function pointer with the exact C
+    /// signature is the only safe form.
+    private static func tagCustomSdkVersion(_ ctInstance: NSObject) {
+        if let last = taggedInstance, last === ctInstance {
+            // Already tagged this exact instance — avoid double-fire on re-wire.
+            return
+        }
+        guard ctInstance.responds(to: setCustomSdkVersionSelector) else {
+            NDLogger.w(
+                Self.self,
+                "CleverTap instance does not respond to setCustomSdkVersion:version: — wrapper attribution unavailable"
+            )
+            return
+        }
+        guard let imp = class_getMethodImplementation(
+            type(of: ctInstance),
+            setCustomSdkVersionSelector
+        ) else {
+            NDLogger.w(
+                Self.self,
+                "Could not resolve IMP for setCustomSdkVersion:version:"
+            )
+            return
+        }
+        // Obj-C `int` is fixed-width 32-bit on all iOS architectures. Passing the
+        // pointer-sized `Int` (8 bytes on 64-bit) would garble adjacent registers,
+        // so we narrow to `Int32` explicitly.
+        typealias SetCustomSdkVersionIMP = @convention(c) (AnyObject, Selector, NSString, Int32) -> Void
+        let fn = unsafeBitCast(imp, to: SetCustomSdkVersionIMP.self)
+        fn(
+            ctInstance,
+            setCustomSdkVersionSelector,
+            customSdkName as NSString,
+            Int32(NativeDisplaySDKVersion.code)
+        )
+        taggedInstance = ctInstance
+        NDLogger.d(
+            Self.self,
+            "Tagged Core SDK with Native Display version \(NativeDisplaySDKVersion.code)"
+        )
+    }
+
     /// Sync the ND SDK log level from Core SDK's `debugLevel` property.
     ///
     /// Only runs when the client has not set a log level explicitly (via
@@ -229,6 +324,9 @@ internal class CleverTapAutoWire: NSObject {
             NotificationCenter.default.removeObserver(observer)
         }
         activeObserver = nil
+        // Clear the weak identity so a subsequent re-wire (post-clear) re-tags
+        // the same instance — symmetric with `bridge.isInitialized = false`.
+        taggedInstance = nil
     }
 
     // MARK: - Delegate Callback (Obj-C compatible)
@@ -261,7 +359,7 @@ internal class CleverTapAutoWire: NSObject {
     // MARK: - Notification Handler
 
     @objc private func handleDisplayUnitsNotification(_ notification: Notification) {
-        guard let bridge = bridge,
+        guard bridge != nil,
               let displayUnits = notification.userInfo?["displayUnits"] as? [AnyObject] else {
             return
         }

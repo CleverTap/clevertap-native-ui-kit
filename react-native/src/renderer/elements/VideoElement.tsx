@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { Linking, Pressable, StyleSheet, View } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { NativeDisplayElement } from '../../models/NativeDisplayNode';
 import type { Style } from '../../models/Style';
 import { getVideo } from '../../optional/optionalDeps';
@@ -28,6 +28,14 @@ export const VideoElement = React.memo(function VideoElement({ node, resolvedSty
   // with useCallback - hooks must run unconditionally before any return.
   const videoConfig = node.bindings;
   const openUrl = videoConfig?.openUrl ?? '';
+
+  // Track playback errors so we can render a fallback overlay instead of
+  // a silent black surface. Mirrors iOS's AVPlayerItem.status observation.
+  const [hasError, setHasError] = useState(false);
+  const handleError = useCallback(() => {
+    console.warn(`[VideoElement] Playback failed for url: ${url}`);
+    setHasError(true);
+  }, [url]);
 
   const handleOpenUrl = useCallback(() => {
     if (!openUrl) return;
@@ -59,6 +67,12 @@ export const VideoElement = React.memo(function VideoElement({ node, resolvedSty
   // common case.
   const showControls = videoConfig?.showControls !== 'false';
 
+  const errorOverlay = hasError ? (
+    <View style={[StyleSheet.absoluteFill, errorOverlayStyle]} pointerEvents="none">
+      <Text style={errorTextStyle}>Video playback failed</Text>
+    </View>
+  ) : null;
+
   // openUrl binding (PR #15): when present, overlay a Pressable that
   // launches the URL when tapped. The overlay sits on top of the player so
   // it intercepts taps before they reach native controls; that mirrors
@@ -74,7 +88,9 @@ export const VideoElement = React.memo(function VideoElement({ node, resolvedSty
           muted={muted}
           controls={showControls}
           resizeMode="contain"
+          onError={handleError}
         />
+        {errorOverlay}
         <Pressable
           style={StyleSheet.absoluteFill}
           onPress={handleOpenUrl}
@@ -85,14 +101,32 @@ export const VideoElement = React.memo(function VideoElement({ node, resolvedSty
   }
 
   return (
-    <Video
-      source={{ uri: url }}
-      style={layoutStyle}
-      paused={!autoPlay}
-      repeat={loop}
-      muted={muted}
-      controls={showControls}
-      resizeMode="contain"
-    />
+    <View style={layoutStyle}>
+      <Video
+        source={{ uri: url }}
+        style={StyleSheet.absoluteFill}
+        paused={!autoPlay}
+        repeat={loop}
+        muted={muted}
+        controls={showControls}
+        resizeMode="contain"
+        onError={handleError}
+      />
+      {errorOverlay}
+    </View>
   );
 });
+
+const errorOverlayStyle = {
+  backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  justifyContent: 'center' as const,
+  alignItems: 'center' as const,
+};
+
+const errorTextStyle = {
+  color: '#ffffff',
+  fontSize: 14,
+  fontWeight: '600' as const,
+  textAlign: 'center' as const,
+  paddingHorizontal: 16,
+};
