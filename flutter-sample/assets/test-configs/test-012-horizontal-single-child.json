@@ -1,0 +1,64 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#1A237E",
+      "fontSize": 16,
+      "lineHeight": 22
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "horizontal-single",
+    "containerType": "horizontal",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 150,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 20
+      },
+      "arrangement": {
+        "strategy": "center"
+      }
+    },
+    "style": {
+      "backgroundColor": "#E8EAF6"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "icon-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Click Me"
+        },
+        "layout": {
+          "width": {
+            "value": 150,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 50,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#3F51B5",
+          "textColor": "#FFFFFF",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "borderRadius": 25,
+          "lineHeight": 25
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

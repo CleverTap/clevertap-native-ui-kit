@@ -76,6 +76,41 @@ The value under `native_display_config` (or the platform-specific keys) is a `Na
 
 ---
 
+## Layout Dimensions — Dashboard Constraint
+
+> **⚠️ The dashboard emits only `percent` dimensions and `aspectRatio`.**
+
+The SDK supports four dimension units (`dp`, `sp`, `px`, `percent`) plus special values (`wrap_content`, `match_parent`). However, the CleverTap dashboard generates JSON using **only** `percent` and `aspectRatio` for all `width` and `height` fields:
+
+```json
+// ✅ What the dashboard emits
+"width": {"value": 100, "unit": "percent"}
+"aspectRatio": 1.777
+
+// ❌ What the dashboard does NOT emit (SDK-only, for programmatic use)
+"width": {"value": 300, "unit": "dp"}
+"width": {"special": "wrap_content"}
+"width": {"special": "match_parent"}
+```
+
+**Why this matters:**
+- **Backend/dashboard teams**: always use `percent` + `aspectRatio` when generating payloads. Avoid emitting `dp`, `px`, `sp`, or `wrap_content`/`match_parent` — these are reserved for SDK-side programmatic JSON.
+- **SDK/platform implementers**: all dimension types must be correctly parsed (for test JSON and backward compatibility), but the rendering fast-path for production traffic is exclusively `percent` + `aspectRatio`. Prioritise and stress-test these two cases.
+
+### aspectRatio overrides percent dimensions
+
+When `aspectRatio` is set on any node, the `width.percent` value is **ignored** — the node uses the **full available parent width** and derives height = `parentWidth / aspectRatio`. This is consistent across all platforms:
+
+| Platform | Mechanism |
+|---|---|
+| Android | `aspectRatio` Compose modifier applied before `fillMaxWidth(fraction)` — AR locks `minW=parentWidth`, so percent has no effect |
+| iOS | Explicit guard in `resolveRootWidth`: returns `parentWidth` when `aspectRatio > 0`, regardless of percent |
+| Flutter | `_effectiveWidth` returns `availableWidth` (ignoring percent) when `layout.aspectRatio != null && ar > 0` |
+
+`aspectRatio` is skipped only when **both** `width` AND `height` are explicitly fixed (dp/sp/px). Percent dimensions are never treated as "fixed" for this check.
+
+---
+
 ## Payload Samples
 
 ### 1. Minimal Payload (shared config, both platforms)
