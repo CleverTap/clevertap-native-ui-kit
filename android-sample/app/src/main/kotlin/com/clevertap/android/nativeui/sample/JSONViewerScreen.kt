@@ -21,8 +21,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-
 /**
  * JSONViewerScreen - Displays JSON source with copy to clipboard functionality
  *
@@ -35,9 +33,9 @@ import androidx.navigation.NavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JSONViewerScreen(
-    navController: NavController,
     jsonString: String?,
-    title: String = "Banner JSON"
+    title: String = "Banner JSON",
+    onBack: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -51,7 +49,7 @@ fun JSONViewerScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { onBack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",

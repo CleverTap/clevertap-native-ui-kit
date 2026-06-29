@@ -1,565 +1,226 @@
-# CleverTap Native Display Kit
+<p align="center">
+  <img src="https://github.com/CleverTap/clevertap-ios-sdk/blob/master/docs/images/clevertap-logo.png" height="220"/>
+</p>
 
-**Server-driven native UI framework for mobile in-app messaging**
+# CleverTap Native Display SDK
+![API 23+](https://img.shields.io/badge/API-23%2B-blue.svg)
+![Kotlin 1.9+](https://img.shields.io/badge/Kotlin-1.9%2B-blue.svg)
+![iOS 15.0+](https://img.shields.io/badge/iOS-15.0%2B-blue.svg)
+![Swift 5.5+](https://img.shields.io/badge/Swift-5.5%2B-blue.svg)
 
-Replace HTML/WebView-based in-app messages with true native UI components powered by JSON schemas.
-
----
-
-## 🎯 Project Vision
-
-### Current Problem
-- In-app messages use HTML + WebView
-- Poor performance (WebView overhead)
-- Limited native features
-- Inconsistent UX
-- Hard to maintain
-
-### Solution: Native Display Kit
-- **Server-driven**: JSON schema → Native UI
-- **True native**: Jetpack Compose (Android) + SwiftUI (iOS)
-- **Type-safe**: Compile-time validation
-- **Flexible**: Easy to extend
-- **Performant**: Native rendering
+Render server-driven native UI campaigns delivered by CleverTap — using Jetpack Compose on Android and SwiftUI on iOS. No WebViews.
+The SDK receives a JSON campaign config from the CleverTap backend and renders it as fully native UI. Layouts, styles, themes, and dynamic variables are all controlled server-side without app updates.
 
 ---
 
-## 📋 Architecture Overview
+## Choose your platform
 
-### High-Level Flow
+Integration is documented per platform. Pick your stack and follow the guide end-to-end — install, integration, event hooks, fonts, and troubleshooting:
 
-```
-Backend (Server)
-    ↓ (sends JSON)
-Mobile SDK
-    ↓ (parses JSON)
-Native Display Kit
-    ↓ (renders)
-Native UI (Compose/SwiftUI)
-```
+| Platform | Guide | UI stacks covered |
+|----------|-------|-------------------|
+| **iOS** | **[iOS Integration →](docs/INTEGRATION_IOS.md)** | SwiftUI · UIKit · Objective-C |
+| **Android** | **[Android Integration →](docs/INTEGRATION_ANDROID.md)** | Jetpack Compose · XML / Views |
 
-### Components
+**More references**
 
-1. **Schema**: JSON structure defining UI
-2. **Parser**: JSON → Data models
-3. **Renderer**: Data models → Native UI
-4. **Style System**: Theme + Style classes
-5. **Layout Engine**: Positioning & sizing
+- [Core SDK Integration](docs/CORE_SDK_INTEGRATION.md) — bridge modes, listeners, fetch, standalone
+- [JSON Structure Reference](docs/JSON_STRUCTURE_REFERENCE.md) — full campaign JSON schema
 
 ---
 
-## 🏗️ Project Structure
+## Requirements
 
-```
-clevertap-native-ui-kit/
-├── android/                    # Android implementation
-│   ├── library/               # Main library
-│   │   └── src/main/kotlin/
-│   │       └── com/clevertap/android/nativedisplay/
-│   │           ├── models/    # Data models
-│   │           ├── parser/    # JSON parsing
-│   │           ├── styling/   # Style resolution
-│   │           ├── layout/    # Layout calculations
-│   │           └── ui/        # Compose rendering
-│   └── sample/                # Demo app
-│
-├── ios/                       # iOS implementation
-│   ├── CleverTapNativeDisplay/     # Main library
-│   │   ├── Models/           # Data models
-│   │   ├── Parser/           # JSON parsing
-│   │   ├── Styling/          # Style resolution
-│   │   ├── Layout/           # Layout calculations
-│   │   └── UI/               # SwiftUI rendering
-│   └── Sample/               # Demo app
-│
-├── schema/                    # JSON schema definitions
-│   ├── examples/             # Example JSON files
-│   └── schema.json           # JSON Schema spec
-│
-├── docs/                      # Documentation
-│   ├── architecture.md
-│   ├── json-schema.md
-│   └── style-guide.md
-│
-└── scripts/                   # Build & utility scripts
-```
+| Platform | Minimum |
+|----------|---------|
+| Android | API 23+, Kotlin 1.9+, Jetpack Compose |
+| iOS | iOS 15+, Swift 5.5+, SwiftUI |
+
+> The SDK renders with Compose (Android) and SwiftUI (iOS) *internally* — the XML/View wrappers host a `ComposeView` and the UIKit wrappers host a `UIHostingController`, so Compose/SwiftUI are transitive implementation details, not requirements on your UI layer.
+
+> **Prerequisite — CleverTap Core SDK.** The Native Display SDK is a renderer; it expects display units to be delivered by the CleverTap Core SDK. Install and initialize it first:
+> [Android Core SDK](https://github.com/CleverTap/clevertap-android-sdk) · [iOS Core SDK](https://github.com/CleverTap/clevertap-ios-sdk) · [General docs](https://docs.clevertap.com)
+>
+> You can also run the Display SDK in standalone mode (no Core SDK) and feed JSON manually — see the Approach 2 section in each platform guide.
 
 ---
 
-## 🎨 JSON Schema Design
+## How it works
 
-### Core Concepts
+1. You author a **Native Display** campaign on the CleverTap dashboard (or feed JSON directly).
+2. The CleverTap Core SDK delivers the campaign's JSON config to the device.
+3. This SDK parses the JSON and renders it as fully native UI — into a **slot** you declare, or a view you place yourself.
 
-1. **Elements**: UI components (text, image, button, etc.)
-2. **Containers**: Layout managers (vertical, horizontal, box)
-3. **Styles**: Visual properties (colors, fonts, etc.)
-4. **Theme**: Default styles + variables
-
-### Naming Convention: NativeDisplay*
-
-All components use the `NativeDisplay` prefix:
-- `NativeDisplayConfig` - Root configuration
-- `NativeDisplayElement` - UI element
-- `NativeDisplayContainer` - Layout container
-- `NativeDisplayStyle` - Style properties
-- `NativeDisplayTheme` - Theme definition
-
-### Example JSON
-
-```json
-{
-  "version": "1.0",
-  "theme": {
-    "id": "default",
-    "colors": {
-      "primary": "#007AFF",
-      "text": "#000000"
-    }
-  },
-  "container": {
-    "type": "vertical",
-    "layout": {
-      "width": { "value": 100, "unit": "percent" },
-      "height": { "value": 400, "unit": "dp" },
-      "padding": { "all": 16, "unit": "dp" }
-    }
-  },
-  "elements": [
-    {
-      "id": "title",
-      "type": "text",
-      "content": {
-        "text": "Welcome!"
-      },
-      "style": {
-        "fontSize": 24,
-        "fontWeight": "bold",
-        "textColor": "#000000"
-      }
-    },
-    {
-      "id": "cta-button",
-      "type": "button",
-      "content": {
-        "text": "Get Started"
-      },
-      "styleClass": "button-primary",
-      "actions": {
-        "onClick": {
-          "type": "deeplink",
-          "url": "app://onboarding"
-        }
-      }
-    }
-  ]
-}
-```
+Two integration paths exist in every platform guide: **Approach 1** (slot-based, recommended) and **Approach 2** (custom rendering / standalone).
 
 ---
 
-## 🚀 Supported Components
+## Supported Elements
 
-### Containers (3 types)
+Campaigns are composed of **containers** (which hold children) and **elements** (leaf nodes):
 
-| Type | Description | Use Case |
-|------|-------------|----------|
-| `vertical` | Stack elements vertically | Lists, forms |
-| `horizontal` | Stack elements horizontally | Rows, toolbars |
-| `box` | Absolute positioning | Overlays, cards |
-
-### Elements (5 types initially)
-
-| Type | Description | Properties |
-|------|-------------|------------|
-| `text` | Text display | text, fontSize, color |
-| `image` | Image display | url, aspectRatio |
-| `button` | Clickable button | text, style, onClick |
-| `spacer` | Empty space | height/width |
-| `video` | Video player | url, autoPlay |
-
----
-
-## 🎨 Style System
-
-### Priority Hierarchy
-
-```
-1. Inline Style    (highest - element.style)
-2. Style Class     (middle - element.styleClass)
-3. Theme Default   (lowest - theme.defaultStyle)
-```
-
-### Style Properties
-
-```json
-{
-  "style": {
-    "textColor": "#000000",
-    "fontSize": 16,
-    "fontWeight": "bold",
-    "backgroundColor": "#FFFFFF",
-    "borderRadius": 8,
-    "borderWidth": 1,
-    "borderColor": "#CCCCCC",
-    "shadowColor": "#00000033",
-    "shadowRadius": 4,
-    "padding": { "all": 16 },
-    "margin": { "all": 8 }
-  }
-}
-```
-
-### Theme Support
-
-```json
-{
-  "theme": {
-    "colors": {
-      "primary": "#007AFF",
-      "secondary": "#5AC8FA",
-      "danger": "#FF3B30"
-    },
-    "spacing": {
-      "small": 8,
-      "medium": 16,
-      "large": 24
-    }
-  }
-}
-```
-
-### Style Classes (Reusable)
-
-```json
-{
-  "styleClasses": [
-    {
-      "name": "button-primary",
-      "style": {
-        "backgroundColor": "#007AFF",
-        "textColor": "#FFFFFF",
-        "fontSize": 16,
-        "fontWeight": "bold",
-        "borderRadius": 8
-      }
-    }
-  ]
-}
-```
-
----
-
-## 📐 Layout System
-
-### Size Units
-
-| Unit | Description | Example | Platform |
-|------|-------------|---------|----------|
-| `dp` | Density-independent | 200dp | Android dp / iOS pt |
-| `percent` | Percentage of parent | 80% | Both |
-| `px` | Absolute pixels | 100px | Both |
-| `wrap_content` | Fit content | - | Both |
-| `match_parent` | Fill parent | - | Both |
-
-### Position Types
+**Containers**
 
 | Type | Description |
 |------|-------------|
-| `relative` | Relative to previous element |
-| `absolute` | Absolute positioning |
-| `center` | Centered in parent |
+| `VERTICAL` | Stack children vertically |
+| `HORIZONTAL` | Stack children horizontally |
+| `BOX` | Overlay / absolute positioning |
+| `GALLERY` | Scrollable carousel (snapping or free-flow) |
 
-### Gravity/Alignment
+**Elements**
 
-```
-TOP_START    TOP_CENTER    TOP_END
-CENTER_START   CENTER     CENTER_END
-BOTTOM_START BOTTOM_CENTER BOTTOM_END
-```
+| Type | Description |
+|------|-------------|
+| `TEXT` | Styled text, supports `{{variable}}` templates |
+| `IMAGE` | Remote image or GIF |
+| `BUTTON` | Tappable button with actions |
+| `VIDEO` | Inline video with optional controls and autoplay |
+| `HTML` | WebView-rendered rich content |
+| `SPACER` | Fixed or flexible spacing |
+| `DIVIDER` | Visual separator |
 
----
-
-## 🔧 Implementation Phases
-
-### Phase 1: Foundation (Weeks 1-2) ✅
-- [x] Project setup (Android + iOS)
-- [x] Basic data models
-- [ ] JSON schema definition
-- [ ] Documentation structure
-
-### Phase 2: Core Features (Weeks 3-4)
-- [ ] JSON parser
-- [ ] Style resolution system
-- [ ] Layout calculator
-- [ ] Basic container rendering
-
-### Phase 3: Elements (Weeks 5-6)
-- [ ] Text element
-- [ ] Image element
-- [ ] Button element
-- [ ] Spacer element
-- [ ] Video element
-
-### Phase 4: Advanced Features (Weeks 7-8)
-- [ ] Action handling (onClick, deeplinks)
-- [ ] Animation support
-- [ ] Form validation
-- [ ] Accessibility
-
-### Phase 5: Polish (Weeks 9-10)
-- [ ] Performance optimization
-- [ ] Error handling
-- [ ] Testing suite
-- [ ] Documentation completion
+Full schema, layout system, and styling rules: **[JSON Structure Reference](docs/JSON_STRUCTURE_REFERENCE.md)**.
 
 ---
 
-## 🎯 Development Approach
+## Creating a Native Display campaign
 
-### Separate Native Codebases ✅
+This SDK is the **renderer**. The most complete way to drive it is the **Native Display** feature of the CleverTap Core SDK — authored on the dashboard, delivered by the Core SDK at runtime. Going through the dashboard gives you targeting, scheduling, A/B testing, and end-to-end attribution out of the box.
 
-**Decision**: Build Android and iOS separately (not KMP)
+To create one:
 
-**Reasoning**:
-- ✅ Full access to platform features
-- ✅ Best performance (no abstraction layer)
-- ✅ Native idioms (Compose Material 3, SwiftUI)
-- ✅ Easier debugging
-- ✅ Platform-specific optimizations
-- ✅ Team expertise (Android devs know Kotlin, iOS devs know Swift)
+1. Sign in to the CleverTap dashboard and open **Campaigns → Create → Native Display**.
+2. Use the **Advanced Builder** to compose the layout — pick containers (`VERTICAL`, `HORIZONTAL`, `BOX`, `GALLERY`), drop in elements (`TEXT`, `IMAGE`, `BUTTON`, `VIDEO`, `HTML`), and bind variables.
+3. Target the slot ID (or audience segment) and publish — the campaign reaches users through the Core SDK's display unit pipeline that this SDK listens to.
 
-**Trade-off**:
-- ❌ Some code duplication (models, parsing logic)
-- ✅ But: UI rendering is platform-specific anyway
-- ✅ And: Each platform can move at its own pace
+Full dashboard documentation: **[Native Display — CleverTap docs](https://docs.clevertap.com/docs/native-display)**.
 
-### Shared Concepts, Native Implementation
-
-Both platforms implement the same:
-1. **JSON schema** (identical)
-2. **Data models** (same structure, different language)
-3. **Style resolution** (same logic, native code)
-4. **Layout calculations** (same math, native code)
-
-But render using:
-- **Android**: Jetpack Compose + Material 3
-- **iOS**: SwiftUI + SF Symbols
+If your use case calls for it, you can also feed JSON to the renderer directly — see the Approach 2 (custom rendering / standalone) section in your platform guide. You'll lose the dashboard-side targeting and attribution loop, so this is rarely the right call.
 
 ---
 
-## 📦 Deliverables
+## Campaign JSON
 
-### Android Library
-```kotlin
-// Usage
-val renderer = NativeDisplayRenderer(context)
-val result = renderer.render(jsonConfig)
+The examples below show the JSON shape this SDK consumes. In a typical setup you won't hand-write these — the CleverTap dashboard authors them and the Core SDK delivers them — but the format is open.
 
-// Integration
-class MyActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        setContent {
-            NativeDisplayView(config = jsonConfig)
+> The complete schema — layout system, aspect ratios, percentage layouts, and styling rules — is documented in the **[JSON Structure Reference](docs/JSON_STRUCTURE_REFERENCE.md)**.
+
+### Minimal example — text + button
+
+```json
+{
+  "theme": {
+    "textColor": "#111111",
+    "fontSize": 16
+  },
+  "variables": {
+    "userName": "Alex"
+  },
+  "root": {
+    "type": "VERTICAL",
+    "layout": { "width": "match_parent", "padding": 16 },
+    "children": [
+      {
+        "type": "TEXT",
+        "bindings": { "text": "Welcome back, {{userName}}!" },
+        "style": { "fontSize": 22, "fontWeight": "bold" }
+      },
+      {
+        "type": "BUTTON",
+        "bindings": { "text": "Shop Now" },
+        "actions": {
+          "onClick": { "type": "open_url", "url": "https://example.com" }
         }
-    }
+      }
+    ]
+  }
 }
 ```
 
-### iOS Library
-```swift
-// Usage
-let renderer = NativeDisplayRenderer()
-let view = renderer.render(jsonConfig: jsonConfig)
+<details>
+<summary><b>Image banner with overlay text</b></summary>
 
-// Integration
-struct ContentView: View {
-    var body: some View {
-        NativeDisplayView(config: jsonConfig)
-    }
+```json
+{
+  "root": {
+    "type": "BOX",
+    "layout": { "width": "match_parent", "height": { "value": 200, "unit": "dp" } },
+    "children": [
+      {
+        "type": "IMAGE",
+        "bindings": { "url": "https://example.com/banner.jpg" },
+        "layout": { "width": "match_parent", "height": "match_parent" }
+      },
+      {
+        "type": "TEXT",
+        "bindings": { "text": "Limited Time Offer" },
+        "layout": { "width": "match_parent" },
+        "style": {
+          "textColor": "#FFFFFF",
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "backgroundColor": "#00000066"
+        }
+      }
+    ]
+  }
 }
 ```
+</details>
 
----
+<details>
+<summary><b>Horizontal card row</b></summary>
 
-## 🔐 Security & Validation
-
-### JSON Validation
-- Schema validation on parse
-- Type checking
-- Size limits
-- URL whitelisting
-
-### Security
-- Sanitize all user input
-- Validate URLs before navigation
-- Sandbox rendering
-- No code execution
-
----
-
-## 🎨 Design Principles
-
-1. **Server-Driven**: Backend controls UI
-2. **Type-Safe**: Compile-time validation
-3. **Native-First**: Platform best practices
-4. **Performant**: No WebView overhead
-5. **Extensible**: Easy to add components
-6. **Testable**: Unit + UI testing
-7. **Accessible**: WCAG compliance
-
----
-
-## 📊 Success Metrics
-
-### Performance
-- [ ] Render time < 16ms (60fps)
-- [ ] Memory usage < 50MB
-- [ ] JSON parse < 100ms
-
-### Quality
-- [ ] 80%+ test coverage
-- [ ] Zero crashes
-- [ ] Accessibility score > 90
-
-### Adoption
-- [ ] Replace 50% of HTML messages in 6 months
-- [ ] <5% rollback rate
-- [ ] Positive developer feedback
-
----
-
-## 🛠️ Tech Stack
-
-### Android
-- **Language**: Kotlin 1.9.0
-- **UI**: Jetpack Compose + Material 3
-- **JSON**: kotlinx.serialization
-- **Image**: Coil
-- **Video**: ExoPlayer
-- **Testing**: JUnit, Espresso
-
-### iOS
-- **Language**: Swift 5.9
-- **UI**: SwiftUI + SF Symbols
-- **JSON**: Codable
-- **Image**: AsyncImage / Kingfisher
-- **Video**: AVPlayer
-- **Testing**: XCTest, SwiftUI Previews
-
----
-
-## 📚 Documentation
-
-| Document | Description |
-|----------|-------------|
-| [Architecture](docs/architecture.md) | System design |
-| [JSON Schema](docs/json-schema.md) | Complete schema spec |
-| [Style Guide](docs/style-guide.md) | Style system details |
-| [Android Setup](android/README.md) | Android dev guide |
-| [iOS Setup](ios/README.md) | iOS dev guide |
-
----
-
-## 🚀 Getting Started
-
-### Android Development
-
-```bash
-cd android
-./gradlew assembleDebug
-./gradlew installDebug
+```json
+{
+  "root": {
+    "type": "HORIZONTAL",
+    "layout": {
+      "width": "match_parent",
+      "padding": 12,
+      "arrangement": { "strategy": "spaced", "spacing": 8 }
+    },
+    "children": [
+      {
+        "type": "IMAGE",
+        "bindings": { "url": "https://example.com/product.jpg" },
+        "layout": { "width": { "value": 80, "unit": "dp" }, "height": { "value": 80, "unit": "dp" } },
+        "style": { "borderRadius": 8 }
+      },
+      {
+        "type": "VERTICAL",
+        "layout": { "width": "match_parent" },
+        "children": [
+          {
+            "type": "TEXT",
+            "bindings": { "text": "Premium Sneakers" },
+            "style": { "fontWeight": "bold", "fontSize": 16 }
+          },
+          {
+            "type": "TEXT",
+            "bindings": { "text": "$79.99" },
+            "style": { "textColor": "#E53935", "fontSize": 14 }
+          },
+          {
+            "type": "BUTTON",
+            "bindings": { "text": "Add to Cart" },
+            "actions": {
+              "onClick": { "type": "custom", "key": "add_to_cart", "value": "sku_123" }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
 ```
-
-### iOS Development
-
-```bash
-cd ios
-open CleverTapNativeDisplay.xcodeproj
-# Build and run in Xcode
-```
-
-### Run Sample Apps
-
-**Android**:
-```bash
-cd android/sample
-./gradlew installDebug
-```
-
-**iOS**:
-```bash
-cd ios/Sample
-open Sample.xcodeproj
-```
+</details>
 
 ---
 
-## 🤝 Contributing
+## Support
 
-### Code Style
-- **Android**: Kotlin coding conventions
-- **iOS**: Swift API design guidelines
-
-### Naming Conventions
-- Use `NativeDisplay*` prefix for all public APIs
-- CamelCase for classes
-- camelCase for properties/methods
-- Descriptive names (avoid abbreviations)
-
-### Git Workflow
-1. Create feature branch
-2. Make changes
-3. Write tests
-4. Submit PR
-5. Code review
-6. Merge
-
----
-
-## 📄 License
-
-MIT License - See [LICENSE](LICENSE) file
-
----
-
-## 👥 Team
-
-**Project Lead**: [Your Name]  
-**Android Team**: [Team members]  
-**iOS Team**: [Team members]
-
----
-
-## 🗓️ Roadmap
-
-### Q1 2024
-- ✅ Project setup
-- ⏳ Core framework
-- ⏳ Basic elements
-
-### Q2 2024
-- ⏳ Advanced elements
-- ⏳ Actions & events
-- ⏳ Beta release
-
-### Q3 2024
-- ⏳ Production release
-- ⏳ Migration tools
-- ⏳ Performance optimization
-
-### Q4 2024
-- ⏳ Advanced features
-- ⏳ Analytics integration
-- ⏳ A/B testing support
-
----
-
-## 📞 Support
-
-- **Issues**: GitHub Issues
-- **Slack**: #native-display-kit
+- **Documentation**: [docs.clevertap.com](https://docs.clevertap.com)
+- **Issues**: [GitHub Issues](https://github.com/CleverTap/clevertap-native-display/issues)
 - **Email**: support@clevertap.com
-
----
-
-**Built with ❤️ by the CleverTap team**

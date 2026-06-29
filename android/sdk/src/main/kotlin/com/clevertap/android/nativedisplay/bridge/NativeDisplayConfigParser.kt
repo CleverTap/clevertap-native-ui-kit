@@ -1,7 +1,7 @@
 package com.clevertap.android.nativedisplay.bridge
 
-import android.util.Log
 import androidx.annotation.VisibleForTesting
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import com.clevertap.android.nativedisplay.models.NativeDisplayConfig
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
 import com.clevertap.android.nativedisplay.models.Style
@@ -13,7 +13,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
-import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
@@ -54,7 +53,10 @@ internal class NativeDisplayConfigParser {
         threadObserver?.invoke(Thread.currentThread())
         return try {
             val jsonObj = json.parseToJsonElement(jsonString).jsonObject
-            val unitId = extractUnitId(jsonObj) ?: return null
+            val unitId = extractUnitId(jsonObj) ?: run {
+                NDLogger.w(TAG, "Missing wzrk_id in display unit JSON, using fallback id '0_0'")
+                "0_0"
+            }
             val slotId = extractSlotId(jsonObj)
             val customExtras = extractCustomExtras(jsonObj)
 
@@ -77,7 +79,7 @@ internal class NativeDisplayConfigParser {
                 rawJson = jsonString
             )
         } catch (e: Exception) {
-            Log.w(TAG, "Failed to parse display unit JSON: ${e.message}")
+            NDLogger.w(TAG, "Failed to parse display unit JSON: ${e.message}")
             null
         }
     }
@@ -94,7 +96,7 @@ internal class NativeDisplayConfigParser {
             )
             ndConfig.toResolvedConfig()
         } catch (e: Exception) {
-            Log.w(TAG, "Failed to parse native_display_config: ${e.message}")
+            NDLogger.w(TAG, "Failed to parse native_display_config: ${e.message}")
             null
         }
     }
@@ -109,7 +111,7 @@ internal class NativeDisplayConfigParser {
             val ndConfig = json.decodeFromString(NativeDisplayConfig.serializer(), ndConfigStr)
             ndConfig.toResolvedConfig()
         } catch (e: Exception) {
-            Log.w(TAG, "Failed to parse custom_kv.nd_config: ${e.message}")
+            NDLogger.w(TAG, "Failed to parse custom_kv.nd_config: ${e.message}")
             null
         }
     }
@@ -123,7 +125,7 @@ internal class NativeDisplayConfigParser {
             val ndConfig = json.decodeFromJsonElement(NativeDisplayConfig.serializer(), jsonObj)
             ndConfig.toResolvedConfig()
         } catch (e: Exception) {
-            Log.w(TAG, "Failed to parse JSON as NativeDisplayConfig: ${e.message}")
+            NDLogger.w(TAG, "Failed to parse JSON as NativeDisplayConfig: ${e.message}")
             null
         }
     }
@@ -163,7 +165,7 @@ internal class NativeDisplayConfigParser {
         return try {
             StyleResolver(config.theme, config.styleClasses).resolveAll(config.root)
         } catch (e: Exception) {
-            Log.w(TAG, "Style pre-resolution failed: ${e.message}")
+            NDLogger.w(TAG, "Style pre-resolution failed: ${e.message}")
             persistentMapOf()
         }
     }
@@ -174,7 +176,7 @@ internal class NativeDisplayConfigParser {
      */
     private fun NativeDisplayConfig.toResolvedConfig(): ResolvedConfig? {
         val rootNode = this.root ?: run {
-            Log.w(TAG, "NativeDisplayConfig has no root node, skipping")
+            NDLogger.w(TAG, "NativeDisplayConfig has no root node, skipping")
             return null
         }
         return ResolvedConfig(

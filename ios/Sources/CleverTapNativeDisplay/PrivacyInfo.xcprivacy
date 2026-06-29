@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!--
+      Privacy manifest for the CleverTapNativeDisplay renderer SDK.
+
+      Aligned with the CleverTap iOS Core SDK manifest (CleverTapSDK/
+      PrivacyInfo.xcprivacy), but each binary declares only what IT does:
+
+        • NSPrivacyTracking = false        — matches Core; no cross-app tracking.
+        • ProductInteraction (collected)   — matches Core. The renderer ORIGINATES
+          this: it captures taps/clicks/views on rendered units and builds the
+          attribution payload that the bridge forwards to Core. Linked, not used
+          for tracking; purposes mirror Core (Analytics, Product Personalization).
+        • UserID / DeviceID (NOT declared) — Core collects these; the renderer
+          never reads or sends identifiers (no IDFV/IDFA/GUID APIs in this target).
+        • NSPrivacyAccessedAPITypes empty  — unlike Core, the renderer uses no
+          Required-Reason APIs (audited: no UserDefaults, file-timestamp, boot-time,
+          disk-space, or active-keyboard APIs in this target's sources).
+
+      Confirm with the privacy/legal owner before release. Re-audit and re-align
+      with the Core manifest whenever this SDK links new system APIs, stores data
+      locally, or starts handling identifiers.
+    -->
+    <key>NSPrivacyTracking</key>
+    <false/>
+    <key>NSPrivacyTrackingDomains</key>
+    <array/>
+    <key>NSPrivacyCollectedDataTypes</key>
+    <array>
+        <dict>
+            <key>NSPrivacyCollectedDataType</key>
+            <string>NSPrivacyCollectedDataTypeProductInteraction</string>
+            <key>NSPrivacyCollectedDataTypeLinked</key>
+            <true/>
+            <key>NSPrivacyCollectedDataTypeTracking</key>
+            <false/>
+            <key>NSPrivacyCollectedDataTypePurposes</key>
+            <array>
+                <string>NSPrivacyCollectedDataTypePurposeAnalytics</string>
+                <string>NSPrivacyCollectedDataTypePurposeProductPersonalization</string>
+            </array>
+        </dict>
+    </array>
+    <key>NSPrivacyAccessedAPITypes</key>
+    <array/>
+</dict>
+</plist>

@@ -2,8 +2,8 @@ package com.clevertap.android.nativedisplay.bridge
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.webkit.WebView
+import com.clevertap.android.nativedisplay.internal.NDLogger
 
 /**
  * Injects the CleverTap JavaScript bridge into a WebView.
@@ -32,7 +32,7 @@ internal object HtmlJsBridge {
             val getDefault = ctApiClass.getMethod("getDefaultInstance", Context::class.java)
             val ctInstance = getDefault.invoke(null, context.applicationContext)
                 ?: run {
-                    Log.d(TAG, "CleverTapAPI.getDefaultInstance() returned null")
+                    NDLogger.d(TAG, "CleverTapAPI.getDefaultInstance() returned null")
                     return false
                 }
 
@@ -44,16 +44,16 @@ internal object HtmlJsBridge {
             // Add as JavaScript interface
             webView.addJavascriptInterface(webInterface, JS_INTERFACE_NAME)
 
-            Log.d(TAG, "CleverTap JS bridge injected successfully")
+            NDLogger.d(TAG, "CleverTap JS bridge injected successfully")
             true
         } catch (_: ClassNotFoundException) {
-            Log.d(TAG, "CleverTap Core SDK not found, skipping JS bridge injection")
+            NDLogger.d(TAG, "CleverTap Core SDK not found, skipping JS bridge injection")
             false
         } catch (_: NoClassDefFoundError) {
-            Log.d(TAG, "CleverTap Core SDK not found, skipping JS bridge injection")
+            NDLogger.d(TAG, "CleverTap Core SDK not found, skipping JS bridge injection")
             false
         } catch (e: Exception) {
-            Log.w(TAG, "Failed to inject CleverTap JS bridge: ${e.message}")
+            NDLogger.w(TAG, "Failed to inject CleverTap JS bridge: ${e.message}")
             false
         }
     }

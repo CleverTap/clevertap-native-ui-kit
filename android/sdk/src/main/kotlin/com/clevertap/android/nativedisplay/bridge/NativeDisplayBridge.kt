@@ -1,8 +1,8 @@
 package com.clevertap.android.nativedisplay.bridge
 
 import android.content.Context
-import android.util.Log
 import com.clevertap.android.nativedisplay.handler.ActionAttributionExtras
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import com.clevertap.android.sdk.CleverTapAPI
 import java.lang.ref.WeakReference
 import java.lang.reflect.Method
@@ -105,6 +105,22 @@ class NativeDisplayBridge private constructor() {
     private var elementClickedResolved: Boolean = false
 
     /**
+     * Resolved 2-arg viewed-with-extras Core SDK method
+     * (`pushDisplayUnitViewedEventForID(String, HashMap)`), or `null` when the host
+     * Core SDK only exposes the legacy 1-arg overload. Same one-shot probe / sticky
+     * cache contract as [elementClickedMethod].
+     */
+    @Volatile
+    private var viewedWithExtrasMethod: Method? = null
+
+    /**
+     * Flips to `true` the first time [resolveViewedWithExtrasMethod] runs, even when
+     * the 2-arg overload is absent. Distinguishes "absent" from "not yet probed".
+     */
+    @Volatile
+    private var viewedWithExtrasResolved: Boolean = false
+
+    /**
      * Memoised `CleverTapAPI.setDisplayUnitCache` availability probe used by [seedIfNeeded].
      * `null` means "not yet probed"; `true`/`false` are sticky cached results for the
      * lifetime of the currently attached CleverTapAPI instance.
@@ -119,6 +135,8 @@ class NativeDisplayBridge private constructor() {
     private fun resetReflectionCaches() {
         elementClickedMethod = null
         elementClickedResolved = false
+        viewedWithExtrasMethod = null
+        viewedWithExtrasResolved = false
         setDisplayUnitCacheAvailable = null
     }
 
@@ -133,18 +151,25 @@ class NativeDisplayBridge private constructor() {
         internal const val FETCH_TYPE_NATIVE_DISPLAY = 9
 
         /**
-         * Core SDK method name for the new element-level clicked-attribution event.
-         * Signature: `pushDisplayUnitElementClickedEventForID(String unitID, String elementID,
+         * Core SDK method name for the element-level clicked-attribution event.
+         * Signature: `pushDisplayUnitElementClickedEventForID(String unitID,
          * HashMap<String, Object> additionalProperties)`.
          *
-         * Combines the caller-supplied `additionalProperties` (merged into `evtData` first)
-         * with the unit-level `wzrk_*` enrichment layered on top from the cached unit JSON,
-         * plus the element id added to the event as `wzrk_element_id` from the dedicated
-         * parameter. The `wzrk_*` namespace is server-owned — Core SDK always sources those
-         * keys from the cached unit, so client `additionalProperties` should stay in the
-         * `action_*` (and unprefixed) namespace.
+         * Attribution fields (`wzrk_element_id`, `wzrk_btn_text`, etc.) are injected by
+         * the BE into each action's `metadata` field and flow to Core SDK via
+         * `additionalProperties` — no dedicated `elementID` parameter is needed.
          */
         private const val METHOD_ELEMENT_CLICKED = "pushDisplayUnitElementClickedEventForID"
+
+        /**
+         * Core SDK method name for the viewed-attribution event. The 1-arg overload
+         * `pushDisplayUnitViewedEventForID(String unitID)` is the legacy entry point
+         * present on every Core SDK version; the 2-arg overload
+         * `pushDisplayUnitViewedEventForID(String unitID, HashMap<String, Object> additionalProperties)`
+         * is assumed to exist on newer Core SDK builds and is invoked reflectively
+         * when present so we can stamp the ND SDK version onto the event.
+         */
+        private const val METHOD_VIEWED = "pushDisplayUnitViewedEventForID"
 
         @Volatile
         private var instance: NativeDisplayBridge? = null
@@ -192,6 +217,26 @@ class NativeDisplayBridge private constructor() {
          * Get the current bridge instance, or null if not yet initialized.
          */
         fun getInstance(): NativeDisplayBridge? = instance
+
+        /**
+         * Set the SDK log verbosity level.
+         *
+         * Call this before or after initialising the bridge — the level is stored in a
+         * singleton and takes effect immediately.
+         *
+         * ```kotlin
+         * // Silence all SDK logs in production
+         * NativeDisplayBridge.setLogLevel(NDLogLevel.OFF)
+         *
+         * // Enable verbose output while debugging
+         * NativeDisplayBridge.setLogLevel(NDLogLevel.VERBOSE)
+         * ```
+         *
+         * @param level The desired [NDLogLevel]. Overrides any Core SDK auto-sync.
+         */
+        fun setLogLevel(level: NDLogLevel) {
+            NDLogger.setLevel(level.toInternal())
+        }
     }
 
     // --- Manual Mode: accept raw JSON ---
@@ -218,7 +263,8 @@ class NativeDisplayBridge private constructor() {
 
             cache.replaceAll(parsedUnits)
 
-            Log.d(TAG, "Processed ${parsedUnits.size}/${payload.size} display units")
+            NDLogger.d(TAG, "Server cache updated: received ${payload.size} unit(s), parsed ${parsedUnits.size} successfully")
+            NDLogger.d(TAG, "Processed ${parsedUnits.size}/${payload.size} display units")
             withContext(Dispatchers.Main) {
                 notifyListeners(parsedUnits)
             }
@@ -237,13 +283,13 @@ class NativeDisplayBridge private constructor() {
         parseScope.launch {
             val unit = parser.tryParse(displayUnitJsonString)
             if (unit == null) {
-                Log.w(TAG, "Failed to parse display unit, skipping")
+                NDLogger.w(TAG, "Failed to parse display unit, skipping")
                 return@launch
             }
 
             cache.put(unit)
 
-            Log.d(TAG, "Processed display unit: ${unit.unitId}")
+            NDLogger.d(TAG, "Processed display unit: ${unit.unitId}")
             withContext(Dispatchers.Main) {
                 notifyListeners(listOf(unit))
             }
@@ -283,6 +329,9 @@ class NativeDisplayBridge private constructor() {
             val alreadyRegistered = listeners.any { it.get() === listener }
             if (!alreadyRegistered) {
                 listeners.add(WeakReference(listener))
+                NDLogger.d(TAG, "Listener added: ${listener::class.simpleName}")
+            } else {
+                NDLogger.d(TAG, "Listener already registered, skipping: ${listener::class.simpleName}")
             }
         }
     }
@@ -296,6 +345,7 @@ class NativeDisplayBridge private constructor() {
         synchronized(listenersLock) {
             listeners.removeAll { it.get() === listener || it.get() == null }
         }
+        NDLogger.d(TAG, "Listener removed: ${listener::class.simpleName}")
     }
 
     /**
@@ -346,13 +396,13 @@ class NativeDisplayBridge private constructor() {
         return try {
             val eventData = mapOf("t" to FETCH_TYPE_NATIVE_DISPLAY)
             cleverTapApi.pushEvent(WZRK_FETCH, eventData)
-            Log.d(TAG, "Sent wzrk_fetch request for Native Display (type=$FETCH_TYPE_NATIVE_DISPLAY)")
+            NDLogger.d(TAG, "Sent wzrk_fetch request for Native Display (type=$FETCH_TYPE_NATIVE_DISPLAY)")
             true
         } catch (e: NoClassDefFoundError) {
-            Log.w(TAG, "CleverTap Core SDK not available for fetch")
+            NDLogger.w(TAG, "CleverTap Core SDK not available for fetch")
             false
         } catch (e: Exception) {
-            Log.w(TAG, "fetchNativeDisplays() failed: ${e.message}")
+            NDLogger.w(TAG, "fetchNativeDisplays() failed: ${e.message}")
             false
         }
     }
@@ -360,38 +410,61 @@ class NativeDisplayBridge private constructor() {
     /**
      * Push a display unit viewed (impression) attribution event to the CleverTap Core SDK.
      *
-     * Always calls `pushDisplayUnitViewedEventForID(unitId)`. Impressions are inherently
-     * unit-level in ND (the root mount fires once); there is no per-element view event.
+     * When the host Core SDK exposes the 2-arg overload
+     * `pushDisplayUnitViewedEventForID(String unitID, HashMap<String, Object> additionalProperties)`,
+     * it is invoked reflectively with the ND SDK version stamp (`nd_lib_v_name` /
+     * `nd_lib_v_code`) so the server can attribute the impression to a specific SDK
+     * build. On older Core SDK versions without the new overload, the legacy
+     * single-arg `pushDisplayUnitViewedEventForID(unitId)` fires instead (graceful
+     * degradation — version stamp is dropped).
+     *
+     * Impressions are inherently unit-level in ND (the root mount fires once); there
+     * is no per-element view event, so no caller-supplied extras flow through here.
      *
      * @param unitId The ID of the display unit that was viewed
      * @return true if the event was pushed successfully, false if no CleverTapAPI is available
      */
     fun pushViewedEvent(unitId: String): Boolean {
-        val ct = cleverTapApi ?: return false
+        if (cleverTapApi == null) return false
         return try {
             seedIfNeeded(unitId)
-            ct.pushDisplayUnitViewedEventForID(unitId)
+            invokeViewedEvent(unitId)
             true
         } catch (e: Exception) {
-            Log.w(TAG, "pushViewedEvent failed: ${e.message}")
+            NDLogger.w(TAG, "pushViewedEvent failed: ${e.message}")
             false
         }
     }
 
     /**
+     * Prefer the new 2-arg viewed-event overload when Core SDK exposes it; fall back
+     * to the legacy 1-arg overload otherwise. Mirrors [invokeClickedEvent].
+     */
+    private fun invokeViewedEvent(unitId: String) {
+        val ct = cleverTapApi ?: return
+        val viewedMethod = resolveViewedWithExtrasMethod(ct)
+        if (viewedMethod != null) {
+            val stamp = HashMap<String, Any>(ActionAttributionExtras.versionStamp())
+            viewedMethod.invoke(ct, unitId, stamp)
+            return
+        }
+        // Fallback: legacy unit-level viewed attribution (version stamp dropped).
+        ct.pushDisplayUnitViewedEventForID(unitId)
+    }
+
+    /**
      * Push a display unit clicked attribution event to the CleverTap Core SDK.
      *
-     * When [extras] carries a `wzrk_btn_id` transport marker (set by
-     * [ActionAttributionExtras.from] from the clicked node id) AND the host Core SDK exposes
-     * `pushDisplayUnitElementClickedEventForID(String unitID, String elementID,
-     * HashMap<String, Object> additionalProperties)`, that method is invoked reflectively —
-     * the element id is extracted from the extras map and passed as the dedicated argument;
-     * the remaining (sanitized) entries become `additionalProperties`.
+     * When the host Core SDK exposes
+     * `pushDisplayUnitElementClickedEventForID(String unitID, HashMap<String, Object> additionalProperties)`,
+     * that method is invoked reflectively with all sanitized [extras] as `additionalProperties`.
+     * Attribution fields (`wzrk_element_id`, `wzrk_btn_text`, etc.) are injected by the BE into
+     * each action's `metadata` and already flow through [extras] via [ActionAttributionExtras.from].
      *
      * On older Core SDK versions without the new method, the legacy single-arg
      * `pushDisplayUnitClickedEventForID(unitId)` fires instead — the campaign click is still
-     * attributed but per-element context is lost (graceful degradation, no namespace
-     * squatting). Clients receive coarse unit-level attribution until they upgrade Core SDK.
+     * attributed but per-element context is lost (graceful degradation). Clients receive coarse
+     * unit-level attribution until they upgrade Core SDK.
      *
      * @param unitId The ID of the display unit that was clicked
      * @param extras Optional event extras built by [ActionAttributionExtras.from]. Non-scalar /
@@ -406,7 +479,7 @@ class NativeDisplayBridge private constructor() {
             invokeClickedEvent(ct, unitId, extras)
             true
         } catch (e: Exception) {
-            Log.w(TAG, "pushClickedEvent failed: ${e.message}")
+            NDLogger.w(TAG, "pushClickedEvent failed: ${e.message}")
             false
         }
     }
@@ -415,8 +488,8 @@ class NativeDisplayBridge private constructor() {
      * Prefer the new element-aware method when Core SDK exposes it; fall back to the legacy
      * unit-level method otherwise.
      *
-     * The reflection probe targets the exact 3-arg signature
-     * `pushDisplayUnitElementClickedEventForID(String, String, HashMap)` — if it's absent
+     * The reflection probe targets the 2-arg signature
+     * `pushDisplayUnitElementClickedEventForID(String, HashMap)` — if it's absent
      * (older Core SDK), `getMethod` throws and we degrade gracefully.
      */
     private fun invokeClickedEvent(
@@ -424,19 +497,14 @@ class NativeDisplayBridge private constructor() {
         unitId: String,
         extras: Map<String, Any?>?
     ) {
-        val sanitized = ActionAttributionExtras.sanitize(extras)
-        val elementId = sanitized?.get(ActionAttributionExtras.KEY_BUTTON_ID) as? String
-        if (sanitized != null && elementId != null) {
-            val elementMethod = resolveElementClickedMethod(ct)
-            if (elementMethod != null) {
-                // Strip the transport marker — Core SDK adds `wzrk_element_id` to the event
-                // from the dedicated parameter.
-                val additionalProps = HashMap<String, Any>(sanitized).apply {
-                    remove(ActionAttributionExtras.KEY_BUTTON_ID)
-                }
-                elementMethod.invoke(ct, unitId, elementId, additionalProps)
-                return
-            }
+        val elementMethod = resolveElementClickedMethod(ct)
+        if (elementMethod != null) {
+            // Use the element-aware path whenever available, even when extras is empty.
+            // An empty map is a valid additionalProperties argument — Core SDK still
+            // enriches the event from its own cached unit JSON.
+            val sanitized = ActionAttributionExtras.sanitize(extras)
+            elementMethod.invoke(ct, unitId, HashMap<String, Any>(sanitized))
+            return
         }
         // Fallback: legacy unit-level click attribution (no per-element data).
         ct.pushDisplayUnitClickedEventForID(unitId)
@@ -458,12 +526,37 @@ class NativeDisplayBridge private constructor() {
             ct.javaClass.getMethod(
                 METHOD_ELEMENT_CLICKED,
                 String::class.java,
-                String::class.java,
                 HashMap::class.java
             )
+        }.onFailure { e ->
+            NDLogger.d(TAG, "Element-clicked method not found (${ct.javaClass.name}): ${e.message} — using legacy fallback")
         }.getOrNull()
         elementClickedMethod = resolved
         elementClickedResolved = true
+        NDLogger.d(TAG, if (resolved != null) "Element-clicked method resolved: $METHOD_ELEMENT_CLICKED(String, HashMap)" else "Element-clicked method absent — legacy fallback active")
+        return resolved
+    }
+
+    /**
+     * Memoised lookup of the 2-arg viewed-event Core SDK overload. Same one-shot
+     * probe / sticky cache contract as [resolveElementClickedMethod] — runs once per
+     * attached CleverTapAPI instance and caches the result (including "absent"),
+     * cleared only by [resetReflectionCaches].
+     */
+    private fun resolveViewedWithExtrasMethod(ct: CleverTapAPI): Method? {
+        if (viewedWithExtrasResolved) return viewedWithExtrasMethod
+        val resolved = runCatching {
+            ct.javaClass.getMethod(
+                METHOD_VIEWED,
+                String::class.java,
+                HashMap::class.java
+            )
+        }.onFailure { e ->
+            NDLogger.d(TAG, "Viewed-with-extras method not found (${ct.javaClass.name}): ${e.message} — using legacy 1-arg fallback")
+        }.getOrNull()
+        viewedWithExtrasMethod = resolved
+        viewedWithExtrasResolved = true
+        NDLogger.d(TAG, if (resolved != null) "Viewed-with-extras method resolved: $METHOD_VIEWED(String, HashMap)" else "Viewed-with-extras method absent — legacy 1-arg fallback active")
         return resolved
     }
 
@@ -516,7 +609,7 @@ class NativeDisplayBridge private constructor() {
         synchronized(listenersLock) {
             listeners.clear()
         }
-        Log.d(TAG, "Bridge cleared")
+        NDLogger.d(TAG, "Bridge cleared")
     }
 
     /**
@@ -526,12 +619,7 @@ class NativeDisplayBridge private constructor() {
      * supports `setDisplayUnitCache(...)`.
      */
     internal fun coreSdkCacheProxy(): Any? = cache.asProxy(
-        onServerUpdate = { jsonArray ->
-            val jsonStrings = (0 until jsonArray.length()).mapNotNull { i ->
-                try { jsonArray.optJSONObject(i)?.toString() } catch (_: Throwable) { null }
-            }
-            if (jsonStrings.isNotEmpty()) processDisplayUnits(jsonStrings)
-        },
+        onServerUpdate = { jsonStrings -> processDisplayUnits(jsonStrings) },
         onReset = { cache.clear() }
     )
 
@@ -569,7 +657,7 @@ class NativeDisplayBridge private constructor() {
             try {
                 listener.onNativeDisplaysLoaded(units)
             } catch (e: Exception) {
-                Log.w(TAG, "Listener threw exception: ${e.message}")
+                NDLogger.w(TAG, "Listener threw exception: ${e.message}")
             }
         }
     }

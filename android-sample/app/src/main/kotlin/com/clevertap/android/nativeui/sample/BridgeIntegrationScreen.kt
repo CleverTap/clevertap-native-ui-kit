@@ -9,17 +9,21 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridgeListener
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
 import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
@@ -41,7 +45,9 @@ import com.clevertap.android.nativedisplay.renderer.NativeDisplayView
  * 5. Pull API: getAllNativeDisplays() and getNativeDisplayForId()
  */
 @Composable
-fun BridgeIntegrationScreen() {
+fun BridgeIntegrationScreen(
+    viewModel: BridgeIntegrationViewModel = viewModel()
+) {
     val context = LocalContext.current
 
     // --- Load mock JSON strings from assets ---
@@ -54,19 +60,18 @@ fun BridgeIntegrationScreen() {
         context.assets.open("bridge_mock_notification.json").bufferedReader().readText()
     }
 
-    // --- Bridge state ---
-    // In a real app, you would create the bridge once in Application.onCreate() or Activity.
-    // Here we use DisposableEffect to manage the bridge lifecycle within this demo.
-    val bridge = remember { NativeDisplayBridge.create() }
-    var receivedUnits by remember { mutableStateOf<List<NativeDisplayUnit>>(emptyList()) }
-    var logMessages by remember { mutableStateOf(listOf<String>()) }
-    var listenerRegistered by remember { mutableStateOf(false) }
-    var dataProcessed by remember { mutableStateOf(false) }
+    // --- Bridge state (survives rotation via ViewModel) ---
+    // The bridge is held in the ViewModel so it is not recreated on rotation.
+    val bridge = viewModel.bridge
+    val receivedUnits by viewModel.receivedUnits.collectAsState()
+    val logMessages by viewModel.logMessages.collectAsState()
+    val listenerRegistered by viewModel.listenerRegistered.collectAsState()
+    val dataProcessed by viewModel.dataProcessed.collectAsState()
 
     // Helper to append log messages
     fun log(message: String) {
         Log.d("BridgeDemo", message)
-        logMessages = logMessages + message
+        viewModel.log(message)
     }
 
     // --- Step 1 & 2: Register listener ---
@@ -80,20 +85,23 @@ fun BridgeIntegrationScreen() {
                 //   - unitId: the wzrk_id from the payload
                 //   - config: a ResolvedConfig ready for NativeDisplayView
                 //   - customExtras: key-value pairs from custom_kv
-                receivedUnits = units
-                log("onNativeDisplaysLoaded: received ${units.size} unit(s)")
+                viewModel.onUnitsLoaded(units)
+                viewModel.log("onNativeDisplaysLoaded: received ${units.size} unit(s)")
                 for (unit in units) {
-                    log("  - ${unit.unitId} | extras: ${unit.customExtras}")
+                    viewModel.log("  - ${unit.unitId} | extras: ${unit.customExtras}")
                 }
             }
         }
     }
 
-    // Clean up bridge on dispose
-    DisposableEffect(bridge) {
+    // Re-register listener after rotation if already enabled (bridge survives in ViewModel,
+    // but the listener object is recreated by remember on each Activity recreation).
+    DisposableEffect(bridge, listenerRegistered) {
+        if (listenerRegistered) {
+            bridge.addListener(listener)
+        }
         onDispose {
             bridge.removeListener(listener)
-            bridge.clear()
         }
     }
 
@@ -131,8 +139,7 @@ bridge.addListener(myListener)""",
         ) {
             Button(
                 onClick = {
-                    bridge.addListener(listener)
-                    listenerRegistered = true
+                    viewModel.markListenerRegistered()
                     log("Listener registered on bridge")
                 },
                 enabled = !listenerRegistered
@@ -159,7 +166,7 @@ bridge.processDisplayUnits(jsonStrings)""",
                     // Simulate the Core SDK delivering display units.
                     // processDisplayUnits() replaces the entire cache and notifies listeners.
                     bridge.processDisplayUnits(listOf(mockProductJson, mockNotificationJson))
-                    dataProcessed = true
+                    viewModel.markDataProcessed()
                 },
                 enabled = listenerRegistered && !dataProcessed
             ) {
@@ -287,31 +294,52 @@ val unit = bridge.getNativeDisplayForId("demo_unit_product")"""
         }
 
         // --- Log Output ---
+        // Default to visible so humans see the log; tests can flip this via the toggle button.
+        var logVisible by remember { mutableStateOf(true) }
         AnimatedVisibility(
             visible = logMessages.isNotEmpty(),
             enter = fadeIn() + expandVertically()
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 HorizontalDivider()
-                Text(
-                    text = "Event Log",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Card(
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF263238)),
-                    shape = RoundedCornerShape(8.dp)
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
-                        for (msg in logMessages) {
-                            Text(
-                                text = "> $msg",
-                                style = MaterialTheme.typography.bodySmall,
-                                fontFamily = FontFamily.Monospace,
-                                color = Color(0xFF80CBC4),
-                                lineHeight = 18.sp
-                            )
+                    Text(
+                        text = "Event Log",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    IconButton(
+                        onClick = { logVisible = !logVisible },
+                        modifier = Modifier.testTag("event-log-toggle")
+                    ) {
+                        Icon(
+                            imageVector = if (logVisible) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
+                            contentDescription = if (logVisible) "Hide event log" else "Show event log"
+                        )
+                    }
+                }
+                if (logVisible) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("event-log-content"),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF263238)),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            for (msg in logMessages) {
+                                Text(
+                                    text = "> $msg",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontFamily = FontFamily.Monospace,
+                                    color = Color(0xFF80CBC4),
+                                    lineHeight = 18.sp
+                                )
+                            }
                         }
                     }
                 }

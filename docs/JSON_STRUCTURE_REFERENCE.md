@@ -351,22 +351,16 @@ Visual separator line.
 }
 ```
 
-**Default Values for Backward Compatibility:**
+**Default values** — all dimension fields are optional. The SDK fills in sensible defaults so your JSON won't fail to parse if you omit them:
 
-All dimension properties have sensible defaults to ensure parsing doesn't fail if backend JSON omits certain fields:
+- `value` → `0`
+- `unit` → `"dp"`
+- `special` → `null`
 
-- `value`: defaults to `0`
-- `unit`: defaults to `"dp"`
-- `special`: defaults to `null`
-
-This means a minimal dimension can be:
+This means a minimal dimension is valid:
 ```json
-{}  // Valid! Will parse as {value: 0, unit: "dp", special: null}
+{}  // Parses as {value: 0, unit: "dp", special: null}
 ```
-
-**Implementation Notes:**
-- **Android**: Uses `@Serializable` data class with default parameter values
-- **iOS**: Uses custom `init(from decoder:)` with `decodeIfPresent` + `??` fallbacks for robust parsing
 
 ### Special Dimensions
 
@@ -761,13 +755,13 @@ Combine percentages with aspect ratios for responsive, proportional layouts:
 Colors must be hex strings:
 
 ```json
-"#RRGGBB"      // RGB
-"#AARRGGBB"    // ARGB (with alpha)
+"#RRGGBB"      // RGB (opaque)
+"#RRGGBBAA"    // RGBA (with alpha — AA is the alpha byte, 00=transparent, FF=opaque)
 ```
 
 Examples:
-- `"#FF5722"` - Orange
-- `"#80FF5722"` - Orange with 50% opacity
+- `"#FF5722"` — Orange (fully opaque)
+- `"#FF572280"` — Orange at 50% opacity
 
 ---
 
@@ -1191,7 +1185,3 @@ Use this checklist when creating JSON:
 6. ✅ Unique IDs throughout
 7. ✅ Bindings object on elements
 8. ✅ Children array on containers
-
----
-
-**For complete specification and advanced features, refer to the source code models.**

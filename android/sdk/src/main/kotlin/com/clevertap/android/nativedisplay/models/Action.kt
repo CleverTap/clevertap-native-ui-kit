@@ -12,12 +12,12 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonEncoder
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 
 /**
@@ -41,7 +41,8 @@ sealed class Action {
     data class OpenUrl(
         val url: String,
         val openInBrowser: Boolean = false,
-        val customTabsEnabled: Boolean = true
+        val customTabsEnabled: Boolean = true,
+        val metadata: Map<String, String>? = null
     ) : Action()
 
     /**
@@ -53,7 +54,7 @@ sealed class Action {
      * @property metadata Optional additional metadata for the action
      */
     @Immutable
-    @Serializable
+    @Serializable(with = CustomActionSerializer::class)
     @SerialName("custom")
     data class CustomAction(
         val key: String,
@@ -122,32 +123,92 @@ internal object OpenUrlSerializer : KSerializer<Action.OpenUrl> {
         val jsonDecoder = decoder as JsonDecoder
         val obj = jsonDecoder.decodeJsonElement().jsonObject
 
-        val urlElement = obj["url"]
-        val url = when (urlElement) {
-            is JsonObject -> urlElement["android"]?.jsonPrimitive?.content ?: ""
-            is JsonPrimitive -> urlElement.content
-            else -> ""
-        }
-
-        val openInBrowser = obj["openInBrowser"]?.jsonPrimitive?.booleanOrNull ?: false
-        val customTabsEnabled = obj["customTabsEnabled"]?.jsonPrimitive?.booleanOrNull ?: true
+        val url = resolveUrl(obj["url"])
+        val openInBrowser = (obj["openInBrowser"] as? JsonPrimitive)?.booleanOrNull ?: false
+        val customTabsEnabled = (obj["customTabsEnabled"] as? JsonPrimitive)?.booleanOrNull ?: true
+        val metadata = parseMetadataToStringMap(obj)
 
         return Action.OpenUrl(
             url = url,
             openInBrowser = openInBrowser,
-            customTabsEnabled = customTabsEnabled
+            customTabsEnabled = customTabsEnabled,
+            metadata = metadata,
         )
     }
 
     override fun serialize(encoder: Encoder, value: Action.OpenUrl) {
         val jsonEncoder = encoder as JsonEncoder
-        val jsonElement = buildJsonObject {
+        jsonEncoder.encodeJsonElement(buildJsonObject {
             put("url", value.url)
             put("openInBrowser", value.openInBrowser)
             put("customTabsEnabled", value.customTabsEnabled)
-        }
-        jsonEncoder.encodeJsonElement(jsonElement)
+            value.metadata?.let { meta ->
+                put("metadata", buildJsonObject { for ((k, v) in meta) put(k, v) })
+            }
+        })
     }
+
+    // Resolves the url field, which can be:
+    //   "https://..."                      — plain string
+    //   {"android": "https://...", ...}   — platform object with string values
+    //   {"android": {text, replacements}} — legacy Ultron object format; uses `text`
+    // Android uses the "android" key only — no ios fallback.
+    private fun resolveUrl(urlElement: JsonElement?): String {
+        if (urlElement == null || urlElement is JsonNull) return ""
+        if (urlElement is JsonPrimitive) return urlElement.content
+        if (urlElement !is JsonObject) return ""
+        val platformEl = urlElement["android"] ?: return ""
+        return when (platformEl) {
+            is JsonPrimitive -> platformEl.content
+            is JsonObject -> (platformEl["text"] as? JsonPrimitive)?.content ?: ""
+            else -> ""
+        }
+    }
+}
+
+internal object CustomActionSerializer : KSerializer<Action.CustomAction> {
+
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("custom")
+
+    override fun deserialize(decoder: Decoder): Action.CustomAction {
+        val jsonDecoder = decoder as JsonDecoder
+        val obj = jsonDecoder.decodeJsonElement().jsonObject
+        val key = (obj["key"] as? JsonPrimitive)?.content ?: ""
+        val value = obj["value"] ?: JsonNull
+        val metadata = parseMetadataToStringMap(obj)
+        return Action.CustomAction(key = key, value = value, metadata = metadata)
+    }
+
+    override fun serialize(encoder: Encoder, value: Action.CustomAction) {
+        val jsonEncoder = encoder as JsonEncoder
+        jsonEncoder.encodeJsonElement(buildJsonObject {
+            put("key", value.key)
+            put("value", value.value)
+            value.metadata?.let { meta ->
+                put("metadata", buildJsonObject { for ((k, v) in meta) put(k, v) })
+            }
+        })
+    }
+}
+
+/**
+ * Parses the `metadata` field from an action JSON object into a flat [String, String] map.
+ *
+ * Values that are JSON primitives are taken as-is. Values that are JSON objects or arrays
+ * are serialized to a compact JSON string so the map stays [String, String] without crashing.
+ * Null JSON values are skipped.
+ */
+internal fun parseMetadataToStringMap(obj: JsonObject): Map<String, String>? {
+    val metaEl = obj["metadata"] as? JsonObject ?: return null
+    val result = mutableMapOf<String, String>()
+    for ((k, v) in metaEl) {
+        when (v) {
+            is JsonNull -> Unit
+            is JsonPrimitive -> result[k] = v.content
+            else -> result[k] = v.toString()  // JsonObject / JsonArray → compact JSON string
+        }
+    }
+    return result.ifEmpty { null }
 }
 
 /**

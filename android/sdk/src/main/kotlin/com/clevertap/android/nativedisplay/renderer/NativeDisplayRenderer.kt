@@ -8,13 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
 import com.clevertap.android.nativedisplay.evaluator.VariableEvaluator
 import com.clevertap.android.nativedisplay.handler.ActionAttributionExtras
@@ -27,7 +28,10 @@ import com.clevertap.android.nativedisplay.models.DimensionUnit
 import com.clevertap.android.nativedisplay.models.ElementType
 import com.clevertap.android.nativedisplay.models.NativeDisplayContainer
 import com.clevertap.android.nativedisplay.models.NativeDisplayElement
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
+import com.clevertap.android.nativedisplay.bridge.ViewedUnitsTracker
 import com.clevertap.android.nativedisplay.models.Layout
 import com.clevertap.android.nativedisplay.models.NativeDisplayNode
 import com.clevertap.android.nativedisplay.models.ResolvedConfig
@@ -107,13 +111,15 @@ internal fun NativeDisplayView(
 ) {
     val context = LocalContext.current
 
-    val actionHandler = remember(actionListener, componentListener, unitId) {
+    val actionHandler = remember(unitId) {
         ActionHandler(
             context = context,
-            listener = actionListener,
-            componentListener = componentListener,
-            unitId = unitId
+            unitId = unitId,
         )
+    }
+    SideEffect {
+        actionHandler.listener = actionListener
+        actionHandler.componentListener = componentListener
     }
 
     DisposableEffect(actionHandler) {
@@ -128,8 +134,12 @@ internal fun NativeDisplayView(
 
     val content = @Composable {
         BoxWithConstraints(modifier = modifier) {
-            val parentWidthPx = if (constraints.maxWidth != Constraints.Infinity) constraints.maxWidth.toFloat() else 0f
-            val parentHeightPx = if (constraints.maxHeight != Constraints.Infinity) constraints.maxHeight.toFloat() else 0f
+            // Read the scope's first-class Dp shortcuts so lint sees the receiver
+            // being used. `maxWidth`/`maxHeight` are Dp.Infinity when unbounded,
+            // matching the prior `Constraints.Infinity` guard.
+            val density = LocalDensity.current
+            val parentWidthPx = if (maxWidth != Dp.Infinity) with(density) { maxWidth.toPx() } else 0f
+            val parentHeightPx = if (maxHeight != Dp.Infinity) with(density) { maxHeight.toPx() } else 0f
             val rootHeightPx = resolveRootHeightPx(config.root.layout, parentWidthPx, parentHeightPx, context)
             RenderNode(
                 node = config.root,
@@ -177,6 +187,7 @@ internal fun RenderNode(
     val isClientInterested = componentListener?.getInterestedNodeIds()?.contains(node.id) ?: (componentListener != null)  // If getInterestedNodeIds returns null, listen to all
 
     val isButton = node is NativeDisplayElement && node.elementType == ElementType.BUTTON
+    val isImage = node is NativeDisplayElement && node.elementType == ElementType.IMAGE
 
     // Buttons are always clickable (for "Notification Clicked" system event)
     val shouldApplyClickable = hasServerActions || isClientInterested || isButton
@@ -195,16 +206,24 @@ internal fun RenderNode(
                     actions = node.actions,
                     actionHandler = actionHandler,
                     componentListener = componentListener,
-                    onSystemClick = if (isButton) {
-                        {
-                            val extras = ActionAttributionExtras.from(
-                                action = node.actions?.get(ActionTriggers.ON_CLICK),
-                                nodeId = node.id
-                            )
-                            actionHandler.fireSystemEvent("Notification Clicked", extras)
+                    onSystemClick = when {
+                        isButton -> {
+                            {
+                                val extras = ActionAttributionExtras.from(
+                                    action = node.actions?.get(ActionTriggers.ON_CLICK)
+                                )
+                                actionHandler.fireSystemEvent("Notification Clicked", extras)
+                            }
                         }
-                    } else {
-                        null
+                        isImage && node.actions?.get(ActionTriggers.ON_CLICK) != null -> {
+                            {
+                                val extras = ActionAttributionExtras.from(
+                                    action = node.actions?.get(ActionTriggers.ON_CLICK)
+                                )
+                                actionHandler.fireSystemEvent("Notification Clicked", extras)
+                            }
+                        }
+                        else -> null
                     }
                 )
             } else mod
@@ -215,16 +234,13 @@ internal fun RenderNode(
     val onAppearAction = node.actions?.get(ActionTriggers.ON_APPEAR)
     val onDisappearAction = node.actions?.get(ActionTriggers.ON_DISAPPEAR)
 
-    if (actionHandler != null && (onAppearAction != null || isRoot)) {
+    if (isRoot && actionHandler != null) {
+        TrackNotificationViewed(actionHandler)
+    }
+
+    if (actionHandler != null && onAppearAction != null) {
         LaunchedEffect(node.id) {
-            // Fire "Notification Viewed" system event once for the root node
-            if (isRoot) {
-                actionHandler.fireSystemEvent("Notification Viewed", deduplicate = true)
-            }
-            // Fire server-driven onAppear action if present
-            if (onAppearAction != null) {
-                actionHandler.handleLifecycleAction(onAppearAction, node.id)
-            }
+            actionHandler.handleLifecycleAction(onAppearAction, node.id)
         }
     }
 
@@ -256,6 +272,39 @@ internal fun RenderNode(
             actionHandler = actionHandler,
             rootHeightPx = rootHeightPx,
         )
+    }
+}
+
+/**
+ * Fires `Notification Viewed` for the root unit exactly once per real impression.
+ *
+ * The shared [ViewedUnitsTracker] gates the fire by `unitId`, and the entry is
+ * removed on dispose only when the host Activity is NOT changing configurations
+ * — so rotation / locale / uimode flips don't double-count, while LazyColumn
+ * scroll-out-in, navigation away-and-back, and fresh launches do re-fire.
+ *
+ * When `unitId` is null (preview / raw-JSON paths with no attribution wired) the
+ * tracker is bypassed and the event fires on every mount.
+ */
+@Composable
+private fun TrackNotificationViewed(actionHandler: ActionHandler) {
+    val unitId = actionHandler.unitId
+    val context = LocalContext.current
+    val activity = remember(context) { context.findActivity() }
+
+    LaunchedEffect(unitId) {
+        val firstImpression = unitId == null || ViewedUnitsTracker.markViewedIfNew(unitId)
+        if (firstImpression) actionHandler.fireSystemEvent("Notification Viewed")
+    }
+
+    if (unitId != null) {
+        DisposableEffect(unitId) {
+            onDispose {
+                if (activity?.isChangingConfigurations != true) {
+                    ViewedUnitsTracker.remove(unitId)
+                }
+            }
+        }
     }
 }
 
@@ -401,6 +450,12 @@ private fun resolveRootHeightPx(
 
     // 5. Fallback: screen height
     return context.resources.displayMetrics.heightPixels.toFloat()
+}
+
+internal tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }
 
 /** Resolve root width in px for aspect-ratio height calculation. */

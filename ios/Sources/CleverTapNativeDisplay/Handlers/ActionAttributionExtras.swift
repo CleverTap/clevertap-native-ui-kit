@@ -2,22 +2,17 @@
 //  ActionAttributionExtras.swift
 //  CleverTapNativeDisplay
 //
-//  Pure helper that turns an `Action` (and the originating node id) into a flat
-//  `[String: Any]` payload that the bridge feeds into Core SDK's element-click
-//  attribution path.
+//  Pure helper that turns an `Action` into a flat `[String: Any]` payload that
+//  the bridge feeds into Core SDK's element-click attribution path.
 //
-//  Transport contract with `NativeDisplayBridge`:
-//  - `wzrk_btn_id` carries the clicked node id. The bridge extracts it and passes
-//    it as the `elementID:` argument to the new Core SDK selector
-//    `-recordDisplayUnitElementClickedEventForID:elementID:additionalProperties:`.
-//    It is NOT forwarded inside `additionalProperties` (Core SDK adds it to the
-//    event as `wzrk_element_id` from the dedicated parameter).
-//  - All other entries become Core SDK's `additionalProperties` dict. Core SDK
-//    layers the cached unit JSON's `wzrk_*` keys on top of this dict before
-//    recording, so caller-supplied `wzrk_*` keys are overridden by the cached
-//    unit's namespace (cached `wzrk_*` always wins). Action fields use the
-//    `action_*` prefix to stay outside the `wzrk_*` namespace and bundle
-//    entries from a `CustomAction.value` dictionary spread as first-class keys.
+//  All action entries (including action.metadata which carries BE-injected
+//  wzrk_* attribution fields) become Core SDK's additionalProperties dict.
+//
+//  The BE injects attribution fields such as `wzrk_element_id`, `wzrk_btn_text`,
+//  `wzrk_activity_type`, and `wzrk_data` into each action's `metadata` field
+//  server-side. The `custom` case already spreads `action.metadata` into the
+//  extras dict, so these keys reach Core SDK via `additionalProperties` without
+//  a dedicated `elementID:` parameter.
 //
 //  Per-action `metadata` / `params` / `properties` maps are spread verbatim so
 //  the client's own keys land on the event with their original names. A
@@ -25,7 +20,6 @@
 //  spread); primitive values land under a single `action_value` key.
 //
 //  Output keys produced by this helper:
-//  - `wzrk_btn_id` — transport marker, extracted by the bridge as `elementID`.
 //  - `action_type` — one of `open_url` / `custom` / `navigate` / `event` /
 //    `composite`.
 //  - `action_key` — the `CustomAction.key` discriminator (e.g. `"kv"` for the
@@ -43,16 +37,17 @@ import Foundation
 
 enum ActionAttributionExtras {
 
-    /// Transport marker — the bridge extracts this and passes it as Core SDK's
-    /// `elementID:` argument. NOT forwarded as part of `additionalProperties`.
-    static let keyButtonId = "wzrk_btn_id"
     static let keyActionType = "action_type"
 
-    static func from(action: Action?, nodeId: String?) -> [String: Any] {
+    // ND SDK version attribution — attached on every clicked event so the server
+    // can identify which ND SDK build produced the analytics. Non-`wzrk_`
+    // namespace because the `wzrk_*` namespace is owned by the Core SDK / BE
+    // enrichment path.
+    static let keyNDLibVersionName = "nd_lib_v_name"
+    static let keyNDLibVersionCode = "nd_lib_v_code"
+
+    static func from(action: Action?) -> [String: Any] {
         var out: [String: Any] = [:]
-        if let nodeId = nodeId, !nodeId.isEmpty {
-            out[keyButtonId] = nodeId
-        }
         if let action = action {
             append(action, into: &out)
         }
@@ -65,6 +60,9 @@ enum ActionAttributionExtras {
             out[keyActionType] = "open_url"
             out["action_url"] = a.url
             out["action_open_in_browser"] = a.openInBrowser
+            if let metadata = a.metadata {
+                for (k, v) in metadata { out[k] = v }
+            }
         case .custom(let a):
             out[keyActionType] = "custom"
             out["action_key"] = a.key
@@ -139,21 +137,37 @@ enum ActionAttributionExtras {
 
     /// Strip keys whose values are not Core-SDK-friendly before handing the dict to the
     /// reflective call. Keeps strings/numbers/bools/NSNumber and drops Void/nil entries.
-    static func sanitize(_ extras: [String: Any]?) -> [String: Any]? {
-        guard let extras = extras, !extras.isEmpty else { return nil }
+    /// Always returns a non-empty dict — the ND SDK version is stamped on every payload
+    /// so the server can attribute analytics to a specific SDK build.
+    static func sanitize(_ extras: [String: Any]?) -> [String: Any] {
         var out: [String: Any] = [:]
-        for (k, v) in extras where !k.isEmpty {
-            if v is Void { continue }
-            if v is String || v is NSNumber || v is Bool || v is Int || v is Double || v is Float {
-                out[k] = v
-            } else if let arr = v as? [Any] {
-                out[k] = arr
-            } else if let dict = v as? [String: Any] {
-                out[k] = dict
-            } else {
-                out[k] = String(describing: v)
+        if let extras = extras {
+            for (k, v) in extras where !k.isEmpty {
+                if v is Void { continue }
+                if v is String || v is NSNumber || v is Bool || v is Int || v is Double || v is Float {
+                    out[k] = v
+                } else if let arr = v as? [Any] {
+                    out[k] = arr
+                } else if let dict = v as? [String: Any] {
+                    out[k] = dict
+                } else {
+                    out[k] = String(describing: v)
+                }
             }
         }
-        return out.isEmpty ? nil : out
+        // Caller-supplied keys win — only set if absent.
+        if out[keyNDLibVersionName] == nil { out[keyNDLibVersionName] = NativeDisplaySDKVersion.name }
+        if out[keyNDLibVersionCode] == nil { out[keyNDLibVersionCode] = NativeDisplaySDKVersion.code }
+        return out
+    }
+
+    /// Standalone ND SDK version stamp used by event paths that have no other extras
+    /// to send (e.g. viewed events). The clicked-event path injects the same keys
+    /// inside `sanitize(_:)` alongside the action-derived extras.
+    static func versionStamp() -> [String: Any] {
+        return [
+            keyNDLibVersionName: NativeDisplaySDKVersion.name,
+            keyNDLibVersionCode: NativeDisplaySDKVersion.code
+        ]
     }
 }

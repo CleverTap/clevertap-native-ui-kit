@@ -25,6 +25,11 @@ class RootTabBarController: UITabBarController {
                 sfSymbol: "macwindow"
             ),
             makeTab(
+                UIKitSlotDemoViewController(),
+                title: "UIKit Slots",
+                sfSymbol: "square.grid.3x3"
+            ),
+            makeTab(
                 UIHostingController(rootView: TestConfigBrowserView()),
                 title: "Browser",
                 sfSymbol: "testtube.2"

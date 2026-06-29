@@ -17,14 +17,14 @@ import Foundation
 /// or is cleared for a specific slot. Observers are held weakly by the
 /// `NativeDisplaySlotManager` — no need to unregister on deallocation,
 /// though explicit unregistration is recommended for deterministic cleanup.
-public protocol NativeDisplaySlotObserver: AnyObject {
+@objc public protocol NativeDisplaySlotObserver: AnyObject {
     /// Called when a display unit becomes available for the observed slot.
     /// - Parameter unit: The native display unit ready for rendering.
-    func onUnitAvailable(_ unit: NativeDisplayUnit)
+    @objc func onUnitAvailable(_ unit: NativeDisplayUnit)
 
     /// Called when the display unit for the observed slot is cleared.
     /// - Parameter slotId: The slot identifier that was cleared.
-    func onUnitCleared(slotId: String)
+    @objc func onUnitCleared(slotId: String)
 }
 
 // MARK: - Slot Manager
@@ -51,10 +51,10 @@ public protocol NativeDisplaySlotObserver: AnyObject {
 /// // Sync slot IDs to server
 /// NativeDisplaySlotManager.shared.syncCurrentSlotIds(cleverTapInstance)
 /// ```
-public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
+@objc public class NativeDisplaySlotManager: NSObject, NativeDisplayBridgeListener {
 
     /// Shared singleton instance.
-    public static let shared = NativeDisplaySlotManager()
+    @objc public static let shared = NativeDisplaySlotManager()
 
     // MARK: - Private State
 
@@ -64,6 +64,14 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     /// Latest unit per slotId for immediate delivery to late registrants.
     private var unitIndex: [String: NativeDisplayUnit] = [:]
 
+    /// Last-measured rendered height per slotId. Populated by
+    /// `NativeDisplaySlotTableViewCell` after each successful self-sizing
+    /// pass; consumed by the same cell on subsequent reuse to install a
+    /// placeholder height constraint, so a recycled cell starts at the
+    /// correct size instead of `estimatedRowHeight` and grows visibly on
+    /// the next runloop tick. Main-thread-only — no lock needed.
+    private var measuredHeights: [String: CGFloat] = [:]
+
     /// Thread-safety lock for all mutable state.
     private let lock = NSLock()
 
@@ -72,7 +80,8 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
 
     // MARK: - Init
 
-    private init() {
+    private override init() {
+        super.init()
         NativeDisplayBridge.shared.addListener(self)
     }
 
@@ -81,6 +90,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     /// Called by the bridge when display units are loaded or updated.
     /// Reads `slotId` from each unit, updates the index, and notifies matching observers.
     public func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
+        NDLogger.d(Self.self, "onNativeDisplaysLoaded: \(units.count) unit(s) received")
         lock.lock()
 
         // Build a map of slotId -> unit for this batch, and collect observers to notify
@@ -88,10 +98,12 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
 
         for unit in units {
             guard let slotId = unit.slotId, !slotId.isEmpty else {
+                NDLogger.v(Self.self, "Unit '\(unit.unitId)' has no slotId, skipping slot routing")
                 continue
             }
 
             unitIndex[slotId] = unit
+            NDLogger.d(Self.self, "Slot '\(slotId)' updated with unit '\(unit.unitId)'")
 
             if let observers = slotRegistry[slotId] {
                 let activeObservers = observers.allObjects.compactMap { $0 as? NativeDisplaySlotObserver }
@@ -123,7 +135,8 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     /// - Parameters:
     ///   - slotId: The slot identifier to observe.
     ///   - observer: The observer to register (held weakly).
-    public func registerSlot(_ slotId: String, observer: NativeDisplaySlotObserver) {
+    @objc public func registerSlot(_ slotId: String, observer: NativeDisplaySlotObserver) {
+        NDLogger.d(Self.self, "Registering observer for slot '\(slotId)'")
         lock.lock()
 
         let table: NSHashTable<AnyObject>
@@ -140,6 +153,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
 
         // Deliver existing unit immediately if available
         if let unit = existingUnit {
+            NDLogger.d(Self.self, "Slot '\(slotId)': delivering cached unit '\(unit.unitId)' immediately to new observer")
             DispatchQueue.main.async {
                 observer.onUnitAvailable(unit)
             }
@@ -151,7 +165,8 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     /// - Parameters:
     ///   - slotId: The slot identifier to stop observing.
     ///   - observer: The observer to remove.
-    public func unregisterSlot(_ slotId: String, observer: NativeDisplaySlotObserver) {
+    @objc public func unregisterSlot(_ slotId: String, observer: NativeDisplaySlotObserver) {
+        NDLogger.d(Self.self, "Unregistering observer for slot '\(slotId)'")
         lock.lock()
         defer { lock.unlock() }
 
@@ -160,6 +175,7 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
         // Clean up empty tables
         if let table = slotRegistry[slotId], table.count == 0 {
             slotRegistry.removeValue(forKey: slotId)
+            NDLogger.d(Self.self, "Slot '\(slotId)' has no remaining observers — removed from registry")
         }
     }
 
@@ -179,11 +195,18 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
         return activeIds
     }
 
+    /// Objective-C-friendly variant of `getActiveSlotIds()` returning an array.
+    /// Objective-C cannot represent `Set<String>`, so this exposes the same
+    /// data as an `NSArray<NSString *>` (order is unspecified).
+    @objc public func activeSlotIds() -> [String] {
+        Array(getActiveSlotIds())
+    }
+
     /// Returns the currently indexed unit for a given slot, if any.
     ///
     /// - Parameter slotId: The slot identifier to look up.
     /// - Returns: The latest `NativeDisplayUnit` for the slot, or `nil`.
-    public func getUnit(forSlot slotId: String) -> NativeDisplayUnit? {
+    @objc public func getUnit(forSlot slotId: String) -> NativeDisplayUnit? {
         lock.lock()
         defer { lock.unlock() }
         return unitIndex[slotId]
@@ -198,16 +221,16 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     ///
     /// - Parameter cleverTap: A `CleverTap` instance (passed as `Any?` to avoid compile dependency).
     /// - Returns: `true` if the event was sent, `false` otherwise.
-    @discardableResult
+    @discardableResult @objc
     public func syncCurrentSlotIds(_ cleverTap: Any?) -> Bool {
         guard let ct = cleverTap as? NSObject else {
-            print("[NativeDisplaySlotManager] syncCurrentSlotIds() called with nil or non-NSObject")
+            NDLogger.w(Self.self, "syncCurrentSlotIds() called with nil or non-NSObject")
             return false
         }
 
         let recordEventSelector = NSSelectorFromString("recordEvent:withProps:")
         guard ct.responds(to: recordEventSelector) else {
-            print("[NativeDisplaySlotManager] CleverTap instance does not support recordEvent:withProps:")
+            NDLogger.w(Self.self, "CleverTap instance does not support recordEvent:withProps:")
             return false
         }
 
@@ -215,8 +238,24 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
         let props: [String: Any] = ["slot_ids": activeSlots.sorted().joined(separator: ",")]
         ct.perform(recordEventSelector, with: NativeDisplaySlotManager.wzrkSlotSync, with: props)
 
-        print("[NativeDisplaySlotManager] Synced \(activeSlots.count) active slot IDs to server")
+        NDLogger.d(Self.self, "Synced \(activeSlots.count) active slot IDs to server")
         return true
+    }
+
+    // MARK: - Measured Height Cache
+
+    /// Look up the last-measured height for a slot, if any. Used by the
+    /// table-view cell to pre-size on reuse and avoid a visible jump.
+    /// Main-thread only.
+    func measuredHeight(forSlotId slotId: String) -> CGFloat? {
+        measuredHeights[slotId]
+    }
+
+    /// Record the measured height for a slot. Called by the table-view cell
+    /// after the self-sizing pass settles. Main-thread only.
+    func setMeasuredHeight(_ height: CGFloat, forSlotId slotId: String) {
+        guard height > 0 else { return }
+        measuredHeights[slotId] = height
     }
 
     // MARK: - Clear
@@ -224,7 +263,8 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     /// Clear a specific slot's cached unit and notify observers.
     ///
     /// - Parameter slotId: The slot identifier to clear.
-    public func clearSlot(_ slotId: String) {
+    @objc public func clearSlot(_ slotId: String) {
+        NDLogger.d(Self.self, "Clearing slot '\(slotId)'")
         lock.lock()
 
         unitIndex.removeValue(forKey: slotId)
@@ -248,7 +288,8 @@ public class NativeDisplaySlotManager: NativeDisplayBridgeListener {
     }
 
     /// Clear all cached units and notify all observers.
-    public func clearAll() {
+    @objc public func clearAll() {
+        NDLogger.d(Self.self, "Clearing all slots")
         lock.lock()
 
         let allSlotIds = Array(unitIndex.keys)

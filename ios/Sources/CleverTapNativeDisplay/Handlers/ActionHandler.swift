@@ -16,14 +16,17 @@ import UIKit
 /// Handles execution of actions triggered by Native Display components.
 class ActionHandler {
 
-    private weak var actionListener: NativeDisplayActionListener?
-    private weak var componentListener: NativeDisplayComponentListener?
-    private var firedSystemEvents = Set<String>()
+    /// Mutable so the surrounding view/cell can rebind listeners without
+    /// rebuilding the handler. Stable handler identity is required for the
+    /// per-impression contract of `fireSystemEvent` — recreating it on every
+    /// listener change would defeat that.
+    weak var actionListener: NativeDisplayActionListener?
+    weak var componentListener: NativeDisplayComponentListener?
     private let unitId: String?
 
     init(
-        actionListener: NativeDisplayActionListener?,
-        componentListener: NativeDisplayComponentListener?,
+        actionListener: NativeDisplayActionListener? = nil,
+        componentListener: NativeDisplayComponentListener? = nil,
         unitId: String? = nil
     ) {
         self.actionListener = actionListener
@@ -45,18 +48,18 @@ class ActionHandler {
     ) {
         Task { @MainActor in
             do {
-                print("ActionHandler: Handling action for node: \(nodeId)")
-                
+                NDLogger.d(Self.self, "Handling action for node: \(nodeId)")
+
                 // Notify component listener first (if interested in this node)
                 let shouldProceed = notifyComponentListener(
                     nodeId: nodeId,
                     interactionType: interactionType,
                     hasServerAction: true
                 )
-                
+
                 // If component listener consumed the interaction, stop here
                 guard shouldProceed else {
-                    print("ActionHandler: Component listener consumed interaction for node: \(nodeId)")
+                    NDLogger.d(Self.self, "Component listener consumed interaction for node: \(nodeId)")
                     return
                 }
                 
@@ -74,12 +77,12 @@ class ActionHandler {
                     try await handleCompositeAction(compositeAction, nodeId: nodeId)
                 }
             } catch {
-                print("ActionHandler: Error handling action for node: \(nodeId), error: \(error)")
+                NDLogger.e(Self.self, "Error handling action for node: \(nodeId), error: \(error)")
                 actionListener?.onActionError(action: action, error: error)
             }
         }
     }
-    
+
     /// Execute a lifecycle action (onAppear/onDisappear).
     /// These bypass the component listener since they are not user interactions.
     /// - Parameters:
@@ -91,7 +94,7 @@ class ActionHandler {
     ) {
         Task { @MainActor in
             do {
-                print("ActionHandler: Handling lifecycle action for node: \(nodeId)")
+                NDLogger.d(Self.self, "Handling lifecycle action for node: \(nodeId)")
                 switch action {
                 case .openUrl(let openUrlAction):
                     try await handleOpenUrl(openUrlAction, nodeId: nodeId)
@@ -105,7 +108,7 @@ class ActionHandler {
                     try await handleCompositeAction(compositeAction, nodeId: nodeId)
                 }
             } catch {
-                print("ActionHandler: Error handling lifecycle action for node: \(nodeId) - \(error)")
+                NDLogger.e(Self.self, "Error handling lifecycle action for node: \(nodeId) - \(error)")
                 actionListener?.onActionError(action: action, error: error)
             }
         }
@@ -121,18 +124,16 @@ class ActionHandler {
     /// Bridge push methods short-circuit when no Core SDK instance is attached,
     /// so this stays a graceful no-op in standalone use.
     ///
+    /// Per-impression cadence is the caller's responsibility — the renderer
+    /// gates `Notification Viewed` on the root view's `.onAppear` so each
+    /// appearance produces one event. This method itself does NOT dedupe.
+    ///
     /// - Parameters:
     ///   - eventName: The system event name (e.g., "Notification Viewed")
     ///   - properties: Optional event properties
-    func fireSystemEvent(eventName: String, properties: [String: Any]? = nil, deduplicate: Bool = false) {
-        if deduplicate {
-            guard firedSystemEvents.insert(eventName).inserted else {
-                print("ActionHandler: System event already fired, skipping: \(eventName)")
-                return
-            }
-        }
+    func fireSystemEvent(eventName: String, properties: [String: Any]? = nil) {
         Task { @MainActor in
-            print("ActionHandler: Firing system event: \(eventName)")
+            NDLogger.d(Self.self, "Firing system event: \(eventName)")
             actionListener?.onTrackEvent(eventName: eventName, properties: properties)
             if let unitId = unitId {
                 switch eventName {
@@ -158,7 +159,7 @@ class ActionHandler {
         interactionType: InteractionType
     ) {
         Task { @MainActor in
-            print("ActionHandler: Handling interaction without action for node: \(nodeId)")
+            NDLogger.d(Self.self, "Handling interaction without action for node: \(nodeId)")
             _ = notifyComponentListener(
                 nodeId: nodeId,
                 interactionType: interactionType,
@@ -197,7 +198,7 @@ class ActionHandler {
         )
         
         if consumed {
-            print("ActionHandler: Component listener consumed interaction for: \(nodeId)")
+            NDLogger.d(Self.self, "Component listener consumed interaction for: \(nodeId)")
         }
         
         return !consumed // Return true if NOT consumed (should proceed)
@@ -207,7 +208,7 @@ class ActionHandler {
     
     @MainActor
     private func handleOpenUrl(_ action: Action.OpenUrlAction, nodeId: String) async throws {
-        print("ActionHandler: Opening URL: \(action.url)")
+        NDLogger.d(Self.self, "Opening URL: \(action.url)")
         
         // Ask listener if they want to handle it
         let handled = actionListener?.onOpenUrl(
@@ -229,21 +230,12 @@ class ActionHandler {
         guard let url = URL(string: action.url) else {
             throw ActionError.invalidUrl(action.url)
         }
-        
-        // Validate URL scheme
-        guard isValidUrlScheme(url.scheme) else {
-            throw ActionError.invalidUrlScheme(url.scheme ?? "none")
-        }
-        
-        if action.openInBrowser {
-            // Open in external browser
-            UIApplication.shared.open(url)
-        } else if action.customTabsEnabled {
-            // Open in SFSafariViewController (iOS equivalent of Chrome Custom Tabs)
+
+        if action.customTabsEnabled {
             openInSafariViewController(url)
         } else {
-            // Fallback to external browser
-            UIApplication.shared.open(url)
+            // Matches Core SDK CleverTap.m openURL:forModule: behavior exactly.
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
     
@@ -261,14 +253,9 @@ class ActionHandler {
         rootViewController.present(safariVC, animated: true)
     }
     
-    private func isValidUrlScheme(_ scheme: String?) -> Bool {
-        guard let scheme = scheme?.lowercased() else { return false }
-        return ["http", "https", "tel", "mailto"].contains(scheme)
-    }
-    
     @MainActor
     private func handleCustomAction(_ action: Action.CustomAction, nodeId: String) {
-        print("ActionHandler: Executing custom action: \(action.key)")
+        NDLogger.d(Self.self, "Executing custom action: \(action.key)")
         
         let parsedValue = parseAnyCodableValue(action.value)
         
@@ -281,7 +268,7 @@ class ActionHandler {
     
     @MainActor
     private func handleNavigate(_ action: Action.NavigateAction, nodeId: String) {
-        print("ActionHandler: Navigating to: \(action.destination)")
+        NDLogger.d(Self.self, "Navigating to: \(action.destination)")
         
         actionListener?.onNavigate(
             destination: action.destination,
@@ -291,9 +278,9 @@ class ActionHandler {
     
     @MainActor
     private func handleTrackEvent(_ action: Action.TrackEventAction, nodeId: String) {
-        print("ActionHandler: Tracking event: \(action.eventName)")
+        NDLogger.d(Self.self, "Tracking event: \(action.eventName)")
         
-        let parsedProperties = action.properties?.mapValues { parseAnyCodableValue($0) }
+        let parsedProperties = action.properties?.compactMapValues { parseAnyCodableValue($0) }
         
         actionListener?.onTrackEvent(
             eventName: action.eventName,
@@ -303,7 +290,7 @@ class ActionHandler {
     
     @MainActor
     private func handleCompositeAction(_ action: Action.CompositeAction, nodeId: String) async throws {
-        print("ActionHandler: Executing composite action with \(action.actions.count) sub-actions (\(action.executionMode))")
+        NDLogger.d(Self.self, "Executing composite action with \(action.actions.count) sub-actions (\(action.executionMode))")
         
         switch action.executionMode {
         case .sequential:

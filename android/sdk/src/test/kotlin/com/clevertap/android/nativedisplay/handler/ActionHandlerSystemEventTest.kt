@@ -29,8 +29,8 @@ import org.junit.Test
  * `pushClickedEvent` lambdas for matching events. In production those lambdas
  * delegate to `NativeDisplayBridge.getInstance()?.pushViewedEvent(...)` etc.,
  * which is itself null-guarded on `cleverTapApi`. We exercise the seam directly
- * with capturing fakes so we can assert ordering, deduplication, and the no-op
- * branches without standing up CleverTapAPI / Compose.
+ * with capturing fakes so we can assert ordering and the no-op branches without
+ * standing up CleverTapAPI / Compose.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class ActionHandlerSystemEventTest {
@@ -91,12 +91,12 @@ class ActionHandlerSystemEventTest {
     ): Triple<ActionHandler, ViewedPushCounter, ClickedPushCounter> {
         val handler = ActionHandler(
             context = context,
-            listener = listener,
-            componentListener = null,
             unitId = unitId,
             pushViewedEvent = pushViewed.fn,
             pushClickedEvent = pushClicked.fn,
-        )
+        ).apply {
+            this.listener = listener
+        }
         return Triple(handler, pushViewed, pushClicked)
     }
 
@@ -140,12 +140,12 @@ class ActionHandlerSystemEventTest {
         val noOpPusher = ViewedPushCounter()  // counter exists but lambda body could be no-op
         val handler = ActionHandler(
             context = context,
-            listener = listener,
-            componentListener = null,
             unitId = "unit-1",
             pushViewedEvent = { /* simulate bridge missing / cleverTapApi == null */ },
             pushClickedEvent = { _, _ -> /* unused */ },
-        )
+        ).apply {
+            this.listener = listener
+        }
 
         handler.fireSystemEvent("Notification Viewed")
 
@@ -162,8 +162,6 @@ class ActionHandlerSystemEventTest {
     fun `viewed standalone with no listener and no bridge is a graceful no-op`() = runTest {
         val handler = ActionHandler(
             context = context,
-            listener = null,
-            componentListener = null,
             unitId = "unit-1",
             pushViewedEvent = { /* bridge absent */ },
             pushClickedEvent = { _, _ -> /* bridge absent */ },
@@ -195,34 +193,6 @@ class ActionHandlerSystemEventTest {
         handler.fireSystemEvent("Notification Clicked")
 
         assertEquals(listOf("unit-1"), clickedPusher.invocations)
-    }
-
-    // -- Dedup short-circuits BOTH listener and bridge --
-
-    @Test
-    fun `deduplicate true skips both listener and bridge on second fire`() = runTest {
-        val listener = FakeListener()
-        val (handler, viewedPusher, _) = newHandler(listener)
-
-        handler.fireSystemEvent("Notification Viewed", deduplicate = true)
-        handler.fireSystemEvent("Notification Viewed", deduplicate = true)
-
-        // First fire delivered; second was dropped before listener or bridge ran.
-        assertEquals(1, listener.viewed.size)
-        assertEquals(1, listener.trackEvents.size)
-        assertEquals(1, viewedPusher.invocations.size)
-    }
-
-    @Test
-    fun `deduplicate false fires both listener and bridge each time`() = runTest {
-        val listener = FakeListener()
-        val (handler, viewedPusher, _) = newHandler(listener)
-
-        handler.fireSystemEvent("Notification Viewed", deduplicate = false)
-        handler.fireSystemEvent("Notification Viewed", deduplicate = false)
-
-        assertEquals(2, listener.viewed.size)
-        assertEquals(2, viewedPusher.invocations.size)
     }
 
     // -- Null unitId: trackEvent still goes to listener; bridge is skipped --

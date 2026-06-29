@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Wrapper layout for a NativeDisplaySlotView inside the RecyclerView feed.
+
+  The slot id is NOT hardcoded — `SlotFeedAdapter.NDSlotViewHolder` sets it via
+  `setSlotId(...)` on bind. The view auto-registers with the slot manager when
+  it attaches to the window.
+-->
+<com.clevertap.android.nativedisplay.placement.NativeDisplaySlotView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/slotView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />

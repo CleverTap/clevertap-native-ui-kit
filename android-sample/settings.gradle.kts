@@ -20,6 +20,6 @@ include(":app")
 // Include the SDK from parent android project
 includeBuild("../android") {
     dependencySubstitution {
-        substitute(module("com.clevertap.android:native-display-sdk")).using(project(":sdk"))
+        substitute(module("com.clevertap.android:clevertap-native-display-sdk")).using(project(":sdk"))
     }
 }

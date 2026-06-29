@@ -6,9 +6,15 @@
 //  NativeDisplayUIView instances from JSON data. ObjC files import this
 //  via #import "NativeDisplaySampleObjc-Swift.h".
 //
+//  The font-demo and slot-placeholder paths now delegate straight to the
+//  SDK's own @objc APIs (`NativeDisplayUIView(jsonData:parentWidth:fontFamily:…)`
+//  and `NativeDisplaySlotUIView(slotId:placeholder:)`) — the sample no longer
+//  carries its own SwiftUI font host or slot-observer shim.
+//
 
 import Foundation
 import UIKit
+import SwiftUI
 import CleverTapNativeDisplay
 
 /// ObjC-accessible factory for creating NativeDisplayUIView instances from JSON data.
@@ -124,23 +130,193 @@ import CleverTapNativeDisplay
         return nil
     }
 
-    /// Discover all test-NNN-*.json files in the TestConfigs folder (and bundle root as fallback).
-    @objc public static func discoverTestFiles() -> [String] {
-        guard let resourcePath = Bundle.main.resourcePath else { return [] }
-        let fm = FileManager.default
-        var seen = Set<String>()
-        var results: [String] = []
+    // MARK: - Font Demo helpers
 
-        func collect(from dirPath: String) {
-            guard let files = try? fm.contentsOfDirectory(atPath: dirPath) else { return }
-            for file in files where file.hasPrefix("test-") && file.hasSuffix(".json") {
-                let name = (file as NSString).deletingPathExtension
-                if seen.insert(name).inserted { results.append(name) }
+    /// Create a UIView that renders the given JSON config using the system default font.
+    /// The view is hosted inside a UIHostingController-based container so that SwiftUI
+    /// environment values can be injected. Callers should size the returned view and add
+    /// it to the hierarchy; it will self-size vertically using Auto Layout.
+    @objc public static func createFontDemoView(
+        from jsonData: Data,
+        fontFamily: String?,
+        parentWidth: CGFloat,
+        error: NSErrorPointer
+    ) -> UIView? {
+        do {
+            let config = try ResolvedConfig.from(jsonData: jsonData)
+            let parentSize: CGSize? = parentWidth > 0 ? CGSize(width: parentWidth - 32, height: 0) : nil
+            let hostView = NDFontDemoHostView(
+                config: config,
+                parentSize: parentSize,
+                fontFamily: fontFamily
+            )
+            let host = UIHostingController(rootView: hostView)
+            host.view.backgroundColor = .clear
+            return host.view
+        } catch let err as NSError {
+            error?.pointee = err
+            return nil
+        }
+    }
+
+    // MARK: - Slot helpers
+
+    /// Create a NativeDisplaySlotUIView for the given slot ID.
+    /// Available on iOS 15+; returns nil on earlier versions.
+    @objc public static func createSlotView(slotId: String) -> UIView? {
+        if #available(iOS 15.0, *) {
+            return NativeDisplaySlotUIView(slotId: slotId)
+        }
+        return nil
+    }
+
+    /// Create a slot view with a placeholder shown until content arrives.
+    /// Available on iOS 15+; returns nil on earlier versions.
+    @objc public static func createSlotView(slotId: String, placeholder: UIView) -> UIView? {
+        if #available(iOS 15.0, *) {
+            return NDSlotPlaceholderView(slotId: slotId, placeholder: placeholder)
+        }
+        return nil
+    }
+
+}
+
+// MARK: - Slot placeholder wrapper
+
+/// Wraps NativeDisplaySlotManager observation directly so a placeholder UIView can be
+/// shown until a unit arrives, without requiring SDK changes.
+@available(iOS 15.0, *)
+final class NDSlotPlaceholderView: UIView, NativeDisplaySlotObserver {
+
+    private let slotId: String
+    private let placeholderView: UIView
+    private var displayView: NativeDisplayUIView?
+    private var pendingUnit: NativeDisplayUnit?
+    private var isRegistered = false
+    private var placeholderBottomConstraint: NSLayoutConstraint?
+
+    init(slotId: String, placeholder: UIView) {
+        self.slotId = slotId
+        self.placeholderView = placeholder
+        super.init(frame: .zero)
+        backgroundColor = .clear
+
+        placeholder.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(placeholder)
+        let bottom = placeholder.bottomAnchor.constraint(equalTo: bottomAnchor)
+        NSLayoutConstraint.activate([
+            placeholder.topAnchor.constraint(equalTo: topAnchor),
+            placeholder.leadingAnchor.constraint(equalTo: leadingAnchor),
+            placeholder.trailingAnchor.constraint(equalTo: trailingAnchor),
+            bottom,
+        ])
+        placeholderBottomConstraint = bottom
+    }
+
+    required init?(coder: NSCoder) { fatalError() }
+
+    deinit {
+        if isRegistered {
+            NativeDisplaySlotManager.shared.unregisterSlot(slotId, observer: self)
+        }
+    }
+
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        if window != nil && !isRegistered {
+            isRegistered = true
+            NativeDisplaySlotManager.shared.registerSlot(slotId, observer: self)
+        } else if window == nil && isRegistered {
+            isRegistered = false
+            NativeDisplaySlotManager.shared.unregisterSlot(slotId, observer: self)
+        }
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        // Create or update the display view now that we have a valid width.
+        if let unit = pendingUnit, bounds.width > 0 {
+            pendingUnit = nil
+            installDisplayView(for: unit)
+        }
+    }
+
+    func onUnitAvailable(_ unit: NativeDisplayUnit) {
+        if bounds.width > 0 {
+            installDisplayView(for: unit)
+        } else {
+            // Bounds not yet resolved — defer to layoutSubviews.
+            pendingUnit = unit
+            placeholderView.isHidden = true
+            setNeedsLayout()
+        }
+    }
+
+    private func installDisplayView(for unit: NativeDisplayUnit) {
+        // Deactivate the placeholder's bottom constraint so the display view
+        // can drive the wrapper height freely (placeholder was locking it to 80pt).
+        placeholderBottomConstraint?.isActive = false
+        placeholderView.isHidden = true
+
+        let parentSize = CGSize(width: bounds.width, height: 0)
+        if let existing = displayView {
+            existing.updateConfig(unit.config)
+        } else {
+            let view = NativeDisplayUIView(config: unit.config, parentSize: parentSize)
+            view.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(view)
+            NSLayoutConstraint.activate([
+                view.topAnchor.constraint(equalTo: topAnchor),
+                view.leadingAnchor.constraint(equalTo: leadingAnchor),
+                view.trailingAnchor.constraint(equalTo: trailingAnchor),
+                view.bottomAnchor.constraint(equalTo: bottomAnchor),
+            ])
+            displayView = view
+        }
+    }
+
+    func onUnitCleared(slotId: String) {
+        pendingUnit = nil
+        displayView?.removeFromSuperview()
+        displayView = nil
+        placeholderBottomConstraint?.isActive = true
+        placeholderView.isHidden = false
+    }
+
+    override var intrinsicContentSize: CGSize {
+        displayView?.intrinsicContentSize ?? placeholderView.intrinsicContentSize
+    }
+}
+
+// MARK: - SwiftUI host view for font demos
+
+/// Internal SwiftUI view that wraps NativeDisplayView with optional font env values.
+private struct NDFontDemoHostView: View {
+    let config: ResolvedConfig
+    let parentSize: CGSize?
+    let fontFamily: String?
+
+    var body: some View {
+        Group {
+            if let family = fontFamily {
+                NativeDisplayView(config: config)
+                    .environment(\.nativeDisplayFontFamily, family)
+                    .applyParentSizeIfNeeded(parentSize)
+            } else {
+                NativeDisplayView(config: config)
+                    .applyParentSizeIfNeeded(parentSize)
             }
         }
+    }
+}
 
-        collect(from: (resourcePath as NSString).appendingPathComponent("TestConfigs"))
-        collect(from: resourcePath)
-        return results.sorted()
+private extension View {
+    @ViewBuilder
+    func applyParentSizeIfNeeded(_ size: CGSize?) -> some View {
+        if let size = size {
+            self.environment(\.nativeDisplayParentSize, size)
+        } else {
+            self
+        }
     }
 }

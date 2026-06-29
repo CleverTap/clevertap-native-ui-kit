@@ -1,0 +1,277 @@
+{
+  "theme": {
+    "id": "default"
+  },
+  "version": "1.0",
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "aspectRatio": 1,
+      "width": {
+        "value": 80,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 60,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "background": {
+        "type": "solid",
+        "color": "#5FB79DFF"
+      },
+      "borderRadius": {
+        "value": 10,
+        "unit": "percent"
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "text-1",
+        "elementType": "text",
+        "bindings": {
+          "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 14,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 25,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#FFFFFF00"
+          },
+          "borderColor": "#FFFFFF",
+          "borderRadius": {
+            "value": 0.5,
+            "unit": "percent"
+          },
+          "borderWidth": 0,
+          "fontSize": {
+            "value": 30,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "textAlign": "center",
+          "textColor": "#000000"
+        }
+      },
+      {
+        "type": "element",
+        "id": "text-2",
+        "elementType": "text",
+        "bindings": {
+          "text": "Title message"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 14,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 9,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#FFFFFF00"
+          },
+          "borderColor": "#FFFFFF",
+          "borderRadius": {
+            "value": 0.5,
+            "unit": "percent"
+          },
+          "borderWidth": 0,
+          "fontSize": {
+            "value": 130,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "textAlign": "center",
+          "textColor": "#000000"
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-1",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://d11gh1sd24upek.cloudfront.net/1631012864/assets/222bacc8892e49358e1bf545b73ff529.jpeg"
+        },
+        "layout": {
+          "width": {
+            "value": 29,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 37,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 66,
+            "y": 44,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-2",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://d11gh1sd24upek.cloudfront.net/1631012864/assets/186b39aa07e64c7c88bfe7a411a85be5.jpeg"
+        },
+        "layout": {
+          "width": {
+            "value": 55,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 37,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 44,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "button-1",
+        "elementType": "button",
+        "bindings": {
+          "text": "Button1"
+        },
+        "layout": {
+          "width": {
+            "value": 27,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 7,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 13,
+            "y": 89,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#191919"
+          },
+          "borderColor": "#000000",
+          "borderRadius": {
+            "value": 0.5,
+            "unit": "percent"
+          },
+          "borderWidth": 0,
+          "fontSize": {
+            "value": 70,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "shadowColor": "#000000",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowRadius": 0,
+          "textColor": "#FFFFFF"
+        },
+        "actions": {
+          "onClick": {
+            "type": "open_url",
+            "url": {
+              "android": "[www.google.com](https://www.google.com)",
+              "ios": "[www.google.com](https://www.google.com)"
+            }
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "button-2",
+        "elementType": "button",
+        "bindings": {
+          "text": "Button2"
+        },
+        "layout": {
+          "width": {
+            "value": 29,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 7,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 57,
+            "y": 89,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#191919"
+          },
+          "borderColor": "#000000",
+          "borderRadius": {
+            "value": 0.5,
+            "unit": "percent"
+          },
+          "borderWidth": 0,
+          "fontSize": {
+            "value": 70,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "shadowColor": "#000000",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowRadius": 0,
+          "textColor": "#FFFFFF"
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "close",
+            "value": 1
+          }
+        }
+      }
+    ]
+  }
+}

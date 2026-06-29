@@ -6,10 +6,8 @@
 //
 
 #import "DemoMenuViewController.h"
-#import "ArrangementDemoViewController.h"
-#import "AnimationDemoViewController.h"
-#import "TestConfigBrowserViewController.h"
-#import "HomeScreenViewController.h"
+#import "BridgeIntegrationViewController.h"
+#import "BannerShowcaseViewController.h"
 
 // ---------------------------------------------------------------------------
 // MARK: - Menu item model
@@ -51,32 +49,22 @@ static NSString * const kMenuCellID = @"MenuCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"Other Demos";
+    self.title = @"More";
     [self buildItemList];
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kMenuCellID];
 }
 
 - (void)buildItemList {
     self.items = @[
-        [DemoMenuItem icon:@"rectangle.3.group"
-                     title:@"Arrangements"
-                  subtitle:@"Explore all 7 arrangement strategies"
-               destination:[ArrangementDemoViewController class]],
+        [DemoMenuItem icon:@"link.circle"
+                     title:@"Bridge Integration"
+                  subtitle:@"Core SDK bridge demo with mock data"
+               destination:[BridgeIntegrationViewController class]],
 
-        [DemoMenuItem icon:@"wand.and.stars"
-                     title:@"Animations"
-                  subtitle:@"Container and element animations"
-               destination:[AnimationDemoViewController class]],
-
-        [DemoMenuItem icon:@"testtube.2"
-                     title:@"Test Configs"
-                  subtitle:@"Browse and test configurations"
-               destination:[TestConfigBrowserViewController class]],
-
-        [DemoMenuItem icon:@"house.fill"
-                     title:@"Home Screen"
-                  subtitle:@"Example home screen layout"
-               destination:[HomeScreenViewController class]],
+        [DemoMenuItem icon:@"photo.on.rectangle"
+                     title:@"Banner Showcase"
+                  subtitle:@"10 pre-defined banners + custom JSON upload"
+               destination:[BannerShowcaseViewController class]],
     ];
 }
 

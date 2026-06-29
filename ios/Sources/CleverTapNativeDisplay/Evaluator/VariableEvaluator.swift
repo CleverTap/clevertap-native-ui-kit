@@ -40,12 +40,13 @@ class VariableEvaluator {
                   let fullRange = Range(match.range, in: template) else {
                 continue
             }
-            
+
             let expression = String(template[expressionRange]).trimmingCharacters(in: .whitespaces)
             let value = evaluateExpression(expression)
+            NDLogger.v(Self.self, "Template substitution: {{\(expression)}} → \(value)")
             result = result.replacingCharacters(in: fullRange, with: "\(value)")
         }
-        
+
         return result
     }
     
@@ -76,12 +77,13 @@ class VariableEvaluator {
             return evaluateEquality(cleaned, operator: "!=")
         }
         
-        // Handle plain string literals "true" / "false" sent directly in bindings
+        // Handle plain string literals "true" / "false" / "1" / "0" sent directly in bindings
         switch cleaned.lowercased() {
         case "true": return true
         case "false": return false
         default: break
         }
+        if let number = Double(cleaned) { return number != 0 }
 
         // Fall back to variable lookup for {{variableName}} expressions
         if let value = getVariable(cleaned) {
@@ -201,7 +203,20 @@ class VariableEvaluator {
         if let variable = getVariable(value) {
             return extractValue(variable)
         }
-        
+
+        // Unquoted numeric and boolean literals must be typed so that
+        // `{{count == 10}}` compares Int-to-Int instead of Int-to-String.
+        // Quoted strings (e.g. `"10"`) keep their string form below.
+        if !value.hasPrefix("'") && !value.hasPrefix("\"") {
+            if let intValue = Int(value) { return intValue }
+            if let doubleValue = Double(value) { return doubleValue }
+            switch value.lowercased() {
+            case "true": return true
+            case "false": return false
+            default: break
+            }
+        }
+
         // Return as literal (removing quotes)
         return value.trimmingCharacters(in: CharacterSet(charactersIn: "'\""))
     }
@@ -218,7 +233,10 @@ class VariableEvaluator {
             return bool
         case let int as Int:
             return int != 0
+        case let double as Double:
+            return double != 0
         case let string as String:
+            if let number = Double(string) { return number != 0 }
             return string.lowercased() == "true"
         default:
             return nil

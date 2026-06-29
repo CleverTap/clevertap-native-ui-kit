@@ -2,8 +2,10 @@ package com.clevertap.android.nativedisplay.handler
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
+import androidx.core.net.toUri
+import android.os.Bundle
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayBridge
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.models.Action
 import com.clevertap.android.nativedisplay.models.ExecutionMode
@@ -27,7 +29,6 @@ import kotlinx.serialization.json.int
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.long
 import kotlinx.serialization.json.longOrNull
-import androidx.core.net.toUri
 import com.clevertap.android.nativedisplay.listener.InteractionType
 import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener
 
@@ -41,9 +42,10 @@ import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListen
  * - Providing default implementations for certain actions (like opening URLs)
  * - Managing coroutine lifecycle for async operations
  *
+ * Listener properties are mutable so the renderer can rebind them across recompositions
+ * without rebuilding the handler — handler identity is tied to [unitId] only.
+ *
  * @param context Android context for starting intents, opening URLs, etc.
- * @param listener Client's callback interface for handling actions
- * @param componentListener Optional component interaction listener
  * @param unitId The CleverTap display unit ID (`wzrk_id`) for attribution events; null when
  *        the config did not come from a Core SDK display unit payload
  * @param pushViewedEvent Test seam invoked when "Notification Viewed" fires. Production
@@ -55,15 +57,18 @@ import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListen
  */
 internal class ActionHandler(
     private val context: Context,
-    private val listener: NativeDisplayActionListener?,
-    private val componentListener: NativeDisplayComponentListener? = null,
-    private val unitId: String? = null,
+    internal val unitId: String? = null,
     private val pushViewedEvent: (String) -> Unit = DEFAULT_PUSH_VIEWED,
     private val pushClickedEvent: (String, Map<String, Any?>?) -> Unit = DEFAULT_PUSH_CLICKED,
 ) {
 
+    /** Client's callback interface for handling actions. Rebound by the renderer on recomposition. */
+    internal var listener: NativeDisplayActionListener? = null
+
+    /** Optional component interaction listener. Rebound by the renderer on recomposition. */
+    internal var componentListener: NativeDisplayComponentListener? = null
+
     private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-    private val firedSystemEvents = mutableSetOf<String>()
 
     companion object {
         private const val TAG = "ActionHandler"
@@ -103,7 +108,7 @@ internal class ActionHandler(
     ) {
         coroutineScope.launch {
             try {
-                Log.d(TAG, "Handling action for node: $nodeId, action: ${action::class.simpleName}")
+                NDLogger.d(TAG, "Handling action for node: $nodeId, action: ${action::class.simpleName}")
 
                 // Notify component listener first (if interested in this node)
                 val shouldProceed = notifyComponentListener(
@@ -114,7 +119,7 @@ internal class ActionHandler(
 
                 // If component listener consumed the interaction, stop here
                 if (!shouldProceed) {
-                    Log.d(TAG, "Component listener consumed interaction for node: $nodeId")
+                    NDLogger.d(TAG, "Component listener consumed interaction for node: $nodeId")
                     return@launch
                 }
 
@@ -127,7 +132,7 @@ internal class ActionHandler(
                     is Action.CompositeAction -> handleCompositeAction(action, nodeId)
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error handling action for node: $nodeId", e)
+                NDLogger.e(TAG, "Error handling action for node: $nodeId", e)
                 listener?.onActionError(action, e)
             }
         }
@@ -146,14 +151,14 @@ internal class ActionHandler(
     ) {
         coroutineScope.launch {
             try {
-                Log.d(TAG, "Handling interaction without action for node: $nodeId")
+                NDLogger.d(TAG, "Handling interaction without action for node: $nodeId")
                 notifyComponentListener(
                     nodeId = nodeId,
                     interactionType = interactionType,
                     hasServerAction = false
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "Error handling interaction for node: $nodeId", e)
+                NDLogger.e(TAG, "Error handling interaction for node: $nodeId", e)
             }
         }
     }
@@ -183,7 +188,7 @@ internal class ActionHandler(
                     )
 
                     if (consumed) {
-                        Log.d(TAG, "Component listener consumed interaction for: $nodeId")
+                        NDLogger.d(TAG, "Component listener consumed interaction for: $nodeId")
                         return@withContext false  // Don't proceed with server action
                     }
                 }
@@ -222,7 +227,7 @@ internal class ActionHandler(
     ) {
         coroutineScope.launch {
             try {
-                Log.d(TAG, "Handling lifecycle action for node: $nodeId, action: ${action::class.simpleName}")
+                NDLogger.d(TAG, "Handling lifecycle action for node: $nodeId, action: ${action::class.simpleName}")
                 when (action) {
                     is Action.OpenUrl -> handleOpenUrl(action, nodeId)
                     is Action.CustomAction -> handleCustomAction(action, nodeId)
@@ -231,7 +236,7 @@ internal class ActionHandler(
                     is Action.CompositeAction -> handleCompositeAction(action, nodeId)
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error handling lifecycle action for node: $nodeId", e)
+                NDLogger.e(TAG, "Error handling lifecycle action for node: $nodeId", e)
                 listener?.onActionError(action, e)
             }
         }
@@ -246,19 +251,21 @@ internal class ActionHandler(
      * so attribution flows to Core SDK automatically whenever it is integrated —
      * the client does not have to opt in by attaching a listener.
      *
+     * The handler does not deduplicate fires: each call results in one delivery to
+     * the listener and bridge. Callers control cadence — the renderer's
+     * `TrackNotificationViewed` composable (keyed on `unitId`, gated by the
+     * process-level [com.clevertap.android.nativedisplay.bridge.ViewedUnitsTracker])
+     * produces exactly one `Notification Viewed` per real impression, suppresses
+     * Activity-configuration-change re-fires, and lets a unit scrolled out and back
+     * in legitimately fire again as a fresh impression.
+     *
      * @param eventName The system event name (e.g., "Notification Viewed")
      * @param properties Optional event properties
-     * @param deduplicate When true, skips firing if this event name was already fired
-     *                    by this handler instance
      */
-    fun fireSystemEvent(eventName: String, properties: Map<String, Any?>? = null, deduplicate: Boolean = false) {
-        if (deduplicate && !firedSystemEvents.add(eventName)) {
-            Log.d(TAG, "System event already fired, skipping: $eventName")
-            return
-        }
+    fun fireSystemEvent(eventName: String, properties: Map<String, Any?>? = null) {
         coroutineScope.launch {
             try {
-                Log.d(TAG, "Firing system event: $eventName")
+                NDLogger.d(TAG, "Firing system event: $eventName")
                 listener?.onTrackEvent(eventName, properties)
                 if (unitId != null) {
                     when (eventName) {
@@ -273,7 +280,7 @@ internal class ActionHandler(
                     }
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error firing system event: $eventName", e)
+                NDLogger.e(TAG, "Error firing system event: $eventName", e)
             }
         }
     }
@@ -284,7 +291,7 @@ internal class ActionHandler(
      */
     private suspend fun handleOpenUrl(action: Action.OpenUrl, nodeId: String) {
         withContext(Dispatchers.Main) {
-            Log.d(TAG, "Opening URL: ${action.url} (openInBrowser: ${action.openInBrowser})")
+            NDLogger.d(TAG, "Opening URL: ${action.url} (openInBrowser: ${action.openInBrowser})")
 
             // Ask listener if they want to handle it
             val handled = listener?.onOpenUrl(
@@ -299,74 +306,43 @@ internal class ActionHandler(
         }
     }
 
-    /**
-     * Default implementation for opening URLs.
-     * Tries Chrome Custom Tabs first, falls back to browser.
-     */
     private fun executeDefaultOpenUrl(action: Action.OpenUrl) {
         try {
-            val uri = action.url.toUri()
-
-            // Validate URL scheme (prevent javascript: etc.)
-            if (!isValidUrlScheme(uri.scheme)) {
-                Log.w(TAG, "Invalid URL scheme: ${uri.scheme}")
+            if (action.customTabsEnabled) {
+                openInCustomTab(action.url)
                 return
             }
-
-            when {
-                // Open in external browser
-                action.openInBrowser -> {
-                    openInExternalBrowser(action.url)
-                }
-                // Open in Chrome Custom Tab
-                action.customTabsEnabled -> {
-                    openInCustomTab(action.url)
-                }
-                // Fallback to external browser
-                else -> {
-                    openInExternalBrowser(action.url)
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to open URL: ${action.url}", e)
-            listener?.onActionError(action, e)
+            openUrl(action.url)
+        } catch (_: Exception) {
+            NDLogger.w(TAG, "No activity found to open url: ${action.url}")
+            listener?.onActionError(action, Exception("No activity found to open url: ${action.url}"))
         }
     }
 
-    /**
-     * Open URL in external browser app.
-     */
-    private fun openInExternalBrowser(url: String) {
-        try {
-            val intent = Intent(Intent.ACTION_VIEW, url.toUri()).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            context.startActivity(intent)
-            Log.d(TAG, "Opened URL in external browser: $url")
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to open external browser", e)
-            throw e
+    // Matches Core SDK InAppActionHandler.openUrl behavior exactly.
+    private fun openUrl(url: String) {
+        val uri = url.replace("\n", "").replace("\r", "").toUri()
+        val queryBundle = Bundle()
+        uri.queryParameterNames?.forEach { name ->
+            queryBundle.putString(name, uri.getQueryParameter(name))
         }
+        val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            if (!queryBundle.isEmpty) putExtras(queryBundle)
+        }
+        val appPackageName = context.packageName
+        context.packageManager.queryIntentActivities(intent, 0).forEach { resolveInfo ->
+            if (appPackageName == resolveInfo.activityInfo.packageName) {
+                intent.setPackage(appPackageName)
+                return@forEach
+            }
+        }
+        context.startActivity(intent)
+        NDLogger.d(TAG, "Opened URL: $url")
     }
 
-    /**
-     * Open URL in Chrome Custom Tab.
-     * Provides in-app browser experience with better UX.
-     * Falls back to external browser until Custom Tabs dependency is added.
-     */
     private fun openInCustomTab(url: String) {
-        openInExternalBrowser(url)
-    }
-
-    /**
-     * Validate URL scheme for security.
-     * Only allow http, https, and other safe schemes.
-     */
-    private fun isValidUrlScheme(scheme: String?): Boolean {
-        return when (scheme?.lowercase()) {
-            "http", "https", "tel", "mailto" -> true
-            else -> false
-        }
+        openUrl(url)
     }
 
     /**
@@ -375,7 +351,7 @@ internal class ActionHandler(
      */
     private suspend fun handleCustomAction(action: Action.CustomAction, nodeId: String) {
         withContext(Dispatchers.Main) {
-            Log.d(TAG, "Executing custom action: ${action.key}")
+            NDLogger.d(TAG, "Executing custom action: ${action.key}")
 
             val parsedValue = parseJsonValue(action.value)
 
@@ -393,7 +369,7 @@ internal class ActionHandler(
      */
     private suspend fun handleNavigate(action: Action.Navigate, nodeId: String) {
         withContext(Dispatchers.Main) {
-            Log.d(TAG, "Navigating to: ${action.destination}")
+            NDLogger.d(TAG, "Navigating to: ${action.destination}")
 
             listener?.onNavigate(
                 destination = action.destination,
@@ -408,7 +384,7 @@ internal class ActionHandler(
      */
     private suspend fun handleTrackEvent(action: Action.TrackEvent, nodeId: String) {
         withContext(Dispatchers.Main) {
-            Log.d(TAG, "Tracking event: ${action.eventName}")
+            NDLogger.d(TAG, "Tracking event: ${action.eventName}")
 
             val parsedProperties = action.properties?.mapValues { (_, value) ->
                 parseJsonValue(value)
@@ -426,7 +402,7 @@ internal class ActionHandler(
      * Executes multiple actions either sequentially or in parallel.
      */
     private suspend fun handleCompositeAction(action: Action.CompositeAction, nodeId: String) {
-        Log.d(TAG, "Executing composite action with ${action.actions.size} sub-actions (${action.executionMode})")
+        NDLogger.d(TAG, "Executing composite action with ${action.actions.size} sub-actions (${action.executionMode})")
 
         when (action.executionMode) {
             ExecutionMode.SEQUENTIAL -> {
@@ -500,7 +476,7 @@ internal class ActionHandler(
      * Call this when the composable is disposed.
      */
     fun cleanup() {
-        Log.d(TAG, "Cleaning up ActionHandler")
+        NDLogger.d(TAG, "Cleaning up ActionHandler")
         coroutineScope.cancel()
     }
 }

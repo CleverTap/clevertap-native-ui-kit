@@ -489,14 +489,12 @@ static NSString * const kEmptyCellID = @"EmptyCell";
 // ---------------------------------------------------------------------------
 
 - (void)loadBanner {
-    NSError *error = nil;
-    UIView *view = [NDDisplayHelper createViewFrom:self.jsonData
-                                                     parentWidth:self.view.bounds.size.width
-                                              componentListener:self.componentListener
-                                                 actionListener:self.actionListener
-                                                          error:&error];
-    if (!view || error) {
-        [self showErrorMessage:error.localizedDescription ?: @"Failed to create banner view"];
+    UIView *view = [[NativeDisplayUIView alloc] initWithJsonData:self.jsonData
+                                                             parentWidth:self.view.bounds.size.width
+                                                         actionListener:self.actionListener
+                                                      componentListener:self.componentListener];
+    if (!view) {
+        [self showErrorMessage:@"Failed to create banner view"];
         return;
     }
 

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.roborazzi)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -14,8 +15,8 @@ android {
         applicationId = "com.clevertap.android.nativeui.sample"
         minSdk = 23
         targetSdk = 36
-        versionCode = 8
-        versionName = "1.7"
+        versionCode = 18
+        versionName = "2.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -60,52 +61,86 @@ android {
     }
 }
 
-// ── Campaign Screenshot Integration Test ─────────────────────────────────────
-// Single task that runs the test AND pulls results to ~/Desktop before cleanup.
+// ── Automation Screenshots Integration Test ──────────────────────────────────
+// Runs the events/slots screenshot automation suite and pulls all artifacts
+// (PNGs + MP4 screen recordings) to ~/Desktop/nd-automation-output/android/.
 //
-// Usage: cd android-sample && ./gradlew :app:campaignScreenshots
+// Tests included — exactly one test method per tab:
+//   - EventsScreenshotsTest.composeEventsScreen_fireAllEvents — Compose Events
+//     tab: drive the on-screen EditText + Send button through 22 events.
+//   - EventsScreenshotsTest.xmlEventsScreen_fireAllEvents     — XML Events
+//     tab (`XmlFeedFragment`): same loop via Espresso.
+//   - SlotsScreenshotsTest.composeSlotsScreen_fetchAndScroll  — Compose Slots
+//     tab: tap "Fetch Slot Data" then scroll top→bottom→top.
+//   - SlotsScreenshotsTest.xmlSlotsScreen_fetchAndScroll      — XML Slots
+//     tab (`XmlSlotsFragment`): same fetch-and-scroll on the RecyclerView.
+//
+// Usage: cd android-sample && ./gradlew :app:automationScreenshots
 // ─────────────────────────────────────────────────────────────────────────────
-val desktopPath = "${System.getProperty("user.home")}/Desktop/campaign-screenshots"
+val automationDesktopPath = "${System.getProperty("user.home")}/Desktop/nd-automation-output/android"
 
-// Restrict connectedDebugAndroidTest to only CampaignScreenshotTest when this task is in the graph
+private val automationTestClasses = listOf(
+    "com.clevertap.android.nativeui.sample.automation.EventsScreenshotsTest",
+    "com.clevertap.android.nativeui.sample.automation.SlotsScreenshotsTest"
+).joinToString(",")
+
+// Restrict connectedDebugAndroidTest to just the automation suite when this task is in the graph.
 gradle.taskGraph.whenReady {
-    if (hasTask(":app:campaignScreenshots")) {
-        android.defaultConfig.testInstrumentationRunnerArguments["class"] =
-            "com.clevertap.android.nativeui.sample.CampaignScreenshotTest"
+    if (hasTask(":app:automationScreenshots")) {
+        android.defaultConfig.testInstrumentationRunnerArguments["class"] = automationTestClasses
     }
 }
 
-tasks.register("campaignScreenshots") {
+tasks.register("automationScreenshots") {
     group = "verification"
-    description = "Run CampaignScreenshotTest and pull results to ~/Desktop/campaign-screenshots/"
+    description = "Run the events/slots automation suite and pull PNGs + MP4s to ~/Desktop/nd-automation-output/android/"
     dependsOn("connectedDebugAndroidTest")
+    doFirst {
+        File(automationDesktopPath).mkdirs()
+    }
     doLast {
         // AGP pulls additionalTestOutputDir to build/outputs/connected_android_test_additional_output/
-        // automatically. We just copy campaign-screenshots/ from there to the Desktop.
-        val buildOutput = File(projectDir,
-            "build/outputs/connected_android_test_additional_output")
-        val campaignDir = buildOutput.walkTopDown()
-            .firstOrNull { it.isDirectory && it.name == "campaign-screenshots" }
-
-        if (campaignDir != null) {
-            val dest = File(desktopPath)
-            dest.mkdirs()
-            campaignDir.copyRecursively(dest, overwrite = true)
-            println("Screenshots copied to: $desktopPath")
-        } else {
-            println("Warning: campaign-screenshots not found in $buildOutput")
+        // automatically. Tests write PNGs and MP4s directly into that dir, so we copy
+        // the contents (not the structure) to Desktop.
+        val buildOutput = File(
+            projectDir,
+            "build/outputs/connected_android_test_additional_output"
+        )
+        if (!buildOutput.exists()) {
+            println("Warning: $buildOutput does not exist — no artifacts produced")
+            return@doLast
         }
+
+        val dest = File(automationDesktopPath).apply { mkdirs() }
+        val mediaFiles = buildOutput.walkTopDown()
+            .filter { it.isFile && (it.extension == "png" || it.extension == "mp4") }
+            .toList()
+
+        // Preserve the relative path from AGP's output dir so identically-named
+        // PNGs/MP4s from different test classes don't silently overwrite each
+        // other on a flat copy.
+        mediaFiles.forEach { src ->
+            val target = File(dest, src.relativeTo(buildOutput).path)
+            target.parentFile?.mkdirs()
+            src.copyTo(target, overwrite = true)
+        }
+        println("Automation artifacts (${mediaFiles.size} files) copied to: $automationDesktopPath")
     }
 }
 
 dependencies {
-    // Local SDK
-    implementation("com.clevertap.android:native-display-sdk")
-    implementation("com.clevertap.android:clevertap-android-sdk:8.0.0")
+    // Local SDK (resolved via includeBuild substitution in settings.gradle.kts)
+    implementation("com.clevertap.android:clevertap-native-display-sdk")
+    implementation("com.clevertap.android:clevertap-android-sdk:8.3.0")
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
 
     // AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
     
     // Compose

@@ -1,7 +1,6 @@
 package com.clevertap.android.nativedisplay.internal
 
 import android.content.Context
-import android.util.Log
 import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
@@ -29,7 +28,7 @@ internal object ImageLoaderProvider {
         return imageLoader ?: synchronized(this) {
             imageLoader ?: createImageLoader(context).also {
                 imageLoader = it
-                Log.d(TAG, "ImageLoader created with GIF support")
+                NDLogger.d(TAG, "ImageLoader created with GIF support")
             }
         }
     }
@@ -42,10 +41,10 @@ internal object ImageLoaderProvider {
                 // Use GifDecoder for older Android versions
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     add(ImageDecoderDecoder.Factory())
-                    Log.d(TAG, "Using ImageDecoderDecoder for GIF support (Android P+)")
+                    NDLogger.d(TAG, "Using ImageDecoderDecoder for GIF support (Android P+)")
                 } else {
                     add(GifDecoder.Factory())
-                    Log.d(TAG, "Using GifDecoder for GIF support (Android < P)")
+                    NDLogger.d(TAG, "Using GifDecoder for GIF support (Android < P)")
                 }
             }
             .build()

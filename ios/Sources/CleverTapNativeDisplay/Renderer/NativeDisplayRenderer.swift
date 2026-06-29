@@ -139,7 +139,13 @@ public struct NativeDisplayView: View {
         // - Works even if config has percentages, dynamic root, etc.
         // - This is the ONLY way to avoid GeometryReader when needed
         if let explicitSize = environmentParentSize {
+            // Mirror the GeometryReader path's `.frame(width:)` wrapper so the
+            // rendered root occupies the offered width even when its layout
+            // spec doesn't intrinsically claim it (e.g. wrap_content root).
+            // Without this, SwiftUI sizes the content to its small intrinsic
+            // width and centers it inside the hosting view.
             renderContent(parentSize: explicitSize)
+                .frame(width: explicitSize.width, alignment: .center)
         }
         // ═══════════════════════════════════════════════════════════════
         // Below logic only runs if NO environment override
@@ -259,6 +265,10 @@ struct RenderNode: View {
     let actionHandler: ActionHandler?
     let componentListener: NativeDisplayComponentListener?
     var isRoot: Bool = false
+    /// True when this node is a direct child of a BOX container.
+    /// The parent BOX applies the offset externally via padding overlay, so this node
+    /// must NOT also apply offset internally (which would double it).
+    var inBoxContainer: Bool = false
     
     var body: some View {
         // Check visibility condition
@@ -283,13 +293,14 @@ struct RenderNode: View {
         let isClientInterested = componentListener?.getInterestedNodeIds()?.contains(node.id) ?? (componentListener != nil)
         let shouldApplyTappable = hasServerActions || isClientInterested
         let isButton = node.elementType == .button
+        let isImage = node.elementType == .image
         
         switch node {
         case .container(let container):
             let layoutMod = LayoutModifier(layout: node.layout, parentSize: parentSize, nodeId: node.id)
             let offsetValue = layoutMod.calculateOffset()
 
-            RenderContainer(
+            let containerView = RenderContainer(
                 container: container,
                 resolvedStyles: resolvedStyles,
                 evaluator: evaluator,
@@ -301,7 +312,14 @@ struct RenderNode: View {
             )
             .modifier(layoutMod)
             .modifier(DecorationModifier(style: resolvedStyle, rootHeight: rootHeight))
-            .offset(x: offsetValue.width, y: offsetValue.height)
+
+            Group {
+                if inBoxContainer {
+                    containerView
+                } else {
+                    containerView.offset(x: offsetValue.width, y: offsetValue.height)
+                }
+            }
             .applyEntranceAnimation(node.animation)
             .applyTappable(
                 nodeId: node.id,
@@ -311,7 +329,7 @@ struct RenderNode: View {
             )
             .onAppear {
                 if isRoot {
-                    actionHandler?.fireSystemEvent(eventName: "Notification Viewed", deduplicate: true)
+                    actionHandler?.fireSystemEvent(eventName: "Notification Viewed")
                 }
                 if let action = node.actions?[ActionTriggers.onAppear] {
                     actionHandler?.handleLifecycleAction(action, nodeId: node.id)
@@ -327,8 +345,12 @@ struct RenderNode: View {
         case .element(let element):
             let layoutMod = LayoutModifier(layout: node.layout, parentSize: parentSize, nodeId: node.id)
             let offsetValue = layoutMod.calculateOffset()
+            // Video elements handle their own tap interaction (controls show/hide) internally.
+            // Passing a componentListener here would add a competing gesture that blocks the
+            // internal Color.clear tap layer. Explicit onClick actions still work via `actions`.
+            let isVideo = element.elementType == .video
 
-            RenderElement(
+            let elementView = RenderElement(
                 element: element,
                 evaluator: evaluator,
                 resolvedStyle: resolvedStyle,
@@ -338,17 +360,32 @@ struct RenderNode: View {
             )
             .modifier(layoutMod)
             .modifier(DecorationModifier(style: resolvedStyle, rootHeight: rootHeight))
-            .offset(x: offsetValue.width, y: offsetValue.height)
+
+            // BOX container children: offset is applied externally via padding overlay
+            // in RenderContainer.box, so hit-testing and visual position always align.
+            // Non-BOX children: use .offset() for visual-only displacement.
+            Group {
+                if inBoxContainer {
+                    elementView
+                } else {
+                    elementView.offset(x: offsetValue.width, y: offsetValue.height)
+                }
+            }
             .applyEntranceAnimation(node.animation)
             .applyTappable(
                 nodeId: node.id,
                 actions: !isButton && shouldApplyTappable ? node.actions : nil,
                 actionHandler: actionHandler,
-                componentListener: !isButton ? componentListener : nil
+                componentListener: (!isButton && !isVideo) ? componentListener : nil,
+                onSystemClick: isImage ? {
+                    guard let onClick = node.actions?[ActionTriggers.onClick] else { return }
+                    let extras = ActionAttributionExtras.from(action: onClick)
+                    actionHandler?.fireSystemEvent(eventName: "Notification Clicked", properties: extras)
+                } : nil
             )
             .onAppear {
                 if isRoot {
-                    actionHandler?.fireSystemEvent(eventName: "Notification Viewed", deduplicate: true)
+                    actionHandler?.fireSystemEvent(eventName: "Notification Viewed")
                 }
                 if let action = node.actions?[ActionTriggers.onAppear] {
                     actionHandler?.handleLifecycleAction(action, nodeId: node.id)
@@ -409,19 +446,34 @@ struct RenderContainer: View {
                 .padding(paddingInsets)
 
         case .box:
-            // For BOX containers, use ZStack with topLeading alignment
-            // Children use .offset() (applied in LayoutModifier) to move from their natural position
+            // BOX uses absolute positioning. Each child is placed on a full-size transparent
+            // canvas via .overlay + .padding. This approach correctly aligns both visual
+            // rendering and hit-testing, unlike .offset() (visual only) or .position()
+            // (unreliable hit-test alignment for UIViewRepresentable subtrees).
             ZStack(alignment: .topLeading) {
                 ForEach(container.children, id: \.id) { child in
-                    RenderNode(
-                        node: child,
-                        resolvedStyles: resolvedStyles,
-                        evaluator: evaluator,
+                    let childOffset = LayoutModifier(
+                        layout: child.layout,
                         parentSize: containerSize,
-                        rootHeight: rootHeight,
-                        actionHandler: actionHandler,
-                        componentListener: componentListener
-                    )
+                        nodeId: child.id
+                    ).calculateOffset()
+
+                    Color.clear
+                        .frame(width: containerSize.width, height: containerSize.height)
+                        .overlay(alignment: .topLeading) {
+                            RenderNode(
+                                node: child,
+                                resolvedStyles: resolvedStyles,
+                                evaluator: evaluator,
+                                parentSize: containerSize,
+                                rootHeight: rootHeight,
+                                actionHandler: actionHandler,
+                                componentListener: componentListener,
+                                inBoxContainer: true
+                            )
+                            .padding(.top, childOffset.height)
+                            .padding(.leading, childOffset.width)
+                        }
                 }
             }
             .frame(
@@ -978,22 +1030,14 @@ struct RenderElement: View {
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                             .clipped()
                     case .failure:
-                        Image(systemName: "photo")
-                            .foregroundColor(.gray)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        EmptyView()
                     @unknown default:
                         EmptyView()
                     }
                 }
             }
         } else {
-            Rectangle()
-                .fill(Color.gray.opacity(0.3))
-                .overlay(
-                    Text("No Image")
-                        .foregroundColor(.gray)
-                        .font(.caption)
-                )
+            EmptyView()
         }
     }
 
@@ -1061,7 +1105,7 @@ struct RenderElement: View {
             // Fire system event for button click, carrying the click action's KVs
             // so attribution events surface the URL / custom KVs / metadata.
             let onClickAction = element.actions?[ActionTriggers.onClick]
-            let extras = ActionAttributionExtras.from(action: onClickAction, nodeId: element.id)
+            let extras = ActionAttributionExtras.from(action: onClickAction)
             actionHandler?.fireSystemEvent(
                 eventName: "Notification Clicked",
                 properties: extras
@@ -1575,9 +1619,16 @@ fileprivate class PlayerManager: ObservableObject {
     @Published var isPlaying: Bool = false
     @Published var isMuted: Bool = false
     @Published var isEnded: Bool = false
+    /// Non-nil when the AVPlayerItem reports `.failed` status. Drives the
+    /// error overlay in VideoPlayerView / VideoFullscreenView. Mirrors the
+    /// Android side's `errorMessage` state for cross-platform parity —
+    /// without this, unsupported formats (e.g. .webm, .mkv) and unreachable
+    /// URLs render as a silent black surface on iOS.
+    @Published var errorMessage: String?
 
     var player: AVPlayer?
     private var playerObserver: NSObjectProtocol?
+    private var statusObservation: NSKeyValueObservation?
     private var timeObserver: Any?
 
     func setupPlayer(url: URL, autoPlay: Bool, loop: Bool, muted: Bool) {
@@ -1585,6 +1636,8 @@ fileprivate class PlayerManager: ObservableObject {
         player = AVPlayer(playerItem: playerItem)
         player?.isMuted = muted
         self.isMuted = muted
+        // Reset any prior error state when reattaching to a new URL.
+        self.errorMessage = nil
 
         // Setup end-of-video observer (used for both loop and ended-state tracking)
         playerObserver = NotificationCenter.default.addObserver(
@@ -1597,6 +1650,21 @@ fileprivate class PlayerManager: ObservableObject {
                 self?.player?.play()
             } else {
                 self?.isEnded = true
+            }
+        }
+
+        // Surface AVPlayerItem.status transitions to `.failed` — covers
+        // unsupported formats, network errors, decoder failures. Without this,
+        // bad URLs produce a silent black surface with no UX feedback. KVO
+        // closures can fire on any thread, so hop to main before mutating
+        // @Published state.
+        statusObservation = playerItem.observe(\.status, options: [.new]) { [weak self] item, _ in
+            guard item.status == .failed else { return }
+            let detail = item.error?.localizedDescription ?? "unknown error"
+            DispatchQueue.main.async {
+                guard let self = self, self.player?.currentItem === item else { return }
+                self.errorMessage = "Video playback failed"
+                NDLogger.e(Self.self, "Playback error: \(detail)")
             }
         }
 
@@ -1638,6 +1706,9 @@ fileprivate class PlayerManager: ObservableObject {
             playerObserver = nil
         }
 
+        statusObservation?.invalidate()
+        statusObservation = nil
+
         if let timeObs = timeObserver {
             player?.removeTimeObserver(timeObs)
             timeObserver = nil
@@ -1651,48 +1722,57 @@ fileprivate class PlayerManager: ObservableObject {
     }
 }
 
+/// UIView subclass that keeps AVPlayerLayer filling its bounds on every layout pass,
+/// including device rotation.
+private final class PlayerLayerView: UIView {
+    let playerLayer = AVPlayerLayer()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .clear
+        playerLayer.videoGravity = .resizeAspect
+        layer.addSublayer(playerLayer)
+    }
+
+    required init?(coder: NSCoder) { fatalError() }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        playerLayer.frame = bounds
+    }
+}
+
 /// UIViewRepresentable wrapper for AVPlayerLayer
 private struct VideoPlayerLayer: UIViewRepresentable {
     let player: AVPlayer?
 
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        view.backgroundColor = .black
-
-        let playerLayer = AVPlayerLayer(player: player)
-        playerLayer.videoGravity = .resizeAspect
-        view.layer.addSublayer(playerLayer)
-
-        context.coordinator.playerLayer = playerLayer
-        return view
+    func makeUIView(context: Context) -> PlayerLayerView {
+        PlayerLayerView()
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {
-        context.coordinator.playerLayer?.player = player
-
-        // Update layer frame to match view bounds
-        DispatchQueue.main.async {
-            context.coordinator.playerLayer?.frame = uiView.bounds
+    func updateUIView(_ uiView: PlayerLayerView, context: Context) {
+        // Only reassign if the player instance actually changed — avoids a black flash
+        // on rotation when SwiftUI rebuilds the view body but the player is the same.
+        if uiView.playerLayer.player !== player {
+            uiView.playerLayer.player = player
         }
     }
 
-    func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
-
-    static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
-        coordinator.playerLayer?.removeFromSuperlayer()
-        coordinator.playerLayer = nil
-    }
-
-    class Coordinator {
-        var playerLayer: AVPlayerLayer?
+    static func dismantleUIView(_ uiView: PlayerLayerView, coordinator: ()) {
+        // Do not nil out the player here — the PlayerManager's cleanup() handles
+        // release on onDisappear. Nilling here causes a black flash on rotation
+        // because SwiftUI dismantles/remakes UIViewRepresentable during layout rebuilds.
     }
 }
 
 private struct VideoControlIcon: View {
     let systemName: String
     let accessibilityLabel: String
+    /// Stable XCUITest identifier. Distinct from `accessibilityLabel` (which
+    /// VoiceOver reads aloud and flips with state — "Play" ↔ "Pause"); this
+    /// is the state-independent automation handle, e.g.
+    /// `app.buttons[NDVideoAccessibilityID.play]` in XCUITest.
+    let accessibilityIdentifier: String
     var size: CGFloat = 32
     let action: () -> Void
 
@@ -1706,7 +1786,31 @@ private struct VideoControlIcon: View {
             .contentShape(Rectangle())
             .onTapGesture(perform: action)
             .accessibilityLabel(accessibilityLabel)
+            .accessibilityIdentifier(accessibilityIdentifier)
     }
+}
+
+// MARK: - Public test identifiers
+//
+// Stable XCUITest accessibility identifiers applied to the VIDEO element's
+// control buttons. Public API so consumers can identify controls in XCUITest
+// (`app.buttons[NDVideoAccessibilityID.play]`) and cross-platform automation
+// (Maestro, Appium) without depending on the user-visible accessibilityLabel
+// (which flips with state — "Play" ↔ "Pause" — and localizes).
+//
+// String values match the Android side's `ND_VIDEO_TEST_TAG_*` constants
+// verbatim so cross-platform Appium/Maestro suites use one ID per control.
+//
+// Inline and fullscreen modes are mutually exclusive at any moment, so
+// `play`, `mute` and `actionUrl` re-use the same identifier across both
+// modes — a test "tap play" works regardless of which mode the player is in.
+public enum NDVideoAccessibilityID {
+    public static let play: String       = "nd_video_play"
+    public static let mute: String       = "nd_video_mute"
+    public static let actionUrl: String  = "nd_video_action_url"
+    public static let expand: String     = "nd_video_expand"
+    public static let close: String      = "nd_video_close"
+    public static let collapse: String   = "nd_video_collapse"
 }
 
 /// Main video player view with custom controls
@@ -1721,38 +1825,56 @@ private struct VideoPlayerView: View {
 
     @StateObject private var playerManager = PlayerManager()
     @State private var showControlsUI = false
-    @State private var controlsOpacity: Double = 0
     @State private var isFullscreen = false
+    @State private var hideControlsWorkItem: DispatchWorkItem?
 
     var body: some View {
         ZStack {
             // Custom AVPlayerLayer — hidden when fullscreen (shared AVPlayer instance)
             VideoPlayerLayer(player: playerManager.player)
                 .opacity(isFullscreen ? 0 : 1)
-                .onTapGesture {
-                    if showControls {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            showControlsUI.toggle()
-                            controlsOpacity = showControlsUI ? 1.0 : 0.0
-                        }
+
+            // Error overlay — mirrors Android's failure UI. Shown when the
+            // AVPlayerItem reports `.failed` (unsupported format, 404, decoder
+            // error, etc.). Suppresses the otherwise-silent black surface.
+            if let message = playerManager.errorMessage, !isFullscreen {
+                Rectangle()
+                    .fill(Color(.darkGray))
+                    .overlay(
+                        Text(message)
+                            .foregroundColor(.white)
+                            .font(.system(size: 12))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 16)
+                    )
+            }
+
+            // Transparent tap layer — detects taps reliably as a pure SwiftUI view
+            if showControls && !isFullscreen {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        showControlsUI.toggle()
                     }
-                }
+            }
 
             // Custom controls overlay
-            if showControls && controlsOpacity > 0 {
+            if showControls && playerManager.errorMessage == nil {
                 VStack {
                     Spacer()
                     HStack(spacing: 12) {
                         VideoControlIcon(
                             systemName: playerManager.isPlaying ? "pause.fill" : "play.fill",
-                            accessibilityLabel: playerManager.isPlaying ? "Pause" : "Play"
+                            accessibilityLabel: playerManager.isPlaying ? "Pause" : "Play",
+                            accessibilityIdentifier: NDVideoAccessibilityID.play
                         ) {
                             playerManager.togglePlayPause()
                         }
                         if let url = openUrl {
                             VideoControlIcon(
                                 systemName: "arrow.up.right.square",
-                                accessibilityLabel: "Open URL"
+                                accessibilityLabel: "Open URL",
+                                accessibilityIdentifier: NDVideoAccessibilityID.actionUrl
                             ) {
                                 if let u = URL(string: url) {
                                     UIApplication.shared.open(u)
@@ -1761,14 +1883,16 @@ private struct VideoPlayerView: View {
                         }
                         VideoControlIcon(
                             systemName: playerManager.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill",
-                            accessibilityLabel: playerManager.isMuted ? "Unmute" : "Mute"
+                            accessibilityLabel: playerManager.isMuted ? "Unmute" : "Mute",
+                            accessibilityIdentifier: NDVideoAccessibilityID.mute
                         ) {
                             playerManager.toggleMute()
                         }
                         if showFullscreen {
                             VideoControlIcon(
                                 systemName: "arrow.up.left.and.arrow.down.right",
-                                accessibilityLabel: "Enter fullscreen"
+                                accessibilityLabel: "Enter fullscreen",
+                                accessibilityIdentifier: NDVideoAccessibilityID.expand
                             ) {
                                 isFullscreen = true
                             }
@@ -1777,7 +1901,9 @@ private struct VideoPlayerView: View {
                     }
                     .padding(12)
                 }
-                .opacity(controlsOpacity)
+                .opacity(showControlsUI ? 1.0 : 0.0)
+                .animation(.easeInOut(duration: 0.3), value: showControlsUI)
+                .allowsHitTesting(showControlsUI)
             }
         }
         .fullScreenCover(isPresented: $isFullscreen) {
@@ -1794,15 +1920,11 @@ private struct VideoPlayerView: View {
             playerManager.cleanup()
         }
         .onChange(of: showControlsUI) { isShown in
-            if isShown {
-                // Auto-hide after 3 seconds
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        showControlsUI = false
-                        controlsOpacity = 0
-                    }
-                }
-            }
+            hideControlsWorkItem?.cancel()
+            guard isShown else { return }
+            let workItem = DispatchWorkItem { showControlsUI = false }
+            hideControlsWorkItem = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: workItem)
         }
     }
 }
@@ -1812,6 +1934,7 @@ private struct VideoFullscreenView: View {
     let openUrl: String?
     @Binding var isPresented: Bool
     @State private var showControlsUI = true
+    @State private var hideControlsWorkItem: DispatchWorkItem?
 
     var body: some View {
         ZStack {
@@ -1819,18 +1942,33 @@ private struct VideoFullscreenView: View {
 
             VideoPlayerLayer(player: playerManager.player)
                 .ignoresSafeArea()
+
+            // Fullscreen error overlay (same source of truth as the inline view).
+            if let message = playerManager.errorMessage {
+                Text(message)
+                    .foregroundColor(.white)
+                    .font(.system(size: 14))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
+            }
+
+            Color.clear
+                .contentShape(Rectangle())
+                .ignoresSafeArea()
                 .onTapGesture {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        showControlsUI.toggle()
-                    }
+                    showControlsUI.toggle()
                 }
 
-            if showControlsUI {
+            if showControlsUI && playerManager.errorMessage == nil {
                 // Close — top right
                 VStack {
                     HStack {
                         Spacer()
-                        VideoControlIcon(systemName: "xmark", accessibilityLabel: "Close fullscreen") {
+                        VideoControlIcon(
+                            systemName: "xmark",
+                            accessibilityLabel: "Close fullscreen",
+                            accessibilityIdentifier: NDVideoAccessibilityID.close
+                        ) {
                             isPresented = false
                         }
                         .padding(12)
@@ -1842,6 +1980,7 @@ private struct VideoFullscreenView: View {
                 VideoControlIcon(
                     systemName: playerManager.isPlaying ? "pause.fill" : "play.fill",
                     accessibilityLabel: playerManager.isPlaying ? "Pause" : "Play",
+                    accessibilityIdentifier: NDVideoAccessibilityID.play,
                     size: 40
                 ) {
                     playerManager.togglePlayPause()
@@ -1854,20 +1993,23 @@ private struct VideoFullscreenView: View {
                         if let urlStr = openUrl, let url = URL(string: urlStr) {
                             VideoControlIcon(
                                 systemName: "arrow.up.right.square",
-                                accessibilityLabel: "Open URL"
+                                accessibilityLabel: "Open URL",
+                                accessibilityIdentifier: NDVideoAccessibilityID.actionUrl
                             ) {
                                 UIApplication.shared.open(url)
                             }
                         }
                         VideoControlIcon(
                             systemName: playerManager.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill",
-                            accessibilityLabel: playerManager.isMuted ? "Unmute" : "Mute"
+                            accessibilityLabel: playerManager.isMuted ? "Unmute" : "Mute",
+                            accessibilityIdentifier: NDVideoAccessibilityID.mute
                         ) {
                             playerManager.toggleMute()
                         }
                         VideoControlIcon(
                             systemName: "arrow.down.right.and.arrow.up.left",
-                            accessibilityLabel: "Exit fullscreen"
+                            accessibilityLabel: "Exit fullscreen",
+                            accessibilityIdentifier: NDVideoAccessibilityID.collapse
                         ) {
                             isPresented = false
                         }
@@ -1877,21 +2019,24 @@ private struct VideoFullscreenView: View {
             }
         }
         .onChange(of: showControlsUI) { isShown in
-            if isShown {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        showControlsUI = false
-                    }
-                }
-            }
-        }
-        .onAppear {
-            // Auto-hide controls after 3 seconds when fullscreen opens
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            hideControlsWorkItem?.cancel()
+            guard isShown else { return }
+            let workItem = DispatchWorkItem {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     showControlsUI = false
                 }
             }
+            hideControlsWorkItem = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: workItem)
+        }
+        .onAppear {
+            let workItem = DispatchWorkItem {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    showControlsUI = false
+                }
+            }
+            hideControlsWorkItem = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: workItem)
         }
     }
 }

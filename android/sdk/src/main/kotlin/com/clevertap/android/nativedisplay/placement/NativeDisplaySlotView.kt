@@ -2,7 +2,6 @@ package com.clevertap.android.nativedisplay.placement
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.widget.FrameLayout
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
@@ -11,7 +10,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import com.clevertap.android.nativeui.R
+import com.clevertap.android.nativedisplay.internal.NDLogger
+import com.clevertap.android.nativedisplay.R
 import com.clevertap.android.nativedisplay.bridge.NativeDisplayUnit
 import com.clevertap.android.nativedisplay.listener.NativeDisplayActionListener
 import com.clevertap.android.nativedisplay.listener.NativeDisplayComponentListener
@@ -161,7 +161,7 @@ class NativeDisplaySlotView @JvmOverloads constructor(
     // --- SlotObserver ---
 
     override fun onUnitAvailable(unit: NativeDisplayUnit) {
-        Log.d(TAG, "Unit available for slot: $slotId (unitId=${unit.unitId})")
+        NDLogger.d(TAG, "Unit available for slot: $slotId (unitId=${unit.unitId})")
 
         // Styles were pre-resolved off-main inside the bridge parser — just consume them.
         resolvedStylesState.value = unit.resolvedStyles
@@ -170,7 +170,7 @@ class NativeDisplaySlotView @JvmOverloads constructor(
     }
 
     override fun onUnitCleared(slotId: String) {
-        Log.d(TAG, "Unit cleared for slot: $slotId")
+        NDLogger.d(TAG, "Unit cleared for slot: $slotId")
         unitState.value = null
         resolvedStylesState.value = persistentMapOf()
     }
@@ -183,7 +183,7 @@ class NativeDisplaySlotView @JvmOverloads constructor(
             if (!isRegistered) {
                 NativeDisplaySlotManager.getInstance().registerSlot(id, this)
                 isRegistered = true
-                Log.d(TAG, "Registered with slot manager: $id")
+                NDLogger.d(TAG, "Registered with slot manager: $id")
             }
         }
     }
@@ -194,7 +194,7 @@ class NativeDisplaySlotView @JvmOverloads constructor(
             if (isRegistered) {
                 NativeDisplaySlotManager.getInstance().unregisterSlot(id, this)
                 isRegistered = false
-                Log.d(TAG, "Unregistered from slot manager: $id")
+                NDLogger.d(TAG, "Unregistered from slot manager: $id")
             }
         }
         // Clear state

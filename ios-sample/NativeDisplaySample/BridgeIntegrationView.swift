@@ -14,6 +14,7 @@ import CleverTapNativeDisplay
 /// - Pull API (getAllNativeDisplays / getNativeDisplayForId)
 struct BridgeIntegrationView: View {
     @StateObject private var viewModel = BridgeIntegrationViewModel()
+    @State private var eventLogVisible = true
 
     var body: some View {
         ScrollView {
@@ -222,23 +223,46 @@ struct BridgeIntegrationView: View {
     // MARK: - Event Log Section
 
     private var eventLogSection: some View {
-        SectionCard(title: "Event Log", icon: "doc.text") {
-            VStack(alignment: .leading, spacing: 4) {
-                if viewModel.eventLog.isEmpty {
-                    Text("Events will appear here as the bridge processes units.")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                } else {
-                    ForEach(viewModel.eventLog.indices, id: \.self) { index in
-                        Text(viewModel.eventLog[index])
-                            .font(.system(size: 11, design: .monospaced))
-                            .foregroundColor(.primary)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "doc.text")
+                    .foregroundColor(.blue)
+                    .font(.system(size: 16, weight: .semibold))
+                Text("Event Log")
+                    .font(.headline)
+                Spacer()
+                Button {
+                    eventLogVisible.toggle()
+                } label: {
+                    Image(systemName: eventLogVisible ? "eye.slash" : "eye")
+                        .font(.system(size: 14, weight: .semibold))
+                }
+                .accessibilityIdentifier("event-log-toggle")
+            }
+
+            if eventLogVisible {
+                VStack(alignment: .leading, spacing: 4) {
+                    if viewModel.eventLog.isEmpty {
+                        Text("Events will appear here as the bridge processes units.")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                    } else {
+                        ForEach(viewModel.eventLog.indices, id: \.self) { index in
+                            Text(viewModel.eventLog[index])
+                                .font(.system(size: 11, design: .monospaced))
+                                .foregroundColor(.primary)
+                        }
                     }
                 }
+                .accessibilityIdentifier("event-log-content")
             }
         }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.systemBackground))
+        .cornerRadius(12)
     }
 }
 

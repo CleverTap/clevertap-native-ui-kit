@@ -26,7 +26,7 @@ internal class NativeDisplayConfigParser {
     /// - Returns: A `NativeDisplayUnit` if parsing succeeds, `nil` otherwise.
     func tryParse(_ jsonString: String) -> NativeDisplayUnit? {
         guard let data = jsonString.data(using: .utf8) else {
-            print("[NativeDisplayBridge] Failed to convert JSON string to Data")
+            NDLogger.w(Self.self, "Failed to convert JSON string to Data")
             return nil
         }
         return tryParse(data: data, rawJson: jsonString)
@@ -39,14 +39,14 @@ internal class NativeDisplayConfigParser {
     /// - Returns: A `NativeDisplayUnit` if parsing succeeds, `nil` otherwise.
     func tryParse(data: Data, rawJson: String? = nil) -> NativeDisplayUnit? {
         guard let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            print("[NativeDisplayBridge] Failed to deserialize JSON")
+            NDLogger.w(Self.self, "Failed to deserialize JSON")
             return nil
         }
 
-        // Extract unit ID (required)
-        guard let unitId = jsonObject["wzrk_id"] as? String else {
-            print("[NativeDisplayBridge] Missing wzrk_id in display unit JSON")
-            return nil
+        // Extract unit ID; fall back to a sentinel when absent so the campaign still renders
+        let unitId = (jsonObject["wzrk_id"] as? String) ?? "0_0"
+        if unitId == "0_0" {
+            NDLogger.w(Self.self, "Missing wzrk_id in display unit JSON, using fallback id '0_0'")
         }
 
         // Slot ID lives at the root, alongside `wzrk_id` and `native_display_config`.
@@ -60,6 +60,7 @@ internal class NativeDisplayConfigParser {
 
         // Strategy 1: Look for "native_display_config" key
         if let config = tryParseNativeDisplayConfig(from: jsonObject) {
+            NDLogger.d(Self.self, "Parsed unit '\(unitId)' via native_display_config key" + (slotId.map { " (slotId: \($0))" } ?? ""))
             return makeUnit(
                 unitId: unitId,
                 config: config,
@@ -71,6 +72,7 @@ internal class NativeDisplayConfigParser {
 
         // Strategy 2: Look for "custom_kv.nd_config" string
         if let config = tryParseFromCustomKV(from: jsonObject) {
+            NDLogger.d(Self.self, "Parsed unit '\(unitId)' via custom_kv.nd_config" + (slotId.map { " (slotId: \($0))" } ?? ""))
             return makeUnit(
                 unitId: unitId,
                 config: config,
@@ -82,6 +84,7 @@ internal class NativeDisplayConfigParser {
 
         // Strategy 3: Look for "root" key — treat entire JSON as ND config
         if let config = tryParseAsDirectConfig(from: jsonObject, data: data) {
+            NDLogger.d(Self.self, "Parsed unit '\(unitId)' as direct ND config (root key present)" + (slotId.map { " (slotId: \($0))" } ?? ""))
             return makeUnit(
                 unitId: unitId,
                 config: config,
@@ -91,7 +94,7 @@ internal class NativeDisplayConfigParser {
             )
         }
 
-        print("[NativeDisplayBridge] JSON does not contain a Native Display config (unitId: \(unitId))")
+        NDLogger.w(Self.self, "JSON does not contain a Native Display config (unitId: \(unitId))")
         return nil
     }
 
@@ -106,8 +109,10 @@ internal class NativeDisplayConfigParser {
         customExtras: [String: String],
         rawJson: String?
     ) -> NativeDisplayUnit {
+        NDLogger.d(Self.self, "Pre-resolving styles for unit '\(unitId)'")
         let resolver = StyleResolver(theme: config.theme, styleClasses: config.styleClasses)
         let resolved = resolver.resolveAll(node: config.root)
+        NDLogger.d(Self.self, "Unit '\(unitId)' ready: \(resolved.count) resolved style(s), customExtras=\(customExtras.count)")
         return NativeDisplayUnit(
             unitId: unitId,
             config: config,
@@ -131,7 +136,7 @@ internal class NativeDisplayConfigParser {
             let config = try ResolvedConfig.from(jsonData: ndConfigData)
             return config
         } catch {
-            print("[NativeDisplayBridge] Failed to parse native_display_config: \(error.localizedDescription)")
+            NDLogger.w(Self.self, "Failed to parse native_display_config: \(error.localizedDescription)")
             return nil
         }
     }
@@ -147,7 +152,7 @@ internal class NativeDisplayConfigParser {
             let config = try ResolvedConfig.from(jsonString: ndConfigString)
             return config
         } catch {
-            print("[NativeDisplayBridge] Failed to parse custom_kv.nd_config: \(error.localizedDescription)")
+            NDLogger.w(Self.self, "Failed to parse custom_kv.nd_config: \(error.localizedDescription)")
             return nil
         }
     }
@@ -162,7 +167,7 @@ internal class NativeDisplayConfigParser {
             let config = try ResolvedConfig.from(jsonData: data)
             return config
         } catch {
-            print("[NativeDisplayBridge] Failed to parse JSON as direct ND config: \(error.localizedDescription)")
+            NDLogger.w(Self.self, "Failed to parse JSON as direct ND config: \(error.localizedDescription)")
             return nil
         }
     }

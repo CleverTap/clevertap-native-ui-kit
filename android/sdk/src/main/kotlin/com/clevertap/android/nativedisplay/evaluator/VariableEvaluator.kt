@@ -1,5 +1,6 @@
 package com.clevertap.android.nativedisplay.evaluator
 
+import com.clevertap.android.nativedisplay.internal.NDLogger
 import kotlinx.serialization.json.*
 
 /**
@@ -16,6 +17,7 @@ internal class VariableEvaluator(
     private val variables: Map<String, JsonElement>
 ) {
     companion object {
+        private const val TAG = "VariableEvaluator"
         private val TEMPLATE_PATTERN = Regex("\\{\\{([^}]+)\\}\\}")
         private val TERNARY_PATTERN = Regex("(.+?)\\?(.+?):(.+)")
     }
@@ -33,6 +35,7 @@ internal class VariableEvaluator(
         TEMPLATE_PATTERN.findAll(template).forEach { match ->
             val expression = match.groupValues[1].trim()
             val value = evaluateExpression(expression)
+            NDLogger.v(TAG, "Resolved {{$expression}} → $value")
             result = result.replace(match.value, value.toString())
         }
         
@@ -60,12 +63,18 @@ internal class VariableEvaluator(
             
             // Direct boolean variable
             else -> {
-                // Handle plain string literals "true" / "false" sent directly in bindings
+                // Handle plain string literals "true" / "false" / "1" / "0" sent directly in bindings
                 cleaned.toBooleanStrictOrNull()?.let { return it }
+                cleaned.toDoubleOrNull()?.let { return it != 0.0 }
                 // Fall back to variable lookup for {{variableName}} expressions
                 val value = getVariable(cleaned)
                 when (value) {
-                    is JsonPrimitive -> value.booleanOrNull ?: false
+                    is JsonPrimitive -> value.booleanOrNull
+                        ?: value.doubleOrNull?.let { it != 0.0 }
+                        ?: value.contentOrNull?.let { s ->
+                            s.toBooleanStrictOrNull() ?: s.toDoubleOrNull()?.let { it != 0.0 }
+                        }
+                        ?: false
                     else -> false
                 }
             }
