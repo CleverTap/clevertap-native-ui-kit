@@ -46,6 +46,16 @@ function LinearGradientBg({
   const endX = 0.5 + Math.cos(angleRad) * 0.5;
   const endY = 0.5 + Math.sin(angleRad) * 0.5;
 
+  // Forward color stops as `locations` so non-uniform gradients match native
+  // (iOS zips colors+stops, Android reads stops[i]). Only pass them when the
+  // count matches the colors array - react-native-linear-gradient's behavior
+  // is undefined for mismatched lengths, so in that case we fall back to the
+  // library's even distribution, same as before.
+  const locations =
+    background.stops && background.stops.length === parsedColors.length
+      ? background.stops
+      : undefined;
+
   // Use a wrapper View so the outer View owns the size/position (from the `style` prop),
   // and the LinearGradient fills it with explicit 100%x100% dimensions. Using
   // absoluteFill (bottom/right: 0) on the gradient itself is unreliable when the
@@ -55,6 +65,7 @@ function LinearGradientBg({
     <View style={style}>
       <LinearGradient
         colors={parsedColors}
+        locations={locations}
         start={{ x: startX, y: startY }}
         end={{ x: endX, y: endY }}
         style={{ position: 'absolute', width: '100%', height: '100%' }}

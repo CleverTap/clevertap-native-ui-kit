@@ -19,18 +19,19 @@
 /**
  * Semver name. Keep in lockstep with `react-native/package.json` `version`.
  *
- * iOS and Android version this SDK independently; this value need not match
- * theirs. Used as the `nd_lib_v_name` event-attribution stamp on
- * Notification Viewed / Notification Clicked payloads.
+ * Aligned to the native SDKs' released `1.0.0` so the `nd_lib_v_name`
+ * attribution stamp on Notification Viewed / Notification Clicked payloads
+ * reads the same across iOS / Android / RN on the dashboard.
  */
-export const NAME: string = '0.1.0';
+export const NAME: string = '1.0.0';
 
 /**
  * Monotonic integer derived as `major * 10000 + minor * 100 + patch`.
- * For `0.1.0` this is `100`. Bump whenever `NAME` changes. Used as the
- * `nd_lib_v_code` event-attribution stamp.
+ * For `1.0.0` this is `10000` (matches Android's `ND_LIB_VERSION_CODE` and
+ * iOS's `NativeDisplaySDKVersion.code`). Bump whenever `NAME` changes. Used
+ * as the `nd_lib_v_code` event-attribution stamp.
  */
-export const CODE: number = 100;
+export const CODE: number = 10000;
 
 /**
  * Identity tag passed to the Core SDK's `setCustomSdkVersion(name, code)`

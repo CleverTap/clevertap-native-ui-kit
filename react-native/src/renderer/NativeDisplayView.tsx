@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 import type { ViewStyle, LayoutChangeEvent } from 'react-native';
 import type { NativeDisplayUnit } from '../bridge/NativeDisplayUnit';
@@ -46,6 +46,14 @@ export function NativeDisplayView(props: NativeDisplayViewProps): React.ReactEle
   // Hooks must always be called, regardless of props
   const [measuredSize, setMeasuredSize] = useState<{ width: number; height: number } | null>(null);
 
+  // Keep the listener in a ref so the viewed-event effect can call it without
+  // listing `actionListener` in its dependency array. Hosts almost always
+  // pass a fresh listener object each render (inline literal), and if that
+  // were a dependency the effect would tear down + re-run every render,
+  // re-firing "Notification Viewed" on every re-render.
+  const actionListenerRef = useRef(actionListener);
+  actionListenerRef.current = actionListener;
+
   let unitId: string;
   let root: NativeDisplayNode | undefined;
   let resolvedStyles: ResolvedStyles;
@@ -78,16 +86,23 @@ export function NativeDisplayView(props: NativeDisplayViewProps): React.ReactEle
 
   useEffect(() => {
     if (!unitId || !root) return;
-    // Dedupe is now handled by the bridge's process-scoped viewed-units
-    // tracker - calling this from a remount is safe; the bridge will no-op
-    // if the unit has already fired Viewed in this JS session. Listener
-    // callbacks fire alongside the bridge call so hosts that care about
-    // every mount still receive a notification (the wzrk_id stays the
-    // same, so they can dedupe themselves if they want).
+    // Fire once when the unit appears. The bridge's process-scoped tracker
+    // dedupes within a single appearance cycle (it no-ops if the unit is
+    // already marked viewed), so an ordinary re-render won't re-fire.
     NativeDisplayBridge.shared.pushViewedEvent(unitId);
-    actionListener?.onDisplayUnitViewed?.(unitId);
-    actionListener?.onTrackEvent?.('Notification Viewed', undefined);
-  }, [unitId, actionListener, root]);
+    actionListenerRef.current?.onDisplayUnitViewed?.(unitId);
+    actionListenerRef.current?.onTrackEvent?.('Notification Viewed', undefined);
+
+    // On teardown, release the unit from the tracker so a later remount
+    // (scrolled back into view, navigated back to) re-fires Viewed - matching
+    // Android's ViewedUnitsTracker, which removes the id on Compose dispose.
+    // Keyed on [unitId, root] only (NOT actionListener) so this runs on a
+    // genuine unmount / unit swap, not on every render. RN rotations
+    // re-render without unmounting, so they don't double-count.
+    return () => {
+      NativeDisplayBridge.shared.releaseViewedUnit(unitId);
+    };
+  }, [unitId, root]);
 
   if (!root) return null;
 

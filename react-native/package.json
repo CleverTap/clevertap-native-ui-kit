@@ -1,6 +1,6 @@
 {
   "name": "@clevertap/native-display-sdk",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "CleverTap Native Display SDK for React Native - server-driven native UI from JSON",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

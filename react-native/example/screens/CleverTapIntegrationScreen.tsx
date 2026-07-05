@@ -301,9 +301,12 @@ const styles = StyleSheet.create({
   },
 
   // ── FireEventHeader ─────────────────────────────────────────────────────
-  // Android: Column(fillMaxWidth, padding(16.dp), spacedBy(12.dp))
+  // iOS: VStack(alignment: .leading, spacing: 12).padding(10) - uniform 10pt
+  // padding matches CleverTapIntegrationView.fireEventSection so the header
+  // footprint (and by extension the top of the canvas below) lines up when
+  // eyeballing screenshots side-by-side.
   fireEventHeader: {
-    padding: 16,
+    padding: 10,
     gap: 12,
   },
   // Android: Row(fillMaxWidth, spacedBy(8.dp), verticalAlignment Center)
@@ -343,16 +346,20 @@ const styles = StyleSheet.create({
   },
 
   // ── CanvasContent (the parent of NativeDisplayView) ─────────────────────
-  // Matches Android exactly:
-  //   LazyColumn(modifier = fillMaxWidth().weight(1f).padding(horizontal=16.dp),
-  //              verticalArrangement = Arrangement.spacedBy(12.dp),
-  //              contentPadding = PaddingValues(vertical = 8.dp))
+  // Matches iOS exactly (the reference for cross-platform screenshot diffs):
+  //   ScrollView { VStack(spacing: 12) { ForEach(units) { ... } }
+  //     .frame(maxWidth: .infinity)
+  //     .padding(.horizontal, 10) }
+  // No vertical inset - the first unit sits flush against the divider above.
+  // A 16dp horizontal / 8dp vertical inset (matching Android) would make
+  // every percent-computed layout.width on RN 12pt narrower than iOS and
+  // shift the first unit down by 8pt, so we align to iOS instead.
   canvas: {
     flex: 1,
   },
   canvasScroll: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 0,
     gap: 12,
   },
   // Android: NativeDisplayView(modifier = Modifier.fillMaxWidth())

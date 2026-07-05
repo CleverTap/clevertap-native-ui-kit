@@ -1,12 +1,15 @@
 import { Linking } from 'react-native';
 import type { Action, CompositeAction } from '../models/Action';
 
-// Matches the URL scheme check in Android ActionHandler.kt and iOS ActionHandler.swift.
-// Only http, https, tel, and mailto are safe to open. Everything else (including
-// schemeless URLs like "www.google.com" or strings like "[text](url)") is dropped with a warning.
+// Matches Android ActionHandler.kt / iOS ActionHandler.swift after SDK-5859:
+// the native SDKs no longer restrict open_url to an http/https/tel/mailto
+// allow-list - they open ANY URL that carries a scheme, so custom deeplinks
+// (myapp://, whatsapp://, intent://, ...) work. We keep only a minimal guard:
+// the string must start with a valid RFC-3986 scheme followed by ':'. That
+// still drops schemeless strings like "www.google.com" and markdown like
+// "[text](url)", which can't be opened anyway.
 function isValidUrlScheme(url: string): boolean {
-  const scheme = url.split(':')[0]?.toLowerCase();
-  return ['http', 'https', 'tel', 'mailto'].includes(scheme ?? '');
+  return /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(url.trim());
 }
 import { resolveOpenUrl } from '../models/Action';
 import { attributionExtrasFor } from './ActionAttributionExtras';

@@ -245,6 +245,24 @@ export class NativeDisplayBridge {
   }
 
   /**
+   * Release a unit from the viewed tracker when its view is torn down, so a
+   * later remount fires `Notification Viewed` again.
+   *
+   * This mirrors Android `ViewedUnitsTracker` removing the id on Compose
+   * dispose (scroll out of a list, navigate away): the impression re-fires
+   * when the unit comes back into view. The RN analog of Android's
+   * `isChangingConfigurations` guard is free - a rotation on RN re-renders
+   * the same component without unmounting it, so no release happens and we
+   * don't double-count. Called from `NativeDisplayView`'s effect cleanup.
+   *
+   * Distinct from `resetViewedTracker`, which is the host-facing knob for
+   * login/logout; this one is the SDK's own lifecycle bookkeeping.
+   */
+  releaseViewedUnit(unitId: string): void {
+    if (unitId) _viewedUnits.delete(unitId);
+  }
+
+  /**
    * Push a "Notification Viewed" event to CleverTap. Always sanitizes and
    * stamps the ND SDK version (`nd_lib_v_name` / `nd_lib_v_code`) onto the
    * payload, then prefers the extras-aware Core SDK method

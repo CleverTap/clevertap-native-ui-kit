@@ -17,6 +17,27 @@ import {
 
 export const MATCH_PARENT_MARKER = '__match_parent__';
 
+// Map the JSON font weight enum to a value RN actually honors. RN's TextStyle
+// only reliably resolves 'normal', 'bold', and the numeric strings '100'-'900'
+// on both platforms; the named weights 'light' and 'medium' are silently
+// dropped to normal. Native maps them to Light(300)/Medium(500), so we mirror
+// that here to keep weight rendering at parity.
+function mapFontWeight(weight: string): TextStyle['fontWeight'] {
+  switch (weight) {
+    case 'light':
+      return '300';
+    case 'medium':
+      return '500';
+    case 'bold':
+      return 'bold';
+    case 'normal':
+      return 'normal';
+    default:
+      // Already a numeric string or an unknown value - pass through.
+      return weight as TextStyle['fontWeight'];
+  }
+}
+
 export function resolveDimension(dim: Dimension | undefined): number | string | undefined {
   if (!dim) return undefined;
   if (dim.special === 'wrap_content') return undefined;
@@ -169,7 +190,7 @@ export function resolveNodeStyle(resolved: Partial<Style>, rootHeightPx: number)
   }
 
   if (resolved.fontWeight) {
-    style.fontWeight = resolved.fontWeight as TextStyle['fontWeight'];
+    style.fontWeight = mapFontWeight(resolved.fontWeight);
   }
 
   if (resolved.fontStyle) {

@@ -11,11 +11,14 @@ interface VideoElementProps {
   resolvedStyle: Partial<Style>;
 }
 
-// Mirror ActionHandler.isValidUrlScheme - keep the same allow-list so the
-// behavior of "tap the video to open this URL" matches button clicks.
+// Mirror ActionHandler.isValidUrlScheme. Native SDKs (SDK-5859) open ANY
+// URL that carries a scheme - custom deeplinks (myapp://, whatsapp://,
+// intent://) included - not just an http/https/tel/mailto allow-list. We
+// keep only a minimal guard: the string must start with a valid RFC-3986
+// scheme followed by ':', which still drops schemeless junk like
+// "www.google.com" or markdown "[text](url)" that can't be opened anyway.
 function isValidUrlScheme(url: string): boolean {
-  const scheme = url.split(':')[0]?.toLowerCase();
-  return ['http', 'https', 'tel', 'mailto'].includes(scheme ?? '');
+  return /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(url.trim());
 }
 
 export const VideoElement = React.memo(function VideoElement({ node, resolvedStyle }: VideoElementProps): React.ReactElement | null {
@@ -58,7 +61,11 @@ export const VideoElement = React.memo(function VideoElement({ node, resolvedSty
   const layout = node.layout ?? {};
   const layoutStyle = resolveLayoutStyle(layout, rootHeight);
 
-  const autoPlay = videoConfig?.autoPlay === 'true' || videoConfig?.autoPlay === undefined;
+  // autoPlay defaults OFF, matching iOS (`autoPlay ?? false`) and Android
+  // (`autoPlay = false`). Only an explicit `"true"` starts playback; a
+  // missing value keeps the video paused. Previously RN defaulted this ON,
+  // which diverged from both native SDKs.
+  const autoPlay = videoConfig?.autoPlay === 'true';
   const loop = videoConfig?.loop === 'true';
   const muted = videoConfig?.muted === 'true';
   // Controls default to ON, matching iOS/Android PR #15. Only an explicit

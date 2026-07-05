@@ -104,7 +104,7 @@ function RenderNodeFn({ node, resolvedStyles, actionHandler }: RenderNodeProps):
         content = <TextElement node={node} resolvedStyle={resolvedStyle} />;
         break;
       case 'image':
-        content = <ImageElement node={node} resolvedStyle={resolvedStyle} />;
+        content = <ImageElement node={node} resolvedStyle={resolvedStyle} actionHandler={actionHandler} />;
         break;
       case 'button':
         content = <ButtonElement node={node} resolvedStyle={resolvedStyle} actionHandler={actionHandler} />;
