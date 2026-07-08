@@ -8,34 +8,24 @@ import {
 } from '../NativeDisplaySdkVersion';
 
 /**
- * Pure helper that turns an `Action` into a flat `Record<string, unknown>`
- * payload the bridge can forward to the Core SDK's element-click attribution
- * endpoint as `additionalProperties`.
+ * Turn an Action into a flat map the bridge forwards as click-attribution
+ * extras. Keys match Android and iOS so the dashboard sees the same fields
+ * everywhere.
  *
- * Mirrors `ios/Sources/CleverTapNativeDisplay/Handlers/ActionAttributionExtras.swift`
- * and the equivalent Android Kotlin helper so the keys arriving on the
- * CleverTap dashboard are identical across all three platforms.
+ * Reserved keys per action type:
+ *   - action_type          - open_url, custom, navigate, event, or composite
+ *   - action_key           - the CustomAction key (e.g. "kv", "close")
+ *   - action_url           - resolved URL for open_url
+ *   - action_open_in_browser
+ *   - action_destination   - for navigate
+ *   - action_event_name    - for event
+ *   - action_value         - fallback when CustomAction value isn't an object
+ *   - action_count         - sub-action count for composite
+ *   - action_mode          - execution mode for composite
  *
- * Output keys:
- *
- *   - `action_type`        - one of `open_url`, `custom`, `navigate`, `event`,
- *                            `composite`.
- *   - `action_key`         - the `CustomAction.key` discriminator (the BE
- *                            uses this for `"kv"` bundles, `"close"` actions,
- *                            etc.).
- *   - `action_url`         - resolved platform-specific URL for `open_url`.
- *   - `action_open_in_browser` - copied verbatim.
- *   - `action_destination` - for `navigate`.
- *   - `action_event_name`  - for `event`.
- *   - `action_value`       - scalar fallback for non-dict `CustomAction.value`.
- *   - `action_count`       - sub-action count for `composite`.
- *   - `action_mode`        - execution mode for `composite`.
- *   - Entries from `metadata` / `params` / `properties` / dict `value` are
- *     **spread verbatim** so the dashboard can slice by the client's own
- *     keys (especially `wzrk_*` fields the BE injects into `metadata`).
- *
- * Key collisions resolve last-write-wins under this order:
- *   reserved keys → spread entries (value/metadata/params/properties).
+ * metadata / params / properties / dict value are spread in as-is so the
+ * dashboard can slice by the client's own keys (like wzrk_* fields).
+ * On key collision the spread entries win (they're written last).
  */
 export function attributionExtrasFor(action: Action | undefined): Record<string, unknown> {
   const out: Record<string, unknown> = {};
@@ -58,8 +48,7 @@ function append(action: Action, out: Record<string, unknown>): void {
       out['action_key'] = action.key;
       const value = action.value;
       if (isPlainObject(value)) {
-        // Spread the bundle entries so the dashboard can slice per KV name
-        // (mirrors the BE's `{ "type": "custom", "key": "kv", "value": {...} }` shape).
+        // Spread each KV entry so the dashboard can slice by its name.
         for (const [k, v] of Object.entries(value)) {
           const scalar = coerceScalar(v);
           if (scalar !== undefined) out[k] = scalar;
@@ -98,12 +87,9 @@ function append(action: Action, out: Record<string, unknown>): void {
 }
 
 /**
- * Reduce an arbitrary `unknown` to an analytics-friendly scalar.
- *
- * Strings/numbers/booleans round-trip as their native type so the CleverTap
- * dashboard renders them appropriately. Objects/arrays are JSON-stringified
- * so the payload stays serializable across the bridge. `null`/`undefined`
- * return `undefined` so the caller can skip emitting the key.
+ * Reduce a value to an analytics-friendly scalar. Strings/numbers/booleans
+ * pass through as-is; objects/arrays are JSON-stringified so they survive the
+ * bridge; null/undefined return undefined so the caller can skip the key.
  */
 function coerceScalar(v: unknown): unknown | undefined {
   if (v == null) return undefined;
@@ -128,15 +114,10 @@ function spreadInto(out: Record<string, unknown>, source: Record<string, unknown
 }
 
 /**
- * Drop entries whose values can't be transported across the JS/native
- * bridge cleanly, then unconditionally stamp the ND SDK version onto the
- * payload. Callers should pipe their raw extras through this helper before
- * handing them to the Core SDK so every event the dashboard sees can be
- * attributed to a specific SDK build.
- *
- * Always returns a non-empty object - even an `undefined` / empty input
- * produces `{ nd_lib_v_name, nd_lib_v_code }`. Caller-supplied keys win on
- * collision (we set the version keys last only if absent).
+ * Clean extras for the bridge and stamp on the ND SDK version so every event
+ * can be tied to a build. Run raw extras through this before sending them to
+ * the Core SDK. Always returns at least { nd_lib_v_name, nd_lib_v_code };
+ * caller keys win on collision (version keys are only added if missing).
  */
 export function sanitizeExtras(extras: Record<string, unknown> | undefined): Record<string, unknown> {
   const out: Record<string, unknown> = {};

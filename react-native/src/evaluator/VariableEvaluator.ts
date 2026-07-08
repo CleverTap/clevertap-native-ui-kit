@@ -1,23 +1,20 @@
 const TEMPLATE_PATTERN = /\{\{([^}]+)\}\}/g;
 
 /**
- * Coerce a JS value into a boolean using FE-renderer / native-renderer
- * semantics. Returns `null` when the value can't be mapped, so callers can
- * fall back to their own default.
+ * Convert a value to a boolean the same way the FE and native renderers do.
+ * Returns null when it can't map, so callers can use their own default.
  *
- *   - `boolean` → identity.
- *   - `"true"` / `"false"` strings → literal.
- *   - `"1"` / `"0"` strings → true / false (BE often ships numeric flags
- *     as strings; matches Android + iOS behavior after PR #9 / PR #11).
- *   - finite `number` → `n !== 0`.
- *   - everything else (other strings, null, undefined, objects) → `null`.
+ *   - boolean         -> itself
+ *   - "true"/"false"  -> literal
+ *   - "1"/"0"         -> true/false (the BE often sends flags as strings)
+ *   - finite number   -> n !== 0
+ *   - anything else    -> null
  *
- * Critically, `"0"` is treated as `false` here. The JS default
- * (`Boolean("0")` → `true`) is the opposite of what the FE renderer does,
- * so without this coercion a node with `visible: "{{flag}}"` and
- * `variables: { flag: 0 }` would render on RN but not on iOS/Android.
+ * Note "0" maps to false. Plain JS does the opposite (Boolean("0") is true),
+ * so without this a node with visible: "{{flag}}" and flag: 0 would show on
+ * RN but not on iOS/Android.
  */
-function coerceToBool(value: unknown): boolean | null {
+export function coerceToBool(value: unknown): boolean | null {
   if (typeof value === 'boolean') return value;
   if (typeof value === 'number' && Number.isFinite(value)) return value !== 0;
   if (typeof value === 'string') {
@@ -45,7 +42,7 @@ export class VariableEvaluator {
     if (trimmed === 'true') return true;
     if (trimmed === 'false') return false;
 
-    // Single template variable of the form {{varName}}
+    // A lone {{varName}}
     const singleVarMatch = /^\{\{([^}]+)\}\}$/.exec(trimmed);
     if (singleVarMatch) {
       const value = this._getVariable(singleVarMatch[1]!.trim());
@@ -54,7 +51,7 @@ export class VariableEvaluator {
       return Boolean(value);
     }
 
-    // Check >= and <= before > and < to avoid partial matches
+    // Check >= and <= before > and < so we don't match them partially.
     if (trimmed.includes('>=')) return this._evaluateBinaryExpr(trimmed, '>=');
     if (trimmed.includes('<=')) return this._evaluateBinaryExpr(trimmed, '<=');
     if (trimmed.includes('>')) return this._evaluateBinaryExpr(trimmed, '>');
@@ -70,17 +67,17 @@ export class VariableEvaluator {
   }
 
   private _evaluateExpression(expression: string): unknown {
-    // Ternary expression: condition ? trueValue : falseValue
+    // Ternary: condition ? trueValue : falseValue
     const ternaryMatch = /^(.+?)\?(.+?):(.+)$/.exec(expression);
     if (ternaryMatch) {
       const condition = ternaryMatch[1]!.trim();
       const trueVal = ternaryMatch[2]!.trim().replace(/^['"]|['"]$/g, '');
       const falseVal = ternaryMatch[3]!.trim().replace(/^['"]|['"]$/g, '');
-      // Evaluate the condition as-is, not wrapped in {{}}
+      // The condition is evaluated as-is, not wrapped in {{}}.
       return this.evaluateBoolean(condition) ? trueVal : falseVal;
     }
 
-    // Inside {{...}}: treat the expression as a variable path; return '' if missing
+    // Otherwise treat it as a variable path; return '' if missing.
     return this._getVariable(expression) ?? '';
   }
 
@@ -106,41 +103,37 @@ export class VariableEvaluator {
       }
     }
 
-    // Equality check - stringly-typed, matching Android's VariableEvaluator,
-    // which resolves both operands and compares them by their string form.
-    // We deliberately do NOT special-case booleans: `true == 1` compares as
-    // `"true" == "1"` (false) and `false == "0"` as `"false" == "0"` (false),
-    // same as Android. iOS is typed and also returns false for these, so the
-    // earlier RN behavior (coercing them to equal) matched neither native SDK.
-    // Plain string×number equality still works: `"10" == 10` → "10" == "10".
+    // Equality compares both sides as strings, matching Android. We don't
+    // special-case booleans: `true == 1` is "true" == "1" (false), same as
+    // Android and iOS. String vs number still works: `"10" == 10` -> "10" == "10".
     const leftStr = String(leftVal ?? '');
     const rightStr = String(rightVal ?? '');
     return operator === '==' ? leftStr === rightStr : leftStr !== rightStr;
   }
 
   private _resolveOperand(raw: string): unknown {
-    // Template variable of the form {{varName}}
+    // {{varName}}
     const templateMatch = /^\{\{([^}]+)\}\}$/.exec(raw);
     if (templateMatch) {
       return this._getVariable(templateMatch[1]!.trim()) ?? '';
     }
-    // Quoted string literal (single or double quotes)
+    // Quoted string
     if (
       (raw.startsWith('"') && raw.endsWith('"')) ||
       (raw.startsWith("'") && raw.endsWith("'"))
     ) {
       return raw.slice(1, -1);
     }
-    // Numeric literal
+    // Number
     const num = parseFloat(raw);
     if (!isNaN(num) && String(num) === raw) return num;
-    // Boolean literal
+    // Boolean
     if (raw === 'true') return true;
     if (raw === 'false') return false;
-    // Bare variable name without template syntax
+    // Bare variable name (no {{}})
     const varValue = this._getVariable(raw);
     if (varValue !== undefined) return varValue;
-    // Treat anything else as an unquoted string
+    // Fall back to an unquoted string
     return raw;
   }
 

@@ -25,9 +25,17 @@ export function useFontContext(): FontContextValue {
   return useContext(FontContext);
 }
 
+/**
+ * Picks which font family to use, matching iOS and Android priority:
+ *   1. Client default (highest). Used as-is, not passed through fontResolver.
+ *   2. JSON `fontFamily`, remapped by fontResolver if one is set.
+ *   3. System default (returns undefined so RN uses the OS font).
+ *
+ * Note: the client default must win over the JSON font, or a JSON config could
+ * override the client's chosen font - the opposite of what native does.
+ */
 export function resolveFont(fontFamily: string | undefined, ctx: FontContextValue): string | undefined {
-  const family = fontFamily ?? ctx.defaultFontFamily;
-  if (!family) return undefined;
-  if (ctx.fontResolver) return ctx.fontResolver(family);
-  return family;
+  if (ctx.defaultFontFamily) return ctx.defaultFontFamily;
+  if (fontFamily) return ctx.fontResolver ? ctx.fontResolver(fontFamily) : fontFamily;
+  return undefined;
 }

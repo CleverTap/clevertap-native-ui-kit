@@ -89,7 +89,7 @@ function ArrowButton({ direction, isVertical, arrowStyle: cfg, onPress }: ArrowB
   const size = cfg?.size ?? 20;
   const pad = cfg?.padding ?? 8;
 
-  // Pick arrow symbol: horizontal uses ‹ ›, vertical uses ∧ ∨
+  // Arrow symbol: ‹ › for horizontal, ∧ ∨ for vertical
   let symbol: string;
   if (isVertical) {
     symbol = direction === 'prev' ? '∧' : '∨';
@@ -150,7 +150,8 @@ export const GalleryContainer = React.memo(function GalleryContainer({
   const mode = galleryConfig?.mode ?? 'snapping';
   const orientation = galleryConfig?.orientation ?? 'horizontal';
   const isVertical = orientation === 'vertical';
-  const spacing = galleryConfig?.spacing ?? 0;
+  // Default gap is 8dp to match native (iOS and Android both use 8).
+  const spacing = galleryConfig?.spacing ?? 8;
   const itemsPerView = galleryConfig?.itemsPerView ?? 1;
   const columns = galleryConfig?.columns ?? 1;
   const showIndicators = galleryConfig?.showIndicators ?? false;
@@ -158,7 +159,10 @@ export const GalleryContainer = React.memo(function GalleryContainer({
   const showArrows = galleryConfig?.showArrows ?? false;
   const arrowStyleCfg = galleryConfig?.arrowStyle;
   const peek = galleryConfig?.peek;
-  const snapBehaviorRaw = galleryConfig?.snapBehavior ?? 'start';
+  // Default to 'center' to match native, which always centers the focused item.
+  // Only matters for peek carousels - without peek there's no snapToInterval so
+  // snapToAlignment does nothing.
+  const snapBehaviorRaw = galleryConfig?.snapBehavior ?? 'center';
   const snapAlignment = snapBehaviorRaw === 'none' ? undefined : snapBehaviorRaw;
   const autoScrollInterval = galleryConfig?.autoScrollInterval;
   const infiniteScroll = galleryConfig?.infiniteScroll ?? false;
@@ -183,10 +187,10 @@ export const GalleryContainer = React.memo(function GalleryContainer({
   let itemHeight: number | undefined;
 
   if (isVertical) {
-    // Vertical gallery: each item fills the full width (cross-axis).
-    // itemsPerView controls how many items are visible along the scroll axis.
+    // Vertical gallery: items fill the width; itemsPerView is how many show
+    // along the scroll axis.
     if (mode === 'free_flow_grid' && columns > 1) {
-      // Multi-column vertical grid: size items to fit `columns` per row
+      // Grid: fit `columns` items per row
       itemWidth = (containerWidth - spacing * (columns - 1)) / columns;
     } else {
       itemWidth = containerWidth;
@@ -196,13 +200,12 @@ export const GalleryContainer = React.memo(function GalleryContainer({
     } else if (mode === 'free_flow_grid') {
       itemHeight = (containerHeight - spacing * (itemsPerView - 1)) / itemsPerView;
     }
-    // free_flow vertical: items render at their own natural height
+    // free_flow vertical: items use their own natural height
   } else {
     // Horizontal gallery
     if (mode === 'free_flow_grid') {
       if (columns > 1) {
-        // Multi-row horizontal grid: group items into rows of `columns` each.
-        // Item width is derived from itemsPerView (visible columns per screen).
+        // Grid: width comes from itemsPerView (visible columns per screen)
         itemWidth = (containerWidth - spacing * (itemsPerView - 1)) / itemsPerView;
       } else {
         itemWidth = (containerWidth - spacing * (itemsPerView - 1)) / itemsPerView;
@@ -210,7 +213,7 @@ export const GalleryContainer = React.memo(function GalleryContainer({
     } else if (mode === 'snapping') {
       itemWidth = containerWidth - peekBefore - peekAfter;
     } else {
-      // free_flow: items render at their own natural width
+      // free_flow: items use their own natural width
       itemWidth = containerWidth;
     }
   }
@@ -260,7 +263,7 @@ export const GalleryContainer = React.memo(function GalleryContainer({
 
       if (next >= count) {
         if (infiniteScroll) {
-          // Jump back to the start instantly so the loop appears seamless
+          // Jump back to start with no animation so the loop looks seamless
           next = 0;
           animated = false;
         } else {
@@ -333,7 +336,7 @@ export const GalleryContainer = React.memo(function GalleryContainer({
   const contentPaddingStart = peekBefore > 0 ? peekBefore : undefined;
   const contentPaddingEnd = peekAfter > 0 ? peekAfter : undefined;
 
-  // getItemLayout requires a known item size - not available in free_flow mode
+  // getItemLayout needs a known item size, which free_flow doesn't have
   const knownItemSize = isVertical ? itemHeight : itemWidth;
   const getItemLayout =
     mode !== 'free_flow' && knownItemSize !== undefined
@@ -349,18 +352,17 @@ export const GalleryContainer = React.memo(function GalleryContainer({
       {resolvedStyle.background && (
         <BackgroundRenderer
           background={resolvedStyle.background}
-          // Explicit width/height: '100%' resolves reliably against the parent's
-          // measured size, including wrap_content containers. absoluteFillObject's
-          // right:0/bottom:0 inset anchoring fails for wrap_content parents on iOS,
-          // leaving the underlying LinearGradient at zero height.
+          // '100%' width/height resolves reliably, even for wrap_content
+          // parents. absoluteFill's right:0/bottom:0 fails on iOS wrap_content
+          // parents, leaving the gradient at zero height.
           style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
         >
           {null}
         </BackgroundRenderer>
       )}
       <FlatList
-        // FlatList does not allow numColumns to change after mount. Key on the
-        // values that affect it so any config change forces a remount.
+        // FlatList can't change numColumns after mount, so key on the values
+        // that affect it to force a remount when they change.
         key={`${mode}-${orientation}-${columns}`}
         ref={flatListRef}
         data={node.children}
@@ -387,7 +389,7 @@ export const GalleryContainer = React.memo(function GalleryContainer({
         viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
         initialScrollIndex={initialPage > 0 ? initialPage : undefined}
         getItemLayout={getItemLayout}
-        // Multi-column grid (vertical scroll only - FlatList numColumns requires vertical orientation)
+        // Multi-column grid, vertical only (FlatList numColumns needs vertical scroll)
         numColumns={!isVertical || mode !== 'free_flow_grid' ? undefined : columns > 1 ? columns : undefined}
       />
 

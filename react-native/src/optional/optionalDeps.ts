@@ -1,3 +1,5 @@
+import { NDLogger } from '../internal/NDLogger';
+
 const cache = new Map<string, unknown>();
 const NOT_INSTALLED = Symbol('not-installed');
 
@@ -14,9 +16,12 @@ function tryLoad<T>(name: string, loader: Loader<T>): T | null {
     return mod;
   } catch {
     cache.set(name, NOT_INSTALLED);
-    // eslint-disable-next-line no-console
-    console.info(
-      `[NativeDisplay] optional peer "${name}" not installed - related features will degrade gracefully.`,
+    // Debug level, not warn: the useful, feature-specific warning is logged
+    // where the feature is actually used (BackgroundRenderer, VideoElement).
+    // Keeping this at debug avoids double-logging at the default INFO level.
+    NDLogger.d(
+      'NativeDisplay',
+      `optional peer "${name}" not installed - related features will degrade gracefully.`,
     );
     return null;
   }
@@ -24,16 +29,15 @@ function tryLoad<T>(name: string, loader: Loader<T>): T | null {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getLinearGradient = (): any | null => {
-  // Prefer react-native-linear-gradient; fall back to expo-linear-gradient for Expo clients.
-  // Both expose the same start/end/colors API so BackgroundRenderer works unchanged.
+  // Prefer react-native-linear-gradient, fall back to expo-linear-gradient for
+  // Expo. Both have the same API so BackgroundRenderer doesn't care which.
   const rn = tryLoad('react-native-linear-gradient', () => require('react-native-linear-gradient').default);
   if (rn) return rn;
-  // expo-linear-gradient uses expo-modules-core and requires the Expo env (same guard as expo-image).
+  // Only try the Expo package in an Expo env.
   if (!process.env.EXPO_OS) return null;
-  // eval('require') is the standard Metro escape hatch: Metro's static analyser
-  // does not follow requires inside eval, so bare-RN projects that don't have
-  // expo-linear-gradient installed will never see a bundle-time resolution error.
-  // The tryLoad wrapper catches any runtime error if the package is absent.
+  // eval('require') hides this require from Metro's static analyser, so a plain
+  // RN project without expo-linear-gradient won't fail at bundle time. tryLoad
+  // catches the runtime error if the package isn't there.
   // eslint-disable-next-line no-eval
   return tryLoad('expo-linear-gradient', () => eval('require')('expo-linear-gradient').LinearGradient);
 };
@@ -70,15 +74,10 @@ export const getBlurView = (): any | null =>
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getExpoImage = (): any | null => {
-  // expo-image needs babel-preset-expo to inline process.env.EXPO_OS at build
-  // time. In a bare React Native project that transform is missing, so the
-  // module throws on load - before our try/catch can catch it - and Metro
-  // reports a fatal error. We guard with the same env var expo itself checks:
-  // if it was never inlined, the value is the literal string 'undefined' which
-  // is falsy, so we skip the load entirely.
-  //
-  // In an Expo-managed or bare-with-expo-modules project the var is inlined to
-  // 'ios', 'android', or 'web', so the load proceeds normally.
+  // expo-image only loads correctly in an Expo project (it needs
+  // babel-preset-expo to inline process.env.EXPO_OS). In a plain RN project it
+  // throws on load in a way our try/catch can't catch, crashing Metro. So we
+  // check the same env var: if it isn't set, skip loading entirely.
   if (!process.env.EXPO_OS) return null;
   return tryLoad('expo-image', () => require('expo-image').Image);
 };

@@ -2,15 +2,15 @@ import { NativeDisplayConfig, ResolvedConfig, toResolvedConfig } from '../models
 import { StyleResolver } from '../style/StyleResolver';
 import { NativeDisplayUnit } from './NativeDisplayUnit';
 import { parseNativeDisplayConfig } from './configDeserializer';
+import { NDLogger } from '../internal/NDLogger';
 
 export class NativeDisplayConfigParser {
   tryParse(jsonString: string): NativeDisplayUnit | null {
     try {
       const jsonObj = JSON.parse(jsonString) as Record<string, unknown>;
 
-      // _extractUnitId never returns null - it falls back to "0_0" when
-      // wzrk_id is absent. Mirrors Android + iOS so payloads stripped of
-      // identifiers during local testing still render.
+      // Always returns an id, falling back to "0_0" when wzrk_id is
+      // missing, so test payloads without ids still render.
       const unitId = this._extractUnitId(jsonObj);
 
       const slotId = this._extractSlotId(jsonObj);
@@ -22,7 +22,7 @@ export class NativeDisplayConfigParser {
         this._tryParseAsRootConfig(jsonObj);
 
       if (!resolvedConfig) {
-        console.warn(`[NativeDisplayConfigParser] All parse strategies failed for unit ${unitId}. No valid config found.`);
+        NDLogger.w('NativeDisplayConfigParser', `All parse strategies failed for unit ${unitId}. No valid config found.`);
         return null;
       }
 
@@ -37,7 +37,7 @@ export class NativeDisplayConfigParser {
         rawJson: jsonString,
       };
     } catch (e) {
-      console.warn('[NativeDisplayConfigParser] Failed to parse JSON:', e);
+      NDLogger.w('NativeDisplayConfigParser', 'Failed to parse JSON:', e);
       return null;
     }
   }
@@ -52,7 +52,7 @@ export class NativeDisplayConfigParser {
       const ndConfig = parseNativeDisplayConfig(ndConfigRaw as Record<string, unknown>);
       return toResolvedConfig(ndConfig);
     } catch (e) {
-      console.warn('[NativeDisplayConfigParser] Strategy 1 (native_display_config) failed:', e);
+      NDLogger.w('NativeDisplayConfigParser', 'Strategy 1 (native_display_config) failed:', e);
       return null;
     }
   }
@@ -70,7 +70,7 @@ export class NativeDisplayConfigParser {
       const ndConfig = parseNativeDisplayConfig(parsed);
       return toResolvedConfig(ndConfig);
     } catch (e) {
-      console.warn('[NativeDisplayConfigParser] Strategy 2 (custom_kv.nd_config) failed:', e);
+      NDLogger.w('NativeDisplayConfigParser', 'Strategy 2 (custom_kv.nd_config) failed:', e);
       return null;
     }
   }
@@ -84,7 +84,7 @@ export class NativeDisplayConfigParser {
       const ndConfig = parseNativeDisplayConfig(jsonObj);
       return toResolvedConfig(ndConfig);
     } catch (e) {
-      console.warn('[NativeDisplayConfigParser] Strategy 3 (bare root) failed:', e);
+      NDLogger.w('NativeDisplayConfigParser', 'Strategy 3 (bare root) failed:', e);
       return null;
     }
   }
@@ -93,23 +93,20 @@ export class NativeDisplayConfigParser {
     try {
       return new StyleResolver(config.theme, config.styleClasses).resolveAll(config.root);
     } catch (e) {
-      console.warn(`[NativeDisplayConfigParser] Style pre-resolution failed for unit ${unitId}:`, e);
+      NDLogger.w('NativeDisplayConfigParser', `Style pre-resolution failed for unit ${unitId}:`, e);
       return {};
     }
   }
 
   /**
-   * Extract `wzrk_id` (the unit identifier the dashboard uses for
-   * attribution). Falls back to the sentinel `"0_0"` when the field is
-   * missing or empty - matches Android + iOS so a payload stripped of
-   * identifiers during local testing still renders. The dashboard will
-   * group all `"0_0"` events together; that's fine for local dev and
-   * harmless in production (where the BE always supplies a real id).
+   * Get `wzrk_id`, the id the dashboard uses for attribution. Falls back to
+   * "0_0" when it's missing so local test payloads still render. In
+   * production the backend always sends a real id.
    */
   private _extractUnitId(jsonObj: Record<string, unknown>): string {
     const id = jsonObj['wzrk_id'];
     if (typeof id === 'string' && id.length > 0) return id;
-    console.warn('[NativeDisplayConfigParser] Missing wzrk_id; using sentinel "0_0".');
+    NDLogger.w('NativeDisplayConfigParser', 'Missing wzrk_id; using sentinel "0_0".');
     return '0_0';
   }
 

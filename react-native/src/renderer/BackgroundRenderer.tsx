@@ -4,6 +4,7 @@ import type { ViewStyle } from 'react-native';
 import type { Background } from '../models/Background';
 import { parseColor } from '../utils/color';
 import { getLinearGradient, getSvg, getReanimated, getBlurView } from '../optional/optionalDeps';
+import { NDLogger } from '../internal/NDLogger';
 
 interface BackgroundRendererProps {
   background: Background;
@@ -32,7 +33,7 @@ function LinearGradientBg({
   const parsedColors = background.colors.map((c) => parseColor(c) ?? c);
 
   if (!LinearGradient) {
-    console.warn('[BackgroundRenderer] linear_gradient requires react-native-linear-gradient (or expo-linear-gradient for Expo). Falling back to solid color.');
+    NDLogger.w('BackgroundRenderer', 'linear_gradient requires react-native-linear-gradient (or expo-linear-gradient for Expo). Falling back to solid color.');
     return (
       <View style={[style, { backgroundColor: parsedColors[0] ?? 'transparent' }]}>
         {children}
@@ -46,21 +47,17 @@ function LinearGradientBg({
   const endX = 0.5 + Math.cos(angleRad) * 0.5;
   const endY = 0.5 + Math.sin(angleRad) * 0.5;
 
-  // Forward color stops as `locations` so non-uniform gradients match native
-  // (iOS zips colors+stops, Android reads stops[i]). Only pass them when the
-  // count matches the colors array - react-native-linear-gradient's behavior
-  // is undefined for mismatched lengths, so in that case we fall back to the
-  // library's even distribution, same as before.
+  // Pass color stops as `locations` so uneven gradients match native. Only when
+  // the count matches the colors, since the library misbehaves otherwise; then
+  // we let it space them evenly.
   const locations =
     background.stops && background.stops.length === parsedColors.length
       ? background.stops
       : undefined;
 
-  // Use a wrapper View so the outer View owns the size/position (from the `style` prop),
-  // and the LinearGradient fills it with explicit 100%x100% dimensions. Using
-  // absoluteFill (bottom/right: 0) on the gradient itself is unreliable when the
-  // parent has no normal-flow children and derives its height from aspectRatio.
-  // Explicit width/height percentages always resolve against the known parent size.
+  // Wrapper View owns the size/position; the gradient fills it at 100%x100%.
+  // absoluteFill (bottom/right: 0) on the gradient is unreliable when the parent
+  // gets its height from aspectRatio, but 100% always resolves against it.
   return (
     <View style={style}>
       <LinearGradient
@@ -90,7 +87,7 @@ function SvgGradientBg({
   const parsedColors = background.colors.map((c) => parseColor(c) ?? c);
 
   if (!svgMod) {
-    console.warn(`[BackgroundRenderer] ${background.type} requires react-native-svg. Falling back to solid color.`);
+    NDLogger.w('BackgroundRenderer', `${background.type} requires react-native-svg. Falling back to solid color.`);
     return (
       <View style={[style, { backgroundColor: parsedColors[0] ?? 'transparent' }]}>
         {children}
@@ -125,7 +122,7 @@ function SvgGradientBg({
     );
   }
 
-  // sweep_gradient - approximate with a linear gradient since SVG sweep gradients are complex
+  // sweep_gradient - approximated with a linear gradient (true sweep is complex in SVG)
   const bg = background as import('../models/Background').SweepGradientBackground;
   const stops = bg.stops ?? bg.colors.map((_, i) => i / Math.max(bg.colors.length - 1, 1));
   return (
@@ -158,7 +155,7 @@ function AnimatedGradientBg({
   const parsedColors = background.colors.map((c) => parseColor(c) ?? c);
 
   if (!reanimated) {
-    console.warn('[BackgroundRenderer] animated_gradient requires react-native-reanimated. Falling back to solid color.');
+    NDLogger.w('BackgroundRenderer', 'animated_gradient requires react-native-reanimated. Falling back to solid color.');
     return (
       <View style={[style, { backgroundColor: parsedColors[0] ?? 'transparent' }]}>
         {children}
@@ -168,7 +165,7 @@ function AnimatedGradientBg({
 
   const LinearGradient = getLinearGradient();
   if (!LinearGradient) {
-    console.warn('[BackgroundRenderer] animated_gradient requires react-native-linear-gradient (or expo-linear-gradient for Expo). Falling back to solid color.');
+    NDLogger.w('BackgroundRenderer', 'animated_gradient requires react-native-linear-gradient (or expo-linear-gradient for Expo). Falling back to solid color.');
     return (
       <View style={[style, { backgroundColor: parsedColors[0] ?? 'transparent' }]}>
         {children}
@@ -181,7 +178,7 @@ function AnimatedGradientBg({
     ? reanimated.default.createAnimatedComponent(LinearGradient)
     : LinearGradient;
 
-  // Cycle through color stops - simplified implementation
+  // Cycle through the colors (simplified)
   const progress = useSharedValue(0);
   useEffect(() => {
     progress.value = withRepeat(
@@ -197,8 +194,8 @@ function AnimatedGradientBg({
   const endX = 0.5 + Math.cos(angleRad) * 0.5;
   const endY = 0.5 + Math.sin(angleRad) * 0.5;
 
-  // Same wrapper-View pattern as LinearGradientBg: explicit 100%x100% fills the
-  // outer View reliably regardless of how the parent derived its dimensions.
+  // Same wrapper-View trick as LinearGradientBg: 100%x100% fills the outer View
+  // no matter how the parent got its size.
   return (
     <View style={style}>
       <AnimatedLinearGradient
@@ -228,7 +225,7 @@ function ShimmerBg({
   const highlightColor = parseColor(background.highlight_color) ?? '#F5F5F5';
 
   if (!reanimated) {
-    console.warn('[BackgroundRenderer] shimmer requires react-native-reanimated. Falling back to static base color.');
+    NDLogger.w('BackgroundRenderer', 'shimmer requires react-native-reanimated. Falling back to static base color.');
     return (
       <View style={[style, { backgroundColor: baseColor }]}>
         {children}
@@ -275,7 +272,7 @@ function PulseBg({
   const color = parseColor(background.color) ?? '#FFFFFF';
 
   if (!reanimated) {
-    console.warn('[BackgroundRenderer] pulse requires react-native-reanimated. Falling back to static color.');
+    NDLogger.w('BackgroundRenderer', 'pulse requires react-native-reanimated. Falling back to static color.');
     return (
       <View style={[style, { backgroundColor: color }]}>
         {children}
@@ -356,46 +353,85 @@ function PatternBg({
   children: React.ReactNode;
 }): React.ReactElement {
   const svgMod = getSvg();
-  const primaryColor = parseColor(background.primary_color) ?? '#000000';
+  // Base fill = primary_color, pattern shapes = secondary_color, matching native.
+  // (These were swapped before, so patterns showed the wrong colors.)
+  const primaryColor = parseColor(background.primary_color) ?? '#808080';
   const secondaryColor = parseColor(background.secondary_color) ?? '#FFFFFF';
 
   if (!svgMod) {
-    console.warn('[BackgroundRenderer] pattern requires react-native-svg. Falling back to solid color.');
+    NDLogger.w('BackgroundRenderer', 'pattern requires react-native-svg. Falling back to solid color.');
     return (
-      <View style={[style, { backgroundColor: secondaryColor }]}>
+      <View style={[style, { backgroundColor: primaryColor }]}>
         {children}
       </View>
     );
   }
 
-  const { Svg, Rect, Circle, Defs, Pattern } = svgMod;
-  const size = background.size ?? 10;
+  const { Svg, Rect, Circle, Line, Defs, Pattern } = svgMod;
+  // Defaults match native (size = 20, spacing = 30).
+  const size = background.size ?? 20;
+  const spacing = background.spacing ?? 30;
   const opacity = background.opacity ?? 1;
 
+  // Each pattern is a repeating tile (tileW x tileH) with shapes in
+  // secondaryColor. SVG <Pattern> tiles it, doing what native's draw loops do.
+  let tileW = size + spacing;
+  let tileH = size + spacing;
   let patternContent: React.ReactElement;
   switch (background.pattern_type) {
     case 'dots':
     case 'polka_dots':
-      patternContent = <Circle cx={size / 2} cy={size / 2} r={size * 0.3} fill={primaryColor} />;
+      // Dot of diameter `size`, centered in a `spacing`-wide tile
+      tileW = spacing;
+      tileH = spacing;
+      patternContent = <Circle cx={spacing / 2} cy={spacing / 2} r={size / 2} fill={secondaryColor} />;
       break;
-    case 'checkerboard':
+    case 'stripes_horizontal':
+      // Horizontal bar of height `size`, repeated down the tile
+      patternContent = <Rect x="0" y="0" width={tileW} height={size} fill={secondaryColor} />;
+      break;
+    case 'stripes_vertical':
+      // Vertical bar of width `size`, repeated across the tile
+      patternContent = <Rect x="0" y="0" width={size} height={tileH} fill={secondaryColor} />;
+      break;
+    case 'stripes_diagonal':
+      // Corner-to-corner line of width `size`, tiles seamlessly at 45deg
+      patternContent = (
+        <Line x1="0" y1="0" x2={tileW} y2={tileH} stroke={secondaryColor} strokeWidth={size} />
+      );
+      break;
+    case 'grid':
+      // Horizontal + vertical bars make a grid of `size`-wide lines
       patternContent = (
         <>
-          <Rect x="0" y="0" width={size / 2} height={size / 2} fill={primaryColor} />
-          <Rect x={size / 2} y={size / 2} width={size / 2} height={size / 2} fill={primaryColor} />
+          <Rect x="0" y="0" width={tileW} height={size} fill={secondaryColor} />
+          <Rect x="0" y="0" width={size} height={tileH} fill={secondaryColor} />
+        </>
+      );
+      break;
+    case 'checkerboard':
+      // Two `size` squares on the diagonal of a 2x size tile
+      tileW = size * 2;
+      tileH = size * 2;
+      patternContent = (
+        <>
+          <Rect x="0" y="0" width={size} height={size} fill={secondaryColor} />
+          <Rect x={size} y={size} width={size} height={size} fill={secondaryColor} />
         </>
       );
       break;
     default:
-      patternContent = <Rect x="0" y="0" width={size} height="1" fill={primaryColor} />;
+      tileW = spacing;
+      tileH = spacing;
+      patternContent = <Circle cx={spacing / 2} cy={spacing / 2} r={size / 2} fill={secondaryColor} />;
   }
 
   return (
     <View style={[style, { overflow: 'hidden' }]}>
-      <View style={[StyleSheet.absoluteFill, { backgroundColor: secondaryColor }]} />
+      <View style={[StyleSheet.absoluteFill, { backgroundColor: primaryColor }]} />
       <Svg style={[StyleSheet.absoluteFill, { opacity }]}>
         <Defs>
-          <Pattern id="pat" x="0" y="0" width={size} height={size} patternUnits="userSpaceOnUse">
+          <Pattern id="pat" x="0" y="0" width={tileW} height={tileH} patternUnits="userSpaceOnUse">
             {patternContent}
           </Pattern>
         </Defs>
@@ -420,7 +456,7 @@ function ParticlesBg({
   const particleColor = parseColor(background.particle_color) ?? '#FFFFFF';
 
   if (!reanimated) {
-    console.warn('[BackgroundRenderer] particles requires react-native-reanimated. Falling back to transparent background.');
+    NDLogger.w('BackgroundRenderer', 'particles requires react-native-reanimated. Falling back to transparent background.');
     return (
       <View style={[style, { backgroundColor: bgColor }]}>
         {children}
@@ -428,7 +464,7 @@ function ParticlesBg({
     );
   }
 
-  // Simplified: render a static set of dots as a stand-in for a full particle system
+  // Simplified: static dots instead of a real particle system
   const count = Math.min(background.particle_count ?? 20, 50);
   const size = background.particle_size ?? 4;
   const opacity = background.opacity ?? 0.7;

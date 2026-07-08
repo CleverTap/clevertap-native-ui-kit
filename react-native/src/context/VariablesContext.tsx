@@ -12,17 +12,12 @@ export interface VariablesProviderProps {
 }
 
 /**
- * Provides the unit-level `variables` map to all child components via context.
+ * Shares the `variables` map with all child components via context.
  *
- * Putting variables in context (instead of passing them as a prop through every
- * RenderNodeProps call) lets `RenderNode` be passed by stable reference to
- * container components. Containers get the same `RenderNode` reference across
- * renders, so their `React.memo` wrapping can skip re-renders correctly.
- *
- * Without this, `RenderNode.tsx` would need an inline closure like
- * `(props) => <RenderNode {...props} variables={variables} />` to pass the
- * variables down. A new closure object is created on every parent render,
- * which looks like a new `RenderNode` prop to the container - breaking memo.
+ * We use context instead of passing variables as a prop so `RenderNode` keeps
+ * a stable reference across renders. That lets `React.memo` on containers skip
+ * unneeded re-renders - a prop would create a new closure each render and
+ * break memo.
  */
 export function VariablesProvider({ variables, children }: VariablesProviderProps): React.ReactElement {
   return (

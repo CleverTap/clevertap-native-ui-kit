@@ -18,7 +18,7 @@ export const DividerElement = React.memo(function DividerElement({ node, resolve
   const layoutStyle = resolveLayoutStyle(layout, rootHeight);
   const dividerConfig = node.dividerConfig;
 
-  const color = parseColor(dividerConfig?.color ?? resolvedStyle.borderColor ?? '#CCCCCC');
+  const color = parseColor(dividerConfig?.color ?? resolvedStyle.borderColor ?? '#E0E0E0');
   const thickness = dividerConfig?.thickness ?? 1;
 
   const isHorizontalDivider =

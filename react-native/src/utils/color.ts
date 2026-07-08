@@ -1,14 +1,10 @@
 /**
- * Convert a color string to a React Native-compatible rgba() string.
+ * Turns a hex color string into an rgb()/rgba() string React Native accepts.
+ * Handles #RGB, #RGBA, #RRGGBB, #RRGGBBAA. Alpha is the last byte (RGBA order),
+ * not the web ARGB order.
  *
- * Supported formats:
- *   #RRGGBB     - opaque
- *   #RRGGBBAA   - with alpha (AA is alpha, not the web ARGB order)
- *   #RGB        - shorthand, opaque
- *   #RGBA       - shorthand with alpha
- *
- * Returns the input unchanged if it does not start with #, so already-valid
- * RN colors like 'transparent', 'red', or 'rgb(...)' pass through as-is.
+ * Anything not starting with # is returned as-is, so 'red', 'transparent',
+ * 'rgb(...)' etc. pass through unchanged.
  */
 export function parseColor(color: string | undefined | null): string | undefined {
   if (!color) return undefined;
@@ -39,7 +35,7 @@ export function parseColor(color: string | undefined | null): string | undefined
   }
 
   if (hex.length === 8) {
-    // #RRGGBBAA - alpha is the last byte, not the web ARGB order
+    // #RRGGBBAA - alpha is the last byte (not web ARGB order)
     const r = parseInt(hex.slice(0, 2), 16);
     const g = parseInt(hex.slice(2, 4), 16);
     const b = parseInt(hex.slice(4, 6), 16);

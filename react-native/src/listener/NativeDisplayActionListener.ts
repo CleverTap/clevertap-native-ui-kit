@@ -1,56 +1,45 @@
 /**
- * Host-facing callbacks fired by the Native Display SDK as a unit goes
- * through its lifecycle and as the user interacts with its elements.
- *
- * All methods are optional except those marked required at the type level.
- * Implement only the ones you care about and ignore the rest.
+ * Callbacks the SDK fires as a unit is shown and as the user interacts with it.
+ * Implement only the ones you need.
  */
 export interface NativeDisplayActionListener {
   /**
-   * Called when an `open_url` action fires. Return `true` if the host took
-   * over the navigation; `false` to fall through to the SDK's default
-   * `Linking.openURL`.
+   * Fired on an `open_url` action. Return `true` if you handled the navigation
+   * yourself, `false` to let the SDK open it with `Linking.openURL`.
    */
   onOpenUrl(url: string, openInBrowser: boolean): boolean;
 
   /**
-   * Called when a `custom` action fires. The SDK never opens custom actions
-   * itself - it just hands you the key/value pair so you can route it.
+   * Fired on a `custom` action. The SDK just hands you the key/value pair; you
+   * decide what to do with it.
    */
   onCustomAction(key: string, value: unknown, metadata?: Record<string, string>): void;
 
   /**
-   * Called when a `navigate` action fires. Wire this to your navigation
-   * library (React Navigation, etc.).
+   * Fired on a `navigate` action. Hook this up to your navigation library.
    */
   onNavigate(destination: string, params?: Record<string, string>): void;
 
   /**
-   * Called for `event` actions, and also for the SDK's own analytics:
-   * `Notification Viewed` (carrying the unit id) and `Notification
-   * Clicked` (carrying `node_id` plus attribution extras such as
-   * `action_type`, `action_url`, `wzrk_*`). Treat this as a passive
-   * notification - the SDK already pushed the matching event to CleverTap.
+   * Fired for `event` actions and for the SDK's own analytics events
+   * (Notification Viewed / Clicked). The SDK already sent these to CleverTap,
+   * so this is just a heads-up for you.
    */
   onTrackEvent(eventName: string, properties?: Record<string, unknown>): void;
 
   /**
-   * Called once when a unit first becomes visible.
+   * Fired once when a unit first becomes visible.
    *
-   * **Do NOT call `pushDisplayUnitViewedEventForID` manually here** - the
-   * SDK already fires the "Notification Viewed" event to the Core SDK
-   * automatically. This callback is purely a notification for the host
-   * (e.g. for in-app logging or extra analytics).
+   * Do NOT push a "Notification Viewed" event yourself - the SDK already does.
+   * This is just a notification for the host (e.g. your own analytics).
    */
   onDisplayUnitViewed?(unitId: string): void;
 
   /**
-   * Called when any element inside a unit is clicked.
+   * Fired when any element in a unit is clicked.
    *
-   * **Do NOT call `pushDisplayUnitClickedEventForID` manually here** - the
-   * SDK already fires "Notification Clicked" to the Core SDK automatically
-   * (with element-attribution extras after PR #12). This callback is purely
-   * a notification for the host.
+   * Do NOT push a "Notification Clicked" event yourself - the SDK already does.
+   * This is just a notification for the host.
    */
   onDisplayUnitClicked?(unitId: string): void;
 }

@@ -17,11 +17,9 @@ import {
 
 export const MATCH_PARENT_MARKER = '__match_parent__';
 
-// Map the JSON font weight enum to a value RN actually honors. RN's TextStyle
-// only reliably resolves 'normal', 'bold', and the numeric strings '100'-'900'
-// on both platforms; the named weights 'light' and 'medium' are silently
-// dropped to normal. Native maps them to Light(300)/Medium(500), so we mirror
-// that here to keep weight rendering at parity.
+// Map JSON font weights to values RN honors. RN only handles 'normal', 'bold',
+// and numeric strings '100'-'900'; 'light' and 'medium' get dropped to normal.
+// Convert them to 300/500 to match native.
 function mapFontWeight(weight: string): TextStyle['fontWeight'] {
   switch (weight) {
     case 'light':
@@ -33,7 +31,7 @@ function mapFontWeight(weight: string): TextStyle['fontWeight'] {
     case 'normal':
       return 'normal';
     default:
-      // Already a numeric string or an unknown value - pass through.
+      // Numeric string or unknown value - pass through.
       return weight as TextStyle['fontWeight'];
   }
 }
@@ -76,7 +74,7 @@ export function resolveOffsetStyle(offset: Offset): {
   if (offset.unit === 'percent') {
     return { top: `${offset.y}%`, left: `${offset.x}%` };
   }
-  // dp / sp / px - use the raw number (RN treats unitless values as dp)
+  // dp / sp / px - use the raw number (RN treats unitless as dp).
   return { top: offset.y, left: offset.x };
 }
 
@@ -85,19 +83,17 @@ export function resolveLayoutStyle(layout: Layout, rootHeightPx: number): ViewSt
 
   const width = resolveDimension(layout.width);
   if (width === MATCH_PARENT_MARKER) {
-    // match_parent width = fill available horizontal space.
-    // In RN, flex: 1 fills the main axis (height in a vertical container), NOT width.
-    // width: '100%' is the correct equivalent for horizontal fill.
+    // Fill horizontal space. Use width: '100%', not flex: 1 - flex fills the
+    // main axis (height in a vertical container), not width.
     style.width = '100%';
   } else if (width !== undefined) {
+    // Explicit width must hold its size. flexShrink: 0 stops a sibling from
+    // squeezing it in a horizontal row.
     style.width = width as number | `${number}%`;
-    // An explicit dp/px/percent width means this element must hold its stated size.
-    // flexShrink: 0 stops a wrap_content sibling from pushing it off-screen
-    // in a horizontal flex row.
     style.flexShrink = 0;
   }
-  // wrap_content (width === undefined) leaves flexShrink at RN's default of 1,
-  // so the element can shrink to give space to fixed-size siblings in a tight row.
+  // wrap_content keeps RN's default flexShrink of 1, so it can shrink to make
+  // room for fixed-size siblings.
 
   const height = resolveDimension(layout.height);
   if (height === MATCH_PARENT_MARKER) {
@@ -134,7 +130,7 @@ export function resolveNodeStyle(resolved: Partial<Style>, rootHeightPx: number)
 
   if (resolved.borderRadius) {
     style.borderRadius = resolveBorderRadius(resolved.borderRadius, rootHeightPx);
-    // overflow: hidden clips children to the borderRadius
+    // Clip children to the rounded corners.
     style.overflow = 'hidden';
   }
 
@@ -181,7 +177,7 @@ export function resolveNodeStyle(resolved: Partial<Style>, rootHeightPx: number)
 
   if (resolved.lineHeight) {
     const lh = resolveTextDim(resolved.lineHeight, rootHeightPx);
-    // lineHeight in RN is an absolute value - do not multiply by fontSize
+    // RN lineHeight is absolute - don't multiply by fontSize.
     if (lh != null) style.lineHeight = lh;
   }
 
@@ -198,11 +194,9 @@ export function resolveNodeStyle(resolved: Partial<Style>, rootHeightPx: number)
   }
 
   if (resolved.letterSpacing != null) {
-    // Skip letterSpacing when fontSize is explicitly 0. Android Fabric's
-    // text layout pass throws IllegalArgumentException("FontSize should be a
-    // positive value") because it computes em-relative letter spacing from
-    // fontSize. If fontSize is unset, RN's default (14) is used and Fabric
-    // is happy - so only the explicit-zero case is dangerous.
+    // Skip letterSpacing when fontSize is exactly 0. Android Fabric derives
+    // letter spacing from fontSize and throws if fontSize is 0. An unset
+    // fontSize falls back to RN's default (14), which is fine.
     if (style.fontSize !== 0) {
       style.letterSpacing = resolved.letterSpacing;
     }

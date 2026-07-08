@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import type { Animation } from '../models/Animation';
 import { getReanimated } from '../optional/optionalDeps';
+import { NDLogger } from '../internal/NDLogger';
 
 interface EntranceAnimationProps {
   animation: Animation;
@@ -12,7 +13,7 @@ export function EntranceAnimation({ animation, children }: EntranceAnimationProp
   const reanimated = getReanimated();
 
   if (!reanimated) {
-    console.warn('[EntranceAnimation] Entrance animation requires react-native-reanimated. Element will render without animation.');
+    NDLogger.w('EntranceAnimation', 'Entrance animation requires react-native-reanimated. Element will render without animation.');
     return <View>{children}</View>;
   }
 
@@ -57,9 +58,8 @@ function AnimatedWrapper({ animation, reanimated, children }: AnimatedWrapperPro
   useEffect(() => {
     if (animation.type === 'none') return;
 
-    // Matches Android + iOS PR (Easing.SPRING dropped): all entrance
-    // animations run through `withTiming` with a curve picked by
-    // `resolveEasing`. Spring physics are not in the public schema.
+    // All entrance animations use withTiming with a curve from resolveEasing.
+    // No spring physics - they aren't in the schema.
     const config = { duration, easing, delay };
     const animate = (to: number) => withTiming(to, config);
 

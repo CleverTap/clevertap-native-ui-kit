@@ -1,7 +1,6 @@
 /**
- * Defer work to a microtask so any in-progress gestures or animations
- * finish before heavy parsing starts. This is the React Native equivalent of
- * the off-main-thread parsing used by the native SDKs.
+ * Runs work in a microtask so ongoing gestures/animations can finish before
+ * heavy parsing starts. RN's version of the native SDKs' off-main-thread work.
  */
 export function deferToIdle(work: () => void): void {
   Promise.resolve().then(work);

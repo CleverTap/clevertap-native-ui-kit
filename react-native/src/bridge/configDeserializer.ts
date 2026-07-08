@@ -7,27 +7,15 @@ import type { Action } from '../models/Action';
 type Raw = Record<string, unknown>;
 
 /**
- * Coerce every value in an arbitrary record into a string.
- *
- * Mirrors Android's `FlexibleStringMapSerializer` and iOS's `AnyStringValue`
- * decoding: the backend sometimes ships `bindings`/`metadata` values as JSON
- * primitives (boolean / number) or even nested objects/arrays. Without
- * coercion they survive into the renderer as non-strings and break callers
- * that expect a `Record<string, string>` (notably `evaluateBoolean`).
- *
- * - `null` / `undefined` values are skipped entirely (no key emitted).
- * - Primitive scalars (string / number / boolean) are stringified with
- *   `String(value)`.
- * - Arrays and objects are `JSON.stringify`'d so the payload stays
- *   analytics-friendly.
+ * Turn every value in a record into a string. The backend sometimes sends
+ * bindings/metadata as numbers, booleans, or nested objects, and callers
+ * (like evaluateBoolean) expect strings. null/undefined are dropped;
+ * objects and arrays are JSON.stringify'd.
  */
 /**
- * Parse a per-trigger action map (`onClick`, `onAppear`, ...) from the
- * raw JSON object. Each value is dispatched to `parseAction` so nested
- * `metadata` and other typed fields get the right coercion.
- *
- * Returns `undefined` if the input isn't a usable object, so callers can
- * keep the `actions` field optional.
+ * Parse a map of triggers (`onClick`, `onAppear`, ...) to actions. Each
+ * value goes through parseAction. Returns undefined if the input isn't a
+ * usable object, so callers can keep `actions` optional.
  */
 function parseActions(raw: unknown): Record<string, Action> | undefined {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
@@ -40,12 +28,9 @@ function parseActions(raw: unknown): Record<string, Action> | undefined {
 }
 
 /**
- * Parse a single Action object. Dispatches on `type`. Carefully extracts
- * `metadata` for `open_url` and `custom` (server-injected `wzrk_*`
- * attribution fields land here), coercing any non-string values into
- * strings so downstream consumers always see a `Record<string, string>`.
- *
- * Unknown action types return `undefined` so the caller can drop them.
+ * Parse one Action based on its `type`. For open_url and custom, it pulls
+ * out `metadata` (where server attribution fields land) and coerces values
+ * to strings. Unknown types return undefined so the caller can drop them.
  */
 function parseAction(raw: unknown): Action | undefined {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
@@ -183,7 +168,9 @@ function parseNode(raw: Raw): NativeDisplayNode {
     style: raw['style'] ? parseStyle(raw['style'] as Raw) : undefined,
     styleClass: raw['styleClass'] as string | undefined,
     visible: raw['visible'] as string | undefined,
-    actions: raw['actions'] ? raw['actions'] as Record<string, import('../models/Action').Action> : undefined,
+    // Parse element actions the same way as containers so metadata gets
+    // coerced and typed. (Casting the raw map used to skip that.)
+    actions: parseActions(raw['actions']),
     animation: raw['animation'] ? raw['animation'] as import('../models/Animation').Animation : undefined,
     dividerConfig: raw['dividerConfig'] ? raw['dividerConfig'] as import('../models/NativeDisplayNode').DividerConfig : undefined,
     imageConfig: raw['imageConfig'] ? raw['imageConfig'] as import('../models/NativeDisplayNode').ImageConfig : undefined,

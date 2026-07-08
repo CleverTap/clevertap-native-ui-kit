@@ -5,70 +5,36 @@ import { NativeDisplayUnitCache } from './NativeDisplayUnitCache';
 import { deferToIdleAsync } from '../utils/threading';
 import { sanitizeExtras } from '../handler/ActionAttributionExtras';
 import { CODE as ND_LIB_VERSION_CODE, LIBRARY_NAME } from '../NativeDisplaySdkVersion';
+import { NDLogger, NDLogLevel } from '../internal/NDLogger';
 
 export interface NativeDisplayBridgeListener {
   onNativeDisplaysLoaded(units: NativeDisplayUnit[]): void;
 }
 
 /**
- * Process-scoped set of unit IDs that have already fired "Notification
- * Viewed" in this JS context.
- *
- * The renderer calls `markViewedIfNew(unitId)` before pushing the viewed
- * event; it returns `true` only the first time we see that unitId in the
- * lifetime of the JS context. After that, repeat calls no-op so we don't
- * double-count impressions when a `NativeDisplayView` remounts (FlatList
- * virtualization recycling, react-navigation blur/focus, conditional
- * rendering toggles, hot reload).
- *
- * Mirrors `android/sdk/.../bridge/ViewedUnitsTracker.kt`; the RN flavour is
- * simpler because RN has no Activity-style configuration changes to wait
- * out before pruning. Hosts that want a unit to re-fire Viewed (e.g. after
- * `onUserLogin`, or after a manual "show me this fresh" gesture) can call
- * `NativeDisplayBridge.shared.resetViewedTracker(unitId?)` - omit the
- * arg to clear everything.
+ * Unit IDs that already fired "Notification Viewed" in this JS context.
+ * We track them so a view remounting (list recycling, navigation, hot
+ * reload) doesn't count the same impression twice. Call
+ * `resetViewedTracker(unitId?)` to let a unit fire again.
  */
 const _viewedUnits = new Set<string>();
 
 /**
- * Identity reference to the `NativeModules.CleverTapReact` module instance
- * we last stamped with `setLibrary('Native Display', CODE)`. Guards against
- * re-tagging when `bind()` runs more than once for the same instance (Fast
- * Refresh during dev, host re-binding, etc.). When a different instance
- * arrives (rare in production), the tag fires again.
- *
- * Mirrors Android `CleverTapAutoWire.taggedInstance` semantics.
+ * The CleverTap native module we last tagged with setLibrary(). We keep it
+ * so re-running bind() on the same instance (e.g. Fast Refresh) doesn't
+ * tag it again. A new instance gets tagged fresh.
  */
 let _taggedCleverTapNativeModule: unknown = null;
 
 /**
- * Tag the underlying CleverTap Core SDK instance with this wrapper SDK's
- * identity (`"Native Display"`) and version code via
- * `clevertap-react-native`'s native module surface so Core SDK can attribute
- * subsequent analytics back to ND - matches Android's `setCustomSdkVersion`
- * tagging in `CleverTapAutoWire`.
+ * Tell the CleverTap Core SDK that events come from "Native Display" (with
+ * our version) so analytics get attributed to us.
  *
- * Why we reach into `NativeModules.CleverTapReact` directly:
- *
- *   `clevertap-react-native` exposes `setLibrary(name, version)` on the
- *   underlying TurboModule (which calls Core SDK's
- *   `setCustomSdkVersion` internally on both platforms), but it does NOT
- *   re-export it on the public `CleverTap` JS object that `bind()`
- *   receives. The module-load bootstrap call at the top of
- *   `clevertap-react-native/src/index.js` is the only place it's invoked
- *   today (it tags itself as `"React-Native"`).
- *
- *   So to overwrite that tag with `"Native Display"`, we have to go through
- *   the native module by name. This is stable - the module name has been
- *   `CleverTapReact` since `clevertap-react-native` 1.x. If the name ever
- *   changes upstream, this no-ops (try/catch) and the click attribution
- *   still works, just without the wrapper-SDK identity tag.
- *
- * One-shot per native-module reference: re-binding the same CleverTap is
- * a no-op. Wrapped in try/catch so any unexpected runtime issue (missing
- * NativeModules in a non-RN environment, host SDK on a fork that renamed
- * the module, etc.) degrades silently with a warning instead of crashing
- * `bind()`.
+ * We call setLibrary() straight on NativeModules.CleverTapReact because the
+ * public CleverTap JS object doesn't expose it - only the native module
+ * does. The module name has been stable since v1.x. If anything is missing
+ * or fails, the try/catch just warns and clicks still work, only without
+ * our identity tag.
  */
 function _tagNativeDisplayLibrary(): void {
   try {
@@ -78,8 +44,9 @@ function _tagNativeDisplayLibrary(): void {
     if (_taggedCleverTapNativeModule === ctRaw) return;
     const ctMod = ctRaw as Record<string, unknown>;
     if (typeof ctMod['setLibrary'] !== 'function') {
-      console.warn(
-        '[NativeDisplayBridge] Cannot tag Core SDK with "Native Display": ' +
+      NDLogger.w(
+        'NativeDisplayBridge',
+        'Cannot tag Core SDK with "Native Display": ' +
         'NativeModules.CleverTapReact.setLibrary not found. ' +
         'Update `@clevertap/clevertap-react-native` to enable wrapper SDK attribution.',
       );
@@ -90,11 +57,58 @@ function _tagNativeDisplayLibrary(): void {
       ND_LIB_VERSION_CODE,
     );
     _taggedCleverTapNativeModule = ctRaw;
-    console.log(
-      `[NativeDisplayBridge] Tagged Core SDK as "${LIBRARY_NAME}" version ${ND_LIB_VERSION_CODE}`,
+    NDLogger.d(
+      'NativeDisplayBridge',
+      `Tagged Core SDK as "${LIBRARY_NAME}" version ${ND_LIB_VERSION_CODE}`,
     );
   } catch (e) {
-    console.warn('[NativeDisplayBridge] setLibrary tagging failed:', e);
+    NDLogger.w('NativeDisplayBridge', 'setLibrary tagging failed:', e);
+  }
+}
+
+/**
+ * Copy the Core SDK's debug level so our logs follow the same setting the
+ * host already picked, with no second logger to configure. This stops
+ * applying once the client calls setLogLevel() themselves.
+ *
+ * getDebugLevel() isn't stable across versions, so we probe for it and
+ * handle all three shapes it might have: a plain number, an (err, level)
+ * callback, or a Promise. Anything unexpected is ignored and we keep our
+ * INFO default.
+ */
+function _syncLogLevelFromCoreSdk(ct: Record<string, unknown>): void {
+  try {
+    const getter = ct['getDebugLevel'];
+    if (typeof getter !== 'function') return;
+
+    const apply = (raw: unknown): void => {
+      const n = typeof raw === 'number' ? raw : Number(raw);
+      if (Number.isFinite(n)) {
+        NDLogger.syncFromCoreSdk(n);
+      }
+    };
+
+    // Callback form: getDebugLevel((err, level) => ...)
+    const result = (getter as (cb?: (err: unknown, level: unknown) => void) => unknown)(
+      (err, level) => {
+        if (!err) apply(level);
+      },
+    );
+
+    // Plain-number form: getDebugLevel() returns the level directly.
+    if (typeof result === 'number') {
+      apply(result);
+      return;
+    }
+
+    // Promise form: getDebugLevel().then(level => ...)
+    if (result && typeof (result as { then?: unknown }).then === 'function') {
+      (result as Promise<unknown>).then(apply).catch(() => {
+        /* ignore - keep ND default */
+      });
+    }
+  } catch {
+    // Method missing or an unexpected shape - keep ND default.
   }
 }
 
@@ -116,7 +130,7 @@ export class NativeDisplayBridge {
 
   bind(cleverTap: unknown): void {
     if (!cleverTap || typeof cleverTap !== 'object') {
-      console.warn('[NativeDisplayBridge] bind() received a non-object. Ignoring.');
+      NDLogger.w('NativeDisplayBridge', 'bind() received a non-object. Ignoring.');
       return;
     }
 
@@ -126,19 +140,20 @@ export class NativeDisplayBridge {
       .filter((key) => typeof ct[key] !== 'function');
 
     if (missing.length > 0) {
-      console.warn(
-        `[NativeDisplayBridge] CleverTap instance is missing: ${missing.join(', ')}. ` +
+      NDLogger.w(
+        'NativeDisplayBridge',
+        `CleverTap instance is missing: ${missing.join(', ')}. ` +
         'Minimum supported version is @clevertap/clevertap-react-native >= 0.4.0.',
       );
     }
 
     this._cleverTap = ct;
 
-    // Stamp the Core SDK with this wrapper's identity (`"Native Display"`)
-    // so subsequent analytics events get attributed to ND rather than the
-    // host's generic `"React-Native"` tag. See `_tagNativeDisplayLibrary`
-    // for why this goes through `NativeModules` directly.
+    // Tag Core SDK events as "Native Display" for attribution.
     _tagNativeDisplayLibrary();
+
+    // Follow the host's debug level unless the client set our own.
+    _syncLogLevelFromCoreSdk(ct);
 
     if (typeof ct['addListener'] === 'function') {
       const eventName = this._resolveDisplayUnitsLoadedEvent(ct);
@@ -155,12 +170,16 @@ export class NativeDisplayBridge {
   }
 
   /**
-   * Fetch any display units already cached by the CleverTap SDK and deliver
-   * them to all registered listeners.
-   *
-   * Call this once at startup, right after bind() - same as the native apps:
-   *   iOS:     bridge.bind(ct); bridge.fetchNativeDisplays(ct)
-   *   Android: bridge.bind(ct); bridge.fetchNativeDisplays(ct)
+   * Set the log level for our internal logger. Once the client calls this,
+   * the chosen level sticks and overrides the one copied from Core SDK.
+   */
+  setLogLevel(level: NDLogLevel): void {
+    NDLogger.setLevel(level);
+  }
+
+  /**
+   * Get the display units CleverTap already cached and hand them to
+   * listeners. Call once at startup, right after bind().
    */
   fetchNativeDisplays(cleverTap: unknown): void {
     const ct = cleverTap as Record<string, unknown>;
@@ -177,7 +196,7 @@ export class NativeDisplayBridge {
         },
       );
     } else {
-      console.warn('[NativeDisplayBridge] fetchNativeDisplays: getAllDisplayUnits not available on CleverTap instance.');
+      NDLogger.w('NativeDisplayBridge', 'fetchNativeDisplays: getAllDisplayUnits not available on CleverTap instance.');
     }
   }
 
@@ -185,11 +204,11 @@ export class NativeDisplayBridge {
     deferToIdleAsync(() => {
       const unit = this._parser.tryParse(jsonString);
       if (!unit) {
-        console.warn('[NativeDisplayBridge] Failed to parse display unit. Check JSON format.');
+        NDLogger.w('NativeDisplayBridge', 'Failed to parse display unit. Check JSON format.');
         return;
       }
       this._cache.put(unit);
-      console.log(`[NativeDisplayBridge] Processed 1 display unit: ${unit.unitId}`);
+      NDLogger.d('NativeDisplayBridge', `Processed 1 display unit: ${unit.unitId}`);
       this._notifyListeners([unit]);
     });
   }
@@ -202,11 +221,11 @@ export class NativeDisplayBridge {
         if (unit) units.push(unit);
       }
       if (units.length === 0) {
-        console.warn('[NativeDisplayBridge] No display units could be parsed from the provided JSON strings.');
+        NDLogger.w('NativeDisplayBridge', 'No display units could be parsed from the provided JSON strings.');
         return;
       }
       for (const unit of units) this._cache.put(unit);
-      console.log(`[NativeDisplayBridge] Processed ${units.length} display unit(s).`);
+      NDLogger.d('NativeDisplayBridge', `Processed ${units.length} display unit(s).`);
       this._notifyListeners(units);
     });
   }
@@ -228,13 +247,9 @@ export class NativeDisplayBridge {
   }
 
   /**
-   * Forget that the given unit (or all units, if omitted) has already
-   * fired `Notification Viewed`, so the next mount will re-fire the event.
-   *
-   * Typical use: call from a host's `onUserLogin` / logout / identity-change
-   * handler so post-login impressions get counted again. Tests can also
-   * call `resetViewedTracker()` with no args to clear the whole set
-   * between cases.
+   * Forget that a unit (or all units, if omitted) already fired
+   * `Notification Viewed`, so the next mount fires it again. Handy from a
+   * login/logout handler so post-login impressions get counted.
    */
   resetViewedTracker(unitId?: string): void {
     if (unitId) {
@@ -245,44 +260,29 @@ export class NativeDisplayBridge {
   }
 
   /**
-   * Release a unit from the viewed tracker when its view is torn down, so a
-   * later remount fires `Notification Viewed` again.
-   *
-   * This mirrors Android `ViewedUnitsTracker` removing the id on Compose
-   * dispose (scroll out of a list, navigate away): the impression re-fires
-   * when the unit comes back into view. The RN analog of Android's
-   * `isChangingConfigurations` guard is free - a rotation on RN re-renders
-   * the same component without unmounting it, so no release happens and we
-   * don't double-count. Called from `NativeDisplayView`'s effect cleanup.
-   *
-   * Distinct from `resetViewedTracker`, which is the host-facing knob for
-   * login/logout; this one is the SDK's own lifecycle bookkeeping.
+   * Drop a unit from the viewed tracker when its view is destroyed, so a
+   * later remount fires `Notification Viewed` again (e.g. scrolling it back
+   * into view). Called from NativeDisplayView cleanup. This is the SDK's own
+   * bookkeeping, unlike resetViewedTracker which the host calls.
    */
   releaseViewedUnit(unitId: string): void {
     if (unitId) _viewedUnits.delete(unitId);
   }
 
   /**
-   * Push a "Notification Viewed" event to CleverTap. Always sanitizes and
-   * stamps the ND SDK version (`nd_lib_v_name` / `nd_lib_v_code`) onto the
-   * payload, then prefers the extras-aware Core SDK method
-   * (`pushDisplayUnitViewedEventForIDWithProperties(id, props)`) when it's
-   * exposed by the installed `clevertap-react-native` version, falling back
-   * to the legacy 1-arg `pushDisplayUnitViewedEventForID(id)` otherwise.
+   * Push a "Notification Viewed" event to CleverTap. Sanitizes extras and
+   * stamps our SDK version, then uses the newer extras-aware Core SDK method
+   * if the installed version has it, else the older 1-arg one.
    *
-   * `extras` is currently always empty at call sites - the SDK version
-   * stamp is the only attribution we attach to a Viewed event - but the
-   * parameter is there so we don't have to widen the signature again the
-   * next time we want to carry more data (matches Android + iOS).
+   * `extras` is empty at call sites today, but the param stays so we can
+   * carry more data later without changing the signature.
    */
   pushViewedEvent(unitId: string, extras?: Record<string, unknown>): void {
     const ct = this._cleverTap;
     if (!ct) return;
 
-    // Dedupe across remounts. Anonymous units (no unitId - preview / raw-JSON
-    // paths) skip the check and fire every time, matching native behavior.
-    // Hosts that need a unit to re-fire (e.g. on logout / identity change)
-    // call `resetViewedTracker(unitId?)` to evict it from the set first.
+    // Skip if already viewed. Units with no id (preview / raw JSON) always
+    // fire. Call resetViewedTracker() to make a unit fire again.
     if (unitId) {
       if (_viewedUnits.has(unitId)) {
         return;
@@ -293,7 +293,7 @@ export class NativeDisplayBridge {
     const props = sanitizeExtras(extras);
 
     if (typeof ct['pushDisplayUnitViewedEventForIDWithProperties'] === 'function') {
-      console.log(`[NativeDisplayBridge] Pushing viewed event (with extras) for unit: ${unitId}`);
+      NDLogger.d('NativeDisplayBridge', `Pushing viewed event (with extras) for unit: ${unitId}`);
       (ct['pushDisplayUnitViewedEventForIDWithProperties'] as (id: string, p: Record<string, unknown>) => void)(
         unitId,
         props,
@@ -302,28 +302,20 @@ export class NativeDisplayBridge {
     }
 
     if (typeof ct['pushDisplayUnitViewedEventForID'] === 'function') {
-      console.log(`[NativeDisplayBridge] Pushing viewed event for unit: ${unitId}`);
+      NDLogger.d('NativeDisplayBridge', `Pushing viewed event for unit: ${unitId}`);
       (ct['pushDisplayUnitViewedEventForID'] as (id: string) => void)(unitId);
     } else {
-      console.warn(`[NativeDisplayBridge] pushDisplayUnitViewedEventForID not available. Viewed event for ${unitId} not sent.`);
+      NDLogger.w('NativeDisplayBridge', `pushDisplayUnitViewedEventForID not available. Viewed event for ${unitId} not sent.`);
     }
   }
 
   /**
-   * Push a "Notification Clicked" event to CleverTap with optional
-   * element-level attribution extras.
+   * Push a "Notification Clicked" event to CleverTap with optional extras.
+   * sanitizeExtras drops values that can't be sent and stamps our SDK
+   * version, so each click can be traced to an SDK build.
    *
-   * Extras are always routed through `sanitizeExtras`, which (a) drops
-   * non-transportable values and (b) unconditionally stamps the ND SDK
-   * version (`nd_lib_v_name` / `nd_lib_v_code`). Result: every click
-   * reaching Core SDK can be attributed to a specific SDK build, matching
-   * Android + iOS.
-   *
-   * Prefers the element-aware Core SDK method
-   * (`pushDisplayUnitElementClickedEventForID(id, additionalProperties)`).
-   * Falls back to the legacy `pushDisplayUnitClickedEventForID(id)` with a
-   * warning if the host SDK is too old to know about the new method - the
-   * click still records, just without the extras.
+   * Uses the element-aware Core SDK method if available, else the older
+   * 1-arg one with a warning - the click still records, just no extras.
    */
   pushClickedEvent(unitId: string, extras?: Record<string, unknown>): void {
     const ct = this._cleverTap;
@@ -331,7 +323,7 @@ export class NativeDisplayBridge {
     const props = sanitizeExtras(extras);
 
     if (typeof ct['pushDisplayUnitElementClickedEventForID'] === 'function') {
-      console.log(`[NativeDisplayBridge] Pushing element-clicked event for unit: ${unitId}`);
+      NDLogger.d('NativeDisplayBridge', `Pushing element-clicked event for unit: ${unitId}`);
       (ct['pushDisplayUnitElementClickedEventForID'] as (id: string, p: Record<string, unknown>) => void)(
         unitId,
         props,
@@ -340,15 +332,16 @@ export class NativeDisplayBridge {
     }
 
     if (typeof ct['pushDisplayUnitClickedEventForID'] === 'function') {
-      console.log(`[NativeDisplayBridge] Pushing clicked event for unit: ${unitId}`);
+      NDLogger.d('NativeDisplayBridge', `Pushing clicked event for unit: ${unitId}`);
       (ct['pushDisplayUnitClickedEventForID'] as (id: string) => void)(unitId);
-      console.warn(
-        '[NativeDisplayBridge] pushDisplayUnitElementClickedEventForID not available; ' +
+      NDLogger.w(
+        'NativeDisplayBridge',
+        'pushDisplayUnitElementClickedEventForID not available; ' +
         'element attribution + SDK version stamp were not forwarded to Core SDK. ' +
         'Update `@clevertap/clevertap-react-native` to receive attribution data.',
       );
     } else {
-      console.warn(`[NativeDisplayBridge] pushDisplayUnitClickedEventForID not available. Clicked event for ${unitId} not sent.`);
+      NDLogger.w('NativeDisplayBridge', `pushDisplayUnitClickedEventForID not available. Clicked event for ${unitId} not sent.`);
     }
   }
 
@@ -357,24 +350,23 @@ export class NativeDisplayBridge {
       try {
         listener.onNativeDisplaysLoaded(units);
       } catch (e) {
-        console.error('[NativeDisplayBridge] Listener threw an exception:', e);
+        NDLogger.e('NativeDisplayBridge', 'Listener threw an exception:', e);
       }
     }
   }
 
   private _resolveDisplayUnitsLoadedEvent(ct: Record<string, unknown>): string | null {
-    // Use the event name constant if the CT instance exposes it
+    // Prefer the constant the CT instance exposes, else the known name.
     if (typeof ct['CleverTapDisplayUnitsLoaded'] === 'string') {
       return ct['CleverTapDisplayUnitsLoaded'];
     }
-    // Fall back to the known string value
     return 'CleverTapDisplayUnitsLoaded';
   }
 
   private _handleCleverTapDisplayUnitsEvent(event: unknown): void {
     if (!event || typeof event !== 'object') return;
     const e = event as Record<string, unknown>;
-    // The CT RN SDK sends the event as { displayUnits: [...] } or as a plain array
+    // CT sends this as { displayUnits: [...] } or as a plain array.
     const units = Array.isArray(e) ? e : (e['displayUnits'] as unknown[] | undefined);
     if (!Array.isArray(units)) return;
     const jsonStrings = this._extractJsonStrings(units);

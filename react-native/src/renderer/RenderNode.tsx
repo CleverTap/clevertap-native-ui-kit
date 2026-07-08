@@ -17,27 +17,24 @@ import { HtmlElement } from './elements/HtmlElement';
 import { SpacerElement } from './elements/SpacerElement';
 import { DividerElement } from './elements/DividerElement';
 import type { RenderNodeProps } from './types';
+import { NDLogger } from '../internal/NDLogger';
 
 export type { RenderNodeProps };
 
-// Two-step memo pattern: the inner function references the module-level
-// `RenderNode` export (the memoized wrapper) when building `sharedProps`.
-// Using `export const RenderNode = React.memo(function RenderNode() {...})`
-// would make the inner name point to the raw function, not the memoized wrapper.
-// Containers would then receive a non-memoized reference and their own
-// React.memo checks would never skip a render.
+// Two-step memo: this inner function refers to the memoized `RenderNode`
+// export below when it builds `sharedProps`. If we inlined the memo instead,
+// that name would point to the raw function, and containers would get an
+// unmemoized reference that breaks their own React.memo.
 function RenderNodeFn({ node, resolvedStyles, actionHandler }: RenderNodeProps): React.ReactElement | null {
-  // Variables come from context rather than being passed as a prop.
-  // This lets `RenderNode` be passed by stable reference to containers
-  // (no inline closure needed), so container React.memo actually works.
+  // Read variables from context, not props, so RenderNode has a stable
+  // reference we can pass to containers and keep their React.memo working.
   const variables = useVariables();
-  // Keep a stable ref so lifecycle cleanup always sees the current handler
-  // without putting actionHandler in the effect's dependency array.
+  // Keep the handler in a ref so cleanup sees the latest one without adding
+  // actionHandler to the effect deps.
   const actionHandlerRef = useRef(actionHandler);
   actionHandlerRef.current = actionHandler;
 
-  // Lifecycle actions: onAppear fires once on mount, onDisappear fires on unmount.
-  // Matches Android's LaunchedEffect / DisposableEffect pattern in applyClickable().
+  // onAppear fires once on mount, onDisappear fires on unmount.
   useEffect(() => {
     const handler = actionHandlerRef.current;
     const appearAction = node.actions?.onAppear;
@@ -50,11 +47,10 @@ function RenderNodeFn({ node, resolvedStyles, actionHandler }: RenderNodeProps):
         actionHandlerRef.current.handleLifecycle(disappearAction, node.id, 'disappear');
       }
     };
-  // Re-run only when the node identity changes (e.g. an item is replaced in a list).
+  // Re-run only when the node changes (e.g. a list item gets replaced).
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [node.id]);
 
-  // Check visibility before rendering
   if (node.visible != null) {
     const visibleStr = String(node.visible);
     if (visibleStr === 'false') return null;
@@ -74,10 +70,8 @@ function RenderNodeFn({ node, resolvedStyles, actionHandler }: RenderNodeProps):
       resolvedStyle,
       resolvedStyles,
       actionHandler,
-      // Pass the memoized RenderNode export directly - no inline closure.
-      // An inline closure like `(props) => <RenderNode {...props} variables={v} />`
-      // is a new function object on every parent render, which looks like a
-      // new prop to containers and defeats their React.memo wrapping.
+      // Pass the memoized RenderNode directly. An inline closure would be a new
+      // function each render, which looks like a new prop and defeats container memo.
       RenderNode,
     };
 
@@ -128,14 +122,13 @@ function RenderNodeFn({ node, resolvedStyles, actionHandler }: RenderNodeProps):
 
   if (!content) return null;
 
-  // Wrap in an entrance animation if one is set and it is not 'none'
+  // Wrap in an entrance animation if one is set.
   if (node.animation && node.animation.type !== 'none') {
     content = <EntranceAnimation animation={node.animation}>{content}</EntranceAnimation>;
   }
 
-  // Wrap ELEMENT nodes in a background renderer.
-  // Containers handle their own background internally as an absoluteFill child,
-  // so their background is always clipped to the container's own bounds.
+  // Only elements need the background wrapper. Containers draw their own
+  // background internally, clipped to their bounds.
   if (resolvedStyle.background && !isContainer(node)) {
     content = (
       <BackgroundRenderer background={resolvedStyle.background}>
@@ -144,19 +137,18 @@ function RenderNodeFn({ node, resolvedStyles, actionHandler }: RenderNodeProps):
     );
   }
 
-  // Apply layout offset for children that are not inside a BOX container.
-  // BOX containers clear layout.offset from childForRender after using it as
-  // absolute top/left, so this code only runs for VERTICAL/HORIZONTAL/GALLERY children.
-  // Percent offsets outside a BOX cannot be resolved without parent dimensions.
-  // Matches Android's Modifier.applyOffset() which uses Modifier.offset() (no layout shift).
+  // Offset for children not inside a BOX. BOX handles its own offset as
+  // absolute top/left, so this only runs for VERTICAL/HORIZONTAL/GALLERY children.
+  // Percent offsets need parent size, which we don't have here.
   const offset = node.layout?.offset;
   if (offset && (offset.x !== 0 || offset.y !== 0)) {
     if (offset.unit === 'percent') {
-      console.warn(
-        `[RenderNode] node ${node.id}: percent offset outside a BOX container is not supported — use a BOX container for percent-based absolute positioning.`,
+      NDLogger.w(
+        'RenderNode',
+        `node ${node.id}: percent offset outside a BOX container is not supported - use a BOX container for percent-based absolute positioning.`,
       );
     } else {
-      // dp / sp / px - shift visually without removing the element from the flex flow
+      // dp / sp / px - shift visually, keep the element in the flex flow.
       content = (
         <View style={{ transform: [{ translateX: offset.x }, { translateY: offset.y }] }}>
           {content}
@@ -168,7 +160,5 @@ function RenderNodeFn({ node, resolvedStyles, actionHandler }: RenderNodeProps):
   return content;
 }
 
-// Memoized export. RenderNodeFn references this module-level binding when
-// building `sharedProps.RenderNode`, so containers always receive the stable
-// memoized reference rather than the raw inner function.
+// Memoized export. RenderNodeFn passes this stable reference to containers.
 export const RenderNode = React.memo(RenderNodeFn);

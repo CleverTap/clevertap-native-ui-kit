@@ -1,5 +1,6 @@
 import { NativeDisplayBridge, NativeDisplayBridgeListener } from '../bridge/NativeDisplayBridge';
 import { NativeDisplayUnit } from '../bridge/NativeDisplayUnit';
+import { NDLogger } from '../internal/NDLogger';
 
 export interface NativeDisplaySlotObserver {
   onUnitAvailable(unit: NativeDisplayUnit): void;
@@ -28,12 +29,12 @@ class NativeDisplaySlotManager implements NativeDisplayBridgeListener {
       this._slots.set(slotId, new Set());
     }
     this._slots.get(slotId)!.add(observer);
-    console.log(`[NativeDisplaySlotManager] Registered observer for slot: ${slotId}`);
+    NDLogger.d('NativeDisplaySlotManager', `Registered observer for slot: ${slotId}`);
 
-    // If a unit is already cached for this slot, deliver it immediately
+    // If we already have a unit for this slot, hand it over now.
     const cached = this._unitIndex.get(slotId);
     if (cached) {
-      console.log(`[NativeDisplaySlotManager] Delivering cached unit ${cached.unitId} to new observer for slot: ${slotId}`);
+      NDLogger.d('NativeDisplaySlotManager', `Delivering cached unit ${cached.unitId} to new observer for slot: ${slotId}`);
       observer.onUnitAvailable(cached);
     }
   }
@@ -45,7 +46,7 @@ class NativeDisplaySlotManager implements NativeDisplayBridgeListener {
     if (observers.size === 0) {
       this._slots.delete(slotId);
     }
-    console.log(`[NativeDisplaySlotManager] Unregistered observer for slot: ${slotId}`);
+    NDLogger.d('NativeDisplaySlotManager', `Unregistered observer for slot: ${slotId}`);
   }
 
   getActiveSlotIds(): Set<string> {
@@ -78,7 +79,7 @@ class NativeDisplaySlotManager implements NativeDisplayBridgeListener {
     if (typeof ct['recordEvent'] !== 'function') return;
 
     const slotIds = Array.from(this.getActiveSlotIds()).join(',');
-    console.log(`[NativeDisplaySlotManager] Syncing active slot IDs: ${slotIds}`);
+    NDLogger.d('NativeDisplaySlotManager', `Syncing active slot IDs: ${slotIds}`);
     (ct['recordEvent'] as (name: string, props: Record<string, unknown>) => void)(
       'wzrk_nd_slot_sync',
       { slot_ids: slotIds },
@@ -96,7 +97,7 @@ class NativeDisplaySlotManager implements NativeDisplayBridgeListener {
           try {
             observer.onUnitAvailable(unit);
           } catch (e) {
-            console.error(`[NativeDisplaySlotManager] Observer threw an exception for slot ${unit.slotId}:`, e);
+            NDLogger.e('NativeDisplaySlotManager', `Observer threw an exception for slot ${unit.slotId}:`, e);
           }
         }
       }

@@ -43,14 +43,12 @@ export function NativeDisplayView(props: NativeDisplayViewProps): React.ReactEle
     style,
   } = props;
 
-  // Hooks must always be called, regardless of props
+  // Hooks must run every render, no matter the props.
   const [measuredSize, setMeasuredSize] = useState<{ width: number; height: number } | null>(null);
 
-  // Keep the listener in a ref so the viewed-event effect can call it without
-  // listing `actionListener` in its dependency array. Hosts almost always
-  // pass a fresh listener object each render (inline literal), and if that
-  // were a dependency the effect would tear down + re-run every render,
-  // re-firing "Notification Viewed" on every re-render.
+  // Keep the listener in a ref so the effect can call it without listing it as
+  // a dep. Hosts usually pass a new listener each render, and if it were a dep
+  // the effect would re-run every render and re-fire "Notification Viewed".
   const actionListenerRef = useRef(actionListener);
   actionListenerRef.current = actionListener;
 
@@ -73,32 +71,24 @@ export function NativeDisplayView(props: NativeDisplayViewProps): React.ReactEle
     variables = cfg.variables ?? {};
   }
 
-  // rootSize is the reference width/height for resolving percent dimensions inside
-  // the unit. It MUST match the actual rendered width of the outer wrapper View,
-  // otherwise BoxContainer's `boxSize` (computed against rootWidth) diverges from
-  // the View's CSS-derived size (Yoga's "80%" of the actual parent), and the
-  // absolutely-positioned children drift relative to the container.
-  //
-  // We measure via onLayout instead of falling back to Dimensions.get('window'),
-  // because any host wrapping (padding, margin, sidebar, etc.) makes the window
-  // size wrong. The host can short-circuit measurement by passing availableSize.
+  // rootSize is the reference size for percent dimensions. It must match the
+  // real width of the wrapper View, or BoxContainer's absolute children drift.
+  // We measure via onLayout instead of the window size, since host padding or
+  // margins make the window wrong. Hosts can skip measuring via availableSize.
   const rootSize = availableSize ?? measuredSize;
 
   useEffect(() => {
     if (!unitId || !root) return;
-    // Fire once when the unit appears. The bridge's process-scoped tracker
-    // dedupes within a single appearance cycle (it no-ops if the unit is
-    // already marked viewed), so an ordinary re-render won't re-fire.
+    // Fire once when the unit appears. The bridge tracker dedupes, so a plain
+    // re-render won't fire it again.
     NativeDisplayBridge.shared.pushViewedEvent(unitId);
     actionListenerRef.current?.onDisplayUnitViewed?.(unitId);
     actionListenerRef.current?.onTrackEvent?.('Notification Viewed', undefined);
 
-    // On teardown, release the unit from the tracker so a later remount
-    // (scrolled back into view, navigated back to) re-fires Viewed - matching
-    // Android's ViewedUnitsTracker, which removes the id on Compose dispose.
-    // Keyed on [unitId, root] only (NOT actionListener) so this runs on a
-    // genuine unmount / unit swap, not on every render. RN rotations
-    // re-render without unmounting, so they don't double-count.
+    // On unmount, release the unit so a later remount (scrolled back in,
+    // navigated back to) fires Viewed again. Keyed on [unitId, root] only
+    // (not actionListener) so it runs on a real unmount / unit swap, not
+    // every render - rotations re-render without unmounting.
     return () => {
       NativeDisplayBridge.shared.releaseViewedUnit(unitId);
     };
@@ -115,7 +105,7 @@ export function NativeDisplayView(props: NativeDisplayViewProps): React.ReactEle
 
   const handleLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
-    // Only update if changed, to avoid re-render loops when the layout settles.
+    // Only update if the size changed, to avoid re-render loops.
     setMeasuredSize((prev) =>
       prev && prev.width === width && prev.height === height
         ? prev
@@ -123,32 +113,23 @@ export function NativeDisplayView(props: NativeDisplayViewProps): React.ReactEle
     );
   };
 
-  // First render (no availableSize, not yet measured): render an empty wrapper
-  // to capture the real available size. Rendering content here with fallback
-  // window dims would force a re-layout one frame later AND show the wrong
-  // size briefly.
+  // First render, before we've measured: show an empty wrapper just to capture
+  // the real size. Rendering content now with a guessed size would flash the
+  // wrong layout for a frame.
   if (!rootSize) {
     return <View style={style} onLayout={handleLayout} />;
   }
 
-  // RenderErrorBoundary stops a bad JSON config from crashing the host app.
-  // See RenderErrorBoundary.tsx for the full explanation.
+  // RenderErrorBoundary keeps bad JSON from crashing the host app (see that
+  // file for details). key={unitId} gives each unit a fresh boundary, since a
+  // tripped boundary stays broken until it unmounts - without the key, a broken
+  // unit's fallback would linger after switching to a healthy one.
+  // Keep onLayout attached (unless availableSize is given) so rotations and
+  // resizes re-measure.
   //
-  // key={unitId} resets the boundary whenever the active unit changes. An error
-  // boundary stays in hasError=true until it unmounts. Without this key,
-  // switching from a broken unit to a healthy one would still show the fallback
-  // because the same boundary instance is reused.
-  // Keep onLayout attached (unless availableSize is provided) so rotations or
-  // parent resizes re-measure and rootSize stays accurate.
-  //
-  // Explicit `width: rootSize.width` pins the outer View to the measured pixel
-  // width. Without this, root containers that declare `width: 100%` collapse to
-  // wrap_content on iOS - Yoga resolves percentages against the parent's defined
-  // width, and stretch-only sizing (the ScrollView alignItems default) is not
-  // counted as "defined". The visible symptom: a horizontal container's flow
-  // children measure to their own intrinsic widths, the container shrinks to
-  // hug them, and the background (also 100%) only covers the text portion while
-  // a sibling image overflows past it.
+  // Explicit width pins the outer View to the measured pixel width. Without it,
+  // root containers with width: 100% collapse to wrap_content on iOS, because
+  // Yoga only resolves percentages against a parent with a defined width.
   return (
     <View
       style={[{ width: rootSize.width }, style]}

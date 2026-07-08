@@ -10,8 +10,7 @@ import { resolveLayoutStyle, resolveNodeStyle } from '../layoutModifier';
 import { splitNodeStyle } from '../styleSplit';
 import { resolveTextDim } from '../../utils/dimension';
 
-// Two taps within this window count as a double-tap.
-// Matches Android's default ViewConfiguration.DOUBLE_TAP_TIMEOUT (300 ms).
+// Two taps within this window count as a double-tap (matches Android's 300 ms default).
 const DOUBLE_TAP_WINDOW_MS = 300;
 
 interface ButtonElementProps {
@@ -35,18 +34,15 @@ export const ButtonElement = React.memo(function ButtonElement({ node, resolvedS
     nodeStyle.fontFamily = fontFamily;
   }
 
-  // Always set an explicit lineHeight
+  // Always set an explicit lineHeight.
   if (nodeStyle.lineHeight == null && resolvedStyle.fontSize) {
     const fs = resolveTextDim(resolvedStyle.fontSize, rootHeight) ?? 14;
     nodeStyle.lineHeight = fs * 1.3;
   }
 
-  // Split nodeStyle: view-level props (backgroundColor, borderRadius*,
-  // borderWidth, borderColor, overflow, opacity, shadow*, elevation) go on
-  // the Pressable; text-level props (color, font*, letterSpacing, textAlign,
-  // textShadow*, etc) go on the inner Text. Without this split, borderColor/
-  // borderWidth paint a stroke around the label's glyph box instead of
-  // around the button's full layout footprint.
+  // Split the style: view props (background, border, shadow, etc.) go on the
+  // Pressable, text props (color, font, etc.) go on the inner Text. Without this,
+  // the border would wrap the label text instead of the whole button.
   const { viewStyle, textStyle } = splitNodeStyle(nodeStyle as Record<string, unknown>);
 
   const handlePress = useCallback(() => {
@@ -54,21 +50,17 @@ export const ButtonElement = React.memo(function ButtonElement({ node, resolvedS
     const gap = now - lastTapAt.current;
     lastTapAt.current = now;
 
-    // Always fire the unit-clicked event - matches Android which fires
-    // "Notification Clicked" on every button press regardless of action type.
-    // Pass the `onClick` action so element-attribution extras (action_type,
-    // wzrk_*, etc.) ride along even when there's no double-tap involved.
+    // Fire the clicked event on every tap (matches Android). Pass the onClick
+    // action so element-attribution extras (action_type, wzrk_*, etc.) tag along.
     const clickAction = node.actions?.onClick;
     actionHandler.fireClickedEvent(node.id, clickAction);
 
-    // Double-tap: if the second tap lands within the window, fire onDoubleTap.
-    // A single tap always fires onClick (matches Android combinedClickable
-    // which fires both click and doubleClick independently on the same tap).
+    // If this tap completes a double-tap, run onDoubleTap and skip onClick.
     if (gap > 0 && gap < DOUBLE_TAP_WINDOW_MS) {
       const doubleTapAction = node.actions?.onDoubleTap;
       if (doubleTapAction) {
         actionHandler.handle(doubleTapAction, node.id, 'doubleTap');
-        return; // skip onClick for the tap that completes the double-tap
+        return;
       }
     }
 

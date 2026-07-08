@@ -22,7 +22,7 @@ export const SpacerElement = React.memo(function SpacerElement({ node, resolvedS
     || (heightRaw !== undefined && heightRaw !== MATCH_PARENT_MARKER);
   const isFlex = widthRaw === MATCH_PARENT_MARKER || heightRaw === MATCH_PARENT_MARKER;
 
-  // Default to flex:1 when no explicit size is given so the spacer fills remaining space
+  // With no explicit size, use flex:1 so the spacer fills the remaining space.
   const style = hasExplicitSize
     ? layoutStyle
     : { ...layoutStyle, flex: 1 };

@@ -5,18 +5,17 @@ import type { Style } from '../../models/Style';
 import { getVideo } from '../../optional/optionalDeps';
 import { useRootSize } from '../../context/RootSizeContext';
 import { resolveLayoutStyle } from '../layoutModifier';
+import { coerceToBool } from '../../evaluator/VariableEvaluator';
+import { NDLogger } from '../../internal/NDLogger';
 
 interface VideoElementProps {
   node: NativeDisplayElement;
   resolvedStyle: Partial<Style>;
 }
 
-// Mirror ActionHandler.isValidUrlScheme. Native SDKs (SDK-5859) open ANY
-// URL that carries a scheme - custom deeplinks (myapp://, whatsapp://,
-// intent://) included - not just an http/https/tel/mailto allow-list. We
-// keep only a minimal guard: the string must start with a valid RFC-3986
-// scheme followed by ':', which still drops schemeless junk like
-// "www.google.com" or markdown "[text](url)" that can't be opened anyway.
+// Allow any URL that has a scheme, including custom deeplinks (myapp://, etc.),
+// like the native SDKs do (SDK-5859). We only require a valid scheme followed by
+// ':', which drops junk like "www.google.com" that can't be opened anyway.
 function isValidUrlScheme(url: string): boolean {
   return /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(url.trim());
 }
@@ -27,32 +26,30 @@ export const VideoElement = React.memo(function VideoElement({ node, resolvedSty
 
   const url = node.bindings?.url ?? '';
 
-  // Pull bindings up front because the openUrl overlay handler is declared
-  // with useCallback - hooks must run unconditionally before any return.
+  // Read bindings up front: the useCallback hooks below must run before any return.
   const videoConfig = node.bindings;
   const openUrl = videoConfig?.openUrl ?? '';
 
-  // Track playback errors so we can render a fallback overlay instead of
-  // a silent black surface. Mirrors iOS's AVPlayerItem.status observation.
+  // Track playback errors so we can show a fallback overlay instead of a black screen.
   const [hasError, setHasError] = useState(false);
   const handleError = useCallback(() => {
-    console.warn(`[VideoElement] Playback failed for url: ${url}`);
+    NDLogger.w('VideoElement', `Playback failed for url: ${url}`);
     setHasError(true);
   }, [url]);
 
   const handleOpenUrl = useCallback(() => {
     if (!openUrl) return;
     if (!isValidUrlScheme(openUrl)) {
-      console.warn(`[VideoElement] Invalid URL scheme, dropping openUrl: ${openUrl}`);
+      NDLogger.w('VideoElement', `Invalid URL scheme, dropping openUrl: ${openUrl}`);
       return;
     }
     Linking.openURL(openUrl).catch((e) => {
-      console.warn(`[VideoElement] Failed to open URL: ${openUrl}`, e);
+      NDLogger.w('VideoElement', `Failed to open URL: ${openUrl}`, e);
     });
   }, [openUrl]);
 
   if (!Video) {
-    console.warn('[VideoElement] VIDEO element requires react-native-video peer dependency. Element will not render.');
+    NDLogger.w('VideoElement', 'VIDEO element requires react-native-video peer dependency. Element will not render.');
     return null;
   }
 
@@ -61,18 +58,14 @@ export const VideoElement = React.memo(function VideoElement({ node, resolvedSty
   const layout = node.layout ?? {};
   const layoutStyle = resolveLayoutStyle(layout, rootHeight);
 
-  // autoPlay defaults OFF, matching iOS (`autoPlay ?? false`) and Android
-  // (`autoPlay = false`). Only an explicit `"true"` starts playback; a
-  // missing value keeps the video paused. Previously RN defaulted this ON,
-  // which diverged from both native SDKs.
-  const autoPlay = videoConfig?.autoPlay === 'true';
-  const loop = videoConfig?.loop === 'true';
-  const muted = videoConfig?.muted === 'true';
-  // Controls default to ON, matching iOS/Android PR #15. Only an explicit
-  // `"false"` from the JSON suppresses them; missing or any other string
-  // value keeps them visible so authors don't have to opt in for the
-  // common case.
-  const showControls = videoConfig?.showControls !== 'false';
+  // autoPlay/loop/muted default OFF (matches iOS/Android). coerceToBool handles
+  // "true"/"false", "1"/"0", and native booleans so any form the BE sends is read
+  // the same way as native; missing/bad values fall back to false.
+  const autoPlay = coerceToBool(videoConfig?.autoPlay) ?? false;
+  const loop = coerceToBool(videoConfig?.loop) ?? false;
+  const muted = coerceToBool(videoConfig?.muted) ?? false;
+  // Controls default ON (matches iOS/Android). Only an explicit false value hides them.
+  const showControls = coerceToBool(videoConfig?.showControls) ?? true;
 
   const errorOverlay = hasError ? (
     <View style={[StyleSheet.absoluteFill, errorOverlayStyle]} pointerEvents="none">
@@ -80,10 +73,8 @@ export const VideoElement = React.memo(function VideoElement({ node, resolvedSty
     </View>
   ) : null;
 
-  // openUrl binding (PR #15): when present, overlay a Pressable that
-  // launches the URL when tapped. The overlay sits on top of the player so
-  // it intercepts taps before they reach native controls; that mirrors
-  // iOS's "open-url overlay button" behavior.
+  // If openUrl is set, put a tappable overlay on top of the player that opens
+  // the URL. It sits above the native controls to catch taps first (matches iOS).
   if (openUrl) {
     return (
       <View style={layoutStyle}>

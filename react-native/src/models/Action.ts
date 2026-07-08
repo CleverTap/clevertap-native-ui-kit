@@ -1,16 +1,9 @@
 import { ExecutionMode } from './enums';
 
 /**
- * The shape of a per-platform URL entry. Production payloads ship two
- * variants:
- *
- *  1. A flat string: `{ "android": "https://...", "ios": "https://..." }`.
- *  2. A nested object carrying `text` (+ optional `replacements`), the legacy
- *     Ultron shape: `{ "android": { "text": "https://...", "replacements": {} } }`.
- *
- * Either is accepted; `resolveOpenUrl` flattens the nested shape down to a
- * string. `replacements` are not expanded yet on RN (Android/iOS also just
- * read `text` today).
+ * A per-platform URL. It can be a plain string, or an object with `text`
+ * (the older shape). Either works - `resolveOpenUrl` turns it into a string.
+ * `replacements` is not used yet.
  */
 export type PlatformUrlValue =
   | string
@@ -23,11 +16,7 @@ export interface OpenUrlAction {
     | { android?: PlatformUrlValue; ios?: PlatformUrlValue; rn?: PlatformUrlValue };
   openInBrowser?: boolean;
   customTabsEnabled?: boolean;
-  /**
-   * Server-injected attribution fields (`wzrk_element_id`, `wzrk_c2a`, etc.).
-   * Flattened into the click event's `additionalProperties` via
-   * `ActionAttributionExtras`.
-   */
+  /** Extra tracking fields from the server, added to the click event. */
   metadata?: Record<string, string>;
 }
 
@@ -71,11 +60,8 @@ export type ActionTrigger =
   | 'onDisappear';
 
 /**
- * Pick the platform-correct URL from an `OpenUrlAction.url` field.
- *
- * Preference order is `rn` → `android` → `ios`. Each entry can be either a
- * plain string or the legacy nested `{ text, replacements }` shape; the
- * nested form is flattened to its `text` value.
+ * Get the right URL for this platform. Tries rn, then android, then ios.
+ * Each entry can be a string or a `{ text }` object.
  */
 export function resolveOpenUrl(action: OpenUrlAction): string {
   if (typeof action.url === 'string') return action.url;

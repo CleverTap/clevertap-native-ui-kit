@@ -8,9 +8,9 @@ import { ActionHandler } from '../../handler/ActionHandler';
 import { getExpoImage, getFastImage } from '../../optional/optionalDeps';
 import { useRootSize } from '../../context/RootSizeContext';
 import { resolveLayoutStyle, resolveNodeStyle } from '../layoutModifier';
+import { NDLogger } from '../../internal/NDLogger';
 
-// Two taps within this window count as a double-tap. Matches ButtonElement /
-// Android's ViewConfiguration.DOUBLE_TAP_TIMEOUT (300 ms).
+// Two taps within this window count as a double-tap (matches ButtonElement / Android's 300 ms).
 const DOUBLE_TAP_WINDOW_MS = 300;
 
 interface ImageElementProps {
@@ -41,11 +41,8 @@ export const ImageElement = React.memo(function ImageElement({ node, resolvedSty
   const { height: rootHeight } = useRootSize();
   const lastTapAt = useRef<number>(0);
 
-  // Server-driven images can carry interaction actions just like buttons.
-  // Both native SDKs fire "Notification Clicked" (with element attribution)
-  // and dispatch the onClick action when an IMAGE with actions is tapped
-  // (SDK-5862). Without this, an actionable image is inert on RN - no event
-  // reaches the server and the action never runs.
+  // Images can carry tap actions just like buttons (SDK-5862). Without this,
+  // an actionable image does nothing on RN - no event, no action.
   const clickAction = node.actions?.onClick;
   const doubleTapAction = node.actions?.onDoubleTap;
   const longPressAction = node.actions?.onLongPress;
@@ -56,14 +53,13 @@ export const ImageElement = React.memo(function ImageElement({ node, resolvedSty
     const gap = now - lastTapAt.current;
     lastTapAt.current = now;
 
-    // Fire the unit-clicked event on every tap, matching ButtonElement and
-    // the native image-tap path. Pass the onClick action so element
-    // attribution (action_type, action_url, wzrk_*, ...) rides along.
+    // Fire the clicked event on every tap. Pass the onClick action so element
+    // attribution (action_type, action_url, wzrk_*, ...) tags along.
     actionHandler.fireClickedEvent(node.id, clickAction);
 
     if (gap > 0 && gap < DOUBLE_TAP_WINDOW_MS && doubleTapAction) {
       actionHandler.handle(doubleTapAction, node.id, 'doubleTap');
-      return; // skip onClick for the tap that completes the double-tap
+      return; // this tap completes a double-tap, so skip onClick
     }
 
     if (clickAction) {
@@ -88,8 +84,7 @@ export const ImageElement = React.memo(function ImageElement({ node, resolvedSty
   const resizeMode = fitToResizeMode(fit);
   const gif = isGif(url, imageConfig?.animated);
 
-  // Cast needed: resolveNodeStyle returns ViewStyle & TextStyle where overflow includes 'scroll',
-  // but ImageStyle only allows 'visible' | 'hidden'. Images never scroll, so the cast is safe.
+  // Cast is safe: nodeStyle's overflow allows 'scroll' but ImageStyle doesn't, and images never scroll.
   const combinedStyle = { ...layoutStyle, ...nodeStyle } as unknown as ImageStyle;
 
   let image: React.ReactElement;
@@ -121,10 +116,10 @@ export const ImageElement = React.memo(function ImageElement({ node, resolvedSty
       />
     );
   } else {
-    // Neither expo-image nor react-native-fast-image is available; fall back to the built-in Image.
-    // GIFs will animate on iOS but show only a static frame on Android.
+    // No expo-image or fast-image - fall back to RN's built-in Image.
+    // GIFs animate on iOS but show only a static frame on Android.
     if (gif) {
-      console.warn('[ImageElement] GIF detected but neither expo-image nor react-native-fast-image is installed. Install one of these peer dependencies for GIF support on Android.');
+      NDLogger.w('ImageElement', 'GIF detected but neither expo-image nor react-native-fast-image is installed. Install one of these peer dependencies for GIF support on Android.');
     }
     image = (
       <Image
@@ -135,13 +130,11 @@ export const ImageElement = React.memo(function ImageElement({ node, resolvedSty
     );
   }
 
-  // Non-interactive image: render it directly, no tap wrapper (keeps the
-  // hit-testing / layout identical to before for the common case).
+  // Non-interactive: render the image directly, no tap wrapper.
   if (!interactive) return image;
 
-  // Interactive image: wrap in a style-less Pressable so it shrink-wraps to
-  // the image's own footprint (the image keeps its full layout+visual style),
-  // then routes taps through the same click path as ButtonElement.
+  // Interactive: wrap in a style-less Pressable that shrink-wraps to the image
+  // and routes taps through the same path as ButtonElement.
   return (
     <Pressable onPress={handlePress} onLongPress={handleLongPress} accessibilityRole="imagebutton">
       {image}
