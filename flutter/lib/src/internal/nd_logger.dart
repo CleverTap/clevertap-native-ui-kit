@@ -1,5 +1,7 @@
 import 'dart:developer' as developer;
 
+import 'package:flutter/foundation.dart';
+
 /// Log verbosity for the Native Display SDK.
 ///
 /// Values mirror CleverTap Core SDK `setDebugLevel` integers so
@@ -59,6 +61,14 @@ class NDLogger {
 
   static NDLogLevel get currentLevel => _level;
   static bool get isExplicitlySet => _explicitlySet;
+
+  /// Reset logger state to defaults. Test-only — the static state is otherwise
+  /// process-global and would leak between test cases.
+  @visibleForTesting
+  static void resetForTest() {
+    _level = NDLogLevel.info;
+    _explicitlySet = false;
+  }
 
   static String _format(String tag, String msg) => '$_prefix: $tag: $msg';
 
