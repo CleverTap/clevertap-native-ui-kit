@@ -105,7 +105,11 @@ class NativeDisplayRenderer extends StatelessWidget {
   Widget _buildElement(BuildContext context, NativeDisplayElement node, Style style) {
     return switch (node.elementType) {
       ElementType.text => TextElement(node: node, style: style, evaluator: evaluator),
-      ElementType.image => ImageElement(node: node, style: style),
+      ElementType.image => ImageElement(
+          node: node,
+          style: style,
+          actionListener: actionListener,
+        ),
       ElementType.button => ButtonElement(
           node: node,
           style: style,

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../../internal/nd_logger.dart';
 import '../../evaluator/variable_evaluator.dart';
 import '../../models/enums.dart';
 import '../../models/native_display_node.dart';
@@ -77,7 +78,7 @@ class _HtmlElementState extends State<HtmlElement> {
     final isWrapContent = layout?.height?.special == SpecialDimension.wrapContent;
     final isMatchParent = layout?.height?.special == SpecialDimension.matchParent;
     if (isWrapContent) {
-      debugPrint('[NativeDisplay] HtmlElement: wrap_content height unsupported; using 200dp fallback');
+      NDLogger.w('HtmlElement', 'wrap_content height unsupported; using 200dp fallback');
     }
     final double? height = isMatchParent
         ? null
