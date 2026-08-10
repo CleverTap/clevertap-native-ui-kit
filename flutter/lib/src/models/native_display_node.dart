@@ -5,6 +5,17 @@ import 'layout.dart';
 import 'node_config.dart';
 import 'style.dart';
 
+// Binding values arrive as String / bool / int / double depending on the source
+// (dashboard emits strings; programmatic JSON often uses native types). Coerce
+// non-string scalars to their canonical string form so downstream consumers
+// (VariableEvaluator, renderers) can treat bindings as Map<String,String>.
+String _coerceBindingValue(dynamic v) {
+  if (v == null) return '';
+  if (v is String) return v;
+  if (v is bool) return v ? 'true' : 'false';
+  return v.toString();
+}
+
 sealed class NativeDisplayNode {
   final String id;
   final Layout? layout;
@@ -112,7 +123,7 @@ class NativeDisplayElement extends NativeDisplayNode {
       id: json['id'] as String? ?? '',
       elementType: ElementType.fromJson(json['elementType'] as String? ?? 'text'),
       bindings: (json['bindings'] as Map<String, dynamic>?)
-              ?.map((k, v) => MapEntry(k, v as String)) ??
+              ?.map((k, v) => MapEntry(k, _coerceBindingValue(v))) ??
           const {},
       layout: json['layout'] != null
           ? Layout.fromJson(json['layout'] as Map<String, dynamic>)

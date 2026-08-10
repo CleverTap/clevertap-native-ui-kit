@@ -1,6 +1,6 @@
-import 'package:flutter/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../internal/nd_logger.dart';
 import '../models/action.dart';
 import '../models/enums.dart';
 import '../renderer/native_display_view.dart';
@@ -21,18 +21,32 @@ class ActionHandler {
   }
 
   Future<void> _handleOpenUrl(OpenUrlAction action, String nodeId) async {
-    final uri = Uri.tryParse(action.url);
+    // Match Core SDK openUrl: strip newlines, route via OS so custom schemes
+    // (myapp://, fb://, spotify://) work without a scheme allowlist.
+    final sanitized = action.url.replaceAll('\n', '').replaceAll('\r', '');
+    final uri = Uri.tryParse(sanitized);
     if (uri == null) return;
     try {
+      final LaunchMode mode;
       if (action.openInBrowser) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
+        mode = LaunchMode.externalApplication;
+      } else if (action.customTabsEnabled) {
+        // Chrome Custom Tabs on Android, SFSafariViewController on iOS.
+        mode = LaunchMode.inAppBrowserView;
       } else {
-        await launchUrl(uri, mode: LaunchMode.platformDefault);
+        mode = LaunchMode.platformDefault;
       }
+      await launchUrl(uri, mode: mode);
     } catch (e) {
-      debugPrint('[NativeDisplay] ActionHandler: failed to launch URL ${action.url}: $e');
+      NDLogger.w('ActionHandler', 'failed to launch URL ${action.url}: $e');
     }
-    listener?.call('open_url', nodeId, {'url': action.url});
+    listener?.call('open_url', nodeId, {
+      'url': action.url,
+      // Surface query params alongside attribution metadata so listeners can
+      // act on deep-link state without re-parsing the URL.
+      if (uri.queryParameters.isNotEmpty) ...uri.queryParameters,
+      if (action.metadata != null) ...?action.metadata,
+    });
   }
 
   void _handleCustom(CustomAction action, String nodeId) {

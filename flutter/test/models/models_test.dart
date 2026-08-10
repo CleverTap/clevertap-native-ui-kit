@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:clevertap_native_display/clevertap_native_display.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -272,12 +273,24 @@ void main() {
       expect((a as OpenUrlAction).url, 'https://clevertap.com');
     });
 
-    test('open_url resolves platform-specific url map (ios key)', () {
+    test('open_url resolves platform-specific url map (ios key on iOS)', () {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
       final a = NDAction.fromJson({
         'type': 'open_url',
         'url': {'android': 'https://play.google.com', 'ios': 'https://apps.apple.com'},
       });
       expect((a as OpenUrlAction).url, 'https://apps.apple.com');
+    });
+
+    test('open_url resolves platform-specific url map (android key on Android)', () {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      final a = NDAction.fromJson({
+        'type': 'open_url',
+        'url': {'android': 'https://play.google.com', 'ios': 'https://apps.apple.com'},
+      });
+      expect((a as OpenUrlAction).url, 'https://play.google.com');
     });
 
     test('parses custom action', () {
