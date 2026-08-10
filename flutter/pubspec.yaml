@@ -3,9 +3,15 @@ description: Native Display SDK Flutter plugin for CleverTap — renders server-
 version: 0.1.0
 homepage: https://github.com/CleverTap/clevertap-native-ui-kit
 
+# Minimum SDK floor reflects the real build requirements, not just the Dart
+# language level. The dominant constraint is Android compileSdk 36 (kept current
+# for Play Store), which needs AGP 8.7 + suppressUnsupportedCompileSdk (or AGP
+# 8.9) → Gradle 8.7+/JDK 17, first available with Flutter 3.27. webview_flutter
+# (^4.9.0) and video_player sit below that. Declaring the true floor makes
+# `pub get` fail early with a clear message instead of a cryptic Gradle error.
 environment:
-  sdk: ">=3.0.0 <4.0.0"
-  flutter: ">=3.10.0"
+  sdk: ">=3.6.0 <4.0.0"
+  flutter: ">=3.27.0"
 
 dependencies:
   flutter:
