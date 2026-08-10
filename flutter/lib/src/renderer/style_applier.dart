@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 
+import '../internal/nd_logger.dart';
 import '../models/background.dart';
 import '../models/enums.dart';
 import '../models/layout.dart';
@@ -139,7 +140,7 @@ class StyleApplier {
               : null,
         ),
       _ => () {
-          debugPrint('[NativeDisplay] Animated background type deferred to v2: ${bg.runtimeType}');
+          NDLogger.d('StyleApplier', 'Animated background type deferred to v2: ${bg.runtimeType}');
           return null;
         }(),
     };

@@ -14,8 +14,12 @@ class VariableEvaluator {
 
   bool evaluateBoolean(String? expr) {
     if (expr == null) return true;
-    if (expr == 'true') return true;
-    if (expr == 'false') return false;
+    // Plain literals sent directly in bindings: "true"/"false"/"1"/"0"/"1.0".
+    final lower = expr.toLowerCase();
+    if (lower == 'true') return true;
+    if (lower == 'false') return false;
+    final asNum = num.tryParse(expr);
+    if (asNum != null) return asNum != 0;
     final clean = expr.startsWith('{{') && expr.endsWith('}}')
         ? expr.substring(2, expr.length - 2).trim()
         : expr;
@@ -33,8 +37,15 @@ class VariableEvaluator {
   bool _evalBoolean(String expr) {
     final result = _evaluateExpr(expr);
     if (result is bool) return result;
-    if (result is String) return result.isNotEmpty && result != 'false';
     if (result is num) return result != 0;
+    if (result is String) {
+      final lower = result.toLowerCase();
+      if (lower == 'true') return true;
+      if (lower == 'false') return false;
+      final asNum = num.tryParse(result);
+      if (asNum != null) return asNum != 0;
+      return result.isNotEmpty;
+    }
     return false;
   }
 

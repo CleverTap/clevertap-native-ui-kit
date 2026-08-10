@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:isolate';
 
+import '../internal/nd_logger.dart';
 import '../models/native_display_config.dart';
 import '../models/native_display_unit.dart';
 import '../style/style_resolver.dart';
@@ -32,7 +33,14 @@ class NativeDisplayConfigParser {
     try {
       final unit = _deepCast(rawUnit);
 
-      final unitId = unit['wzrk_id']?.toString() ?? unit['slot_id']?.toString() ?? '';
+      // Fall back to a sentinel when wzrk_id is absent so previews and test
+      // fixtures still render — matches iOS and Android parser behaviour.
+      final wzrkId = unit['wzrk_id']?.toString();
+      final unitId = wzrkId ?? '0_0';
+      if (wzrkId == null) {
+        NDLogger.w('NativeDisplayConfigParser',
+            'Missing wzrk_id in display unit JSON, using fallback id \'0_0\'');
+      }
       final slotId = unit['slot_id']?.toString();
 
       // Retain non-system keys as custom extras for the client.

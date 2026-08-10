@@ -1,14 +1,20 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 
+import '../internal/nd_logger.dart';
 import '../models/native_display_config.dart';
 
 class NativeDisplayBridge {
+  static const String _tag = 'NativeDisplayBridge';
   static const _channel = MethodChannel('com.clevertap.flutter.nativedisplay');
   static const _events = EventChannel('com.clevertap.flutter/native_display_events');
   static const _sampleChannel = MethodChannel('com.clevertap.flutter/native_display');
+
+  /// Configure the SDK log level. Takes precedence over the auto-sync from
+  /// Core SDK debug level — once set, [NDLogger.syncFromCoreSdk] will not
+  /// override the client preference.
+  static void setLogLevel(NDLogLevel level) => NDLogger.setLevel(level);
 
   // Fetch a display unit config JSON from the native CleverTap Core SDK by unitId.
   // Returns null when the unit is not found or an error occurs.
@@ -19,7 +25,7 @@ class NativeDisplayBridge {
       final json = jsonDecode(result) as Map<String, dynamic>;
       return NativeDisplayConfig.fromJson(json);
     } on PlatformException catch (e) {
-      debugPrint('[NativeDisplay] fetchConfig failed for $unitId: ${e.message}');
+      NDLogger.w(_tag, 'fetchConfig failed for $unitId: ${e.message}');
       return null;
     }
   }
@@ -29,7 +35,7 @@ class NativeDisplayBridge {
     try {
       await _channel.invokeMethod<void>('pushViewedEvent', {'unitId': unitId});
     } on PlatformException catch (e) {
-      debugPrint('[NativeDisplay] pushViewedEvent failed for $unitId: ${e.message}');
+      NDLogger.w(_tag, 'pushViewedEvent failed for $unitId: ${e.message}');
     }
   }
 
@@ -41,7 +47,7 @@ class NativeDisplayBridge {
         if (elementId != null) 'elementId': elementId,
       });
     } on PlatformException catch (e) {
-      debugPrint('[NativeDisplay] pushClickedEvent failed for $unitId: ${e.message}');
+      NDLogger.w(_tag, 'pushClickedEvent failed for $unitId: ${e.message}');
     }
   }
 
@@ -58,7 +64,7 @@ class NativeDisplayBridge {
     try {
       await _sampleChannel.invokeMethod<void>('pushEvent', {'eventName': eventName});
     } on PlatformException catch (e) {
-      debugPrint('[NativeDisplay] pushEvent failed for $eventName: ${e.message}');
+      NDLogger.w(_tag, 'pushEvent failed for $eventName: ${e.message}');
     } catch (_) {
       // Channel may not be set up in all host apps — silently ignore
     }

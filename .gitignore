@@ -155,3 +155,7 @@ google-services.json
 android-sample/app/configs
 .claude/worktrees/
 .claude/scheduled_tasks.lock
+.claude/scratch/
+
+# Flutter build output
+.dart_tool/

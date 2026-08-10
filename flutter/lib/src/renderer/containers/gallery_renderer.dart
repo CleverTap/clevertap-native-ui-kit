@@ -147,7 +147,7 @@ class _GalleryRendererState extends State<GalleryRenderer> {
     );
   }
 
-  Alignment _indicatorAlignment(String position) => switch (position) {
+  Alignment _indicatorAlignment(String position) => switch (position.toLowerCase()) {
         'top' => Alignment.topCenter,
         'left' => Alignment.centerLeft,
         'right' => Alignment.centerRight,

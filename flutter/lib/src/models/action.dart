@@ -1,4 +1,47 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+
 import 'enums.dart';
+
+// Coerce metadata JSON values to String. Primitives go through toString();
+// nested objects/arrays are serialized to a compact JSON string so the map
+// stays Map<String, String> without crashing on the dynamic cast.
+// Mirrors parseMetadataToStringMap on Android and ndMetadataToStringMap on iOS.
+Map<String, String>? _parseMetadataToStringMap(dynamic raw) {
+  if (raw is! Map) return null;
+  final result = <String, String>{};
+  raw.forEach((k, v) {
+    if (v == null) return;
+    if (v is String) {
+      result[k.toString()] = v;
+    } else if (v is bool || v is num) {
+      result[k.toString()] = v.toString();
+    } else {
+      result[k.toString()] = jsonEncode(v);
+    }
+  });
+  return result.isEmpty ? null : result;
+}
+
+// Resolve the OpenUrl `url` field. Accepts:
+//   "https://..."                     — plain string
+//   {"android":"...","ios":"..."}     — platform object (prefer host platform)
+//   {"android":{text,replacements}}   — legacy Ultron object; use `text`
+String _resolveOpenUrlValue(dynamic raw) {
+  if (raw == null) return '';
+  if (raw is String) return raw;
+  if (raw is! Map) return '';
+  final key = defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android';
+  final altKey = defaultTargetPlatform == TargetPlatform.iOS ? 'android' : 'ios';
+  final platformVal = raw[key] ?? raw[altKey];
+  if (platformVal is String) return platformVal;
+  if (platformVal is Map) {
+    final text = platformVal['text'];
+    if (text is String) return text;
+  }
+  return '';
+}
 
 sealed class NDAction {
   const NDAction();
@@ -17,32 +60,26 @@ sealed class NDAction {
 }
 
 class OpenUrlAction extends NDAction {
-  // url can be a plain string, or a platform map {"android": "...", "ios": "..."}
+  // url can be a plain string, a platform map {"android": "...", "ios": "..."},
+  // or the legacy Ultron {text, replacements} object — resolved at parse time.
   final String url;
   final bool openInBrowser;
   final bool customTabsEnabled;
+  final Map<String, String>? metadata;
 
   const OpenUrlAction({
     required this.url,
     this.openInBrowser = false,
     this.customTabsEnabled = true,
+    this.metadata,
   });
 
-  factory OpenUrlAction.fromJson(Map<String, dynamic> json) {
-    final urlRaw = json['url'];
-    String url;
-    if (urlRaw is Map) {
-      // Platform-specific URL map — use 'ios' key for Flutter (treated as iOS-like)
-      url = (urlRaw['ios'] as String?) ?? (urlRaw['android'] as String?) ?? '';
-    } else {
-      url = urlRaw as String? ?? '';
-    }
-    return OpenUrlAction(
-      url: url,
-      openInBrowser: json['openInBrowser'] as bool? ?? false,
-      customTabsEnabled: json['customTabsEnabled'] as bool? ?? true,
-    );
-  }
+  factory OpenUrlAction.fromJson(Map<String, dynamic> json) => OpenUrlAction(
+        url: _resolveOpenUrlValue(json['url']),
+        openInBrowser: json['openInBrowser'] as bool? ?? false,
+        customTabsEnabled: json['customTabsEnabled'] as bool? ?? true,
+        metadata: _parseMetadataToStringMap(json['metadata']),
+      );
 }
 
 class CustomAction extends NDAction {
@@ -55,8 +92,7 @@ class CustomAction extends NDAction {
   factory CustomAction.fromJson(Map<String, dynamic> json) => CustomAction(
         key: json['key'] as String? ?? '',
         value: json['value'],
-        metadata: (json['metadata'] as Map<String, dynamic>?)
-            ?.map((k, v) => MapEntry(k, v as String)),
+        metadata: _parseMetadataToStringMap(json['metadata']),
       );
 }
 

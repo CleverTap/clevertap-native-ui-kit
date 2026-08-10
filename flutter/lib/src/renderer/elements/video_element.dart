@@ -76,19 +76,26 @@ class _VideoElementState extends State<VideoElement> {
           alignment: Alignment.center,
           children: [
             video,
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _controller!.value.isPlaying
-                      ? _controller!.pause()
-                      : _controller!.play();
-                });
-              },
-              child: _controller!.value.isPlaying
-                  ? const SizedBox.shrink()
-                  : const Icon(IconData(0xe037, fontFamily: 'MaterialIcons'),
-                      size: 48, color: Color(0xCCFFFFFF)),
+            // Full-area tap target so tap-anywhere toggles play/pause.
+            // HitTestBehavior.opaque ensures the gesture wins over the
+            // underlying VideoPlayer texture in Flutter's gesture arena.
+            Positioned.fill(
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  setState(() {
+                    _controller!.value.isPlaying
+                        ? _controller!.pause()
+                        : _controller!.play();
+                  });
+                },
+              ),
             ),
+            if (!_controller!.value.isPlaying)
+              const IgnorePointer(
+                child: Icon(IconData(0xe037, fontFamily: 'MaterialIcons'),
+                    size: 48, color: Color(0xCCFFFFFF)),
+              ),
           ],
         );
       }

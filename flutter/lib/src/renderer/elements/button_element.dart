@@ -1,12 +1,15 @@
 import 'package:flutter/widgets.dart';
 
+import '../../bridge/native_display_bridge.dart';
 import '../../evaluator/variable_evaluator.dart';
+import '../../models/action.dart';
 import '../../models/enums.dart';
 import '../../models/native_display_node.dart';
 import '../../models/style.dart';
 import '../../utils/color_parser.dart';
 import '../root_height_scope.dart';
 import '../style_applier.dart';
+import '../unit_id_scope.dart';
 
 class ButtonElement extends StatelessWidget {
   final NativeDisplayElement node;
@@ -26,9 +29,10 @@ class ButtonElement extends StatelessWidget {
   Widget build(BuildContext context) {
     final rootHeight = RootHeightScope.of(context);
     final text = evaluator.evaluateString(node.bindings['text'] ?? '');
+    final unitId = UnitIdScope.of(context);
 
     return GestureDetector(
-      onTap: _handleClick,
+      onTap: () => _handleClick(unitId),
       child: StyleApplier.apply(
         Center(
           child: Text(
@@ -75,10 +79,18 @@ class ButtonElement extends StatelessWidget {
         null => FontWeight.w400,
       };
 
-  void _handleClick() {
-    final action = node.actions?['onClick'];
-    if (action != null) {
-      actionListener?.call('action', node.id, null);
+  void _handleClick(String? unitId) {
+    final action = node.actions?[ActionTriggers.onClick];
+    if (action == null) return;
+    actionListener?.call('action', node.id, _payload(action));
+    if (unitId != null && unitId.isNotEmpty) {
+      NativeDisplayBridge.pushClickedEvent(unitId, elementId: node.id);
     }
+  }
+
+  Map<String, dynamic>? _payload(NDAction action) {
+    if (action is OpenUrlAction && action.metadata != null) return {...action.metadata!};
+    if (action is CustomAction && action.metadata != null) return {...action.metadata!};
+    return null;
   }
 }

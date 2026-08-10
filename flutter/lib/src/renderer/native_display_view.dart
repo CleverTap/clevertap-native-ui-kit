@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
+import '../bridge/native_display_bridge.dart';
 import '../evaluator/variable_evaluator.dart';
+import '../internal/viewed_units_tracker.dart';
 import '../models/enums.dart';
 import '../models/layout.dart';
 import '../models/native_display_config.dart';
@@ -8,6 +10,7 @@ import '../style/style_resolver.dart';
 import 'native_display_renderer.dart';
 import 'root_height_scope.dart';
 import 'resolved_styles_scope.dart';
+import 'unit_id_scope.dart';
 
 typedef NativeDisplayActionListener = void Function(
     String action, String nodeId, Map<String, dynamic>? params);
@@ -21,6 +24,12 @@ class NativeDisplayView extends StatefulWidget {
   /// the view skips [StyleResolver] entirely — avoiding redundant computation.
   final Map<String, Style>? resolvedStyles;
 
+  /// CleverTap display unit ID (`wzrk_id`). When provided, the view fires
+  /// "Notification Viewed" once per impression and "Notification Clicked"
+  /// when an interactive element with an onClick action is tapped — both via
+  /// [NativeDisplayBridge]. Leave `null` for previews / test fixtures.
+  final String? unitId;
+
   final NativeDisplayActionListener? actionListener;
   final NativeDisplayComponentListener? componentListener;
 
@@ -28,6 +37,7 @@ class NativeDisplayView extends StatefulWidget {
     super.key,
     required this.config,
     this.resolvedStyles,
+    this.unitId,
     this.actionListener,
     this.componentListener,
   });
@@ -82,11 +92,17 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
           rootHeight: fixedHeight,
           child: ResolvedStylesScope(
             styles: _resolvedStyles,
-            child: NativeDisplayRenderer(
-              node: root,
-              evaluator: evaluator,
-              actionListener: widget.actionListener,
-              componentListener: widget.componentListener,
+            child: UnitIdScope(
+              unitId: widget.unitId,
+              child: _TrackNotificationViewed(
+                unitId: widget.unitId,
+                child: NativeDisplayRenderer(
+                  node: root,
+                  evaluator: evaluator,
+                  actionListener: widget.actionListener,
+                  componentListener: widget.componentListener,
+                ),
+              ),
             ),
           ),
         ),
@@ -108,11 +124,17 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
           rootHeight: rootHeight,
           child: ResolvedStylesScope(
             styles: _resolvedStyles,
-            child: NativeDisplayRenderer(
-              node: root,
-              evaluator: evaluator,
-              actionListener: widget.actionListener,
-              componentListener: widget.componentListener,
+            child: UnitIdScope(
+              unitId: widget.unitId,
+              child: _TrackNotificationViewed(
+                unitId: widget.unitId,
+                child: NativeDisplayRenderer(
+                  node: root,
+                  evaluator: evaluator,
+                  actionListener: widget.actionListener,
+                  componentListener: widget.componentListener,
+                ),
+              ),
             ),
           ),
         );
@@ -209,4 +231,62 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
 
     return screenHeight;
   }
+}
+
+/// Fires "Notification Viewed" exactly once per impression via the
+/// [ViewedUnitsTracker] gate. A no-op when [unitId] is null.
+///
+/// Mirrors Android `TrackNotificationViewed` (Compose) — the gate suppresses
+/// repeat-fires from rebuilds while allowing genuine scroll-out → scroll-in
+/// to re-fire once the widget unmounts.
+class _TrackNotificationViewed extends StatefulWidget {
+  final String? unitId;
+  final Widget child;
+
+  const _TrackNotificationViewed({required this.unitId, required this.child});
+
+  @override
+  State<_TrackNotificationViewed> createState() => _TrackNotificationViewedState();
+}
+
+class _TrackNotificationViewedState extends State<_TrackNotificationViewed> {
+  @override
+  void initState() {
+    super.initState();
+    _fireIfFirstImpression();
+  }
+
+  @override
+  void didUpdateWidget(_TrackNotificationViewed old) {
+    super.didUpdateWidget(old);
+    if (old.unitId != widget.unitId) {
+      if (old.unitId != null) ViewedUnitsTracker.remove(old.unitId!);
+      _fireIfFirstImpression();
+    }
+  }
+
+  void _fireIfFirstImpression() {
+    final id = widget.unitId;
+    if (id == null || id.isEmpty) return;
+    if (ViewedUnitsTracker.addIfNew(id)) {
+      // Defer past the first frame so the impression coincides with the
+      // canvas actually being on-screen (matches LaunchedEffect cadence
+      // on Android).
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        NativeDisplayBridge.pushViewedEvent(id);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    final id = widget.unitId;
+    if (id != null && id.isNotEmpty) {
+      ViewedUnitsTracker.remove(id);
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
