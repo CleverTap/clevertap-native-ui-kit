@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 
-import '../../bridge/native_display_bridge.dart';
 import '../../evaluator/variable_evaluator.dart';
 import '../../handler/action_attribution_extras.dart';
 import '../../models/action.dart';
@@ -8,6 +7,7 @@ import '../../models/enums.dart';
 import '../../models/native_display_node.dart';
 import '../../models/style.dart';
 import '../../utils/color_parser.dart';
+import '../notification_click_scope.dart';
 import '../root_height_scope.dart';
 import '../style_applier.dart';
 import '../unit_id_scope.dart';
@@ -31,9 +31,10 @@ class ButtonElement extends StatelessWidget {
     final rootHeight = RootHeightScope.of(context);
     final text = evaluator.evaluateString(node.bindings['text'] ?? '');
     final unitId = UnitIdScope.of(context);
+    final onNotificationClicked = NotificationClickScope.of(context);
 
     return GestureDetector(
-      onTap: () => _handleClick(unitId),
+      onTap: () => _handleClick(unitId, onNotificationClicked),
       child: StyleApplier.apply(
         Center(
           child: Text(
@@ -80,18 +81,18 @@ class ButtonElement extends StatelessWidget {
         null => FontWeight.w400,
       };
 
-  void _handleClick(String? unitId) {
+  void _handleClick(String? unitId, NativeDisplayNotificationClicked? onNotificationClicked) {
     final action = node.actions?[ActionTriggers.onClick];
     if (action == null) return;
     actionListener?.call('action', node.id, _payload(action));
-    if (unitId != null && unitId.isNotEmpty) {
+    if (onNotificationClicked != null && unitId != null && unitId.isNotEmpty) {
       // Flatten the clicked action into attribution extras (action_type, custom
-      // KVs, and BE-injected wzrk_* fields from action.metadata) so they reach
-      // the dashboard as additionalProperties — matches Android/iOS SDK-5793.
+      // KVs, and BE-injected wzrk_* fields from action.metadata). The host feeds
+      // these into clevertap_plugin.pushDisplayUnitElementClickedEvent.
       final extras = ActionAttributionExtras.sanitize(
         ActionAttributionExtras.from(action),
       );
-      NativeDisplayBridge.pushClickedEvent(unitId, elementId: node.id, extras: extras);
+      onNotificationClicked(unitId, node.id, extras);
     }
   }
 
