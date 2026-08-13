@@ -190,16 +190,31 @@ class _CanvasContent extends StatelessWidget {
       itemCount: units.length,
       itemBuilder: (ctx, i) {
         final unit = units[i];
+        final unitId = unit.unitId.isNotEmpty ? unit.unitId : null;
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: NativeDisplayView(
             config: unit.config,
             resolvedStyles: unit.resolvedStyles,
+            unitId: unitId,
+            // Impression attribution — fired once per unit by the SDK.
+            onNotificationViewed: (id) {
+              CleverTapPlugin.pushDisplayUnitViewedEvent(id);
+              onAction('VIEWED unit $id');
+            },
+            // Element-level click attribution — extras already sanitized by the SDK.
+            onNotificationClicked: (id, elementId, extras) {
+              if (elementId.isNotEmpty) {
+                CleverTapPlugin.pushDisplayUnitElementClickedEvent(id, extras);
+                onAction('CLICKED element $elementId on unit $id');
+              } else {
+                // Fallback: no element id — record a unit-level click.
+                CleverTapPlugin.pushDisplayUnitClickedEvent(id);
+                onAction('CLICKED unit $id');
+              }
+            },
             actionListener: (action, nodeId, params) {
               onAction('ACTION $action on $nodeId');
-              if (unit.unitId.isNotEmpty) {
-                CleverTapPlugin.pushDisplayUnitClickedEvent(unit.unitId);
-              }
             },
           ),
         );
@@ -247,6 +262,8 @@ class _EventLogFooterState extends State<_EventLogFooter> {
 
   Color _color(String msg) {
     if (msg.contains('Fired')) return const Color(0xFFFFD54F);
+    if (msg.contains('VIEWED')) return const Color(0xFFCE93D8);
+    if (msg.contains('CLICKED')) return const Color(0xFFFFAB91);
     if (msg.contains('ACTION')) return const Color(0xFF81D4FA);
     if (msg.contains('ERROR') || msg.contains('WARN')) return const Color(0xFFEF9A9A);
     if (msg.contains('Received')) return const Color(0xFFA5D6A7);

@@ -25,9 +25,11 @@ class BridgeIntegrationScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Demonstrates how NativeDisplayBridge.fetchConfig() retrieves configs from '
-              'the native CleverTap Core SDK. The cards below load mock JSON configs '
-              'from the local assets folder to simulate bridge payloads.',
+              'The Native Display SDK is a pure-Dart renderer. The host fetches display '
+              'units from the CleverTap Core SDK via clevertap_plugin.getAllDisplayUnits(), '
+              'renders each with NativeDisplayView, and forwards impression/click '
+              'attribution back through clevertap_plugin. The cards below load mock JSON '
+              'configs from the local assets folder to simulate those unit payloads.',
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
@@ -106,16 +108,22 @@ class _ConfigSection extends StatelessWidget {
 class _ApiInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    const snippet = '''// Fetch a config from the Core SDK by unit ID
-final config = await NativeDisplayBridge.fetchConfig('my-unit-id');
-if (config != null) {
-  // Pass directly to NativeDisplayView
-  NativeDisplayView(config: config)
-}
+    const snippet = '''// 1. Fetch display units from the CleverTap Core SDK
+final raw = await CleverTapPlugin.getAllDisplayUnits();
+final units = await NativeDisplayConfigParser.parseAll(raw);
 
-// Report analytics events
-await NativeDisplayBridge.pushViewedEvent(unitId);
-await NativeDisplayBridge.pushClickedEvent(unitId, elementId: nodeId);''';
+// 2. Render each unit and wire attribution back to clevertap_plugin
+NativeDisplayView(
+  config: unit.config,
+  resolvedStyles: unit.resolvedStyles,
+  unitId: unit.unitId,
+  // Impression — fired once per unit
+  onNotificationViewed: (id) =>
+      CleverTapPlugin.pushDisplayUnitViewedEvent(id),
+  // Element click — extras already sanitized by the SDK
+  onNotificationClicked: (id, elementId, extras) =>
+      CleverTapPlugin.pushDisplayUnitElementClickedEvent(id, extras),
+);''';
 
     return Card(
       elevation: 0,
@@ -126,7 +134,7 @@ await NativeDisplayBridge.pushClickedEvent(unitId, elementId: nodeId);''';
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Bridge API',
+            Text('Integration Pattern',
                 style: Theme.of(context)
                     .textTheme
                     .titleSmall
