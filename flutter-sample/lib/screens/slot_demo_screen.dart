@@ -94,12 +94,10 @@ Map<String, dynamic> _sampleUnit({
         'layout': {
           'width': {'value': 100, 'unit': 'percent'},
           'height': {'value': 96, 'unit': 'dp'},
-          'padding': {
-            'top': {'value': 16, 'unit': 'dp'},
-            'bottom': {'value': 16, 'unit': 'dp'},
-            'start': {'value': 16, 'unit': 'dp'},
-            'end': {'value': 16, 'unit': 'dp'},
-          },
+          // Spacing is flat per-side numbers with a single `unit` (see
+          // Spacing.fromJson) — NOT nested {value,unit} objects, and it uses
+          // left/right, not start/end.
+          'padding': {'all': 16, 'unit': 'dp'},
           'arrangement': {'strategy': 'center'},
         },
         'style': {
@@ -136,10 +134,7 @@ Map<String, dynamic> _sampleUnit({
             'layout': {
               'width': {'special': 'wrap_content'},
               'height': {'special': 'wrap_content'},
-              'padding': {
-                'top': {'value': 2, 'unit': 'dp'},
-                'bottom': {'value': 8, 'unit': 'dp'},
-              },
+              'padding': {'top': 2, 'bottom': 8, 'unit': 'dp'},
             },
           },
           {
@@ -158,12 +153,7 @@ Map<String, dynamic> _sampleUnit({
             'layout': {
               'width': {'special': 'wrap_content'},
               'height': {'special': 'wrap_content'},
-              'padding': {
-                'top': {'value': 6, 'unit': 'dp'},
-                'bottom': {'value': 6, 'unit': 'dp'},
-                'start': {'value': 14, 'unit': 'dp'},
-                'end': {'value': 14, 'unit': 'dp'},
-              },
+              'padding': {'top': 6, 'bottom': 6, 'left': 14, 'right': 14, 'unit': 'dp'},
             },
             // Click attribution: metadata wzrk_* keys surface through the
             // onNotificationClicked extras, which we forward to the Core SDK.
