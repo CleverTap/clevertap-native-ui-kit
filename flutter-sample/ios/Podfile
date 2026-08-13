@@ -1,5 +1,6 @@
-# Uncomment this line to define a global platform for your project
-# platform :ios, '12.0'
+# CleverTapNativeDisplay.podspec requires iOS 15.0 — set it here so pod install
+# doesn't fall back to the CocoaPods default of 12.0 (which fails resolution).
+platform :ios, '15.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -34,8 +35,10 @@ target 'Runner' do
 
   # CleverTap Core iOS SDK — required for CleverTap.autoIntegrate() + display unit callbacks
   pod 'CleverTap-iOS-SDK', '~> 7.0'
-  # Local Native Display SDK — provides NativeDisplayBridge + NativeDisplayView
-  pod 'CleverTapNativeDisplay', :path => '../../../ios'
+  # Local Native Display SDK — provides NativeDisplayBridge + NativeDisplayView.
+  # The podspec lives at the repo root (moved there in #75), which is two levels
+  # up from this Podfile — NOT ../../../ios.
+  pod 'CleverTapNativeDisplay', :path => '../..'
 
   target 'RunnerTests' do
     inherit! :search_paths
