@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
@@ -12,14 +13,49 @@ class NativeDisplayBridge {
   static const _events = EventChannel('com.clevertap.flutter/native_display_events');
   static const _sampleChannel = MethodChannel('com.clevertap.flutter/native_display');
 
+  // Guards the one-shot lazy log-level sync triggered from [fetchConfig] so we
+  // only hop the platform channel once per app run. An explicit host call to
+  // [syncLogLevelFromCoreSdk] can still re-sync at any time.
+  static bool _logSyncTriggered = false;
+
   /// Configure the SDK log level. Takes precedence over the auto-sync from
   /// Core SDK debug level — once set, [NDLogger.syncFromCoreSdk] will not
   /// override the client preference.
   static void setLogLevel(NDLogLevel level) => NDLogger.setLevel(level);
 
+  /// Sync the ND SDK log level from the host's CleverTap Core SDK debug level.
+  ///
+  /// Reads the Core debug level over the platform channel and forwards it to
+  /// [NDLogger.syncFromCoreSdk], which is a no-op once the client has called
+  /// [setLogLevel] (client-wins). Mirrors the shipped Android/iOS
+  /// `CleverTapAutoWire.syncLogLevelFromCoreSdk`.
+  ///
+  /// Safe to call repeatedly and a graceful no-op when no bridge / Core SDK is
+  /// wired (a null result or PlatformException leaves the current level intact).
+  static Future<void> syncLogLevelFromCoreSdk() async {
+    // Skip the channel round-trip entirely once the client fixed the level.
+    if (NDLogger.isExplicitlySet) return;
+    try {
+      final level = await _channel.invokeMethod<int>('getCoreDebugLevel');
+      if (level != null) {
+        NDLogger.syncFromCoreSdk(level);
+        NDLogger.d(_tag, 'Log level synced from Core SDK: $level → ${NDLogger.currentLevel}');
+      }
+    } on PlatformException catch (e) {
+      // getCoreDebugLevel unavailable on this host — keep the current level.
+      NDLogger.w(_tag, 'syncLogLevelFromCoreSdk failed: ${e.message}');
+    }
+  }
+
   // Fetch a display unit config JSON from the native CleverTap Core SDK by unitId.
   // Returns null when the unit is not found or an error occurs.
   static Future<NativeDisplayConfig?> fetchConfig(String unitId) async {
+    // Lazily align verbosity with the Core SDK on first Core-SDK interaction.
+    // Fire-and-forget: config fetching must not block on the log-level sync.
+    if (!_logSyncTriggered) {
+      _logSyncTriggered = true;
+      unawaited(syncLogLevelFromCoreSdk());
+    }
     try {
       final result = await _channel.invokeMethod<String>('fetchDisplayUnit', {'unitId': unitId});
       if (result == null) return null;

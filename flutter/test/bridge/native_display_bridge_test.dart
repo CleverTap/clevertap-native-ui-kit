@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
-import 'package:clevertap_native_display/src/bridge/native_display_bridge.dart';
+import 'package:clevertap_native_display/src/internal/nd_logger.dart';
 import 'package:clevertap_native_display/src/internal/nd_sdk_version.dart';
 
 const _channel = MethodChannel('com.clevertap.flutter.nativedisplay');
@@ -161,6 +161,70 @@ void main() {
 
       final result = await NativeDisplayBridge.fetchConfig('missing');
       expect(result, isNull);
+    });
+  });
+
+  group('NativeDisplayBridge.syncLogLevelFromCoreSdk', () {
+    setUp(() {
+      NDLogger.resetForTest();
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(_channel, null);
+    });
+
+    tearDown(() {
+      NDLogger.resetForTest();
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(_channel, null);
+    });
+
+    test('invokes getCoreDebugLevel and applies the returned level', () async {
+      String? capturedMethod;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(_channel, (call) async {
+        capturedMethod = call.method;
+        return 3; // VERBOSE
+      });
+
+      await NativeDisplayBridge.syncLogLevelFromCoreSdk();
+
+      expect(capturedMethod, 'getCoreDebugLevel');
+      expect(NDLogger.currentLevel, NDLogLevel.verbose);
+      expect(NDLogger.isExplicitlySet, isFalse);
+    });
+
+    test('null core level is a no-op — current level preserved', () async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(_channel, (call) async => null);
+
+      await NativeDisplayBridge.syncLogLevelFromCoreSdk();
+
+      expect(NDLogger.currentLevel, NDLogLevel.info); // unchanged default
+    });
+
+    test('PlatformException is a graceful no-op', () async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(_channel, (call) async {
+        throw PlatformException(code: 'UNAVAILABLE', message: 'no core sdk');
+      });
+
+      await NativeDisplayBridge.syncLogLevelFromCoreSdk();
+
+      expect(NDLogger.currentLevel, NDLogLevel.info);
+    });
+
+    test('client setLogLevel wins — skips the channel entirely', () async {
+      var channelHit = false;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(_channel, (call) async {
+        channelHit = true;
+        return 3;
+      });
+
+      NativeDisplayBridge.setLogLevel(NDLogLevel.off);
+      await NativeDisplayBridge.syncLogLevelFromCoreSdk();
+
+      expect(channelHit, isFalse);
+      expect(NDLogger.currentLevel, NDLogLevel.off);
     });
   });
 }

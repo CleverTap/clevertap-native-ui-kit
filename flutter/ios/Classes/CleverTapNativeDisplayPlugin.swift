@@ -19,6 +19,12 @@ public class CleverTapNativeDisplayPlugin: NSObject, FlutterPlugin {
     }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        // Argument-less methods are handled before the args guard.
+        if call.method == "getCoreDebugLevel" {
+            result(bridge?.coreDebugLevel())
+            return
+        }
+
         guard let args = call.arguments as? [String: Any] else {
             result(FlutterError(code: "INVALID_ARGUMENT", message: "Arguments missing", details: nil))
             return
@@ -71,4 +77,10 @@ public protocol NativeDisplayPluginBridge {
     // (action_type, custom KVs, and BE-injected wzrk_* fields) to forward to the
     // ND SDK's element-clicked path as Core SDK additionalProperties.
     func pushClickedEvent(unitId: String, elementId: String?, additionalProperties: [String: Any]?)
+
+    // Return the CleverTap Core SDK debug level (KVC `debugLevel` on the
+    // CleverTap instance), or nil if unavailable. Used by the Flutter SDK to
+    // align its own log verbosity with the host's Core SDK unless the client
+    // set a level explicitly.
+    func coreDebugLevel() -> NSNumber?
 }
