@@ -1,0 +1,732 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14
+    },
+    "colors": {}
+  },
+  "styleClasses": [],
+  "variables": {},
+  "root": {
+    "type": "container",
+    "id": "social_profile_root",
+    "containerType": "vertical",
+    "layout": {
+      "spacing": 0,
+      "padding": {
+        "all": 0
+      }
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "profile_card",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "shadowRadius": 8,
+          "shadowColor": "#00000015"
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "hero_section",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 200,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "layered",
+                "layers": [
+                  {
+                    "type": "linear_gradient",
+                    "angle": 135,
+                    "colors": ["#667eea", "#764ba2", "#f093fb"]
+                  },
+                  {
+                    "type": "pattern",
+                    "pattern_type": "grid",
+                    "primary_color": "#00000000",
+                    "secondary_color": "#FFFFFF08",
+                    "size": 1,
+                    "spacing": 20
+                  }
+                ]
+              }
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "status_badges",
+                "containerType": "horizontal",
+                "layout": {
+                  "spacing": 8,
+                  "margin": {
+                    "top": 16,
+                    "right": 16
+                  }
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "verified_badge",
+                    "containerType": "horizontal",
+                    "layout": {
+                      "spacing": 6,
+                      "padding": {
+                        "vertical": 6,
+                        "horizontal": 12
+                      }
+                    },
+                    "style": {
+                      "backgroundColor": "#4CAF50",
+                      "borderRadius": 12,
+                      "opacity": 0.95
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "verified_icon",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "✓"
+                        },
+                        "style": {
+                          "textColor": "#FFFFFF",
+                          "fontSize": 12,
+                          "fontWeight": "bold"
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "verified_text",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Verified"
+                        },
+                        "style": {
+                          "textColor": "#FFFFFF",
+                          "fontSize": 11,
+                          "fontWeight": "bold"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "pro_badge",
+                    "containerType": "box",
+                    "layout": {
+                      "padding": {
+                        "vertical": 6,
+                        "horizontal": 12
+                      }
+                    },
+                    "style": {
+                      "background": {
+                        "type": "animated_gradient",
+                        "gradient_type": "linear",
+                        "angle": 90,
+                        "colors": ["#FFD700", "#FFA500"],
+                        "duration": 3000,
+                        "loop": true,
+                        "animation_style": "smooth"
+                      },
+                      "borderRadius": 12,
+                      "opacity": 0.95
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "pro_text",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "PRO"
+                        },
+                        "style": {
+                          "textColor": "#FFFFFF",
+                          "fontSize": 11,
+                          "fontWeight": "bold"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "profile_info_section",
+            "containerType": "vertical",
+            "layout": {
+              "padding": {
+                "horizontal": 20,
+                "top": 0,
+                "bottom": 20
+              },
+              "spacing": 16,
+              "margin": {
+                "top": -60
+              }
+            },
+            "children": [
+              {
+                "type": "container",
+                "id": "avatar_section",
+                "containerType": "vertical",
+                "layout": {
+                  "spacing": 12
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "avatar_container",
+                    "containerType": "box",
+                    "layout": {
+                      "width": {
+                        "value": 120,
+                        "unit": "dp"
+                      },
+                      "height": {
+                        "value": 120,
+                        "unit": "dp"
+                      }
+                    },
+                    "style": {
+                      "background": {
+                        "type": "radial_gradient",
+                        "center_x": 0.5,
+                        "center_y": 0.5,
+                        "radius": 1.0,
+                        "colors": ["#E8E8E8", "#D0D0D0"]
+                      },
+                      "borderRadius": 60,
+                      "borderWidth": 4,
+                      "borderColor": "#FFFFFF",
+                      "shadowRadius": 8,
+                      "shadowColor": "#00000020"
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "avatar_emoji",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "👤"
+                        },
+                        "style": {
+                          "textColor": "#999999",
+                          "fontSize": 60,
+                          "textAlign": "center",
+                          "opacity": 0.6
+                        },
+                        "layout": {
+                          "padding": {
+                            "top": 30
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "name_section",
+                    "containerType": "vertical",
+                    "layout": {
+                      "spacing": 4
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "display_name",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Sarah Anderson"
+                        },
+                        "style": {
+                          "textColor": "#1A1A1A",
+                          "fontSize": 24,
+                          "fontWeight": "bold"
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "username",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "@sarah_designs"
+                        },
+                        "style": {
+                          "textColor": "#666666",
+                          "fontSize": 16,
+                          "opacity": 0.8
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "element",
+                    "id": "bio",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "UI/UX Designer | Creating beautiful digital experiences | Love minimalism and good coffee ☕"
+                    },
+                    "style": {
+                      "textColor": "#333333",
+                      "fontSize": 14,
+                      "lineHeight": 20,
+                      "opacity": 0.9
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "stats_section",
+                "containerType": "horizontal",
+                "layout": {
+                  "spacing": 24,
+                  "padding": {
+                    "vertical": 20
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#F8F9FA",
+                  "borderRadius": 16,
+                  "opacity": 0.6
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "followers_stat",
+                    "containerType": "vertical",
+                    "layout": {
+                      "spacing": 4,
+                      "padding": {
+                        "horizontal": 16
+                      }
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "followers_count",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "12.5K"
+                        },
+                        "style": {
+                          "textColor": "#1A1A1A",
+                          "fontSize": 20,
+                          "fontWeight": "bold",
+                          "textAlign": "center"
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "followers_label",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Followers"
+                        },
+                        "style": {
+                          "textColor": "#666666",
+                          "fontSize": 12,
+                          "textAlign": "center",
+                          "opacity": 0.8
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "element",
+                    "id": "stat_divider_1",
+                    "elementType": "divider",
+                    "dividerConfig": {
+                      "orientation": "vertical",
+                      "thickness": 1,
+                      "color": "#E0E0E0"
+                    }
+                  },
+                  {
+                    "type": "container",
+                    "id": "following_stat",
+                    "containerType": "vertical",
+                    "layout": {
+                      "spacing": 4,
+                      "padding": {
+                        "horizontal": 16
+                      }
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "following_count",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "842"
+                        },
+                        "style": {
+                          "textColor": "#1A1A1A",
+                          "fontSize": 20,
+                          "fontWeight": "bold",
+                          "textAlign": "center"
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "following_label",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Following"
+                        },
+                        "style": {
+                          "textColor": "#666666",
+                          "fontSize": 12,
+                          "textAlign": "center",
+                          "opacity": 0.8
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "element",
+                    "id": "stat_divider_2",
+                    "elementType": "divider",
+                    "dividerConfig": {
+                      "orientation": "vertical",
+                      "thickness": 1,
+                      "color": "#E0E0E0"
+                    }
+                  },
+                  {
+                    "type": "container",
+                    "id": "posts_stat",
+                    "containerType": "vertical",
+                    "layout": {
+                      "spacing": 4,
+                      "padding": {
+                        "horizontal": 16
+                      }
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "posts_count",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "234"
+                        },
+                        "style": {
+                          "textColor": "#1A1A1A",
+                          "fontSize": 20,
+                          "fontWeight": "bold",
+                          "textAlign": "center"
+                        }
+                      },
+                      {
+                        "type": "element",
+                        "id": "posts_label",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Posts"
+                        },
+                        "style": {
+                          "textColor": "#666666",
+                          "fontSize": 12,
+                          "textAlign": "center",
+                          "opacity": 0.8
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "container",
+                "id": "action_buttons_section",
+                "containerType": "horizontal",
+                "layout": {
+                  "spacing": 12
+                },
+                "children": [
+                  {
+                    "type": "container",
+                    "id": "follow_button",
+                    "containerType": "box",
+                    "layout": {
+                      "width": {
+                        "value": 0,
+                        "unit": "dp"
+                      },
+                      "padding": {
+                        "vertical": 14,
+                        "horizontal": 24
+                      }
+                    },
+                    "style": {
+                      "background": {
+                        "type": "linear_gradient",
+                        "angle": 135,
+                        "colors": ["#667eea", "#764ba2"]
+                      },
+                      "borderRadius": 12
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "follow_text",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Follow"
+                        },
+                        "style": {
+                          "textColor": "#FFFFFF",
+                          "fontSize": 15,
+                          "fontWeight": "bold",
+                          "textAlign": "center"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "message_button",
+                    "containerType": "box",
+                    "layout": {
+                      "width": {
+                        "value": 0,
+                        "unit": "dp"
+                      },
+                      "padding": {
+                        "vertical": 14,
+                        "horizontal": 24
+                      }
+                    },
+                    "style": {
+                      "backgroundColor": "#F5F5F5",
+                      "borderRadius": 12,
+                      "opacity": 0.8
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "message_text",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "Message"
+                        },
+                        "style": {
+                          "textColor": "#333333",
+                          "fontSize": 15,
+                          "fontWeight": "bold",
+                          "textAlign": "center"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "container",
+                    "id": "more_button",
+                    "containerType": "box",
+                    "layout": {
+                      "width": {
+                        "value": 48,
+                        "unit": "dp"
+                      },
+                      "height": {
+                        "value": 48,
+                        "unit": "dp"
+                      },
+                      "padding": {
+                        "all": 12
+                      }
+                    },
+                    "style": {
+                      "backgroundColor": "#F5F5F5",
+                      "borderRadius": 12,
+                      "opacity": 0.8
+                    },
+                    "children": [
+                      {
+                        "type": "element",
+                        "id": "more_icon",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "⋯"
+                        },
+                        "style": {
+                          "textColor": "#333333",
+                          "fontSize": 20,
+                          "fontWeight": "bold",
+                          "textAlign": "center"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "element",
+                "id": "section_divider",
+                "elementType": "divider",
+                "layout": {
+                  "margin": {
+                    "vertical": 16
+                  }
+                },
+                "dividerConfig": {
+                  "orientation": "horizontal",
+                  "thickness": 1,
+                  "color": "#E8E8E8"
+                }
+              },
+              {
+                "type": "container",
+                "id": "interests_section",
+                "containerType": "vertical",
+                "layout": {
+                  "spacing": 12
+                },
+                "children": [
+                  {
+                    "type": "element",
+                    "id": "interests_title",
+                    "elementType": "text",
+                    "bindings": {
+                      "text": "Interests"
+                    },
+                    "style": {
+                      "textColor": "#1A1A1A",
+                      "fontSize": 16,
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "type": "container",
+                    "id": "interests_tags",
+                    "containerType": "horizontal",
+                    "layout": {
+                      "spacing": 8
+                    },
+                    "children": [
+                      {
+                        "type": "container",
+                        "id": "tag_design",
+                        "containerType": "box",
+                        "layout": {
+                          "padding": {
+                            "vertical": 8,
+                            "horizontal": 16
+                          }
+                        },
+                        "style": {
+                          "backgroundColor": "#E3F2FD",
+                          "borderRadius": 16,
+                          "opacity": 0.9
+                        },
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "tag_design_text",
+                            "elementType": "text",
+                            "bindings": {
+                              "text": "Design"
+                            },
+                            "style": {
+                              "textColor": "#1976D2",
+                              "fontSize": 13,
+                              "fontWeight": "bold"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "container",
+                        "id": "tag_ui",
+                        "containerType": "box",
+                        "layout": {
+                          "padding": {
+                            "vertical": 8,
+                            "horizontal": 16
+                          }
+                        },
+                        "style": {
+                          "backgroundColor": "#F3E5F5",
+                          "borderRadius": 16,
+                          "opacity": 0.9
+                        },
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "tag_ui_text",
+                            "elementType": "text",
+                            "bindings": {
+                              "text": "UI/UX"
+                            },
+                            "style": {
+                              "textColor": "#7B1FA2",
+                              "fontSize": 13,
+                              "fontWeight": "bold"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "container",
+                        "id": "tag_creative",
+                        "containerType": "box",
+                        "layout": {
+                          "padding": {
+                            "vertical": 8,
+                            "horizontal": 16
+                          }
+                        },
+                        "style": {
+                          "backgroundColor": "#FFF3E0",
+                          "borderRadius": 16,
+                          "opacity": 0.9
+                        },
+                        "children": [
+                          {
+                            "type": "element",
+                            "id": "tag_creative_text",
+                            "elementType": "text",
+                            "bindings": {
+                              "text": "Creative"
+                            },
+                            "style": {
+                              "textColor": "#F57C00",
+                              "fontSize": 13,
+                              "fontWeight": "bold"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

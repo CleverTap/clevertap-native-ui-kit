@@ -1,0 +1,186 @@
+{
+  "theme": {
+    "id": "banner-02",
+    "defaultStyle": {
+      "textColor": "#FFFFFF",
+      "fontSize": 16
+    }
+  },
+  "variables": {
+    "productName": "iPhone 15 Pro",
+    "tagline": "Titanium Design"
+  },
+  "root": {
+    "type": "container",
+    "id": "banner-root",
+    "containerType": "box",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "aspectRatio": 0.62
+    },
+    "style": {
+      "backgroundColor": "#000000",
+      "borderRadius": 16
+    },
+    "animation": {
+      "type": "slide_in_left",
+      "duration": 600,
+      "easing": "ease_in_out"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "dark-overlay",
+        "elementType": "text",
+        "bindings": {
+          "text": ""
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 100, "unit": "percent" },
+          "offset": { "x": 0, "y": 0, "unit": "percent" }
+        },
+        "style": {
+          "backgroundColor": "#00000050"
+        }
+      },
+      {
+        "type": "element",
+        "id": "product-image",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://cdn.dummyjson.com/products/images/smartphones/iPhone%205s/1.png"
+        },
+        "layout": {
+          "width": { "value": 48, "unit": "percent" },
+          "height": { "value": 80, "unit": "percent" },
+          "offset": { "x": 4, "y": 10, "unit": "percent" }
+        },
+        "style": {
+          "borderRadius": 12
+        }
+      },
+      {
+        "type": "element",
+        "id": "new-badge",
+        "elementType": "text",
+        "bindings": {
+          "text": "NEW"
+        },
+        "layout": {
+          "width": { "value": 18, "unit": "percent" },
+          "height": { "value": 10, "unit": "percent" },
+          "offset": { "x": 56, "y": 8, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 14,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFF",
+          "textAlign": "center",
+          "backgroundColor": "#007AFFEE",
+          "borderRadius": 16
+        }
+      },
+      {
+        "type": "element",
+        "id": "product-name",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{productName}}"
+        },
+        "layout": {
+          "width": { "value": 42, "unit": "percent" },
+          "offset": { "x": 54, "y": 25, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 30,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFF",
+          "textAlign": "left"
+        }
+      },
+      {
+        "type": "element",
+        "id": "product-tagline",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{tagline}}"
+        },
+        "layout": {
+          "width": { "value": 42, "unit": "percent" },
+          "offset": { "x": 54, "y": 43, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 16,
+          "fontWeight": "normal",
+          "textColor": "#AAAAAA",
+          "textAlign": "left"
+        }
+      },
+      {
+        "type": "element",
+        "id": "learn-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Learn More"
+        },
+        "layout": {
+          "width": { "value": 40, "unit": "percent" },
+          "height": { "value": 16, "unit": "percent" },
+          "offset": { "x": 54, "y": 60, "unit": "percent" }
+        },
+        "style": {
+          "backgroundColor": "#007AFF",
+          "textColor": "#FFFFFF",
+          "fontSize": 16,
+          "fontWeight": "bold",
+          "borderRadius": 24,
+          "shadowColor": "#007AFF70",
+          "shadowRadius": 14,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 6
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "view_product",
+            "value": {
+              "product_id": "iphone_15_pro"
+            }
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "buy-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Buy Now"
+        },
+        "layout": {
+          "width": { "value": 40, "unit": "percent" },
+          "height": { "value": 16, "unit": "percent" },
+          "offset": { "x": 54, "y": 79, "unit": "percent" }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF20",
+          "textColor": "#FFFFFF",
+          "fontSize": 16,
+          "fontWeight": "bold",
+          "borderRadius": 24,
+          "borderWidth": 2,
+          "borderColor": "#FFFFFF"
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "buy_product",
+            "value": {
+              "product_id": "iphone_15_pro"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

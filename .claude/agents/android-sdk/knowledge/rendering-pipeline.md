@@ -173,6 +173,35 @@ val text = node.bindings?.get("text")?.let { template ->
 **Output**: Compose Modifier with size constraints
 **Responsibility**: Convert dimensions to actual pixel values
 
+### aspectRatio Precedence Rule (Critical)
+
+`aspectRatio` is applied as a Compose modifier **before** width and height modifiers (`applySizing` in `ModifierExtensions.kt`):
+
+```kotlin
+// AspectRatio applied FIRST
+if (layout.aspectRatio != null && layout.aspectRatio > 0 && !(hasFixedWidth && hasFixedHeight)) {
+    modifier = modifier.aspectRatio(layout.aspectRatio, matchHeightConstraintsFirst = hasFixedHeight)
+}
+// Then width
+modifier = modifier.fillMaxWidth(width.value / 100f)  // for percent
+// Then height
+```
+
+**Effect**: `Modifier.aspectRatio(ratio)` locks constraints to `{W=parentWidth, H=parentWidth/ratio}`. The subsequent `fillMaxWidth(fraction)` receives `minW=parentWidth` and cannot shrink — so **percent width has zero effect when AR is present**.
+
+### Sizing Resolution Priority
+
+| Scenario | Result |
+|---|---|
+| Both width AND height fixed (dp/px) | `aspectRatio` skipped; explicit dims win |
+| Only height fixed (dp/px) | width = `fixedHeight × AR` (`matchHeightConstraintsFirst=true`) |
+| Only width fixed (dp/px) | height = `fixedWidth / AR` |
+| width is percent + AR | **percent ignored**; uses full parent width; height = `parentWidth / AR` |
+| height is percent + AR | AR-derived height; percent height ignored |
+| No explicit width or height | full parent width; height = `parentWidth / AR` |
+
+> Note: `hasFixedWidth`/`hasFixedHeight` check `unit in [DP, PX]` — SP and PERCENT are NOT considered "fixed" for the AR skip condition.
+
 ### Dimension Types
 
 ```kotlin

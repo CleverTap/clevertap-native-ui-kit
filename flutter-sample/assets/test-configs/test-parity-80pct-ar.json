@@ -1,0 +1,97 @@
+{
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "padding": {"all": 0},
+      "width": {"unit": "percent", "value": 80},
+      "aspectRatio": 1.7778,
+      "height": {"unit": "percent", "value": 60}
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "angle": 180,
+        "colors": ["#d4b8ff", "#b8d4ff"]
+      },
+      "borderRadius": 12
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "text-1",
+        "elementType": "text",
+        "layout": {
+          "offset": {"unit": "percent", "x": 1.0, "y": 2.0},
+          "width": {"unit": "percent", "value": 99.0},
+          "height": {"unit": "percent", "value": 16.0}
+        },
+        "bindings": {"text": "80% width + AR 16:9"},
+        "style": {
+          "fontSize": {"unit": "percent", "value": 130},
+          "fontWeight": "bold",
+          "fontStyle": "italic",
+          "textColor": "#333333",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "img-1",
+        "elementType": "image",
+        "layout": {
+          "offset": {"unit": "percent", "x": 5.0, "y": 24.0},
+          "width": {"unit": "percent", "value": 43.0},
+          "height": {"unit": "percent", "value": 50.0}
+        },
+        "bindings": {"url": "https://images.unsplash.com/photo-1520763185298-1b434c919102?w=400"}
+      },
+      {
+        "type": "element",
+        "id": "img-2",
+        "elementType": "image",
+        "layout": {
+          "offset": {"unit": "percent", "x": 52.0, "y": 24.0},
+          "width": {"unit": "percent", "value": 43.0},
+          "height": {"unit": "percent", "value": 50.0}
+        },
+        "bindings": {"url": "https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=400"}
+      },
+      {
+        "type": "element",
+        "id": "btn-1",
+        "elementType": "button",
+        "layout": {
+          "offset": {"unit": "percent", "x": 5.0, "y": 78.0},
+          "width": {"unit": "percent", "value": 43.0},
+          "height": {"unit": "percent", "value": 14.0}
+        },
+        "bindings": {"text": "Flower"},
+        "style": {
+          "backgroundColor": "#4a4a7a",
+          "textColor": "#FFFFFF",
+          "fontSize": {"unit": "percent", "value": 90},
+          "borderRadius": 6
+        }
+      },
+      {
+        "type": "element",
+        "id": "btn-2",
+        "elementType": "button",
+        "layout": {
+          "offset": {"unit": "percent", "x": 52.0, "y": 78.0},
+          "width": {"unit": "percent", "value": 43.0},
+          "height": {"unit": "percent", "value": 14.0}
+        },
+        "bindings": {"text": "Rainbow"},
+        "style": {
+          "backgroundColor": "#7a3a3a",
+          "textColor": "#FFFFFF",
+          "fontSize": {"unit": "percent", "value": 90},
+          "borderRadius": 6
+        }
+      }
+    ]
+  }
+}

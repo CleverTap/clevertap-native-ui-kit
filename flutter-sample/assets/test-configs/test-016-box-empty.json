@@ -1,0 +1,46 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#311B92",
+      "fontSize": 16,
+      "lineHeight": 22
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "box-empty",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 300,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "background": {
+        "type": "radial_gradient",
+        "colors": [
+          "#D1C4E9",
+          "#9575CD"
+        ],
+        "centerX": 0.5,
+        "centerY": 0.5,
+        "radius": 0.8
+      },
+      "borderRadius": 20,
+      "borderWidth": 3,
+      "borderColor": "#4A148C"
+    },
+    "children": []
+  },
+  "styleClasses": [],
+  "variables": {}
+}

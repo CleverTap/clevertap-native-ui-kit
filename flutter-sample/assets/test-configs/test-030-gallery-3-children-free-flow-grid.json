@@ -1,0 +1,278 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#33691E",
+      "fontSize": 12,
+      "lineHeight": 17
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "gallery-3-free-flow-grid",
+    "containerType": "gallery",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 500,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 16
+      }
+    },
+    "style": {
+      "backgroundColor": "#F1F8E9"
+    },
+    "galleryConfig": {
+      "mode": "free_flow_grid",
+      "orientation": "vertical",
+      "spacing": 12,
+      "columns": 2
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "grid-item-1",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 12
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowRadius": 4,
+          "shadowOffsetY": 2,
+          "shadowColor": "#00000018"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "grid-img-1",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-52.jpg"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 150,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "type": "element",
+            "id": "grid-text-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "Grid Item 1"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#33691E",
+              "lineHeight": 20
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "grid-item-2",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 12
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowRadius": 4,
+          "shadowOffsetY": 2,
+          "shadowColor": "#00000018"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "grid-img-2",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-53.jpg"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 180,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "type": "element",
+            "id": "grid-text-2",
+            "elementType": "text",
+            "bindings": {
+              "text": "Grid Item 2"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#33691E",
+              "lineHeight": 20
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "grid-item-3",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 12
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8,
+            "spacingUnit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderRadius": 12,
+          "shadowRadius": 4,
+          "shadowOffsetY": 2,
+          "shadowColor": "#00000018"
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "grid-img-3",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-54.jpg"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 160,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 8
+            }
+          },
+          {
+            "type": "element",
+            "id": "grid-text-3",
+            "elementType": "text",
+            "bindings": {
+              "text": "Grid Item 3"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 0,
+                "unit": "dp",
+                "special": "wrap_content"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#33691E",
+              "lineHeight": 20
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}
