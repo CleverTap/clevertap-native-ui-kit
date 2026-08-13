@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../bridge/native_display_bridge.dart';
 import '../../handler/action_attribution_extras.dart';
 import '../../models/action.dart';
 import '../../models/enums.dart';
 import '../../models/native_display_node.dart';
 import '../../models/node_config.dart';
 import '../../models/style.dart';
+import '../notification_click_scope.dart';
 import '../root_height_scope.dart';
 import '../style_applier.dart';
 import '../unit_id_scope.dart';
@@ -85,15 +85,16 @@ class ImageElement extends StatelessWidget {
     final onClick = node.actions?[ActionTriggers.onClick];
     if (onClick != null) {
       final unitId = UnitIdScope.of(context);
+      final onNotificationClicked = NotificationClickScope.of(context);
       styled = GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
           actionListener?.call('action', node.id, _onClickPayload(onClick));
-          if (unitId != null && unitId.isNotEmpty) {
+          if (onNotificationClicked != null && unitId != null && unitId.isNotEmpty) {
             final extras = ActionAttributionExtras.sanitize(
               ActionAttributionExtras.from(onClick),
             );
-            NativeDisplayBridge.pushClickedEvent(unitId, elementId: node.id, extras: extras);
+            onNotificationClicked(unitId, node.id, extras);
           }
         },
         child: styled,
@@ -103,7 +104,7 @@ class ImageElement extends StatelessWidget {
     return RepaintBoundary(child: styled);
   }
 
-  // Mirror the attribution payload Android/iOS pass to pushClickedEvent —
+  // Mirror the attribution payload Android/iOS surface on element click —
   // action.metadata carries wzrk_element_id / wzrk_c2a / wzrk_act / wzrk_data
   // injected by the backend; surface them to the host listener as well.
   Map<String, dynamic>? _onClickPayload(NDAction onClick) {

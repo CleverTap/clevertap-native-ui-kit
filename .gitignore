@@ -159,3 +159,6 @@ android-sample/app/configs
 
 # Flutter build output
 .dart_tool/
+# Flutter-generated plugin registrants (dev-local, not for VCS)
+flutter/.flutter-plugins
+flutter/.flutter-plugins-dependencies

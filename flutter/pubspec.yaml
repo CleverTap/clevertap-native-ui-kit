@@ -3,15 +3,17 @@ description: Native Display SDK Flutter plugin for CleverTap — renders server-
 version: 0.1.0
 homepage: https://github.com/CleverTap/clevertap-native-ui-kit
 
-# Minimum SDK floor reflects the real build requirements, not just the Dart
-# language level. The dominant constraint is Android compileSdk 36 (kept current
-# for Play Store), which needs AGP 8.7 + suppressUnsupportedCompileSdk (or AGP
-# 8.9) → Gradle 8.7+/JDK 17, first available with Flutter 3.27. webview_flutter
-# (^4.9.0) and video_player sit below that. Declaring the true floor makes
-# `pub get` fail early with a clear message instead of a cryptic Gradle error.
+# Pure-Dart package: no native plugin, so the floor is driven purely by the
+# transitive Flutter/Dart deps (the Android compileSdk 36 constraint is gone).
+# The binding constraint is the caret MINIMUM of each dep, not the version that
+# happens to resolve on a newer toolchain: webview_flutter 4.9.0 requires
+# Flutter 3.24 / Dart 3.5 (video_player ^2.9.2 and url_launcher ^6.3.0 are
+# lower — 3.16 — because a client on 3.24 resolves video_player 2.9.x, not the
+# 2.10.1 that only newer toolchains pull). 3.24/3.5 is the honest minimum where
+# a valid resolution exists; CI should confirm on a Flutter 3.24 toolchain.
 environment:
-  sdk: ">=3.6.0 <4.0.0"
-  flutter: ">=3.27.0"
+  sdk: ">=3.5.0 <4.0.0"
+  flutter: ">=3.24.0"
 
 dependencies:
   flutter:
@@ -25,12 +27,3 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
-
-flutter:
-  plugin:
-    platforms:
-      android:
-        package: com.clevertap.flutter.nativedisplay
-        pluginClass: CleverTapNativeDisplayPlugin
-      ios:
-        pluginClass: CleverTapNativeDisplayPlugin
