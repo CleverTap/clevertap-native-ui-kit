@@ -93,7 +93,9 @@ Map<String, dynamic> _sampleUnit({
         'containerType': 'vertical',
         'layout': {
           'width': {'value': 100, 'unit': 'percent'},
-          'height': {'value': 96, 'unit': 'dp'},
+          // 120dp fits title + subtitle + CTA within the 16dp all-round padding;
+          // 96dp overflowed the column by ~12dp.
+          'height': {'value': 120, 'unit': 'dp'},
           // Spacing is flat per-side numbers with a single `unit` (see
           // Spacing.fromJson) — NOT nested {value,unit} objects, and it uses
           // left/right, not start/end.
