@@ -47,6 +47,9 @@ class CleverTapNativeDisplayPlugin : FlutterPlugin, MethodCallHandler {
                 if (unitId != null) bridge?.pushClickedEvent(unitId, elementId, additionalProperties)
                 result.success(null)
             }
+            "getCoreDebugLevel" -> {
+                result.success(bridge?.getCoreDebugLevel())
+            }
             else -> result.notImplemented()
         }
     }
@@ -70,4 +73,9 @@ interface NativeDisplayPluginBridge {
     // (action_type, custom KVs, and BE-injected wzrk_* fields) to forward to the
     // ND SDK's element-clicked path as Core SDK additionalProperties.
     fun pushClickedEvent(unitId: String, elementId: String?, additionalProperties: Map<String, Any?>?)
+
+    // Return the CleverTap Core SDK debug level (`CleverTapAPI.getDebugLevel()`),
+    // or null if unavailable. Used by the Flutter SDK to align its own log
+    // verbosity with the host's Core SDK unless the client set a level explicitly.
+    fun getCoreDebugLevel(): Int?
 }
