@@ -167,6 +167,81 @@ void main() {
       final evaluator = VariableEvaluator({});
       expect(evaluator.evaluateBoolean(null), true);
     });
+
+    // #54 parity: numeric-boolean evaluation. Literal binding values (as strings,
+    // since bindings/visible are coerced to String at parse time) must evaluate
+    // to the correct bool. Matches Android (`toIntOrNull() != 0`) and iOS.
+    group('numeric boolean literals', () {
+      final evaluator = VariableEvaluator({});
+
+      test('"1" is true', () => expect(evaluator.evaluateBoolean('1'), true));
+      test('"1.0" is true', () => expect(evaluator.evaluateBoolean('1.0'), true));
+      test('"0" is false', () => expect(evaluator.evaluateBoolean('0'), false));
+      test('"0.0" is false', () => expect(evaluator.evaluateBoolean('0.0'), false));
+      test('"2" (non-zero) is true', () => expect(evaluator.evaluateBoolean('2'), true));
+      test('"-1" (non-zero) is true', () => expect(evaluator.evaluateBoolean('-1'), true));
+      test('"true" is true', () => expect(evaluator.evaluateBoolean('true'), true));
+      test('"false" is false', () => expect(evaluator.evaluateBoolean('false'), false));
+      test('"True" (mixed case) is true', () => expect(evaluator.evaluateBoolean('True'), true));
+      test('"FALSE" (upper case) is false', () => expect(evaluator.evaluateBoolean('FALSE'), false));
+    });
+
+    // A variable that resolves to a numeric/bool value (from `variables`, which
+    // is Map<String, dynamic> and may hold raw JSON numbers/bools) must not
+    // throw and must coerce sensibly.
+    test('numeric variable value coerces to bool without throwing', () {
+      final evaluator = VariableEvaluator({'flag': 1, 'off': 0, 'yes': true, 'no': false});
+      expect(evaluator.evaluateBoolean('{{flag}}'), true);
+      expect(evaluator.evaluateBoolean('{{off}}'), false);
+      expect(evaluator.evaluateBoolean('{{yes}}'), true);
+      expect(evaluator.evaluateBoolean('{{no}}'), false);
+    });
+
+    test('non-string variable value interpolates without throwing', () {
+      final evaluator = VariableEvaluator({'count': 42, 'ratio': 1.5, 'enabled': true});
+      expect(evaluator.evaluateString('n={{count}} r={{ratio}} e={{enabled}}'),
+          'n=42 r=1.5 e=true');
+    });
+  });
+
+  // #54 parity: non-string JSON binding values must not throw at parse time and
+  // must coerce to their canonical string form (Map<String,String> invariant),
+  // mirroring Android/iOS which normalise binding values to strings.
+  group('binding value coercion', () {
+    NativeDisplayElement parseElement(Map<String, dynamic> bindings) {
+      return NativeDisplayElement.fromJson({
+        'type': 'element',
+        'id': 'e',
+        'elementType': 'text',
+        'bindings': bindings,
+      });
+    }
+
+    test('int binding coerces to string', () {
+      expect(parseElement({'text': 42}).bindings['text'], '42');
+    });
+
+    test('double binding coerces to string', () {
+      expect(parseElement({'text': 1.5}).bindings['text'], '1.5');
+    });
+
+    test('bool binding coerces to canonical true/false', () {
+      expect(parseElement({'autoPlay': true}).bindings['autoPlay'], 'true');
+      expect(parseElement({'muted': false}).bindings['muted'], 'false');
+    });
+
+    test('null binding coerces to empty string', () {
+      expect(parseElement({'text': null}).bindings['text'], '');
+    });
+
+    test('string binding passes through unchanged', () {
+      expect(parseElement({'text': 'hello'}).bindings['text'], 'hello');
+    });
+
+    test('mixed non-string bindings all parse without throwing', () {
+      final el = parseElement({'a': 1, 'b': 2.0, 'c': true, 'd': 'x', 'e': null});
+      expect(el.bindings, {'a': '1', 'b': '2.0', 'c': 'true', 'd': 'x', 'e': ''});
+    });
   });
 
   group('ColorParser', () {
