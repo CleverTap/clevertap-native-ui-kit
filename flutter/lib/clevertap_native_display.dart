@@ -22,4 +22,11 @@ export 'src/bridge/native_display_config_parser.dart' show NativeDisplayConfigPa
 export 'src/handler/action_handler.dart' show ActionHandler;
 export 'src/handler/action_attribution_extras.dart' show ActionAttributionExtras;
 export 'src/bridge/native_display_bridge.dart' show NativeDisplayBridge;
+export 'src/placement/native_display_slot_manager.dart'
+    show
+        NativeDisplaySlotManager,
+        NativeDisplaySlotObserver,
+        NativeDisplaySlotSync;
+export 'src/placement/native_display_slot.dart'
+    show NativeDisplaySlot, NativeDisplaySlotLoadingBuilder;
 export 'src/internal/nd_logger.dart' show NDLogLevel;
