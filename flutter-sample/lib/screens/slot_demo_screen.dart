@@ -61,8 +61,9 @@ class SlotDemoScreen extends StatefulWidget {
 
 class _SlotDemoScreenState extends State<SlotDemoScreen> {
   final _feed = _buildFeed();
-  // In a real integration, slot configs would come from NativeDisplayBridge.
-  // Here we show dashed placeholders to demonstrate the layout.
+  // In a real integration, slot configs would come from the CleverTap Core SDK
+  // via clevertap_plugin.getAllDisplayUnits(). Here we show dashed placeholders
+  // to demonstrate the layout.
 
   void _fetchSlotData() {
     ScaffoldMessenger.of(context).showSnackBar(
