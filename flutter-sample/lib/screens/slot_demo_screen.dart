@@ -59,152 +59,15 @@ List<_FeedItem> _buildFeed() => [
   _SlotItem(_slotBottom),
 ];
 
-// --- Sample display-unit JSON ---
-//
-// In a live integration these raw maps arrive from the CleverTap Core SDK via
-// clevertap_plugin (getAllDisplayUnits / the display-units-loaded handler), each
-// tagged with a top-level `slot_id`. The sample must run WITHOUT a live account,
-// so we synthesise a handful of raw units here and feed them straight into
-// NativeDisplaySlotManager.processDisplayUnits(). The manager routes each unit
-// to the NativeDisplaySlot registered for its `slot_id`.
-//
-// Each unit carries `wzrk_id`, `slot_id`, and an inline `native_display_config`
-// (Strategy 1 in NativeDisplayConfigParser) with a small valid `root` tree.
-
-/// Builds a simple banner display-unit: a VERTICAL container with a background,
-/// a title TEXT, a subtitle TEXT and a BUTTON whose onClick carries wzrk_* click
-/// attribution metadata.
-Map<String, dynamic> _sampleUnit({
-  required String wzrkId,
-  required String slotId,
-  required String title,
-  required String subtitle,
-  required String cta,
-  required String bg,
-  required String accent,
-}) {
-  return <String, dynamic>{
-    'wzrk_id': wzrkId,
-    'slot_id': slotId,
-    'native_display_config': <String, dynamic>{
-      'root': <String, dynamic>{
-        'type': 'container',
-        'id': 'banner_root',
-        'containerType': 'vertical',
-        'layout': {
-          'width': {'value': 100, 'unit': 'percent'},
-          // 120dp fits title + subtitle + CTA within the 16dp all-round padding;
-          // 96dp overflowed the column by ~12dp.
-          'height': {'value': 120, 'unit': 'dp'},
-          // Spacing is flat per-side numbers with a single `unit` (see
-          // Spacing.fromJson) — NOT nested {value,unit} objects, and it uses
-          // left/right, not start/end.
-          'padding': {'all': 16, 'unit': 'dp'},
-          'arrangement': {'strategy': 'center'},
-        },
-        'style': {
-          'backgroundColor': bg,
-          'borderRadius': 8,
-        },
-        'children': [
-          {
-            'type': 'element',
-            'id': 'banner_title',
-            'elementType': 'text',
-            'bindings': {'text': title},
-            'style': {
-              'textColor': '#FFFFFF',
-              'fontSize': 16,
-              'fontWeight': 'bold',
-              'lineHeight': 20,
-            },
-            'layout': {
-              'width': {'special': 'wrap_content'},
-              'height': {'special': 'wrap_content'},
-            },
-          },
-          {
-            'type': 'element',
-            'id': 'banner_subtitle',
-            'elementType': 'text',
-            'bindings': {'text': subtitle},
-            'style': {
-              'textColor': '#FFFFFFCC',
-              'fontSize': 13,
-              'lineHeight': 18,
-            },
-            'layout': {
-              'width': {'special': 'wrap_content'},
-              'height': {'special': 'wrap_content'},
-              'padding': {'top': 2, 'bottom': 8, 'unit': 'dp'},
-            },
-          },
-          {
-            'type': 'element',
-            'id': 'banner_cta',
-            'elementType': 'button',
-            'bindings': {'text': cta},
-            'style': {
-              'textColor': bg,
-              'backgroundColor': accent,
-              'fontSize': 13,
-              'fontWeight': 'bold',
-              'lineHeight': 16,
-              'borderRadius': 6,
-            },
-            'layout': {
-              'width': {'special': 'wrap_content'},
-              'height': {'special': 'wrap_content'},
-              'padding': {'top': 6, 'bottom': 6, 'left': 14, 'right': 14, 'unit': 'dp'},
-            },
-            // Click attribution: metadata wzrk_* keys surface through the
-            // onNotificationClicked extras, which we forward to the Core SDK.
-            'actions': {
-              'onClick': {
-                'type': 'open_url',
-                'url': 'https://clevertap.com',
-                'metadata': {
-                  'wzrk_c2a': cta,
-                  'wzrk_element_id': 'banner_cta',
-                  'wzrk_slot_id': slotId,
-                },
-              },
-            },
-          },
-        ],
-      },
-    },
-  };
-}
-
-List<Map<String, dynamic>> _sampleUnits() => [
-  _sampleUnit(
-    wzrkId: 'sample_top_0001',
-    slotId: _slotTop,
-    title: 'Summer Sale is live',
-    subtitle: 'Up to 40% off — today only',
-    cta: 'Shop now',
-    bg: '#1565C0',
-    accent: '#FFFFFF',
-  ),
-  _sampleUnit(
-    wzrkId: 'sample_feed1_0002',
-    slotId: _slotFeed1,
-    title: 'Go Premium',
-    subtitle: 'Ad-free workouts & recipes',
-    cta: 'Try free',
-    bg: '#2E7D32',
-    accent: '#FFFFFF',
-  ),
-  _sampleUnit(
-    wzrkId: 'sample_feed2_0003',
-    slotId: _slotFeed2,
-    title: 'Refer a friend',
-    subtitle: 'Give \$10, get \$10',
-    cta: 'Invite',
-    bg: '#6A1B9A',
-    accent: '#FFFFFF',
-  ),
+// Events fired by "Fetch Slot Data" — identical to the Android and iOS Slot
+// Demo screens (SlotDemoScreen.kt / SlotDemoView.swift). These trigger the
+// slot-targeted Native Display campaigns provisioned on the CleverTap dashboard
+// for this sample. The returned units arrive via the display-units handler
+// (owned by CleverTapIntegrationScreen — the single sink) and are fanned out to
+// NativeDisplaySlotManager, which routes each to its NativeDisplaySlot by
+// slot_id. Requires the live CleverTap account the sample is configured with.
+const _fetchSlotEvents = <String>[
+  'Footer1', 'Footer5', 'Header1', 'Header2', 'Header4', 'lalit',
 ];
 
 // --- Screen ---
@@ -241,11 +104,15 @@ class _SlotDemoScreenState extends State<SlotDemoScreen> {
   }
 
   Future<void> _fetchSlotData() async {
-    // Feed RAW display-unit JSON to the manager. It parses off the main isolate
-    // and routes each unit to the NativeDisplaySlot registered for its slot_id.
-    await _manager.processDisplayUnits(_sampleUnits());
+    // Fire the same events as the Android/iOS Slot Demo screens. The server
+    // returns slot-targeted units, delivered through the display-units handler
+    // (CleverTapIntegrationScreen) which fans them out to the SlotManager; each
+    // NativeDisplaySlot then renders the unit routed to its slot_id.
+    for (final event in _fetchSlotEvents) {
+      await CleverTapPlugin.recordEvent(event, {});
+    }
     if (!mounted) return;
-    _snack('Fetched ${_sampleUnits().length} slot unit(s)');
+    _snack('Fired ${_fetchSlotEvents.length} slot fetch event(s)');
     // Report which slots are currently active back to the server.
     _manager.syncActiveSlots();
   }
@@ -296,6 +163,7 @@ class _SlotDemoScreenState extends State<SlotDemoScreen> {
         ],
       ),
       body: ListView.builder(
+        key: const Key('slot-demo-feed'),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         itemCount: _feed.length + 1, // +1 for header
         itemBuilder: (ctx, i) {
@@ -342,16 +210,18 @@ class _Header extends StatelessWidget {
           const SizedBox(height: 4),
           const Text(
             'This feed hosts real NativeDisplaySlot views at fixed positions. '
-            'Tap the button to inject sample display units into the '
-            'NativeDisplaySlotManager — in production these arrive from the '
-            'CleverTap Core SDK via clevertap_plugin. Each slot then renders its '
-            'routed unit in place of the dashed placeholder.',
+            'Tap "Fetch Slot Data" to fire the CleverTap events that trigger the '
+            'slot-targeted campaigns (same events as the Android/iOS samples). '
+            'Returned units arrive via clevertap_plugin, are routed to the '
+            'NativeDisplaySlotManager, and each slot renders its unit in place '
+            'of the dashed placeholder.',
             style: TextStyle(fontSize: 14, color: Color(0xFF666666)),
           ),
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             child: FilledButton(
+              key: const Key('fetch-slot-data-btn'),
               onPressed: onFetch,
               style: FilledButton.styleFrom(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

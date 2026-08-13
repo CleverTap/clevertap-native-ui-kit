@@ -48,6 +48,13 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
     // the main thread via Isolate.run() in NativeDisplayConfigParser.
     final parsed = await NativeDisplayConfigParser.parseAll(rawUnits);
 
+    // clevertap_plugin exposes a single display-units handler (unlike the
+    // native multi-listener bridge), so this screen is the one sink. Fan the
+    // parsed units out to the SlotManager too: units carrying a `slot_id` are
+    // routed to their NativeDisplaySlot on the Slots tab, while the canvas
+    // below shows every unit. Mirrors the native bridge's fan-out.
+    NativeDisplaySlotManager.instance.deliverUnits(parsed);
+
     if (!mounted) return;
     setState(() {
       _units
@@ -135,6 +142,10 @@ class _FireEventHeader extends StatelessWidget {
             children: [
               Expanded(
                 child: TextField(
+                  // Automation hook — matches Android `ct-event-input` testTag
+                  // and iOS `ct-event-input` accessibilityIdentifier so the
+                  // cross-platform screenshot suites drive the same UI.
+                  key: const Key('ct-event-input'),
                   controller: controller,
                   decoration: const InputDecoration(
                     hintText: 'Enter event name',
@@ -148,6 +159,7 @@ class _FireEventHeader extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               FilledButton(
+                key: const Key('ct-send-event-btn'),
                 onPressed: controller.text.isNotEmpty ? onSend : null,
                 child: const Text('Send Event'),
               ),
@@ -238,6 +250,11 @@ class _EventLogFooter extends StatefulWidget {
 class _EventLogFooterState extends State<_EventLogFooter> {
   final _scroll = ScrollController();
 
+  // Log is visible by default on every launch (matches Android/iOS). The
+  // automation suites tap `event-log-toggle` once to collapse it so it doesn't
+  // cover the Native Display canvas in screenshots.
+  bool _logVisible = true;
+
   @override
   void didUpdateWidget(_EventLogFooter old) {
     super.didUpdateWidget(old);
@@ -283,40 +300,57 @@ class _EventLogFooterState extends State<_EventLogFooter> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text('Event Log', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-              if (widget.messages.isNotEmpty)
-                TextButton(
-                  onPressed: widget.onClear,
-                  child: const Text('Clear', style: TextStyle(fontSize: 12)),
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_logVisible && widget.messages.isNotEmpty)
+                    TextButton(
+                      onPressed: widget.onClear,
+                      child: const Text('Clear', style: TextStyle(fontSize: 12)),
+                    ),
+                  IconButton(
+                    key: const Key('event-log-toggle'),
+                    tooltip: _logVisible ? 'Hide log' : 'Show log',
+                    visualDensity: VisualDensity.compact,
+                    icon: Icon(
+                      _logVisible ? Icons.visibility_off : Icons.visibility,
+                      size: 18,
+                    ),
+                    onPressed: () => setState(() => _logVisible = !_logVisible),
+                  ),
+                ],
+              ),
             ],
           ),
-          Container(
-            height: 130,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: const Color(0xFF263238),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            padding: const EdgeInsets.all(10),
-            child: widget.messages.isEmpty
-                ? const Text(
-                    'No events yet',
-                    style: TextStyle(fontFamily: 'monospace', fontSize: 12, color: Color(0xFF607D8B)),
-                  )
-                : ListView.builder(
-                    controller: _scroll,
-                    itemCount: widget.messages.length,
-                    itemBuilder: (ctx, i) => Text(
-                      widget.messages[i],
-                      style: TextStyle(
-                        fontFamily: 'monospace',
-                        fontSize: 11,
-                        color: _color(widget.messages[i]),
-                        height: 1.4,
+          if (_logVisible)
+            Container(
+              key: const Key('event-log-content'),
+              height: 130,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: const Color(0xFF263238),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.all(10),
+              child: widget.messages.isEmpty
+                  ? const Text(
+                      'No events yet',
+                      style: TextStyle(fontFamily: 'monospace', fontSize: 12, color: Color(0xFF607D8B)),
+                    )
+                  : ListView.builder(
+                      controller: _scroll,
+                      itemCount: widget.messages.length,
+                      itemBuilder: (ctx, i) => Text(
+                        widget.messages[i],
+                        style: TextStyle(
+                          fontFamily: 'monospace',
+                          fontSize: 11,
+                          color: _color(widget.messages[i]),
+                          height: 1.4,
+                        ),
                       ),
                     ),
-                  ),
-          ),
+            ),
           const SizedBox(height: 8),
         ],
       ),
