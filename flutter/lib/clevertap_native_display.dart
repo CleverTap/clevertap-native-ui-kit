@@ -11,9 +11,15 @@ export 'src/models/node_config.dart';
 export 'src/models/native_display_node.dart';
 export 'src/models/native_display_config.dart';
 export 'src/renderer/native_display_view.dart'
-    show NativeDisplayView, NativeDisplayActionListener, NativeDisplayComponentListener;
+    show
+        NativeDisplayView,
+        NativeDisplayActionListener,
+        NativeDisplayComponentListener,
+        NativeDisplayNotificationViewed,
+        NativeDisplayNotificationClicked;
 export 'src/models/native_display_unit.dart';
 export 'src/bridge/native_display_config_parser.dart' show NativeDisplayConfigParser;
 export 'src/handler/action_handler.dart' show ActionHandler;
+export 'src/handler/action_attribution_extras.dart' show ActionAttributionExtras;
 export 'src/bridge/native_display_bridge.dart' show NativeDisplayBridge;
 export 'src/internal/nd_logger.dart' show NDLogLevel;
