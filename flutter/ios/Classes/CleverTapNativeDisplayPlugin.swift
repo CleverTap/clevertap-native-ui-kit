@@ -34,14 +34,20 @@ public class CleverTapNativeDisplayPlugin: NSObject, FlutterPlugin {
 
         case "pushViewedEvent":
             if let unitId = args["unitId"] as? String {
-                bridge?.pushViewedEvent(unitId: unitId)
+                let additionalProperties = args["additionalProperties"] as? [String: Any]
+                bridge?.pushViewedEvent(unitId: unitId, additionalProperties: additionalProperties)
             }
             result(nil)
 
         case "pushClickedEvent":
             if let unitId = args["unitId"] as? String {
                 let elementId = args["elementId"] as? String
-                bridge?.pushClickedEvent(unitId: unitId, elementId: elementId)
+                let additionalProperties = args["additionalProperties"] as? [String: Any]
+                bridge?.pushClickedEvent(
+                    unitId: unitId,
+                    elementId: elementId,
+                    additionalProperties: additionalProperties
+                )
             }
             result(nil)
 
@@ -56,8 +62,13 @@ public protocol NativeDisplayPluginBridge {
     func fetchDisplayUnit(unitId: String) -> String?
 
     // Report viewed event to CleverTap Core SDK.
-    func pushViewedEvent(unitId: String)
+    // `additionalProperties` carries the ND SDK version stamp (nd_lib_v_*) to
+    // forward to the ND SDK's viewed-with-extras path as additionalProperties.
+    func pushViewedEvent(unitId: String, additionalProperties: [String: Any]?)
 
     // Report clicked event to CleverTap Core SDK.
-    func pushClickedEvent(unitId: String, elementId: String?)
+    // `additionalProperties` carries the clicked action's attribution extras
+    // (action_type, custom KVs, and BE-injected wzrk_* fields) to forward to the
+    // ND SDK's element-clicked path as Core SDK additionalProperties.
+    func pushClickedEvent(unitId: String, elementId: String?, additionalProperties: [String: Any]?)
 }

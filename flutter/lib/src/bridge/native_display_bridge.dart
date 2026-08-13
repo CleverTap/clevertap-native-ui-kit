@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
+import '../handler/action_attribution_extras.dart';
 import '../internal/nd_logger.dart';
 import '../models/native_display_config.dart';
 
@@ -31,20 +32,34 @@ class NativeDisplayBridge {
   }
 
   // Report a viewed event for the given display unit to the CleverTap Core SDK.
+  // Impressions are unit-level (no caller extras), but still carry the ND SDK
+  // version stamp as `additionalProperties` for parity with the clicked path
+  // and with the shipped Android/iOS SDKs.
   static Future<void> pushViewedEvent(String unitId) async {
     try {
-      await _channel.invokeMethod<void>('pushViewedEvent', {'unitId': unitId});
+      await _channel.invokeMethod<void>('pushViewedEvent', {
+        'unitId': unitId,
+        'additionalProperties': ActionAttributionExtras.versionStamp(),
+      });
     } on PlatformException catch (e) {
       NDLogger.w(_tag, 'pushViewedEvent failed for $unitId: ${e.message}');
     }
   }
 
   // Report a clicked event for the given display unit and element to the CleverTap Core SDK.
-  static Future<void> pushClickedEvent(String unitId, {String? elementId}) async {
+  // [extras] carries the clicked action's attribution properties (action_type,
+  // custom KVs, and BE-injected wzrk_* fields from action.metadata); when
+  // non-empty it is forwarded to Core SDK as `additionalProperties`.
+  static Future<void> pushClickedEvent(
+    String unitId, {
+    String? elementId,
+    Map<String, Object?>? extras,
+  }) async {
     try {
       await _channel.invokeMethod<void>('pushClickedEvent', {
         'unitId': unitId,
         if (elementId != null) 'elementId': elementId,
+        if (extras != null && extras.isNotEmpty) 'additionalProperties': extras,
       });
     } on PlatformException catch (e) {
       NDLogger.w(_tag, 'pushClickedEvent failed for $unitId: ${e.message}');

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../bridge/native_display_bridge.dart';
+import '../../handler/action_attribution_extras.dart';
 import '../../models/action.dart';
 import '../../models/enums.dart';
 import '../../models/native_display_node.dart';
@@ -89,7 +90,10 @@ class ImageElement extends StatelessWidget {
         onTap: () {
           actionListener?.call('action', node.id, _onClickPayload(onClick));
           if (unitId != null && unitId.isNotEmpty) {
-            NativeDisplayBridge.pushClickedEvent(unitId, elementId: node.id);
+            final extras = ActionAttributionExtras.sanitize(
+              ActionAttributionExtras.from(onClick),
+            );
+            NativeDisplayBridge.pushClickedEvent(unitId, elementId: node.id, extras: extras);
           }
         },
         child: styled,

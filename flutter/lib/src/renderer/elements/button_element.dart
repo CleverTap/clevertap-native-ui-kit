@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../../bridge/native_display_bridge.dart';
 import '../../evaluator/variable_evaluator.dart';
+import '../../handler/action_attribution_extras.dart';
 import '../../models/action.dart';
 import '../../models/enums.dart';
 import '../../models/native_display_node.dart';
@@ -84,7 +85,13 @@ class ButtonElement extends StatelessWidget {
     if (action == null) return;
     actionListener?.call('action', node.id, _payload(action));
     if (unitId != null && unitId.isNotEmpty) {
-      NativeDisplayBridge.pushClickedEvent(unitId, elementId: node.id);
+      // Flatten the clicked action into attribution extras (action_type, custom
+      // KVs, and BE-injected wzrk_* fields from action.metadata) so they reach
+      // the dashboard as additionalProperties — matches Android/iOS SDK-5793.
+      final extras = ActionAttributionExtras.sanitize(
+        ActionAttributionExtras.from(action),
+      );
+      NativeDisplayBridge.pushClickedEvent(unitId, elementId: node.id, extras: extras);
     }
   }
 
