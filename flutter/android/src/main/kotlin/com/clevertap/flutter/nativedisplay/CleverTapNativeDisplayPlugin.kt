@@ -36,13 +36,15 @@ class CleverTapNativeDisplayPlugin : FlutterPlugin, MethodCallHandler {
             }
             "pushViewedEvent" -> {
                 val unitId = call.argument<String>("unitId")
-                if (unitId != null) bridge?.pushViewedEvent(unitId)
+                val additionalProperties = call.argument<Map<String, Any?>?>("additionalProperties")
+                if (unitId != null) bridge?.pushViewedEvent(unitId, additionalProperties)
                 result.success(null)
             }
             "pushClickedEvent" -> {
                 val unitId = call.argument<String>("unitId")
                 val elementId = call.argument<String?>("elementId")
-                if (unitId != null) bridge?.pushClickedEvent(unitId, elementId)
+                val additionalProperties = call.argument<Map<String, Any?>?>("additionalProperties")
+                if (unitId != null) bridge?.pushClickedEvent(unitId, elementId, additionalProperties)
                 result.success(null)
             }
             else -> result.notImplemented()
@@ -59,8 +61,13 @@ interface NativeDisplayPluginBridge {
     fun fetchDisplayUnit(unitId: String): String?
 
     // Report viewed event to CleverTap Core SDK.
-    fun pushViewedEvent(unitId: String)
+    // [additionalProperties] carries the ND SDK version stamp (nd_lib_v_*) to
+    // forward to the ND SDK's viewed-with-extras path as additionalProperties.
+    fun pushViewedEvent(unitId: String, additionalProperties: Map<String, Any?>?)
 
     // Report clicked event to CleverTap Core SDK.
-    fun pushClickedEvent(unitId: String, elementId: String?)
+    // [additionalProperties] carries the clicked action's attribution extras
+    // (action_type, custom KVs, and BE-injected wzrk_* fields) to forward to the
+    // ND SDK's element-clicked path as Core SDK additionalProperties.
+    fun pushClickedEvent(unitId: String, elementId: String?, additionalProperties: Map<String, Any?>?)
 }
