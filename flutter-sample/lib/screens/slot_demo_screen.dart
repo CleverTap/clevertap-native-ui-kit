@@ -1,3 +1,5 @@
+import 'package:clevertap_plugin/clevertap_plugin.dart';
+import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:flutter/material.dart';
 
 // --- Data models ---
@@ -40,14 +42,177 @@ const _appItems = [
   _AppItem(15, 'Mindful Breathing',      'Calm in 3 minutes',                   'https://yavuzceliker.github.io/sample-images/image-70.jpg'),
 ];
 
+// Slot ids interleaved into the feed at fixed positions. These mirror the
+// slot ids the Android/iOS Slot Demo screens use.
+const _slotTop = 'slot_top';
+const _slotFeed1 = 'slot_feed_1';
+const _slotFeed2 = 'slot_feed_2';
+const _slotBottom = 'slot_bottom';
+
 List<_FeedItem> _buildFeed() => [
-  _SlotItem('slot_top'),
+  _SlotItem(_slotTop),
   ..._appItems.sublist(0, 3).map(_ContentItem.new),
-  _SlotItem('slot_feed_1'),
+  _SlotItem(_slotFeed1),
   ..._appItems.sublist(3, 6).map(_ContentItem.new),
-  _SlotItem('slot_feed_2'),
+  _SlotItem(_slotFeed2),
   ..._appItems.sublist(6, 15).map(_ContentItem.new),
-  _SlotItem('slot_bottom'),
+  _SlotItem(_slotBottom),
+];
+
+// --- Sample display-unit JSON ---
+//
+// In a live integration these raw maps arrive from the CleverTap Core SDK via
+// clevertap_plugin (getAllDisplayUnits / the display-units-loaded handler), each
+// tagged with a top-level `slot_id`. The sample must run WITHOUT a live account,
+// so we synthesise a handful of raw units here and feed them straight into
+// NativeDisplaySlotManager.processDisplayUnits(). The manager routes each unit
+// to the NativeDisplaySlot registered for its `slot_id`.
+//
+// Each unit carries `wzrk_id`, `slot_id`, and an inline `native_display_config`
+// (Strategy 1 in NativeDisplayConfigParser) with a small valid `root` tree.
+
+/// Builds a simple banner display-unit: a VERTICAL container with a background,
+/// a title TEXT, a subtitle TEXT and a BUTTON whose onClick carries wzrk_* click
+/// attribution metadata.
+Map<String, dynamic> _sampleUnit({
+  required String wzrkId,
+  required String slotId,
+  required String title,
+  required String subtitle,
+  required String cta,
+  required String bg,
+  required String accent,
+}) {
+  return <String, dynamic>{
+    'wzrk_id': wzrkId,
+    'slot_id': slotId,
+    'native_display_config': <String, dynamic>{
+      'root': <String, dynamic>{
+        'type': 'container',
+        'id': 'banner_root',
+        'containerType': 'vertical',
+        'layout': {
+          'width': {'value': 100, 'unit': 'percent'},
+          'height': {'value': 96, 'unit': 'dp'},
+          'padding': {
+            'top': {'value': 16, 'unit': 'dp'},
+            'bottom': {'value': 16, 'unit': 'dp'},
+            'start': {'value': 16, 'unit': 'dp'},
+            'end': {'value': 16, 'unit': 'dp'},
+          },
+          'arrangement': {'strategy': 'center'},
+        },
+        'style': {
+          'backgroundColor': bg,
+          'borderRadius': 8,
+        },
+        'children': [
+          {
+            'type': 'element',
+            'id': 'banner_title',
+            'elementType': 'text',
+            'bindings': {'text': title},
+            'style': {
+              'textColor': '#FFFFFF',
+              'fontSize': 16,
+              'fontWeight': 'bold',
+              'lineHeight': 20,
+            },
+            'layout': {
+              'width': {'special': 'wrap_content'},
+              'height': {'special': 'wrap_content'},
+            },
+          },
+          {
+            'type': 'element',
+            'id': 'banner_subtitle',
+            'elementType': 'text',
+            'bindings': {'text': subtitle},
+            'style': {
+              'textColor': '#FFFFFFCC',
+              'fontSize': 13,
+              'lineHeight': 18,
+            },
+            'layout': {
+              'width': {'special': 'wrap_content'},
+              'height': {'special': 'wrap_content'},
+              'padding': {
+                'top': {'value': 2, 'unit': 'dp'},
+                'bottom': {'value': 8, 'unit': 'dp'},
+              },
+            },
+          },
+          {
+            'type': 'element',
+            'id': 'banner_cta',
+            'elementType': 'button',
+            'bindings': {'text': cta},
+            'style': {
+              'textColor': bg,
+              'backgroundColor': accent,
+              'fontSize': 13,
+              'fontWeight': 'bold',
+              'lineHeight': 16,
+              'borderRadius': 6,
+            },
+            'layout': {
+              'width': {'special': 'wrap_content'},
+              'height': {'special': 'wrap_content'},
+              'padding': {
+                'top': {'value': 6, 'unit': 'dp'},
+                'bottom': {'value': 6, 'unit': 'dp'},
+                'start': {'value': 14, 'unit': 'dp'},
+                'end': {'value': 14, 'unit': 'dp'},
+              },
+            },
+            // Click attribution: metadata wzrk_* keys surface through the
+            // onNotificationClicked extras, which we forward to the Core SDK.
+            'actions': {
+              'onClick': {
+                'type': 'open_url',
+                'url': 'https://clevertap.com',
+                'metadata': {
+                  'wzrk_c2a': cta,
+                  'wzrk_element_id': 'banner_cta',
+                  'wzrk_slot_id': slotId,
+                },
+              },
+            },
+          },
+        ],
+      },
+    },
+  };
+}
+
+List<Map<String, dynamic>> _sampleUnits() => [
+  _sampleUnit(
+    wzrkId: 'sample_top_0001',
+    slotId: _slotTop,
+    title: 'Summer Sale is live',
+    subtitle: 'Up to 40% off — today only',
+    cta: 'Shop now',
+    bg: '#1565C0',
+    accent: '#FFFFFF',
+  ),
+  _sampleUnit(
+    wzrkId: 'sample_feed1_0002',
+    slotId: _slotFeed1,
+    title: 'Go Premium',
+    subtitle: 'Ad-free workouts & recipes',
+    cta: 'Try free',
+    bg: '#2E7D32',
+    accent: '#FFFFFF',
+  ),
+  _sampleUnit(
+    wzrkId: 'sample_feed2_0003',
+    slotId: _slotFeed2,
+    title: 'Refer a friend',
+    subtitle: 'Give \$10, get \$10',
+    cta: 'Invite',
+    bg: '#6A1B9A',
+    accent: '#FFFFFF',
+  ),
 ];
 
 // --- Screen ---
@@ -61,17 +226,65 @@ class SlotDemoScreen extends StatefulWidget {
 
 class _SlotDemoScreenState extends State<SlotDemoScreen> {
   final _feed = _buildFeed();
-  // In a real integration, slot configs would come from the CleverTap Core SDK
-  // via clevertap_plugin.getAllDisplayUnits(). Here we show dashed placeholders
-  // to demonstrate the layout.
+  final _manager = NativeDisplaySlotManager.instance;
 
-  void _fetchSlotData() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Integrate CleverTap Core SDK to receive live slot data'),
-        duration: Duration(seconds: 3),
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    // Slot-sync is host-mediated: the pure-Dart plugin can't call the Core SDK,
+    // so we forward the wzrk_nd_slot_sync event out to clevertap_plugin here.
+    // syncActiveSlots() invokes this callback with the active slot ids.
+    _manager.onSlotSync = (eventName, eventData) {
+      CleverTapPlugin.recordEvent(eventName, eventData);
+      _snack('Slot sync → $eventName ${eventData['slots']}');
+    };
+  }
+
+  @override
+  void dispose() {
+    // Leave cached units in place (process-wide), but drop our sync hook so we
+    // don't fire snackbars against a disposed context.
+    _manager.onSlotSync = null;
+    super.dispose();
+  }
+
+  Future<void> _fetchSlotData() async {
+    // Feed RAW display-unit JSON to the manager. It parses off the main isolate
+    // and routes each unit to the NativeDisplaySlot registered for its slot_id.
+    await _manager.processDisplayUnits(_sampleUnits());
+    if (!mounted) return;
+    _snack('Fetched ${_sampleUnits().length} slot unit(s)');
+    // Report which slots are currently active back to the server.
+    _manager.syncActiveSlots();
+  }
+
+  void _clearSlots() {
+    _manager.clearAll();
+    _snack('Cleared all slots');
+  }
+
+  void _onViewed(String unitId) {
+    CleverTapPlugin.pushDisplayUnitViewedEvent(unitId);
+    _snack('VIEWED unit $unitId');
+  }
+
+  void _onClicked(String unitId, String elementId, Map<String, Object?> extras) {
+    if (elementId.isNotEmpty) {
+      CleverTapPlugin.pushDisplayUnitElementClickedEvent(unitId, extras);
+      _snack('CLICKED $elementId on unit $unitId');
+    } else {
+      CleverTapPlugin.pushDisplayUnitClickedEvent(unitId);
+      _snack('CLICKED unit $unitId');
+    }
+  }
+
+  void _snack(String msg) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(msg), duration: const Duration(seconds: 2)),
+      );
   }
 
   @override
@@ -82,6 +295,13 @@ class _SlotDemoScreenState extends State<SlotDemoScreen> {
         title: const Text('Slot Demo'),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        actions: [
+          IconButton(
+            tooltip: 'Clear slots',
+            icon: const Icon(Icons.clear_all),
+            onPressed: _clearSlots,
+          ),
+        ],
       ),
       body: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -92,7 +312,15 @@ class _SlotDemoScreenState extends State<SlotDemoScreen> {
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: switch (item) {
-              _SlotItem s => _SlotPlaceholder(slotId: s.slotId),
+              _SlotItem s => NativeDisplaySlot(
+                  slotId: s.slotId,
+                  onNotificationViewed: _onViewed,
+                  onNotificationClicked: _onClicked,
+                  // Empty slots keep the original dashed "Ad" placeholder until
+                  // a unit is routed to this slot id.
+                  loadingBuilder: (ctx, slotId) =>
+                      _SlotPlaceholder(slotId: slotId),
+                ),
               _ContentItem c => _AppContentCard(item: c.item),
             },
           );
@@ -121,8 +349,11 @@ class _Header extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           const Text(
-            'This feed contains 4 NativeDisplaySlot views at fixed positions. '
-            'Tap the button below to fire a CleverTap event that fetches real server data for the slots.',
+            'This feed hosts real NativeDisplaySlot views at fixed positions. '
+            'Tap the button to inject sample display units into the '
+            'NativeDisplaySlotManager — in production these arrive from the '
+            'CleverTap Core SDK via clevertap_plugin. Each slot then renders its '
+            'routed unit in place of the dashed placeholder.',
             style: TextStyle(fontSize: 14, color: Color(0xFF666666)),
           ),
           const SizedBox(height: 12),
