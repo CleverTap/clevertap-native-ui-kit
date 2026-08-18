@@ -32,6 +32,13 @@ class SampleApplication : Application() {
         val cleverTapApi = CleverTapAPI.getDefaultInstance(this)
 
         if (cleverTapApi != null) {
+            // Suspend in-app notifications app-wide. This is a Native Display
+            // demo — an in-app overlay would cover the canvas / slots and break
+            // those flows (and the automation screenshot suite). Suspended
+            // in-apps are held, not shown; call resumeInAppNotifications() to
+            // re-enable them.
+            cleverTapApi.suspendInAppNotifications()
+
             // 3. Bind bridge to CleverTap — wires display unit callbacks
             bridge.bind(cleverTapApi)
             // 4. Request Native Display units from server
