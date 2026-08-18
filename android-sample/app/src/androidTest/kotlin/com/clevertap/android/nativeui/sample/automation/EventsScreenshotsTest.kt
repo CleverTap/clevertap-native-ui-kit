@@ -73,9 +73,9 @@ class EventsScreenshotsTest {
                 rule.waitForIdle()
 
                 rule.onNodeWithTag("ct-send-event-btn").performClick()
-                // Server latency is the dominant flake source; match the floor
-                // used by pushEvent() in AutomationTestHelpers.
-                Thread.sleep(1_500L)
+                // Wait for the full server round trip + native-display render +
+                // image load before capturing (no image prewarm on this path).
+                Thread.sleep(SCREENSHOT_SETTLE_DELAY_MS)
                 rule.waitForIdle()
                 captureScreenshot("${testName}_$eventName")
             }
@@ -109,7 +109,7 @@ class EventsScreenshotsTest {
                 // enabled state.
                 onView(withId(R.id.eventNameInput)).perform(replaceText(eventName))
                 onView(withId(R.id.sendEventButton)).perform(click())
-                Thread.sleep(1_500L)
+                Thread.sleep(SCREENSHOT_SETTLE_DELAY_MS)
                 rule.waitForIdle()
                 captureScreenshot("${testName}_$eventName")
             }

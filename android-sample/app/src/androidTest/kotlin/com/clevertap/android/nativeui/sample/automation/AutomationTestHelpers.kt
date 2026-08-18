@@ -50,6 +50,15 @@ val EVENTS_TO_FIRE: List<String> = listOf(
  */
 private const val EVENT_SETTLE_DELAY_MS = 1_500L
 
+/**
+ * Wait after each event fire, before the screenshot, on the Events screens.
+ * This must cover the full round trip AND the render: server response → unit
+ * parse/style-resolve → Compose/XML paint → Coil image download + decode. The
+ * suite has no image prewarm (that only exists in the Robolectric unit tests),
+ * so images load live here — 5s gives them time to appear in the capture.
+ */
+const val SCREENSHOT_SETTLE_DELAY_MS = 5_000L
+
 private const val TAG = "ndAutomation"
 
 /**
