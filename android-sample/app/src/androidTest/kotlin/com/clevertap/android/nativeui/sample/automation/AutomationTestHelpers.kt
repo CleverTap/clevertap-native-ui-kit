@@ -24,8 +24,6 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.runner.screenshot.BasicScreenCaptureProcessor
-import androidx.test.runner.screenshot.Screenshot
 import com.clevertap.android.nativeui.sample.R
 import com.clevertap.android.sdk.CleverTapAPI
 import java.io.File
@@ -137,16 +135,28 @@ fun hideEventLogXml() {
  * TestInfo through every call.
  */
 fun captureScreenshot(label: String) {
-    val outputDir = additionalOutputDir()
-    outputDir.mkdirs()
-    val processor = object : BasicScreenCaptureProcessor() {
-        init { mDefaultScreenshotPath = outputDir }
+    val outputDir = additionalOutputDir().apply { mkdirs() }
+    val file = File(outputDir, "$label.png")
+
+    // UiAutomation.takeScreenshot() replaces the deprecated
+    // androidx.test.runner.screenshot.Screenshot / BasicScreenCaptureProcessor
+    // API. It grabs the real device framebuffer, so Compose, XML Views and the
+    // native-display canvas are all captured. We write the Bitmap straight into
+    // AGP's additionalTestOutputDir (pulled back to the host after the run),
+    // keeping the same output location the automationScreenshots task expects.
+    val bitmap = InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot()
+    if (bitmap == null) {
+        Log.w(TAG, "takeScreenshot() returned null for '$label' — skipping")
+        return
     }
-    Screenshot.capture().apply {
-        name = label
-        format = CompressFormat.PNG
-    }.process(setOf(processor))
-    Log.d(TAG, "Captured: ${File(outputDir, "$label.png").absolutePath}")
+    try {
+        FileOutputStream(file).use { out ->
+            bitmap.compress(CompressFormat.PNG, 100, out)
+        }
+        Log.d(TAG, "Captured: ${file.absolutePath}")
+    } finally {
+        bitmap.recycle()
+    }
 }
 
 /**
