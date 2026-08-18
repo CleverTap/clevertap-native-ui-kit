@@ -31,21 +31,33 @@ const eventsToFire = <String>[
   'hi', 'viewed', 'html2', 'home',
 ];
 
-/// Per-event settle wait. The Native Display server is asynchronous — this is
-/// the floor below which the unit hasn't rendered by screenshot time. Matches
-/// the 1.5s used by Android and iOS. Bump if flaky.
-const perEventWait = Duration(milliseconds: 1500);
+/// Per-event settle wait. The Native Display server is asynchronous AND the
+/// campaign's images then have to download + decode before they paint, so this
+/// must cover both. Android/iOS use 1.5s; we allow a bit more headroom because
+/// the Flutter screenshot is a single surface grab with no built-in image-idle
+/// wait. Bump further if a capture shows a half-loaded campaign.
+const perEventWait = Duration(milliseconds: 3000);
 
 /// Wait after tapping "Fetch Slot Data" before screenshotting, so the fired
-/// campaigns have time to come back and populate the slots. Matches iOS's 3s.
-const fetchSlotWait = Duration(seconds: 3);
+/// campaigns have time to come back and populate the slots.
+const fetchSlotWait = Duration(seconds: 4);
 
 /// Real-time settle: `pumpAndSettle` can't be used around live network work
-/// (the CleverTap SDK schedules frames/timers that never quiesce), so we pump
-/// once, wait wall-clock, and pump again to flush the resulting rebuild.
-Future<void> settle(WidgetTester tester, Duration d) async {
+/// (the CleverTap SDK schedules frames/timers that never quiesce). Instead we
+/// pump *repeatedly* across the whole wall-clock window so that (a) a campaign
+/// arriving late in the window and (b) an async image decoding into the tree
+/// both get painted into the surface before the screenshot is taken — a single
+/// trailing pump would miss either.
+Future<void> settle(WidgetTester tester, Duration total) async {
+  const step = Duration(milliseconds: 150);
   await tester.pump();
-  await Future<void>.delayed(d);
+  var elapsed = Duration.zero;
+  while (elapsed < total) {
+    await Future<void>.delayed(step);
+    await tester.pump();
+    elapsed += step;
+  }
+  // One more frame so an image that decoded on the final tick is painted.
   await tester.pump();
 }
 
