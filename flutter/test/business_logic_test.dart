@@ -5,7 +5,6 @@ import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:clevertap_native_display/src/style/style_resolver.dart';
 import 'package:clevertap_native_display/src/evaluator/variable_evaluator.dart';
 import 'package:clevertap_native_display/src/utils/color_parser.dart';
-import 'package:clevertap_native_display/src/utils/dimension_calculator.dart';
 
 void main() {
   group('StyleResolver', () {
@@ -287,44 +286,7 @@ void main() {
     });
   });
 
-  group('DimensionCalculator', () {
-    test('percent dimension resolves relative to parent', () {
-      final dim = Dimension.fromJson({'value': 50, 'unit': 'percent'});
-      final result = DimensionCalculator.resolve(dim, parentSize: 200);
-      expect(result, 100.0);
-    });
-
-    test('dp dimension returns value directly', () {
-      final dim = Dimension.fromJson({'value': 24, 'unit': 'dp'});
-      final result = DimensionCalculator.resolve(dim, parentSize: 200);
-      expect(result, 24.0);
-    });
-
-    test('sp dimension returns value directly', () {
-      final dim = Dimension.fromJson({'value': 16, 'unit': 'sp'});
-      final result = DimensionCalculator.resolve(dim, parentSize: 200);
-      expect(result, 16.0);
-    });
-
-    test('px dimension returns value directly', () {
-      final dim = Dimension.fromJson({'value': 32, 'unit': 'px'});
-      final result = DimensionCalculator.resolve(dim, parentSize: 200);
-      expect(result, 32.0);
-    });
-
-    test('wrap_content returns null', () {
-      final result = DimensionCalculator.resolve(Dimension.wrapContent, parentSize: 200);
-      expect(result, isNull);
-    });
-
-    test('match_parent returns null', () {
-      final result = DimensionCalculator.resolve(Dimension.matchParent, parentSize: 200);
-      expect(result, isNull);
-    });
-
-    test('null dimension returns null', () {
-      final result = DimensionCalculator.resolve(null, parentSize: 200);
-      expect(result, isNull);
-    });
-  });
+  // The former DimensionCalculator was inlined into HtmlElement (its only
+  // caller); percent/dp/sp/px + wrap/match sizing is exercised via the widget
+  // tests (container_test, text_element_test, native_display_view_test).
 }

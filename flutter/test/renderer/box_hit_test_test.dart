@@ -3,8 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:clevertap_native_display/src/renderer/containers/box_container.dart';
 import 'package:clevertap_native_display/src/evaluator/variable_evaluator.dart';
-import 'package:clevertap_native_display/src/renderer/root_height_scope.dart';
-import 'package:clevertap_native_display/src/renderer/resolved_styles_scope.dart';
+import 'package:clevertap_native_display/src/renderer/native_display_scope.dart';
 
 // Regression tests locking in #54 BOX hit-testing parity: a non-interactive
 // child stacked in a BOX must not swallow taps destined for an interactive
@@ -16,13 +15,13 @@ void main() {
   Widget wrap(Widget w) => Center(
         child: Directionality(
           textDirection: TextDirection.ltr,
-          child: RootHeightScope(
-            rootHeight: 200,
-            child: ResolvedStylesScope(
-              styles: const {},
-              child: w,
-            ),
-          ),
+          child: NativeDisplayScope(
+          rootHeight: 200,
+          styles: const {},
+          unitId: null,
+          onClicked: null,
+          child: w,
+        ),
         ),
       );
 

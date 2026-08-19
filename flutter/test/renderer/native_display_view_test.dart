@@ -1,8 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
-import 'package:clevertap_native_display/src/renderer/root_height_scope.dart';
-import 'package:clevertap_native_display/src/renderer/resolved_styles_scope.dart';
+import 'package:clevertap_native_display/src/renderer/native_display_scope.dart';
 
 void main() {
   group('NativeDisplayView', () {
@@ -18,7 +17,7 @@ void main() {
       expect(find.byType(SizedBox), findsWidgets);
     });
 
-    testWidgets('widget tree contains RootHeightScope and ResolvedStylesScope', (tester) async {
+    testWidgets('widget tree contains NativeDisplayScope', (tester) async {
       final config = NativeDisplayConfig.fromJson({
         'root': {
           'type': 'element',
@@ -38,8 +37,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(RootHeightScope), findsOneWidget);
-      expect(find.byType(ResolvedStylesScope), findsOneWidget);
+      expect(find.byType(NativeDisplayScope), findsOneWidget);
     });
 
     testWidgets('uses LayoutBuilder for percent dimensions', (tester) async {

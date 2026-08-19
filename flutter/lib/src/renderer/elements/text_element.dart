@@ -8,7 +8,7 @@ import '../../models/native_display_node.dart';
 import '../../models/style.dart';
 import '../../models/text_dimension.dart';
 import '../../utils/color_parser.dart';
-import '../root_height_scope.dart';
+import '../native_display_scope.dart';
 import '../style_applier.dart';
 
 class TextElement extends StatelessWidget {
@@ -25,7 +25,7 @@ class TextElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rootHeight = RootHeightScope.of(context);
+    final rootHeight = NativeDisplayScope.rootHeightOf(context);
     final rawText = node.bindings['text'] ?? '';
     final text = evaluator.evaluateString(rawText);
 

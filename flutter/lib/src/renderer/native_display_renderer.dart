@@ -16,8 +16,7 @@ import 'elements/image_element.dart';
 import 'elements/spacer_element.dart';
 import 'elements/text_element.dart';
 import 'elements/video_element.dart';
-import 'resolved_styles_scope.dart';
-import 'root_height_scope.dart';
+import 'native_display_scope.dart';
 import 'style_applier.dart';
 
 class NativeDisplayRenderer extends StatelessWidget {
@@ -38,9 +37,9 @@ class NativeDisplayRenderer extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!evaluator.evaluateBoolean(node.visible)) return const SizedBox.shrink();
 
-    final resolvedStyles = ResolvedStylesScope.of(context);
+    final resolvedStyles = NativeDisplayScope.stylesOf(context);
     final style = resolvedStyles[node.id] ?? Style.empty;
-    final rootHeight = RootHeightScope.of(context);
+    final rootHeight = NativeDisplayScope.rootHeightOf(context);
 
     Widget built = switch (node) {
       NativeDisplayContainer c => _buildContainer(c, style),

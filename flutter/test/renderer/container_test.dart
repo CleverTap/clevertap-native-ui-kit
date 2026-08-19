@@ -6,8 +6,7 @@ import 'package:clevertap_native_display/src/renderer/containers/vertical_contai
 import 'package:clevertap_native_display/src/renderer/containers/horizontal_container.dart';
 import 'package:clevertap_native_display/src/renderer/containers/gallery_renderer.dart';
 import 'package:clevertap_native_display/src/evaluator/variable_evaluator.dart';
-import 'package:clevertap_native_display/src/renderer/root_height_scope.dart';
-import 'package:clevertap_native_display/src/renderer/resolved_styles_scope.dart';
+import 'package:clevertap_native_display/src/renderer/native_display_scope.dart';
 
 NativeDisplayContainer makeContainer({
   String id = 'c',
@@ -30,12 +29,12 @@ void main() {
 
   Widget wrap(Widget w) => Directionality(
         textDirection: TextDirection.ltr,
-        child: RootHeightScope(
+        child: NativeDisplayScope(
           rootHeight: 200,
-          child: ResolvedStylesScope(
-            styles: const {},
-            child: w,
-          ),
+          styles: const {},
+          unitId: null,
+          onClicked: null,
+          child: w,
         ),
       );
 

@@ -7,8 +7,7 @@ import 'package:video_player_platform_interface/video_player_platform_interface.
 import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:clevertap_native_display/src/renderer/elements/video_element.dart';
 import 'package:clevertap_native_display/src/evaluator/variable_evaluator.dart';
-import 'package:clevertap_native_display/src/renderer/root_height_scope.dart';
-import 'package:clevertap_native_display/src/renderer/resolved_styles_scope.dart';
+import 'package:clevertap_native_display/src/renderer/native_display_scope.dart';
 
 // Regression test locking in #54 VIDEO controls tap reliability: the controls
 // overlay is a full-area GestureDetector with HitTestBehavior.opaque so a tap
@@ -87,12 +86,12 @@ void main() {
 
   Widget wrap(Widget w) => Directionality(
         textDirection: TextDirection.ltr,
-        child: RootHeightScope(
+        child: NativeDisplayScope(
           rootHeight: 200,
-          child: ResolvedStylesScope(
-            styles: const {},
-            child: Center(child: SizedBox(width: 320, height: 240, child: w)),
-          ),
+          styles: const {},
+          unitId: null,
+          onClicked: null,
+          child: Center(child: SizedBox(width: 320, height: 240, child: w)),
         ),
       );
 
