@@ -7,12 +7,9 @@ import '../models/native_display_config.dart';
 import '../models/style.dart';
 import '../style/style_resolver.dart';
 import 'native_display_renderer.dart';
-import 'notification_click_scope.dart';
-import 'root_height_scope.dart';
-import 'resolved_styles_scope.dart';
-import 'unit_id_scope.dart';
+import 'native_display_scope.dart';
 
-export 'notification_click_scope.dart' show NativeDisplayNotificationClicked;
+export 'native_display_scope.dart' show NativeDisplayNotificationClicked;
 
 typedef NativeDisplayActionListener = void Function(
     String action, String nodeId, Map<String, dynamic>? params);
@@ -109,25 +106,19 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
       return SizedBox(
         width: fixedWidth,
         height: fixedHeight,
-        child: RootHeightScope(
+        child: NativeDisplayScope(
           rootHeight: fixedHeight,
-          child: ResolvedStylesScope(
-            styles: _resolvedStyles,
-            child: UnitIdScope(
-              unitId: widget.unitId,
-              child: NotificationClickScope(
-                onClicked: widget.onNotificationClicked,
-                child: _TrackNotificationViewed(
-                  unitId: widget.unitId,
-                  onViewed: widget.onNotificationViewed,
-                  child: NativeDisplayRenderer(
-                    node: root,
-                    evaluator: evaluator,
-                    actionListener: widget.actionListener,
-                    componentListener: widget.componentListener,
-                  ),
-                ),
-              ),
+          styles: _resolvedStyles,
+          unitId: widget.unitId,
+          onClicked: widget.onNotificationClicked,
+          child: _TrackNotificationViewed(
+            unitId: widget.unitId,
+            onViewed: widget.onNotificationViewed,
+            child: NativeDisplayRenderer(
+              node: root,
+              evaluator: evaluator,
+              actionListener: widget.actionListener,
+              componentListener: widget.componentListener,
             ),
           ),
         ),
@@ -145,25 +136,19 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
         final rootHeight =
             _computeRootHeight(layout, effectiveRootWidth, constraints, screenHeight);
 
-        Widget child = RootHeightScope(
+        Widget child = NativeDisplayScope(
           rootHeight: rootHeight,
-          child: ResolvedStylesScope(
-            styles: _resolvedStyles,
-            child: UnitIdScope(
-              unitId: widget.unitId,
-              child: NotificationClickScope(
-                onClicked: widget.onNotificationClicked,
-                child: _TrackNotificationViewed(
-                  unitId: widget.unitId,
-                  onViewed: widget.onNotificationViewed,
-                  child: NativeDisplayRenderer(
-                    node: root,
-                    evaluator: evaluator,
-                    actionListener: widget.actionListener,
-                    componentListener: widget.componentListener,
-                  ),
-                ),
-              ),
+          styles: _resolvedStyles,
+          unitId: widget.unitId,
+          onClicked: widget.onNotificationClicked,
+          child: _TrackNotificationViewed(
+            unitId: widget.unitId,
+            onViewed: widget.onNotificationViewed,
+            child: NativeDisplayRenderer(
+              node: root,
+              evaluator: evaluator,
+              actionListener: widget.actionListener,
+              componentListener: widget.componentListener,
             ),
           ),
         );

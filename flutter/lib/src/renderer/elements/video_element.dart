@@ -4,7 +4,7 @@ import 'package:video_player/video_player.dart';
 import '../../evaluator/variable_evaluator.dart';
 import '../../models/native_display_node.dart';
 import '../../models/style.dart';
-import '../root_height_scope.dart';
+import '../native_display_scope.dart';
 import '../style_applier.dart';
 
 class VideoElement extends StatefulWidget {
@@ -60,7 +60,7 @@ class _VideoElementState extends State<VideoElement> {
 
   @override
   Widget build(BuildContext context) {
-    final rootHeight = RootHeightScope.of(context);
+    final rootHeight = NativeDisplayScope.rootHeightOf(context);
 
     Widget content;
     if (!_initialized || _controller == null) {
