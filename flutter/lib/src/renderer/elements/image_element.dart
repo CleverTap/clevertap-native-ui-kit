@@ -7,10 +7,8 @@ import '../../models/enums.dart';
 import '../../models/native_display_node.dart';
 import '../../models/node_config.dart';
 import '../../models/style.dart';
-import '../notification_click_scope.dart';
-import '../root_height_scope.dart';
+import '../native_display_scope.dart';
 import '../style_applier.dart';
-import '../unit_id_scope.dart';
 
 class ImageElement extends StatelessWidget {
   final NativeDisplayElement node;
@@ -26,7 +24,7 @@ class ImageElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rootHeight = RootHeightScope.of(context);
+    final rootHeight = NativeDisplayScope.rootHeightOf(context);
     final url = node.bindings['url'] ?? '';
     if (url.isEmpty) {
       return StyleApplier.apply(
@@ -84,8 +82,8 @@ class ImageElement extends StatelessWidget {
     // only a componentListener is attached.
     final onClick = node.actions?[ActionTriggers.onClick];
     if (onClick != null) {
-      final unitId = UnitIdScope.of(context);
-      final onNotificationClicked = NotificationClickScope.of(context);
+      final unitId = NativeDisplayScope.unitIdOf(context);
+      final onNotificationClicked = NativeDisplayScope.onClickedOf(context);
       styled = GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
