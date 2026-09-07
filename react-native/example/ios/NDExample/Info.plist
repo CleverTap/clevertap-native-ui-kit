@@ -24,6 +24,12 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>CleverTapAccountID</key>
+	<string>468-RZW-ZK6Z</string>
+	<key>CleverTapRegion</key>
+	<string>sk1-staging-25</string>
+	<key>CleverTapToken</key>
+	<string>012-b64</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -56,11 +62,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>CleverTapAccountID</key>
-	<string>468-RZW-ZK6Z</string>
-	<key>CleverTapToken</key>
-	<string>012-b64</string>
-	<key>CleverTapRegion</key>
-	<string>sk1-staging-25</string>
 </dict>
 </plist>

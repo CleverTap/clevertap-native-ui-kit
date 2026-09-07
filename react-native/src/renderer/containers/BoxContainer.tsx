@@ -13,6 +13,7 @@ import {
 } from '../layoutModifier';
 import { BackgroundRenderer } from '../BackgroundRenderer';
 import { useRootSize } from '../../context/RootSizeContext';
+import { TappableContainer } from '../TappableContainer';
 
 interface BoxContainerProps {
   node: NativeDisplayContainer;
@@ -109,7 +110,7 @@ export const BoxContainer = React.memo(function BoxContainer({
   const boxSize = resolveBoxDimensionsPx(layout, rootWidth, rootHeight);
 
   return (
-    <View style={boxStyle}>
+    <TappableContainer node={node} actionHandler={actionHandler} style={boxStyle}>
       {resolvedStyle.background && (
         <BackgroundRenderer
           background={resolvedStyle.background}
@@ -184,6 +185,6 @@ export const BoxContainer = React.memo(function BoxContainer({
           </View>
         );
       })}
-    </View>
+    </TappableContainer>
   );
 });

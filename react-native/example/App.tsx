@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, SafeAreaView, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StatusBar, StyleSheet } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import CleverTap from 'clevertap-react-native';
 import { NativeDisplayBridge } from '@clevertap/native-display-sdk';
 import { CleverTapIntegrationScreen } from './screens/CleverTapIntegrationScreen';
@@ -37,9 +38,15 @@ export default function App(): React.ReactElement {
   }, []);
 
   return (
-    <SafeAreaView style={styles.root}>
-      {/* Content sits ABOVE the tab bar, matching Android's Scaffold(bottomBar=...). */}
-      <View style={styles.content}>
+    <SafeAreaProvider>
+      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+      {/* SafeAreaView from safe-area-context pads for the status bar (top) and the
+          navigation / gesture bar (bottom) on both platforms. With edge-to-edge
+          on Android, content draws behind the system bars, so these insets keep
+          the header and tab bar clear of them. */}
+      <SafeAreaView style={styles.root}>
+        {/* Content sits ABOVE the tab bar, matching Android's Scaffold(bottomBar=...). */}
+        <View style={styles.content}>
         {screen === 'ct'      && <CleverTapIntegrationScreen />}
         {screen === 'bridge'  && <BridgeIntegrationScreen />}
         {screen === 'browser' && <TestConfigBrowserScreen />}
@@ -65,8 +72,9 @@ export default function App(): React.ReactElement {
             </Pressable>
           );
         })}
-      </View>
-    </SafeAreaView>
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

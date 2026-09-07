@@ -11,6 +11,7 @@ import { resolveLayoutStyle, resolveNodeStyle } from '../layoutModifier';
 import { parseColor } from '../../utils/color';
 import { useRootSize } from '../../context/RootSizeContext';
 import { BackgroundRenderer } from '../BackgroundRenderer';
+import { TappableContainer } from '../TappableContainer';
 
 interface GalleryContainerProps {
   node: NativeDisplayContainer;
@@ -348,7 +349,11 @@ export const GalleryContainer = React.memo(function GalleryContainer({
       : undefined;
 
   return (
-    <View style={[layoutStyle, nodeStyle, { position: 'relative' }]}>
+    <TappableContainer
+      node={node}
+      actionHandler={actionHandler}
+      style={[layoutStyle, nodeStyle, { position: 'relative' }]}
+    >
       {resolvedStyle.background && (
         <BackgroundRenderer
           background={resolvedStyle.background}
@@ -422,6 +427,6 @@ export const GalleryContainer = React.memo(function GalleryContainer({
           />
         </>
       )}
-    </View>
+    </TappableContainer>
   );
 });

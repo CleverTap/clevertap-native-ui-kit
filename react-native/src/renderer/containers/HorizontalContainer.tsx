@@ -11,6 +11,7 @@ import { resolveLayoutStyle, resolveNodeStyle } from '../layoutModifier';
 import { parseColor } from '../../utils/color';
 import { useRootSize } from '../../context/RootSizeContext';
 import { BackgroundRenderer } from '../BackgroundRenderer';
+import { TappableContainer } from '../TappableContainer';
 
 interface HorizontalContainerProps {
   node: NativeDisplayContainer;
@@ -94,7 +95,9 @@ export const HorizontalContainer = React.memo(function HorizontalContainer({
       : undefined;
 
   return (
-    <View
+    <TappableContainer
+      node={node}
+      actionHandler={actionHandler}
       onLayout={handleContainerLayout}
       style={[
         finalLayoutStyle,
@@ -127,6 +130,6 @@ export const HorizontalContainer = React.memo(function HorizontalContainer({
         </BackgroundRenderer>
       )}
       {childElements}
-    </View>
+    </TappableContainer>
   );
 });
