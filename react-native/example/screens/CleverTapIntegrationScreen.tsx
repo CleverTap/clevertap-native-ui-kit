@@ -107,6 +107,24 @@ export function CleverTapIntegrationScreen(): React.ReactElement {
     },
   };
 
+  // The SDK routes a close button through onCustomAction(key="close", ...) with
+  // no unitId (close is a custom action, not a distinct action type - matches
+  // Android/iOS). Dismissing a unit is a client responsibility by design, so
+  // here we wrap the shared listener per unit. The wrapper closes over the
+  // unit's own id, so onCustomAction knows which unit to remove when key ===
+  // "close". All other custom keys fall through to the shared handler.
+  const makeUnitActionListener = (unitId: string): NativeDisplayActionListener => ({
+    ...actionListener,
+    onCustomAction(key: string, value: unknown, metadata?: Record<string, string>): void {
+      if (key === 'close') {
+        appendLog(`ACTION close: dismissing unit ${unitId}`);
+        setUnits((prev) => prev.filter((u) => u.unitId !== unitId));
+        return;
+      }
+      actionListener.onCustomAction(key, value, metadata);
+    },
+  });
+
   function sendEvent() {
     const name = eventName.trim();
     if (!name || !ctAvailable) return;
@@ -192,7 +210,7 @@ export function CleverTapIntegrationScreen(): React.ReactElement {
             <NativeDisplayView
               key={unit.unitId}
               unit={unit}
-              actionListener={actionListener}
+              actionListener={makeUnitActionListener(unit.unitId)}
               style={styles.unitView}
             />
           ))}

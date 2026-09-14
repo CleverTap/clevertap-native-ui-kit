@@ -6,31 +6,10 @@ const sdkRoot = path.resolve(__dirname, '..');
 const repoRoot = path.resolve(__dirname, '../../');
 const ctSdkRoot = fs.realpathSync(path.resolve(__dirname, 'node_modules/clevertap-react-native'));
 
-// Optional peer deps that may not be installed in this example app.
-// Metro resolves require() statically at bundle time, so missing packages
-// must be redirected to a stub - the tryLoad() try/catch handles it at runtime.
-const OPTIONAL_PEER_DEPS = [
-  'react-native-linear-gradient',
-  'react-native-svg',
-  'react-native-reanimated',
-  'react-native-webview',
-  'react-native-video',
-  '@react-native-masked-view/masked-view',
-  '@react-native-community/blur',
-  'expo-image',
-  'react-native-fast-image',
-];
-
-const optionalStubPath = path.resolve(__dirname, 'stubs/optional-stub.js');
-
-function isInstalled(pkg) {
-  try {
-    require.resolve(pkg, { paths: [__dirname] });
-    return true;
-  } catch {
-    return false;
-  }
-}
+// Optional peer deps need no Metro stub here. The SDK loads each one through
+// eval('require') in src/optional/optionalDeps.ts, so Metro never tries to
+// resolve a missing package at bundle time. A missing package fails only at
+// runtime, where the SDK catches it and the feature degrades gracefully.
 
 const config = {
   watchFolders: [sdkRoot, repoRoot, ctSdkRoot],
@@ -61,9 +40,6 @@ const config = {
           filePath: require.resolve(moduleName, { paths: [__dirname] }),
           type: 'sourceFile',
         };
-      }
-      if (OPTIONAL_PEER_DEPS.includes(moduleName) && !isInstalled(moduleName)) {
-        return { filePath: optionalStubPath, type: 'sourceFile' };
       }
       return context.resolveRequest(context, moduleName, platform);
     },

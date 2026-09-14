@@ -11,9 +11,11 @@
 //      from `expo-example/node_modules` so we don't end up with two copies of
 //      the same package loaded into the runtime.
 //
-// Missing optional UI peer deps are routed to a no-op stub - matches the
-// bare example's pattern and keeps Metro bundling green when the user has
-// pruned packages they don't want.
+// Missing optional UI peer deps need no Metro stub. The SDK loads each one
+// through eval('require') in ../src/optional/optionalDeps.ts, so Metro never
+// tries to resolve a missing package at bundle time. A missing package fails
+// only at runtime, where the SDK catches it and the feature degrades
+// gracefully.
 
 const { getDefaultConfig } = require('expo/metro-config');
 const path = require('path');
@@ -25,30 +27,6 @@ const repoRoot = path.resolve(__dirname, '../..');             // monorepo root
 const ctSdkRoot = fs.realpathSync(
   path.resolve(__dirname, 'node_modules/clevertap-react-native'),
 );
-
-const OPTIONAL_PEER_DEPS = [
-  'react-native-linear-gradient',
-  'expo-linear-gradient',
-  'react-native-svg',
-  'react-native-reanimated',
-  'react-native-webview',
-  'react-native-video',
-  '@react-native-masked-view/masked-view',
-  '@react-native-community/blur',
-  'expo-image',
-  'react-native-fast-image',
-];
-
-const optionalStubPath = path.resolve(__dirname, 'stubs/optional-stub.js');
-
-function isInstalled(pkg) {
-  try {
-    require.resolve(pkg, { paths: [__dirname] });
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 const config = getDefaultConfig(__dirname);
 
@@ -108,13 +86,6 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
       filePath: require.resolve(moduleName, { paths: [__dirname] }),
       type: 'sourceFile',
     };
-  }
-
-  // Route missing optional peer deps to a `module.exports = null` stub so
-  // Metro can finish bundling. The SDK's `optionalDeps.ts` tryLoad() pattern
-  // observes `null` and falls back to its degraded path at runtime.
-  if (OPTIONAL_PEER_DEPS.includes(moduleName) && !isInstalled(moduleName)) {
-    return { filePath: optionalStubPath, type: 'sourceFile' };
   }
 
   // Defer to Expo's default resolver (which honors expo-modules autolinking).

@@ -126,9 +126,10 @@ so this example exercises every renderer code path. One deliberate omission:
 
 If you want to test the graceful-degradation paths in
 `src/optional/optionalDeps.ts`, `npm uninstall` whichever package you want to
-drop - Metro's resolver will substitute the null stub at
-`stubs/optional-stub.js` and the SDK will fall back to its degraded rendering
-at runtime.
+drop. No Metro stub is needed: the SDK loads each optional dep through
+eval('require'), so Metro never tries to resolve a missing package at bundle
+time. The SDK catches the missing package at runtime and falls back to its
+degraded rendering.
 
 ## npm peer-deps note
 
