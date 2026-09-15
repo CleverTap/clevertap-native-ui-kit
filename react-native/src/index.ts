@@ -1,6 +1,8 @@
 export { NativeDisplayBridge } from './bridge/NativeDisplayBridge';
 export type { NativeDisplayBridgeListener } from './bridge/NativeDisplayBridge';
 export { NDLogLevel } from './internal/NDLogger';
+export { registerComponents } from './optional/componentRegistry';
+export type { OptionalComponentKey } from './optional/componentRegistry';
 export { wireCleverTap } from './bridge/cleverTapAutoWire';
 export { NativeDisplaySlotManager } from './placement/NativeDisplaySlotManager';
 export { NativeDisplaySlot } from './placement/NativeDisplaySlot';

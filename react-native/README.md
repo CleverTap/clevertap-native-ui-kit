@@ -47,6 +47,12 @@ without them:
 2. **The main CleverTap SDK set up in the app.** That is `clevertap-react-native`,
    installed and initialized with the credentials above. This package listens to
    it. See the [CleverTap React Native docs](https://developer.clevertap.com/docs/react-native).
+
+   **Already using CleverTap?** Keep your existing setup as it is. Your init code,
+   your credentials, and your native config do not change. You only add this
+   package on top. One thing to check first: `clevertap-react-native` must be
+   `4.1.0` or newer. Older apps are often on an earlier version, so confirm yours
+   before you start. An out-of-date Core SDK is a common reason nothing renders.
 3. **Know which kind of app you have** - bare React Native or Expo. If you are
    not sure and your project has `ios/` and `android/` folders you edit by hand,
    it is bare. If you run `npx expo ...` commands, it is Expo.
@@ -91,6 +97,11 @@ NativeDisplayBridge.shared.bind(CleverTap);
 NativeDisplayBridge.shared.fetchNativeDisplays(CleverTap);
 ```
 
+> If your campaigns use gradients, video, web content, or blur, you also need to
+> register the libraries that draw them - see
+> [Optional UI features](#optional-ui-features). Text-only campaigns need nothing
+> extra.
+
 ### 3. Show the campaign
 
 Render campaigns with `<NativeDisplayView />`. See
@@ -128,6 +139,11 @@ npx expo install @clevertap/native-display-sdk clevertap-react-native @clevertap
 - `@clevertap/clevertap-expo-plugin` sets up CleverTap's native pieces during
   `expo prebuild` (Podfile, Info.plist, AndroidManifest, lifecycle hooks).
 - `clevertap-react-native` must be `4.1.0` or newer.
+
+> **Already have CleverTap set up in your Expo app?** You only need
+> `@clevertap/native-display-sdk`. The plugin and the `app.json` block below are
+> already in place, so install just that one package, then skip to
+> [step 3](#3-prebuild-and-run).
 
 ### 2. Add the plugin to `app.json`
 
@@ -168,11 +184,17 @@ just the code, not the bare install commands. A runnable Expo app lives in
 ## Optional UI features
 
 Some features of a native display template - gradients, video, web content,
-blur - are drawn using well-known React Native libraries. You install only the
-ones your campaigns actually use. If one is missing, the SDK falls back to a
-simpler look (for example, a gradient becomes a solid color) instead of
-crashing. So it is safe to start with none and add a library later if a template
-feature does not look right.
+blur - are drawn using well-known React Native libraries. Wiring one up takes
+two steps: **install** the library, then **register** it with the SDK at startup
+(see [Register them at startup](#register-them-at-startup) below). You do both
+only for the libraries your campaigns actually use.
+
+The SDK never imports these libraries itself. It uses only the ones you hand it
+through `registerComponents`. If a feature's library is not registered, the SDK
+falls back to a simpler look (for example, a gradient becomes a solid color)
+instead of crashing. So it is safe to start with none and add a library later if
+a template feature does not look right - just remember the second step, register
+it, or installing alone changes nothing.
 
 ### Install all of them at once (optional)
 
@@ -208,6 +230,61 @@ Two things to know:
   the plugin as the last entry in `babel.config.js` and rebuild - see the
   reanimated note in [FAQ and troubleshooting](#faq-and-troubleshooting).
 
+### Register them at startup
+
+Installing a library is not enough on its own. The SDK does not import these
+libraries. You import each one and hand it to the SDK with `registerComponents`.
+Do this once, in your app's entry file (`index.js`), before any campaign
+renders. Register only the libraries you installed.
+
+```js
+import Video from 'react-native-video';
+import LinearGradient from 'react-native-linear-gradient';
+import * as Svg from 'react-native-svg';
+import * as Reanimated from 'react-native-reanimated';
+import { WebView } from 'react-native-webview';
+import MaskedView from '@react-native-masked-view/masked-view';
+import { BlurView } from '@react-native-community/blur';
+import FastImage from 'react-native-fast-image';
+import { registerComponents } from '@clevertap/native-display-sdk';
+
+registerComponents({
+  Video,
+  LinearGradient,
+  Svg,
+  Reanimated,
+  WebView,
+  MaskedView,
+  BlurView,
+  FastImage,
+});
+```
+
+Each value must match the shape the SDK reads back:
+
+- **Default export** - `Video`, `LinearGradient`, `MaskedView`, `FastImage`.
+- **Named export** - `WebView`, `BlurView`.
+- **Whole module namespace** (`import * as`) - `Svg`, `Reanimated`.
+
+**On Expo**, swap the two libraries that have Expo-native equivalents and register
+them under their own keys:
+
+```js
+import LinearGradient from 'react-native-linear-gradient'; // or expo-linear-gradient
+import { Image as ExpoImage } from 'expo-image'; // named export, key "ExpoImage"
+
+registerComponents({
+  // ... the rest as above ...
+  LinearGradient,
+  ExpoImage, // replaces FastImage under Expo
+});
+```
+
+The SDK prefers `ExpoImage` over `FastImage` when both are registered. Since you
+choose which keys to register, register the one you installed. For a complete
+entry file, see [`example/index.js`](example/index.js) (bare) or
+[`expo-example/index.js`](expo-example/index.js) (Expo).
+
 <details>
 <summary><b>Which library powers which feature</b></summary>
 
@@ -223,9 +300,9 @@ Two things to know:
 | `react-native-fast-image` | faster image loading | `expo-image` (preferred under Expo) |
 
 Minimum versions are listed as peer dependencies in
-[`package.json`](package.json). Under Expo, the SDK prefers `expo-image` and
-`expo-linear-gradient` automatically when they are installed - see
-[Reference and advanced](#reference-and-advanced).
+[`package.json`](package.json). Under Expo you register the Expo-native gradient
+and image libraries in place of the bare ones - see
+[Register them at startup](#register-them-at-startup).
 
 </details>
 
@@ -310,7 +387,10 @@ restart with a clean cache: `npx react-native start --reset-cache` on bare React
 Native, or `npx expo start --clear` on Expo.
 
 **I installed a UI library (video, gradient, ...) but the feature still does not appear.**
-Libraries with native code need a full app rebuild, not just a JavaScript reload.
+Two things to check. First, did you register it? Installing a library does not
+wire it to the SDK on its own - you must also pass it to `registerComponents` at
+startup. See [Register them at startup](#register-them-at-startup). Second,
+libraries with native code need a full app rebuild, not just a JavaScript reload.
 Stop the app and rebuild it. On iOS run `cd ios && pod install` first (bare React
 Native) or `npx expo prebuild --clean` (Expo).
 
@@ -321,8 +401,10 @@ version: for Reanimated 4 it is `react-native-worklets/plugin`; for Reanimated 3
 it is `react-native-reanimated/plugin`. Rebuild after changing `babel.config.js`.
 
 **A gradient or video looks wrong or is missing.**
-The library that draws it is probably not installed. See
-[Optional UI features](#optional-ui-features).
+The library that draws it is either not installed or not registered. Installing
+alone is not enough - you must also pass it to `registerComponents` at startup.
+See [Optional UI features](#optional-ui-features) and
+[Register them at startup](#register-them-at-startup).
 
 ## Reference and advanced
 
@@ -331,11 +413,17 @@ The library that draws it is probably not installed. See
 - **How it works internally** - architecture and the end-to-end render flow:
   [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and
   [docs/HAPPY_FLOW.md](docs/HAPPY_FLOW.md).
-- **Expo peer-dep preference** - `src/optional/optionalDeps.ts` checks
-  `process.env.EXPO_OS`. Under Expo it prefers `expo-image` over
-  `react-native-fast-image`, and `expo-linear-gradient` over
-  `react-native-linear-gradient`. Installing both is fine: the Expo variant wins
-  inside Expo apps, the bare variant wins everywhere else.
+- **How optional libraries reach the SDK** - the SDK never imports the optional
+  peer libraries. The app imports each one and passes it to `registerComponents`
+  at startup. The SDK reads them back from that registry
+  (`src/optional/componentRegistry.ts`). A key that was never registered means
+  the feature degrades gracefully. This keeps the SDK bundler-agnostic - it works
+  on Metro of any version, on Expo, and on Re.Pack, with no `require` of a native
+  library from inside the SDK.
+- **Expo image preference** - when both `ExpoImage` and `FastImage` are
+  registered, the SDK uses `ExpoImage`
+  (`src/renderer/elements/ImageElement.tsx`). Since you choose which keys to
+  register, register the one you installed.
 - **Exported API** - `NativeDisplayBridge`, `NativeDisplayView`,
   `NativeDisplaySlotManager`, `NativeDisplaySlot`, `wireCleverTap`, `NDLogLevel`,
   and supporting types. See [`src/index.ts`](src/index.ts).

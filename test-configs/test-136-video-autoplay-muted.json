@@ -22,7 +22,12 @@
         "id": "video",
         "elementType": "video",
         "bindings": {
-          "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+          "url": "https://media.w3.org/2010/05/sintel/trailer.mp4",
+          "autoPlay": true,
+          "loop": true,
+          "muted": true,
+          "showControls": false,
+          "showFullscreen": false
         },
         "layout": {
           "width": {
@@ -38,12 +43,7 @@
             "y": 0,
             "unit": "percent"
           }
-        },
-        "autoPlay": true,
-        "muted": true,
-        "loop": true,
-        "showControls": false,
-        "showFullscreen": false
+        }
       }
     ]
   }

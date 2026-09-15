@@ -1,106 +1,50 @@
-import { NDLogger } from '../internal/NDLogger';
+import { getRegisteredComponent } from './componentRegistry';
 
-const cache = new Map<string, unknown>();
-const NOT_INSTALLED = Symbol('not-installed');
+// Optional peer libraries reach the SDK through registerComponents, not through
+// a require. The SDK never imports these libraries itself. The client imports
+// the ones it uses. The client passes each one to registerComponents once at
+// app startup. Each getter below reads the value back from that registry.
+// A missing key means the feature is not wired. The feature then degrades
+// gracefully at its use site (BackgroundRenderer, VideoElement, ImageElement).
+//
+// Why not require the packages here: Metro reads a plain require('pkg') at
+// bundle time and never bundles the JS of a package it resolved through a
+// hidden path. A runtime require then throws "unknown module" even when the
+// package and its native pod are both installed. The registry side-steps the
+// bundler completely. It works on Metro of any version, on Expo, and on
+// Re.Pack.
 
-type Loader<T> = () => T;
-
-function tryLoad<T>(name: string, loader: Loader<T>): T | null {
-  if (cache.has(name)) {
-    const cached = cache.get(name);
-    return cached === NOT_INSTALLED ? null : (cached as T);
-  }
-  try {
-    const mod = loader();
-    cache.set(name, mod);
-    return mod;
-  } catch {
-    cache.set(name, NOT_INSTALLED);
-    // Debug level, not warn: the useful, feature-specific warning is logged
-    // where the feature is actually used (BackgroundRenderer, VideoElement).
-    // Keeping this at debug avoids double-logging at the default INFO level.
-    NDLogger.d(
-      'NativeDisplay',
-      `optional peer "${name}" not installed - related features will degrade gracefully.`,
-    );
-    return null;
-  }
-}
-
-// Why eval('require') for every optional peer below:
-// Metro reads a plain require('pkg') at bundle time. If the package is not
-// installed, the bundle fails to build. That happens before any code runs, so
-// the tryLoad try/catch never gets a chance to catch it. eval('require') hides
-// the module name from Metro's static analyser. Metro no longer tries to
-// resolve the package at bundle time. A missing package now fails only at
-// runtime, where tryLoad catches it and the feature degrades gracefully. This
-// removes the need for a client-side Metro resolver stub.
+// Each getter returns the value the consumer expects. The shape is decided by
+// the client at registration time. See example index.js for the exact values.
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getLinearGradient = (): any | null => {
-  // Prefer react-native-linear-gradient, fall back to expo-linear-gradient for
-  // Expo. Both have the same API so BackgroundRenderer doesn't care which.
-  // eslint-disable-next-line no-eval
-  const rn = tryLoad('react-native-linear-gradient', () => eval('require')('react-native-linear-gradient').default);
-  if (rn) return rn;
-  // Only try the Expo package in an Expo env.
-  if (!process.env.EXPO_OS) return null;
-  // eslint-disable-next-line no-eval
-  return tryLoad('expo-linear-gradient', () => eval('require')('expo-linear-gradient').LinearGradient);
-};
+export const getLinearGradient = (): any | null =>
+  getRegisteredComponent('LinearGradient');
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getSvg = (): any | null =>
-  // eslint-disable-next-line no-eval
-  tryLoad('react-native-svg', () => eval('require')('react-native-svg'));
+export const getSvg = (): any | null => getRegisteredComponent('Svg');
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getReanimated = (): any | null =>
-  // eslint-disable-next-line no-eval
-  tryLoad('react-native-reanimated', () => eval('require')('react-native-reanimated'));
+  getRegisteredComponent('Reanimated');
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getWebView = (): any | null =>
-  // eslint-disable-next-line no-eval
-  tryLoad('react-native-webview', () => eval('require')('react-native-webview').WebView);
+export const getWebView = (): any | null => getRegisteredComponent('WebView');
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getVideo = (): any | null =>
-  // eslint-disable-next-line no-eval
-  tryLoad('react-native-video', () => eval('require')('react-native-video').default);
+export const getVideo = (): any | null => getRegisteredComponent('Video');
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getMaskedView = (): any | null =>
-  tryLoad(
-    '@react-native-masked-view/masked-view',
-    // eslint-disable-next-line no-eval
-    () => eval('require')('@react-native-masked-view/masked-view').default,
-  );
+  getRegisteredComponent('MaskedView');
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getBlurView = (): any | null =>
-  tryLoad(
-    '@react-native-community/blur',
-    // eslint-disable-next-line no-eval
-    () => eval('require')('@react-native-community/blur').BlurView,
-  );
+export const getBlurView = (): any | null => getRegisteredComponent('BlurView');
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getExpoImage = (): any | null => {
-  // expo-image only loads correctly in an Expo project (it needs
-  // babel-preset-expo to inline process.env.EXPO_OS). In a plain RN project it
-  // throws on load in a way our try/catch can't catch, crashing Metro. So we
-  // check the same env var: if it isn't set, skip loading entirely.
-  if (!process.env.EXPO_OS) return null;
-  // eslint-disable-next-line no-eval
-  return tryLoad('expo-image', () => eval('require')('expo-image').Image);
-};
+export const getExpoImage = (): any | null =>
+  getRegisteredComponent('ExpoImage');
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getFastImage = (): any | null =>
-  // eslint-disable-next-line no-eval
-  tryLoad('react-native-fast-image', () => eval('require')('react-native-fast-image').default);
-
-export function clearOptionalDepsCache(): void {
-  cache.clear();
-}
+  getRegisteredComponent('FastImage');

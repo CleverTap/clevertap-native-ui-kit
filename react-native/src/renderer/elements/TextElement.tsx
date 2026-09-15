@@ -122,8 +122,20 @@ export const TextElement = React.memo(function TextElement({ node, resolvedStyle
             colors={parsedColors}
             start={{ x: startX, y: startY }}
             end={{ x: endX, y: endY }}
-            style={{ flex: 1 }}
-          />
+          >
+            {/* Invisible copy of the text. It gives the gradient a real size.
+                The mask above then shows the gradient through the text shape.
+                A bare flex:1 gradient has no size when the parent has no
+                height. The text nodes use wrap_content. So the parent has no
+                height. Without this copy the whole masked view is blank. */}
+            <Text
+              style={[textStyle, { opacity: 0 }]}
+              numberOfLines={maxLines}
+              ellipsizeMode={ellipsizeMode}
+            >
+              {text}
+            </Text>
+          </LinearGradient>
         </MaskedView>
       );
     }
