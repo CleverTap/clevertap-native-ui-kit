@@ -209,6 +209,17 @@ npm install react-native-linear-gradient react-native-svg react-native-reanimate
   @react-native-community/blur react-native-fast-image
 ```
 
+> **Pick versions that match your React Native version.** These libraries have
+> native code, and each supports its own range of React Native versions. The
+> command above installs the latest of each, which may be too new for an older
+> React Native app. `react-native-reanimated` is the common trap: version 4.x
+> supports only recent React Native (4.3.1 declares a React Native peer range of
+> `0.81 - 0.85`), so on React Native 0.76 you install
+> `react-native-reanimated@~3.18` instead. If a native library fails to build or
+> the app will not start after adding one, check that library's supported React
+> Native range and install a version that fits. Expo users avoid this: `expo
+> install` (below) picks matching versions for you.
+
 Expo (uses `expo install` so versions match your Expo SDK, and swaps in the
 Expo-native gradient and image libraries):
 
