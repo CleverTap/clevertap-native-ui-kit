@@ -11,8 +11,12 @@ navigation = "2.8.5"
 coil = "2.7.0"
 media3 = "1.5.0"
 junit = "4.13.2"
-androidxTest = "1.2.1"
-espresso = "3.6.1"
+# androidx.test 1.3.0 (ext-junit) pulls core/runner/monitor 1.7.0, and espresso
+# 3.7.0 carries the InputManager fix for Android 15/16+ — required to run the
+# instrumented/Espresso automation on new Android versions (API 36/37) where
+# 3.6.1 crashed with NoSuchMethodException: InputManager.getInstance.
+androidxTest = "1.3.0"
+espresso = "3.7.0"
 robolectric = "4.13"
 roborazzi = "1.29.0"
 runtime = "1.10.4"
