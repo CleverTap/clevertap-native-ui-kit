@@ -6,6 +6,8 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -20,9 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -183,6 +187,15 @@ private fun FireEventHeader(
     isSendEnabled: Boolean,
     showCanvasLabel: Boolean = true
 ) {
+    // Dismiss the soft keyboard when an event is sent: clearing focus hides the
+    // IME in Compose. Good UX (the input is done once sent) and keeps the Native
+    // Display canvas unobscured.
+    val focusManager = LocalFocusManager.current
+    val sendEvent = {
+        focusManager.clearFocus()
+        onSendEvent()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -202,10 +215,12 @@ private fun FireEventHeader(
                     .weight(1f)
                     .testTag("ct-event-input"),
                 singleLine = true,
-                textStyle = MaterialTheme.typography.bodyMedium
+                textStyle = MaterialTheme.typography.bodyMedium,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                keyboardActions = KeyboardActions(onSend = { if (isSendEnabled) sendEvent() })
             )
             Button(
-                onClick = onSendEvent,
+                onClick = sendEvent,
                 enabled = isSendEnabled,
                 modifier = Modifier.testTag("ct-send-event-btn")
             ) {
