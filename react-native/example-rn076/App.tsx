@@ -12,6 +12,7 @@ import {
   StatusBar,
   SafeAreaView,
   StyleSheet,
+  Platform,
 } from 'react-native';
 import CleverTap from 'clevertap-react-native';
 import {NativeDisplayBridge, NDLogLevel} from '@clevertap/native-display-sdk';
@@ -34,6 +35,19 @@ function App(): React.JSX.Element {
     // This mirrors the 0.85 example and the native apps.
     NativeDisplayBridge.shared.bind(CleverTap);
     NativeDisplayBridge.shared.fetchNativeDisplays(CleverTap);
+
+    // Register for push so the device token reaches the CleverTap dashboard.
+    // "Preview and test" for Native Display sends a push to that token.
+    // iOS: registerForPush asks for notification permission, then registers
+    //   for remote notifications. autoIntegrate forwards the APNs token.
+    // Android: registerForPush is a no-op in the SDK. The runtime
+    //   POST_NOTIFICATIONS dialog comes from promptForPushPermission. The FCM
+    //   token is captured and forwarded by the SDK once Firebase is set up.
+    if (Platform.OS === 'ios') {
+      CleverTap.registerForPush();
+    } else {
+      CleverTap.promptForPushPermission(true);
+    }
   }, []);
 
   return (

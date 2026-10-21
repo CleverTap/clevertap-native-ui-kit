@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
-    CleverTap.setDebugLevel(2)
+    CleverTap.setDebugLevel(3)
     CleverTap.autoIntegrate()
     CleverTapReactManager.sharedInstance().applicationDidLaunch(options: launchOptions)
 

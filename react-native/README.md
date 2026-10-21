@@ -388,9 +388,31 @@ iOS and Android.
 5. Did you rebuild the app after installing? On bare React Native run
    `cd ios && pod install` for iOS, then rebuild. On Expo run
    `npx expo prebuild --clean` again.
-6. Turn on debug logs with
-   `NativeDisplayBridge.shared.setLogLevel(NDLogLevel.DEBUG)` and watch the
-   console when the event fires.
+6. Watch the SDK's own logs. The SDK prints a warning whenever a feature
+   degrades - for example, an optional library that is not registered. These
+   warnings show at the default level, so you do not need to raise it. To be
+   sure the level is not turned off, set it once at startup:
+   `NativeDisplayBridge.shared.setLogLevel(NDLogLevel.INFO)`. Use
+   `NDLogLevel.DEBUG` only if you want extra tracing detail. If you still see no
+   SDK logs at all, read the next entry.
+
+**I see no SDK logs, or an optional feature silently does not render.**
+The SDK reports these problems through warnings, but two things can hide them:
+
+1. **You are running a release build.** The SDK's logs are JavaScript
+   `console` output. React Native release builds usually do not forward
+   `console` output to logcat (Android) or the Xcode console (iOS). So a warning
+   that a library is missing will not appear in a release build, even though the
+   fallback still happens on screen. To read SDK logs, run a **debug** build.
+2. **The log level was turned off by the main CleverTap SDK.** Until you set a
+   level yourself, this SDK follows the main CleverTap SDK's debug level. If that
+   is off, this SDK goes quiet too. Set the level once at startup to force logs
+   on: `NativeDisplayBridge.shared.setLogLevel(NDLogLevel.INFO)`. An explicit
+   call always wins over the main SDK's level.
+
+If a feature is missing but you cannot see logs, first confirm the library is
+installed **and** registered - see the entry "I installed a UI library ... but
+the feature still does not appear" further down in this section.
 
 **I get "Unable to resolve module ..." or a red error screen right after installing.**
 Metro (the JavaScript bundler) is using a stale list of packages. Stop it and
