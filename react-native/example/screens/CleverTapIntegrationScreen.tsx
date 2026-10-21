@@ -76,6 +76,14 @@ export function CleverTapIntegrationScreen(): React.ReactElement {
     };
     NativeDisplayBridge.shared.addListener(listener);
     appendLog('Bridge listener registered');
+    // A push-tapped unit may reach the bridge before this screen is mounted
+    // (e.g. the app opened on another tab). Seed from the cache so it still
+    // shows once the user lands on this tab.
+    const cached = NativeDisplayBridge.shared.getAllNativeDisplays();
+    if (cached.length > 0) {
+      setUnits(cached);
+      appendLog(`Seeded ${cached.length} cached display unit(s)`);
+    }
     return () => {
       NativeDisplayBridge.shared.removeListener(listener);
       appendLog('Bridge listener removed');

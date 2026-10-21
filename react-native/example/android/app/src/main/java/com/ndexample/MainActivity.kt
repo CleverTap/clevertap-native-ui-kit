@@ -1,5 +1,7 @@
 package com.ndexample
 
+import android.content.Intent
+import com.clevertap.android.sdk.CleverTapAPI
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
@@ -19,4 +21,20 @@ class MainActivity : ReactActivity() {
    */
   override fun createReactActivityDelegate(): ReactActivityDelegate =
       DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
+
+  /**
+   * The launch mode is singleTask. When the app is already running and the user
+   * taps a CleverTap push, Android delivers the notification intent here instead
+   * of creating a new activity. CleverTap's automatic click tracking only runs
+   * when a new activity is created, so it would miss this tap. Forwarding the
+   * extras makes the SDK raise its push-clicked callback. The bridge then sends
+   * CleverTapPushNotificationClicked to JS, where App.tsx reads wzrk_adunit and
+   * renders the native display unit.
+   */
+  override fun onNewIntent(intent: Intent) {
+    super.onNewIntent(intent)
+    setIntent(intent)
+    CleverTapAPI.getDefaultInstance(applicationContext)
+      ?.pushNotificationClickedEvent(intent.extras)
+  }
 }

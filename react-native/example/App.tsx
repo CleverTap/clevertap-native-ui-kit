@@ -47,6 +47,24 @@ export default function App(): React.ReactElement {
     } else {
       CleverTap.promptForPushPermission(true);
     }
+
+    // "Preview and test" delivers the config inside the push, under the
+    // `wzrk_adunit` key, not through the server display-units pipeline. When
+    // the user taps the push, this handler pulls that config out and hands it
+    // to the renderer. The bridge parser reads the "advanced-builder" wrapper
+    // and its `native_display_config` on its own.
+    const onPushClicked = (payload: Record<string, unknown> | null): void => {
+      if (!payload) return;
+      const adunit = payload.wzrk_adunit;
+      if (typeof adunit === 'string' && adunit.length > 0) {
+        NativeDisplayBridge.shared.processDisplayUnit(adunit);
+      }
+    };
+    CleverTap.addListener(CleverTap.CleverTapPushNotificationClicked, onPushClicked);
+
+    return () => {
+      CleverTap.removeListener(CleverTap.CleverTapPushNotificationClicked);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
