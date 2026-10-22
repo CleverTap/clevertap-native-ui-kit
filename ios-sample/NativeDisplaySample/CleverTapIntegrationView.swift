@@ -117,6 +117,7 @@ struct CleverTapIntegrationView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .accessibilityIdentifier("ct-waiting-canvas")
+                .overlay(batchCountProbe, alignment: .topLeading)
             } else {
                 ScrollView {
                     VStack(spacing: 12) {
@@ -133,8 +134,23 @@ struct CleverTapIntegrationView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .accessibilityIdentifier("ct-display-canvas")
+                .overlay(batchCountProbe, alignment: .topLeading)
             }
         }
+    }
+
+    /// Visually-hidden probe that reports the current display-units batch count
+    /// to the accessibility tree. XCUITest reads
+    /// `app.staticTexts["ct-units-count"].label` to implement an event-driven
+    /// handshake: it waits until this value increases after firing an event,
+    /// instead of relying on a fixed sleep. A zero-size frame keeps it off the
+    /// visible canvas; it is NOT `accessibilityHidden`, so the value is still
+    /// queryable.
+    private var batchCountProbe: some View {
+        Text("\(viewModel.batchCount)")
+            .frame(width: 0, height: 0)
+            .opacity(0)
+            .accessibilityIdentifier("ct-units-count")
     }
 
     // MARK: - Event Log
@@ -223,6 +239,11 @@ struct CleverTapIntegrationView: View {
 
 class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBridgeListener, NativeDisplayActionListener {
     @Published var displayUnits: [NativeDisplayUnit] = []
+    /// Monotonic counter, incremented every time a new display-units batch is
+    /// delivered to the canvas. Surfaced to XCUITest via the `ct-units-count`
+    /// probe so automation can deterministically detect that the server response
+    /// for the event just fired has landed, rather than waiting a fixed time.
+    @Published private(set) var batchCount: Int = 0
     @Published var eventLog: [String] = []
     @Published var eventName: String = ""
     @Published private(set) var cleverTapAvailable = false
@@ -250,10 +271,18 @@ class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBr
     
     func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
         displayUnits = units
+        // Bump the batch counter wherever the canvas state is set so the
+        // automation handshake can observe that this batch replaced whatever
+        // was on the canvas (including the post-send empty state).
+        batchCount += 1
         log("Received \(units.count) display unit(s)")
         for unit in units {
             log("  unit: \(unit.unitId)")
         }
+        // Automation only (PRELOAD_IMAGES=1): accumulate every asset URL from the
+        // raw unit JSON into the incremental manifest so a later run can warm
+        // URLCache before capture. No-op in normal runs.
+        AssetManifest.record(rawJsons: units.compactMap { $0.rawJson })
     }
     
     // MARK: - NativeDisplayActionListener
@@ -292,6 +321,12 @@ class CleverTapIntegrationViewModel: NSObject, ObservableObject, NativeDisplayBr
     func sendEvent() {
         let name = eventName.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return }
+        // Clear the canvas so it returns to the empty "Waiting" state until the
+        // new batch for this event arrives. This prevents a screenshot from
+        // showing the previous event's campaign while the server response is
+        // still in flight. The batch counter is intentionally NOT reset — it is
+        // monotonic so the handshake can detect the next delivery.
+        displayUnits = []
         cleverTapInstance?.recordEvent(name)
         log("Sent event: \(name)")
         eventName = ""
