@@ -30,3 +30,4 @@ export 'src/placement/native_display_slot_manager.dart'
 export 'src/placement/native_display_slot.dart'
     show NativeDisplaySlot, NativeDisplaySlotLoadingBuilder;
 export 'src/internal/nd_logger.dart' show NDLogLevel;
+export 'src/utils/asset_url_collector.dart' show AssetUrlCollector;
