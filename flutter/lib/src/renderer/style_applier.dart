@@ -193,7 +193,16 @@ class StyleApplier {
     final resolvedWidth = rootHeight * width / 1000.0;
     if (resolvedWidth <= 0) return null;
     final color = ColorParser.parse(style.borderColor) ?? const Color(0xFF000000);
-    return Border.all(color: color, width: resolvedWidth);
+    // Center the stroke on the edge (half in / half out), matching the natives
+    // for percent-radius borders — Android draws percent-radius borders with a
+    // centered `Stroke` (drawRoundRect) and iOS uses a centered `.stroke()`
+    // overlay. Flutter's default (`strokeAlignInside`) would render the border
+    // fully inside, making it sit differently around rounded corners.
+    return Border.all(
+      color: color,
+      width: resolvedWidth,
+      strokeAlign: BorderSide.strokeAlignCenter,
+    );
   }
 
   static List<BoxShadow>? _resolveShadow(Style style) {
