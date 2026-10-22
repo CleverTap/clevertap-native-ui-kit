@@ -9,7 +9,7 @@ import '../../models/native_display_node.dart';
 import '../../models/style.dart';
 import '../../utils/color_parser.dart';
 import '../native_display_renderer.dart';
-import '../root_height_scope.dart';
+import '../native_display_scope.dart';
 import '../style_applier.dart';
 
 class GalleryRenderer extends StatefulWidget {
@@ -85,7 +85,7 @@ class _GalleryRendererState extends State<GalleryRenderer> {
 
   @override
   Widget build(BuildContext context) {
-    final rootHeight = RootHeightScope.of(context);
+    final rootHeight = NativeDisplayScope.rootHeightOf(context);
     final config = _config;
     final children = widget.node.children;
 

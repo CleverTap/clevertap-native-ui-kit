@@ -13,9 +13,16 @@ dependencies:
   clevertap_native_display:
     path: ../flutter
   clevertap_plugin: ^4.1.0
+  # Automation-only (ND_AUTOMATION): manifest I/O + cache warming. These are
+  # pulled in by cached_network_image transitively, but we depend on them
+  # directly so the automation code can import them.
+  path_provider: ^2.1.0
+  flutter_cache_manager: ^3.3.0
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
   flutter_lints: ^4.0.0
 

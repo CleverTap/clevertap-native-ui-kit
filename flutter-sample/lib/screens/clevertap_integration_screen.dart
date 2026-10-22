@@ -1,6 +1,12 @@
+import 'dart:async';
+
 import 'package:clevertap_plugin/clevertap_plugin.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
+
+import '../automation/asset_manifest_automation.dart';
+import '../automation/automation_signals.dart';
 
 class CleverTapIntegrationScreen extends StatefulWidget {
   const CleverTapIntegrationScreen({super.key});
@@ -22,6 +28,16 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
     super.initState();
     _ct.setCleverTapDisplayUnitsLoadedHandler(_onUnitsLoaded);
     _fetchCachedUnits();
+
+    // Automation only (ND_AUTOMATION): warm the image cache from the
+    // incremental manifest before any campaign is fired, so the first
+    // screenshot pass renders warm. No-op in normal runs. Needs a BuildContext
+    // for precacheImage, so defer to the first frame.
+    if (AssetManifestAutomation.enabled) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) AssetManifestAutomation.warmCache(context);
+      });
+    }
   }
 
   @override
@@ -44,9 +60,21 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
   Future<void> _onUnitsLoaded(List<dynamic>? rawUnits) async {
     if (rawUnits == null || rawUnits.isEmpty) return;
 
+    // Automation only (ND_AUTOMATION): accumulate every asset URL in the raw
+    // units into the incremental manifest so a later run can warm the image
+    // cache before capturing. No-op in normal runs.
+    unawaited(AssetManifestAutomation.recordUnits(rawUnits));
+
     // Parsing (deep-cast + 3-strategy extraction + style resolution) runs off
     // the main thread via Isolate.run() in NativeDisplayConfigParser.
     final parsed = await NativeDisplayConfigParser.parseAll(rawUnits);
+
+    // clevertap_plugin exposes a single display-units handler (unlike the
+    // native multi-listener bridge), so this screen is the one sink. Fan the
+    // parsed units out to the SlotManager too: units carrying a `slot_id` are
+    // routed to their NativeDisplaySlot on the Slots tab, while the canvas
+    // below shows every unit. Mirrors the native bridge's fan-out.
+    NativeDisplaySlotManager.instance.deliverUnits(parsed);
 
     if (!mounted) return;
     setState(() {
@@ -56,6 +84,12 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
       _log.add('[${_ts()}] Received ${parsed.length} Native Display unit(s)');
     });
 
+    // Automation handshake (ND_AUTOMATION): signal that a new display-units
+    // batch has landed and been rendered. The screenshot suite polls this to
+    // know *this* event's response is on the canvas before capturing. Harmless
+    // in normal runs — nothing reads it.
+    AutomationSignals.batchCount.value++;
+
     if (parsed.length < rawUnits.length) {
       _addLog('WARN: ${rawUnits.length - parsed.length} unit(s) had no recognisable NativeDisplayConfig');
     }
@@ -64,6 +98,16 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
   Future<void> _sendEvent() async {
     final name = _eventController.text.trim();
     if (name.isEmpty) return;
+
+    // Automation only (ND_AUTOMATION): clear the canvas the moment we fire so it
+    // returns to the "Waiting for Native Display response…" state until the new
+    // batch arrives. Combined with the batch-counter handshake, this guarantees
+    // a screenshot can never capture the *previous* event's campaign. Gated so
+    // normal interactive use doesn't flash the canvas empty on every send.
+    if (AssetManifestAutomation.enabled) {
+      setState(() => _units.clear());
+    }
+
     await CleverTapPlugin.recordEvent(name, {});
     _addLog('Fired event: $name');
     _eventController.clear();
@@ -135,6 +179,10 @@ class _FireEventHeader extends StatelessWidget {
             children: [
               Expanded(
                 child: TextField(
+                  // Automation hook — matches Android `ct-event-input` testTag
+                  // and iOS `ct-event-input` accessibilityIdentifier so the
+                  // cross-platform screenshot suites drive the same UI.
+                  key: const Key('ct-event-input'),
                   controller: controller,
                   decoration: const InputDecoration(
                     hintText: 'Enter event name',
@@ -148,6 +196,7 @@ class _FireEventHeader extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               FilledButton(
+                key: const Key('ct-send-event-btn'),
                 onPressed: controller.text.isNotEmpty ? onSend : null,
                 child: const Text('Send Event'),
               ),
@@ -186,7 +235,20 @@ class _CanvasContent extends StatelessWidget {
         ),
       );
     }
-    return ListView.builder(
+    // Mirror each native sample's parent-size behaviour so Flutter matches the
+    // verified native rendering per platform:
+    //  - iOS native injects the canvas geometry (\.nativeDisplayParentSize), so on
+    //    iOS we pass the canvas size as parentSize (viewport-anchored).
+    //  - Android native injects nothing; its SDK derives the parent from the
+    //    (unbounded, in a LazyColumn) constraints and falls back to screen. So on
+    //    Android we pass null and let the SDK mirror that exactly.
+    // Width is minus the 16dp horizontal padding on each side.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final canvasSize = defaultTargetPlatform == TargetPlatform.iOS
+            ? Size(constraints.maxWidth - 32, constraints.maxHeight)
+            : null;
+        return ListView.builder(
       itemCount: units.length,
       itemBuilder: (ctx, i) {
         final unit = units[i];
@@ -197,6 +259,7 @@ class _CanvasContent extends StatelessWidget {
             config: unit.config,
             resolvedStyles: unit.resolvedStyles,
             unitId: unitId,
+            parentSize: canvasSize,
             // Impression attribution — fired once per unit by the SDK.
             onNotificationViewed: (id) {
               CleverTapPlugin.pushDisplayUnitViewedEvent(id);
@@ -219,6 +282,8 @@ class _CanvasContent extends StatelessWidget {
           ),
         );
       },
+        );
+      },
     );
   }
 }
@@ -237,6 +302,11 @@ class _EventLogFooter extends StatefulWidget {
 
 class _EventLogFooterState extends State<_EventLogFooter> {
   final _scroll = ScrollController();
+
+  // Log is visible by default on every launch (matches Android/iOS). The
+  // automation suites tap `event-log-toggle` once to collapse it so it doesn't
+  // cover the Native Display canvas in screenshots.
+  bool _logVisible = true;
 
   @override
   void didUpdateWidget(_EventLogFooter old) {
@@ -283,40 +353,57 @@ class _EventLogFooterState extends State<_EventLogFooter> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text('Event Log', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-              if (widget.messages.isNotEmpty)
-                TextButton(
-                  onPressed: widget.onClear,
-                  child: const Text('Clear', style: TextStyle(fontSize: 12)),
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_logVisible && widget.messages.isNotEmpty)
+                    TextButton(
+                      onPressed: widget.onClear,
+                      child: const Text('Clear', style: TextStyle(fontSize: 12)),
+                    ),
+                  IconButton(
+                    key: const Key('event-log-toggle'),
+                    tooltip: _logVisible ? 'Hide log' : 'Show log',
+                    visualDensity: VisualDensity.compact,
+                    icon: Icon(
+                      _logVisible ? Icons.visibility_off : Icons.visibility,
+                      size: 18,
+                    ),
+                    onPressed: () => setState(() => _logVisible = !_logVisible),
+                  ),
+                ],
+              ),
             ],
           ),
-          Container(
-            height: 130,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: const Color(0xFF263238),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            padding: const EdgeInsets.all(10),
-            child: widget.messages.isEmpty
-                ? const Text(
-                    'No events yet',
-                    style: TextStyle(fontFamily: 'monospace', fontSize: 12, color: Color(0xFF607D8B)),
-                  )
-                : ListView.builder(
-                    controller: _scroll,
-                    itemCount: widget.messages.length,
-                    itemBuilder: (ctx, i) => Text(
-                      widget.messages[i],
-                      style: TextStyle(
-                        fontFamily: 'monospace',
-                        fontSize: 11,
-                        color: _color(widget.messages[i]),
-                        height: 1.4,
+          if (_logVisible)
+            Container(
+              key: const Key('event-log-content'),
+              height: 130,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: const Color(0xFF263238),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.all(10),
+              child: widget.messages.isEmpty
+                  ? const Text(
+                      'No events yet',
+                      style: TextStyle(fontFamily: 'monospace', fontSize: 12, color: Color(0xFF607D8B)),
+                    )
+                  : ListView.builder(
+                      controller: _scroll,
+                      itemCount: widget.messages.length,
+                      itemBuilder: (ctx, i) => Text(
+                        widget.messages[i],
+                        style: TextStyle(
+                          fontFamily: 'monospace',
+                          fontSize: 11,
+                          color: _color(widget.messages[i]),
+                          height: 1.4,
+                        ),
                       ),
                     ),
-                  ),
-          ),
+            ),
           const SizedBox(height: 8),
         ],
       ),
