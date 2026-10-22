@@ -1,6 +1,12 @@
+import 'dart:async';
+
 import 'package:clevertap_plugin/clevertap_plugin.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
+
+import '../automation/asset_manifest_automation.dart';
+import '../automation/automation_signals.dart';
 
 class CleverTapIntegrationScreen extends StatefulWidget {
   const CleverTapIntegrationScreen({super.key});
@@ -22,6 +28,16 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
     super.initState();
     _ct.setCleverTapDisplayUnitsLoadedHandler(_onUnitsLoaded);
     _fetchCachedUnits();
+
+    // Automation only (ND_AUTOMATION): warm the image cache from the
+    // incremental manifest before any campaign is fired, so the first
+    // screenshot pass renders warm. No-op in normal runs. Needs a BuildContext
+    // for precacheImage, so defer to the first frame.
+    if (AssetManifestAutomation.enabled) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) AssetManifestAutomation.warmCache(context);
+      });
+    }
   }
 
   @override
@@ -44,6 +60,11 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
   Future<void> _onUnitsLoaded(List<dynamic>? rawUnits) async {
     if (rawUnits == null || rawUnits.isEmpty) return;
 
+    // Automation only (ND_AUTOMATION): accumulate every asset URL in the raw
+    // units into the incremental manifest so a later run can warm the image
+    // cache before capturing. No-op in normal runs.
+    unawaited(AssetManifestAutomation.recordUnits(rawUnits));
+
     // Parsing (deep-cast + 3-strategy extraction + style resolution) runs off
     // the main thread via Isolate.run() in NativeDisplayConfigParser.
     final parsed = await NativeDisplayConfigParser.parseAll(rawUnits);
@@ -63,6 +84,12 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
       _log.add('[${_ts()}] Received ${parsed.length} Native Display unit(s)');
     });
 
+    // Automation handshake (ND_AUTOMATION): signal that a new display-units
+    // batch has landed and been rendered. The screenshot suite polls this to
+    // know *this* event's response is on the canvas before capturing. Harmless
+    // in normal runs — nothing reads it.
+    AutomationSignals.batchCount.value++;
+
     if (parsed.length < rawUnits.length) {
       _addLog('WARN: ${rawUnits.length - parsed.length} unit(s) had no recognisable NativeDisplayConfig');
     }
@@ -71,6 +98,16 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
   Future<void> _sendEvent() async {
     final name = _eventController.text.trim();
     if (name.isEmpty) return;
+
+    // Automation only (ND_AUTOMATION): clear the canvas the moment we fire so it
+    // returns to the "Waiting for Native Display response…" state until the new
+    // batch arrives. Combined with the batch-counter handshake, this guarantees
+    // a screenshot can never capture the *previous* event's campaign. Gated so
+    // normal interactive use doesn't flash the canvas empty on every send.
+    if (AssetManifestAutomation.enabled) {
+      setState(() => _units.clear());
+    }
+
     await CleverTapPlugin.recordEvent(name, {});
     _addLog('Fired event: $name');
     _eventController.clear();
@@ -198,7 +235,20 @@ class _CanvasContent extends StatelessWidget {
         ),
       );
     }
-    return ListView.builder(
+    // Mirror each native sample's parent-size behaviour so Flutter matches the
+    // verified native rendering per platform:
+    //  - iOS native injects the canvas geometry (\.nativeDisplayParentSize), so on
+    //    iOS we pass the canvas size as parentSize (viewport-anchored).
+    //  - Android native injects nothing; its SDK derives the parent from the
+    //    (unbounded, in a LazyColumn) constraints and falls back to screen. So on
+    //    Android we pass null and let the SDK mirror that exactly.
+    // Width is minus the 16dp horizontal padding on each side.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final canvasSize = defaultTargetPlatform == TargetPlatform.iOS
+            ? Size(constraints.maxWidth - 32, constraints.maxHeight)
+            : null;
+        return ListView.builder(
       itemCount: units.length,
       itemBuilder: (ctx, i) {
         final unit = units[i];
@@ -209,6 +259,7 @@ class _CanvasContent extends StatelessWidget {
             config: unit.config,
             resolvedStyles: unit.resolvedStyles,
             unitId: unitId,
+            parentSize: canvasSize,
             // Impression attribution — fired once per unit by the SDK.
             onNotificationViewed: (id) {
               CleverTapPlugin.pushDisplayUnitViewedEvent(id);
@@ -229,6 +280,8 @@ class _CanvasContent extends StatelessWidget {
               onAction('ACTION $action on $nodeId');
             },
           ),
+        );
+      },
         );
       },
     );

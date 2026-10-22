@@ -15,6 +15,7 @@
 
 import 'dart:io';
 
+import 'package:clevertap_native_display_sample/automation/automation_signals.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -31,12 +32,27 @@ const eventsToFire = <String>[
   'hi', 'viewed', 'html2', 'home',
 ];
 
-/// Per-event settle wait. The Native Display server is asynchronous AND the
-/// campaign's images then have to download + decode before they paint, so this
-/// must cover both. Android/iOS use 1.5s; we allow a bit more headroom because
-/// the Flutter screenshot is a single surface grab with no built-in image-idle
-/// wait. Bump further if a capture shows a half-loaded campaign.
-const perEventWait = Duration(milliseconds: 3000);
+/// Brief post-handshake settle. Once the batch-counter handshake confirms this
+/// event's units have landed and been `setState`'d (see [fireEventThroughScreen]
+/// and `AutomationSignals.batchCount`), we still pump for a short window so the
+/// campaign's images decode and paint into the surface before the screenshot.
+/// This is no longer the primary gate — the handshake is — so it can be short.
+const perEventWait = Duration(milliseconds: 1000);
+
+/// Upper bound on how long to wait for a fired event's display-units batch to
+/// come back from the server before giving up and screenshotting whatever is on
+/// the canvas. The event-driven handshake normally resolves far sooner; this is
+/// only a safety net so a dropped/empty server response can't hang the suite.
+const batchHandshakeTimeout = Duration(seconds: 10);
+
+/// Debounce window for the handshake. The CleverTap SDK can re-deliver the
+/// previously-cached units after the canvas is cleared on send — bumping the
+/// batch counter with STALE content before this event's real campaign lands.
+/// Capturing on the first bump would therefore grab the previous event
+/// (off-by-one). So after the counter advances we wait until it has been quiet
+/// for this window — i.e. the delivery burst has settled — so the canvas shows
+/// the LATEST (this event's) campaign.
+const batchQuietPeriod = Duration(milliseconds: 1500);
 
 /// Wait after tapping "Fetch Slot Data" before screenshotting, so the fired
 /// campaigns have time to come back and populate the slots.
@@ -95,17 +111,60 @@ Future<void> hideEventLog(WidgetTester tester) async {
   }
 }
 
-/// Type [eventName] into `ct-event-input` and tap `ct-send-event-btn`, then wait
-/// [perEventWait] for the server response to land. Caller must already be on the
-/// Events tab. Mirrors `fireEventThroughEventsScreen` on iOS and the type/tap
-/// loop on Android.
+/// Type [eventName] into `ct-event-input`, tap `ct-send-event-btn`, then block on
+/// an event-driven handshake until *this* event's display-units batch arrives —
+/// guaranteeing the screenshot the caller takes reflects this event's server
+/// response, not a stale previous one. Caller must already be on the Events tab.
+/// Mirrors `fireEventThroughEventsScreen` on iOS and the type/tap loop on
+/// Android (which use the equivalent batch-counter handshake).
+///
+/// Flow:
+///  1. Snapshot the current batch counter.
+///  2. Enter text, pump, tap Send. Firing clears the canvas (automation build),
+///     so it falls back to the "Waiting…" state until the new batch lands.
+///  3. Poll in real wall-clock time until the counter exceeds the snapshot OR
+///     [batchHandshakeTimeout] elapses — the handshake is the primary gate.
+///  4. Briefly settle so the batch's images decode and paint.
 Future<void> fireEventThroughScreen(
   WidgetTester tester,
   String eventName,
 ) async {
+  final before = AutomationSignals.batchCount.value;
+
   await tester.enterText(find.byKey(const Key('ct-event-input')), eventName);
   // Let the Send button flip to enabled (onChanged -> setState).
   await tester.pump();
   await tester.tap(find.byKey(const Key('ct-send-event-btn')));
+  await tester.pump();
+
+  // Primary gate: event-driven handshake WITH debounce. The counter can be
+  // bumped by a re-delivery of the previous (stale) units after the canvas is
+  // cleared, before this event's real campaign arrives — so we don't capture on
+  // the first bump. We wait until the counter has (a) advanced past the snapshot
+  // AND (b) then stayed unchanged for [batchQuietPeriod] (the delivery burst has
+  // settled), so the canvas reflects the LATEST = this event's campaign. Bounded
+  // by [batchHandshakeTimeout]; a no-campaign event never advances and simply
+  // times out on the cleared/empty canvas (a truthful screenshot).
+  const step = Duration(milliseconds: 150);
+  final deadline = DateTime.now().add(batchHandshakeTimeout);
+  var lastCount = before;
+  DateTime? lastChange;
+  while (DateTime.now().isBefore(deadline)) {
+    final c = AutomationSignals.batchCount.value;
+    if (c != lastCount) {
+      lastCount = c;
+      lastChange = DateTime.now();
+    }
+    if (c > before &&
+        lastChange != null &&
+        DateTime.now().difference(lastChange) >= batchQuietPeriod) {
+      break;
+    }
+    await Future<void>.delayed(step);
+    await tester.pump();
+  }
+
+  // Secondary settle: give the final batch's images time to decode and paint
+  // before the caller screenshots.
   await settle(tester, perEventWait);
 }
