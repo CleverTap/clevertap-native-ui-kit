@@ -59,6 +59,16 @@ private const val EVENT_SETTLE_DELAY_MS = 1_500L
  */
 const val SCREENSHOT_SETTLE_DELAY_MS = 5_000L
 
+/**
+ * Upper-bound for the event-driven screenshot handshake on the Compose Events
+ * screen. The test fires an event, clears the canvas, then blocks until the
+ * screen's "ct-units-count" batch counter strictly increases (a new server
+ * batch reached the canvas). This is the ceiling it waits before giving up and
+ * capturing the (cleared) empty canvas. Generous relative to typical latency so
+ * slow responses still land their own screenshot rather than a stale one.
+ */
+const val HANDSHAKE_TIMEOUT_MS = 10_000L
+
 private const val TAG = "ndAutomation"
 
 /**
