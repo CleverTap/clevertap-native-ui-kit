@@ -45,6 +45,7 @@ fun CleverTapIntegrationScreen(
     val context = LocalContext.current
 
     val receivedUnits by viewModel.receivedUnits.collectAsState()
+    val batchCount by viewModel.batchCount.collectAsState()
     val logMessages by viewModel.logMessages.collectAsState()
     var eventName by remember { mutableStateOf("") }
 
@@ -106,7 +107,33 @@ fun CleverTapIntegrationScreen(
         onDispose { bridge.removeListener(bridgeListener) }
     }
 
+    // Shared send path for both orientations: clear the canvas to its empty
+    // state first so it shows "Waiting..." until the new batch lands (the
+    // screenshot handshake relies on this — stale campaigns must not linger),
+    // then push the event and dismiss the input. Keyboard dismissal is handled
+    // by FireEventHeader before this runs.
+    val sendEvent: () -> Unit = {
+        val name = eventName.trim()
+        if (name.isNotEmpty() && cleverTapApi != null) {
+            viewModel.clearUnits()
+            cleverTapApi.pushEvent(name)
+            log("Fired event: $name")
+            eventName = ""
+        }
+    }
+
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    // Zero-size, always-in-tree semantics node exposing the batch counter to the
+    // screenshot automation. A 0.dp node still publishes its text via semantics,
+    // so the test can read it with onNodeWithTag("ct-units-count").fetchSemanticsNode().
+    // Placed before the orientation branch so it is present in both layouts.
+    Text(
+        text = batchCount.toString(),
+        modifier = Modifier
+            .size(0.dp)
+            .testTag("ct-units-count")
+    )
 
     if (isLandscape) {
         Row(modifier = Modifier.fillMaxSize()) {
@@ -119,14 +146,7 @@ fun CleverTapIntegrationScreen(
                 FireEventHeader(
                     eventName = eventName,
                     onEventNameChange = { eventName = it },
-                    onSendEvent = {
-                        val name = eventName.trim()
-                        if (name.isNotEmpty() && cleverTapApi != null) {
-                            cleverTapApi.pushEvent(name)
-                            log("Fired event: $name")
-                            eventName = ""
-                        }
-                    },
+                    onSendEvent = sendEvent,
                     isSendEnabled = eventName.isNotBlank() && cleverTapApi != null,
                     showCanvasLabel = false
                 )
@@ -154,14 +174,7 @@ fun CleverTapIntegrationScreen(
             FireEventHeader(
                 eventName = eventName,
                 onEventNameChange = { eventName = it },
-                onSendEvent = {
-                    val name = eventName.trim()
-                    if (name.isNotEmpty() && cleverTapApi != null) {
-                        cleverTapApi.pushEvent(name)
-                        log("Fired event: $name")
-                        eventName = ""
-                    }
-                },
+                onSendEvent = sendEvent,
                 isSendEnabled = eventName.isNotBlank() && cleverTapApi != null
             )
             CanvasContent(
