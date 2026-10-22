@@ -1,0 +1,447 @@
+{
+  "version": "1.0",
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 12
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 12,
+        "spacingUnit": "dp"
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "header",
+        "elementType": "text",
+        "bindings": {
+          "text": "Featured Workouts"
+        },
+        "style": {
+          "textColor": "#111111",
+          "fontSize": 20,
+          "lineHeight": 26,
+          "fontWeight": "bold"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "type": "container",
+        "id": "gallery",
+        "containerType": "gallery",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "aspectRatio": 1.5
+        },
+        "galleryConfig": {
+          "mode": "snapping",
+          "orientation": "horizontal",
+          "itemsPerView": 1,
+          "spacing": 12,
+          "showIndicators": true,
+          "autoScrollInterval": 3000,
+          "initialPage": 0,
+          "indicatorStyle": {
+            "activeColor": "#2196F3",
+            "inactiveColor": "#D0D0D0",
+            "shape": "circle",
+            "size": 8,
+            "spacing": 6,
+            "position": "bottom"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "box_card_1",
+            "containerType": "box",
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 16
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "bicon_1",
+                "elementType": "image",
+                "bindings": {
+                  "url": "https://yavuzceliker.github.io/sample-images/image-1.jpg"
+                },
+                "style": {
+                  "borderRadius": 12
+                },
+                "layout": {
+                  "offset": {
+                    "x": 5,
+                    "y": 18,
+                    "unit": "percent"
+                  },
+                  "width": {
+                    "value": 24,
+                    "unit": "percent"
+                  },
+                  "aspectRatio": 1.0
+                }
+              },
+              {
+                "type": "element",
+                "id": "btitle_1",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Morning Yoga Flow"
+                },
+                "style": {
+                  "textColor": "#1A1A1A",
+                  "fontSize": 18,
+                  "lineHeight": 22,
+                  "fontWeight": "bold"
+                },
+                "layout": {
+                  "offset": {
+                    "x": 34,
+                    "y": 22,
+                    "unit": "percent"
+                  },
+                  "width": {
+                    "value": 60,
+                    "unit": "percent"
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "bsub_1",
+                "elementType": "text",
+                "bindings": {
+                  "text": "30 min \u00b7 Beginner"
+                },
+                "style": {
+                  "textColor": "#6B6B6B",
+                  "fontSize": 14,
+                  "lineHeight": 18
+                },
+                "layout": {
+                  "offset": {
+                    "x": 34,
+                    "y": 52,
+                    "unit": "percent"
+                  },
+                  "width": {
+                    "value": 60,
+                    "unit": "percent"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "box_card_2",
+            "containerType": "box",
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 16
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "bicon_2",
+                "elementType": "image",
+                "bindings": {
+                  "url": "https://yavuzceliker.github.io/sample-images/image-5.jpg"
+                },
+                "style": {
+                  "borderRadius": 12
+                },
+                "layout": {
+                  "offset": {
+                    "x": 5,
+                    "y": 18,
+                    "unit": "percent"
+                  },
+                  "width": {
+                    "value": 24,
+                    "unit": "percent"
+                  },
+                  "aspectRatio": 1.0
+                }
+              },
+              {
+                "type": "element",
+                "id": "btitle_2",
+                "elementType": "text",
+                "bindings": {
+                  "text": "HIIT Burn"
+                },
+                "style": {
+                  "textColor": "#1A1A1A",
+                  "fontSize": 18,
+                  "lineHeight": 22,
+                  "fontWeight": "bold"
+                },
+                "layout": {
+                  "offset": {
+                    "x": 34,
+                    "y": 22,
+                    "unit": "percent"
+                  },
+                  "width": {
+                    "value": 60,
+                    "unit": "percent"
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "bsub_2",
+                "elementType": "text",
+                "bindings": {
+                  "text": "20 min \u00b7 Advanced"
+                },
+                "style": {
+                  "textColor": "#6B6B6B",
+                  "fontSize": 14,
+                  "lineHeight": 18
+                },
+                "layout": {
+                  "offset": {
+                    "x": 34,
+                    "y": 52,
+                    "unit": "percent"
+                  },
+                  "width": {
+                    "value": 60,
+                    "unit": "percent"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "box_card_3",
+            "containerType": "box",
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 16
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "bicon_3",
+                "elementType": "image",
+                "bindings": {
+                  "url": "https://yavuzceliker.github.io/sample-images/image-10.jpg"
+                },
+                "style": {
+                  "borderRadius": 12
+                },
+                "layout": {
+                  "offset": {
+                    "x": 5,
+                    "y": 18,
+                    "unit": "percent"
+                  },
+                  "width": {
+                    "value": 24,
+                    "unit": "percent"
+                  },
+                  "aspectRatio": 1.0
+                }
+              },
+              {
+                "type": "element",
+                "id": "btitle_3",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Core Strength"
+                },
+                "style": {
+                  "textColor": "#1A1A1A",
+                  "fontSize": 18,
+                  "lineHeight": 22,
+                  "fontWeight": "bold"
+                },
+                "layout": {
+                  "offset": {
+                    "x": 34,
+                    "y": 22,
+                    "unit": "percent"
+                  },
+                  "width": {
+                    "value": 60,
+                    "unit": "percent"
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "bsub_3",
+                "elementType": "text",
+                "bindings": {
+                  "text": "15 min \u00b7 Intermediate"
+                },
+                "style": {
+                  "textColor": "#6B6B6B",
+                  "fontSize": 14,
+                  "lineHeight": 18
+                },
+                "layout": {
+                  "offset": {
+                    "x": 34,
+                    "y": 52,
+                    "unit": "percent"
+                  },
+                  "width": {
+                    "value": 60,
+                    "unit": "percent"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "box_card_4",
+            "containerType": "box",
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 16
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "bicon_4",
+                "elementType": "image",
+                "bindings": {
+                  "url": "https://yavuzceliker.github.io/sample-images/image-15.jpg"
+                },
+                "style": {
+                  "borderRadius": 12
+                },
+                "layout": {
+                  "offset": {
+                    "x": 5,
+                    "y": 18,
+                    "unit": "percent"
+                  },
+                  "width": {
+                    "value": 24,
+                    "unit": "percent"
+                  },
+                  "aspectRatio": 1.0
+                }
+              },
+              {
+                "type": "element",
+                "id": "btitle_4",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Evening Stretch"
+                },
+                "style": {
+                  "textColor": "#1A1A1A",
+                  "fontSize": 18,
+                  "lineHeight": 22,
+                  "fontWeight": "bold"
+                },
+                "layout": {
+                  "offset": {
+                    "x": 34,
+                    "y": 22,
+                    "unit": "percent"
+                  },
+                  "width": {
+                    "value": 60,
+                    "unit": "percent"
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "bsub_4",
+                "elementType": "text",
+                "bindings": {
+                  "text": "10 min \u00b7 All levels"
+                },
+                "style": {
+                  "textColor": "#6B6B6B",
+                  "fontSize": 14,
+                  "lineHeight": 18
+                },
+                "layout": {
+                  "offset": {
+                    "x": 34,
+                    "y": 52,
+                    "unit": "percent"
+                  },
+                  "width": {
+                    "value": 60,
+                    "unit": "percent"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
