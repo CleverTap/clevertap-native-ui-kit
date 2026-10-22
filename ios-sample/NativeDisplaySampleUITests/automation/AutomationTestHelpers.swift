@@ -13,10 +13,12 @@ let EventsToFire: [String] = [
     "hi", "viewed", "html2", "home",
 ]
 
-/// Per-event wait, in seconds. The Native Display server is asynchronous —
-/// we need to give it time to push the unit back to the SDK before we
-/// screenshot. Bump if tests flake.
-let PerEventWaitSeconds: TimeInterval = 1.5
+/// Upper bound, in seconds, on how long the handshake waits for a new
+/// display-units batch after firing an event. The Native Display server is
+/// asynchronous; `fireEventThroughEventsScreen` polls the `ct-units-count`
+/// probe until it increments (deterministic) and only falls back to this bound
+/// if the batch never arrives. Bump if the backend gets slower.
+let PerEventWaitSeconds: TimeInterval = 10.0
 
 /// Wait after tapping "Fetch Slot Data" before screenshotting.
 let FetchSlotWaitSeconds: TimeInterval = 3.0
@@ -65,20 +67,41 @@ func hideEventLog(_ app: XCUIApplication) {
 
 // MARK: - Event firing
 
-/// Type `eventName` into `ct-event-input` and tap `ct-send-event-btn`.
+/// Type `eventName` into `ct-event-input` and tap `ct-send-event-btn`, then
+/// wait — deterministically — until the display-units batch for *this* event
+/// has been delivered to the canvas before returning.
+///
 /// Caller is responsible for being on the correct tab (Events or UIKit).
 ///
-/// Both production screens now (a) clear the input after a successful send
-/// and (b) resign first responder on send, so the loop doesn't need to
-/// manually clear text or dismiss the keyboard. Defensive keyboard-dismiss
-/// fallback below catches any future regression without flaking the suite.
+/// Handshake contract (shared across the Flutter / Android / iOS suites):
+///   1. Read `before` = the `ct-units-count` probe value.
+///   2. Fire the event. The production Send action clears the canvas and
+///      records the event; a new batch increments the probe when it lands.
+///   3. Poll the probe until it exceeds `before` (new batch delivered), up to
+///      `PerEventWaitSeconds`. On timeout, proceed anyway — the canvas is in
+///      its empty "Waiting" state (cleared on send), which is a truthful
+///      screenshot rather than a stale previous campaign.
+///   4. Brief settle so images paint, then return; the caller screenshots.
+///
+/// On screens without the probe (e.g. the UIKit screen), `before`/`after` both
+/// read 0, so the poll simply times out and falls back to the bound — matching
+/// the prior fixed-wait behaviour there.
 func fireEventThroughEventsScreen(_ app: XCUIApplication, eventName: String) {
     let field = app.textFields["ct-event-input"]
     XCTAssertTrue(field.waitForExistence(timeout: 5),
                   "ct-event-input must exist on the active screen")
 
+    let before = currentUnitsCount(app)
+
+    // Focus the field and type into the element itself (not app.typeText).
+    // The previous event's send clears the input and dismisses the keyboard, so
+    // on the next iteration a bare `field.tap(); app.typeText(...)` can race —
+    // the tap returns before first-responder/keyboard is ready and typeText
+    // fails with "Neither element nor any descendant has keyboard focus".
+    // Tapping, waiting for the keyboard, then typing into `field` is robust.
     field.tap()
-    app.typeText(eventName)
+    _ = app.keyboards.firstMatch.waitForExistence(timeout: 3)
+    field.typeText(eventName)
 
     let sendButton = app.buttons["ct-send-event-btn"]
     XCTAssertTrue(sendButton.waitForExistence(timeout: 2),
@@ -97,7 +120,25 @@ func fireEventThroughEventsScreen(_ app: XCUIApplication, eventName: String) {
         }
     }
 
-    Thread.sleep(forTimeInterval: PerEventWaitSeconds)
+    // Poll the batch counter until a new batch arrives, bounded by
+    // PerEventWaitSeconds. Short interval keeps latency low without busy-waiting.
+    let deadline = Date().addingTimeInterval(PerEventWaitSeconds)
+    while Date() < deadline {
+        if currentUnitsCount(app) > before { break }
+        Thread.sleep(forTimeInterval: 0.2)
+    }
+
+    // Brief settle for image paint before the caller grabs the screenshot.
+    Thread.sleep(forTimeInterval: 1.0)
+}
+
+/// Read the `ct-units-count` probe as an Int. Returns 0 when the probe is
+/// absent (screen has no counter) or its label isn't numeric, which makes the
+/// handshake degrade gracefully to a plain timeout on those screens.
+private func currentUnitsCount(_ app: XCUIApplication) -> Int {
+    let probe = app.staticTexts["ct-units-count"]
+    guard probe.exists else { return 0 }
+    return Int(probe.label) ?? 0
 }
 
 // MARK: - Screenshotting
