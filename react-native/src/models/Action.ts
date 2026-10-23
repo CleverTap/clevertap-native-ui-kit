@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import { ExecutionMode } from './enums';
 
 /**
@@ -60,15 +61,20 @@ export type ActionTrigger =
   | 'onDisappear';
 
 /**
- * Get the right URL for this platform. Tries rn, then android, then ios.
+ * Get the right URL for this platform. Tries rn, then the current platform's
+ * own key (ios on iOS, android on Android), then the other platform.
  * Each entry can be a string or a `{ text }` object.
  */
 export function resolveOpenUrl(action: OpenUrlAction): string {
   if (typeof action.url === 'string') return action.url;
+  // Prefer an explicit rn url, then this platform's own url, then the other
+  // platform as a last resort. iOS must not fall through to the android url.
+  const ownKey = Platform.OS === 'ios' ? action.url.ios : action.url.android;
+  const otherKey = Platform.OS === 'ios' ? action.url.android : action.url.ios;
   return (
     flattenPlatformUrl(action.url.rn) ||
-    flattenPlatformUrl(action.url.android) ||
-    flattenPlatformUrl(action.url.ios) ||
+    flattenPlatformUrl(ownKey) ||
+    flattenPlatformUrl(otherKey) ||
     ''
   );
 }

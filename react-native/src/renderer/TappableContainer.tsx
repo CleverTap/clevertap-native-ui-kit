@@ -49,9 +49,11 @@ export function TappableContainer({
     const gap = now - lastTapAt.current;
     lastTapAt.current = now;
 
-    // Fire the clicked event on every tap (matches Android). Pass the onClick
-    // action so element-attribution extras (action_type, wzrk_*, etc.) tag along.
-    actionHandler.fireClickedEvent(node.id, clickAction);
+    // No "Notification Clicked" here. The native SDKs raise that system event
+    // only for BUTTON and IMAGE taps, not for a tappable container. A container
+    // just runs its own action. See iOS NativeDisplayRenderer (onSystemClick is
+    // set only for image and button) and Android ModifierExtensions (onSystemClick
+    // is passed only by the button and image renderers).
 
     // If this tap completes a double-tap, run onDoubleTap and skip onClick.
     if (gap > 0 && gap < DOUBLE_TAP_WINDOW_MS && doubleTapAction) {

@@ -12,6 +12,9 @@
     "README.md",
     "LICENSE"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc --build",
     "typecheck": "tsc --noEmit",
@@ -26,7 +29,9 @@
     "server-driven-ui",
     "sdk"
   ],
+  "author": "CleverTap",
   "license": "MIT",
+  "homepage": "https://github.com/CleverTap/clevertap-native-ui-kit#readme",
   "peerDependencies": {
     "react": ">=18.0.0",
     "react-native": ">=0.73.0",

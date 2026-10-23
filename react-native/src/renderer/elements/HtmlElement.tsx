@@ -64,9 +64,11 @@ export const HtmlElement = React.memo(function HtmlElement({ node, resolvedStyle
   const url = node.bindings?.url;
 
   const baseUrl = htmlConfig?.baseUrl;
-  const javascriptEnabled = htmlConfig?.javascriptEnabled !== false;
-  const scrollEnabled = htmlConfig?.scrollEnabled !== false;
-  const transparentBackground = htmlConfig?.transparentBackground ?? false;
+  // Defaults match the native SDKs (iOS HtmlConfig, Android HtmlConfig): scripts
+  // off, no scrolling, see-through background when the config omits a value.
+  const javascriptEnabled = htmlConfig?.javascriptEnabled ?? false;
+  const scrollEnabled = htmlConfig?.scrollEnabled ?? false;
+  const transparentBackground = htmlConfig?.transparentBackground ?? true;
 
   // Keep the WebView from navigating; open links in the system browser instead
   // (matches Android and iOS).

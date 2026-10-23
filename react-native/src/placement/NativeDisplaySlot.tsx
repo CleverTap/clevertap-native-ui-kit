@@ -14,6 +14,8 @@ export interface NativeDisplaySlotProps {
   actionListener?: NativeDisplayActionListener;
   componentListener?: NativeDisplayComponentListener;
   fontResolver?: (fontFamily: string) => string;
+  // Layer-1 client font, forwarded to NativeDisplayView. See that prop's note.
+  defaultFontFamily?: string;
   style?: ViewStyle;
 }
 
@@ -23,6 +25,7 @@ export function NativeDisplaySlot({
   actionListener,
   componentListener,
   fontResolver,
+  defaultFontFamily,
   style,
 }: NativeDisplaySlotProps): React.ReactElement {
   const [unit, setUnit] = useState<NativeDisplayUnit | null>(() =>
@@ -59,6 +62,7 @@ export function NativeDisplaySlot({
       actionListener={actionListener}
       componentListener={componentListener}
       fontResolver={fontResolver}
+      defaultFontFamily={defaultFontFamily}
       style={style}
     />
   );

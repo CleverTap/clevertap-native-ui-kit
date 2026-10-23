@@ -231,7 +231,20 @@ export class NativeDisplayBridge {
   }
 
   addListener(listener: NativeDisplayBridgeListener): void {
+    const isNew = !this._listeners.has(listener);
     this._listeners.add(listener);
+    // Mirror the native bridges: a listener that registers after units are
+    // cached gets them replayed at once, so it does not miss earlier units.
+    if (isNew) {
+      const cached = this._cache.getAll();
+      if (cached.length > 0) {
+        try {
+          listener.onNativeDisplaysLoaded(cached);
+        } catch (e) {
+          NDLogger.e('NativeDisplayBridge', 'Listener threw during cache replay:', e);
+        }
+      }
+    }
   }
 
   removeListener(listener: NativeDisplayBridgeListener): void {

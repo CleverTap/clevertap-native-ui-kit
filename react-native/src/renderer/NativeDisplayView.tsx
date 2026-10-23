@@ -31,6 +31,10 @@ type NativeDisplayViewProps = (NativeDisplayViewPropsWithUnit | NativeDisplayVie
   actionListener?: NativeDisplayActionListener;
   componentListener?: NativeDisplayComponentListener;
   fontResolver?: (fontFamily: string) => string;
+  // Layer-1 client font. When set, it wins over the JSON fontFamily and the
+  // fontResolver, matching iOS `nativeDisplayFontFamily` and Android
+  // `LocalFontFamily`. Use it to force one font across iOS, Android, and RN.
+  defaultFontFamily?: string;
   style?: ViewStyle;
 };
 
@@ -40,6 +44,7 @@ export function NativeDisplayView(props: NativeDisplayViewProps): React.ReactEle
     actionListener = null,
     componentListener = null,
     fontResolver,
+    defaultFontFamily,
     style,
   } = props;
 
@@ -137,7 +142,7 @@ export function NativeDisplayView(props: NativeDisplayViewProps): React.ReactEle
     >
       <RenderErrorBoundary key={unitId || 'default'}>
         <RootSizeProvider size={rootSize}>
-          <FontProvider fontResolver={fontResolver}>
+          <FontProvider fontResolver={fontResolver} defaultFontFamily={defaultFontFamily}>
             <VariablesProvider variables={variables}>
               <RenderNode
                 node={root}
