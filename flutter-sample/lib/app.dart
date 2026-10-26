@@ -10,11 +10,29 @@ class NativeDisplaySampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = ColorScheme.fromSeed(seedColor: const Color(0xFF1A73E8));
     return MaterialApp(
       title: 'Native Display Sample',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1A73E8)),
+        colorScheme: colorScheme,
         useMaterial3: true,
+        // Make the top bar read like the native samples rather than a bold
+        // Material primary block: a flat, surface-coloured bar with a centred
+        // inline title — mirroring iOS's `.navigationBarTitleDisplayMode(.inline)`
+        // and staying unobtrusive on Android (whose main tabs have no bar at all).
+        appBarTheme: AppBarTheme(
+          backgroundColor: colorScheme.surface,
+          foregroundColor: colorScheme.onSurface,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0.5,
+          centerTitle: true,
+          titleTextStyle: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: colorScheme.onSurface,
+          ),
+        ),
       ),
       home: const MainScreen(),
     );

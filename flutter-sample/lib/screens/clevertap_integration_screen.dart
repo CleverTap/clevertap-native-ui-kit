@@ -129,8 +129,6 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('CleverTap Integration'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
       body: Column(
         children: [

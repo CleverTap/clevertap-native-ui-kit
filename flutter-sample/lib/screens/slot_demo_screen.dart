@@ -152,8 +152,6 @@ class _SlotDemoScreenState extends State<SlotDemoScreen> {
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
         title: const Text('Slot Demo'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         actions: [
           IconButton(
             tooltip: 'Clear slots',
