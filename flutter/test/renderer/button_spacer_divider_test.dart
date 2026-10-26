@@ -4,8 +4,6 @@ import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:clevertap_native_display/src/renderer/elements/button_element.dart';
 import 'package:clevertap_native_display/src/renderer/elements/spacer_element.dart';
 import 'package:clevertap_native_display/src/renderer/elements/divider_element.dart';
-import 'package:clevertap_native_display/src/evaluator/variable_evaluator.dart';
-import 'package:clevertap_native_display/src/renderer/native_display_scope.dart';
 
 Widget wrap(Widget w) => Directionality(
       textDirection: TextDirection.ltr,

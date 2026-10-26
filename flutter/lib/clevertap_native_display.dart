@@ -29,5 +29,14 @@ export 'src/placement/native_display_slot_manager.dart'
         NativeDisplaySlotSync;
 export 'src/placement/native_display_slot.dart'
     show NativeDisplaySlot, NativeDisplaySlotLoadingBuilder;
-export 'src/internal/nd_logger.dart' show NDLogLevel;
+export 'src/internal/nd_logger.dart' show NDLogLevel, NDLogger;
 export 'src/utils/asset_url_collector.dart' show AssetUrlCollector;
+
+// Pluggable element renderers (VIDEO/HTML live in optional add-on packages).
+// These are the registry + the small helper surface a host-provided element
+// builder needs.
+export 'src/renderer/nd_element_registry.dart'
+    show NativeDisplayRenderers, NdElementBuilder;
+export 'src/evaluator/variable_evaluator.dart' show VariableEvaluator;
+export 'src/renderer/style_applier.dart' show StyleApplier;
+export 'src/renderer/native_display_scope.dart' show NativeDisplayScope;

@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
-import 'package:clevertap_native_display/src/internal/nd_logger.dart';
 
 // The bridge is pure Dart now: log-level configuration only. Attribution is
 // surfaced via NativeDisplayView callbacks (see native_display_attribution_test).

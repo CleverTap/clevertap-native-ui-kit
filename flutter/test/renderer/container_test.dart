@@ -5,8 +5,6 @@ import 'package:clevertap_native_display/src/renderer/containers/box_container.d
 import 'package:clevertap_native_display/src/renderer/containers/vertical_container.dart';
 import 'package:clevertap_native_display/src/renderer/containers/horizontal_container.dart';
 import 'package:clevertap_native_display/src/renderer/containers/gallery_renderer.dart';
-import 'package:clevertap_native_display/src/evaluator/variable_evaluator.dart';
-import 'package:clevertap_native_display/src/renderer/native_display_scope.dart';
 
 NativeDisplayContainer makeContainer({
   String id = 'c',

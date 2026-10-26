@@ -9,13 +9,13 @@ import 'containers/box_container.dart';
 import 'containers/gallery_renderer.dart';
 import 'containers/horizontal_container.dart';
 import 'containers/vertical_container.dart';
+import '../internal/nd_logger.dart';
+import 'nd_element_registry.dart';
 import 'elements/button_element.dart';
 import 'elements/divider_element.dart';
-import 'elements/html_element.dart';
 import 'elements/image_element.dart';
 import 'elements/spacer_element.dart';
 import 'elements/text_element.dart';
-import 'elements/video_element.dart';
 import 'native_display_scope.dart';
 import 'style_applier.dart';
 
@@ -117,9 +117,30 @@ class NativeDisplayRenderer extends StatelessWidget {
         ),
       ElementType.spacer => SpacerElement(node: node, style: style),
       ElementType.divider => DividerElement(node: node, style: style),
-      ElementType.video => VideoElement(node: node, style: style, evaluator: evaluator),
-      ElementType.html => HtmlElement(node: node, style: style, evaluator: evaluator),
+      // VIDEO and HTML are optional: their heavy native deps live in add-on
+      // packages. If the host hasn't registered a renderer, skip gracefully.
+      ElementType.video => _pluggable(ElementType.video, node, style),
+      ElementType.html => _pluggable(ElementType.html, node, style),
     };
+  }
+
+  /// Resolves an optional element (VIDEO/HTML) via [NativeDisplayRenderers]. When
+  /// no builder is registered, logs a hint and renders nothing — so the heavy
+  /// native dependency isn't forced on integrators who don't use the element.
+  Widget _pluggable(ElementType type, NativeDisplayElement node, Style style) {
+    final builder = NativeDisplayRenderers.builderFor(type);
+    if (builder == null) {
+      final pkg = type == ElementType.video
+          ? 'clevertap_native_display_video'
+          : 'clevertap_native_display_webview';
+      NDLogger.w(
+        'NativeDisplayRenderer',
+        '${type.name.toUpperCase()} element skipped: no renderer registered. '
+            'Add the "$pkg" package and call its register*() function at startup.',
+      );
+      return const SizedBox.shrink();
+    }
+    return builder(node, style, evaluator);
   }
 
   /// Wraps [child] with an [AspectRatio] or [SizedBox] for fixed/ratio sizing.

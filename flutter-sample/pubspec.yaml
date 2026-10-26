@@ -12,6 +12,12 @@ dependencies:
     sdk: flutter
   clevertap_native_display:
     path: ../flutter
+  # Optional element add-ons (VIDEO / HTML). Added here so the sample demos both;
+  # a real host adds only the ones it needs.
+  clevertap_native_display_video:
+    path: ../flutter-video
+  clevertap_native_display_webview:
+    path: ../flutter-webview
   clevertap_plugin: ^4.1.0
   # Automation-only (ND_AUTOMATION): manifest I/O + cache warming. These are
   # pulled in by cached_network_image transitively, but we depend on them
