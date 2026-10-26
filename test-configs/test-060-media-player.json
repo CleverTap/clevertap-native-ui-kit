@@ -10,7 +10,7 @@
   },
   "variables": {
     "videoTitle": "Wildlife Documentary: Nature's Wonders",
-    "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "videoUrl": "https://media.w3.org/2010/05/sintel/trailer.mp4",
     "duration": "12:34",
     "currentTime": "5:42"
   },

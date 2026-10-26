@@ -324,14 +324,33 @@ class NativeDisplayBridge private constructor() {
      * @param listener The listener to register
      */
     fun addListener(listener: NativeDisplayBridgeListener) {
+        val added: Boolean
         synchronized(listenersLock) {
             // Avoid duplicate registration
             val alreadyRegistered = listeners.any { it.get() === listener }
             if (!alreadyRegistered) {
                 listeners.add(WeakReference(listener))
                 NDLogger.d(TAG, "Listener added: ${listener::class.simpleName}")
+                added = true
             } else {
                 NDLogger.d(TAG, "Listener already registered, skipping: ${listener::class.simpleName}")
+                added = false
+            }
+        }
+
+        // Replay the cached units to a freshly registered listener.
+        // A rotation can recreate the host Activity. This happens when the
+        // Activity does not declare android:configChanges for orientation.
+        // The screen then registers a new listener. No fresh server response
+        // follows the rotation. Without this replay the new listener would get
+        // nothing. The canvas would look empty. NativeDisplaySlotManager already
+        // replays cached units to a re-registered slot. This gives the listener
+        // path the same behavior. A duplicate add gets no replay. An empty cache
+        // gets no replay.
+        if (added) {
+            val cached = cache.getAll()
+            if (cached.isNotEmpty()) {
+                listener.onNativeDisplaysLoaded(cached)
             }
         }
     }
