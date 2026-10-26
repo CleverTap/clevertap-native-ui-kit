@@ -19,9 +19,12 @@ dependencies:
   flutter:
     sdk: flutter
   cached_network_image: ^3.4.1
-  video_player: ^2.9.2
-  webview_flutter: ^4.9.0
   url_launcher: ^6.3.0
+  # VIDEO and HTML elements are optional: their heavy native deps (video_player,
+  # webview_flutter) are NOT bundled here. Hosts that need those elements add the
+  # add-on packages clevertap_native_display_video / _webview and register them.
+  # (webview_flutter was what forced the Flutter 3.24 floor below — it can now be
+  # lowered once validated on an older toolchain.)
 
 dev_dependencies:
   flutter_test:

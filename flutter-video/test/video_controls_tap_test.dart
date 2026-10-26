@@ -5,9 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
-import 'package:clevertap_native_display/src/renderer/elements/video_element.dart';
-import 'package:clevertap_native_display/src/evaluator/variable_evaluator.dart';
-import 'package:clevertap_native_display/src/renderer/native_display_scope.dart';
+import 'package:clevertap_native_display_video/clevertap_native_display_video.dart';
 
 // Regression test locking in #54 VIDEO controls tap reliability: the controls
 // overlay is a full-area GestureDetector with HitTestBehavior.opaque so a tap

@@ -56,6 +56,20 @@ packages:
       relative: true
     source: path
     version: "0.1.0"
+  clevertap_native_display_video:
+    dependency: "direct main"
+    description:
+      path: "../flutter-video"
+      relative: true
+    source: path
+    version: "0.1.0"
+  clevertap_native_display_webview:
+    dependency: "direct main"
+    description:
+      path: "../flutter-webview"
+      relative: true
+    source: path
+    version: "0.1.0"
   clevertap_plugin:
     dependency: "direct main"
     description:

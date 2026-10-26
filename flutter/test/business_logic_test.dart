@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:clevertap_native_display/src/style/style_resolver.dart';
-import 'package:clevertap_native_display/src/evaluator/variable_evaluator.dart';
 import 'package:clevertap_native_display/src/utils/color_parser.dart';
 
 void main() {

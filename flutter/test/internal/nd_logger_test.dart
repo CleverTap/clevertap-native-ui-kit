@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
-import 'package:clevertap_native_display/src/internal/nd_logger.dart';
 
 // Mirrors the shipped Android/iOS CleverTapAutoWire log-sync semantics:
 // client-wins, unknown-level fallback = DEBUG, re-sync updates level without
