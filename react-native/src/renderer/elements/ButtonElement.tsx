@@ -6,6 +6,8 @@ import type { Style } from '../../models/Style';
 import { ActionHandler } from '../../handler/ActionHandler';
 import { useRootSize } from '../../context/RootSizeContext';
 import { useFontContext, resolveFont } from '../../context/FontContext';
+import { useVariables } from '../../context/VariablesContext';
+import { VariableEvaluator } from '../../evaluator/VariableEvaluator';
 import { resolveLayoutStyle, resolveNodeStyle } from '../layoutModifier';
 import { splitNodeStyle } from '../styleSplit';
 import { resolveTextDim } from '../../utils/dimension';
@@ -22,10 +24,13 @@ interface ButtonElementProps {
 export const ButtonElement = React.memo(function ButtonElement({ node, resolvedStyle, actionHandler }: ButtonElementProps): React.ReactElement {
   const { height: rootHeight } = useRootSize();
   const fontCtx = useFontContext();
+  const variables = useVariables();
   const layout = node.layout ?? {};
   const lastTapAt = useRef<number>(0);
 
-  const label = node.bindings?.text ?? '';
+  // Substitute {{variable}} placeholders, same as the native renderers. A
+  // string with no placeholders passes through unchanged.
+  const label = new VariableEvaluator(variables).evaluateString(node.bindings?.text ?? '');
   const layoutStyle = resolveLayoutStyle(layout, rootHeight);
   const nodeStyle = resolveNodeStyle(resolvedStyle, rootHeight);
 

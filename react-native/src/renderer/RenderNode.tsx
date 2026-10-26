@@ -89,6 +89,9 @@ function RenderNodeFn({ node, resolvedStyles, actionHandler }: RenderNodeProps):
         content = <GalleryContainer {...sharedProps} />;
         break;
       default:
+        // Unknown container type. Fall back to vertical, but log it so a bad
+        // config is visible in logs. Natives warn here too.
+        NDLogger.w('RenderNode', `Unknown containerType "${String(node.containerType)}" for node ${node.id}; falling back to vertical.`);
         content = <VerticalContainer {...sharedProps} />;
         break;
     }
@@ -116,6 +119,9 @@ function RenderNodeFn({ node, resolvedStyles, actionHandler }: RenderNodeProps):
         content = <DividerElement node={node} resolvedStyle={resolvedStyle} />;
         break;
       default:
+        // Natives log a warning for an unknown element type. Match that so a
+        // bad config is visible in logs instead of a silent blank.
+        NDLogger.w('RenderNode', `Unknown elementType "${String(node.elementType)}" for node ${node.id}; skipping.`);
         return null;
     }
   }
