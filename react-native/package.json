@@ -31,6 +31,11 @@
   ],
   "author": "CleverTap",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CleverTap/clevertap-native-ui-kit.git",
+    "directory": "react-native"
+  },
   "homepage": "https://github.com/CleverTap/clevertap-native-ui-kit#readme",
   "peerDependencies": {
     "react": ">=18.0.0",
