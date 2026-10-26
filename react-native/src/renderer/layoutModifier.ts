@@ -97,7 +97,12 @@ export function resolveLayoutStyle(layout: Layout, rootHeightPx: number): ViewSt
 
   const height = resolveDimension(layout.height);
   if (height === MATCH_PARENT_MARKER) {
-    if (!style.flex) style.flex = 1;
+    // Fill vertical space. Use height: '100%', not flex: 1. flex fills the main
+    // axis. The main axis is the width in a horizontal container, not the
+    // height. This matches native fillMaxHeight (Android) and
+    // maxHeight: .infinity (iOS). Those fill the height in any container
+    // direction.
+    style.height = '100%';
   } else if (height !== undefined) {
     style.height = height as number | `${number}%`;
   }

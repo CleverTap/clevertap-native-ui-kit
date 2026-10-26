@@ -9,10 +9,9 @@ import { resolveLayoutStyle } from '../layoutModifier';
 interface DividerElementProps {
   node: NativeDisplayElement;
   resolvedStyle: Partial<Style>;
-  containerDirection?: 'row' | 'column';
 }
 
-export const DividerElement = React.memo(function DividerElement({ node, resolvedStyle, containerDirection }: DividerElementProps): React.ReactElement {
+export const DividerElement = React.memo(function DividerElement({ node, resolvedStyle }: DividerElementProps): React.ReactElement {
   const { height: rootHeight } = useRootSize();
   const layout = node.layout ?? {};
   const layoutStyle = resolveLayoutStyle(layout, rootHeight);
@@ -21,9 +20,11 @@ export const DividerElement = React.memo(function DividerElement({ node, resolve
   const color = parseColor(dividerConfig?.color ?? resolvedStyle.borderColor ?? '#E0E0E0');
   const thickness = dividerConfig?.thickness ?? 1;
 
-  const isHorizontalDivider =
-    dividerConfig?.orientation === 'horizontal' ||
-    (!dividerConfig?.orientation && containerDirection === 'column');
+  // Native DividerConfig defaults orientation to horizontal (iOS
+  // NativeDisplayNode.swift, Android NativeDisplayNode.kt). Match that. Only an
+  // explicit "vertical" makes a vertical divider. No orientation means
+  // horizontal.
+  const isHorizontalDivider = dividerConfig?.orientation !== 'vertical';
 
   const dividerStyle = isHorizontalDivider
     ? { width: '100%' as const, height: thickness, backgroundColor: color }

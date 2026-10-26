@@ -21,6 +21,12 @@ interface GalleryContainerProps {
   RenderNode: React.ComponentType<RenderNodeProps>;
 }
 
+// One shared, frozen object for the whole module. FlatList keeps the
+// viewabilityConfig it gets on the first render. It throws if a later render
+// passes a different object. An inline object literal is a new object every
+// render, so it must not be used here.
+const VIEWABILITY_CONFIG = { itemVisiblePercentThreshold: 50 };
+
 // Indicator dots
 
 interface IndicatorProps {
@@ -159,6 +165,11 @@ export const GalleryContainer = React.memo(function GalleryContainer({
   const indicatorStyle = galleryConfig?.indicatorStyle;
   const showArrows = galleryConfig?.showArrows ?? false;
   const arrowStyleCfg = galleryConfig?.arrowStyle;
+  // Track which item is visible only when indicators or arrows need it. This
+  // value comes from the node config. It does not change while the gallery is
+  // mounted. So the onViewableItemsChanged prop keeps a stable identity, which
+  // FlatList requires.
+  const tracksViewability = showIndicators || showArrows;
   const peek = galleryConfig?.peek;
   // Default to 'center' to match native, which always centers the focused item.
   // Only matters for peek carousels - without peek there's no snapToInterval so
@@ -388,10 +399,8 @@ export const GalleryContainer = React.memo(function GalleryContainer({
               : { paddingStart: contentPaddingStart, paddingEnd: contentPaddingEnd }
             : undefined
         }
-        onViewableItemsChanged={
-          showIndicators || showArrows ? onViewableItemsChanged : undefined
-        }
-        viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
+        onViewableItemsChanged={tracksViewability ? onViewableItemsChanged : undefined}
+        viewabilityConfig={VIEWABILITY_CONFIG}
         initialScrollIndex={initialPage > 0 ? initialPage : undefined}
         getItemLayout={getItemLayout}
         // Multi-column grid, vertical only (FlatList numColumns needs vertical scroll)
