@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View } from 'react-native';
+import { View, Dimensions } from 'react-native';
 import type { ViewStyle, LayoutChangeEvent } from 'react-native';
+import { resolveRootHeightDp } from './rootHeight';
 import type { NativeDisplayUnit } from '../bridge/NativeDisplayUnit';
 import type { NativeDisplayConfig, ResolvedConfig, ResolvedStyles } from '../models/NativeDisplayConfig';
 import type { NativeDisplayNode } from '../models/NativeDisplayNode';
@@ -81,6 +82,20 @@ export function NativeDisplayView(props: NativeDisplayViewProps): React.ReactEle
   // We measure via onLayout instead of the window size, since host padding or
   // margins make the window wrong. Hosts can skip measuring via availableSize.
   const rootSize = availableSize ?? measuredSize;
+  // rootHeight anchor derived via the native cascade (not the measured view height),
+  // so percent fontSize/borderRadius/lineHeight match Android/iOS. Width stays the
+  // measured width (BoxContainer's absolute children resolve against it).
+  const anchorSize = rootSize
+    ? {
+        width: rootSize.width,
+        height: resolveRootHeightDp(
+          root?.layout,
+          rootSize.width,
+          rootSize.height,
+          Dimensions.get('window').height,
+        ),
+      }
+    : null;
 
   useEffect(() => {
     if (!unitId || !root) return;
@@ -141,7 +156,7 @@ export function NativeDisplayView(props: NativeDisplayViewProps): React.ReactEle
       onLayout={availableSize ? undefined : handleLayout}
     >
       <RenderErrorBoundary key={unitId || 'default'}>
-        <RootSizeProvider size={rootSize}>
+        <RootSizeProvider size={anchorSize ?? rootSize}>
           <FontProvider fontResolver={fontResolver} defaultFontFamily={defaultFontFamily}>
             <VariablesProvider variables={variables}>
               <RenderNode
