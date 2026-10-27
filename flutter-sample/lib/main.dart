@@ -15,6 +15,11 @@ const _automation = bool.fromEnvironment('ND_AUTOMATION');
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Enable CleverTap Core SDK verbose logging from the Flutter side (3 = VERBOSE
+  // on Android / iOS). The Android SampleApplication also sets this natively
+  // before Dart runs; this makes the intent explicit and Dart-controllable.
+  CleverTapPlugin.setDebugLevel(3);
+
   // Surface the Native Display SDK's own logs while demoing. In a production
   // host you'd typically call NativeDisplayBridge.syncLogLevelFromCore(...)
   // with the CleverTap Core SDK debug level instead.

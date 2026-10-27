@@ -27,7 +27,7 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
   void initState() {
     super.initState();
     _ct.setCleverTapDisplayUnitsLoadedHandler(_onUnitsLoaded);
-    _fetchCachedUnits();
+    //_fetchCachedUnits();
 
     // Automation only (ND_AUTOMATION): warm the image cache from the
     // incremental manifest before any campaign is fired, so the first
@@ -49,15 +49,20 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
   Future<void> _fetchCachedUnits() async {
     try {
       final units = await CleverTapPlugin.getAllDisplayUnits();
-      if (units != null && units.isNotEmpty) {
-        _onUnitsLoaded(units.cast<dynamic>());
-      }
+      await _onUnitsLoaded(units?.cast<dynamic>(),
+          source: 'getAllDisplayUnits PULL (init)');
     } catch (e) {
       _addLog('ERROR fetching cached units: $e');
     }
   }
 
-  Future<void> _onUnitsLoaded(List<dynamic>? rawUnits) async {
+  Future<void> _onUnitsLoaded(List<dynamic>? rawUnits,
+      {String source = 'delegate PUSH (onDisplayUnitsLoaded)'}) async {
+    // Log every raw unit the SDK hands us, on both the push and pull paths, with
+    // the same identifiers the native sample prints — so one-behind delivery is
+    // visible per event (fire event N, see which unit actually arrives).
+    _logUnits(source, rawUnits);
+
     if (rawUnits == null || rawUnits.isEmpty) return;
 
     // Automation only (ND_AUTOMATION): accumulate every asset URL in the raw
@@ -109,6 +114,7 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
     }
 
     await CleverTapPlugin.recordEvent(name, {});
+    debugPrint('[CT-ND ${_ts()}] >>> fired event: "$name"');
     _addLog('Fired event: $name');
     _eventController.clear();
     setState(() {});
@@ -119,9 +125,32 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
     setState(() => _log.add('[${_ts()}] $msg'));
   }
 
+  /// Logs every raw display unit the SDK delivers, tagged by source
+  /// (`delegate PUSH` vs `getAllDisplayUnits PULL`), with the id/extras the
+  /// native sample prints. Fire event N and watch which campaign actually
+  /// arrives — this makes Core's one-behind delegate delivery visible.
+  void _logUnits(String source, List<dynamic>? rawUnits) {
+    final count = rawUnits?.length ?? 0;
+    debugPrint('[CT-ND ${_ts()}] $source → $count unit(s)');
+    _addLog('$source → $count unit(s)');
+    if (rawUnits == null) return;
+    for (var i = 0; i < rawUnits.length; i++) {
+      final u = rawUnits[i];
+      final wzrk = (u is Map) ? u['wzrk_id'] : null;
+      final ti = (u is Map) ? u['ti'] : null;
+      final slot = (u is Map) ? u['slot_id'] : null;
+      final title =
+          RegExp(r'Title - (\w+) event fired').firstMatch('$u')?.group(1);
+      final detail = '[$i] wzrk_id=$wzrk ti=$ti slot=$slot title=${title ?? "?"}';
+      debugPrint('[CT-ND]   $detail');
+      _addLog(detail);
+    }
+  }
+
   String _ts() {
-    final t = TimeOfDay.now();
-    return '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+    final n = DateTime.now();
+    String p(int v, [int w = 2]) => v.toString().padLeft(w, '0');
+    return '${p(n.hour)}:${p(n.minute)}:${p(n.second)}.${p(n.millisecond, 3)}';
   }
 
   @override
@@ -252,6 +281,11 @@ class _CanvasContent extends StatelessWidget {
         final unit = units[i];
         final unitId = unit.unitId.isNotEmpty ? unit.unitId : null;
         return Padding(
+          // Stable identity so the list preserves each unit's element/State
+          // (video playback, nested gallery page, etc.) across deliveries
+          // rather than reusing State by position. unitId is unique per unit;
+          // empty-id units fall back to a per-index key (distinct type, no clash).
+          key: ValueKey(unitId ?? i),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: NativeDisplayView(
             config: unit.config,
