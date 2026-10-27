@@ -18,7 +18,7 @@ dependencies:
     path: ../flutter-video
   clevertap_native_display_webview:
     path: ../flutter-webview
-  clevertap_plugin: ^4.1.0
+  clevertap_plugin: ^4.3.0
   # Automation-only (ND_AUTOMATION): manifest I/O + cache warming. These are
   # pulled in by cached_network_image transitively, but we depend on them
   # directly so the automation code can import them.
