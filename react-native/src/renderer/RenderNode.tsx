@@ -5,6 +5,8 @@ import { VariableEvaluator } from '../evaluator/VariableEvaluator';
 import { useVariables } from '../context/VariablesContext';
 import { EntranceAnimation } from './EntranceAnimation';
 import { BackgroundRenderer } from './BackgroundRenderer';
+import { useRootSize } from '../context/RootSizeContext';
+import { resolveBorderRadius } from '../utils/dimension';
 import { VerticalContainer } from './containers/VerticalContainer';
 import { HorizontalContainer } from './containers/HorizontalContainer';
 import { BoxContainer } from './containers/BoxContainer';
@@ -29,6 +31,9 @@ function RenderNodeFn({ node, resolvedStyles, actionHandler }: RenderNodeProps):
   // Read variables from context, not props, so RenderNode has a stable
   // reference we can pass to containers and keep their React.memo working.
   const variables = useVariables();
+  // Root size anchors percent borderRadius so an element's background wrapper can
+  // be clipped to the same rounded corners as the element's border.
+  const { height: rootHeight } = useRootSize();
   // Keep the handler in a ref so cleanup sees the latest one without adding
   // actionHandler to the effect deps.
   const actionHandlerRef = useRef(actionHandler);
@@ -135,9 +140,17 @@ function RenderNodeFn({ node, resolvedStyles, actionHandler }: RenderNodeProps):
 
   // Only elements need the background wrapper. Containers draw their own
   // background internally, clipped to their bounds.
+  //
+  // Clip the wrapper to the element's borderRadius (with overflow: hidden) so a
+  // gradient/image fill follows the element's rounded corners instead of showing
+  // square corners poking out behind a rounded border (e.g. a pill button).
   if (resolvedStyle.background && !isContainer(node)) {
+    const br = resolvedStyle.borderRadius
+      ? resolveBorderRadius(resolvedStyle.borderRadius, rootHeight)
+      : 0;
+    const bgStyle = br > 0 ? { borderRadius: br, overflow: 'hidden' as const } : undefined;
     content = (
-      <BackgroundRenderer background={resolvedStyle.background}>
+      <BackgroundRenderer background={resolvedStyle.background} style={bgStyle}>
         {content}
       </BackgroundRenderer>
     );
