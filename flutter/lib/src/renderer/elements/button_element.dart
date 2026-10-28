@@ -59,7 +59,7 @@ class ButtonElement extends StatelessWidget {
       fontFamily: style.fontFamily,
       fontWeight: _resolveFontWeight(style.fontWeight),
       fontStyle: style.fontStyle == NDFontStyle.italic ? FontStyle.italic : FontStyle.normal,
-      height: lineHeight != null ? lineHeight / fontSize : null,
+      height: (lineHeight != null && fontSize > 0) ? lineHeight / fontSize : null,
       letterSpacing: style.letterSpacing,
     );
   }

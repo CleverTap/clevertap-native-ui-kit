@@ -41,6 +41,7 @@ class VerticalContainer extends StatelessWidget {
     final List<Widget> widgets = [];
     for (final child in children) {
       Widget renderer = NativeDisplayRenderer(
+        key: ValueKey(child.id),
         node: child,
         evaluator: evaluator,
         actionListener: actionListener,

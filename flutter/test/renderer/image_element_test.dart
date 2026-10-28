@@ -1,16 +1,16 @@
+import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:clevertap_native_display/clevertap_native_display.dart';
 
 // GIF detection unit tests — pure logic, no widgets
 void main() {
   group('ImageElement GIF detection logic', () {
     test('explicit animated=true overrides all', () {
-      expect(_testIsGif('https://example.com/photo.png', ImageConfig(animated: true)), true);
+      expect(_testIsGif('https://example.com/photo.png', const ImageConfig(animated: true)), true);
     });
 
     test('explicit animated=false overrides .gif extension', () {
-      expect(_testIsGif('https://example.com/image.gif', ImageConfig(animated: false)), false);
+      expect(_testIsGif('https://example.com/image.gif', const ImageConfig(animated: false)), false);
     });
 
     test('.gif extension detected', () {

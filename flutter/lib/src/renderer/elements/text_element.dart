@@ -31,7 +31,8 @@ class TextElement extends StatelessWidget {
 
     final fontSize = _resolveTextDimension(style.fontSize, rootHeight) ?? 14.0;
     final lineHeight = _resolveTextDimension(style.lineHeight, rootHeight);
-    final heightMultiplier = lineHeight != null ? lineHeight / fontSize : null;
+    final heightMultiplier =
+        (lineHeight != null && fontSize > 0) ? lineHeight / fontSize : null;
 
     final textStyle = TextStyle(
       color: ColorParser.parse(style.textColor),
@@ -67,7 +68,9 @@ class TextElement extends StatelessWidget {
       ),
     );
 
-    if (style.textGradient != null) {
+    // A gradient needs at least two colors (Flutter asserts colors.length >= 2).
+    // With fewer, render plain text rather than crashing.
+    if (style.textGradient != null && style.textGradient!.colors.length >= 2) {
       textWidget = ShaderMask(
         shaderCallback: (bounds) => _buildGradient(style.textGradient!).createShader(bounds),
         blendMode: BlendMode.srcIn,

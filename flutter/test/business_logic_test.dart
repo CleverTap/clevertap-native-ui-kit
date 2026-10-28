@@ -1,9 +1,9 @@
 import 'dart:ui';
 
-import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:clevertap_native_display/src/style/style_resolver.dart';
 import 'package:clevertap_native_display/src/utils/color_parser.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('StyleResolver', () {
@@ -123,46 +123,46 @@ void main() {
 
   group('VariableEvaluator', () {
     test('simple variable substitution', () {
-      final evaluator = VariableEvaluator({'name': 'Alice'});
+      const evaluator = VariableEvaluator({'name': 'Alice'});
       expect(evaluator.evaluateString('Hello {{name}}!'), 'Hello Alice!');
     });
 
     test('object.key lookup', () {
-      final evaluator = VariableEvaluator({
+      const evaluator = VariableEvaluator({
         'user': {'first': 'Bob', 'last': 'Smith'}
       });
       expect(evaluator.evaluateString('{{user.first}} {{user.last}}'), 'Bob Smith');
     });
 
     test('ternary expression', () {
-      final evaluator = VariableEvaluator({'premium': 'true'});
+      const evaluator = VariableEvaluator({'premium': 'true'});
       expect(evaluator.evaluateString("{{premium ? 'Pro' : 'Free'}}"), 'Pro');
     });
 
     test('comparison expression', () {
-      final evaluator = VariableEvaluator({'score': '100'});
+      const evaluator = VariableEvaluator({'score': '100'});
       expect(evaluator.evaluateBoolean("{{score >= 50}}"), true);
       expect(evaluator.evaluateBoolean("{{score < 50}}"), false);
     });
 
     test('equality comparison', () {
-      final evaluator = VariableEvaluator({'status': 'active'});
+      const evaluator = VariableEvaluator({'status': 'active'});
       expect(evaluator.evaluateBoolean("{{status == 'active'}}"), true);
     });
 
     test('unknown variable returns empty string', () {
-      final evaluator = VariableEvaluator({});
+      const evaluator = VariableEvaluator({});
       expect(evaluator.evaluateString('{{unknown}}'), '');
     });
 
     test('literal true/false', () {
-      final evaluator = VariableEvaluator({});
+      const evaluator = VariableEvaluator({});
       expect(evaluator.evaluateBoolean('true'), true);
       expect(evaluator.evaluateBoolean('false'), false);
     });
 
     test('null returns true (visible by default)', () {
-      final evaluator = VariableEvaluator({});
+      const evaluator = VariableEvaluator({});
       expect(evaluator.evaluateBoolean(null), true);
     });
 
@@ -170,7 +170,7 @@ void main() {
     // since bindings/visible are coerced to String at parse time) must evaluate
     // to the correct bool. Matches Android (`toIntOrNull() != 0`) and iOS.
     group('numeric boolean literals', () {
-      final evaluator = VariableEvaluator({});
+      const evaluator = VariableEvaluator({});
 
       test('"1" is true', () => expect(evaluator.evaluateBoolean('1'), true));
       test('"1.0" is true', () => expect(evaluator.evaluateBoolean('1.0'), true));
@@ -188,7 +188,7 @@ void main() {
     // is Map<String, dynamic> and may hold raw JSON numbers/bools) must not
     // throw and must coerce sensibly.
     test('numeric variable value coerces to bool without throwing', () {
-      final evaluator = VariableEvaluator({'flag': 1, 'off': 0, 'yes': true, 'no': false});
+      const evaluator = VariableEvaluator({'flag': 1, 'off': 0, 'yes': true, 'no': false});
       expect(evaluator.evaluateBoolean('{{flag}}'), true);
       expect(evaluator.evaluateBoolean('{{off}}'), false);
       expect(evaluator.evaluateBoolean('{{yes}}'), true);
@@ -196,7 +196,7 @@ void main() {
     });
 
     test('non-string variable value interpolates without throwing', () {
-      final evaluator = VariableEvaluator({'count': 42, 'ratio': 1.5, 'enabled': true});
+      const evaluator = VariableEvaluator({'count': 42, 'ratio': 1.5, 'enabled': true});
       expect(evaluator.evaluateString('n={{count}} r={{ratio}} e={{enabled}}'),
           'n=42 r=1.5 e=true');
     });

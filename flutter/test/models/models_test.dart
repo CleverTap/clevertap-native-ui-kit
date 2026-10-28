@@ -117,16 +117,16 @@ void main() {
 
   group('Spacing', () {
     test('resolveTop uses top > vertical > all fallback chain', () {
-      expect(Spacing(top: 10, vertical: 20, all: 30).resolveTop(), 10.0);
-      expect(Spacing(vertical: 20, all: 30).resolveTop(), 20.0);
-      expect(Spacing(all: 30).resolveTop(), 30.0);
+      expect(const Spacing(top: 10, vertical: 20, all: 30).resolveTop(), 10.0);
+      expect(const Spacing(vertical: 20, all: 30).resolveTop(), 20.0);
+      expect(const Spacing(all: 30).resolveTop(), 30.0);
       expect(const Spacing().resolveTop(), 0.0);
     });
 
     test('resolveLeft uses left > horizontal > all fallback chain', () {
-      expect(Spacing(left: 5, horizontal: 10, all: 20).resolveLeft(), 5.0);
-      expect(Spacing(horizontal: 10, all: 20).resolveLeft(), 10.0);
-      expect(Spacing(all: 20).resolveLeft(), 20.0);
+      expect(const Spacing(left: 5, horizontal: 10, all: 20).resolveLeft(), 5.0);
+      expect(const Spacing(horizontal: 10, all: 20).resolveLeft(), 10.0);
+      expect(const Spacing(all: 20).resolveLeft(), 20.0);
       expect(const Spacing().resolveLeft(), 0.0);
     });
 
@@ -152,12 +152,12 @@ void main() {
     });
 
     test('cascadingOnly returns only text properties + opacity', () {
-      final s = Style(
+      const s = Style(
         textColor: '#FF0000',
-        fontSize: const TextDimension(value: 14),
+        fontSize: TextDimension(value: 14),
         background: SolidBackground(color: '#FFFFFF'),
         backgroundColor: '#FFFFFF',
-        borderRadius: const Dimension(value: 8),
+        borderRadius: Dimension(value: 8),
         shadowColor: '#000000',
         opacity: 0.5,
       );
@@ -364,7 +364,7 @@ void main() {
         'type': 'container',
         'id': 'root',
         'containerType': 'box',
-        'children': [],
+        'children': <dynamic>[],
         'layout': {
           'width': {'value': 100, 'unit': 'percent'},
           'aspectRatio': 1.777,

@@ -17,7 +17,7 @@ sealed class Background {
       'pattern' => PatternBackground.fromJson(json),
       'particles' => ParticlesBackground.fromJson(json),
       'layered' => LayeredBackground.fromJson(json),
-      _ => SolidBackground(color: '#00000000'),
+      _ => const SolidBackground(color: '#00000000'),
     };
   }
 }
@@ -45,8 +45,15 @@ class LinearGradientBackground extends Background {
   factory LinearGradientBackground.fromJson(Map<String, dynamic> json) =>
       LinearGradientBackground(
         angle: (json['angle'] as num?)?.toDouble() ?? 0,
-        colors: (json['colors'] as List?)?.map((e) => e as String).toList() ?? const [],
-        stops: (json['stops'] as List?)?.map((e) => (e as num).toDouble()).toList(),
+        colors: (json['colors'] as List?)
+                ?.map((e) => e?.toString())
+                .whereType<String>()
+                .toList() ??
+            const [],
+        stops: (json['stops'] as List?)
+            ?.map((e) => e is num ? e.toDouble() : null)
+            .whereType<double>()
+            .toList(),
       );
 }
 
@@ -70,8 +77,15 @@ class RadialGradientBackground extends Background {
         centerX: (json['center_x'] as num?)?.toDouble() ?? 0.5,
         centerY: (json['center_y'] as num?)?.toDouble() ?? 0.5,
         radius: (json['radius'] as num?)?.toDouble() ?? 1.0,
-        colors: (json['colors'] as List?)?.map((e) => e as String).toList() ?? const [],
-        stops: (json['stops'] as List?)?.map((e) => (e as num).toDouble()).toList(),
+        colors: (json['colors'] as List?)
+                ?.map((e) => e?.toString())
+                .whereType<String>()
+                .toList() ??
+            const [],
+        stops: (json['stops'] as List?)
+            ?.map((e) => e is num ? e.toDouble() : null)
+            .whereType<double>()
+            .toList(),
       );
 }
 
@@ -95,8 +109,15 @@ class SweepGradientBackground extends Background {
         centerX: (json['center_x'] as num?)?.toDouble() ?? 0.5,
         centerY: (json['center_y'] as num?)?.toDouble() ?? 0.5,
         startAngle: (json['start_angle'] as num?)?.toDouble() ?? 0,
-        colors: (json['colors'] as List?)?.map((e) => e as String).toList() ?? const [],
-        stops: (json['stops'] as List?)?.map((e) => (e as num).toDouble()).toList(),
+        colors: (json['colors'] as List?)
+                ?.map((e) => e?.toString())
+                .whereType<String>()
+                .toList() ??
+            const [],
+        stops: (json['stops'] as List?)
+            ?.map((e) => e is num ? e.toDouble() : null)
+            .whereType<double>()
+            .toList(),
       );
 }
 
@@ -147,7 +168,7 @@ class ShimmerBackground extends Background {
         baseColor: json['base_color'] as String? ?? '#E0E0E0',
         highlightColor: json['highlight_color'] as String? ?? '#F5F5F5',
         angle: (json['angle'] as num?)?.toDouble() ?? 45,
-        duration: json['duration'] as int? ?? 1500,
+        duration: (json['duration'] as num?)?.toInt() ?? 1500,
         loop: json['loop'] as bool? ?? true,
       );
 }
@@ -174,8 +195,12 @@ class AnimatedGradientBackground extends Background {
       AnimatedGradientBackground(
         gradientType: GradientType.fromJson(json['gradient_type'] as String? ?? 'linear'),
         angle: (json['angle'] as num?)?.toDouble() ?? 0,
-        colors: (json['colors'] as List?)?.map((e) => e as String).toList() ?? const [],
-        duration: json['duration'] as int? ?? 3000,
+        colors: (json['colors'] as List?)
+                ?.map((e) => e?.toString())
+                .whereType<String>()
+                .toList() ??
+            const [],
+        duration: (json['duration'] as num?)?.toInt() ?? 3000,
         loop: json['loop'] as bool? ?? true,
         animationStyle: AnimationStyle.fromJson(json['animation_style'] as String? ?? 'smooth'),
       );
@@ -201,7 +226,7 @@ class PulseBackground extends Background {
         color: json['color'] as String? ?? '#000000',
         minOpacity: (json['min_opacity'] as num?)?.toDouble() ?? 0.3,
         maxOpacity: (json['max_opacity'] as num?)?.toDouble() ?? 1.0,
-        duration: json['duration'] as int? ?? 1000,
+        duration: (json['duration'] as num?)?.toInt() ?? 1000,
         loop: json['loop'] as bool? ?? true,
       );
 }
@@ -254,7 +279,7 @@ class ParticlesBackground extends Background {
 
   factory ParticlesBackground.fromJson(Map<String, dynamic> json) => ParticlesBackground(
         particleColor: json['particle_color'] as String? ?? '#000000',
-        particleCount: json['particle_count'] as int? ?? 50,
+        particleCount: (json['particle_count'] as num?)?.toInt() ?? 50,
         particleSize: (json['particle_size'] as num?)?.toDouble() ?? 4,
         speed: (json['speed'] as num?)?.toDouble() ?? 2,
         direction: ParticleDirection.fromJson(json['direction'] as String? ?? 'up'),

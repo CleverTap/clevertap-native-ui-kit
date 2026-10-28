@@ -24,13 +24,42 @@ class _AnimationModifierState extends State<AnimationModifier>
   late Animation<Offset> _slide;
   late Animation<double> _scale;
 
+  // Computed once per animation config (initState / didUpdateWidget) instead of
+  // re-deriving via a switch on every build.
+  late bool _hasFade;
+  late bool _hasSlide;
+  late bool _hasScale;
+
   @override
   void initState() {
     super.initState();
-    final anim = widget.animation;
+    _setup(widget.animation);
+  }
+
+  @override
+  void didUpdateWidget(AnimationModifier old) {
+    super.didUpdateWidget(old);
+    if (!_animationEquals(old.animation, widget.animation)) {
+      _controller.dispose();
+      _setup(widget.animation);
+    }
+  }
+
+  bool _animationEquals(NDAnimation a, NDAnimation b) =>
+      a.type == b.type &&
+      a.duration == b.duration &&
+      a.delay == b.delay &&
+      a.easing == b.easing;
+
+  void _setup(NDAnimation anim) {
+    _hasFade = _computeHasFade(anim.type);
+    _hasSlide = _computeHasSlide(anim.type);
+    _hasScale = _computeHasScale(anim.type);
+
+    // Clamp to non-negative — negative durations/delays would assert.
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: anim.duration),
+      duration: Duration(milliseconds: anim.duration < 0 ? 0 : anim.duration),
     );
 
     final curve = _resolveCurve(anim.easing);
@@ -40,8 +69,9 @@ class _AnimationModifierState extends State<AnimationModifier>
     _slide = Tween<Offset>(begin: _slideBegin(anim.type), end: Offset.zero).animate(curved);
     _scale = Tween<double>(begin: 0.8, end: 1).animate(curved);
 
-    if (anim.delay > 0) {
-      Future.delayed(Duration(milliseconds: anim.delay), () {
+    final delay = anim.delay < 0 ? 0 : anim.delay;
+    if (delay > 0) {
+      Future.delayed(Duration(milliseconds: delay), () {
         if (mounted) _controller.forward();
       });
     } else {
@@ -74,7 +104,7 @@ class _AnimationModifierState extends State<AnimationModifier>
         _ => Offset.zero,
       };
 
-  bool get _hasFade => switch (widget.animation.type) {
+  bool _computeHasFade(AnimationType type) => switch (type) {
         AnimationType.none => false,
         AnimationType.fadeIn => true,
         AnimationType.slideInLeft => false,
@@ -86,7 +116,7 @@ class _AnimationModifierState extends State<AnimationModifier>
         AnimationType.fadeSlideIn => true,
       };
 
-  bool get _hasSlide => switch (widget.animation.type) {
+  bool _computeHasSlide(AnimationType type) => switch (type) {
         AnimationType.slideInLeft => true,
         AnimationType.slideInRight => true,
         AnimationType.slideInTop => true,
@@ -95,7 +125,7 @@ class _AnimationModifierState extends State<AnimationModifier>
         _ => false,
       };
 
-  bool get _hasScale => switch (widget.animation.type) {
+  bool _computeHasScale(AnimationType type) => switch (type) {
         AnimationType.scaleIn => true,
         AnimationType.fadeScaleIn => true,
         _ => false,

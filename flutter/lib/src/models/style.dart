@@ -1,5 +1,5 @@
-import 'enums.dart';
 import 'background.dart';
+import 'enums.dart';
 import 'layout.dart';
 import 'text_dimension.dart';
 
@@ -39,9 +39,16 @@ class TextGradient {
 
   factory TextGradient.fromJson(Map<String, dynamic> json) => TextGradient(
         type: json['type'] as String? ?? 'linear',
-        colors: (json['colors'] as List?)?.map((e) => e as String).toList() ?? const [],
+        colors: (json['colors'] as List?)
+                ?.map((e) => e?.toString())
+                .whereType<String>()
+                .toList() ??
+            const [],
         angle: (json['angle'] as num?)?.toDouble() ?? 0,
-        stops: (json['stops'] as List?)?.map((e) => (e as num).toDouble()).toList(),
+        stops: (json['stops'] as List?)
+            ?.map((e) => e is num ? e.toDouble() : null)
+            .whereType<double>()
+            .toList(),
       );
 }
 
@@ -160,20 +167,20 @@ class Style {
         fontSize: json['fontSize'] != null ? TextDimension.fromJson(json['fontSize']) : null,
         fontFamily: json['fontFamily'] as String?,
         fontWeight: json['fontWeight'] != null
-            ? NDFontWeight.fromJson(json['fontWeight'] as String)
+            ? NDFontWeight.fromJson(json['fontWeight'].toString())
             : null,
         fontStyle: json['fontStyle'] != null
-            ? NDFontStyle.fromJson(json['fontStyle'] as String)
+            ? NDFontStyle.fromJson(json['fontStyle'].toString())
             : null,
         lineHeight: json['lineHeight'] != null ? TextDimension.fromJson(json['lineHeight']) : null,
         letterSpacing: (json['letterSpacing'] as num?)?.toDouble(),
         textDecoration: json['textDecoration'] != null
-            ? NDTextDecoration.fromJson(json['textDecoration'] as String)
+            ? NDTextDecoration.fromJson(json['textDecoration'].toString())
             : null,
         textAlign: json['textAlign'] as String?,
-        maxLines: json['maxLines'] as int?,
+        maxLines: (json['maxLines'] as num?)?.toInt(),
         overflow: json['overflow'] != null
-            ? NDTextOverflow.fromJson(json['overflow'] as String)
+            ? NDTextOverflow.fromJson(json['overflow'].toString())
             : null,
         textShadow: json['textShadow'] != null
             ? TextShadow.fromJson(json['textShadow'] as Map<String, dynamic>)

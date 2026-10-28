@@ -135,11 +135,8 @@ class Layout {
   });
 
   factory Layout.fromJson(Map<String, dynamic> json) => Layout(
-        width:
-            json['width'] != null ? Dimension.fromJson(json['width'] as Map<String, dynamic>) : null,
-        height: json['height'] != null
-            ? Dimension.fromJson(json['height'] as Map<String, dynamic>)
-            : null,
+        width: json['width'] != null ? Dimension.fromJsonFlexible(json['width']) : null,
+        height: json['height'] != null ? Dimension.fromJsonFlexible(json['height']) : null,
         aspectRatio: (json['aspectRatio'] as num?)?.toDouble(),
         offset: json['offset'] != null
             ? NDOffset.fromJson(json['offset'] as Map<String, dynamic>)

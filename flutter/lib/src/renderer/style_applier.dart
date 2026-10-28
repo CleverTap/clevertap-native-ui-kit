@@ -118,20 +118,24 @@ class StyleApplier {
     if (bg == null) {
       final color = ColorParser.parse(style.backgroundColor);
       if (color == null || bakedOpacity == null) return color;
-      return color.withValues(alpha: bakedOpacity.clamp(0.0, 1.0));
+      return ColorParser.applyOpacity(color, bakedOpacity);
     }
     return switch (bg) {
-      SolidBackground s => () {
+      final SolidBackground s => () {
           final color = ColorParser.parse(s.color);
           if (color == null || bakedOpacity == null) return color;
-          return color.withValues(alpha: bakedOpacity.clamp(0.0, 1.0));
+          return ColorParser.applyOpacity(color, bakedOpacity);
         }(),
-      LinearGradientBackground lg => _buildLinearGradient(lg),
-      RadialGradientBackground rg => _buildRadialGradient(rg),
-      SweepGradientBackground sg => _buildSweepGradient(sg),
-      ImageBackground img => DecorationImage(
+      final LinearGradientBackground lg => _buildLinearGradient(lg),
+      final RadialGradientBackground rg => _buildRadialGradient(rg),
+      final SweepGradientBackground sg => _buildSweepGradient(sg),
+      final ImageBackground img => DecorationImage(
           image: NetworkImage(img.url),
           fit: BoxFit.cover,
+          // DecorationImage can't substitute a widget on failure — log and
+          // swallow so a bad background URL doesn't surface as an uncaught error.
+          onError: (e, st) =>
+              NDLogger.e('StyleApplier', 'Background image failed: ${img.url}', e, st),
           colorFilter: img.tint != null
               ? ColorFilter.mode(
                   ColorParser.parse(img.tint) ?? const Color(0x00000000),
@@ -146,7 +150,9 @@ class StyleApplier {
     };
   }
 
-  static LinearGradient _buildLinearGradient(LinearGradientBackground lg) {
+  static LinearGradient? _buildLinearGradient(LinearGradientBackground lg) {
+    // Flutter asserts colors.length >= 2; with fewer, render no gradient.
+    if (lg.colors.length < 2) return null;
     final radians = (lg.angle - 90) * pi / 180;
     final dx = cos(radians);
     final dy = sin(radians);
@@ -162,7 +168,9 @@ class StyleApplier {
     );
   }
 
-  static RadialGradient _buildRadialGradient(RadialGradientBackground rg) {
+  static RadialGradient? _buildRadialGradient(RadialGradientBackground rg) {
+    // Flutter asserts colors.length >= 2; with fewer, render no gradient.
+    if (rg.colors.length < 2) return null;
     final colors = rg.colors
         .map((c) => ColorParser.parse(c) ?? const Color(0x00000000))
         .toList();
@@ -174,7 +182,9 @@ class StyleApplier {
     );
   }
 
-  static SweepGradient _buildSweepGradient(SweepGradientBackground sg) {
+  static SweepGradient? _buildSweepGradient(SweepGradientBackground sg) {
+    // Flutter asserts colors.length >= 2; with fewer, render no gradient.
+    if (sg.colors.length < 2) return null;
     final colors = sg.colors
         .map((c) => ColorParser.parse(c) ?? const Color(0x00000000))
         .toList();
@@ -220,9 +230,11 @@ class StyleApplier {
   static double? _resolveBorderRadius(Dimension? borderRadius, double rootHeight) {
     if (borderRadius == null) return null;
     if (borderRadius.special != null) return null;
-    return switch (borderRadius.unit) {
+    final resolved = switch (borderRadius.unit) {
       DimensionUnit.percent => rootHeight * borderRadius.value / 100.0,
       _ => borderRadius.value,
     };
+    // A negative radius would assert in BorderRadius.circular / ClipRRect.
+    return resolved < 0 ? 0.0 : resolved;
   }
 }

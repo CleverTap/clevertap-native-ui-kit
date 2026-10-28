@@ -1,7 +1,7 @@
-import 'package:flutter/widgets.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:clevertap_native_display/src/internal/viewed_units_tracker.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 NativeDisplayConfig _config(String text) => NativeDisplayConfig.fromJson({
       'root': {

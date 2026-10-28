@@ -68,17 +68,58 @@ class _GalleryRendererState extends State<GalleryRenderer> {
     _autoScrollTimer = Timer.periodic(Duration(milliseconds: interval), (_) {
       if (!mounted) return;
       final current = _currentPage.value;
-      final nextPage = _config.infiniteScroll
-          ? (current + 1) % _childCount
-          : (current + 1 < _childCount ? current + 1 : current);
-      if (nextPage != current) {
+      if (_config.infiniteScroll) {
+        // Infinite mode: keep advancing the live controller page unbounded
+        // (itemBuilder maps index % children.length to content). Never modulo
+        // the controller page itself or the carousel snaps back to the start.
         _pageController.animateToPage(
-          nextPage,
+          current + 1,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
+      } else {
+        final nextPage = current + 1 < _childCount ? current + 1 : current;
+        if (nextPage != current) {
+          _pageController.animateToPage(
+            nextPage,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(GalleryRenderer old) {
+    super.didUpdateWidget(old);
+    final oldConfig = old.node.galleryConfig ?? const GalleryConfig();
+    final newConfig = _config;
+    final newChildCount = widget.node.children.length;
+
+    final structuralChange = newChildCount != _childCount ||
+        oldConfig.autoScrollInterval != newConfig.autoScrollInterval ||
+        oldConfig.infiniteScroll != newConfig.infiniteScroll ||
+        oldConfig.initialPage != newConfig.initialPage ||
+        oldConfig.effectiveItemsPerView != newConfig.effectiveItemsPerView;
+
+    if (!structuralChange) return;
+
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = null;
+    _pageController.dispose();
+
+    _childCount = newChildCount;
+    final maxPage = _childCount == 0 ? 0 : _childCount - 1;
+    final clampedPage = _currentPage.value.clamp(0, maxPage);
+    _currentPage.value = clampedPage;
+
+    final initialPage = newConfig.initialPage.clamp(0, maxPage);
+    _pageController = PageController(
+      initialPage: initialPage,
+      viewportFraction: _viewportFraction,
+    );
+    _startAutoScroll();
   }
 
   @override
@@ -91,6 +132,10 @@ class _GalleryRendererState extends State<GalleryRenderer> {
 
   @override
   Widget build(BuildContext context) {
+    // Empty gallery: nothing to page through. Guards against `index % 0` in the
+    // infinite-scroll itemBuilder when there are no children.
+    if (widget.node.children.isEmpty) return const SizedBox.shrink();
+
     final rootHeight = NativeDisplayScope.rootHeightOf(context);
     final config = _config;
     final children = widget.node.children;

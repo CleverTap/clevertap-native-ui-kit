@@ -1,8 +1,8 @@
+import 'package:clevertap_native_display/src/models/enums.dart';
+import 'package:clevertap_native_display/src/models/node_config.dart';
+import 'package:clevertap_native_display/src/renderer/animation_modifier.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:clevertap_native_display/src/renderer/animation_modifier.dart';
-import 'package:clevertap_native_display/src/models/node_config.dart';
-import 'package:clevertap_native_display/src/models/enums.dart';
 
 Widget wrap(Widget w) => Directionality(
       textDirection: TextDirection.ltr,
