@@ -42,7 +42,7 @@ void main() {
     });
 
     test('HtmlConfig fromJson parses all fields', () {
-      final config = HtmlConfig.fromJson({
+      final config = HtmlConfig.fromJson(const {
         'javascriptEnabled': true,
         'scrollEnabled': true,
         'baseUrl': 'https://cdn.example.com',
@@ -55,7 +55,7 @@ void main() {
     });
 
     test('HtmlConfig defaults when json is empty', () {
-      final config = HtmlConfig.fromJson({});
+      final config = HtmlConfig.fromJson(const {});
       expect(config.javascriptEnabled, false);
       expect(config.scrollEnabled, false);
       expect(config.baseUrl, isNull);

@@ -52,7 +52,7 @@ void main() {
     });
 
     testWidgets('applies fontWeight bold', (tester) async {
-      final style = Style.fromJson({'fontWeight': 'bold'});
+      final style = Style.fromJson(const {'fontWeight': 'bold'});
       final node = makeTextElement();
 
       await tester.pumpWidget(wrap(
@@ -64,7 +64,7 @@ void main() {
     });
 
     testWidgets('applies fontWeight light', (tester) async {
-      final style = Style.fromJson({'fontWeight': 'light'});
+      final style = Style.fromJson(const {'fontWeight': 'light'});
       final node = makeTextElement();
 
       await tester.pumpWidget(wrap(
@@ -76,7 +76,7 @@ void main() {
     });
 
     testWidgets('wraps with ShaderMask when textGradient set', (tester) async {
-      final style = Style.fromJson({
+      final style = Style.fromJson(const {
         'textGradient': {
           'colors': ['#FF0000', '#0000FF'],
           'angle': 90.0,
@@ -92,7 +92,7 @@ void main() {
     });
 
     testWidgets('textAlign center maps correctly', (tester) async {
-      final style = Style.fromJson({'textAlign': 'center'});
+      final style = Style.fromJson(const {'textAlign': 'center'});
       final node = makeTextElement();
 
       await tester.pumpWidget(wrap(
@@ -104,7 +104,7 @@ void main() {
     });
 
     testWidgets('textColor applied to TextStyle', (tester) async {
-      final style = Style.fromJson({'textColor': '#FF0000'});
+      final style = Style.fromJson(const {'textColor': '#FF0000'});
       final node = makeTextElement();
 
       await tester.pumpWidget(wrap(

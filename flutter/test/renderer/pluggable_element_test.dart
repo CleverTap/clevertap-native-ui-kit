@@ -6,7 +6,7 @@ void main() {
   setUp(NativeDisplayRenderers.clear);
   tearDown(NativeDisplayRenderers.clear);
 
-  NativeDisplayConfig videoConfig() => NativeDisplayConfig.fromJson({
+  NativeDisplayConfig videoConfig() => NativeDisplayConfig.fromJson(const {
         'root': {
           'type': 'element',
           'id': 'root',

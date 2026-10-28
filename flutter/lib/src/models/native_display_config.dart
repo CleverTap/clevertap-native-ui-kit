@@ -1,6 +1,19 @@
+import 'package:flutter/foundation.dart';
+
 import 'native_display_node.dart';
 import 'style.dart';
 
+// Order-independent hash for a nullable map — pairs with mapEquals.
+int _mapHash(Map<Object?, Object?>? map) {
+  if (map == null) return null.hashCode;
+  var h = 0;
+  for (final e in map.entries) {
+    h ^= Object.hash(e.key, e.value);
+  }
+  return Object.hash(map.length, h);
+}
+
+@immutable
 class NDTheme {
   final String id;
   final Style defaultStyle;
@@ -25,8 +38,20 @@ class NDTheme {
                 ?.map((k, v) => MapEntry(k, v?.toString() ?? '')) ??
             const {},
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NDTheme &&
+          other.id == id &&
+          other.defaultStyle == defaultStyle &&
+          mapEquals(other.colors, colors);
+
+  @override
+  int get hashCode => Object.hash(id, defaultStyle, _mapHash(colors));
 }
 
+@immutable
 class StyleClass {
   final String name;
   final Style style;
@@ -39,8 +64,17 @@ class StyleClass {
             ? Style.fromJson(json['style'] as Map<String, dynamic>)
             : Style.empty,
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is StyleClass && other.name == name && other.style == style;
+
+  @override
+  int get hashCode => Object.hash(name, style);
 }
 
+@immutable
 class NativeDisplayConfig {
   final String version;
   final NDTheme? theme;
@@ -70,19 +104,23 @@ class NativeDisplayConfig {
             ? NativeDisplayNode.fromJson(json['root'] as Map<String, dynamic>)
             : null,
       );
-}
 
-// Resolved config — used after StyleResolver fills in all cascading values
-class ResolvedConfig {
-  final NDTheme theme;
-  final List<StyleClass> styleClasses;
-  final Map<String, dynamic> variables;
-  final NativeDisplayNode root;
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NativeDisplayConfig &&
+          other.version == version &&
+          other.theme == theme &&
+          listEquals(other.styleClasses, styleClasses) &&
+          mapEquals(other.variables, variables) &&
+          other.root == root;
 
-  const ResolvedConfig({
-    this.theme = NDTheme.empty,
-    this.styleClasses = const [],
-    this.variables = const {},
-    required this.root,
-  });
+  @override
+  int get hashCode => Object.hash(
+        version,
+        theme,
+        Object.hashAll(styleClasses),
+        _mapHash(variables),
+        root,
+      );
 }

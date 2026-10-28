@@ -42,22 +42,11 @@ class ImageElement extends StatelessWidget {
     final fit = _resolveBoxFit(imageFit);
 
     Widget imageWidget;
-    if (isTile) {
-      imageWidget = Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: NetworkImage(url),
-            repeat: ImageRepeat.repeat,
-            // DecorationImage can't substitute a widget on failure — log and
-            // swallow so a bad tile URL doesn't surface as an uncaught error.
-            onError: (e, st) =>
-                NDLogger.e('ImageElement', 'Tile image failed: $url', e, st),
-          ),
-        ),
-      );
-    } else if (isGif) {
+    if (isGif) {
       // Flutter's image codec handles animated GIFs natively via Image.network.
       // CachedNetworkImage may not preserve frame timing for animated GIFs.
+      // Do NOT resize this path — decoding animated GIFs at a cache width can
+      // drop/garble frames.
       imageWidget = Image.network(
         url,
         fit: fit,
@@ -66,11 +55,40 @@ class ImageElement extends StatelessWidget {
         errorBuilder: (ctx, err, stack) => const SizedBox.shrink(),
       );
     } else {
-      imageWidget = CachedNetworkImage(
-        imageUrl: url,
-        fit: fit,
-        placeholder: (ctx, url) => const SizedBox.shrink(),
-        errorWidget: (ctx, url, err) => const SizedBox.shrink(),
+      // Static / tile paths: decode at the display pixel width to cut memory.
+      // LayoutBuilder gives the parent's max width; only resize when it's a
+      // concrete finite value — never guess.
+      imageWidget = LayoutBuilder(
+        builder: (ctx, constraints) {
+          final dpr = MediaQuery.devicePixelRatioOf(ctx);
+          final cacheW =
+              constraints.maxWidth.isFinite && constraints.maxWidth > 0
+                  ? (constraints.maxWidth * dpr).round()
+                  : null;
+          if (isTile) {
+            return Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: cacheW != null
+                      ? ResizeImage(NetworkImage(url), width: cacheW)
+                      : NetworkImage(url),
+                  repeat: ImageRepeat.repeat,
+                  // DecorationImage can't substitute a widget on failure — log and
+                  // swallow so a bad tile URL doesn't surface as an uncaught error.
+                  onError: (e, st) =>
+                      NDLogger.e('ImageElement', 'Tile image failed: $url', e, st),
+                ),
+              ),
+            );
+          }
+          return CachedNetworkImage(
+            imageUrl: url,
+            fit: fit,
+            memCacheWidth: cacheW,
+            placeholder: (ctx, url) => const SizedBox.shrink(),
+            errorWidget: (ctx, url, err) => const SizedBox.shrink(),
+          );
+        },
       );
     }
 

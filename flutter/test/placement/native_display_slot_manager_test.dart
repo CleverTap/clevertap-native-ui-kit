@@ -1,7 +1,7 @@
 import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-NativeDisplayConfig _config() => NativeDisplayConfig.fromJson({
+NativeDisplayConfig _config() => NativeDisplayConfig.fromJson(const {
       'root': {
         'type': 'element',
         'id': 't',

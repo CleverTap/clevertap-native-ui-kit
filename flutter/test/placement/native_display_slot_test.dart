@@ -9,7 +9,7 @@ NativeDisplayConfig _config(String text) => NativeDisplayConfig.fromJson({
         'id': 't',
         'elementType': 'text',
         'bindings': {'text': text},
-        'layout': {
+        'layout': const {
           'width': {'value': 100, 'unit': 'dp'},
           'height': {'value': 40, 'unit': 'dp'},
         },
@@ -22,7 +22,7 @@ NativeDisplayUnit _unit(String unitId, String slotId, String text) =>
 NativeDisplayUnit _buttonUnit(String unitId, String slotId) => NativeDisplayUnit(
       unitId: unitId,
       slotId: slotId,
-      config: NativeDisplayConfig.fromJson({
+      config: NativeDisplayConfig.fromJson(const {
         'root': {
           'type': 'element',
           'id': 'cta',

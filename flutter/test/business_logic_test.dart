@@ -10,7 +10,7 @@ void main() {
     final resolver = StyleResolver();
 
     test('cascades text properties from parent to child', () {
-      final config = NativeDisplayConfig.fromJson({
+      final config = NativeDisplayConfig.fromJson(const {
         'root': {
           'type': 'container',
           'id': 'root',
@@ -39,7 +39,7 @@ void main() {
     });
 
     test('visual props do NOT cascade', () {
-      final config = NativeDisplayConfig.fromJson({
+      final config = NativeDisplayConfig.fromJson(const {
         'root': {
           'type': 'container',
           'id': 'root',
@@ -66,7 +66,7 @@ void main() {
     });
 
     test('inline > styleClass > theme priority', () {
-      final config = NativeDisplayConfig.fromJson({
+      final config = NativeDisplayConfig.fromJson(const {
         'theme': {
           'id': 'default',
           'defaultStyle': {'textColor': '#111111'},
@@ -94,7 +94,7 @@ void main() {
     });
 
     test('styleClass applied when no inline style', () {
-      final config = NativeDisplayConfig.fromJson({
+      final config = NativeDisplayConfig.fromJson(const {
         'theme': {
           'id': 'default',
           'defaultStyle': {'textColor': '#111111'},
