@@ -104,6 +104,12 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
     final name = _eventController.text.trim();
     if (name.isEmpty) return;
 
+    // Dismiss the soft keyboard on send. Flutter does NOT auto-dismiss when the
+    // send is a button tap (only an IME completion action would), so the field
+    // keeps focus and the keyboard stays up otherwise — worse UX and it lingers
+    // during automation. Unfocus explicitly.
+    FocusManager.instance.primaryFocus?.unfocus();
+
     // Automation only (ND_AUTOMATION): clear the canvas the moment we fire so it
     // returns to the "Waiting for Native Display response…" state until the new
     // batch arrives. Combined with the batch-counter handshake, this guarantees
