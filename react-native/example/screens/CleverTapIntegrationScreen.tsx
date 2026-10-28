@@ -22,7 +22,7 @@ import type {
   NativeDisplayUnit,
   NativeDisplayActionListener,
 } from '@clevertap/native-display-sdk';
-import { fireEvent, runSequence, subscribeAutomation } from '../screenshotAutomation';
+import { fireEvent, isCanonicalEvent, runSequence, subscribeAutomation } from '../screenshotAutomation';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -99,6 +99,11 @@ export function CleverTapIntegrationScreen(): React.ReactElement {
   useEffect(() => {
     return subscribeAutomation((request) => {
       if (request.kind === 'single') {
+        // Guard against typos in the deep link — only canonical events fire.
+        if (!isCanonicalEvent(request.name)) {
+          appendLog(`AUTOMATION WARNING unknown event '${request.name}' ignored`);
+          return;
+        }
         fireEvent(request.name);
         appendLog(`AUTOMATION EVENT ${request.name}`);
         return;

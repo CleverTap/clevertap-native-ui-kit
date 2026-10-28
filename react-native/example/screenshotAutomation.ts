@@ -38,6 +38,11 @@ export const CANONICAL_EVENTS: readonly string[] = [
   'hi', 'viewed', 'html2', 'home',
 ];
 
+/** True if `name` is one of the 22 canonical events (exact match). */
+export function isCanonicalEvent(name: string): boolean {
+  return CANONICAL_EVENTS.includes(name);
+}
+
 /**
  * A parsed automation deep link.
  *   - `single` → fire one named event (`ndautomation://event?name=...`)
