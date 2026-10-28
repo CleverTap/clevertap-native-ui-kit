@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, StatusBar, StyleSheet, Platform } from 'react-native';
+import { View, Text, Pressable, StatusBar, StyleSheet, Platform, Linking } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import CleverTap from 'clevertap-react-native';
 import { NativeDisplayBridge } from '@clevertap/native-display-sdk';
+import { parseAutomationUrl, triggerAutomation } from './screenshotAutomation';
 import { CleverTapIntegrationScreen } from './screens/CleverTapIntegrationScreen';
 import { BridgeIntegrationScreen } from './screens/BridgeIntegrationScreen';
 import { TestConfigBrowserScreen } from './screens/TestConfigBrowserScreen';
@@ -66,6 +67,28 @@ export default function App(): React.ReactElement {
       CleverTap.removeListener(CleverTap.CleverTapPushNotificationClicked);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ─── Screenshot automation deep link ──────────────────────────────────────
+  // Drives the app for the cross-platform screenshot comparison. Switches to the
+  // Events tab, then lets that screen fire via CleverTap.recordEvent:
+  //   ndautomation://event?name=<eventName>   → fire that one event (primary;
+  //                                              the capture script opens this
+  //                                              once per canonical event)
+  //   ndautomation://events?settle=<seconds>  → fire all 22, settle apart
+  // Handles both cold start (getInitialURL) and warm foreground (Linking 'url'
+  // event). Inert unless a URL is opened, so no effect on normal usage.
+  useEffect(() => {
+    const handleUrl = (url: string | null): void => {
+      const request = parseAutomationUrl(url);
+      if (!request) return;
+      setScreen('ct');
+      triggerAutomation(request);
+    };
+
+    Linking.getInitialURL().then(handleUrl).catch(() => {});
+    const sub = Linking.addEventListener('url', ({ url }) => handleUrl(url));
+    return () => sub.remove();
   }, []);
 
   return (

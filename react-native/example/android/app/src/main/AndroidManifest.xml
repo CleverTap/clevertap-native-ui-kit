@@ -26,6 +26,16 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+        <!-- Screenshot automation deep link: ndautomation://events?settle=<seconds>
+             drives the app for the cross-platform screenshot comparison. Example
+             app only; see screenshotAutomation.ts. singleTask delivers the URL
+             to the RN Linking 'url' event on warm starts. -->
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="ndautomation" />
+        </intent-filter>
       </activity>
       <service
         android:name=".MyFirebaseMessagingService"
