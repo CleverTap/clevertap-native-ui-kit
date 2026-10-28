@@ -2,7 +2,6 @@ import React from 'react';
 import { View } from 'react-native';
 import type { ViewStyle } from 'react-native';
 import type { NativeDisplayContainer } from '../../models/NativeDisplayNode';
-import type { Dimension, Layout } from '../../models/Layout';
 import type { Style } from '../../models/Style';
 import type { ResolvedStyles } from '../../models/NativeDisplayConfig';
 import type { ActionHandler } from '../../handler/ActionHandler';
@@ -11,6 +10,7 @@ import {
   resolveLayoutStyle,
   resolveNodeStyle,
 } from '../layoutModifier';
+import { dimensionToPx, resolveBoxDimensionsPx } from './boxDimensions';
 import { BackgroundRenderer } from '../BackgroundRenderer';
 import { useRootSize } from '../../context/RootSizeContext';
 import { TappableContainer } from '../TappableContainer';
@@ -21,65 +21,6 @@ interface BoxContainerProps {
   resolvedStyles: ResolvedStyles;
   actionHandler: ActionHandler;
   RenderNode: React.ComponentType<RenderNodeProps>;
-}
-
-/**
- * Turn a layout Dimension into a pixel number.
- * Returns undefined for wrap_content so the content sizes itself.
- */
-function dimensionToPx(dim: Dimension | undefined, parentPx: number): number | undefined {
-  if (!dim) return undefined;
-  if (dim.special === 'wrap_content') return undefined;
-  if (dim.special === 'match_parent') return parentPx;
-  if (dim.unit === 'percent') return (parentPx * dim.value) / 100;
-  // dp / sp / px - use the raw value
-  return dim.value;
-}
-
-/**
- * Work out the BOX pixel size in JS, using the same priority order as Android:
- *  1. Fixed dp/sp/px height
- *  2. aspectRatio + known width (beats percent)
- *  3. Percent height of the parent
- *  4. Parent height
- *  5. Width (makes a square)
- *
- * Why compute it here instead of letting Yoga do it: a "60%" height inside an
- * unbounded ScrollView resolves to 0 before aspectRatio can kick in, so every
- * child ends up at y=0. Doing the math against the known root size avoids that.
- */
-function resolveBoxDimensionsPx(
-  layout: Layout,
-  rootWidth: number,
-  rootHeight: number,
-): { width: number; height: number } {
-  // Width: fixed value, then percent of root, then root width
-  const width = dimensionToPx(layout.width, rootWidth) ?? rootWidth;
-
-  const h = layout.height;
-
-  // 1. Fixed height
-  if (h && h.special == null && h.unit !== 'percent') {
-    return { width, height: h.value };
-  }
-
-  // 2. aspectRatio beats percent height
-  if (layout.aspectRatio != null && layout.aspectRatio > 0) {
-    return { width, height: width / layout.aspectRatio };
-  }
-
-  // 3. Percent of root height
-  if (h?.unit === 'percent' && rootHeight > 0) {
-    return { width, height: (rootHeight * h.value) / 100 };
-  }
-
-  // 4. Root height
-  if (rootHeight > 0) {
-    return { width, height: rootHeight };
-  }
-
-  // 5. Square
-  return { width, height: width };
 }
 
 export const BoxContainer = React.memo(function BoxContainer({

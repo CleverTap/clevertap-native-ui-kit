@@ -32,8 +32,11 @@ export class ActionHandler {
    * `action` is optional - omitting it just gives empty extras.
    */
   fireClickedEvent(nodeId: string, action?: Action): void {
+    // Attribution extras come from the action only, matching Android and iOS.
+    // node_id is not an attribution field there. We keep nodeId for a local
+    // debug log so the click is still traceable in logs.
+    NDLogger.d('ActionHandler', `Click fired for nodeId=${nodeId}`);
     const extras: Record<string, unknown> = {
-      node_id: nodeId,
       ...attributionExtrasFor(action),
     };
     this.bridge?.pushClickedEvent(this.unitId, extras);

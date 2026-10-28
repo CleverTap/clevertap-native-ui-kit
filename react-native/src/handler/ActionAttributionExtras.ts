@@ -39,7 +39,9 @@ function append(action: Action, out: Record<string, unknown>): void {
     case 'open_url': {
       out['action_type'] = 'open_url';
       out['action_url'] = resolveOpenUrl(action);
-      if (action.openInBrowser != null) out['action_open_in_browser'] = action.openInBrowser;
+      // Always write this key, even when the server omits openInBrowser. Android
+      // and iOS default it to false, so writing it keeps attribution identical.
+      out['action_open_in_browser'] = action.openInBrowser ?? false;
       spreadInto(out, action.metadata);
       break;
     }

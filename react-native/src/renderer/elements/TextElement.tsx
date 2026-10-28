@@ -10,6 +10,8 @@ import { useRootSize } from '../../context/RootSizeContext';
 import { useFontContext, resolveFont } from '../../context/FontContext';
 import { resolveLayoutStyle, resolveNodeStyle } from '../layoutModifier';
 import { splitNodeStyle } from '../styleSplit';
+import { useVariables } from '../../context/VariablesContext';
+import { VariableEvaluator } from '../../evaluator/VariableEvaluator';
 import { NDLogger } from '../../internal/NDLogger';
 
 function isWrapContentLayout(layout: Layout): boolean {
@@ -36,15 +38,20 @@ interface TextElementProps {
  * the text to one line ("Some UI body wi").
  *
  * We don't auto-set a default `lineHeight`: on iOS, an explicit lineHeight on
- * width-constrained text forces single-line measurement and clips it. Let iOS
- * pick its own. Authors who need line-height parity must set it in the JSON.
+ * width-constrained text forces single-line measurement and clips it (confirmed
+ * on-device: multiline body text truncates to "Some UI body wi" on one line).
+ * Let iOS pick its own. Authors who need line-height parity must set it in the
+ * JSON. ButtonElement can set a default because its label is single-line.
  */
 export const TextElement = React.memo(function TextElement({ node, resolvedStyle }: TextElementProps): React.ReactElement {
   const { height: rootHeight } = useRootSize();
   const fontCtx = useFontContext();
+  const variables = useVariables();
   const layout = node.layout ?? {};
 
-  const text = node.bindings?.text ?? '';
+  // Substitute {{variable}} placeholders, same as the native renderers. A
+  // string with no placeholders passes through unchanged.
+  const text = new VariableEvaluator(variables).evaluateString(node.bindings?.text ?? '');
 
   const layoutStyle = resolveLayoutStyle(layout, rootHeight);
   const nodeStyle = resolveNodeStyle(resolvedStyle, rootHeight);
@@ -97,7 +104,10 @@ export const TextElement = React.memo(function TextElement({ node, resolvedStyle
     const LinearGradient = getLinearGradient();
 
     if (MaskedView && LinearGradient) {
-      const angleRad = ((gradient.angle ?? 0) * Math.PI) / 180;
+      // Subtract 90 so 0deg points up, matching BackgroundRenderer's gradient
+      // math and the native/Flutter text gradients. Without it the fill is
+      // rotated 90deg from the background gradients in the same config.
+      const angleRad = (((gradient.angle ?? 0) - 90) * Math.PI) / 180;
       const startX = 0.5 - Math.cos(angleRad) * 0.5;
       const startY = 0.5 - Math.sin(angleRad) * 0.5;
       const endX = 0.5 + Math.cos(angleRad) * 0.5;
