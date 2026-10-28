@@ -78,37 +78,56 @@ export function resolveOffsetStyle(offset: Offset): {
   return { top: offset.y, left: offset.x };
 }
 
+// A dimension is "fixed" when it has a concrete unit (dp/sp/px) and no special
+// value (wrap_content / match_parent). percent is NOT fixed.
+function isFixedDimension(dim?: Dimension): boolean {
+  if (!dim || dim.special != null) return false;
+  return dim.unit === 'dp' || dim.unit === 'sp' || dim.unit === 'px';
+}
+
 export function resolveLayoutStyle(layout: Layout, rootHeightPx: number): ViewStyle {
   const style: ViewStyle = {};
 
-  const width = resolveDimension(layout.width);
-  if (width === MATCH_PARENT_MARKER) {
-    // Fill horizontal space. Use width: '100%', not flex: 1 - flex fills the
-    // main axis (height in a vertical container), not width.
+  // aspectRatio overrides percent dimensions — parity with Android (Compose
+  // modifier order), iOS (SwiftUI frame) and Flutter (AspectRatio widget): an
+  // aspectRatio node takes the full available parent width and derives
+  // height = width / aspectRatio, ignoring any width.percent / height.percent.
+  // aspectRatio is skipped ONLY when BOTH width AND height are fixed (dp/sp/px)
+  // simultaneously — then the fixed box defines the size.
+  const bothFixed =
+    isFixedDimension(layout.width) && isFixedDimension(layout.height);
+
+  if (layout.aspectRatio != null && !bothFixed) {
     style.width = '100%';
-  } else if (width !== undefined) {
-    // Explicit width must hold its size. flexShrink: 0 stops a sibling from
-    // squeezing it in a horizontal row.
-    style.width = width as number | `${number}%`;
-    style.flexShrink = 0;
-  }
-  // wrap_content keeps RN's default flexShrink of 1, so it can shrink to make
-  // room for fixed-size siblings.
-
-  const height = resolveDimension(layout.height);
-  if (height === MATCH_PARENT_MARKER) {
-    // Fill vertical space. Use height: '100%', not flex: 1. flex fills the main
-    // axis. The main axis is the width in a horizontal container, not the
-    // height. This matches native fillMaxHeight (Android) and
-    // maxHeight: .infinity (iOS). Those fill the height in any container
-    // direction.
-    style.height = '100%';
-  } else if (height !== undefined) {
-    style.height = height as number | `${number}%`;
-  }
-
-  if (layout.aspectRatio != null) {
     style.aspectRatio = layout.aspectRatio;
+  } else {
+    const width = resolveDimension(layout.width);
+    if (width === MATCH_PARENT_MARKER) {
+      // Fill horizontal space. Use width: '100%', not flex: 1 - flex fills the
+      // main axis (height in a vertical container), not width.
+      style.width = '100%';
+    } else if (width !== undefined) {
+      // Explicit width must hold its size. flexShrink: 0 stops a sibling from
+      // squeezing it in a horizontal row.
+      style.width = width as number | `${number}%`;
+      style.flexShrink = 0;
+    }
+    // wrap_content keeps RN's default flexShrink of 1, so it can shrink to make
+    // room for fixed-size siblings.
+
+    const height = resolveDimension(layout.height);
+    if (height === MATCH_PARENT_MARKER) {
+      // Fill vertical space. Use height: '100%', not flex: 1. flex fills the main
+      // axis. The main axis is the width in a horizontal container, not the
+      // height. This matches native fillMaxHeight (Android) and
+      // maxHeight: .infinity (iOS). Those fill the height in any container
+      // direction.
+      style.height = '100%';
+    } else if (height !== undefined) {
+      style.height = height as number | `${number}%`;
+    }
+    // Both width & height fixed with an aspectRatio present -> aspectRatio is
+    // intentionally skipped (the fixed box wins), matching native.
   }
 
   if (layout.padding) {

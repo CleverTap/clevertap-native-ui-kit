@@ -22,6 +22,7 @@ import type {
   NativeDisplayUnit,
   NativeDisplayActionListener,
 } from '@clevertap/native-display-sdk';
+import { fireEvent, isCanonicalEvent, runSequence, subscribeAutomation } from '../screenshotAutomation';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -88,6 +89,30 @@ export function CleverTapIntegrationScreen(): React.ReactElement {
       NativeDisplayBridge.shared.removeListener(listener);
       appendLog('Bridge listener removed');
     };
+  }, [appendLog]);
+
+  // Screenshot automation: App.tsx publishes a request when an automation deep
+  // link is opened. We fire through the same recordEvent path as the Send Event
+  // button, logging each event so screenshots show which event is active.
+  //   - single   → ndautomation://event?name=<eventName>   (fire one event)
+  //   - sequence → ndautomation://events?settle=<seconds>  (fire all 22)
+  useEffect(() => {
+    return subscribeAutomation((request) => {
+      if (request.kind === 'single') {
+        // Guard against typos in the deep link — only canonical events fire.
+        if (!isCanonicalEvent(request.name)) {
+          appendLog(`AUTOMATION WARNING unknown event '${request.name}' ignored`);
+          return;
+        }
+        fireEvent(request.name);
+        appendLog(`AUTOMATION EVENT ${request.name}`);
+        return;
+      }
+      appendLog(`AUTOMATION start (settle ${request.settleSeconds}s, 22 events)`);
+      runSequence(request.settleSeconds, (name, index, total) => {
+        appendLog(`AUTOMATION ${index + 1}/${total} EVENT ${name}`);
+      }).catch((e) => appendLog(`AUTOMATION ERROR ${String(e)}`));
+    });
   }, [appendLog]);
 
   const actionListener: NativeDisplayActionListener = {

@@ -106,7 +106,7 @@ NativeDisplayBridge.shared.fetchNativeDisplays(CleverTap);
 
 Render campaigns with `<NativeDisplayView />`. See
 [Using it in your code](#using-it-in-your-code) for a full example, and the
-runnable app in [`example/`](example/).
+runnable app in [`example/`](https://github.com/CleverTap/clevertap-native-ui-kit/tree/main/react-native/example).
 
 ### 4. Check that it works
 
@@ -176,7 +176,7 @@ The JavaScript code to start the SDK and draw a campaign is identical on both
 tracks. Reuse the snippets from
 [step 2](#2-wire-it-up-at-app-startup) and [step 3](#3-show-the-campaign) above -
 just the code, not the bare install commands. A runnable Expo app lives in
-[`expo-example/`](expo-example/).
+[`expo-example/`](https://github.com/CleverTap/clevertap-native-ui-kit/tree/main/react-native/expo-example).
 
 > **Expo Go will not work.** The main CleverTap SDK needs native code that Expo
 > Go cannot load. You must use `expo prebuild` + `expo run:*`, or EAS Build.
@@ -293,8 +293,8 @@ registerComponents({
 
 The SDK prefers `ExpoImage` over `FastImage` when both are registered. Since you
 choose which keys to register, register the one you installed. For a complete
-entry file, see [`example/index.js`](example/index.js) (bare) or
-[`expo-example/index.js`](expo-example/index.js) (Expo).
+entry file, see [`example/index.js`](https://github.com/CleverTap/clevertap-native-ui-kit/blob/main/react-native/example/index.js) (bare) or
+[`expo-example/index.js`](https://github.com/CleverTap/clevertap-native-ui-kit/blob/main/react-native/expo-example/index.js) (Expo).
 
 <details>
 <summary><b>Which library powers which feature</b></summary>
@@ -357,7 +357,7 @@ export function Campaigns() {
 ```
 
 For placing campaigns into named slots, or handling taps and custom actions, see
-the runnable [`example/`](example/) app, which shows every integration pattern.
+the runnable [`example/`](https://github.com/CleverTap/clevertap-native-ui-kit/tree/main/react-native/example) app, which shows every integration pattern.
 
 ## FAQ and troubleshooting
 
@@ -442,10 +442,10 @@ See [Optional UI features](#optional-ui-features) and
 ## Reference and advanced
 
 - **Campaign JSON schema** - the full structure the SDK draws:
-  [../docs/JSON_STRUCTURE_REFERENCE.md](../docs/JSON_STRUCTURE_REFERENCE.md).
+  [JSON_STRUCTURE_REFERENCE.md](https://github.com/CleverTap/clevertap-native-ui-kit/blob/main/docs/JSON_STRUCTURE_REFERENCE.md).
 - **How it works internally** - architecture and the end-to-end render flow:
-  [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and
-  [docs/HAPPY_FLOW.md](docs/HAPPY_FLOW.md).
+  [ARCHITECTURE.md](https://github.com/CleverTap/clevertap-native-ui-kit/blob/main/react-native/docs/ARCHITECTURE.md) and
+  [HAPPY_FLOW.md](https://github.com/CleverTap/clevertap-native-ui-kit/blob/main/react-native/docs/HAPPY_FLOW.md).
 - **How optional libraries reach the SDK** - the SDK never imports the optional
   peer libraries. The app imports each one and passes it to `registerComponents`
   at startup. The SDK reads them back from that registry

@@ -61,7 +61,9 @@ class NativeDisplaySlotManager implements NativeDisplayBridgeListener {
     this._unitIndex.delete(slotId);
     const observers = this._slots.get(slotId);
     if (observers) {
-      for (const observer of observers) {
+      // Iterate over a copy. An observer may register or unregister during
+      // delivery. That would change the live Set while we loop over it.
+      for (const observer of [...observers]) {
         try { observer.onUnitCleared(slotId); } catch { /* ignore */ }
       }
     }
@@ -78,7 +80,9 @@ class NativeDisplaySlotManager implements NativeDisplayBridgeListener {
     const ct = cleverTap as Record<string, unknown>;
     if (typeof ct['recordEvent'] !== 'function') return;
 
-    const slotIds = Array.from(this.getActiveSlotIds()).join(',');
+    // Sort before joining so the string is deterministic, matching iOS
+    // (activeSlots.sorted().joined). Same slot set gives the same payload.
+    const slotIds = Array.from(this.getActiveSlotIds()).sort().join(',');
     NDLogger.d('NativeDisplaySlotManager', `Syncing active slot IDs: ${slotIds}`);
     (ct['recordEvent'] as (name: string, props: Record<string, unknown>) => void)(
       'wzrk_nd_slot_sync',
@@ -93,7 +97,9 @@ class NativeDisplaySlotManager implements NativeDisplayBridgeListener {
       this._unitIndex.set(unit.slotId, unit);
       const observers = this._slots.get(unit.slotId);
       if (observers) {
-        for (const observer of observers) {
+        // Iterate over a copy. An observer may register or unregister during
+        // delivery. That would change the live Set while we loop over it.
+        for (const observer of [...observers]) {
           try {
             observer.onUnitAvailable(unit);
           } catch (e) {
