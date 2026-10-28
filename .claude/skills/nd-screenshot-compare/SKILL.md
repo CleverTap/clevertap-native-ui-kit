@@ -17,14 +17,14 @@ eyeball each framework's rendering side-by-side.
 │   ├── header1/
 │   │   ├── flutter.png
 │   │   ├── native.png
-│   │   └── rn.png        (TODO — RN sample not yet in branch)
+│   │   └── rn.png
 │   ├── header2/ ...
 │   └── home/
 └── ios/
     ├── header1/
     │   ├── flutter.png
     │   ├── native.png
-    │   └── rn.png        (TODO)
+    │   └── rn.png
     └── ...
 ```
 
@@ -150,9 +150,38 @@ xcodebuild test -scheme NativeDisplaySample \
 
 Helper: `scripts/capture_ios_native.sh <UDID> <outDir>` (runs twice).
 
-### RN (React Native) — TODO
-Not yet in this branch. See the TODO section at the bottom. Placeholder helper:
-`scripts/capture_rn.sh` (echoes a TODO notice).
+### RN (React Native) — Android
+The RN example (`react-native/example`) has no test harness, so Android is driven by adb
+UI automation: tap the event input, type the event, submit via the IME ENTER action
+(the input uses `returnKeyType="send"` + `onSubmitEditing`), then screencap.
+
+```bash
+scripts/capture_rn_android.sh <serial> <outDir> [settle] [package] [activity]
+# defaults: settle=12  package=com.ndexample  activity=.MainActivity
+```
+
+- **Never sends BACK** — the RN app uses in-app navigation, so BACK at the root drops to
+  the launcher. It verifies the app is foreground before each event and recovers if not.
+- Produces `rn-events-<event>.png`.
+- Preconditions: the RN example is built, installed and **launched on the Events screen**;
+  Metro is running (debug build).
+
+### RN (React Native) — iOS
+`simctl` can screenshot but cannot tap/type, and there's no XCUITest harness — so the APP
+drives itself. The example registers an **in-app automation mode** (SDK-6264) that fires
+one event when it receives the deep link `ndautomation://event?name=<eventName>`. The
+helper opens that URL once per event (full pacing control), waits `settle`, and captures
+with `xcrun simctl io screenshot`.
+
+```bash
+scripts/capture_rn_ios.sh <UDID> <outDir> [settle] [bundleId]
+# defaults: settle=12  bundleId=com.clevertap.nativedisplay.sample
+```
+
+- Produces `rn-events-<event>.png`.
+- Preconditions: the RN example is built, installed and launched; Metro is running; the
+  **automation mode (SDK-6264) is present** in the example app.
+- Get a booted sim UDID with `xcrun simctl list devices booted`.
 
 ---
 
@@ -166,6 +195,8 @@ scripts/segregate.sh \
   --native-android  <dir with composeEventsScreen_fireAllEvents_*.png> \
   --flutter-ios     <dir with flutter-events-*.png captured on an iOS sim> \
   --native-ios      <dir with swiftui-events-*.png> \
+  --rn-android      <dir with rn-events-*.png captured on an ANDROID device> \
+  --rn-ios          <dir with rn-events-*.png captured on an iOS sim> \
   [--out ~/Desktop/nd-screenshots-review]
 ```
 
@@ -177,10 +208,10 @@ Mapping performed:
 | `composeEventsScreen_fireAllEvents_<event>.png`   | `android/<event>/native.png`         |
 | `flutter-events-<event>.png` (iOS capture)        | `ios/<event>/flutter.png`            |
 | `swiftui-events-<event>.png`                      | `ios/<event>/native.png`             |
-| RN (Android/iOS)                                  | `android|ios/<event>/rn.png` (TODO)  |
+| `rn-events-<event>.png` (Android capture)         | `android/<event>/rn.png`             |
+| `rn-events-<event>.png` (iOS capture)             | `ios/<event>/rn.png`                 |
 
-`segregate.sh` also writes `README.txt` at the review root describing the layout and the
-RN TODO.
+`segregate.sh` also writes `README.txt` at the review root describing the layout.
 
 ---
 
@@ -214,30 +245,40 @@ bash $S/capture_flutter.sh       <androidDeviceId> /tmp/nd/flutter-android
 bash $S/capture_flutter.sh       <iosDeviceId>     /tmp/nd/flutter-ios
 bash $S/capture_android_native.sh                   /tmp/nd/native-android
 bash $S/capture_ios_native.sh    <iosUDID>         /tmp/nd/native-ios
-# bash $S/capture_rn.sh  (TODO)
+bash $S/capture_rn_android.sh    <androidSerial>   /tmp/nd/rn-android
+bash $S/capture_rn_ios.sh        <iosUDID>         /tmp/nd/rn-ios
 
 # 2. Segregate into the review bundle
 bash $S/segregate.sh \
   --flutter-android /tmp/nd/flutter-android \
   --native-android  /tmp/nd/native-android \
   --flutter-ios     /tmp/nd/flutter-ios \
-  --native-ios      /tmp/nd/native-ios
+  --native-ios      /tmp/nd/native-ios \
+  --rn-android      /tmp/nd/rn-android \
+  --rn-ios          /tmp/nd/rn-ios
 
 open ~/Desktop/nd-screenshots-review
 ```
 
 ---
 
-## TODO — React Native (RN) framework
+## React Native specifics
 
-The RN sample is **not in this branch yet**. When it lands:
+The RN example is at `react-native/example`. Two different driving mechanisms (see the
+capture sections above):
 
-1. Add an RN capture step producing `rn.png`, mirroring the Flutter approach: the RN
-   sample will likely expose its own events screen plus a screenshot mechanism that fires
-   the same 22 canonical events (same order/casing) and names each shot after the event.
-2. Flesh out `scripts/capture_rn.sh` to drive that automation and drop
-   `rn-events-<event>.png` (or equivalent) into an output dir.
-3. Extend `scripts/segregate.sh` with `--rn-android` / `--rn-ios` flags mapping to
-   `android/<event>/rn.png` and `ios/<event>/rn.png`.
-4. Wire the same staging credentials (`468-RZW-ZK6Z` / `012-b64` / `sk1-staging-25`) into
-   the RN sample's native config, LOCAL ONLY.
+- **Android** — adb UI automation (`capture_rn_android.sh`), driving the real on-screen
+  input + IME submit. Works against the stock example app; no app changes required.
+- **iOS** — in-app automation mode triggered by the deep link
+  `ndautomation://event?name=<event>` (`capture_rn_ios.sh`), because simctl can't tap/type.
+  This requires the example's automation mode (**SDK-6264**). If that change isn't present
+  in the RN example you're running, the deep link is a no-op and the shots will be blank —
+  build an example that includes it.
+
+Both drivers need the RN example **built, installed, launched** with Metro running, pointed
+at the SAME staging credentials as the other samples. Wire `468-RZW-ZK6Z` / `012-b64` /
+`sk1-staging-25` into the RN example's native config **LOCAL ONLY**:
+- Android: `react-native/example/android/app/src/main/res/values/strings.xml`
+- iOS: `react-native/example/ios/**/Info.plist`
+
+> ⚠️ Same rule as the other samples — never commit RN credential changes.

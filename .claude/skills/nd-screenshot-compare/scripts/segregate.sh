@@ -8,8 +8,8 @@
 #     --native-android  <dir>   # composeEventsScreen_fireAllEvents_<event>.png
 #     --flutter-ios     <dir>   # flutter-events-<event>.png captured on an iOS sim
 #     --native-ios      <dir>   # swiftui-events-<event>.png
-#     --rn-android      <dir>   # TODO
-#     --rn-ios          <dir>   # TODO
+#     --rn-android      <dir>   # rn-events-<event>.png (capture_rn_android.sh)
+#     --rn-ios          <dir>   # rn-events-<event>.png (capture_rn_ios.sh)
 #     [--out <dir>]             # default: ~/Desktop/nd-screenshots-review
 set -euo pipefail
 
@@ -66,7 +66,6 @@ copy_set "$FLUTTER_ANDROID" android flutter "flutter-events-" ""
 copy_set "$NATIVE_ANDROID"  android native  "composeEventsScreen_fireAllEvents_" ""
 copy_set "$FLUTTER_IOS"     ios     flutter "flutter-events-" ""
 copy_set "$NATIVE_IOS"      ios     native  "swiftui-events-" ""
-# RN — TODO; patterns unknown until the RN sample lands.
 copy_set "$RN_ANDROID"      android rn      "rn-events-" ""
 copy_set "$RN_IOS"          ios     rn      "rn-events-" ""
 
@@ -95,12 +94,16 @@ Source -> destination mapping:
   composeEventsScreen_fireAllEvents_<event>.png -> android/<event>/native.png
   flutter-events-<event>.png (iOS capture)      -> ios/<event>/flutter.png
   swiftui-events-<event>.png                    -> ios/<event>/native.png
-  rn (Android/iOS)                              -> android|ios/<event>/rn.png  [TODO]
+  rn-events-<event>.png (Android capture)       -> android/<event>/rn.png
+  rn-events-<event>.png (iOS capture)           -> ios/<event>/rn.png
 
-TODO — React Native (rn.png):
-  The RN sample is not in this branch yet. When it lands, add an RN capture step
-  (framework=rn) mirroring the Flutter approach and re-run segregation with
-  --rn-android / --rn-ios so rn.png appears alongside flutter.png and native.png.
+React Native capture:
+  Android — scripts/capture_rn_android.sh drives the Events screen via adb UI
+    automation (tap input, type event, IME-submit) and screencaps per event.
+  iOS     — scripts/capture_rn_ios.sh triggers the RN example's in-app automation
+    mode via the deep link ndautomation://events?settle=<N> and captures each
+    event with `xcrun simctl io screenshot` (simctl can't tap/type, so the app
+    drives itself). Requires the RN example's automation mode (SDK-6264).
 
 Caveats:
   - Per-event campaign content can legitimately differ across platforms (dashboard
