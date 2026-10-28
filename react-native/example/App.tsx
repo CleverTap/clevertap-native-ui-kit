@@ -70,12 +70,14 @@ export default function App(): React.ReactElement {
   }, []);
 
   // ─── Screenshot automation deep link ──────────────────────────────────────
-  // Opening `ndautomation://events?settle=<seconds>` drives the app for the
-  // cross-platform screenshot comparison: switch to the Events tab, then let
-  // that screen fire the 22 canonical CleverTap events one every `settle`
-  // seconds. Handles both cold start (getInitialURL) and warm foreground
-  // (Linking 'url' event). This is inert unless the URL is opened, so it has no
-  // effect on normal usage.
+  // Drives the app for the cross-platform screenshot comparison. Switches to the
+  // Events tab, then lets that screen fire via CleverTap.recordEvent:
+  //   ndautomation://event?name=<eventName>   → fire that one event (primary;
+  //                                              the capture script opens this
+  //                                              once per canonical event)
+  //   ndautomation://events?settle=<seconds>  → fire all 22, settle apart
+  // Handles both cold start (getInitialURL) and warm foreground (Linking 'url'
+  // event). Inert unless a URL is opened, so no effect on normal usage.
   useEffect(() => {
     const handleUrl = (url: string | null): void => {
       const request = parseAutomationUrl(url);
