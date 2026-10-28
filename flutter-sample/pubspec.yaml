@@ -33,7 +33,7 @@ dev_dependencies:
   flutter_lints: ^4.0.0
 
 # Monorepo local development. The add-on packages declare a HOSTED core dep
-# (clevertap_native_display: ^0.1.0) so they're publishable, but locally every
+# (clevertap_native_display: ^1.0.0) so they're publishable, but locally every
 # package must resolve core from the sibling path. A dependency_overrides in the
 # root (this sample) pins the source for the whole resolution — including the
 # add-ons — so path and hosted don't conflict.
