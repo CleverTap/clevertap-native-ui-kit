@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:clevertap_native_display/src/style/style_resolver.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 // Validates the hand-authored percent+aspectRatio gallery samples parse cleanly
 // through the real models + StyleResolver (the same path the parser uses), and

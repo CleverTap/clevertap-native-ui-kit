@@ -22,7 +22,7 @@ class NDTheme {
             ? Style.fromJson(json['defaultStyle'] as Map<String, dynamic>)
             : Style.empty,
         colors: (json['colors'] as Map<String, dynamic>?)
-                ?.map((k, v) => MapEntry(k, v as String)) ??
+                ?.map((k, v) => MapEntry(k, v?.toString() ?? '')) ??
             const {},
       );
 }

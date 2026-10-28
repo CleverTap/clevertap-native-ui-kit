@@ -105,7 +105,7 @@ class NavigateAction extends NDAction {
   factory NavigateAction.fromJson(Map<String, dynamic> json) => NavigateAction(
         destination: json['destination'] as String? ?? '',
         params: (json['params'] as Map<String, dynamic>?)
-            ?.map((k, v) => MapEntry(k, v as String)),
+            ?.map((k, v) => MapEntry(k, v?.toString() ?? '')),
       );
 }
 

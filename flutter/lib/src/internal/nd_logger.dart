@@ -19,7 +19,7 @@ enum NDLogLevel {
   const NDLogLevel(this.value);
 
   static NDLogLevel fromInt(int v) =>
-      NDLogLevel.values.firstWhere((l) => l.value == v, orElse: () => NDLogLevel.debug);
+      NDLogLevel.values.firstWhere((l) => l.value == v, orElse: () => NDLogLevel.info);
 }
 
 /// Structured logger for the Native Display SDK.

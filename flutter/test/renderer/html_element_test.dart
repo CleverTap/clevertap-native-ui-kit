@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 // HtmlElement uses WebViewController which requires platform channels.
 // Tests here validate configuration logic without constructing the widget.
@@ -32,10 +32,10 @@ void main() {
     });
 
     test('HtmlConfig defaults: JS disabled, scroll disabled, transparent', () {
-      final node = NativeDisplayElement(
+      const node = NativeDisplayElement(
         id: 'html',
         elementType: ElementType.html,
-        bindings: const {},
+        bindings: {},
       );
       // Default htmlConfig is null → defaults apply in HtmlElement
       expect(node.htmlConfig, isNull);

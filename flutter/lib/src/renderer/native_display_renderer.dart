@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
+
 import '../evaluator/variable_evaluator.dart';
+import '../internal/nd_logger.dart';
 import '../models/enums.dart';
 import '../models/layout.dart';
 import '../models/native_display_node.dart';
@@ -9,14 +11,13 @@ import 'containers/box_container.dart';
 import 'containers/gallery_renderer.dart';
 import 'containers/horizontal_container.dart';
 import 'containers/vertical_container.dart';
-import '../internal/nd_logger.dart';
-import 'nd_element_registry.dart';
 import 'elements/button_element.dart';
 import 'elements/divider_element.dart';
 import 'elements/image_element.dart';
 import 'elements/spacer_element.dart';
 import 'elements/text_element.dart';
 import 'native_display_scope.dart';
+import 'nd_element_registry.dart';
 import 'style_applier.dart';
 
 class NativeDisplayRenderer extends StatelessWidget {
@@ -41,31 +42,38 @@ class NativeDisplayRenderer extends StatelessWidget {
     final style = resolvedStyles[node.id] ?? Style.empty;
     final rootHeight = NativeDisplayScope.rootHeightOf(context);
 
-    Widget built = switch (node) {
-      NativeDisplayContainer c => _buildContainer(c, style),
-      NativeDisplayElement e => _buildElement(context, e, style),
-    };
+    // Per-node safety net: a single malformed node must not tear down the whole
+    // view. On any render failure, log and render nothing in that node's place.
+    try {
+      Widget built = switch (node) {
+        final NativeDisplayContainer c => _buildContainer(c, style),
+        final NativeDisplayElement e => _buildElement(context, e, style),
+      };
 
-    // Containers apply style here; elements apply their own style internally.
-    if (node is NativeDisplayContainer) {
-      built = StyleApplier.apply(
-        built,
-        style,
-        rootHeight: rootHeight,
-        padding: node.layout?.padding,
-      );
+      // Containers apply style here; elements apply their own style internally.
+      if (node is NativeDisplayContainer) {
+        built = StyleApplier.apply(
+          built,
+          style,
+          rootHeight: rootHeight,
+          padding: node.layout?.padding,
+        );
+      }
+
+      // Apply aspectRatio and fixed (dp/sp/px) sizing.
+      // Percent sizing is handled by each parent container:
+      //   BOX → Positioned(width:, height:), VERTICAL/HORIZONTAL → FractionallySizedBox.
+      built = _wrapWithSizing(built, node.layout);
+
+      final anim = node.animation;
+      if (anim != null && anim.type != AnimationType.none) {
+        built = AnimationModifier(animation: anim, child: built);
+      }
+      return built;
+    } catch (e, st) {
+      NDLogger.e('NativeDisplayRenderer', 'Failed to render node ${node.id}', e, st);
+      return const SizedBox.shrink();
     }
-
-    // Apply aspectRatio and fixed (dp/sp/px) sizing.
-    // Percent sizing is handled by each parent container:
-    //   BOX → Positioned(width:, height:), VERTICAL/HORIZONTAL → FractionallySizedBox.
-    built = _wrapWithSizing(built, node.layout);
-
-    final anim = node.animation;
-    if (anim != null && anim.type != AnimationType.none) {
-      built = AnimationModifier(animation: anim, child: built);
-    }
-    return built;
   }
 
   Widget _buildContainer(NativeDisplayContainer node, Style style) {

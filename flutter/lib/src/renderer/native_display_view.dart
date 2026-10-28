@@ -83,11 +83,13 @@ class NativeDisplayView extends StatefulWidget {
 
 class _NativeDisplayViewState extends State<NativeDisplayView> {
   late Map<String, Style> _resolvedStyles;
+  late VariableEvaluator _evaluator;
 
   @override
   void initState() {
     super.initState();
     _resolvedStyles = _resolve();
+    _evaluator = VariableEvaluator(widget.config.variables);
   }
 
   @override
@@ -96,6 +98,9 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
     if (!identical(old.config, widget.config) ||
         !identical(old.resolvedStyles, widget.resolvedStyles)) {
       _resolvedStyles = _resolve();
+    }
+    if (!identical(old.config.variables, widget.config.variables)) {
+      _evaluator = VariableEvaluator(widget.config.variables);
     }
   }
 
@@ -112,7 +117,7 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
     final root = widget.config.root;
     if (root == null) return const SizedBox.shrink();
 
-    final evaluator = VariableEvaluator(widget.config.variables);
+    final evaluator = _evaluator;
     final layout = root.layout;
 
     // Optimization: when root has only fixed (dp) dimensions and no aspectRatio,
@@ -345,6 +350,7 @@ class _TrackNotificationViewedState extends State<_TrackNotificationViewed> {
       // canvas actually being on-screen (matches LaunchedEffect cadence
       // on Android).
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
         widget.onViewed?.call(id);
       });
     }

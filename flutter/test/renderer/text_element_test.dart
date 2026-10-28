@@ -1,7 +1,7 @@
-import 'package:flutter/widgets.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:clevertap_native_display/src/renderer/elements/text_element.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   Widget wrap(Widget w) => Directionality(
@@ -32,7 +32,7 @@ void main() {
     testWidgets('renders Text widget with text from bindings', (tester) async {
       final node = makeTextElement(text: 'Hello World');
       await tester.pumpWidget(wrap(
-        TextElement(node: node, style: Style.empty, evaluator: VariableEvaluator({})),
+        TextElement(node: node, style: Style.empty, evaluator: const VariableEvaluator({})),
       ));
 
       expect(find.text('Hello World'), findsOneWidget);
@@ -44,7 +44,7 @@ void main() {
         TextElement(
           node: node,
           style: Style.empty,
-          evaluator: VariableEvaluator({'name': 'Alice'}),
+          evaluator: const VariableEvaluator({'name': 'Alice'}),
         ),
       ));
 
@@ -56,7 +56,7 @@ void main() {
       final node = makeTextElement();
 
       await tester.pumpWidget(wrap(
-        TextElement(node: node, style: style, evaluator: VariableEvaluator({})),
+        TextElement(node: node, style: style, evaluator: const VariableEvaluator({})),
       ));
 
       final text = tester.widget<Text>(find.byType(Text));
@@ -68,7 +68,7 @@ void main() {
       final node = makeTextElement();
 
       await tester.pumpWidget(wrap(
-        TextElement(node: node, style: style, evaluator: VariableEvaluator({})),
+        TextElement(node: node, style: style, evaluator: const VariableEvaluator({})),
       ));
 
       final text = tester.widget<Text>(find.byType(Text));
@@ -85,7 +85,7 @@ void main() {
       final node = makeTextElement();
 
       await tester.pumpWidget(wrap(
-        TextElement(node: node, style: style, evaluator: VariableEvaluator({})),
+        TextElement(node: node, style: style, evaluator: const VariableEvaluator({})),
       ));
 
       expect(find.byType(ShaderMask), findsOneWidget);
@@ -96,7 +96,7 @@ void main() {
       final node = makeTextElement();
 
       await tester.pumpWidget(wrap(
-        TextElement(node: node, style: style, evaluator: VariableEvaluator({})),
+        TextElement(node: node, style: style, evaluator: const VariableEvaluator({})),
       ));
 
       final text = tester.widget<Text>(find.byType(Text));
@@ -108,7 +108,7 @@ void main() {
       final node = makeTextElement();
 
       await tester.pumpWidget(wrap(
-        TextElement(node: node, style: style, evaluator: VariableEvaluator({})),
+        TextElement(node: node, style: style, evaluator: const VariableEvaluator({})),
       ));
 
       final text = tester.widget<Text>(find.byType(Text));

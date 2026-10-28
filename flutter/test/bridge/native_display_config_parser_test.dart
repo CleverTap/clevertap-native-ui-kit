@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 // Guards the raw display-unit → NativeDisplayUnit parse contract, including the
 // container/style/padding shape the sample Slot Demo injects. A regression here

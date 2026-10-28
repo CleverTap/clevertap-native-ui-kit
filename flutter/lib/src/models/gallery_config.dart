@@ -103,18 +103,18 @@ class GalleryConfig {
             ? PeekConfig.fromJson(json['peek'] as Map<String, dynamic>)
             : const PeekConfig(),
         itemsPerView: (json['itemsPerView'] as num?)?.toDouble() ?? 1,
-        columns: json['columns'] as int?,
+        columns: (json['columns'] as num?)?.toInt(),
         spacing: (json['spacing'] as num?)?.toDouble() ?? 8,
         showIndicators: json['showIndicators'] as bool? ?? false,
         indicatorStyle: json['indicatorStyle'] != null
             ? IndicatorStyle.fromJson(json['indicatorStyle'] as Map<String, dynamic>)
             : null,
-        autoScrollInterval: json['autoScrollInterval'] as int? ?? 0,
+        autoScrollInterval: (json['autoScrollInterval'] as num?)?.toInt() ?? 0,
         infiniteScroll: json['infiniteScroll'] as bool? ?? false,
         showArrows: json['showArrows'] as bool? ?? false,
         arrowStyle: json['arrowStyle'] != null
             ? ArrowStyle.fromJson(json['arrowStyle'] as Map<String, dynamic>)
             : null,
-        initialPage: json['initialPage'] as int? ?? 0,
+        initialPage: (json['initialPage'] as num?)?.toInt() ?? 0,
       );
 }

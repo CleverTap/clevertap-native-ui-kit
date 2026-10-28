@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../handler/action_attribution_extras.dart';
+import '../../internal/nd_logger.dart';
 import '../../models/action.dart';
 import '../../models/enums.dart';
 import '../../models/native_display_node.dart';
@@ -47,6 +48,10 @@ class ImageElement extends StatelessWidget {
           image: DecorationImage(
             image: NetworkImage(url),
             repeat: ImageRepeat.repeat,
+            // DecorationImage can't substitute a widget on failure — log and
+            // swallow so a bad tile URL doesn't surface as an uncaught error.
+            onError: (e, st) =>
+                NDLogger.e('ImageElement', 'Tile image failed: $url', e, st),
           ),
         ),
       );

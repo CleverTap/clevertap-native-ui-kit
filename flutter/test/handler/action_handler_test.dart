@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('ActionHandler listener dispatch', () {
@@ -93,13 +93,13 @@ void main() {
     });
 
     test('no listener — no crash on custom action', () async {
-      final handler = ActionHandler();
+      const handler = ActionHandler();
       final action = NDAction.fromJson({'type': 'custom', 'key': 'x'});
       await expectLater(handler.handle(action, 'n'), completes);
     });
 
     test('no listener — no crash on navigate action', () async {
-      final handler = ActionHandler();
+      const handler = ActionHandler();
       final action = NDAction.fromJson({'type': 'navigate', 'destination': 'home'});
       await expectLater(handler.handle(action, 'n'), completes);
     });

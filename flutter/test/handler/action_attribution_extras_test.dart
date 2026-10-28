@@ -1,6 +1,6 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:clevertap_native_display/src/internal/nd_sdk_version.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 // Mirrors android/sdk .../handler/ActionAttributionExtrasTest.kt and the iOS
 // equivalent — the flattening keys must match key-for-key for dashboard parity.

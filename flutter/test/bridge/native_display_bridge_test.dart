@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 // The bridge is pure Dart now: log-level configuration only. Attribution is
 // surfaced via NativeDisplayView callbacks (see native_display_attribution_test).
@@ -21,9 +21,11 @@ void main() {
       expect(NDLogger.isExplicitlySet, isFalse);
     });
 
-    test('syncLogLevelFromCore maps an unknown level to DEBUG', () {
+    test('syncLogLevelFromCore maps an unknown level to INFO', () {
+      // Unknown Core debug levels fall back to INFO — never silently enabling
+      // verbose/debug output.
       NativeDisplayBridge.syncLogLevelFromCore(99);
-      expect(NDLogger.currentLevel, NDLogLevel.debug);
+      expect(NDLogger.currentLevel, NDLogLevel.info);
     });
 
     test('client setLogLevel wins over a subsequent core sync', () {

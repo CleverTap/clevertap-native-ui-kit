@@ -67,8 +67,8 @@ class NDAnimation {
 
   factory NDAnimation.fromJson(Map<String, dynamic> json) => NDAnimation(
         type: AnimationType.fromJson(json['type'] as String? ?? 'none'),
-        duration: json['duration'] as int? ?? 300,
-        delay: json['delay'] as int? ?? 0,
+        duration: (json['duration'] as num?)?.toInt() ?? 300,
+        delay: (json['delay'] as num?)?.toInt() ?? 0,
         easing: Easing.fromJson(json['easing'] as String? ?? 'ease_out'),
       );
 }
