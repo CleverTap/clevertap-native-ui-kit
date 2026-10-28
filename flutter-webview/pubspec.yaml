@@ -1,6 +1,6 @@
 name: clevertap_native_display_webview
 description: Optional HTML element renderer for CleverTap Native Display (webview_flutter-backed add-on).
-version: 0.1.0
+version: 1.0.0
 homepage: https://github.com/CleverTap/clevertap-native-ui-kit
 
 environment:
@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  clevertap_native_display: ^0.1.0
+  clevertap_native_display: ^1.0.0
   webview_flutter: ^4.9.0
 
 dev_dependencies:
@@ -20,7 +20,7 @@ dev_dependencies:
 
 # Monorepo local development: resolve the core SDK from the sibling path instead
 # of pub.dev. Overrides are ignored when this package is consumed as a published
-# dependency, so the hosted ^0.1.0 constraint above is what ships.
+# dependency, so the hosted ^1.0.0 constraint above is what ships.
 dependency_overrides:
   clevertap_native_display:
     path: ../flutter

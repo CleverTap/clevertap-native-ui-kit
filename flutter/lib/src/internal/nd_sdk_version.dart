@@ -5,8 +5,8 @@
 /// `BuildConfig.ND_LIB_VERSION_NAME` / `ND_LIB_VERSION_CODE` and iOS's
 /// `NativeDisplaySDKVersion`.
 abstract final class NDSdkVersion {
-  static const String name = '0.1.0';
+  static const String name = '1.0.0';
 
   // Integer code derived from [name] (major*10000 + minor*100 + patch).
-  static const int code = 100;
+  static const int code = 10000;
 }
