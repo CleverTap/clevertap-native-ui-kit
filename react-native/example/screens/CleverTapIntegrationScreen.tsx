@@ -22,6 +22,7 @@ import type {
   NativeDisplayUnit,
   NativeDisplayActionListener,
 } from '@clevertap/native-display-sdk';
+import { runAutomation, subscribeAutomation } from '../screenshotAutomation';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -88,6 +89,20 @@ export function CleverTapIntegrationScreen(): React.ReactElement {
       NativeDisplayBridge.shared.removeListener(listener);
       appendLog('Bridge listener removed');
     };
+  }, [appendLog]);
+
+  // Screenshot automation: App.tsx publishes a request when the
+  // `ndautomation://events?settle=<seconds>` deep link is opened. We fire the
+  // 22 canonical events through the same recordEvent path as the Send Event
+  // button, logging each so screenshots show which event is active. The driver
+  // itself guards against double-start.
+  useEffect(() => {
+    return subscribeAutomation((request) => {
+      appendLog(`AUTOMATION start (settle ${request.settleSeconds}s, 22 events)`);
+      runAutomation(request, (name, index, total) => {
+        appendLog(`AUTOMATION ${index + 1}/${total} EVENT ${name}`);
+      }).catch((e) => appendLog(`AUTOMATION ERROR ${String(e)}`));
+    });
   }, [appendLog]);
 
   const actionListener: NativeDisplayActionListener = {
