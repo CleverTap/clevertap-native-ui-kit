@@ -79,6 +79,29 @@ void main() {
       expect(fired, isFalse);
     });
 
+    testWidgets('two units on screen each fire viewed exactly once', (tester) async {
+      final viewed = <String>[];
+
+      await tester.pumpWidget(_wrap(Column(children: [
+        NativeDisplayView(
+          config: _buttonConfig(),
+          unitId: 'unit-a',
+          onNotificationViewed: viewed.add,
+        ),
+        NativeDisplayView(
+          config: _imageConfig(),
+          unitId: 'unit-b',
+          onNotificationViewed: viewed.add,
+        ),
+      ])));
+      await tester.pump(); // run the post-frame callbacks
+
+      // Each distinct unit fires once; one unit's impression never suppresses
+      // another's (the gate is keyed per unitId, not a global latch).
+      expect(viewed, containsAll(<String>['unit-a', 'unit-b']));
+      expect(viewed.length, 2);
+    });
+
     testWidgets('re-fires after unmount then remount (fresh impression)', (tester) async {
       final viewed = <String>[];
 
