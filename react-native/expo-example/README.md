@@ -29,7 +29,7 @@ react-native/
     ├── metro.config.js        ← Aliases @bare-example/* and @clevertap/native-display-sdk
     ├── babel.config.js        ← babel-preset-expo + reanimated/plugin (last)
     ├── app.json               ← Expo config with @clevertap/clevertap-expo-plugin
-    └── stubs/                 ← Null shim for missing optional peer deps
+    └── index.js               ← registerComponents(...) wires optional native deps
 ```
 
 ## Setup
@@ -126,10 +126,10 @@ so this example exercises every renderer code path. One deliberate omission:
 
 If you want to test the graceful-degradation paths in
 `src/optional/optionalDeps.ts`, `npm uninstall` whichever package you want to
-drop. No Metro stub is needed: the SDK loads each optional dep through
-eval('require'), so Metro never tries to resolve a missing package at bundle
-time. The SDK catches the missing package at runtime and falls back to its
-degraded rendering.
+drop and remove its entry from the `registerComponents` call in `index.js`. No
+Metro stub is needed: the SDK never imports optional deps itself - it reads them
+from the `registerComponents` registry. A package that was never registered
+makes the SDK fall back to its degraded rendering.
 
 ## npm peer-deps note
 

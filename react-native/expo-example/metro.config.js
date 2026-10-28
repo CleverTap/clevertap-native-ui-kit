@@ -11,11 +11,11 @@
 //      from `expo-example/node_modules` so we don't end up with two copies of
 //      the same package loaded into the runtime.
 //
-// Missing optional UI peer deps need no Metro stub. The SDK loads each one
-// through eval('require') in ../src/optional/optionalDeps.ts, so Metro never
-// tries to resolve a missing package at bundle time. A missing package fails
-// only at runtime, where the SDK catches it and the feature degrades
-// gracefully.
+// Missing optional UI peer deps need no Metro stub. The SDK never imports these
+// packages. The client passes the ones it uses to registerComponents at startup,
+// and ../src/optional/optionalDeps.ts reads them back from that registry. So
+// Metro never tries to resolve a missing package at bundle time. A feature whose
+// package was not registered degrades gracefully at its use site.
 
 const { getDefaultConfig } = require('expo/metro-config');
 const path = require('path');
