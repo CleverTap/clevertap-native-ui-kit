@@ -39,11 +39,11 @@ void main() {
       String? capturedAction;
       String? capturedNodeId;
 
-      final action = NDAction.fromJson({'type': 'custom', 'key': 'test'});
+      final action = NDAction.fromJson(const {'type': 'custom', 'key': 'test'});
       final node = NativeDisplayElement(
         id: 'btn',
         elementType: ElementType.button,
-        bindings: {'text': 'Tap'},
+        bindings: const {'text': 'Tap'},
         actions: {'onClick': action},
       );
 
@@ -91,7 +91,7 @@ void main() {
       final node = NativeDisplayElement(
         id: 'spacer',
         elementType: ElementType.spacer,
-        layout: Layout.fromJson({
+        layout: Layout.fromJson(const {
           'width': {'special': 'match_parent'},
         }),
       );
@@ -107,7 +107,7 @@ void main() {
       final node = NativeDisplayElement(
         id: 'spacer',
         elementType: ElementType.spacer,
-        layout: Layout.fromJson({
+        layout: Layout.fromJson(const {
           'height': {'special': 'match_parent'},
         }),
       );
@@ -123,7 +123,7 @@ void main() {
       final node = NativeDisplayElement(
         id: 'spacer',
         elementType: ElementType.spacer,
-        layout: Layout.fromJson({
+        layout: Layout.fromJson(const {
           'width': {'value': 16, 'unit': 'dp'},
           'height': {'value': 8, 'unit': 'dp'},
         }),
@@ -142,7 +142,7 @@ void main() {
       final node = NativeDisplayElement(
         id: 'divider',
         elementType: ElementType.divider,
-        dividerConfig: DividerConfig.fromJson({
+        dividerConfig: DividerConfig.fromJson(const {
           'orientation': 'horizontal',
           'thickness': 2.0,
           'color': '#FF0000',
@@ -162,7 +162,7 @@ void main() {
       final node = NativeDisplayElement(
         id: 'divider',
         elementType: ElementType.divider,
-        dividerConfig: DividerConfig.fromJson({
+        dividerConfig: DividerConfig.fromJson(const {
           'orientation': 'vertical',
           'thickness': 3.0,
           'color': '#0000FF',

@@ -56,7 +56,7 @@ void main() {
       final child = NativeDisplayElement(
         id: 'child',
         elementType: ElementType.text,
-        layout: Layout.fromJson({
+        layout: Layout.fromJson(const {
           'offset': {'x': 10, 'y': 20, 'unit': 'dp'},
         }),
       );
@@ -75,7 +75,7 @@ void main() {
       final child = NativeDisplayElement(
         id: 'child',
         elementType: ElementType.text,
-        layout: Layout.fromJson({
+        layout: Layout.fromJson(const {
           'offset': {'x': 50, 'y': 25, 'unit': 'percent'},
         }),
       );
@@ -178,11 +178,11 @@ void main() {
       final node = NativeDisplayContainer(
         id: 'gallery',
         containerType: ContainerType.gallery,
-        children: [
-          const NativeDisplayElement(id: 'a', elementType: ElementType.text, bindings: {'text': 'P1'}),
-          const NativeDisplayElement(id: 'b', elementType: ElementType.text, bindings: {'text': 'P2'}),
+        children: const [
+          NativeDisplayElement(id: 'a', elementType: ElementType.text, bindings: {'text': 'P1'}),
+          NativeDisplayElement(id: 'b', elementType: ElementType.text, bindings: {'text': 'P2'}),
         ],
-        galleryConfig: GalleryConfig.fromJson({
+        galleryConfig: GalleryConfig.fromJson(const {
           'showIndicators': true,
         }),
       );

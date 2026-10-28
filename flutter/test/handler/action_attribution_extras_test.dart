@@ -11,7 +11,7 @@ void main() {
     });
 
     test('open_url emits url and browser flag and spreads metadata', () {
-      final action = NDAction.fromJson({
+      final action = NDAction.fromJson(const {
         'type': 'open_url',
         'url': 'https://example.com',
         'openInBrowser': true,
@@ -26,7 +26,7 @@ void main() {
     });
 
     test('custom spreads JsonObject value entries verbatim', () {
-      final action = NDAction.fromJson({
+      final action = NDAction.fromJson(const {
         'type': 'custom',
         'key': 'kv',
         'value': {'sku': 'SKU-123', 'qty': 2},
@@ -45,7 +45,7 @@ void main() {
     });
 
     test('custom metadata wins on key collision with value entries', () {
-      final action = NDAction.fromJson({
+      final action = NDAction.fromJson(const {
         'type': 'custom',
         'key': 'kv',
         'value': {'user_id': 'from-value', 'only_in_value': 'v'},
@@ -59,7 +59,7 @@ void main() {
     });
 
     test('custom with empty JsonObject value emits no spread entries', () {
-      final action = NDAction.fromJson({
+      final action = NDAction.fromJson(const {
         'type': 'custom',
         'key': 'kv',
         'value': <String, dynamic>{},
@@ -71,7 +71,7 @@ void main() {
     });
 
     test('custom scalar value round-trips as native type under action_value', () {
-      final action = NDAction.fromJson({
+      final action = NDAction.fromJson(const {
         'type': 'custom',
         'key': 'amount',
         'value': 42,
@@ -81,7 +81,7 @@ void main() {
     });
 
     test('custom serializes non-map value collections to JSON string', () {
-      final action = NDAction.fromJson({
+      final action = NDAction.fromJson(const {
         'type': 'custom',
         'key': 'list',
         'value': [1, 2, 3],
@@ -91,7 +91,7 @@ void main() {
     });
 
     test('custom metadata spreads BE-injected wzrk attribution fields', () {
-      final action = NDAction.fromJson({
+      final action = NDAction.fromJson(const {
         'type': 'custom',
         'key': 'kv',
         'value': <String, dynamic>{},
@@ -109,7 +109,7 @@ void main() {
     });
 
     test('navigate emits destination and spreads params', () {
-      final action = NDAction.fromJson({
+      final action = NDAction.fromJson(const {
         'type': 'navigate',
         'destination': 'profile',
         'params': {'user_id': 'u-1'},
@@ -122,7 +122,7 @@ void main() {
     });
 
     test('event emits name and spreads properties as scalars', () {
-      final action = NDAction.fromJson({
+      final action = NDAction.fromJson(const {
         'type': 'event',
         'eventName': 'Banner Tapped',
         'properties': {'position': 3, 'is_hero': true},
@@ -136,7 +136,7 @@ void main() {
     });
 
     test('composite emits count and mode', () {
-      final action = NDAction.fromJson({
+      final action = NDAction.fromJson(const {
         'type': 'composite',
         'executionMode': 'parallel',
         'actions': [
@@ -152,7 +152,7 @@ void main() {
     });
 
     test('client never injects wzrk_ keys — only present when in metadata', () {
-      final action = NDAction.fromJson({
+      final action = NDAction.fromJson(const {
         'type': 'open_url',
         'url': 'https://example.com',
       });

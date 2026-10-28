@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
+
 import 'background.dart';
 import 'enums.dart';
 import 'layout.dart';
 import 'text_dimension.dart';
 
+@immutable
 class TextShadow {
   final String color;
   final double offsetX;
@@ -22,8 +25,21 @@ class TextShadow {
         offsetY: (json['offsetY'] as num?)?.toDouble() ?? 0,
         blur: (json['blur'] as num?)?.toDouble() ?? 0,
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TextShadow &&
+          other.color == color &&
+          other.offsetX == offsetX &&
+          other.offsetY == offsetY &&
+          other.blur == blur;
+
+  @override
+  int get hashCode => Object.hash(color, offsetX, offsetY, blur);
 }
 
+@immutable
 class TextGradient {
   final String type;
   final List<String> colors;
@@ -50,8 +66,23 @@ class TextGradient {
             .whereType<double>()
             .toList(),
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TextGradient &&
+          other.type == type &&
+          listEquals(other.colors, colors) &&
+          other.angle == angle &&
+          listEquals(other.stops, stops);
+
+  @override
+  int get hashCode =>
+      Object.hash(type, Object.hashAll(colors), angle,
+          stops == null ? null : Object.hashAll(stops!));
 }
 
+@immutable
 class Style {
   // Text properties (cascade to children)
   final String? textColor;
@@ -203,4 +234,59 @@ class Style {
         shadowOffsetY: (json['shadowOffsetY'] as num?)?.toDouble(),
         opacity: (json['opacity'] as num?)?.toDouble(),
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Style &&
+          other.textColor == textColor &&
+          other.fontSize == fontSize &&
+          other.fontFamily == fontFamily &&
+          other.fontWeight == fontWeight &&
+          other.fontStyle == fontStyle &&
+          other.lineHeight == lineHeight &&
+          other.letterSpacing == letterSpacing &&
+          other.textDecoration == textDecoration &&
+          other.textAlign == textAlign &&
+          other.maxLines == maxLines &&
+          other.overflow == overflow &&
+          other.textShadow == textShadow &&
+          other.textGradient == textGradient &&
+          other.background == background &&
+          other.backgroundColor == backgroundColor &&
+          other.borderRadius == borderRadius &&
+          other.borderWidth == borderWidth &&
+          other.borderColor == borderColor &&
+          other.shadowColor == shadowColor &&
+          other.shadowRadius == shadowRadius &&
+          other.shadowOffsetX == shadowOffsetX &&
+          other.shadowOffsetY == shadowOffsetY &&
+          other.opacity == opacity;
+
+  @override
+  int get hashCode => Object.hashAll([
+        textColor,
+        fontSize,
+        fontFamily,
+        fontWeight,
+        fontStyle,
+        lineHeight,
+        letterSpacing,
+        textDecoration,
+        textAlign,
+        maxLines,
+        overflow,
+        textShadow,
+        textGradient,
+        background,
+        backgroundColor,
+        borderRadius,
+        borderWidth,
+        borderColor,
+        shadowColor,
+        shadowRadius,
+        shadowOffsetX,
+        shadowOffsetY,
+        opacity,
+      ]);
 }

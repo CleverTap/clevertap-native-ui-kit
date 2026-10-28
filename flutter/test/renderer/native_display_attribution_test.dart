@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 // callbacks (pure Dart — no platform channel). These tests lock in the
 // once-per-impression viewed gate and the click callback shape that the sample
 // (SDK-6020) will consume.
-NativeDisplayConfig _buttonConfig() => NativeDisplayConfig.fromJson({
+NativeDisplayConfig _buttonConfig() => NativeDisplayConfig.fromJson(const {
       'root': {
         'type': 'element',
         'id': 'cta',
@@ -27,7 +27,7 @@ NativeDisplayConfig _buttonConfig() => NativeDisplayConfig.fromJson({
       },
     });
 
-NativeDisplayConfig _imageConfig() => NativeDisplayConfig.fromJson({
+NativeDisplayConfig _imageConfig() => NativeDisplayConfig.fromJson(const {
       'root': {
         'type': 'element',
         'id': 'hero',

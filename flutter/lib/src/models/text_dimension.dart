@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
+
 import 'enums.dart';
 
+@immutable
 class TextDimension {
   final double value;
   final TextDimensionUnit unit;
@@ -26,4 +29,12 @@ class TextDimension {
     }
     return const TextDimension(value: 0);
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TextDimension && other.value == value && other.unit == unit;
+
+  @override
+  int get hashCode => Object.hash(value, unit);
 }

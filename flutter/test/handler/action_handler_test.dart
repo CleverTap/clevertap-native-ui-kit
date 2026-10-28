@@ -16,7 +16,7 @@ void main() {
         },
       );
 
-      final action = NDAction.fromJson({'type': 'custom', 'key': 'promo_click'});
+      final action = NDAction.fromJson(const {'type': 'custom', 'key': 'promo_click'});
       await handler.handle(action, 'btn1');
 
       expect(capturedAction, 'custom');
@@ -35,7 +35,7 @@ void main() {
         },
       );
 
-      final action = NDAction.fromJson({
+      final action = NDAction.fromJson(const {
         'type': 'navigate',
         'destination': 'product_detail',
         'params': {'id': '42'},
@@ -58,7 +58,7 @@ void main() {
         },
       );
 
-      final action = NDAction.fromJson({
+      final action = NDAction.fromJson(const {
         'type': 'event',
         'eventName': 'Banner Viewed',
         'properties': {'campaign': 'summer'},
@@ -79,7 +79,7 @@ void main() {
         },
       );
 
-      final action = NDAction.fromJson({
+      final action = NDAction.fromJson(const {
         'type': 'composite',
         'executionMode': 'sequential',
         'actions': [
@@ -94,13 +94,13 @@ void main() {
 
     test('no listener — no crash on custom action', () async {
       const handler = ActionHandler();
-      final action = NDAction.fromJson({'type': 'custom', 'key': 'x'});
+      final action = NDAction.fromJson(const {'type': 'custom', 'key': 'x'});
       await expectLater(handler.handle(action, 'n'), completes);
     });
 
     test('no listener — no crash on navigate action', () async {
       const handler = ActionHandler();
-      final action = NDAction.fromJson({'type': 'navigate', 'destination': 'home'});
+      final action = NDAction.fromJson(const {'type': 'navigate', 'destination': 'home'});
       await expectLater(handler.handle(action, 'n'), completes);
     });
   });
