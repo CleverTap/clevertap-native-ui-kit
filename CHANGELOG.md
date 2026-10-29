@@ -5,7 +5,15 @@ All notable changes to the CleverTap Native Display SDK are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.0] - Unreleased
+This is a multi-platform monorepo. Each platform SDK versions and releases on its
+own line, so the same number can appear for different platforms. Entry headings
+name the platform. Git tags follow the per-platform convention: iOS and Android
+use a bare semver tag (e.g. `1.0.0`); React Native and Flutter use a prefixed tag
+(e.g. `react-native-v1.0.0`).
+
+## [React Native 1.0.0] - 2026-10-29
+
+Initial release.
 
 ### Added
 
@@ -27,7 +35,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   - Requires React Native 0.73+, React 18+, `clevertap-react-native` 4.1+.
   - Full setup: [react-native/README.md](react-native/README.md).
 
-## [1.0.0] - 2026-06-25
+## [iOS & Android 1.0.0] - 2026-06-25
 
 Initial release.
 
@@ -47,5 +55,5 @@ Initial release.
 - Two integration paths on each platform: slot-based rendering (recommended) and
   custom / standalone rendering where you feed JSON yourself.
 
-[1.1.0]: https://github.com/CleverTap/clevertap-native-ui-kit/compare/1.0.0...HEAD
-[1.0.0]: https://github.com/CleverTap/clevertap-native-ui-kit/releases/tag/1.0.0
+[React Native 1.0.0]: https://github.com/CleverTap/clevertap-native-ui-kit/releases/tag/react-native-v1.0.0
+[iOS & Android 1.0.0]: https://github.com/CleverTap/clevertap-native-ui-kit/releases/tag/1.0.0
