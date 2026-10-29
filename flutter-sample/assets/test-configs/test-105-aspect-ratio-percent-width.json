@@ -1,0 +1,266 @@
+{
+  "theme": {
+    "id": "test-105",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "variables": {
+    "testName": "Aspect Ratio - Responsive Width (Percentage)"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333",
+          "lineHeight": 25
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests aspect ratio with percentage-based width. Elements scale responsively while maintaining aspect ratio."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666",
+          "lineHeight": 17
+        }
+      },
+      {
+        "type": "container",
+        "id": "full-width-16-9",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "aspectRatio": 1.777
+        },
+        "style": {
+          "backgroundColor": "#2196F3",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "full-width-image",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-95.jpg"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "half-width-square",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 50,
+            "unit": "percent"
+          },
+          "aspectRatio": 1.0
+        },
+        "style": {
+          "backgroundColor": "#4CAF50",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "half-width-content",
+            "elementType": "text",
+            "bindings": {
+              "text": "50% width\n1:1 square"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "padding": {
+                "all": 16,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 16,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "lineHeight": 22
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "responsive-row",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "arrangement": {
+            "spacing": 12,
+            "spacingUnit": "dp",
+            "strategy": "space_between"
+          }
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "card-1",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "aspectRatio": 1.0
+            },
+            "style": {
+              "backgroundColor": "#FF9800",
+              "borderRadius": 8
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "card-2",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "aspectRatio": 1.0
+            },
+            "style": {
+              "backgroundColor": "#9C27B0",
+              "borderRadius": 8
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "card-3",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "aspectRatio": 1.0
+            },
+            "style": {
+              "backgroundColor": "#F44336",
+              "borderRadius": 8
+            },
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "nested-responsive",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "aspectRatio": 1.5,
+          "padding": {
+            "all": 16,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#607D8B",
+          "borderRadius": 8
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "nested-image",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-96.jpg"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "aspectRatio": 1.5
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

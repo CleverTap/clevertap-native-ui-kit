@@ -1,0 +1,334 @@
+{
+  "theme": {
+    "id": "gallery-item",
+    "defaultStyle": {
+      "textColor": "#FF1F2937",
+      "fontSize": 14,
+      "fontFamily": "System",
+      "lineHeight": 20
+    }
+  },
+  "variables": {
+    "imageUrl": "https://yavuzceliker.github.io/sample-images/image-450.jpg",
+    "title": "Mountain Landscape Photography",
+    "description": "Breathtaking views captured at sunrise in the Swiss Alps",
+    "photographer": "Alex Morrison",
+    "likes": "2,847",
+    "views": "15.2K",
+    "buttonText": "View Gallery"
+  },
+  "root": {
+    "id": "gallery-item-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16
+      }
+    },
+    "style": {
+      "backgroundColor": "#FFF3F4F6"
+    },
+    "children": [
+      {
+        "id": "gallery-card",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 0
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFFFF",
+          "borderRadius": 20,
+          "shadowRadius": 16,
+          "shadowColor": "#FF000000",
+          "shadowOpacity": 0.12,
+          "shadowOffsetY": 6
+        },
+        "children": [
+          {
+            "id": "image-container",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 240,
+                "unit": "dp"
+              }
+            },
+            "children": [
+              {
+                "id": "gallery-image",
+                "elementType": "image",
+                "bindings": {
+                  "url": "{{imageUrl}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 240,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "borderRadius": 20
+                },
+                "type": "element"
+              },
+              {
+                "id": "overlay",
+                "containerType": "vertical",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "all": 16
+                  },
+                  "arrangement": {
+                    "strategy": "space_between"
+                  }
+                },
+                "style": {
+                  "background": {
+                    "type": "linear_gradient",
+                    "colors": [
+                      "#00000000",
+                      "#80000000"
+                    ],
+                    "angle": 180
+                  }
+                },
+                "children": [
+                  {
+                    "id": "top-spacer",
+                    "elementType": "spacer",
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      },
+                      "height": {
+                        "value": 1,
+                        "unit": "dp"
+                      }
+                    },
+                    "type": "element"
+                  },
+                  {
+                    "id": "stats-row",
+                    "containerType": "horizontal",
+                    "layout": {
+                      "width": {
+                        "value": 100,
+                        "unit": "percent"
+                      },
+                      "arrangement": {
+                        "spacing": 16,
+                        "strategy": "spaced"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "likes",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "❤️ {{likes}}"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": -2,
+                            "unit": "dp"
+                          }
+                        },
+                        "style": {
+                          "fontSize": 14,
+                          "fontWeight": "bold",
+                          "textColor": "#FFFFFFFF",
+                          "shadowRadius": 4,
+                          "shadowColor": "#FF000000",
+                          "shadowOpacity": 0.3,
+                          "lineHeight": 20
+                        },
+                        "type": "element"
+                      },
+                      {
+                        "id": "views",
+                        "elementType": "text",
+                        "bindings": {
+                          "text": "👁️ {{views}}"
+                        },
+                        "layout": {
+                          "width": {
+                            "value": -2,
+                            "unit": "dp"
+                          }
+                        },
+                        "style": {
+                          "fontSize": 14,
+                          "fontWeight": "bold",
+                          "textColor": "#FFFFFFFF",
+                          "shadowRadius": 4,
+                          "shadowColor": "#FF000000",
+                          "shadowOpacity": 0.3,
+                          "lineHeight": 20
+                        },
+                        "type": "element"
+                      }
+                    ],
+                    "type": "container"
+                  }
+                ],
+                "type": "container"
+              }
+            ],
+            "type": "container"
+          },
+          {
+            "id": "content-container",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "padding": {
+                "all": 20
+              },
+              "arrangement": {
+                "spacing": 12,
+                "strategy": "spaced"
+              }
+            },
+            "children": [
+              {
+                "id": "title",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{title}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 20,
+                  "fontWeight": "bold",
+                  "textColor": "#FF111827",
+                  "lineHeight": 28
+                },
+                "type": "element"
+              },
+              {
+                "id": "description",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{description}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 14,
+                  "fontWeight": "normal",
+                  "textColor": "#FF6B7280",
+                  "lineHeight": 20
+                },
+                "type": "element"
+              },
+              {
+                "id": "photographer",
+                "elementType": "text",
+                "bindings": {
+                  "text": "By {{photographer}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 12,
+                  "fontWeight": "medium",
+                  "textColor": "#FF9CA3AF",
+                  "lineHeight": 17
+                },
+                "type": "element"
+              },
+              {
+                "id": "view-button",
+                "elementType": "button",
+                "bindings": {
+                  "text": "{{buttonText}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 48,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "background": {
+                    "type": "linear_gradient",
+                    "colors": [
+                      "#FF3B82F6",
+                      "#FF8B5CF6"
+                    ],
+                    "angle": 90
+                  },
+                  "borderRadius": 12,
+                  "textColor": "#FFFFFFFF",
+                  "fontSize": 16,
+                  "fontWeight": "bold",
+                  "shadowRadius": 12,
+                  "shadowColor": "#FF3B82F6",
+                  "shadowOpacity": 0.4,
+                  "shadowOffsetY": 4,
+                  "lineHeight": 22
+                },
+                "type": "element"
+              }
+            ],
+            "type": "container"
+          }
+        ],
+        "type": "container"
+      }
+    ],
+    "type": "container"
+  },
+  "styleClasses": []
+}
