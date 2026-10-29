@@ -1,34 +1,31 @@
-import 'package:flutter/widgets.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:clevertap_native_display/src/renderer/elements/button_element.dart';
-import 'package:clevertap_native_display/src/renderer/elements/spacer_element.dart';
 import 'package:clevertap_native_display/src/renderer/elements/divider_element.dart';
-import 'package:clevertap_native_display/src/evaluator/variable_evaluator.dart';
-import 'package:clevertap_native_display/src/renderer/root_height_scope.dart';
-import 'package:clevertap_native_display/src/renderer/resolved_styles_scope.dart';
+import 'package:clevertap_native_display/src/renderer/elements/spacer_element.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 Widget wrap(Widget w) => Directionality(
       textDirection: TextDirection.ltr,
-      child: RootHeightScope(
-        rootHeight: 200,
-        child: ResolvedStylesScope(
+      child: NativeDisplayScope(
+          rootHeight: 200,
           styles: const {},
+          unitId: null,
+          onClicked: null,
           child: w,
         ),
-      ),
     );
 
 void main() {
   group('ButtonElement', () {
     testWidgets('renders GestureDetector wrapping content', (tester) async {
-      final node = NativeDisplayElement(
+      const node = NativeDisplayElement(
         id: 'btn',
         elementType: ElementType.button,
         bindings: {'text': 'Click Me'},
       );
 
-      await tester.pumpWidget(wrap(ButtonElement(
+      await tester.pumpWidget(wrap(const ButtonElement(
         node: node,
         style: Style.empty,
         evaluator: VariableEvaluator({}),
@@ -42,18 +39,18 @@ void main() {
       String? capturedAction;
       String? capturedNodeId;
 
-      final action = NDAction.fromJson({'type': 'custom', 'key': 'test'});
+      final action = NDAction.fromJson(const {'type': 'custom', 'key': 'test'});
       final node = NativeDisplayElement(
         id: 'btn',
         elementType: ElementType.button,
-        bindings: {'text': 'Tap'},
+        bindings: const {'text': 'Tap'},
         actions: {'onClick': action},
       );
 
       await tester.pumpWidget(wrap(ButtonElement(
         node: node,
         style: Style.empty,
-        evaluator: VariableEvaluator({}),
+        evaluator: const VariableEvaluator({}),
         actionListener: (action, nodeId, params) {
           capturedAction = action;
           capturedNodeId = nodeId;
@@ -69,7 +66,7 @@ void main() {
 
     testWidgets('no actionListener called when no onClick action', (tester) async {
       bool called = false;
-      final node = NativeDisplayElement(
+      const node = NativeDisplayElement(
         id: 'btn',
         elementType: ElementType.button,
         bindings: {'text': 'Tap'},
@@ -78,7 +75,7 @@ void main() {
       await tester.pumpWidget(wrap(ButtonElement(
         node: node,
         style: Style.empty,
-        evaluator: VariableEvaluator({}),
+        evaluator: const VariableEvaluator({}),
         actionListener: (_, __, ___) => called = true,
       )));
 
@@ -94,7 +91,7 @@ void main() {
       final node = NativeDisplayElement(
         id: 'spacer',
         elementType: ElementType.spacer,
-        layout: Layout.fromJson({
+        layout: Layout.fromJson(const {
           'width': {'special': 'match_parent'},
         }),
       );
@@ -110,7 +107,7 @@ void main() {
       final node = NativeDisplayElement(
         id: 'spacer',
         elementType: ElementType.spacer,
-        layout: Layout.fromJson({
+        layout: Layout.fromJson(const {
           'height': {'special': 'match_parent'},
         }),
       );
@@ -126,7 +123,7 @@ void main() {
       final node = NativeDisplayElement(
         id: 'spacer',
         elementType: ElementType.spacer,
-        layout: Layout.fromJson({
+        layout: Layout.fromJson(const {
           'width': {'value': 16, 'unit': 'dp'},
           'height': {'value': 8, 'unit': 'dp'},
         }),
@@ -145,7 +142,7 @@ void main() {
       final node = NativeDisplayElement(
         id: 'divider',
         elementType: ElementType.divider,
-        dividerConfig: DividerConfig.fromJson({
+        dividerConfig: DividerConfig.fromJson(const {
           'orientation': 'horizontal',
           'thickness': 2.0,
           'color': '#FF0000',
@@ -165,7 +162,7 @@ void main() {
       final node = NativeDisplayElement(
         id: 'divider',
         elementType: ElementType.divider,
-        dividerConfig: DividerConfig.fromJson({
+        dividerConfig: DividerConfig.fromJson(const {
           'orientation': 'vertical',
           'thickness': 3.0,
           'color': '#0000FF',
@@ -182,13 +179,13 @@ void main() {
     });
 
     testWidgets('default divider uses 1.0 thickness and #E0E0E0 color', (tester) async {
-      final node = NativeDisplayElement(
+      const node = NativeDisplayElement(
         id: 'divider',
         elementType: ElementType.divider,
       );
 
       await tester.pumpWidget(wrap(
-        SizedBox(width: 200, child: DividerElement(node: node, style: Style.empty)),
+        const SizedBox(width: 200, child: DividerElement(node: node, style: Style.empty)),
       ));
 
       final sizedBox = tester.widget<SizedBox>(find.byType(SizedBox).last);

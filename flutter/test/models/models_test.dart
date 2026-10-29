@@ -73,7 +73,7 @@ void main() {
     });
 
     test('parses object with unit=percent', () {
-      final td = TextDimension.fromJson({'value': 50, 'unit': 'percent'});
+      final td = TextDimension.fromJson(const {'value': 50, 'unit': 'percent'});
       expect(td.value, 50.0);
       expect(td.unit, TextDimensionUnit.percent);
     });
@@ -84,21 +84,21 @@ void main() {
     });
 
     test('resolves percent as rootHeight * value / 1000', () {
-      final td = TextDimension.fromJson({'value': 50, 'unit': 'percent'});
+      final td = TextDimension.fromJson(const {'value': 50, 'unit': 'percent'});
       expect(td.resolve(400), closeTo(20.0, 0.001)); // 400 * 50 / 1000 = 20
     });
   });
 
   group('Dimension', () {
     test('parses standard object', () {
-      final d = Dimension.fromJson({'value': 100, 'unit': 'percent'});
+      final d = Dimension.fromJson(const {'value': 100, 'unit': 'percent'});
       expect(d.value, 100.0);
       expect(d.unit, DimensionUnit.percent);
       expect(d.special, isNull);
     });
 
     test('parses wrap_content special', () {
-      final d = Dimension.fromJson({'special': 'wrap_content'});
+      final d = Dimension.fromJson(const {'special': 'wrap_content'});
       expect(d.special, SpecialDimension.wrapContent);
     });
 
@@ -109,7 +109,7 @@ void main() {
     });
 
     test('fromJsonFlexible parses object', () {
-      final d = Dimension.fromJsonFlexible({'value': 50, 'unit': 'percent'});
+      final d = Dimension.fromJsonFlexible(const {'value': 50, 'unit': 'percent'});
       expect(d.value, 50.0);
       expect(d.unit, DimensionUnit.percent);
     });
@@ -117,21 +117,21 @@ void main() {
 
   group('Spacing', () {
     test('resolveTop uses top > vertical > all fallback chain', () {
-      expect(Spacing(top: 10, vertical: 20, all: 30).resolveTop(), 10.0);
-      expect(Spacing(vertical: 20, all: 30).resolveTop(), 20.0);
-      expect(Spacing(all: 30).resolveTop(), 30.0);
+      expect(const Spacing(top: 10, vertical: 20, all: 30).resolveTop(), 10.0);
+      expect(const Spacing(vertical: 20, all: 30).resolveTop(), 20.0);
+      expect(const Spacing(all: 30).resolveTop(), 30.0);
       expect(const Spacing().resolveTop(), 0.0);
     });
 
     test('resolveLeft uses left > horizontal > all fallback chain', () {
-      expect(Spacing(left: 5, horizontal: 10, all: 20).resolveLeft(), 5.0);
-      expect(Spacing(horizontal: 10, all: 20).resolveLeft(), 10.0);
-      expect(Spacing(all: 20).resolveLeft(), 20.0);
+      expect(const Spacing(left: 5, horizontal: 10, all: 20).resolveLeft(), 5.0);
+      expect(const Spacing(horizontal: 10, all: 20).resolveLeft(), 10.0);
+      expect(const Spacing(all: 20).resolveLeft(), 20.0);
       expect(const Spacing().resolveLeft(), 0.0);
     });
 
     test('parses from JSON', () {
-      final s = Spacing.fromJson({'all': 8, 'top': 12});
+      final s = Spacing.fromJson(const {'all': 8, 'top': 12});
       expect(s.resolveTop(), 12.0);
       expect(s.resolveBottom(), 8.0);
     });
@@ -152,12 +152,12 @@ void main() {
     });
 
     test('cascadingOnly returns only text properties + opacity', () {
-      final s = Style(
+      const s = Style(
         textColor: '#FF0000',
-        fontSize: const TextDimension(value: 14),
+        fontSize: TextDimension(value: 14),
         background: SolidBackground(color: '#FFFFFF'),
         backgroundColor: '#FFFFFF',
-        borderRadius: const Dimension(value: 8),
+        borderRadius: Dimension(value: 8),
         shadowColor: '#000000',
         opacity: 0.5,
       );
@@ -173,7 +173,7 @@ void main() {
     });
 
     test('parses from JSON', () {
-      final s = Style.fromJson({
+      final s = Style.fromJson(const {
         'textColor': '#FFFFFF',
         'fontSize': 16,
         'fontWeight': 'bold',
@@ -190,7 +190,7 @@ void main() {
     });
 
     test('parses borderRadius as object with unit', () {
-      final s = Style.fromJson({'borderRadius': {'value': 50, 'unit': 'percent'}});
+      final s = Style.fromJson(const {'borderRadius': {'value': 50, 'unit': 'percent'}});
       expect(s.borderRadius?.unit, DimensionUnit.percent);
       expect(s.borderRadius?.value, 50.0);
     });
@@ -198,13 +198,13 @@ void main() {
 
   group('Background', () {
     test('parses solid background', () {
-      final b = Background.fromJson({'type': 'solid', 'color': '#FF0000'});
+      final b = Background.fromJson(const {'type': 'solid', 'color': '#FF0000'});
       expect(b, isA<SolidBackground>());
       expect((b as SolidBackground).color, '#FF0000');
     });
 
     test('parses linear_gradient background', () {
-      final b = Background.fromJson({
+      final b = Background.fromJson(const {
         'type': 'linear_gradient',
         'angle': 90.0,
         'colors': ['#FF0000', '#0000FF'],
@@ -216,7 +216,7 @@ void main() {
     });
 
     test('parses radial_gradient background', () {
-      final b = Background.fromJson({
+      final b = Background.fromJson(const {
         'type': 'radial_gradient',
         'colors': ['#FFFFFF', '#000000'],
         'center_x': 0.3,
@@ -229,7 +229,7 @@ void main() {
     });
 
     test('parses sweep_gradient background', () {
-      final b = Background.fromJson({
+      final b = Background.fromJson(const {
         'type': 'sweep_gradient',
         'colors': ['#FF0000', '#00FF00', '#0000FF'],
         'start_angle': 45.0,
@@ -239,7 +239,7 @@ void main() {
     });
 
     test('parses image background', () {
-      final b = Background.fromJson({
+      final b = Background.fromJson(const {
         'type': 'image',
         'url': 'https://example.com/bg.jpg',
         'fit': 'contain',
@@ -251,7 +251,7 @@ void main() {
     });
 
     test('parses shimmer background (v2 deferred)', () {
-      final b = Background.fromJson({
+      final b = Background.fromJson(const {
         'type': 'shimmer',
         'base_color': '#E0E0E0',
         'highlight_color': '#F5F5F5',
@@ -260,7 +260,7 @@ void main() {
     });
 
     test('unknown type returns transparent solid', () {
-      final b = Background.fromJson({'type': 'unknown_type'});
+      final b = Background.fromJson(const {'type': 'unknown_type'});
       expect(b, isA<SolidBackground>());
       expect((b as SolidBackground).color, '#00000000');
     });
@@ -268,7 +268,7 @@ void main() {
 
   group('Action', () {
     test('parses open_url action', () {
-      final a = NDAction.fromJson({'type': 'open_url', 'url': 'https://clevertap.com'});
+      final a = NDAction.fromJson(const {'type': 'open_url', 'url': 'https://clevertap.com'});
       expect(a, isA<OpenUrlAction>());
       expect((a as OpenUrlAction).url, 'https://clevertap.com');
     });
@@ -276,7 +276,7 @@ void main() {
     test('open_url resolves platform-specific url map (ios key on iOS)', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      final a = NDAction.fromJson({
+      final a = NDAction.fromJson(const {
         'type': 'open_url',
         'url': {'android': 'https://play.google.com', 'ios': 'https://apps.apple.com'},
       });
@@ -286,7 +286,7 @@ void main() {
     test('open_url resolves platform-specific url map (android key on Android)', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       addTearDown(() => debugDefaultTargetPlatformOverride = null);
-      final a = NDAction.fromJson({
+      final a = NDAction.fromJson(const {
         'type': 'open_url',
         'url': {'android': 'https://play.google.com', 'ios': 'https://apps.apple.com'},
       });
@@ -294,25 +294,25 @@ void main() {
     });
 
     test('parses custom action', () {
-      final a = NDAction.fromJson({'type': 'custom', 'key': 'add_to_cart', 'value': '123'});
+      final a = NDAction.fromJson(const {'type': 'custom', 'key': 'add_to_cart', 'value': '123'});
       expect(a, isA<CustomAction>());
       expect((a as CustomAction).key, 'add_to_cart');
     });
 
     test('parses navigate action', () {
-      final a = NDAction.fromJson({'type': 'navigate', 'destination': 'product_detail'});
+      final a = NDAction.fromJson(const {'type': 'navigate', 'destination': 'product_detail'});
       expect(a, isA<NavigateAction>());
       expect((a as NavigateAction).destination, 'product_detail');
     });
 
     test('parses track event action', () {
-      final a = NDAction.fromJson({'type': 'event', 'eventName': 'Button Clicked'});
+      final a = NDAction.fromJson(const {'type': 'event', 'eventName': 'Button Clicked'});
       expect(a, isA<TrackEventAction>());
       expect((a as TrackEventAction).eventName, 'Button Clicked');
     });
 
     test('parses composite action', () {
-      final a = NDAction.fromJson({
+      final a = NDAction.fromJson(const {
         'type': 'composite',
         'executionMode': 'parallel',
         'actions': [
@@ -329,14 +329,14 @@ void main() {
 
   group('GalleryConfig', () {
     test('parses defaults', () {
-      final g = GalleryConfig.fromJson({});
+      final g = GalleryConfig.fromJson(const {});
       expect(g.mode, GalleryMode.snapping);
       expect(g.orientation, Orientation.horizontal);
       expect(g.spacing, 8.0);
     });
 
     test('parses full config', () {
-      final g = GalleryConfig.fromJson({
+      final g = GalleryConfig.fromJson(const {
         'mode': 'free_flow_grid',
         'orientation': 'vertical',
         'snapBehavior': 'start',
@@ -353,7 +353,7 @@ void main() {
     });
 
     test('effectiveItemsPerView uses columns when set', () {
-      final g = GalleryConfig.fromJson({'columns': 3, 'itemsPerView': 2.0});
+      final g = GalleryConfig.fromJson(const {'columns': 3, 'itemsPerView': 2.0});
       expect(g.effectiveItemsPerView, 3.0);
     });
   });
@@ -364,7 +364,7 @@ void main() {
         'type': 'container',
         'id': 'root',
         'containerType': 'box',
-        'children': [],
+        'children': <dynamic>[],
         'layout': {
           'width': {'value': 100, 'unit': 'percent'},
           'aspectRatio': 1.777,
@@ -511,7 +511,7 @@ void main() {
 
   group('NodeConfig', () {
     test('parses DividerConfig', () {
-      final d = DividerConfig.fromJson({
+      final d = DividerConfig.fromJson(const {
         'orientation': 'vertical',
         'thickness': 2.0,
         'color': '#FF0000',
@@ -522,14 +522,14 @@ void main() {
     });
 
     test('DividerConfig uses defaults', () {
-      final d = DividerConfig.fromJson({});
+      final d = DividerConfig.fromJson(const {});
       expect(d.orientation, Orientation.horizontal);
       expect(d.thickness, 1.0);
       expect(d.color, '#E0E0E0');
     });
 
     test('parses HtmlConfig', () {
-      final h = HtmlConfig.fromJson({
+      final h = HtmlConfig.fromJson(const {
         'javascriptEnabled': true,
         'scrollEnabled': true,
         'baseUrl': 'https://example.com',
@@ -542,7 +542,7 @@ void main() {
     });
 
     test('parses NDAnimation', () {
-      final a = NDAnimation.fromJson({
+      final a = NDAnimation.fromJson(const {
         'type': 'fade_in',
         'duration': 500,
         'delay': 100,

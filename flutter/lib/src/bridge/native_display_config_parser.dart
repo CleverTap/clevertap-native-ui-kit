@@ -89,7 +89,14 @@ class NativeDisplayConfigParser {
         customExtras: customExtras,
         resolvedStyles: resolvedStyles,
       );
-    } catch (_) {
+    } catch (e) {
+      // Never drop a unit silently — a malformed payload that throws here would
+      // otherwise just vanish (no view renders, no clue why). Warnings emit at
+      // INFO+, so this surfaces even though _parseSync runs in the parse isolate
+      // (whose logger defaults to INFO). Include the unit id when we got that far.
+      final id = (rawUnit['wzrk_id'] ?? rawUnit['slot_id'] ?? '?').toString();
+      NDLogger.w('NativeDisplayConfigParser',
+          'Dropped display unit (id/slot=$id) — failed to parse: $e');
       return null;
     }
   }

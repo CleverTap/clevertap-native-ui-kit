@@ -1,18 +1,16 @@
 import 'dart:ui';
 
-import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:clevertap_native_display/src/style/style_resolver.dart';
-import 'package:clevertap_native_display/src/evaluator/variable_evaluator.dart';
 import 'package:clevertap_native_display/src/utils/color_parser.dart';
-import 'package:clevertap_native_display/src/utils/dimension_calculator.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('StyleResolver', () {
     final resolver = StyleResolver();
 
     test('cascades text properties from parent to child', () {
-      final config = NativeDisplayConfig.fromJson({
+      final config = NativeDisplayConfig.fromJson(const {
         'root': {
           'type': 'container',
           'id': 'root',
@@ -41,7 +39,7 @@ void main() {
     });
 
     test('visual props do NOT cascade', () {
-      final config = NativeDisplayConfig.fromJson({
+      final config = NativeDisplayConfig.fromJson(const {
         'root': {
           'type': 'container',
           'id': 'root',
@@ -68,7 +66,7 @@ void main() {
     });
 
     test('inline > styleClass > theme priority', () {
-      final config = NativeDisplayConfig.fromJson({
+      final config = NativeDisplayConfig.fromJson(const {
         'theme': {
           'id': 'default',
           'defaultStyle': {'textColor': '#111111'},
@@ -96,7 +94,7 @@ void main() {
     });
 
     test('styleClass applied when no inline style', () {
-      final config = NativeDisplayConfig.fromJson({
+      final config = NativeDisplayConfig.fromJson(const {
         'theme': {
           'id': 'default',
           'defaultStyle': {'textColor': '#111111'},
@@ -125,46 +123,46 @@ void main() {
 
   group('VariableEvaluator', () {
     test('simple variable substitution', () {
-      final evaluator = VariableEvaluator({'name': 'Alice'});
+      const evaluator = VariableEvaluator({'name': 'Alice'});
       expect(evaluator.evaluateString('Hello {{name}}!'), 'Hello Alice!');
     });
 
     test('object.key lookup', () {
-      final evaluator = VariableEvaluator({
+      const evaluator = VariableEvaluator({
         'user': {'first': 'Bob', 'last': 'Smith'}
       });
       expect(evaluator.evaluateString('{{user.first}} {{user.last}}'), 'Bob Smith');
     });
 
     test('ternary expression', () {
-      final evaluator = VariableEvaluator({'premium': 'true'});
+      const evaluator = VariableEvaluator({'premium': 'true'});
       expect(evaluator.evaluateString("{{premium ? 'Pro' : 'Free'}}"), 'Pro');
     });
 
     test('comparison expression', () {
-      final evaluator = VariableEvaluator({'score': '100'});
+      const evaluator = VariableEvaluator({'score': '100'});
       expect(evaluator.evaluateBoolean("{{score >= 50}}"), true);
       expect(evaluator.evaluateBoolean("{{score < 50}}"), false);
     });
 
     test('equality comparison', () {
-      final evaluator = VariableEvaluator({'status': 'active'});
+      const evaluator = VariableEvaluator({'status': 'active'});
       expect(evaluator.evaluateBoolean("{{status == 'active'}}"), true);
     });
 
     test('unknown variable returns empty string', () {
-      final evaluator = VariableEvaluator({});
+      const evaluator = VariableEvaluator({});
       expect(evaluator.evaluateString('{{unknown}}'), '');
     });
 
     test('literal true/false', () {
-      final evaluator = VariableEvaluator({});
+      const evaluator = VariableEvaluator({});
       expect(evaluator.evaluateBoolean('true'), true);
       expect(evaluator.evaluateBoolean('false'), false);
     });
 
     test('null returns true (visible by default)', () {
-      final evaluator = VariableEvaluator({});
+      const evaluator = VariableEvaluator({});
       expect(evaluator.evaluateBoolean(null), true);
     });
 
@@ -172,7 +170,7 @@ void main() {
     // since bindings/visible are coerced to String at parse time) must evaluate
     // to the correct bool. Matches Android (`toIntOrNull() != 0`) and iOS.
     group('numeric boolean literals', () {
-      final evaluator = VariableEvaluator({});
+      const evaluator = VariableEvaluator({});
 
       test('"1" is true', () => expect(evaluator.evaluateBoolean('1'), true));
       test('"1.0" is true', () => expect(evaluator.evaluateBoolean('1.0'), true));
@@ -190,7 +188,7 @@ void main() {
     // is Map<String, dynamic> and may hold raw JSON numbers/bools) must not
     // throw and must coerce sensibly.
     test('numeric variable value coerces to bool without throwing', () {
-      final evaluator = VariableEvaluator({'flag': 1, 'off': 0, 'yes': true, 'no': false});
+      const evaluator = VariableEvaluator({'flag': 1, 'off': 0, 'yes': true, 'no': false});
       expect(evaluator.evaluateBoolean('{{flag}}'), true);
       expect(evaluator.evaluateBoolean('{{off}}'), false);
       expect(evaluator.evaluateBoolean('{{yes}}'), true);
@@ -198,7 +196,7 @@ void main() {
     });
 
     test('non-string variable value interpolates without throwing', () {
-      final evaluator = VariableEvaluator({'count': 42, 'ratio': 1.5, 'enabled': true});
+      const evaluator = VariableEvaluator({'count': 42, 'ratio': 1.5, 'enabled': true});
       expect(evaluator.evaluateString('n={{count}} r={{ratio}} e={{enabled}}'),
           'n=42 r=1.5 e=true');
     });
@@ -287,44 +285,7 @@ void main() {
     });
   });
 
-  group('DimensionCalculator', () {
-    test('percent dimension resolves relative to parent', () {
-      final dim = Dimension.fromJson({'value': 50, 'unit': 'percent'});
-      final result = DimensionCalculator.resolve(dim, parentSize: 200);
-      expect(result, 100.0);
-    });
-
-    test('dp dimension returns value directly', () {
-      final dim = Dimension.fromJson({'value': 24, 'unit': 'dp'});
-      final result = DimensionCalculator.resolve(dim, parentSize: 200);
-      expect(result, 24.0);
-    });
-
-    test('sp dimension returns value directly', () {
-      final dim = Dimension.fromJson({'value': 16, 'unit': 'sp'});
-      final result = DimensionCalculator.resolve(dim, parentSize: 200);
-      expect(result, 16.0);
-    });
-
-    test('px dimension returns value directly', () {
-      final dim = Dimension.fromJson({'value': 32, 'unit': 'px'});
-      final result = DimensionCalculator.resolve(dim, parentSize: 200);
-      expect(result, 32.0);
-    });
-
-    test('wrap_content returns null', () {
-      final result = DimensionCalculator.resolve(Dimension.wrapContent, parentSize: 200);
-      expect(result, isNull);
-    });
-
-    test('match_parent returns null', () {
-      final result = DimensionCalculator.resolve(Dimension.matchParent, parentSize: 200);
-      expect(result, isNull);
-    });
-
-    test('null dimension returns null', () {
-      final result = DimensionCalculator.resolve(null, parentSize: 200);
-      expect(result, isNull);
-    });
-  });
+  // The former DimensionCalculator was inlined into HtmlElement (its only
+  // caller); percent/dp/sp/px + wrap/match sizing is exercised via the widget
+  // tests (container_test, text_element_test, native_display_view_test).
 }

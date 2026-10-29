@@ -1,13 +1,11 @@
+import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:clevertap_native_display/clevertap_native_display.dart';
-import 'package:clevertap_native_display/src/renderer/root_height_scope.dart';
-import 'package:clevertap_native_display/src/renderer/resolved_styles_scope.dart';
 
 void main() {
   group('NativeDisplayView', () {
     testWidgets('renders SizedBox.shrink when root is null', (tester) async {
-      final config = NativeDisplayConfig.fromJson({});
+      final config = NativeDisplayConfig.fromJson(const {});
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
@@ -18,8 +16,8 @@ void main() {
       expect(find.byType(SizedBox), findsWidgets);
     });
 
-    testWidgets('widget tree contains RootHeightScope and ResolvedStylesScope', (tester) async {
-      final config = NativeDisplayConfig.fromJson({
+    testWidgets('widget tree contains NativeDisplayScope', (tester) async {
+      final config = NativeDisplayConfig.fromJson(const {
         'root': {
           'type': 'element',
           'id': 'root',
@@ -38,12 +36,11 @@ void main() {
         ),
       );
 
-      expect(find.byType(RootHeightScope), findsOneWidget);
-      expect(find.byType(ResolvedStylesScope), findsOneWidget);
+      expect(find.byType(NativeDisplayScope), findsOneWidget);
     });
 
     testWidgets('uses LayoutBuilder for percent dimensions', (tester) async {
-      final config = NativeDisplayConfig.fromJson({
+      final config = NativeDisplayConfig.fromJson(const {
         'root': {
           'type': 'element',
           'id': 'root',
@@ -70,7 +67,7 @@ void main() {
     });
 
     testWidgets('uses LayoutBuilder for aspectRatio', (tester) async {
-      final config = NativeDisplayConfig.fromJson({
+      final config = NativeDisplayConfig.fromJson(const {
         'root': {
           'type': 'element',
           'id': 'root',
@@ -96,7 +93,7 @@ void main() {
     });
 
     testWidgets('uses SizedBox with fixed dimensions when no percent/aspectRatio', (tester) async {
-      final config = NativeDisplayConfig.fromJson({
+      final config = NativeDisplayConfig.fromJson(const {
         'root': {
           'type': 'element',
           'id': 'root',

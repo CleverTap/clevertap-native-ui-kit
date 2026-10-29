@@ -1,6 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
-import 'package:clevertap_native_display/src/internal/nd_logger.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 // Mirrors the shipped Android/iOS CleverTapAutoWire log-sync semantics:
 // client-wins, unknown-level fallback = DEBUG, re-sync updates level without
@@ -17,10 +16,12 @@ void main() {
       expect(NDLogLevel.fromInt(3), NDLogLevel.verbose);
     });
 
-    test('unknown level falls back to DEBUG', () {
-      expect(NDLogLevel.fromInt(1), NDLogLevel.debug);
-      expect(NDLogLevel.fromInt(99), NDLogLevel.debug);
-      expect(NDLogLevel.fromInt(-5), NDLogLevel.debug);
+    test('unknown level falls back to INFO', () {
+      // Unknown Core debug levels must not silently enable verbose/debug
+      // logging — they fall back to the safe INFO default.
+      expect(NDLogLevel.fromInt(1), NDLogLevel.info);
+      expect(NDLogLevel.fromInt(99), NDLogLevel.info);
+      expect(NDLogLevel.fromInt(-5), NDLogLevel.info);
     });
   });
 

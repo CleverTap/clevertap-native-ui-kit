@@ -55,12 +55,12 @@ abstract final class ActionAttributionExtras {
 
   static void _appendAction(NDAction action, Map<String, Object?> out) {
     switch (action) {
-      case OpenUrlAction a:
+      case final OpenUrlAction a:
         out[_keyActionType] = 'open_url';
         out['action_url'] = a.url;
         out['action_open_in_browser'] = a.openInBrowser;
         a.metadata?.forEach((k, v) => out[k] = v);
-      case CustomAction a:
+      case final CustomAction a:
         out[_keyActionType] = 'custom';
         out['action_key'] = a.key;
         final value = a.value;
@@ -72,15 +72,15 @@ abstract final class ActionAttributionExtras {
           out['action_value'] = _toScalar(value);
         }
         a.metadata?.forEach((k, v) => out[k] = v);
-      case NavigateAction a:
+      case final NavigateAction a:
         out[_keyActionType] = 'navigate';
         out['action_destination'] = a.destination;
         a.params?.forEach((k, v) => out[k] = v);
-      case TrackEventAction a:
+      case final TrackEventAction a:
         out[_keyActionType] = 'event';
         out['action_event_name'] = a.eventName;
         a.properties?.forEach((k, v) => out[k] = _toScalar(v));
-      case CompositeAction a:
+      case final CompositeAction a:
         out[_keyActionType] = 'composite';
         out['action_count'] = a.actions.length;
         out['action_mode'] = switch (a.executionMode) {

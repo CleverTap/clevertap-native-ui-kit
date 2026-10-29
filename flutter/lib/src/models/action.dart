@@ -43,6 +43,18 @@ String _resolveOpenUrlValue(dynamic raw) {
   return '';
 }
 
+// Order-independent hash for a nullable map — pairs with mapEquals so two maps
+// that are `mapEquals`-equal always produce the same hashCode.
+int _mapHash(Map<Object?, Object?>? map) {
+  if (map == null) return null.hashCode;
+  var h = 0;
+  for (final e in map.entries) {
+    h ^= Object.hash(e.key, e.value);
+  }
+  return Object.hash(map.length, h);
+}
+
+@immutable
 sealed class NDAction {
   const NDAction();
 
@@ -80,6 +92,19 @@ class OpenUrlAction extends NDAction {
         customTabsEnabled: json['customTabsEnabled'] as bool? ?? true,
         metadata: _parseMetadataToStringMap(json['metadata']),
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is OpenUrlAction &&
+          other.url == url &&
+          other.openInBrowser == openInBrowser &&
+          other.customTabsEnabled == customTabsEnabled &&
+          mapEquals(other.metadata, metadata);
+
+  @override
+  int get hashCode =>
+      Object.hash(url, openInBrowser, customTabsEnabled, _mapHash(metadata));
 }
 
 class CustomAction extends NDAction {
@@ -94,6 +119,17 @@ class CustomAction extends NDAction {
         value: json['value'],
         metadata: _parseMetadataToStringMap(json['metadata']),
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CustomAction &&
+          other.key == key &&
+          other.value == value &&
+          mapEquals(other.metadata, metadata);
+
+  @override
+  int get hashCode => Object.hash(key, value, _mapHash(metadata));
 }
 
 class NavigateAction extends NDAction {
@@ -105,8 +141,18 @@ class NavigateAction extends NDAction {
   factory NavigateAction.fromJson(Map<String, dynamic> json) => NavigateAction(
         destination: json['destination'] as String? ?? '',
         params: (json['params'] as Map<String, dynamic>?)
-            ?.map((k, v) => MapEntry(k, v as String)),
+            ?.map((k, v) => MapEntry(k, v?.toString() ?? '')),
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NavigateAction &&
+          other.destination == destination &&
+          mapEquals(other.params, params);
+
+  @override
+  int get hashCode => Object.hash(destination, _mapHash(params));
 }
 
 class TrackEventAction extends NDAction {
@@ -119,6 +165,16 @@ class TrackEventAction extends NDAction {
         eventName: json['eventName'] as String? ?? '',
         properties: json['properties'] as Map<String, dynamic>?,
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TrackEventAction &&
+          other.eventName == eventName &&
+          mapEquals(other.properties, properties);
+
+  @override
+  int get hashCode => Object.hash(eventName, _mapHash(properties));
 }
 
 class CompositeAction extends NDAction {
@@ -137,6 +193,16 @@ class CompositeAction extends NDAction {
             const [],
         executionMode: ExecutionMode.fromJson(json['executionMode'] as String? ?? 'sequential'),
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CompositeAction &&
+          listEquals(other.actions, actions) &&
+          other.executionMode == executionMode;
+
+  @override
+  int get hashCode => Object.hash(Object.hashAll(actions), executionMode);
 }
 
 abstract final class ActionTriggers {

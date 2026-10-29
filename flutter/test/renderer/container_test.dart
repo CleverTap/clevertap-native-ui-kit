@@ -1,13 +1,10 @@
-import 'package:flutter/widgets.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:clevertap_native_display/src/renderer/containers/box_container.dart';
-import 'package:clevertap_native_display/src/renderer/containers/vertical_container.dart';
-import 'package:clevertap_native_display/src/renderer/containers/horizontal_container.dart';
 import 'package:clevertap_native_display/src/renderer/containers/gallery_renderer.dart';
-import 'package:clevertap_native_display/src/evaluator/variable_evaluator.dart';
-import 'package:clevertap_native_display/src/renderer/root_height_scope.dart';
-import 'package:clevertap_native_display/src/renderer/resolved_styles_scope.dart';
+import 'package:clevertap_native_display/src/renderer/containers/horizontal_container.dart';
+import 'package:clevertap_native_display/src/renderer/containers/vertical_container.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 NativeDisplayContainer makeContainer({
   String id = 'c',
@@ -26,16 +23,16 @@ NativeDisplayElement makeElement({String id = 'e'}) {
 }
 
 void main() {
-  final evaluator = VariableEvaluator({});
+  const evaluator = VariableEvaluator({});
 
   Widget wrap(Widget w) => Directionality(
         textDirection: TextDirection.ltr,
-        child: RootHeightScope(
+        child: NativeDisplayScope(
           rootHeight: 200,
-          child: ResolvedStylesScope(
-            styles: const {},
-            child: w,
-          ),
+          styles: const {},
+          unitId: null,
+          onClicked: null,
+          child: w,
         ),
       );
 
@@ -59,7 +56,7 @@ void main() {
       final child = NativeDisplayElement(
         id: 'child',
         elementType: ElementType.text,
-        layout: Layout.fromJson({
+        layout: Layout.fromJson(const {
           'offset': {'x': 10, 'y': 20, 'unit': 'dp'},
         }),
       );
@@ -78,7 +75,7 @@ void main() {
       final child = NativeDisplayElement(
         id: 'child',
         elementType: ElementType.text,
-        layout: Layout.fromJson({
+        layout: Layout.fromJson(const {
           'offset': {'x': 50, 'y': 25, 'unit': 'percent'},
         }),
       );
@@ -153,7 +150,7 @@ void main() {
     });
 
     testWidgets('renders correct number of children', (tester) async {
-      final node = NativeDisplayContainer(
+      const node = NativeDisplayContainer(
         id: 'gallery',
         containerType: ContainerType.gallery,
         children: [
@@ -163,7 +160,7 @@ void main() {
         ],
       );
 
-      await tester.pumpWidget(wrap(SizedBox(
+      await tester.pumpWidget(wrap(const SizedBox(
         width: 300,
         height: 200,
         child: GalleryRenderer(
@@ -181,11 +178,11 @@ void main() {
       final node = NativeDisplayContainer(
         id: 'gallery',
         containerType: ContainerType.gallery,
-        children: [
+        children: const [
           NativeDisplayElement(id: 'a', elementType: ElementType.text, bindings: {'text': 'P1'}),
           NativeDisplayElement(id: 'b', elementType: ElementType.text, bindings: {'text': 'P2'}),
         ],
-        galleryConfig: GalleryConfig.fromJson({
+        galleryConfig: GalleryConfig.fromJson(const {
           'showIndicators': true,
         }),
       );
@@ -204,7 +201,7 @@ void main() {
       expect(find.byType(Stack), findsOneWidget);
     });
 
-    testWidgets('empty children renders empty PageView without crash', (tester) async {
+    testWidgets('empty children renders nothing without crash', (tester) async {
       final node = makeContainer(
         type: ContainerType.gallery,
         children: const [],
@@ -220,7 +217,9 @@ void main() {
         ),
       )));
 
-      expect(find.byType(PageView), findsOneWidget);
+      // An empty gallery short-circuits to SizedBox.shrink() — building a
+      // PageView with zero children would trip `index % 0` in infinite mode.
+      expect(find.byType(PageView), findsNothing);
     });
   });
 }

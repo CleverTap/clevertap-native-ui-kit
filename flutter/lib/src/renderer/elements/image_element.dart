@@ -2,15 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../handler/action_attribution_extras.dart';
+import '../../internal/nd_logger.dart';
 import '../../models/action.dart';
 import '../../models/enums.dart';
 import '../../models/native_display_node.dart';
 import '../../models/node_config.dart';
 import '../../models/style.dart';
-import '../notification_click_scope.dart';
-import '../root_height_scope.dart';
+import '../native_display_scope.dart';
 import '../style_applier.dart';
-import '../unit_id_scope.dart';
 
 class ImageElement extends StatelessWidget {
   final NativeDisplayElement node;
@@ -26,7 +25,7 @@ class ImageElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rootHeight = RootHeightScope.of(context);
+    final rootHeight = NativeDisplayScope.rootHeightOf(context);
     final url = node.bindings['url'] ?? '';
     if (url.isEmpty) {
       return StyleApplier.apply(
@@ -43,18 +42,11 @@ class ImageElement extends StatelessWidget {
     final fit = _resolveBoxFit(imageFit);
 
     Widget imageWidget;
-    if (isTile) {
-      imageWidget = Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: NetworkImage(url),
-            repeat: ImageRepeat.repeat,
-          ),
-        ),
-      );
-    } else if (isGif) {
+    if (isGif) {
       // Flutter's image codec handles animated GIFs natively via Image.network.
       // CachedNetworkImage may not preserve frame timing for animated GIFs.
+      // Do NOT resize this path — decoding animated GIFs at a cache width can
+      // drop/garble frames.
       imageWidget = Image.network(
         url,
         fit: fit,
@@ -63,11 +55,40 @@ class ImageElement extends StatelessWidget {
         errorBuilder: (ctx, err, stack) => const SizedBox.shrink(),
       );
     } else {
-      imageWidget = CachedNetworkImage(
-        imageUrl: url,
-        fit: fit,
-        placeholder: (ctx, url) => const SizedBox.shrink(),
-        errorWidget: (ctx, url, err) => const SizedBox.shrink(),
+      // Static / tile paths: decode at the display pixel width to cut memory.
+      // LayoutBuilder gives the parent's max width; only resize when it's a
+      // concrete finite value — never guess.
+      imageWidget = LayoutBuilder(
+        builder: (ctx, constraints) {
+          final dpr = MediaQuery.devicePixelRatioOf(ctx);
+          final cacheW =
+              constraints.maxWidth.isFinite && constraints.maxWidth > 0
+                  ? (constraints.maxWidth * dpr).round()
+                  : null;
+          if (isTile) {
+            return Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: cacheW != null
+                      ? ResizeImage(NetworkImage(url), width: cacheW)
+                      : NetworkImage(url),
+                  repeat: ImageRepeat.repeat,
+                  // DecorationImage can't substitute a widget on failure — log and
+                  // swallow so a bad tile URL doesn't surface as an uncaught error.
+                  onError: (e, st) =>
+                      NDLogger.e('ImageElement', 'Tile image failed: $url', e, st),
+                ),
+              ),
+            );
+          }
+          return CachedNetworkImage(
+            imageUrl: url,
+            fit: fit,
+            memCacheWidth: cacheW,
+            placeholder: (ctx, url) => const SizedBox.shrink(),
+            errorWidget: (ctx, url, err) => const SizedBox.shrink(),
+          );
+        },
       );
     }
 
@@ -84,8 +105,8 @@ class ImageElement extends StatelessWidget {
     // only a componentListener is attached.
     final onClick = node.actions?[ActionTriggers.onClick];
     if (onClick != null) {
-      final unitId = UnitIdScope.of(context);
-      final onNotificationClicked = NotificationClickScope.of(context);
+      final unitId = NativeDisplayScope.unitIdOf(context);
+      final onNotificationClicked = NativeDisplayScope.onClickedOf(context);
       styled = GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {

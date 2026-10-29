@@ -9,7 +9,7 @@ import '../../models/native_display_node.dart';
 import '../../models/style.dart';
 import '../../utils/color_parser.dart';
 import '../native_display_renderer.dart';
-import '../root_height_scope.dart';
+import '../native_display_scope.dart';
 import '../style_applier.dart';
 
 class GalleryRenderer extends StatefulWidget {
@@ -35,7 +35,9 @@ class GalleryRenderer extends StatefulWidget {
 class _GalleryRendererState extends State<GalleryRenderer> {
   late PageController _pageController;
   Timer? _autoScrollTimer;
-  late int _currentPage;
+  // Current page as a ValueNotifier so page changes only rebuild the indicator
+  // dots (via ValueListenableBuilder) instead of the whole gallery/PageView.
+  late final ValueNotifier<int> _currentPage;
   late int _childCount;
 
   GalleryConfig get _config => widget.node.galleryConfig ?? const GalleryConfig();
@@ -44,9 +46,11 @@ class _GalleryRendererState extends State<GalleryRenderer> {
   void initState() {
     super.initState();
     _childCount = widget.node.children.length;
-    _currentPage = _config.initialPage.clamp(0, _childCount == 0 ? 0 : _childCount - 1);
+    final initialPage =
+        _config.initialPage.clamp(0, _childCount == 0 ? 0 : _childCount - 1);
+    _currentPage = ValueNotifier<int>(initialPage);
     _pageController = PageController(
-      initialPage: _currentPage,
+      initialPage: initialPage,
       viewportFraction: _viewportFraction,
     );
     _startAutoScroll();
@@ -63,29 +67,76 @@ class _GalleryRendererState extends State<GalleryRenderer> {
     if (interval <= 0 || _childCount <= 1) return;
     _autoScrollTimer = Timer.periodic(Duration(milliseconds: interval), (_) {
       if (!mounted) return;
-      final nextPage = _config.infiniteScroll
-          ? (_currentPage + 1) % _childCount
-          : (_currentPage + 1 < _childCount ? _currentPage + 1 : _currentPage);
-      if (nextPage != _currentPage) {
+      final current = _currentPage.value;
+      if (_config.infiniteScroll) {
+        // Infinite mode: keep advancing the live controller page unbounded
+        // (itemBuilder maps index % children.length to content). Never modulo
+        // the controller page itself or the carousel snaps back to the start.
         _pageController.animateToPage(
-          nextPage,
+          current + 1,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
+      } else {
+        final nextPage = current + 1 < _childCount ? current + 1 : current;
+        if (nextPage != current) {
+          _pageController.animateToPage(
+            nextPage,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(GalleryRenderer old) {
+    super.didUpdateWidget(old);
+    final oldConfig = old.node.galleryConfig ?? const GalleryConfig();
+    final newConfig = _config;
+    final newChildCount = widget.node.children.length;
+
+    final structuralChange = newChildCount != _childCount ||
+        oldConfig.autoScrollInterval != newConfig.autoScrollInterval ||
+        oldConfig.infiniteScroll != newConfig.infiniteScroll ||
+        oldConfig.initialPage != newConfig.initialPage ||
+        oldConfig.effectiveItemsPerView != newConfig.effectiveItemsPerView;
+
+    if (!structuralChange) return;
+
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = null;
+    _pageController.dispose();
+
+    _childCount = newChildCount;
+    final maxPage = _childCount == 0 ? 0 : _childCount - 1;
+    final clampedPage = _currentPage.value.clamp(0, maxPage);
+    _currentPage.value = clampedPage;
+
+    final initialPage = newConfig.initialPage.clamp(0, maxPage);
+    _pageController = PageController(
+      initialPage: initialPage,
+      viewportFraction: _viewportFraction,
+    );
+    _startAutoScroll();
   }
 
   @override
   void dispose() {
     _autoScrollTimer?.cancel();
     _pageController.dispose();
+    _currentPage.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final rootHeight = RootHeightScope.of(context);
+    // Empty gallery: nothing to page through. Guards against `index % 0` in the
+    // infinite-scroll itemBuilder when there are no children.
+    if (widget.node.children.isEmpty) return const SizedBox.shrink();
+
+    final rootHeight = NativeDisplayScope.rootHeightOf(context);
     final config = _config;
     final children = widget.node.children;
 
@@ -102,7 +153,7 @@ class _GalleryRendererState extends State<GalleryRenderer> {
             scrollDirection: config.orientation == Orientation.vertical
                 ? Axis.vertical
                 : Axis.horizontal,
-            onPageChanged: (page) => setState(() => _currentPage = page),
+            onPageChanged: (page) => _currentPage.value = page,
             itemCount: config.infiniteScroll ? null : children.length,
             itemBuilder: (context, index) {
               final child = children[index % children.length];
@@ -121,7 +172,13 @@ class _GalleryRendererState extends State<GalleryRenderer> {
                   child: item,
                 );
               }
-              return RepaintBoundary(child: item);
+              // Stable key per item: in infinite mode the same child repeats
+              // across indices (index % len), so key by index there; in finite
+              // mode key by the child's node id. Both are collision-free.
+              return RepaintBoundary(
+                key: ValueKey(config.infiniteScroll ? index : child.id),
+                child: item,
+              );
             },
           ),
         );
@@ -134,7 +191,13 @@ class _GalleryRendererState extends State<GalleryRenderer> {
         alignment: _indicatorAlignment(style.position),
         children: [
           gallery,
-          _buildIndicators(style, children.length),
+          // Only the dots rebuild as the page changes (ValueListenableBuilder) —
+          // the PageView above is not rebuilt on scroll.
+          ValueListenableBuilder<int>(
+            valueListenable: _currentPage,
+            builder: (_, page, __) =>
+                _buildIndicators(style, children.length, page),
+          ),
         ],
       );
     }
@@ -154,13 +217,13 @@ class _GalleryRendererState extends State<GalleryRenderer> {
         _ => Alignment.bottomCenter,
       };
 
-  Widget _buildIndicators(IndicatorStyle style, int count) {
+  Widget _buildIndicators(IndicatorStyle style, int count, int currentPage) {
     final activeColor = ColorParser.parse(style.activeColor) ?? const Color(0xFF2196F3);
     final inactiveColor = ColorParser.parse(style.inactiveColor) ?? const Color(0xFFBDBDBD);
     final isVertical = _config.orientation == Orientation.vertical;
 
     final dots = List.generate(count, (i) {
-      final isActive = i == _currentPage % count;
+      final isActive = i == currentPage % count;
       return Container(
         width: style.size,
         height: style.size,

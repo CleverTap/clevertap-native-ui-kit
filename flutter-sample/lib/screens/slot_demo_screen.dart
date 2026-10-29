@@ -1,3 +1,5 @@
+import 'package:clevertap_plugin/clevertap_plugin.dart';
+import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:flutter/material.dart';
 
 // --- Data models ---
@@ -40,14 +42,32 @@ const _appItems = [
   _AppItem(15, 'Mindful Breathing',      'Calm in 3 minutes',                   'https://yavuzceliker.github.io/sample-images/image-70.jpg'),
 ];
 
+// Slot ids interleaved into the feed at fixed positions. These mirror the
+// slot ids the Android/iOS Slot Demo screens use.
+const _slotTop = 'slot_top';
+const _slotFeed1 = 'slot_feed_1';
+const _slotFeed2 = 'slot_feed_2';
+const _slotBottom = 'slot_bottom';
+
 List<_FeedItem> _buildFeed() => [
-  _SlotItem('slot_top'),
+  _SlotItem(_slotTop),
   ..._appItems.sublist(0, 3).map(_ContentItem.new),
-  _SlotItem('slot_feed_1'),
+  _SlotItem(_slotFeed1),
   ..._appItems.sublist(3, 6).map(_ContentItem.new),
-  _SlotItem('slot_feed_2'),
+  _SlotItem(_slotFeed2),
   ..._appItems.sublist(6, 15).map(_ContentItem.new),
-  _SlotItem('slot_bottom'),
+  _SlotItem(_slotBottom),
+];
+
+// Events fired by "Fetch Slot Data" — identical to the Android and iOS Slot
+// Demo screens (SlotDemoScreen.kt / SlotDemoView.swift). These trigger the
+// slot-targeted Native Display campaigns provisioned on the CleverTap dashboard
+// for this sample. The returned units arrive via the display-units handler
+// (owned by CleverTapIntegrationScreen — the single sink) and are fanned out to
+// NativeDisplaySlotManager, which routes each to its NativeDisplaySlot by
+// slot_id. Requires the live CleverTap account the sample is configured with.
+const _fetchSlotEvents = <String>[
+  'Footer1', 'Footer5', 'Header1', 'Header2', 'Header4', 'lalit',
 ];
 
 // --- Screen ---
@@ -61,17 +81,69 @@ class SlotDemoScreen extends StatefulWidget {
 
 class _SlotDemoScreenState extends State<SlotDemoScreen> {
   final _feed = _buildFeed();
-  // In a real integration, slot configs would come from the CleverTap Core SDK
-  // via clevertap_plugin.getAllDisplayUnits(). Here we show dashed placeholders
-  // to demonstrate the layout.
+  final _manager = NativeDisplaySlotManager.instance;
 
-  void _fetchSlotData() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Integrate CleverTap Core SDK to receive live slot data'),
-        duration: Duration(seconds: 3),
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    // Slot-sync is host-mediated: the pure-Dart plugin can't call the Core SDK,
+    // so we forward the wzrk_nd_slot_sync event out to clevertap_plugin here.
+    // syncActiveSlots() invokes this callback with the active slot ids.
+    _manager.onSlotSync = (eventName, eventData) {
+      CleverTapPlugin.recordEvent(eventName, eventData);
+      _snack('Slot sync → $eventName ${eventData['slots']}');
+    };
+  }
+
+  @override
+  void dispose() {
+    // Leave cached units in place (process-wide), but drop our sync hook so we
+    // don't fire snackbars against a disposed context.
+    _manager.onSlotSync = null;
+    super.dispose();
+  }
+
+  Future<void> _fetchSlotData() async {
+    // Fire the same events as the Android/iOS Slot Demo screens. The server
+    // returns slot-targeted units, delivered through the display-units handler
+    // (CleverTapIntegrationScreen) which fans them out to the SlotManager; each
+    // NativeDisplaySlot then renders the unit routed to its slot_id.
+    for (final event in _fetchSlotEvents) {
+      await CleverTapPlugin.recordEvent(event, {});
+    }
+    if (!mounted) return;
+    _snack('Fired ${_fetchSlotEvents.length} slot fetch event(s)');
+    // Report which slots are currently active back to the server.
+    _manager.syncActiveSlots();
+  }
+
+  void _clearSlots() {
+    _manager.clearAll();
+    _snack('Cleared all slots');
+  }
+
+  void _onViewed(String unitId) {
+    CleverTapPlugin.pushDisplayUnitViewedEvent(unitId);
+    _snack('VIEWED unit $unitId');
+  }
+
+  void _onClicked(String unitId, String elementId, Map<String, Object?> extras) {
+    if (elementId.isNotEmpty) {
+      CleverTapPlugin.pushDisplayUnitElementClickedEvent(unitId, extras);
+      _snack('CLICKED $elementId on unit $unitId');
+    } else {
+      CleverTapPlugin.pushDisplayUnitClickedEvent(unitId);
+      _snack('CLICKED unit $unitId');
+    }
+  }
+
+  void _snack(String msg) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(content: Text(msg), duration: const Duration(seconds: 2)),
+      );
   }
 
   @override
@@ -80,10 +152,16 @@ class _SlotDemoScreenState extends State<SlotDemoScreen> {
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
         title: const Text('Slot Demo'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        actions: [
+          IconButton(
+            tooltip: 'Clear slots',
+            icon: const Icon(Icons.clear_all),
+            onPressed: _clearSlots,
+          ),
+        ],
       ),
       body: ListView.builder(
+        key: const Key('slot-demo-feed'),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         itemCount: _feed.length + 1, // +1 for header
         itemBuilder: (ctx, i) {
@@ -92,7 +170,15 @@ class _SlotDemoScreenState extends State<SlotDemoScreen> {
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: switch (item) {
-              _SlotItem s => _SlotPlaceholder(slotId: s.slotId),
+              _SlotItem s => NativeDisplaySlot(
+                  slotId: s.slotId,
+                  onNotificationViewed: _onViewed,
+                  onNotificationClicked: _onClicked,
+                  // Empty slots keep the original dashed "Ad" placeholder until
+                  // a unit is routed to this slot id.
+                  loadingBuilder: (ctx, slotId) =>
+                      _SlotPlaceholder(slotId: slotId),
+                ),
               _ContentItem c => _AppContentCard(item: c.item),
             },
           );
@@ -121,14 +207,19 @@ class _Header extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           const Text(
-            'This feed contains 4 NativeDisplaySlot views at fixed positions. '
-            'Tap the button below to fire a CleverTap event that fetches real server data for the slots.',
+            'This feed hosts real NativeDisplaySlot views at fixed positions. '
+            'Tap "Fetch Slot Data" to fire the CleverTap events that trigger the '
+            'slot-targeted campaigns (same events as the Android/iOS samples). '
+            'Returned units arrive via clevertap_plugin, are routed to the '
+            'NativeDisplaySlotManager, and each slot renders its unit in place '
+            'of the dashed placeholder.',
             style: TextStyle(fontSize: 14, color: Color(0xFF666666)),
           ),
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             child: FilledButton(
+              key: const Key('fetch-slot-data-btn'),
               onPressed: onFetch,
               style: FilledButton.styleFrom(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

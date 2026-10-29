@@ -12,12 +12,34 @@ dependencies:
     sdk: flutter
   clevertap_native_display:
     path: ../flutter
-  clevertap_plugin: ^4.1.0
+  # Optional element add-ons (VIDEO / HTML). Added here so the sample demos both;
+  # a real host adds only the ones it needs.
+  clevertap_native_display_video:
+    path: ../flutter-video
+  clevertap_native_display_webview:
+    path: ../flutter-webview
+  clevertap_plugin: ^4.3.0
+  # Automation-only (ND_AUTOMATION): manifest I/O + cache warming. These are
+  # pulled in by cached_network_image transitively, but we depend on them
+  # directly so the automation code can import them.
+  path_provider: ^2.1.0
+  flutter_cache_manager: ^3.3.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
   flutter_lints: ^4.0.0
+
+# Monorepo local development. The add-on packages declare a HOSTED core dep
+# (clevertap_native_display: ^1.0.0) so they're publishable, but locally every
+# package must resolve core from the sibling path. A dependency_overrides in the
+# root (this sample) pins the source for the whole resolution — including the
+# add-ons — so path and hosted don't conflict.
+dependency_overrides:
+  clevertap_native_display:
+    path: ../flutter
 
 flutter:
   uses-material-design: true

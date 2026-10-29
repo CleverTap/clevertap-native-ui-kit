@@ -12,11 +12,11 @@ class ActionHandler {
 
   Future<void> handle(NDAction action, String nodeId) async {
     return switch (action) {
-      OpenUrlAction a => _handleOpenUrl(a, nodeId),
-      CustomAction a => _handleCustom(a, nodeId),
-      NavigateAction a => _handleNavigate(a, nodeId),
-      TrackEventAction a => _handleTrackEvent(a, nodeId),
-      CompositeAction a => _handleComposite(a, nodeId),
+      final OpenUrlAction a => _handleOpenUrl(a, nodeId),
+      final CustomAction a => _handleCustom(a, nodeId),
+      final NavigateAction a => _handleNavigate(a, nodeId),
+      final TrackEventAction a => _handleTrackEvent(a, nodeId),
+      final CompositeAction a => _handleComposite(a, nodeId),
     };
   }
 

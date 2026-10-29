@@ -1,13 +1,13 @@
-import 'package:flutter/widgets.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:clevertap_native_display/src/internal/viewed_units_tracker.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 // SDK-6019: attribution is surfaced to the host through NativeDisplayView
 // callbacks (pure Dart — no platform channel). These tests lock in the
 // once-per-impression viewed gate and the click callback shape that the sample
 // (SDK-6020) will consume.
-NativeDisplayConfig _buttonConfig() => NativeDisplayConfig.fromJson({
+NativeDisplayConfig _buttonConfig() => NativeDisplayConfig.fromJson(const {
       'root': {
         'type': 'element',
         'id': 'cta',
@@ -27,7 +27,7 @@ NativeDisplayConfig _buttonConfig() => NativeDisplayConfig.fromJson({
       },
     });
 
-NativeDisplayConfig _imageConfig() => NativeDisplayConfig.fromJson({
+NativeDisplayConfig _imageConfig() => NativeDisplayConfig.fromJson(const {
       'root': {
         'type': 'element',
         'id': 'hero',
@@ -77,6 +77,29 @@ void main() {
       await tester.pump();
 
       expect(fired, isFalse);
+    });
+
+    testWidgets('two units on screen each fire viewed exactly once', (tester) async {
+      final viewed = <String>[];
+
+      await tester.pumpWidget(_wrap(Column(children: [
+        NativeDisplayView(
+          config: _buttonConfig(),
+          unitId: 'unit-a',
+          onNotificationViewed: viewed.add,
+        ),
+        NativeDisplayView(
+          config: _imageConfig(),
+          unitId: 'unit-b',
+          onNotificationViewed: viewed.add,
+        ),
+      ])));
+      await tester.pump(); // run the post-frame callbacks
+
+      // Each distinct unit fires once; one unit's impression never suppresses
+      // another's (the gate is keyed per unitId, not a global latch).
+      expect(viewed, containsAll(<String>['unit-a', 'unit-b']));
+      expect(viewed.length, 2);
     });
 
     testWidgets('re-fires after unmount then remount (fresh impression)', (tester) async {

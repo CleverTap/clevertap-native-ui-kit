@@ -7,10 +7,8 @@ import '../../models/enums.dart';
 import '../../models/native_display_node.dart';
 import '../../models/style.dart';
 import '../../utils/color_parser.dart';
-import '../notification_click_scope.dart';
-import '../root_height_scope.dart';
+import '../native_display_scope.dart';
 import '../style_applier.dart';
-import '../unit_id_scope.dart';
 
 class ButtonElement extends StatelessWidget {
   final NativeDisplayElement node;
@@ -28,10 +26,10 @@ class ButtonElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rootHeight = RootHeightScope.of(context);
+    final rootHeight = NativeDisplayScope.rootHeightOf(context);
     final text = evaluator.evaluateString(node.bindings['text'] ?? '');
-    final unitId = UnitIdScope.of(context);
-    final onNotificationClicked = NotificationClickScope.of(context);
+    final unitId = NativeDisplayScope.unitIdOf(context);
+    final onNotificationClicked = NativeDisplayScope.onClickedOf(context);
 
     return GestureDetector(
       onTap: () => _handleClick(unitId, onNotificationClicked),
@@ -61,7 +59,7 @@ class ButtonElement extends StatelessWidget {
       fontFamily: style.fontFamily,
       fontWeight: _resolveFontWeight(style.fontWeight),
       fontStyle: style.fontStyle == NDFontStyle.italic ? FontStyle.italic : FontStyle.normal,
-      height: lineHeight != null ? lineHeight / fontSize : null,
+      height: (lineHeight != null && fontSize > 0) ? lineHeight / fontSize : null,
       letterSpacing: style.letterSpacing,
     );
   }

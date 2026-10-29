@@ -1,10 +1,7 @@
-import 'package:flutter/widgets.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:clevertap_native_display/src/renderer/containers/box_container.dart';
-import 'package:clevertap_native_display/src/evaluator/variable_evaluator.dart';
-import 'package:clevertap_native_display/src/renderer/root_height_scope.dart';
-import 'package:clevertap_native_display/src/renderer/resolved_styles_scope.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 // Regression tests locking in #54 BOX hit-testing parity: a non-interactive
 // child stacked in a BOX must not swallow taps destined for an interactive
@@ -16,13 +13,13 @@ void main() {
   Widget wrap(Widget w) => Center(
         child: Directionality(
           textDirection: TextDirection.ltr,
-          child: RootHeightScope(
-            rootHeight: 200,
-            child: ResolvedStylesScope(
-              styles: const {},
-              child: w,
-            ),
-          ),
+          child: NativeDisplayScope(
+          rootHeight: 200,
+          styles: const {},
+          unitId: null,
+          onClicked: null,
+          child: w,
+        ),
         ),
       );
 
@@ -31,19 +28,19 @@ void main() {
     var lowerTaps = 0;
 
     // Lower interactive BUTTON + top non-interactive TEXT in the same BOX.
-    final lower = NativeDisplayElement(
+    const lower = NativeDisplayElement(
       id: 'lower',
       elementType: ElementType.button,
-      bindings: const {'text': 'tap-me'},
-      actions: {ActionTriggers.onClick: const CustomAction(key: 'lower_click')},
+      bindings: {'text': 'tap-me'},
+      actions: {ActionTriggers.onClick: CustomAction(key: 'lower_click')},
     );
-    final top = NativeDisplayElement(
+    const top = NativeDisplayElement(
       id: 'top',
       elementType: ElementType.text,
-      bindings: const {'text': 'overlay'},
+      bindings: {'text': 'overlay'},
     );
 
-    final node = NativeDisplayContainer(
+    const node = NativeDisplayContainer(
       id: 'box',
       containerType: ContainerType.box,
       children: [lower, top],
@@ -52,7 +49,7 @@ void main() {
     await tester.pumpWidget(wrap(BoxContainer(
       node: node,
       style: Style.empty,
-      evaluator: VariableEvaluator({}),
+      evaluator: const VariableEvaluator({}),
       actionListener: (action, nodeId, params) {
         if (nodeId == 'lower') lowerTaps++;
       },
@@ -74,20 +71,20 @@ void main() {
     var lowerTaps = 0;
     var topTaps = 0;
 
-    final lower = NativeDisplayElement(
+    const lower = NativeDisplayElement(
       id: 'lower',
       elementType: ElementType.button,
-      bindings: const {'text': 'lower-btn'},
-      actions: {ActionTriggers.onClick: const CustomAction(key: 'lower_click')},
+      bindings: {'text': 'lower-btn'},
+      actions: {ActionTriggers.onClick: CustomAction(key: 'lower_click')},
     );
-    final top = NativeDisplayElement(
+    const top = NativeDisplayElement(
       id: 'top',
       elementType: ElementType.button,
-      bindings: const {'text': 'top-btn'},
-      actions: {ActionTriggers.onClick: const CustomAction(key: 'top_click')},
+      bindings: {'text': 'top-btn'},
+      actions: {ActionTriggers.onClick: CustomAction(key: 'top_click')},
     );
 
-    final node = NativeDisplayContainer(
+    const node = NativeDisplayContainer(
       id: 'box',
       containerType: ContainerType.box,
       children: [lower, top],
@@ -96,7 +93,7 @@ void main() {
     await tester.pumpWidget(wrap(BoxContainer(
       node: node,
       style: Style.empty,
-      evaluator: VariableEvaluator({}),
+      evaluator: const VariableEvaluator({}),
       actionListener: (action, nodeId, params) {
         if (nodeId == 'lower') lowerTaps++;
         if (nodeId == 'top') topTaps++;

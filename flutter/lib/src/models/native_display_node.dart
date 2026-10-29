@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import 'action.dart';
 import 'enums.dart';
 import 'gallery_config.dart';
@@ -16,6 +18,19 @@ String _coerceBindingValue(dynamic v) {
   return v.toString();
 }
 
+// Order-independent hash for a nullable map — pairs with mapEquals.
+int _mapHash(Map<Object?, Object?>? map) {
+  if (map == null) return null.hashCode;
+  var h = 0;
+  for (final e in map.entries) {
+    h ^= Object.hash(e.key, e.value);
+  }
+  return Object.hash(map.length, h);
+}
+
+int _actionsHash(Map<String, NDAction>? actions) => _mapHash(actions);
+
+@immutable
 sealed class NativeDisplayNode {
   final String id;
   final Layout? layout;
@@ -93,6 +108,37 @@ class NativeDisplayContainer extends NativeDisplayNode {
           : null,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NativeDisplayContainer &&
+          other.id == id &&
+          other.layout == layout &&
+          other.style == style &&
+          other.styleClass == styleClass &&
+          other.visible == visible &&
+          mapEquals(other.actions, actions) &&
+          other.animation == animation &&
+          other.containerType == containerType &&
+          listEquals(other.children, children) &&
+          other.galleryConfig == galleryConfig &&
+          other.dividerConfig == dividerConfig;
+
+  @override
+  int get hashCode => Object.hash(
+        id,
+        layout,
+        style,
+        styleClass,
+        visible,
+        _actionsHash(actions),
+        animation,
+        containerType,
+        Object.hashAll(children),
+        galleryConfig,
+        dividerConfig,
+      );
 }
 
 class NativeDisplayElement extends NativeDisplayNode {
@@ -148,4 +194,37 @@ class NativeDisplayElement extends NativeDisplayNode {
           : null,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NativeDisplayElement &&
+          other.id == id &&
+          other.layout == layout &&
+          other.style == style &&
+          other.styleClass == styleClass &&
+          other.visible == visible &&
+          mapEquals(other.actions, actions) &&
+          other.animation == animation &&
+          other.elementType == elementType &&
+          mapEquals(other.bindings, bindings) &&
+          other.dividerConfig == dividerConfig &&
+          other.imageConfig == imageConfig &&
+          other.htmlConfig == htmlConfig;
+
+  @override
+  int get hashCode => Object.hash(
+        id,
+        layout,
+        style,
+        styleClass,
+        visible,
+        _actionsHash(actions),
+        animation,
+        elementType,
+        _mapHash(bindings),
+        dividerConfig,
+        imageConfig,
+        htmlConfig,
+      );
 }

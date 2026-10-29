@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
+
 import 'enums.dart';
 
+@immutable
 sealed class Background {
   const Background();
 
@@ -17,7 +20,7 @@ sealed class Background {
       'pattern' => PatternBackground.fromJson(json),
       'particles' => ParticlesBackground.fromJson(json),
       'layered' => LayeredBackground.fromJson(json),
-      _ => SolidBackground(color: '#00000000'),
+      _ => const SolidBackground(color: '#00000000'),
     };
   }
 }
@@ -29,6 +32,14 @@ class SolidBackground extends Background {
 
   factory SolidBackground.fromJson(Map<String, dynamic> json) =>
       SolidBackground(color: json['color'] as String? ?? '#000000');
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SolidBackground && other.color == color;
+
+  @override
+  int get hashCode => color.hashCode;
 }
 
 class LinearGradientBackground extends Background {
@@ -45,9 +56,28 @@ class LinearGradientBackground extends Background {
   factory LinearGradientBackground.fromJson(Map<String, dynamic> json) =>
       LinearGradientBackground(
         angle: (json['angle'] as num?)?.toDouble() ?? 0,
-        colors: (json['colors'] as List?)?.map((e) => e as String).toList() ?? const [],
-        stops: (json['stops'] as List?)?.map((e) => (e as num).toDouble()).toList(),
+        colors: (json['colors'] as List?)
+                ?.map((e) => e?.toString())
+                .whereType<String>()
+                .toList() ??
+            const [],
+        stops: (json['stops'] as List?)
+            ?.map((e) => e is num ? e.toDouble() : null)
+            .whereType<double>()
+            .toList(),
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LinearGradientBackground &&
+          other.angle == angle &&
+          listEquals(other.colors, colors) &&
+          listEquals(other.stops, stops);
+
+  @override
+  int get hashCode => Object.hash(
+      angle, Object.hashAll(colors), stops == null ? null : Object.hashAll(stops!));
 }
 
 class RadialGradientBackground extends Background {
@@ -70,9 +100,30 @@ class RadialGradientBackground extends Background {
         centerX: (json['center_x'] as num?)?.toDouble() ?? 0.5,
         centerY: (json['center_y'] as num?)?.toDouble() ?? 0.5,
         radius: (json['radius'] as num?)?.toDouble() ?? 1.0,
-        colors: (json['colors'] as List?)?.map((e) => e as String).toList() ?? const [],
-        stops: (json['stops'] as List?)?.map((e) => (e as num).toDouble()).toList(),
+        colors: (json['colors'] as List?)
+                ?.map((e) => e?.toString())
+                .whereType<String>()
+                .toList() ??
+            const [],
+        stops: (json['stops'] as List?)
+            ?.map((e) => e is num ? e.toDouble() : null)
+            .whereType<double>()
+            .toList(),
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RadialGradientBackground &&
+          other.centerX == centerX &&
+          other.centerY == centerY &&
+          other.radius == radius &&
+          listEquals(other.colors, colors) &&
+          listEquals(other.stops, stops);
+
+  @override
+  int get hashCode => Object.hash(centerX, centerY, radius, Object.hashAll(colors),
+      stops == null ? null : Object.hashAll(stops!));
 }
 
 class SweepGradientBackground extends Background {
@@ -95,9 +146,30 @@ class SweepGradientBackground extends Background {
         centerX: (json['center_x'] as num?)?.toDouble() ?? 0.5,
         centerY: (json['center_y'] as num?)?.toDouble() ?? 0.5,
         startAngle: (json['start_angle'] as num?)?.toDouble() ?? 0,
-        colors: (json['colors'] as List?)?.map((e) => e as String).toList() ?? const [],
-        stops: (json['stops'] as List?)?.map((e) => (e as num).toDouble()).toList(),
+        colors: (json['colors'] as List?)
+                ?.map((e) => e?.toString())
+                .whereType<String>()
+                .toList() ??
+            const [],
+        stops: (json['stops'] as List?)
+            ?.map((e) => e is num ? e.toDouble() : null)
+            .whereType<double>()
+            .toList(),
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SweepGradientBackground &&
+          other.centerX == centerX &&
+          other.centerY == centerY &&
+          other.startAngle == startAngle &&
+          listEquals(other.colors, colors) &&
+          listEquals(other.stops, stops);
+
+  @override
+  int get hashCode => Object.hash(centerX, centerY, startAngle, Object.hashAll(colors),
+      stops == null ? null : Object.hashAll(stops!));
 }
 
 class ImageBackground extends Background {
@@ -125,6 +197,20 @@ class ImageBackground extends Background {
         tint: json['tint'] as String?,
         tintOpacity: (json['tint_opacity'] as num?)?.toDouble() ?? 0,
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ImageBackground &&
+          other.url == url &&
+          other.fit == fit &&
+          other.opacity == opacity &&
+          other.blur == blur &&
+          other.tint == tint &&
+          other.tintOpacity == tintOpacity;
+
+  @override
+  int get hashCode => Object.hash(url, fit, opacity, blur, tint, tintOpacity);
 }
 
 // Deferred to v2 — parsed but rendered as transparent with warning
@@ -147,9 +233,22 @@ class ShimmerBackground extends Background {
         baseColor: json['base_color'] as String? ?? '#E0E0E0',
         highlightColor: json['highlight_color'] as String? ?? '#F5F5F5',
         angle: (json['angle'] as num?)?.toDouble() ?? 45,
-        duration: json['duration'] as int? ?? 1500,
+        duration: (json['duration'] as num?)?.toInt() ?? 1500,
         loop: json['loop'] as bool? ?? true,
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ShimmerBackground &&
+          other.baseColor == baseColor &&
+          other.highlightColor == highlightColor &&
+          other.angle == angle &&
+          other.duration == duration &&
+          other.loop == loop;
+
+  @override
+  int get hashCode => Object.hash(baseColor, highlightColor, angle, duration, loop);
 }
 
 // Deferred to v2 — parsed but rendered as transparent with warning
@@ -174,11 +273,30 @@ class AnimatedGradientBackground extends Background {
       AnimatedGradientBackground(
         gradientType: GradientType.fromJson(json['gradient_type'] as String? ?? 'linear'),
         angle: (json['angle'] as num?)?.toDouble() ?? 0,
-        colors: (json['colors'] as List?)?.map((e) => e as String).toList() ?? const [],
-        duration: json['duration'] as int? ?? 3000,
+        colors: (json['colors'] as List?)
+                ?.map((e) => e?.toString())
+                .whereType<String>()
+                .toList() ??
+            const [],
+        duration: (json['duration'] as num?)?.toInt() ?? 3000,
         loop: json['loop'] as bool? ?? true,
         animationStyle: AnimationStyle.fromJson(json['animation_style'] as String? ?? 'smooth'),
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AnimatedGradientBackground &&
+          other.gradientType == gradientType &&
+          other.angle == angle &&
+          listEquals(other.colors, colors) &&
+          other.duration == duration &&
+          other.loop == loop &&
+          other.animationStyle == animationStyle;
+
+  @override
+  int get hashCode => Object.hash(
+      gradientType, angle, Object.hashAll(colors), duration, loop, animationStyle);
 }
 
 // Deferred to v2 — parsed but rendered as transparent with warning
@@ -201,9 +319,22 @@ class PulseBackground extends Background {
         color: json['color'] as String? ?? '#000000',
         minOpacity: (json['min_opacity'] as num?)?.toDouble() ?? 0.3,
         maxOpacity: (json['max_opacity'] as num?)?.toDouble() ?? 1.0,
-        duration: json['duration'] as int? ?? 1000,
+        duration: (json['duration'] as num?)?.toInt() ?? 1000,
         loop: json['loop'] as bool? ?? true,
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PulseBackground &&
+          other.color == color &&
+          other.minOpacity == minOpacity &&
+          other.maxOpacity == maxOpacity &&
+          other.duration == duration &&
+          other.loop == loop;
+
+  @override
+  int get hashCode => Object.hash(color, minOpacity, maxOpacity, duration, loop);
 }
 
 // Deferred to v2 — parsed but rendered as transparent with warning
@@ -232,6 +363,21 @@ class PatternBackground extends Background {
         spacing: (json['spacing'] as num?)?.toDouble() ?? 30,
         opacity: (json['opacity'] as num?)?.toDouble() ?? 1.0,
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PatternBackground &&
+          other.patternType == patternType &&
+          other.primaryColor == primaryColor &&
+          other.secondaryColor == secondaryColor &&
+          other.size == size &&
+          other.spacing == spacing &&
+          other.opacity == opacity;
+
+  @override
+  int get hashCode =>
+      Object.hash(patternType, primaryColor, secondaryColor, size, spacing, opacity);
 }
 
 // Deferred to v2 — parsed but rendered as transparent with warning
@@ -254,12 +400,27 @@ class ParticlesBackground extends Background {
 
   factory ParticlesBackground.fromJson(Map<String, dynamic> json) => ParticlesBackground(
         particleColor: json['particle_color'] as String? ?? '#000000',
-        particleCount: json['particle_count'] as int? ?? 50,
+        particleCount: (json['particle_count'] as num?)?.toInt() ?? 50,
         particleSize: (json['particle_size'] as num?)?.toDouble() ?? 4,
         speed: (json['speed'] as num?)?.toDouble() ?? 2,
         direction: ParticleDirection.fromJson(json['direction'] as String? ?? 'up'),
         opacity: (json['opacity'] as num?)?.toDouble() ?? 0.7,
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ParticlesBackground &&
+          other.particleColor == particleColor &&
+          other.particleCount == particleCount &&
+          other.particleSize == particleSize &&
+          other.speed == speed &&
+          other.direction == direction &&
+          other.opacity == opacity;
+
+  @override
+  int get hashCode => Object.hash(
+      particleColor, particleCount, particleSize, speed, direction, opacity);
 }
 
 // Deferred to v2 — parsed but rendered as transparent with warning
@@ -274,4 +435,12 @@ class LayeredBackground extends Background {
                 .toList() ??
             const [],
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LayeredBackground && listEquals(other.layers, layers);
+
+  @override
+  int get hashCode => Object.hashAll(layers);
 }

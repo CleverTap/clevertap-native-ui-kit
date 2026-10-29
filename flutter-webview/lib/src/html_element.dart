@@ -1,14 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../../internal/nd_logger.dart';
-import '../../evaluator/variable_evaluator.dart';
-import '../../models/enums.dart';
-import '../../models/native_display_node.dart';
-import '../../models/style.dart';
-import '../../utils/dimension_calculator.dart';
-import '../root_height_scope.dart';
-import '../style_applier.dart';
+import 'package:clevertap_native_display/clevertap_native_display.dart';
 
 class HtmlElement extends StatefulWidget {
   final NativeDisplayElement node;
@@ -69,12 +62,17 @@ class _HtmlElementState extends State<HtmlElement> {
 
   @override
   Widget build(BuildContext context) {
-    final rootHeight = RootHeightScope.of(context);
+    final rootHeight = NativeDisplayScope.rootHeightOf(context);
     final layout = widget.node.layout;
 
     // HTML requires an explicit height — wrap_content is unsupported by WebView.
     // Resolve height from layout; fall back to 200dp for wrap_content or unspecified.
-    final rawHeight = DimensionCalculator.resolve(layout?.height, parentSize: rootHeight);
+    // (Inlined the former DimensionCalculator: percent → rootHeight%, dp/sp/px →
+    // value, specials → null.)
+    final h = layout?.height;
+    final double? rawHeight = (h == null || h.special != null)
+        ? null
+        : (h.unit == DimensionUnit.percent ? rootHeight * h.value / 100.0 : h.value);
     final isWrapContent = layout?.height?.special == SpecialDimension.wrapContent;
     final isMatchParent = layout?.height?.special == SpecialDimension.matchParent;
     if (isWrapContent) {

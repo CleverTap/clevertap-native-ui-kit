@@ -1,11 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../evaluator/variable_evaluator.dart';
-import '../../models/native_display_node.dart';
-import '../../models/style.dart';
-import '../root_height_scope.dart';
-import '../style_applier.dart';
+import 'package:clevertap_native_display/clevertap_native_display.dart';
 
 class VideoElement extends StatefulWidget {
   final NativeDisplayElement node;
@@ -60,7 +56,7 @@ class _VideoElementState extends State<VideoElement> {
 
   @override
   Widget build(BuildContext context) {
-    final rootHeight = RootHeightScope.of(context);
+    final rootHeight = NativeDisplayScope.rootHeightOf(context);
 
     Widget content;
     if (!_initialized || _controller == null) {

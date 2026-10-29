@@ -1,7 +1,6 @@
+import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:clevertap_native_display/clevertap_native_display.dart';
-import 'package:clevertap_native_display/src/renderer/style_applier.dart';
 
 void main() {
   Widget wrap(Widget w) => Directionality(
@@ -11,7 +10,7 @@ void main() {
 
   group('StyleApplier', () {
     testWidgets('applies SolidBackground as BoxDecoration color', (tester) async {
-      final style = Style.fromJson({
+      final style = Style.fromJson(const {
         'background': {'type': 'solid', 'color': '#FF0000'},
       });
 
@@ -29,7 +28,7 @@ void main() {
     });
 
     testWidgets('applies LinearGradient', (tester) async {
-      final style = Style.fromJson({
+      final style = Style.fromJson(const {
         'background': {
           'type': 'linear_gradient',
           'angle': 90.0,
@@ -51,7 +50,7 @@ void main() {
     });
 
     testWidgets('animated background renders transparent and no crash', (tester) async {
-      final style = Style.fromJson({
+      final style = Style.fromJson(const {
         'background': {
           'type': 'shimmer',
           'base_color': '#E0E0E0',
@@ -72,7 +71,7 @@ void main() {
     });
 
     testWidgets('applies border via BorderColor', (tester) async {
-      final style = Style.fromJson({
+      final style = Style.fromJson(const {
         'borderColor': '#00FF00',
         'borderWidth': 2.0,
       });
@@ -95,7 +94,7 @@ void main() {
     });
 
     testWidgets('applies opacity', (tester) async {
-      final style = Style.fromJson({'opacity': 0.5});
+      final style = Style.fromJson(const {'opacity': 0.5});
 
       await tester.pumpWidget(wrap(
         StyleApplier.apply(
@@ -123,7 +122,7 @@ void main() {
     });
 
     testWidgets('applies shadow via BoxShadow', (tester) async {
-      final style = Style.fromJson({
+      final style = Style.fromJson(const {
         'shadowColor': '#000000',
         'shadowRadius': 8.0,
         'shadowOffsetX': 2.0,
@@ -144,7 +143,7 @@ void main() {
     });
 
     testWidgets('backgroundColor (no background obj) applies color', (tester) async {
-      final style = Style.fromJson({'backgroundColor': '#0000FF'});
+      final style = Style.fromJson(const {'backgroundColor': '#0000FF'});
 
       await tester.pumpWidget(wrap(
         StyleApplier.apply(

@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
+
 import '../evaluator/variable_evaluator.dart';
+import '../internal/nd_logger.dart';
 import '../models/enums.dart';
 import '../models/layout.dart';
 import '../models/native_display_node.dart';
@@ -11,13 +13,11 @@ import 'containers/horizontal_container.dart';
 import 'containers/vertical_container.dart';
 import 'elements/button_element.dart';
 import 'elements/divider_element.dart';
-import 'elements/html_element.dart';
 import 'elements/image_element.dart';
 import 'elements/spacer_element.dart';
 import 'elements/text_element.dart';
-import 'elements/video_element.dart';
-import 'resolved_styles_scope.dart';
-import 'root_height_scope.dart';
+import 'native_display_scope.dart';
+import 'nd_element_registry.dart';
 import 'style_applier.dart';
 
 class NativeDisplayRenderer extends StatelessWidget {
@@ -38,35 +38,42 @@ class NativeDisplayRenderer extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!evaluator.evaluateBoolean(node.visible)) return const SizedBox.shrink();
 
-    final resolvedStyles = ResolvedStylesScope.of(context);
+    final resolvedStyles = NativeDisplayScope.stylesOf(context);
     final style = resolvedStyles[node.id] ?? Style.empty;
-    final rootHeight = RootHeightScope.of(context);
+    final rootHeight = NativeDisplayScope.rootHeightOf(context);
 
-    Widget built = switch (node) {
-      NativeDisplayContainer c => _buildContainer(c, style),
-      NativeDisplayElement e => _buildElement(context, e, style),
-    };
+    // Per-node safety net: a single malformed node must not tear down the whole
+    // view. On any render failure, log and render nothing in that node's place.
+    try {
+      Widget built = switch (node) {
+        final NativeDisplayContainer c => _buildContainer(c, style),
+        final NativeDisplayElement e => _buildElement(context, e, style),
+      };
 
-    // Containers apply style here; elements apply their own style internally.
-    if (node is NativeDisplayContainer) {
-      built = StyleApplier.apply(
-        built,
-        style,
-        rootHeight: rootHeight,
-        padding: node.layout?.padding,
-      );
+      // Containers apply style here; elements apply their own style internally.
+      if (node is NativeDisplayContainer) {
+        built = StyleApplier.apply(
+          built,
+          style,
+          rootHeight: rootHeight,
+          padding: node.layout?.padding,
+        );
+      }
+
+      // Apply aspectRatio and fixed (dp/sp/px) sizing.
+      // Percent sizing is handled by each parent container:
+      //   BOX → Positioned(width:, height:), VERTICAL/HORIZONTAL → FractionallySizedBox.
+      built = _wrapWithSizing(built, node.layout);
+
+      final anim = node.animation;
+      if (anim != null && anim.type != AnimationType.none) {
+        built = AnimationModifier(animation: anim, child: built);
+      }
+      return built;
+    } catch (e, st) {
+      NDLogger.e('NativeDisplayRenderer', 'Failed to render node ${node.id}', e, st);
+      return const SizedBox.shrink();
     }
-
-    // Apply aspectRatio and fixed (dp/sp/px) sizing.
-    // Percent sizing is handled by each parent container:
-    //   BOX → Positioned(width:, height:), VERTICAL/HORIZONTAL → FractionallySizedBox.
-    built = _wrapWithSizing(built, node.layout);
-
-    final anim = node.animation;
-    if (anim != null && anim.type != AnimationType.none) {
-      built = AnimationModifier(animation: anim, child: built);
-    }
-    return built;
   }
 
   Widget _buildContainer(NativeDisplayContainer node, Style style) {
@@ -118,9 +125,30 @@ class NativeDisplayRenderer extends StatelessWidget {
         ),
       ElementType.spacer => SpacerElement(node: node, style: style),
       ElementType.divider => DividerElement(node: node, style: style),
-      ElementType.video => VideoElement(node: node, style: style, evaluator: evaluator),
-      ElementType.html => HtmlElement(node: node, style: style, evaluator: evaluator),
+      // VIDEO and HTML are optional: their heavy native deps live in add-on
+      // packages. If the host hasn't registered a renderer, skip gracefully.
+      ElementType.video => _pluggable(ElementType.video, node, style),
+      ElementType.html => _pluggable(ElementType.html, node, style),
     };
+  }
+
+  /// Resolves an optional element (VIDEO/HTML) via [NativeDisplayRenderers]. When
+  /// no builder is registered, logs a hint and renders nothing — so the heavy
+  /// native dependency isn't forced on integrators who don't use the element.
+  Widget _pluggable(ElementType type, NativeDisplayElement node, Style style) {
+    final builder = NativeDisplayRenderers.builderFor(type);
+    if (builder == null) {
+      final pkg = type == ElementType.video
+          ? 'clevertap_native_display_video'
+          : 'clevertap_native_display_webview';
+      NDLogger.w(
+        'NativeDisplayRenderer',
+        '${type.name.toUpperCase()} element skipped: no renderer registered. '
+            'Add the "$pkg" package and call its register*() function at startup.',
+      );
+      return const SizedBox.shrink();
+    }
+    return builder(node, style, evaluator);
   }
 
   /// Wraps [child] with an [AspectRatio] or [SizedBox] for fixed/ratio sizing.

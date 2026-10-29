@@ -7,12 +7,9 @@ import '../models/native_display_config.dart';
 import '../models/style.dart';
 import '../style/style_resolver.dart';
 import 'native_display_renderer.dart';
-import 'notification_click_scope.dart';
-import 'root_height_scope.dart';
-import 'resolved_styles_scope.dart';
-import 'unit_id_scope.dart';
+import 'native_display_scope.dart';
 
-export 'notification_click_scope.dart' show NativeDisplayNotificationClicked;
+export 'native_display_scope.dart' show NativeDisplayNotificationClicked;
 
 typedef NativeDisplayActionListener = void Function(
     String action, String nodeId, Map<String, dynamic>? params);
@@ -52,6 +49,22 @@ class NativeDisplayView extends StatefulWidget {
   final NativeDisplayActionListener? actionListener;
   final NativeDisplayComponentListener? componentListener;
 
+  /// The size of the placement region this view lives in — the host's available
+  /// width/height. This is the exact analog of the iOS SDK's
+  /// `\.nativeDisplayParentSize` environment value: it supplies the `parentWidth`
+  /// / `parentHeight` that root sizing resolves against (percent dimensions, and
+  /// the `rootHeight` anchor for percent fonts / borders / radii), matching the
+  /// native `resolveRootHeight` cascade.
+  ///
+  /// When `null`, the parent dimensions come from the incoming layout constraints
+  /// (an unbounded dimension counts as "no bound", exactly like Android's
+  /// `BoxWithConstraints` treating `Dp.Infinity` as `0f`), and the screen height
+  /// is used only as the final fallback. Pass this when the view sits in a
+  /// scrollable that hands it unbounded height AND you want it anchored to the
+  /// viewport (as the iOS sample does); omit it to mirror the Android sample,
+  /// which does not inject a parent size.
+  final Size? parentSize;
+
   const NativeDisplayView({
     super.key,
     required this.config,
@@ -61,6 +74,7 @@ class NativeDisplayView extends StatefulWidget {
     this.onNotificationClicked,
     this.actionListener,
     this.componentListener,
+    this.parentSize,
   });
 
   @override
@@ -69,11 +83,13 @@ class NativeDisplayView extends StatefulWidget {
 
 class _NativeDisplayViewState extends State<NativeDisplayView> {
   late Map<String, Style> _resolvedStyles;
+  late VariableEvaluator _evaluator;
 
   @override
   void initState() {
     super.initState();
     _resolvedStyles = _resolve();
+    _evaluator = VariableEvaluator(widget.config.variables);
   }
 
   @override
@@ -82,6 +98,9 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
     if (!identical(old.config, widget.config) ||
         !identical(old.resolvedStyles, widget.resolvedStyles)) {
       _resolvedStyles = _resolve();
+    }
+    if (!identical(old.config.variables, widget.config.variables)) {
+      _evaluator = VariableEvaluator(widget.config.variables);
     }
   }
 
@@ -98,7 +117,7 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
     final root = widget.config.root;
     if (root == null) return const SizedBox.shrink();
 
-    final evaluator = VariableEvaluator(widget.config.variables);
+    final evaluator = _evaluator;
     final layout = root.layout;
 
     // Optimization: when root has only fixed (dp) dimensions and no aspectRatio,
@@ -109,66 +128,63 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
       return SizedBox(
         width: fixedWidth,
         height: fixedHeight,
-        child: RootHeightScope(
+        child: NativeDisplayScope(
           rootHeight: fixedHeight,
-          child: ResolvedStylesScope(
-            styles: _resolvedStyles,
-            child: UnitIdScope(
-              unitId: widget.unitId,
-              child: NotificationClickScope(
-                onClicked: widget.onNotificationClicked,
-                child: _TrackNotificationViewed(
-                  unitId: widget.unitId,
-                  onViewed: widget.onNotificationViewed,
-                  child: NativeDisplayRenderer(
-                    node: root,
-                    evaluator: evaluator,
-                    actionListener: widget.actionListener,
-                    componentListener: widget.componentListener,
-                  ),
-                ),
-              ),
+          styles: _resolvedStyles,
+          unitId: widget.unitId,
+          onClicked: widget.onNotificationClicked,
+          child: _TrackNotificationViewed(
+            unitId: widget.unitId,
+            onViewed: widget.onNotificationViewed,
+            child: NativeDisplayRenderer(
+              node: root,
+              evaluator: evaluator,
+              actionListener: widget.actionListener,
+              componentListener: widget.componentListener,
             ),
           ),
         ),
       );
     }
 
+    // Final fallback only — the real device screen height. Matches native's last
+    // resort (`displayMetrics.heightPixels` / `UIScreen.main.bounds.height`).
     final screenHeight = MediaQuery.sizeOf(context).height;
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final layouterWidth =
-            constraints.maxWidth.isInfinite ? screenHeight : constraints.maxWidth;
+        // Mirror native's parent derivation. Android reads BoxWithConstraints and
+        // treats an unbounded dimension as 0f ("no parent bound"); iOS takes an
+        // injected parentSize. So: prefer the host-provided [parentSize] (the iOS
+        // environment analog), else the incoming constraints, else 0 when
+        // unbounded — never the screen here (screen is only the final fallback
+        // inside _computeRootHeight).
+        final parentWidth = widget.parentSize?.width ??
+            (constraints.maxWidth.isFinite ? constraints.maxWidth : 0.0);
+        final parentHeight = widget.parentSize?.height ??
+            (constraints.maxHeight.isFinite ? constraints.maxHeight : 0.0);
 
-        final effectiveRootWidth = _effectiveWidth(layout, layouterWidth);
-        final rootHeight =
-            _computeRootHeight(layout, effectiveRootWidth, constraints, screenHeight);
+        final rootWidth = _resolveRootWidth(layout, parentWidth);
+        final rootHeight = _computeRootHeight(layout, parentWidth, parentHeight, screenHeight);
 
-        Widget child = RootHeightScope(
+        Widget child = NativeDisplayScope(
           rootHeight: rootHeight,
-          child: ResolvedStylesScope(
-            styles: _resolvedStyles,
-            child: UnitIdScope(
-              unitId: widget.unitId,
-              child: NotificationClickScope(
-                onClicked: widget.onNotificationClicked,
-                child: _TrackNotificationViewed(
-                  unitId: widget.unitId,
-                  onViewed: widget.onNotificationViewed,
-                  child: NativeDisplayRenderer(
-                    node: root,
-                    evaluator: evaluator,
-                    actionListener: widget.actionListener,
-                    componentListener: widget.componentListener,
-                  ),
-                ),
-              ),
+          styles: _resolvedStyles,
+          unitId: widget.unitId,
+          onClicked: widget.onNotificationClicked,
+          child: _TrackNotificationViewed(
+            unitId: widget.unitId,
+            onViewed: widget.onNotificationViewed,
+            child: NativeDisplayRenderer(
+              node: root,
+              evaluator: evaluator,
+              actionListener: widget.actionListener,
+              componentListener: widget.componentListener,
             ),
           ),
         );
 
-        child = _applyRootSizing(child, layout, effectiveRootWidth, rootHeight, screenHeight);
+        child = _applyRootSizing(child, layout, rootWidth, rootHeight, parentHeight);
 
         return child;
       },
@@ -187,12 +203,16 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
     return w.value > 0 && h.value > 0;
   }
 
+  /// Visual box sizing for the root. Faithful to native: AR is handled by the
+  /// AspectRatio widget (in NativeDisplayRenderer._wrapWithSizing), percent width
+  /// constrains the box to [rootWidth], and percent height uses the resolved
+  /// [rootHeight]. A root with no explicit dimensions wraps its content.
   Widget _applyRootSizing(
     Widget child,
     Layout? layout,
-    double effectiveRootWidth,
+    double rootWidth,
     double rootHeight,
-    double screenHeight,
+    double parentHeight,
   ) {
     if (layout == null) return child;
 
@@ -201,63 +221,85 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
     final ar = layout.aspectRatio;
     final hasAR = ar != null && ar > 0;
 
-    // AR takes precedence over all percent dimensions — it uses full available width
-    // and derives height. The AspectRatio widget in _wrapWithSizing handles the
-    // visual constraint; no additional sizing wrapper is needed here.
+    // AR takes precedence; the AspectRatio widget applies the visual constraint.
     if (hasAR) return child;
 
     final hasPercentWidth =
         rw != null && rw.special == null && rw.unit == DimensionUnit.percent && rw.value > 0;
+    // Percent height only yields a concrete box when the parent is bounded
+    // (parentHeight > 0) — mirrors native, which skips percent-height when the
+    // parent height is unknown.
+    final hasPercentHeight = rh != null &&
+        rh.special == null &&
+        rh.unit == DimensionUnit.percent &&
+        rh.value > 0 &&
+        parentHeight > 0;
 
     if (hasPercentWidth) {
-      double? explicitHeight;
-      if (rh != null && rh.special == null && rh.unit == DimensionUnit.percent && rh.value > 0) {
-        explicitHeight = screenHeight * rh.value / 100.0;
-      }
+      final explicitHeight = hasPercentHeight ? parentHeight * rh.value / 100.0 : null;
       return Align(
         alignment: Alignment.topLeft,
-        child: SizedBox(width: effectiveRootWidth, height: explicitHeight, child: child),
+        child: SizedBox(width: rootWidth, height: explicitHeight, child: child),
       );
     }
 
-    if (rh != null && rh.special == null && rh.unit == DimensionUnit.percent && rh.value > 0) {
-      return SizedBox(height: screenHeight * rh.value / 100.0, child: child);
+    if (hasPercentHeight) {
+      return SizedBox(height: parentHeight * rh.value / 100.0, child: child);
     }
 
     return child;
   }
 
-  double _effectiveWidth(Layout? layout, double availableWidth) {
-    // AR present → use full available width; percent is irrelevant.
-    final ar = layout?.aspectRatio;
-    if (ar != null && ar > 0) return availableWidth;
-
+  /// Faithful port of native `resolveRootWidthPx`: null/special width → parent
+  /// width; dp/sp/px → value; percent → parentWidth × value/100 (0 if the parent
+  /// width is unknown).
+  double _resolveRootWidth(Layout? layout, double parentWidth) {
     final w = layout?.width;
-    if (w != null && w.special == null && w.unit == DimensionUnit.percent && w.value > 0) {
-      return availableWidth * w.value / 100.0;
-    }
-    return availableWidth;
+    if (w == null || w.special != null) return parentWidth;
+    return switch (w.unit) {
+      DimensionUnit.percent => parentWidth > 0 ? parentWidth * w.value / 100.0 : 0.0,
+      _ => w.value, // dp/sp/px as logical pixels
+    };
   }
 
+  /// Faithful port of native `resolveRootHeightPx` (NativeDisplayRenderer.kt:411
+  /// / NativeDisplayRenderer.swift:207). The cascade — and therefore the anchor
+  /// every percent font / border / radius resolves against — matches native
+  /// exactly so cross-platform sizing agrees:
+  ///   1. fixed height (dp/sp/px) → value
+  ///   2. aspectRatio → rootWidth / aspectRatio
+  ///   3. percent height, bounded parent → parentHeight × value/100
+  ///   4. bounded parent → parentHeight
+  ///   5. fallback → screen height
   double _computeRootHeight(
     Layout? layout,
-    double effectiveRootWidth,
-    BoxConstraints constraints,
+    double parentWidth,
+    double parentHeight,
     double screenHeight,
   ) {
-    if (layout == null) return screenHeight;
+    final h = layout?.height;
 
-    final ar = layout.aspectRatio;
-    if (ar != null && ar > 0) return effectiveRootWidth / ar;
-
-    final h = layout.height;
-    if (h != null && h.special == null && h.value > 0) {
-      if (h.unit == DimensionUnit.percent) return screenHeight * h.value / 100.0;
+    // 1. Fixed height.
+    if (h != null && h.special == null && h.unit != DimensionUnit.percent && h.value > 0) {
       return h.value;
     }
 
-    if (!constraints.maxHeight.isInfinite) return constraints.maxHeight;
+    // 2. Aspect ratio + known width.
+    final ar = layout?.aspectRatio;
+    if (ar != null && ar > 0) {
+      final rootWidth = _resolveRootWidth(layout, parentWidth);
+      if (rootWidth > 0) return rootWidth / ar;
+    }
 
+    // 3. Percent height against a bounded parent.
+    if (h != null && h.special == null && h.unit == DimensionUnit.percent && parentHeight > 0) {
+      return parentHeight * h.value / 100.0;
+    }
+
+    // 4. Bounded parent height.
+    if (parentHeight > 0) return parentHeight;
+
+    // 5. Final fallback: screen height.
     return screenHeight;
   }
 }
@@ -308,6 +350,7 @@ class _TrackNotificationViewedState extends State<_TrackNotificationViewed> {
       // canvas actually being on-screen (matches LaunchedEffect cadence
       // on Android).
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
         widget.onViewed?.call(id);
       });
     }

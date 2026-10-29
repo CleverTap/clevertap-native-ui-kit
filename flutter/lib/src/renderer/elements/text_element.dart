@@ -8,7 +8,7 @@ import '../../models/native_display_node.dart';
 import '../../models/style.dart';
 import '../../models/text_dimension.dart';
 import '../../utils/color_parser.dart';
-import '../root_height_scope.dart';
+import '../native_display_scope.dart';
 import '../style_applier.dart';
 
 class TextElement extends StatelessWidget {
@@ -25,13 +25,14 @@ class TextElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rootHeight = RootHeightScope.of(context);
+    final rootHeight = NativeDisplayScope.rootHeightOf(context);
     final rawText = node.bindings['text'] ?? '';
     final text = evaluator.evaluateString(rawText);
 
     final fontSize = _resolveTextDimension(style.fontSize, rootHeight) ?? 14.0;
     final lineHeight = _resolveTextDimension(style.lineHeight, rootHeight);
-    final heightMultiplier = lineHeight != null ? lineHeight / fontSize : null;
+    final heightMultiplier =
+        (lineHeight != null && fontSize > 0) ? lineHeight / fontSize : null;
 
     final textStyle = TextStyle(
       color: ColorParser.parse(style.textColor),
@@ -40,6 +41,11 @@ class TextElement extends StatelessWidget {
       fontWeight: _resolveFontWeight(style.fontWeight),
       fontStyle: style.fontStyle == NDFontStyle.italic ? FontStyle.italic : FontStyle.normal,
       height: heightMultiplier,
+      // Center the text within its line box, matching Android Compose's
+      // LineHeightStyle(alignment=Center) and iOS. Flutter's default
+      // (`proportional`) biases leading toward the descent, so the same
+      // lineHeight sits lower than on the natives.
+      leadingDistribution: TextLeadingDistribution.even,
       letterSpacing: style.letterSpacing,
       decoration: _resolveDecoration(style.textDecoration),
       shadows: _resolveShadows(style),
@@ -51,9 +57,20 @@ class TextElement extends StatelessWidget {
       textAlign: _resolveTextAlign(style.textAlign),
       maxLines: style.maxLines,
       overflow: _resolveOverflow(style.overflow),
+      // Match Android's `includeFontPadding = false`: drop the extra leading
+      // above the first line and below the last so the text block is the same
+      // height as the natives for a given lineHeight (Flutter otherwise adds
+      // half-leading padding at both ends).
+      textHeightBehavior: const TextHeightBehavior(
+        applyHeightToFirstAscent: false,
+        applyHeightToLastDescent: false,
+        leadingDistribution: TextLeadingDistribution.even,
+      ),
     );
 
-    if (style.textGradient != null) {
+    // A gradient needs at least two colors (Flutter asserts colors.length >= 2).
+    // With fewer, render plain text rather than crashing.
+    if (style.textGradient != null && style.textGradient!.colors.length >= 2) {
       textWidget = ShaderMask(
         shaderCallback: (bounds) => _buildGradient(style.textGradient!).createShader(bounds),
         blendMode: BlendMode.srcIn,

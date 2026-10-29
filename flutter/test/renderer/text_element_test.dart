@@ -1,20 +1,17 @@
-import 'package:flutter/widgets.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:clevertap_native_display/src/renderer/elements/text_element.dart';
-import 'package:clevertap_native_display/src/evaluator/variable_evaluator.dart';
-import 'package:clevertap_native_display/src/renderer/root_height_scope.dart';
-import 'package:clevertap_native_display/src/renderer/resolved_styles_scope.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   Widget wrap(Widget w) => Directionality(
         textDirection: TextDirection.ltr,
-        child: RootHeightScope(
+        child: NativeDisplayScope(
           rootHeight: 200,
-          child: ResolvedStylesScope(
-            styles: const {},
-            child: w,
-          ),
+          styles: const {},
+          unitId: null,
+          onClicked: null,
+          child: w,
         ),
       );
 
@@ -35,7 +32,7 @@ void main() {
     testWidgets('renders Text widget with text from bindings', (tester) async {
       final node = makeTextElement(text: 'Hello World');
       await tester.pumpWidget(wrap(
-        TextElement(node: node, style: Style.empty, evaluator: VariableEvaluator({})),
+        TextElement(node: node, style: Style.empty, evaluator: const VariableEvaluator({})),
       ));
 
       expect(find.text('Hello World'), findsOneWidget);
@@ -47,7 +44,7 @@ void main() {
         TextElement(
           node: node,
           style: Style.empty,
-          evaluator: VariableEvaluator({'name': 'Alice'}),
+          evaluator: const VariableEvaluator({'name': 'Alice'}),
         ),
       ));
 
@@ -55,11 +52,11 @@ void main() {
     });
 
     testWidgets('applies fontWeight bold', (tester) async {
-      final style = Style.fromJson({'fontWeight': 'bold'});
+      final style = Style.fromJson(const {'fontWeight': 'bold'});
       final node = makeTextElement();
 
       await tester.pumpWidget(wrap(
-        TextElement(node: node, style: style, evaluator: VariableEvaluator({})),
+        TextElement(node: node, style: style, evaluator: const VariableEvaluator({})),
       ));
 
       final text = tester.widget<Text>(find.byType(Text));
@@ -67,11 +64,11 @@ void main() {
     });
 
     testWidgets('applies fontWeight light', (tester) async {
-      final style = Style.fromJson({'fontWeight': 'light'});
+      final style = Style.fromJson(const {'fontWeight': 'light'});
       final node = makeTextElement();
 
       await tester.pumpWidget(wrap(
-        TextElement(node: node, style: style, evaluator: VariableEvaluator({})),
+        TextElement(node: node, style: style, evaluator: const VariableEvaluator({})),
       ));
 
       final text = tester.widget<Text>(find.byType(Text));
@@ -79,7 +76,7 @@ void main() {
     });
 
     testWidgets('wraps with ShaderMask when textGradient set', (tester) async {
-      final style = Style.fromJson({
+      final style = Style.fromJson(const {
         'textGradient': {
           'colors': ['#FF0000', '#0000FF'],
           'angle': 90.0,
@@ -88,18 +85,18 @@ void main() {
       final node = makeTextElement();
 
       await tester.pumpWidget(wrap(
-        TextElement(node: node, style: style, evaluator: VariableEvaluator({})),
+        TextElement(node: node, style: style, evaluator: const VariableEvaluator({})),
       ));
 
       expect(find.byType(ShaderMask), findsOneWidget);
     });
 
     testWidgets('textAlign center maps correctly', (tester) async {
-      final style = Style.fromJson({'textAlign': 'center'});
+      final style = Style.fromJson(const {'textAlign': 'center'});
       final node = makeTextElement();
 
       await tester.pumpWidget(wrap(
-        TextElement(node: node, style: style, evaluator: VariableEvaluator({})),
+        TextElement(node: node, style: style, evaluator: const VariableEvaluator({})),
       ));
 
       final text = tester.widget<Text>(find.byType(Text));
@@ -107,11 +104,11 @@ void main() {
     });
 
     testWidgets('textColor applied to TextStyle', (tester) async {
-      final style = Style.fromJson({'textColor': '#FF0000'});
+      final style = Style.fromJson(const {'textColor': '#FF0000'});
       final node = makeTextElement();
 
       await tester.pumpWidget(wrap(
-        TextElement(node: node, style: style, evaluator: VariableEvaluator({})),
+        TextElement(node: node, style: style, evaluator: const VariableEvaluator({})),
       ));
 
       final text = tester.widget<Text>(find.byType(Text));

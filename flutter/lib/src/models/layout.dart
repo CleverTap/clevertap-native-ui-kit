@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
+
 import 'enums.dart';
 
+@immutable
 class Dimension {
   final double value;
   final DimensionUnit unit;
@@ -40,8 +43,20 @@ class Dimension {
 
   @override
   String toString() => 'Dimension(value: $value, unit: $unit, special: $special)';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Dimension &&
+          other.value == value &&
+          other.unit == unit &&
+          other.special == special;
+
+  @override
+  int get hashCode => Object.hash(value, unit, special);
 }
 
+@immutable
 class NDOffset {
   final double x;
   final double y;
@@ -56,8 +71,17 @@ class NDOffset {
         y: (json['y'] as num?)?.toDouble() ?? 0,
         unit: DimensionUnit.fromJson(json['unit'] as String? ?? 'dp'),
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NDOffset && other.x == x && other.y == y && other.unit == unit;
+
+  @override
+  int get hashCode => Object.hash(x, y, unit);
 }
 
+@immutable
 class Spacing {
   final double? all;
   final double? horizontal;
@@ -94,8 +118,26 @@ class Spacing {
         right: (json['right'] as num?)?.toDouble(),
         unit: DimensionUnit.fromJson(json['unit'] as String? ?? 'dp'),
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Spacing &&
+          other.all == all &&
+          other.horizontal == horizontal &&
+          other.vertical == vertical &&
+          other.top == top &&
+          other.bottom == bottom &&
+          other.left == left &&
+          other.right == right &&
+          other.unit == unit;
+
+  @override
+  int get hashCode =>
+      Object.hash(all, horizontal, vertical, top, bottom, left, right, unit);
 }
 
+@immutable
 class ChildArrangement {
   final double? spacing;
   final DimensionUnit spacingUnit;
@@ -115,8 +157,20 @@ class ChildArrangement {
         spacingUnit: DimensionUnit.fromJson(json['spacingUnit'] as String? ?? 'dp'),
         strategy: ArrangementStrategy.fromJson(json['strategy'] as String? ?? 'spaced'),
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ChildArrangement &&
+          other.spacing == spacing &&
+          other.spacingUnit == spacingUnit &&
+          other.strategy == strategy;
+
+  @override
+  int get hashCode => Object.hash(spacing, spacingUnit, strategy);
 }
 
+@immutable
 class Layout {
   final Dimension? width;
   final Dimension? height;
@@ -135,11 +189,8 @@ class Layout {
   });
 
   factory Layout.fromJson(Map<String, dynamic> json) => Layout(
-        width:
-            json['width'] != null ? Dimension.fromJson(json['width'] as Map<String, dynamic>) : null,
-        height: json['height'] != null
-            ? Dimension.fromJson(json['height'] as Map<String, dynamic>)
-            : null,
+        width: json['width'] != null ? Dimension.fromJsonFlexible(json['width']) : null,
+        height: json['height'] != null ? Dimension.fromJsonFlexible(json['height']) : null,
         aspectRatio: (json['aspectRatio'] as num?)?.toDouble(),
         offset: json['offset'] != null
             ? NDOffset.fromJson(json['offset'] as Map<String, dynamic>)
@@ -151,4 +202,19 @@ class Layout {
             ? ChildArrangement.fromJson(json['arrangement'] as Map<String, dynamic>)
             : null,
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Layout &&
+          other.width == width &&
+          other.height == height &&
+          other.aspectRatio == aspectRatio &&
+          other.offset == offset &&
+          other.padding == padding &&
+          other.arrangement == arrangement;
+
+  @override
+  int get hashCode =>
+      Object.hash(width, height, aspectRatio, offset, padding, arrangement);
 }
