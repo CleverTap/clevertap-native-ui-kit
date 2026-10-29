@@ -7,8 +7,9 @@
 ![Kotlin 1.9+](https://img.shields.io/badge/Kotlin-1.9%2B-blue.svg)
 ![iOS 15.0+](https://img.shields.io/badge/iOS-15.0%2B-blue.svg)
 ![Swift 5.5+](https://img.shields.io/badge/Swift-5.5%2B-blue.svg)
+![React Native 0.73+](https://img.shields.io/badge/React%20Native-0.73%2B-blue.svg)
 
-Render server-driven native UI campaigns delivered by CleverTap — using Jetpack Compose on Android and SwiftUI on iOS. No WebViews.
+Render server-driven native UI campaigns delivered by CleverTap — using Jetpack Compose on Android and SwiftUI on iOS, or a matching native renderer for React Native (bare and Expo). No WebViews.
 The SDK receives a JSON campaign config from the CleverTap backend and renders it as fully native UI. Layouts, styles, themes, and dynamic variables are all controlled server-side without app updates.
 
 ---
@@ -21,6 +22,7 @@ Integration is documented per platform. Pick your stack and follow the guide end
 |----------|-------|-------------------|
 | **iOS** | **[iOS Integration →](docs/INTEGRATION_IOS.md)** | SwiftUI · UIKit · Objective-C |
 | **Android** | **[Android Integration →](docs/INTEGRATION_ANDROID.md)** | Jetpack Compose · XML / Views |
+| **React Native** | **[React Native Integration →](react-native/README.md)** | Bare React Native · Expo (prebuild / EAS) |
 
 **More references**
 
@@ -35,8 +37,11 @@ Integration is documented per platform. Pick your stack and follow the guide end
 |----------|---------|
 | Android | API 23+, Kotlin 1.9+, Jetpack Compose |
 | iOS | iOS 15+, Swift 5.5+, SwiftUI |
+| React Native | React Native 0.73+, React 18+, `clevertap-react-native` 4.1+ |
 
 > The SDK renders with Compose (Android) and SwiftUI (iOS) *internally* — the XML/View wrappers host a `ComposeView` and the UIKit wrappers host a `UIHostingController`, so Compose/SwiftUI are transitive implementation details, not requirements on your UI layer.
+
+> The React Native package (`@clevertap/native-display-sdk`) is pure TypeScript with its own React renderer — no native module of its own. UI peer deps (gradients, video, WebView, etc.) are optional and load only when your campaign JSON needs them. Full bare-RN and Expo setup: **[react-native/README.md](react-native/README.md)**.
 
 > **Prerequisite — CleverTap Core SDK.** The Native Display SDK is a renderer; it expects display units to be delivered by the CleverTap Core SDK. Install and initialize it first:
 > [Android Core SDK](https://github.com/CleverTap/clevertap-android-sdk) · [iOS Core SDK](https://github.com/CleverTap/clevertap-ios-sdk) · [General docs](https://docs.clevertap.com)

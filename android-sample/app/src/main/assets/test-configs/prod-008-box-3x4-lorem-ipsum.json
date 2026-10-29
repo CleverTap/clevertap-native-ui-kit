@@ -1,0 +1,279 @@
+{
+  "theme": {
+    "id": "default"
+  },
+  "version": "1.0",
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "aspectRatio": 0.75,
+      "width": {
+        "value": 80,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 60,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "angle": 45,
+        "colors": [
+          "#a46933",
+          "#100505"
+        ]
+      },
+      "borderRadius": {
+        "value": 0,
+        "unit": "percent"
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "text-1",
+        "elementType": "text",
+        "bindings": {
+          "text": "What is Lorem Ipsum?"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 7,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#FFFFFF00"
+          },
+          "borderColor": "#ffffff",
+          "borderRadius": {
+            "value": 0.5,
+            "unit": "percent"
+          },
+          "borderWidth": 0,
+          "fontSize": {
+            "value": 50,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "textAlign": "center",
+          "textColor": "#ffffff"
+        }
+      },
+      {
+        "type": "element",
+        "id": "text-2",
+        "elementType": "text",
+        "bindings": {
+          "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 22,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 62,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#FFFFFF00"
+          },
+          "borderColor": "#FFFFFF",
+          "borderRadius": {
+            "value": 0.5,
+            "unit": "percent"
+          },
+          "borderWidth": 0,
+          "fontSize": {
+            "value": 20,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "textAlign": "center",
+          "textColor": "#f8d7a5"
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-1",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://d11gh1sd24upek.cloudfront.net/1631012864/assets/186b39aa07e64c7c88bfe7a411a85be5.jpeg"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 50,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 9,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "button-1",
+        "elementType": "button",
+        "bindings": {
+          "text": "Custom KV"
+        },
+        "layout": {
+          "width": {
+            "value": 26,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 5,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 39,
+            "y": 91,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#581717"
+          },
+          "borderColor": "#000000",
+          "borderRadius": {
+            "value": 0.5,
+            "unit": "percent"
+          },
+          "borderWidth": 0,
+          "fontSize": {
+            "value": 20,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "shadowColor": "#000000",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowRadius": 0,
+          "textColor": "#FFFFFF"
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "k1",
+            "value": "v1"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "button-2",
+        "elementType": "button",
+        "bindings": {
+          "text": "Close"
+        },
+        "layout": {
+          "width": {
+            "value": 26,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 5,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 68,
+            "y": 91,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#191919"
+          },
+          "borderColor": "#000000",
+          "borderRadius": {
+            "value": 0.5,
+            "unit": "percent"
+          },
+          "borderWidth": 0,
+          "fontSize": {
+            "value": 20,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "shadowColor": "#000000",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowRadius": 0,
+          "textColor": "#FFFFFF"
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "close",
+            "value": 1
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-2",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://d11gh1sd24upek.cloudfront.net/1631012864/assets/86eeb73b509d45a48c26eb89845eac8b.jpeg"
+        },
+        "layout": {
+          "width": {
+            "value": 29,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 16,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 84,
+            "unit": "percent"
+          }
+        }
+      }
+    ]
+  }
+}

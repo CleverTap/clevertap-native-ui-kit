@@ -1,0 +1,206 @@
+{
+  "theme": {
+    "id": "default"
+  },
+  "version": "1.0",
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "aspectRatio": 0.75,
+      "width": {
+        "value": 80,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 60,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "angle": 45,
+        "colors": [
+          "#ffada6",
+          "#1f0e0e"
+        ]
+      },
+      "borderRadius": {
+        "value": 8,
+        "unit": "percent"
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "text-1",
+        "elementType": "text",
+        "bindings": {
+          "text": "Title - footer5 event fired\nSize - Tall"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 15,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 7,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#D1A73233"
+          },
+          "borderColor": "#ffffff",
+          "borderRadius": {
+            "value": 0,
+            "unit": "percent"
+          },
+          "borderWidth": 0,
+          "fontSize": {
+            "value": 65,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "textAlign": "center",
+          "textColor": "#ffa85b"
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-1",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://d11gh1sd24upek.cloudfront.net/1631012864/assets/a419bf496ee34a9088ae514643e6fb1f.jpeg"
+        },
+        "layout": {
+          "width": {
+            "value": 40,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 20,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 7,
+            "y": 55,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-2",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://d11gh1sd24upek.cloudfront.net/1631012864/assets/c1fa6491871a4a1497cb3d2117f21ef1.jpeg"
+        },
+        "layout": {
+          "width": {
+            "value": 40,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 20,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 7,
+            "y": 30,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "button-2",
+        "elementType": "button",
+        "bindings": {
+          "text": "Generic button"
+        },
+        "layout": {
+          "width": {
+            "value": 62,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 10,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 16,
+            "y": 84,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#572e1c"
+          },
+          "borderColor": "#043006",
+          "borderRadius": {
+            "value": 6,
+            "unit": "percent"
+          },
+          "borderWidth": 6,
+          "fontSize": {
+            "value": 45,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "shadowColor": "#000000",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowRadius": 0,
+          "textColor": "#ff4a4a"
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "pick",
+            "value": "iceberg2"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-3",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://d11gh1sd24upek.cloudfront.net/1631012864/assets/8571ecd6f9af4ece8457d3abaeb23a2c.jpeg"
+        },
+        "layout": {
+          "width": {
+            "value": 40,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 45,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 51,
+            "y": 30,
+            "unit": "percent"
+          }
+        }
+      }
+    ]
+  }
+}
