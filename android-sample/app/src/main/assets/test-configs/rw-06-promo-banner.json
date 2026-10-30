@@ -1,0 +1,659 @@
+{
+  "theme": {
+    "id": "default"
+  },
+  "version": "1.0",
+  "root": {
+    "type": "container",
+    "id": "gallery",
+    "containerType": "gallery",
+    "layout": {
+      "aspectRatio": 1.7,
+      "width": {
+        "value": 94,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "galleryConfig": {
+      "mode": "snapping",
+      "orientation": "horizontal",
+      "snapBehavior": "center",
+      "spacing": 12,
+      "showIndicators": true,
+      "showArrows": false
+    },
+    "children": [
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "p1",
+        "layout": {
+          "aspectRatio": 2.0,
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 4,
+            "unit": "percent"
+          },
+          "background": {
+            "type": "linear_gradient",
+            "angle": 135,
+            "colors": [
+              "#7c3aed",
+              "#2563eb"
+            ]
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "p1-head",
+            "bindings": {
+              "text": "3X Richer Colour"
+            },
+            "layout": {
+              "width": {
+                "value": 60,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 18,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "maxLines": 2,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "p1-sub",
+            "bindings": {
+              "text": "On all premium hair colour kits"
+            },
+            "layout": {
+              "width": {
+                "value": 60,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 14,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 52,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "normal",
+              "textColor": "#FFFFFF",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "button",
+            "id": "p1-btn",
+            "bindings": {
+              "text": "SHOP NOW"
+            },
+            "layout": {
+              "width": {
+                "value": 35,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 18,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#FFFFFF"
+              },
+              "borderRadius": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#4C1D95",
+              "textAlign": "center"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "p1-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-16.jpg"
+            },
+            "imageConfig": {
+              "fit": "contain"
+            },
+            "layout": {
+              "width": {
+                "value": 34,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 84,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 62,
+                "y": 8,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 6,
+                "unit": "percent"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "p2",
+        "layout": {
+          "aspectRatio": 2.0,
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 4,
+            "unit": "percent"
+          },
+          "background": {
+            "type": "linear_gradient",
+            "angle": 135,
+            "colors": [
+              "#f59e0b",
+              "#ef4444"
+            ]
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "p2-head",
+            "bindings": {
+              "text": "Flat 50% Off"
+            },
+            "layout": {
+              "width": {
+                "value": 60,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 18,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "maxLines": 2,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "p2-sub",
+            "bindings": {
+              "text": "Fresh fruits & vegetables today"
+            },
+            "layout": {
+              "width": {
+                "value": 60,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 14,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 52,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "normal",
+              "textColor": "#FFFFFF",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "button",
+            "id": "p2-btn",
+            "bindings": {
+              "text": "SHOP NOW"
+            },
+            "layout": {
+              "width": {
+                "value": 35,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 18,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#FFFFFF"
+              },
+              "borderRadius": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#B91C1C",
+              "textAlign": "center"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "p2-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-17.jpg"
+            },
+            "imageConfig": {
+              "fit": "contain"
+            },
+            "layout": {
+              "width": {
+                "value": 34,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 84,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 62,
+                "y": 8,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 6,
+                "unit": "percent"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "p3",
+        "layout": {
+          "aspectRatio": 2.0,
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 4,
+            "unit": "percent"
+          },
+          "background": {
+            "type": "linear_gradient",
+            "angle": 135,
+            "colors": [
+              "#059669",
+              "#10b981"
+            ]
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "p3-head",
+            "bindings": {
+              "text": "Free Delivery"
+            },
+            "layout": {
+              "width": {
+                "value": 60,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 18,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "maxLines": 2,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "p3-sub",
+            "bindings": {
+              "text": "On your first 3 orders"
+            },
+            "layout": {
+              "width": {
+                "value": 60,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 14,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 52,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "normal",
+              "textColor": "#FFFFFF",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "button",
+            "id": "p3-btn",
+            "bindings": {
+              "text": "ORDER NOW"
+            },
+            "layout": {
+              "width": {
+                "value": 35,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 18,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#FFFFFF"
+              },
+              "borderRadius": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#047857",
+              "textAlign": "center"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "p3-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-18.jpg"
+            },
+            "imageConfig": {
+              "fit": "contain"
+            },
+            "layout": {
+              "width": {
+                "value": 34,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 84,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 62,
+                "y": 8,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 6,
+                "unit": "percent"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "p4",
+        "layout": {
+          "aspectRatio": 2.0,
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 4,
+            "unit": "percent"
+          },
+          "background": {
+            "type": "linear_gradient",
+            "angle": 135,
+            "colors": [
+              "#0ea5e9",
+              "#6366f1"
+            ]
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "p4-head",
+            "bindings": {
+              "text": "New Arrivals"
+            },
+            "layout": {
+              "width": {
+                "value": 60,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 18,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "maxLines": 2,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "p4-sub",
+            "bindings": {
+              "text": "The latest season drop is here"
+            },
+            "layout": {
+              "width": {
+                "value": 60,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 14,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 52,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "normal",
+              "textColor": "#FFFFFF",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "button",
+            "id": "p4-btn",
+            "bindings": {
+              "text": "EXPLORE"
+            },
+            "layout": {
+              "width": {
+                "value": 35,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 18,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#FFFFFF"
+              },
+              "borderRadius": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#4338CA",
+              "textAlign": "center"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "p4-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-19.jpg"
+            },
+            "imageConfig": {
+              "fit": "contain"
+            },
+            "layout": {
+              "width": {
+                "value": 34,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 84,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 62,
+                "y": 8,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 6,
+                "unit": "percent"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

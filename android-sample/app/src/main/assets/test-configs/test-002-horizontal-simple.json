@@ -1,96 +1,307 @@
 {
   "theme": {
-    "id": "default",
-    "defaultStyle": {
-      "textColor": "#212121",
-      "fontSize": 14,
-      "fontFamily": "system",
-      "lineHeight": 20
-    }
+    "id": "default"
   },
+  "version": "1.0",
   "root": {
     "type": "container",
-    "id": "horizontal-container",
-    "containerType": "horizontal",
+    "id": "root",
+    "containerType": "vertical",
     "layout": {
+      "aspectRatio": 0.75,
       "width": {
-        "value": 100,
+        "value": 96,
         "unit": "percent"
       },
       "height": {
-        "value": 0,
-        "unit": "dp",
-        "special": "wrap_content"
+        "value": 96,
+        "unit": "percent"
       },
       "padding": {
-        "all": 16
-      },
-      "arrangement": {
-        "spacing": 12,
-        "strategy": "spaced",
-        "spacingUnit": "dp"
+        "all": 0
       }
+    },
+    "arrangement": {
+      "strategy": "spaced",
+      "spacing": 12,
+      "spacingUnit": "dp"
     },
     "style": {
       "background": {
-        "type": "linear_gradient",
-        "angle": 135,
-        "colors": [
-          "#667eea",
-          "#764ba2"
-        ]
+        "type": "solid",
+        "color": "#f1f5f9"
+      },
+      "borderRadius": {
+        "value": 3,
+        "unit": "percent"
       }
     },
     "children": [
       {
         "type": "element",
-        "id": "text-element",
+        "id": "header",
         "elementType": "text",
         "bindings": {
-          "text": "HORIZONTAL Container Test"
+          "text": "Horizontal Container"
         },
         "layout": {
           "width": {
-            "value": 0,
-            "unit": "dp",
-            "special": "wrap_content"
+            "value": 100,
+            "unit": "percent"
           },
           "height": {
-            "value": 0,
-            "unit": "dp",
-            "special": "wrap_content"
+            "value": 12,
+            "unit": "percent"
           }
         },
         "style": {
-          "fontSize": 20,
+          "fontSize": {
+            "value": 55,
+            "unit": "percent"
+          },
           "fontWeight": "bold",
-          "textColor": "#FFFFFF",
-          "lineHeight": 28
+          "textAlign": "center",
+          "textColor": "#0f172a"
         }
       },
       {
-        "type": "element",
-        "id": "image-element",
-        "elementType": "image",
-        "bindings": {
-          "url": "https://yavuzceliker.github.io/sample-images/image-2.jpg"
-        },
+        "type": "container",
+        "id": "row",
+        "containerType": "horizontal",
         "layout": {
           "width": {
             "value": 100,
-            "unit": "dp"
+            "unit": "percent"
           },
           "height": {
-            "value": 100,
-            "unit": "dp"
+            "value": 40,
+            "unit": "percent"
           }
         },
-        "style": {
-          "borderRadius": 8
-        }
+        "arrangement": {
+          "strategy": "spaced",
+          "spacing": 10,
+          "spacingUnit": "dp"
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "col-1",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#2563eb"
+              },
+              "borderRadius": {
+                "value": 6,
+                "unit": "percent"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "c1",
+                "elementType": "text",
+                "bindings": {
+                  "text": "A"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": {
+                    "value": 60,
+                    "unit": "percent"
+                  },
+                  "fontWeight": "bold",
+                  "textAlign": "center",
+                  "textColor": "#FFFFFF"
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "col-2",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#059669"
+              },
+              "borderRadius": {
+                "value": 6,
+                "unit": "percent"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "c2",
+                "elementType": "text",
+                "bindings": {
+                  "text": "B"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": {
+                    "value": 60,
+                    "unit": "percent"
+                  },
+                  "fontWeight": "bold",
+                  "textAlign": "center",
+                  "textColor": "#FFFFFF"
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "col-3",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#d97706"
+              },
+              "borderRadius": {
+                "value": 6,
+                "unit": "percent"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "c3",
+                "elementType": "text",
+                "bindings": {
+                  "text": "C"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": {
+                    "value": 60,
+                    "unit": "percent"
+                  },
+                  "fontWeight": "bold",
+                  "textAlign": "center",
+                  "textColor": "#FFFFFF"
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "col-4",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#7c3aed"
+              },
+              "borderRadius": {
+                "value": 6,
+                "unit": "percent"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "c4",
+                "elementType": "text",
+                "bindings": {
+                  "text": "D"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": {
+                    "value": 60,
+                    "unit": "percent"
+                  },
+                  "fontWeight": "bold",
+                  "textAlign": "center",
+                  "textColor": "#FFFFFF"
+                }
+              }
+            ]
+          }
+        ]
       }
     ]
-  },
-  "styleClasses": [],
-  "variables": {}
+  }
 }

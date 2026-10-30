@@ -1,0 +1,1949 @@
+{
+  "theme": {
+    "id": "default"
+  },
+  "version": "1.0",
+  "root": {
+    "type": "container",
+    "id": "gallery",
+    "containerType": "gallery",
+    "layout": {
+      "width": {
+        "value": 92,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 85,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "galleryConfig": {
+      "mode": "snapping",
+      "orientation": "horizontal",
+      "snapBehavior": "center",
+      "spacing": 12,
+      "showIndicators": true,
+      "showArrows": true
+    },
+    "children": [
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "card1",
+        "layout": {
+          "aspectRatio": 0.95,
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#FFFFFF"
+          },
+          "borderRadius": {
+            "value": 5,
+            "unit": "percent"
+          },
+          "shadowColor": "#22000000",
+          "shadowRadius": 10,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c1-header",
+            "bindings": {
+              "text": "2X DineCash"
+            },
+            "layout": {
+              "width": {
+                "value": 92,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 9,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 4,
+                "y": 4,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 17,
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c1-sub",
+            "bindings": {
+              "text": "20% cashback on bill payments"
+            },
+            "layout": {
+              "width": {
+                "value": 92,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 4,
+                "y": 15,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "textColor": "#6b7280",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c1-r1-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-1.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 22,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 3,
+                "y": 24,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 4,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c1-r1-name",
+            "bindings": {
+              "text": "Spice Garden"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 7,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 24,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 15,
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c1-r1-meta",
+            "bindings": {
+              "text": "\u2605 4.7 \u00b7 2.5 km \u00b7 North Indian"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 32,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "textColor": "#6b7280",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c1-r1-offer",
+            "bindings": {
+              "text": "Flat 15% off"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 39,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 12,
+              "fontWeight": "bold",
+              "textColor": "#16a34a",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c1-r2-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-2.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 22,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 3,
+                "y": 48,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 4,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c1-r2-name",
+            "bindings": {
+              "text": "Olive Bistro"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 7,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 48,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 15,
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c1-r2-meta",
+            "bindings": {
+              "text": "\u2605 4.5 \u00b7 1.8 km \u00b7 Italian"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 56,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "textColor": "#6b7280",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c1-r2-offer",
+            "bindings": {
+              "text": "Flat 20% off"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 63,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 12,
+              "fontWeight": "bold",
+              "textColor": "#16a34a",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c1-r3-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-3.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 22,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 3,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 4,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c1-r3-name",
+            "bindings": {
+              "text": "Tandoor House"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 7,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 15,
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c1-r3-meta",
+            "bindings": {
+              "text": "\u2605 4.8 \u00b7 3.1 km \u00b7 Mughlai"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 80,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "textColor": "#6b7280",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c1-r3-offer",
+            "bindings": {
+              "text": "Flat 10% off"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 87,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 12,
+              "fontWeight": "bold",
+              "textColor": "#16a34a",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "card2",
+        "layout": {
+          "aspectRatio": 0.95,
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#FFFFFF"
+          },
+          "borderRadius": {
+            "value": 5,
+            "unit": "percent"
+          },
+          "shadowColor": "#22000000",
+          "shadowRadius": 10,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c2-header",
+            "bindings": {
+              "text": "Weekend Feast"
+            },
+            "layout": {
+              "width": {
+                "value": 92,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 8,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 4,
+                "y": 3,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 42,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c2-sub",
+            "bindings": {
+              "text": "Buy 1 Get 1 on main courses"
+            },
+            "layout": {
+              "width": {
+                "value": 92,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 4,
+                "y": 12,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 26,
+                "unit": "percent"
+              },
+              "fontWeight": "normal",
+              "textColor": "#6B7280",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c2-r1-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-4.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 22,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 3,
+                "y": 24,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 4,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c2-r1-name",
+            "bindings": {
+              "text": "Coastal Catch"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 7,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 24,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c2-r1-meta",
+            "bindings": {
+              "text": "\u2605 4.6 \u00b7 2.0 km \u00b7 Seafood"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 32,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "normal",
+              "textColor": "#6B7280",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c2-r1-offer",
+            "bindings": {
+              "text": "Flat 25% off"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 39,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#15803d",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c2-r2-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-5.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 22,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 3,
+                "y": 48,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 4,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c2-r2-name",
+            "bindings": {
+              "text": "Green Bowl"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 7,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 48,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c2-r2-meta",
+            "bindings": {
+              "text": "\u2605 4.4 \u00b7 1.2 km \u00b7 Healthy"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 56,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "normal",
+              "textColor": "#6B7280",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c2-r2-offer",
+            "bindings": {
+              "text": "Flat 12% off"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 63,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#15803d",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c2-r3-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-6.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 22,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 3,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 4,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c2-r3-name",
+            "bindings": {
+              "text": "Smoke & Grill"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 7,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c2-r3-meta",
+            "bindings": {
+              "text": "\u2605 4.9 \u00b7 4.0 km \u00b7 BBQ"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 80,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "normal",
+              "textColor": "#6B7280",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c2-r3-offer",
+            "bindings": {
+              "text": "Flat 18% off"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 87,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#15803d",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "card3",
+        "layout": {
+          "aspectRatio": 0.95,
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#FFFFFF"
+          },
+          "borderRadius": {
+            "value": 5,
+            "unit": "percent"
+          },
+          "shadowColor": "#22000000",
+          "shadowRadius": 10,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c3-header",
+            "bindings": {
+              "text": "Late Night Eats"
+            },
+            "layout": {
+              "width": {
+                "value": 92,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 8,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 4,
+                "y": 3,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 42,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c3-sub",
+            "bindings": {
+              "text": "Open till 2 AM near you"
+            },
+            "layout": {
+              "width": {
+                "value": 92,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 4,
+                "y": 12,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 26,
+                "unit": "percent"
+              },
+              "fontWeight": "normal",
+              "textColor": "#6B7280",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c3-r1-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-7.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 22,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 3,
+                "y": 24,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 4,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c3-r1-name",
+            "bindings": {
+              "text": "Midnight Diner"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 7,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 24,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c3-r1-meta",
+            "bindings": {
+              "text": "\u2605 4.3 \u00b7 1.5 km \u00b7 Continental"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 32,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "normal",
+              "textColor": "#6B7280",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c3-r1-offer",
+            "bindings": {
+              "text": "Flat 15% off"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 39,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#15803d",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c3-r2-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-8.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 22,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 3,
+                "y": 48,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 4,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c3-r2-name",
+            "bindings": {
+              "text": "Wok Express"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 7,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 48,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c3-r2-meta",
+            "bindings": {
+              "text": "\u2605 4.5 \u00b7 2.7 km \u00b7 Chinese"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 56,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "normal",
+              "textColor": "#6B7280",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c3-r2-offer",
+            "bindings": {
+              "text": "Flat 22% off"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 63,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#15803d",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c3-r3-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-9.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 22,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 3,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 4,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c3-r3-name",
+            "bindings": {
+              "text": "Taco Fiesta"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 7,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c3-r3-meta",
+            "bindings": {
+              "text": "\u2605 4.6 \u00b7 3.4 km \u00b7 Mexican"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 80,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "normal",
+              "textColor": "#6B7280",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c3-r3-offer",
+            "bindings": {
+              "text": "Flat 14% off"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 87,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#15803d",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "card4",
+        "layout": {
+          "aspectRatio": 0.95,
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#FFFFFF"
+          },
+          "borderRadius": {
+            "value": 5,
+            "unit": "percent"
+          },
+          "shadowColor": "#22000000",
+          "shadowRadius": 10,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c4-header",
+            "bindings": {
+              "text": "Cafe Hopping"
+            },
+            "layout": {
+              "width": {
+                "value": 92,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 8,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 4,
+                "y": 3,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 42,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c4-sub",
+            "bindings": {
+              "text": "Coffee & desserts you'll love"
+            },
+            "layout": {
+              "width": {
+                "value": 92,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 4,
+                "y": 12,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 26,
+                "unit": "percent"
+              },
+              "fontWeight": "normal",
+              "textColor": "#6B7280",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c4-r1-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-10.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 22,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 3,
+                "y": 24,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 4,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c4-r1-name",
+            "bindings": {
+              "text": "Bean & Brew"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 7,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 24,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c4-r1-meta",
+            "bindings": {
+              "text": "\u2605 4.8 \u00b7 0.8 km \u00b7 Cafe"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 32,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "normal",
+              "textColor": "#6B7280",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c4-r1-offer",
+            "bindings": {
+              "text": "Flat 10% off"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 39,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#15803d",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c4-r2-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-11.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 22,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 3,
+                "y": 48,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 4,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c4-r2-name",
+            "bindings": {
+              "text": "Sweet Tooth"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 7,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 48,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c4-r2-meta",
+            "bindings": {
+              "text": "\u2605 4.7 \u00b7 1.1 km \u00b7 Bakery"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 56,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "normal",
+              "textColor": "#6B7280",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c4-r2-offer",
+            "bindings": {
+              "text": "Flat 30% off"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 63,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#15803d",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c4-r3-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-12.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 22,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 3,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 4,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c4-r3-name",
+            "bindings": {
+              "text": "Mocha Lane"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 7,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 30,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c4-r3-meta",
+            "bindings": {
+              "text": "\u2605 4.6 \u00b7 2.2 km \u00b7 Cafe"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 80,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "normal",
+              "textColor": "#6B7280",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c4-r3-offer",
+            "bindings": {
+              "text": "Flat 16% off"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 6,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 28,
+                "y": 87,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 24,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textColor": "#15803d",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
