@@ -1,49 +1,48 @@
 {
   "theme": {
-    "id": "default",
-    "defaultStyle": {
-      "textColor": "#212121",
-      "fontSize": 14,
-      "fontFamily": "system",
-      "lineHeight": 20
-    }
+    "id": "default"
   },
+  "version": "1.0",
   "root": {
     "type": "container",
-    "id": "vertical-container",
+    "id": "root",
     "containerType": "vertical",
     "layout": {
+      "aspectRatio": 0.75,
       "width": {
-        "value": 100,
+        "value": 96,
         "unit": "percent"
       },
       "height": {
-        "value": 0,
-        "unit": "dp",
-        "special": "wrap_content"
+        "value": 96,
+        "unit": "percent"
       },
       "padding": {
-        "all": 16
-      },
-      "arrangement": {
-        "spacing": 12,
-        "strategy": "spaced",
-        "spacingUnit": "dp"
+        "all": 0
       }
+    },
+    "arrangement": {
+      "strategy": "spaced",
+      "spacing": 12,
+      "spacingUnit": "dp"
     },
     "style": {
       "background": {
         "type": "solid",
-        "color": "#E3F2FD"
+        "color": "#f1f5f9"
+      },
+      "borderRadius": {
+        "value": 3,
+        "unit": "percent"
       }
     },
     "children": [
       {
         "type": "element",
-        "id": "text-element",
+        "id": "header",
         "elementType": "text",
         "bindings": {
-          "text": "VERTICAL Container Test"
+          "text": "Vertical Container"
         },
         "layout": {
           "width": {
@@ -51,41 +50,236 @@
             "unit": "percent"
           },
           "height": {
-            "value": 0,
-            "unit": "dp",
-            "special": "wrap_content"
+            "value": 12,
+            "unit": "percent"
           }
         },
         "style": {
-          "fontSize": 20,
+          "fontSize": {
+            "value": 55,
+            "unit": "percent"
+          },
           "fontWeight": "bold",
-          "textColor": "#000000",
-          "lineHeight": 28
+          "textAlign": "center",
+          "textColor": "#0f172a"
         }
       },
       {
-        "type": "element",
-        "id": "image-element",
-        "elementType": "image",
-        "bindings": {
-          "url": "https://yavuzceliker.github.io/sample-images/image-1.jpg"
-        },
+        "type": "container",
+        "id": "child-1",
+        "containerType": "box",
         "layout": {
           "width": {
-            "value": 200,
-            "unit": "dp"
+            "value": 100,
+            "unit": "percent"
           },
           "height": {
-            "value": 200,
-            "unit": "dp"
+            "value": 18,
+            "unit": "percent"
           }
         },
         "style": {
-          "borderRadius": 8
-        }
+          "background": {
+            "type": "solid",
+            "color": "#2563eb"
+          },
+          "borderRadius": {
+            "value": 4,
+            "unit": "percent"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "label-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "Child 1"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 45,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textAlign": "center",
+              "textColor": "#FFFFFF"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "child-2",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 18,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#059669"
+          },
+          "borderRadius": {
+            "value": 4,
+            "unit": "percent"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "label-2",
+            "elementType": "text",
+            "bindings": {
+              "text": "Child 2"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 45,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textAlign": "center",
+              "textColor": "#FFFFFF"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "child-3",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 18,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#d97706"
+          },
+          "borderRadius": {
+            "value": 4,
+            "unit": "percent"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "label-3",
+            "elementType": "text",
+            "bindings": {
+              "text": "Child 3"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 45,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textAlign": "center",
+              "textColor": "#FFFFFF"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "id": "child-4",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 18,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#7c3aed"
+          },
+          "borderRadius": {
+            "value": 4,
+            "unit": "percent"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "label-4",
+            "elementType": "text",
+            "bindings": {
+              "text": "Child 4"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": {
+                "value": 45,
+                "unit": "percent"
+              },
+              "fontWeight": "bold",
+              "textAlign": "center",
+              "textColor": "#FFFFFF"
+            }
+          }
+        ]
       }
     ]
-  },
-  "styleClasses": [],
-  "variables": {}
+  }
 }
