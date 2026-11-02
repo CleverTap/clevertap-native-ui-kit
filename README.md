@@ -227,5 +227,5 @@ The examples below show the JSON shape this SDK consumes. In a typical setup you
 ## Support
 
 - **Documentation**: [docs.clevertap.com](https://docs.clevertap.com)
-- **Issues**: [GitHub Issues](https://github.com/CleverTap/clevertap-native-display/issues)
+- **Issues**: [GitHub Issues](https://github.com/CleverTap/clevertap-native-ui-kit/issues)
 - **Email**: support@clevertap.com
