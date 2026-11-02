@@ -200,6 +200,25 @@ void main() {
       expect(evaluator.evaluateString('n={{count}} r={{ratio}} e={{enabled}}'),
           'n=42 r=1.5 e=true');
     });
+
+    // Parity: an object/array variable interpolates as empty (like Android/iOS),
+    // never a Dart-specific toString() such as "{a: 1}" or "[1, 2]".
+    test('object/array variable interpolates as empty', () {
+      const evaluator = VariableEvaluator({
+        'obj': {'a': 1},
+        'arr': [1, 2, 3],
+      });
+      expect(evaluator.evaluateString('x={{obj}}y'), 'x=y');
+      expect(evaluator.evaluateString('x={{arr}}y'), 'x=y');
+    });
+
+    // Parity: ternary strips only the surrounding quote pair, so apostrophes
+    // inside a literal survive instead of every quote being removed.
+    test('ternary preserves apostrophes inside the literal', () {
+      const evaluator = VariableEvaluator({'premium': 'true'});
+      expect(evaluator.evaluateString("{{premium ? 'Bob's Deli' : 'Closed'}}"),
+          "Bob's Deli");
+    });
   });
 
   // #54 parity: non-string JSON binding values must not throw at parse time and

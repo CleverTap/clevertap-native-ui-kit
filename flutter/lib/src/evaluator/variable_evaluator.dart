@@ -8,7 +8,12 @@ class VariableEvaluator {
   String evaluateString(String template) {
     return template.replaceAllMapped(_pattern, (match) {
       final expr = match.group(1)!.trim();
-      return _evaluateExpr(expr)?.toString() ?? '';
+      final value = _evaluateExpr(expr);
+      // Parity with Android/iOS: a missing variable or a non-primitive result
+      // (object/array) interpolates as empty — never a Dart-specific toString()
+      // like "{a: 1}" or "[1, 2]".
+      if (value == null || value is Map || value is Iterable) return '';
+      return value.toString();
     });
   }
 
@@ -54,9 +59,18 @@ class VariableEvaluator {
     final cIdx = expr.lastIndexOf(':');
     if (qIdx < 0 || cIdx <= qIdx) return null;
     final condition = expr.substring(0, qIdx).trim();
-    final trueVal = expr.substring(qIdx + 1, cIdx).trim().replaceAll("'", '');
-    final falseVal = expr.substring(cIdx + 1).trim().replaceAll("'", '');
+    final trueVal = _stripQuotes(expr.substring(qIdx + 1, cIdx).trim());
+    final falseVal = _stripQuotes(expr.substring(cIdx + 1).trim());
     return _evalBoolean(condition) ? trueVal : falseVal;
+  }
+
+  // Strip a single surrounding pair of single quotes only — not every quote —
+  // so apostrophes inside a literal survive (e.g. "it's").
+  static String _stripQuotes(String s) {
+    if (s.length >= 2 && s.startsWith("'") && s.endsWith("'")) {
+      return s.substring(1, s.length - 1);
+    }
+    return s;
   }
 
   bool? _tryComparison(String expr) {

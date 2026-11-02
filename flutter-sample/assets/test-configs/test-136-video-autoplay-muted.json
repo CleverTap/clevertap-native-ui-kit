@@ -22,7 +22,12 @@
         "id": "video",
         "elementType": "video",
         "bindings": {
-          "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+          "url": "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
+          "autoPlay": "true",
+          "muted": "true",
+          "loop": "true",
+          "showControls": "false",
+          "showFullscreen": "false"
         },
         "layout": {
           "width": {
@@ -38,12 +43,7 @@
             "y": 0,
             "unit": "percent"
           }
-        },
-        "autoPlay": true,
-        "muted": true,
-        "loop": true,
-        "showControls": false,
-        "showFullscreen": false
+        }
       }
     ]
   }
