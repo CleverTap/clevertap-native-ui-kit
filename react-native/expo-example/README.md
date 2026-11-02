@@ -58,11 +58,13 @@ cd /Users/akash.malhotra/clevertap-native-ui-kit/react-native/expo-example
 npm install
 ```
 
-Note: this app links local copies of three packages:
+Note: this app links local copies of two packages:
 
 - `@clevertap/native-display-sdk` → `file:..` (the parent SDK folder)
-- `clevertap-react-native` → `file:/Users/akash.malhotra/clevertap-react-native`
 - `@clevertap/clevertap-expo-plugin` → `file:/Users/akash.malhotra/clevertap-expo-plugin`
+
+`clevertap-react-native` now comes from npm (`^4.5.0`), which is the first
+published release with the Native Display element-click crash fix.
 
 If you're not the original author or those paths don't match your machine,
 update them in `package.json` before installing.
