@@ -30,8 +30,9 @@ class NativeDisplayConfigParser {
   // Runs inside isolate — no Flutter/platform dependencies.
   static NativeDisplayUnit? _parseSync(dynamic rawUnit) {
     if (rawUnit is! Map) return null;
+    final Map<dynamic, dynamic> unitMap = rawUnit;
     try {
-      final unit = _deepCast(rawUnit);
+      final unit = _deepCast(unitMap);
 
       // Fall back to a sentinel when wzrk_id is absent so previews and test
       // fixtures still render — matches iOS and Android parser behaviour.
@@ -94,7 +95,7 @@ class NativeDisplayConfigParser {
       // otherwise just vanish (no view renders, no clue why). Warnings emit at
       // INFO+, so this surfaces even though _parseSync runs in the parse isolate
       // (whose logger defaults to INFO). Include the unit id when we got that far.
-      final id = (rawUnit['wzrk_id'] ?? rawUnit['slot_id'] ?? '?').toString();
+      final id = (unitMap['wzrk_id'] ?? unitMap['slot_id'] ?? '?').toString();
       NDLogger.w('NativeDisplayConfigParser',
           'Dropped display unit (id/slot=$id) — failed to parse: $e');
       return null;

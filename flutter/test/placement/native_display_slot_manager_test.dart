@@ -66,13 +66,15 @@ void main() {
       expect(observer.available.map((u) => u.unitId), ['u1']);
     });
 
-    test('a cached unit is delivered immediately on late registration', () {
+    test('a cached unit is returned immediately on late registration', () {
       manager.deliverUnits([_unit('u1', 'hero')]);
 
       final observer = _RecordingObserver();
-      manager.registerSlot('hero', observer);
+      final cached = manager.registerSlot('hero', observer);
 
-      expect(observer.available.single.unitId, 'u1');
+      expect(cached?.unitId, 'u1');
+      // Cached unit is returned to the caller, not delivered via the observer.
+      expect(observer.available, isEmpty);
     });
 
     test('all observers for a slot receive the unit', () {
@@ -113,9 +115,9 @@ void main() {
       manager.deliverUnits([_unit('u2', 'hero')]);
 
       final observer = _RecordingObserver();
-      manager.registerSlot('hero', observer);
+      final cached = manager.registerSlot('hero', observer);
 
-      expect(observer.available.single.unitId, 'u2');
+      expect(cached?.unitId, 'u2');
     });
 
     test('registering the same observer twice does not double-deliver', () {

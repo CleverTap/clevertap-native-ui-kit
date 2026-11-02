@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import 'enums.dart';
+import 'model_hash.dart';
 
 // Coerce metadata JSON values to String. Primitives go through toString();
 // nested objects/arrays are serialized to a compact JSON string so the map
@@ -41,17 +42,6 @@ String _resolveOpenUrlValue(dynamic raw) {
     if (text is String) return text;
   }
   return '';
-}
-
-// Order-independent hash for a nullable map — pairs with mapEquals so two maps
-// that are `mapEquals`-equal always produce the same hashCode.
-int _mapHash(Map<Object?, Object?>? map) {
-  if (map == null) return null.hashCode;
-  var h = 0;
-  for (final e in map.entries) {
-    h ^= Object.hash(e.key, e.value);
-  }
-  return Object.hash(map.length, h);
 }
 
 @immutable
@@ -104,7 +94,7 @@ class OpenUrlAction extends NDAction {
 
   @override
   int get hashCode =>
-      Object.hash(url, openInBrowser, customTabsEnabled, _mapHash(metadata));
+      Object.hash(url, openInBrowser, customTabsEnabled, ndMapHash(metadata));
 }
 
 class CustomAction extends NDAction {
@@ -129,7 +119,7 @@ class CustomAction extends NDAction {
           mapEquals(other.metadata, metadata);
 
   @override
-  int get hashCode => Object.hash(key, value, _mapHash(metadata));
+  int get hashCode => Object.hash(key, value, ndMapHash(metadata));
 }
 
 class NavigateAction extends NDAction {
@@ -152,7 +142,7 @@ class NavigateAction extends NDAction {
           mapEquals(other.params, params);
 
   @override
-  int get hashCode => Object.hash(destination, _mapHash(params));
+  int get hashCode => Object.hash(destination, ndMapHash(params));
 }
 
 class TrackEventAction extends NDAction {
@@ -174,7 +164,7 @@ class TrackEventAction extends NDAction {
           mapEquals(other.properties, properties);
 
   @override
-  int get hashCode => Object.hash(eventName, _mapHash(properties));
+  int get hashCode => Object.hash(eventName, ndMapHash(properties));
 }
 
 class CompositeAction extends NDAction {

@@ -56,7 +56,7 @@ class BoxContainer extends StatelessWidget {
 
   Widget _buildChild(NativeDisplayNode child, double parentWidth, double parentHeight) {
     final renderer = NativeDisplayRenderer(
-      key: ValueKey(child.id),
+      key: ObjectKey(child),
       node: child,
       evaluator: evaluator,
       actionListener: actionListener,

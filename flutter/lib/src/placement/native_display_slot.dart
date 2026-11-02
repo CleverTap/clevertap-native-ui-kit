@@ -75,11 +75,6 @@ class _NativeDisplaySlotState extends State<NativeDisplaySlot>
     implements NativeDisplaySlotObserver {
   NativeDisplayUnit? _unit;
 
-  // True while a synchronous registerSlot() is running, during which an
-  // immediate cached-unit delivery must not call setState (we're inside
-  // initState / didUpdateWidget, before the resulting build).
-  bool _registering = false;
-
   NativeDisplaySlotManager get _manager =>
       widget.manager ?? NativeDisplaySlotManager.instance;
 
@@ -107,32 +102,18 @@ class _NativeDisplaySlotState extends State<NativeDisplaySlot>
   }
 
   void _register() {
-    _registering = true;
-    _manager.registerSlot(widget.slotId, this);
-    _registering = false;
+    _unit = _manager.registerSlot(widget.slotId, this);
   }
 
   @override
   void onUnitAvailable(NativeDisplayUnit unit) {
-    if (_registering) {
-      // Immediate cached delivery during (re)registration — the pending build
-      // will pick this up; setState here would throw.
-      _unit = unit;
-      return;
-    }
-    if (!mounted) {
-      _unit = unit;
-      return;
-    }
+    if (!mounted) return;
     setState(() => _unit = unit);
   }
 
   @override
   void onUnitCleared(String slotId) {
-    if (_registering || !mounted) {
-      _unit = null;
-      return;
-    }
+    if (!mounted) return;
     setState(() => _unit = null);
   }
 
