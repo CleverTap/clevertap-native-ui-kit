@@ -115,6 +115,7 @@ class NativeDisplayRenderer extends StatelessWidget {
       ElementType.image => ImageElement(
           node: node,
           style: style,
+          evaluator: evaluator,
           actionListener: actionListener,
         ),
       ElementType.button => ButtonElement(

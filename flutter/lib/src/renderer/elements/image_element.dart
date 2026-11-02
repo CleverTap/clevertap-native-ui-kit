@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../evaluator/variable_evaluator.dart';
 import '../../handler/action_attribution_extras.dart';
 import '../../internal/nd_logger.dart';
 import '../../models/action.dart';
@@ -14,19 +15,23 @@ import '../style_applier.dart';
 class ImageElement extends StatelessWidget {
   final NativeDisplayElement node;
   final Style style;
+  final VariableEvaluator evaluator;
   final void Function(String, String, Map<String, dynamic>?)? actionListener;
 
   const ImageElement({
     super.key,
     required this.node,
     required this.style,
+    required this.evaluator,
     this.actionListener,
   });
 
   @override
   Widget build(BuildContext context) {
     final rootHeight = NativeDisplayScope.rootHeightOf(context);
-    final url = node.bindings['url'] ?? '';
+    // Template-evaluate the URL so {{var}} bindings resolve — parity with
+    // Android/iOS, which evaluate IMAGE url bindings.
+    final url = evaluator.evaluateString(node.bindings['url'] ?? '');
     if (url.isEmpty) {
       return StyleApplier.apply(
         const SizedBox.shrink(),

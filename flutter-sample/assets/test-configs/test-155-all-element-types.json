@@ -83,7 +83,7 @@
         "id": "video-inset",
         "elementType": "video",
         "bindings": {
-          "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+          "url": "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         },
         "layout": {
           "width": {

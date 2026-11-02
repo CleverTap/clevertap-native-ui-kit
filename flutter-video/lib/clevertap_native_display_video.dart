@@ -4,7 +4,14 @@ import 'package:clevertap_native_display/clevertap_native_display.dart';
 
 import 'src/video_element.dart';
 
-export 'src/video_element.dart' show VideoElement;
+export 'src/video_element.dart'
+    show
+        VideoElement,
+        ndVideoTestTagPlay,
+        ndVideoTestTagMute,
+        ndVideoTestTagExpand,
+        ndVideoTestTagClose,
+        ndVideoTestTagCollapse;
 
 /// Enables rendering of Native Display `VIDEO` elements.
 ///
