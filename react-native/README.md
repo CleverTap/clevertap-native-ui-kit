@@ -211,14 +211,29 @@ npm install react-native-linear-gradient react-native-svg react-native-reanimate
 
 > **Pick versions that match your React Native version.** These libraries have
 > native code, and each supports its own range of React Native versions. The
-> command above installs the latest of each, which may be too new for an older
-> React Native app. `react-native-reanimated` is the common trap: version 4.x
-> supports only recent React Native (4.3.1 declares a React Native peer range of
-> `0.81 - 0.85`), so on React Native 0.76 you install
-> `react-native-reanimated@~3.18` instead. If a native library fails to build or
-> the app will not start after adding one, check that library's supported React
-> Native range and install a version that fits. Expo users avoid this: `expo
-> install` (below) picks matching versions for you.
+> command above installs the latest of each, which may be too new - or too new
+> to build - for your React Native version. Three known traps:
+>
+> - `react-native-reanimated` 4.x supports only recent React Native (4.3.1
+>   declares a React Native peer range of `0.81 - 0.85`), so on React Native 0.76
+>   you install `react-native-reanimated@~3.18` instead.
+> - On React Native 0.76 - 0.80 (New Architecture on by default), recent
+>   `react-native-svg` (15.16.0 and newer) and `react-native-fast-image` (10.x)
+>   fail the codegen build step with an `Unknown prop type ... "undefined"`
+>   error. Pin the versions the sample apps use instead:
+>   `react-native-svg@15.15.5` and `react-native-fast-image@8.6.3`.
+> - `react-native-fast-image@8.6.3` has a React peer range of `^17 || ^18` - see
+>   the React 19 note below.
+>
+> The least-surprise path is to copy the pinned versions from the sample app that
+> matches your React Native version:
+> [`example-rn076/package.json`](https://github.com/CleverTap/clevertap-native-ui-kit/blob/main/react-native/example-rn076/package.json)
+> for React Native 0.76.x, or
+> [`example/package.json`](https://github.com/CleverTap/clevertap-native-ui-kit/blob/main/react-native/example/package.json)
+> for React Native 0.85.x. If a native library fails to build or the app will not
+> start after adding one, check that library's supported React Native range and
+> install a version that fits. Expo users avoid this: `expo install` (below)
+> picks matching versions for you.
 
 Expo (uses `expo install` so versions match your Expo SDK, and swaps in the
 Expo-native gradient and image libraries):
@@ -231,12 +246,16 @@ npx expo install expo-linear-gradient react-native-svg react-native-reanimated \
 
 Two things to know:
 
-- **React 19 and `react-native-fast-image`.** The current `react-native-fast-image`
-  (8.6.3) declares a React peer range of `^17 || ^18`, so on a React 19 project
-  `npm install` will reject it. Drop it from the bare command (image loading
-  still works through the built-in image view, just without the fast-image
-  speedup), or add `--legacy-peer-deps`. The Expo command avoids this by using
-  `expo-image` instead.
+- **React 19 and `react-native-fast-image`.** The version the sample apps pin,
+  `react-native-fast-image@8.6.3`, declares a React peer range of `^17 || ^18`,
+  so on a React 19 project `npm install` rejects it unless you add
+  `--legacy-peer-deps`. Installing it unpinned avoids the peer range - the
+  current npm latest is 10.x with a React peer of `*` - but that 10.x release
+  fails the New Architecture codegen build (see the version note above), which is
+  why the sample apps stay on 8.6.3. You can also just drop fast-image: image
+  loading still works through the built-in image view, only without the
+  fast-image speedup. The Expo command avoids all of this by using `expo-image`
+  instead.
 - **`react-native-reanimated` needs a Babel plugin.** After installing it, add
   the plugin as the last entry in `babel.config.js` and rebuild - see the
   reanimated note in [FAQ and troubleshooting](#faq-and-troubleshooting).
