@@ -1,17 +1,8 @@
 import 'package:flutter/foundation.dart';
 
+import 'model_hash.dart';
 import 'native_display_node.dart';
 import 'style.dart';
-
-// Order-independent hash for a nullable map — pairs with mapEquals.
-int _mapHash(Map<Object?, Object?>? map) {
-  if (map == null) return null.hashCode;
-  var h = 0;
-  for (final e in map.entries) {
-    h ^= Object.hash(e.key, e.value);
-  }
-  return Object.hash(map.length, h);
-}
 
 @immutable
 class NDTheme {
@@ -48,7 +39,7 @@ class NDTheme {
           mapEquals(other.colors, colors);
 
   @override
-  int get hashCode => Object.hash(id, defaultStyle, _mapHash(colors));
+  int get hashCode => Object.hash(id, defaultStyle, ndMapHash(colors));
 }
 
 @immutable
@@ -120,7 +111,7 @@ class NativeDisplayConfig {
         version,
         theme,
         Object.hashAll(styleClasses),
-        _mapHash(variables),
+        ndMapHash(variables),
         root,
       );
 }

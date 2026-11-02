@@ -41,7 +41,7 @@ class HorizontalContainer extends StatelessWidget {
     final List<Widget> widgets = [];
     for (final child in children) {
       Widget renderer = NativeDisplayRenderer(
-        key: ValueKey(child.id),
+        key: ObjectKey(child),
         node: child,
         evaluator: evaluator,
         actionListener: actionListener,

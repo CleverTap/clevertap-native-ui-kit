@@ -4,6 +4,7 @@ import 'action.dart';
 import 'enums.dart';
 import 'gallery_config.dart';
 import 'layout.dart';
+import 'model_hash.dart';
 import 'node_config.dart';
 import 'style.dart';
 
@@ -18,17 +19,7 @@ String _coerceBindingValue(dynamic v) {
   return v.toString();
 }
 
-// Order-independent hash for a nullable map — pairs with mapEquals.
-int _mapHash(Map<Object?, Object?>? map) {
-  if (map == null) return null.hashCode;
-  var h = 0;
-  for (final e in map.entries) {
-    h ^= Object.hash(e.key, e.value);
-  }
-  return Object.hash(map.length, h);
-}
-
-int _actionsHash(Map<String, NDAction>? actions) => _mapHash(actions);
+int _actionsHash(Map<String, NDAction>? actions) => ndMapHash(actions);
 
 @immutable
 sealed class NativeDisplayNode {
@@ -222,7 +213,7 @@ class NativeDisplayElement extends NativeDisplayNode {
         _actionsHash(actions),
         animation,
         elementType,
-        _mapHash(bindings),
+        ndMapHash(bindings),
         dividerConfig,
         imageConfig,
         htmlConfig,

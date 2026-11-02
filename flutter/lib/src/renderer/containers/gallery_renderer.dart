@@ -111,10 +111,8 @@ class _GalleryRendererState extends State<GalleryRenderer> {
 
     _childCount = newChildCount;
     final maxPage = _childCount == 0 ? 0 : _childCount - 1;
-    final clampedPage = _currentPage.value.clamp(0, maxPage);
-    _currentPage.value = clampedPage;
-
     final initialPage = newConfig.initialPage.clamp(0, maxPage);
+    _currentPage.value = initialPage;
     _pageController = PageController(
       initialPage: initialPage,
       viewportFraction: _viewportFraction,

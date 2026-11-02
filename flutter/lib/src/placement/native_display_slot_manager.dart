@@ -85,9 +85,14 @@ class NativeDisplaySlotManager {
 
   /// Register [observer] for [slotId].
   ///
-  /// If a unit is already cached for this slot, [NativeDisplaySlotObserver
-  /// .onUnitAvailable] is invoked immediately (synchronously) on the caller.
-  void registerSlot(String slotId, NativeDisplaySlotObserver observer) {
+  /// Returns the unit already cached for this slot, or `null` if none has
+  /// arrived yet. The caller is responsible for applying the returned unit (the
+  /// manager no longer delivers it synchronously, which avoids setState during
+  /// build). Future units arrive via [NativeDisplaySlotObserver.onUnitAvailable].
+  NativeDisplayUnit? registerSlot(
+    String slotId,
+    NativeDisplaySlotObserver observer,
+  ) {
     final observers = _activeSlots.putIfAbsent(slotId, () => []);
     if (!observers.contains(observer)) {
       observers.add(observer);
@@ -98,11 +103,10 @@ class NativeDisplaySlotManager {
     if (existing != null) {
       NDLogger.d(
         _tag,
-        'Cached unit immediately delivered for slot: $slotId '
-        '(unitId=${existing.unitId})',
+        'Cached unit returned for slot: $slotId (unitId=${existing.unitId})',
       );
-      _deliver(observer, existing);
     }
+    return existing;
   }
 
   /// Unregister [observer] from [slotId]. Removes the slot entry once it has no

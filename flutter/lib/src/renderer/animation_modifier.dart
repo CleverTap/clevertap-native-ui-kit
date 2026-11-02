@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 
 import '../models/enums.dart';
@@ -18,11 +20,12 @@ class AnimationModifier extends StatefulWidget {
 }
 
 class _AnimationModifierState extends State<AnimationModifier>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacity;
   late Animation<Offset> _slide;
   late Animation<double> _scale;
+  Timer? _delayTimer;
 
   // Computed once per animation config (initState / didUpdateWidget) instead of
   // re-deriving via a switch on every build.
@@ -39,17 +42,12 @@ class _AnimationModifierState extends State<AnimationModifier>
   @override
   void didUpdateWidget(AnimationModifier old) {
     super.didUpdateWidget(old);
-    if (!_animationEquals(old.animation, widget.animation)) {
+    if (old.animation != widget.animation) {
+      _delayTimer?.cancel();
       _controller.dispose();
       _setup(widget.animation);
     }
   }
-
-  bool _animationEquals(NDAnimation a, NDAnimation b) =>
-      a.type == b.type &&
-      a.duration == b.duration &&
-      a.delay == b.delay &&
-      a.easing == b.easing;
 
   void _setup(NDAnimation anim) {
     _hasFade = _computeHasFade(anim.type);
@@ -71,7 +69,7 @@ class _AnimationModifierState extends State<AnimationModifier>
 
     final delay = anim.delay < 0 ? 0 : anim.delay;
     if (delay > 0) {
-      Future.delayed(Duration(milliseconds: delay), () {
+      _delayTimer = Timer(Duration(milliseconds: delay), () {
         if (mounted) _controller.forward();
       });
     } else {
@@ -81,6 +79,7 @@ class _AnimationModifierState extends State<AnimationModifier>
 
   @override
   void dispose() {
+    _delayTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }
