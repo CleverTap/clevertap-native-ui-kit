@@ -3,7 +3,12 @@ import 'dart:async';
 import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
-import 'package:clevertap_native_display/clevertap_native_display.dart';
+// Hide the ND SDK's gallery Orientation enum — it collides with Flutter's
+// Orientation (used by OrientationBuilder for the landscape two-column layout).
+import 'package:clevertap_native_display/clevertap_native_display.dart'
+    hide Orientation;
+import 'package:clevertap_plugin_with_native_display/clevertap_plugin_with_native_display.dart'
+    show CleverTapNativeDisplayBinding;
 
 import '../automation/asset_manifest_automation.dart';
 import '../automation/automation_signals.dart';
@@ -20,14 +25,17 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
   final List<String> _log = [];
   final List<NativeDisplayUnit> _units = [];
 
-  // CleverTapPlugin() returns the singleton — needed for instance method registration.
-  final _ct = CleverTapPlugin();
+  final _manager = NativeDisplaySlotManager.instance;
 
   @override
   void initState() {
     super.initState();
-    _ct.setCleverTapDisplayUnitsLoadedHandler(_onUnitsLoaded);
-    //_fetchCachedUnits();
+    // One-call CleverTap integration (SDK-driven): registers the display-units
+    // handler, pulls cached units, wires slot-sync, and installs the global
+    // attribution sink — replacing the ~30 lines of manual wiring this screen
+    // used to own. onUnits mirrors each raw batch to this screen's canvas/log
+    // (and the automation hooks) in addition to slot routing.
+    _manager.bindCleverTap(onUnits: (raw) => _onUnitsLoaded(raw));
 
     // Automation only (ND_AUTOMATION): warm the image cache from the
     // incremental manifest before any campaign is fired, so the first
@@ -42,18 +50,9 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
 
   @override
   void dispose() {
+    _manager.unbindCleverTap();
     _eventController.dispose();
     super.dispose();
-  }
-
-  Future<void> _fetchCachedUnits() async {
-    try {
-      final units = await CleverTapPlugin.getAllDisplayUnits();
-      await _onUnitsLoaded(units?.cast<dynamic>(),
-          source: 'getAllDisplayUnits PULL (init)');
-    } catch (e) {
-      _addLog('ERROR fetching cached units: $e');
-    }
   }
 
   Future<void> _onUnitsLoaded(List<dynamic>? rawUnits,
@@ -70,16 +69,11 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
     // cache before capturing. No-op in normal runs.
     unawaited(AssetManifestAutomation.recordUnits(rawUnits));
 
-    // Parsing (deep-cast + 3-strategy extraction + style resolution) runs off
-    // the main thread via Isolate.run() in NativeDisplayConfigParser.
+    // Slot routing is handled by bindCleverTap() (it feeds the SlotManager from
+    // the same handler). Here we only parse for this screen's "all units" canvas
+    // — units carrying a slot_id still render in their NativeDisplaySlot on the
+    // Slots tab; this canvas shows every unit regardless of slot.
     final parsed = await NativeDisplayConfigParser.parseAll(rawUnits);
-
-    // clevertap_plugin exposes a single display-units handler (unlike the
-    // native multi-listener bridge), so this screen is the one sink. Fan the
-    // parsed units out to the SlotManager too: units carrying a `slot_id` are
-    // routed to their NativeDisplaySlot on the Slots tab, while the canvas
-    // below shows every unit. Mirrors the native bridge's fan-out.
-    NativeDisplaySlotManager.instance.deliverUnits(parsed);
 
     if (!mounted) return;
     setState(() {
@@ -161,28 +155,70 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
 
   @override
   Widget build(BuildContext context) {
+    final input = _FireEventInput(
+      controller: _eventController,
+      onSend: _sendEvent,
+      onChanged: () => setState(() {}),
+    );
+    final canvas = _CanvasContent(units: _units, onAction: _addLog);
+    void clearLog() => setState(() => _log.clear());
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('CleverTap Integration'),
       ),
-      body: Column(
-        children: [
-          _FireEventHeader(
-            controller: _eventController,
-            onSend: _sendEvent,
-            onChanged: () => setState(() {}),
-          ),
-          Expanded(
-            child: _CanvasContent(
-              units: _units,
-              onAction: _addLog,
-            ),
-          ),
-          _EventLogFooter(
-            messages: _log,
-            onClear: () => setState(() => _log.clear()),
-          ),
-        ],
+      body: SafeArea(
+        child: OrientationBuilder(
+          builder: (context, orientation) {
+            // Landscape: two columns (input + log | rendered unit), mirroring the
+            // Android/iOS samples — the canvas gets full height instead of being
+            // squeezed between a fixed header and a fixed-height log footer.
+            if (orientation == Orientation.landscape) {
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      children: [
+                        input,
+                        Expanded(
+                          child: _EventLogFooter(
+                            messages: _log,
+                            onClear: clearLog,
+                            expand: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const VerticalDivider(width: 1),
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const _CanvasLabel(),
+                        Expanded(child: canvas),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            // Portrait: stacked — input, canvas (fills), log footer.
+            return Column(
+              children: [
+                input,
+                const Divider(height: 1),
+                const _CanvasLabel(),
+                Expanded(child: canvas),
+                _EventLogFooter(messages: _log, onClear: clearLog),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -190,12 +226,12 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
 
 // ── Header ────────────────────────────────────────────────────────────────────
 
-class _FireEventHeader extends StatelessWidget {
+class _FireEventInput extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
   final VoidCallback onChanged;
 
-  const _FireEventHeader({
+  const _FireEventInput({
     required this.controller,
     required this.onSend,
     required this.onChanged,
@@ -204,47 +240,48 @@ class _FireEventHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Row(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  // Automation hook — matches Android `ct-event-input` testTag
-                  // and iOS `ct-event-input` accessibilityIdentifier so the
-                  // cross-platform screenshot suites drive the same UI.
-                  key: const Key('ct-event-input'),
-                  controller: controller,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter event name',
-                    border: OutlineInputBorder(),
-                    isDense: true,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  ),
-                  onChanged: (_) => onChanged(),
-                  onSubmitted: (_) => onSend(),
-                ),
+          Expanded(
+            child: TextField(
+              // Automation hook — matches Android `ct-event-input` testTag
+              // and iOS `ct-event-input` accessibilityIdentifier so the
+              // cross-platform screenshot suites drive the same UI.
+              key: const Key('ct-event-input'),
+              controller: controller,
+              decoration: const InputDecoration(
+                hintText: 'Enter event name',
+                border: OutlineInputBorder(),
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               ),
-              const SizedBox(width: 8),
-              FilledButton(
-                key: const Key('ct-send-event-btn'),
-                onPressed: controller.text.isNotEmpty ? onSend : null,
-                child: const Text('Send Event'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          const Divider(height: 1),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 8),
-            child: Text(
-              'Native Display Canvas',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              onChanged: (_) => onChanged(),
+              onSubmitted: (_) => onSend(),
             ),
           ),
+          const SizedBox(width: 8),
+          FilledButton(
+            key: const Key('ct-send-event-btn'),
+            onPressed: controller.text.isNotEmpty ? onSend : null,
+            child: const Text('Send Event'),
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class _CanvasLabel extends StatelessWidget {
+  const _CanvasLabel();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: Text(
+        'Native Display Canvas',
+        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
       ),
     );
   }
@@ -332,7 +369,15 @@ class _EventLogFooter extends StatefulWidget {
   final List<String> messages;
   final VoidCallback onClear;
 
-  const _EventLogFooter({required this.messages, required this.onClear});
+  /// When true (landscape left column) the log box fills the available height
+  /// instead of using the fixed portrait height.
+  final bool expand;
+
+  const _EventLogFooter({
+    required this.messages,
+    required this.onClear,
+    this.expand = false,
+  });
 
   @override
   State<_EventLogFooter> createState() => _EventLogFooterState();
@@ -384,7 +429,7 @@ class _EventLogFooterState extends State<_EventLogFooter> {
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: widget.expand ? MainAxisSize.max : MainAxisSize.min,
         children: [
           const Divider(height: 1),
           Row(
@@ -414,37 +459,44 @@ class _EventLogFooterState extends State<_EventLogFooter> {
             ],
           ),
           if (_logVisible)
-            Container(
-              key: const Key('event-log-content'),
-              height: 130,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: const Color(0xFF263238),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.all(10),
-              child: widget.messages.isEmpty
-                  ? const Text(
-                      'No events yet',
-                      style: TextStyle(fontFamily: 'monospace', fontSize: 12, color: Color(0xFF607D8B)),
-                    )
-                  : ListView.builder(
-                      controller: _scroll,
-                      itemCount: widget.messages.length,
-                      itemBuilder: (ctx, i) => Text(
-                        widget.messages[i],
-                        style: TextStyle(
-                          fontFamily: 'monospace',
-                          fontSize: 11,
-                          color: _color(widget.messages[i]),
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-            ),
-          const SizedBox(height: 8),
+            widget.expand
+                ? Expanded(child: _buildLogBox(fill: true))
+                : _buildLogBox(fill: false),
+          if (!widget.expand) const SizedBox(height: 8),
         ],
       ),
+    );
+  }
+
+  Widget _buildLogBox({required bool fill}) {
+    return Container(
+      key: const Key('event-log-content'),
+      height: fill ? null : 130,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: const Color(0xFF263238),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.all(10),
+      child: widget.messages.isEmpty
+          ? const Text(
+              'No events yet',
+              style: TextStyle(
+                  fontFamily: 'monospace', fontSize: 12, color: Color(0xFF607D8B)),
+            )
+          : ListView.builder(
+              controller: _scroll,
+              itemCount: widget.messages.length,
+              itemBuilder: (ctx, i) => Text(
+                widget.messages[i],
+                style: TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 11,
+                  color: _color(widget.messages[i]),
+                  height: 1.4,
+                ),
+              ),
+            ),
     );
   }
 }

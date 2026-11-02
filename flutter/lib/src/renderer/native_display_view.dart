@@ -6,6 +6,7 @@ import '../models/layout.dart';
 import '../models/native_display_config.dart';
 import '../models/style.dart';
 import '../style/style_resolver.dart';
+import 'native_display_attribution.dart';
 import 'native_display_renderer.dart';
 import 'native_display_scope.dart';
 
@@ -120,6 +121,14 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
     final evaluator = _evaluator;
     final layout = root.layout;
 
+    // Per-widget callbacks win; otherwise fall back to the process-wide sink so a
+    // single global wiring (e.g. the add-on's bindCleverTap()) can attribute
+    // every unit without the host wiring each render site.
+    final onViewed = widget.onNotificationViewed ??
+        NativeDisplayAttribution.instance.onViewed;
+    final onClicked = widget.onNotificationClicked ??
+        NativeDisplayAttribution.instance.onClicked;
+
     // Optimization: when root has only fixed (dp) dimensions and no aspectRatio,
     // skip LayoutBuilder — constraints are already known from the JSON values.
     if (_hasOnlyFixedDimensions(layout)) {
@@ -132,10 +141,10 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
           rootHeight: fixedHeight,
           styles: _resolvedStyles,
           unitId: widget.unitId,
-          onClicked: widget.onNotificationClicked,
+          onClicked: onClicked,
           child: _TrackNotificationViewed(
             unitId: widget.unitId,
-            onViewed: widget.onNotificationViewed,
+            onViewed: onViewed,
             child: NativeDisplayRenderer(
               node: root,
               evaluator: evaluator,
@@ -171,10 +180,10 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
           rootHeight: rootHeight,
           styles: _resolvedStyles,
           unitId: widget.unitId,
-          onClicked: widget.onNotificationClicked,
+          onClicked: onClicked,
           child: _TrackNotificationViewed(
             unitId: widget.unitId,
-            onViewed: widget.onNotificationViewed,
+            onViewed: onViewed,
             child: NativeDisplayRenderer(
               node: root,
               evaluator: evaluator,

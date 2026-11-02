@@ -83,25 +83,10 @@ class _SlotDemoScreenState extends State<SlotDemoScreen> {
   final _feed = _buildFeed();
   final _manager = NativeDisplaySlotManager.instance;
 
-  @override
-  void initState() {
-    super.initState();
-    // Slot-sync is host-mediated: the pure-Dart plugin can't call the Core SDK,
-    // so we forward the wzrk_nd_slot_sync event out to clevertap_plugin here.
-    // syncActiveSlots() invokes this callback with the active slot ids.
-    _manager.onSlotSync = (eventName, eventData) {
-      CleverTapPlugin.recordEvent(eventName, eventData);
-      _snack('Slot sync → $eventName ${eventData['slots']}');
-    };
-  }
-
-  @override
-  void dispose() {
-    // Leave cached units in place (process-wide), but drop our sync hook so we
-    // don't fire snackbars against a disposed context.
-    _manager.onSlotSync = null;
-    super.dispose();
-  }
+  // Slot-sync, attribution (viewed/clicked), and unit ingestion are all wired by
+  // bindCleverTap() — called once in CleverTapIntegrationScreen at startup. This
+  // screen just drops NativeDisplaySlot widgets and fires events; no manual
+  // onSlotSync / per-widget attribution wiring needed.
 
   Future<void> _fetchSlotData() async {
     // Fire the same events as the Android/iOS Slot Demo screens. The server
@@ -120,21 +105,6 @@ class _SlotDemoScreenState extends State<SlotDemoScreen> {
   void _clearSlots() {
     _manager.clearAll();
     _snack('Cleared all slots');
-  }
-
-  void _onViewed(String unitId) {
-    CleverTapPlugin.pushDisplayUnitViewedEvent(unitId);
-    _snack('VIEWED unit $unitId');
-  }
-
-  void _onClicked(String unitId, String elementId, Map<String, Object?> extras) {
-    if (elementId.isNotEmpty) {
-      CleverTapPlugin.pushDisplayUnitElementClickedEvent(unitId, extras);
-      _snack('CLICKED $elementId on unit $unitId');
-    } else {
-      CleverTapPlugin.pushDisplayUnitClickedEvent(unitId);
-      _snack('CLICKED unit $unitId');
-    }
   }
 
   void _snack(String msg) {
@@ -172,8 +142,8 @@ class _SlotDemoScreenState extends State<SlotDemoScreen> {
             child: switch (item) {
               _SlotItem s => NativeDisplaySlot(
                   slotId: s.slotId,
-                  onNotificationViewed: _onViewed,
-                  onNotificationClicked: _onClicked,
+                  // Attribution is handled globally by bindCleverTap() — no
+                  // per-widget onNotificationViewed/onNotificationClicked needed.
                   // Empty slots keep the original dashed "Ad" placeholder until
                   // a unit is routed to this slot id.
                   loadingBuilder: (ctx, slotId) =>

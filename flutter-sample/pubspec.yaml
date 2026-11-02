@@ -18,6 +18,10 @@ dependencies:
     path: ../flutter-video
   clevertap_native_display_webview:
     path: ../flutter-webview
+  # Integration add-on: one-call bindCleverTap() wiring (clevertap_plugin ↔ ND
+  # slot system). Transitively pulls in core + clevertap_plugin.
+  clevertap_plugin_with_native_display:
+    path: ../clevertap_plugin_with_native_display
   clevertap_plugin: ^4.3.0
   # Automation-only (ND_AUTOMATION): manifest I/O + cache warming. These are
   # pulled in by cached_network_image transitively, but we depend on them
