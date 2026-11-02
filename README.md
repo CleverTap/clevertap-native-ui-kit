@@ -37,7 +37,7 @@ Integration is documented per platform. Pick your stack and follow the guide end
 |----------|---------|
 | Android | API 23+, Kotlin 1.9+, Jetpack Compose |
 | iOS | iOS 15+, Swift 5.5+, SwiftUI |
-| React Native | React Native 0.73+, React 18+, `clevertap-react-native` 4.1+ |
+| React Native | React Native 0.73+, React 18+, `clevertap-react-native` 4.5+ |
 
 > The SDK renders with Compose (Android) and SwiftUI (iOS) *internally* — the XML/View wrappers host a `ComposeView` and the UIKit wrappers host a `UIHostingController`, so Compose/SwiftUI are transitive implementation details, not requirements on your UI layer.
 

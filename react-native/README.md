@@ -20,7 +20,7 @@ Works with both kinds of React Native apps: plain ("bare") React Native and Expo
 | Question | Answer |
 |---|---|
 | Which platforms? | iOS and Android |
-| Minimum versions | React Native 0.73+, React 18+, `clevertap-react-native` 4.1+ |
+| Minimum versions | React Native 0.73+, React 18+, `clevertap-react-native` 4.5+ |
 | Does it add native code of its own? | No. This package is pure TypeScript. (The main CleverTap SDK does have native code.) |
 | Does it work with Expo? | Yes, with `expo prebuild` or EAS Build. **Not** with Expo Go. |
 | Where are campaigns designed? | On the CleverTap dashboard, not in code. |
@@ -51,7 +51,7 @@ without them:
    **Already using CleverTap?** Keep your existing setup as it is. Your init code,
    your credentials, and your native config do not change. You only add this
    package on top. One thing to check first: `clevertap-react-native` must be
-   `4.1.0` or newer. Older apps are often on an earlier version, so confirm yours
+   `4.5.0` or newer. Older apps are often on an earlier version, so confirm yours
    before you start. An out-of-date Core SDK is a common reason nothing renders.
 3. **Know which kind of app you have** - bare React Native or Expo. If you are
    not sure and your project has `ios/` and `android/` folders you edit by hand,
@@ -138,7 +138,7 @@ npx expo install @clevertap/native-display-sdk clevertap-react-native @clevertap
 
 - `@clevertap/clevertap-expo-plugin` sets up CleverTap's native pieces during
   `expo prebuild` (Podfile, Info.plist, AndroidManifest, lifecycle hooks).
-- `clevertap-react-native` must be `4.1.0` or newer.
+- `clevertap-react-native` must be `4.5.0` or newer.
 
 > **Already have CleverTap set up in your Expo app?** You only need
 > `@clevertap/native-display-sdk`. The plugin and the `app.json` block below are

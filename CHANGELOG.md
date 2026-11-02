@@ -32,7 +32,7 @@ Initial release.
   - Self-reported Notification Viewed and Notification Clicked events, so host
     apps do not double-report.
   - Element-level click attribution (`action_type`, `action_url`, `wzrk_*`).
-  - Requires React Native 0.73+, React 18+, `clevertap-react-native` 4.1+.
+  - Requires React Native 0.73+, React 18+, `clevertap-react-native` 4.5+.
   - Full setup: [react-native/README.md](react-native/README.md).
 
 ## [iOS & Android 1.0.0] - 2026-06-25
