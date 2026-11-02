@@ -24,6 +24,8 @@ export 'src/placement/native_display_slot_manager.dart'
         NativeDisplaySlotManager,
         NativeDisplaySlotObserver,
         NativeDisplaySlotSync;
+export 'src/renderer/native_display_attribution.dart'
+    show NativeDisplayAttribution;
 export 'src/renderer/native_display_scope.dart' show NativeDisplayScope;
 export 'src/renderer/native_display_view.dart'
     show
