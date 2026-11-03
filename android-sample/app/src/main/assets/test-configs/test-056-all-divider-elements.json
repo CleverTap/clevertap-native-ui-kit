@@ -1,15 +1,11 @@
 {
   "theme": {
-    "id": "divider-sections",
-    "defaultStyle": {
-      "textColor": "#374151",
-      "fontSize": 14,
-      "lineHeight": 20
-    }
+    "id": "default"
   },
+  "version": "1.0",
   "root": {
     "type": "container",
-    "id": "divider-container",
+    "id": "root",
     "containerType": "vertical",
     "layout": {
       "width": {
@@ -25,31 +21,52 @@
       }
     },
     "style": {
-      "backgroundColor": "#F9FAFB"
+      "background": {
+        "type": "solid",
+        "color": "#ffffff"
+      }
     },
     "children": [
       {
         "type": "element",
-        "id": "divider-thin",
-        "elementType": "divider",
+        "id": "row-1",
+        "elementType": "text",
+        "bindings": {
+          "text": "Account settings"
+        },
         "layout": {
           "width": {
-            "value": 100,
+            "value": 92,
             "unit": "percent"
           },
           "height": {
-            "value": 1,
-            "unit": "dp"
+            "value": 10,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 4,
+            "y": 0,
+            "unit": "percent"
           }
         },
         "style": {
-          "backgroundColor": "#E5E7EB"
+          "fontSize": {
+            "value": 34,
+            "unit": "percent"
+          },
+          "fontWeight": "bold",
+          "textColor": "#1e293b"
         }
       },
       {
         "type": "element",
-        "id": "divider-medium",
+        "id": "divider-thin",
         "elementType": "divider",
+        "dividerConfig": {
+          "orientation": "horizontal",
+          "thickness": 1,
+          "color": "#cbd5e1"
+        },
         "layout": {
           "width": {
             "value": 100,
@@ -57,61 +74,49 @@
           },
           "height": {
             "value": 2,
-            "unit": "dp"
+            "unit": "percent"
           }
-        },
-        "style": {
-          "backgroundColor": "#D1D5DB"
         }
       },
       {
         "type": "element",
-        "id": "divider-thick",
-        "elementType": "divider",
+        "id": "row-2",
+        "elementType": "text",
+        "bindings": {
+          "text": "Thin \u00b7 1dp \u00b7 grey \u00b7 full width"
+        },
         "layout": {
           "width": {
-            "value": 100,
+            "value": 92,
             "unit": "percent"
           },
           "height": {
-            "value": 4,
-            "unit": "dp"
-          }
-        },
-        "style": {
-          "backgroundColor": "#9CA3AF"
-        }
-      },
-      {
-        "type": "element",
-        "id": "divider-colored",
-        "elementType": "divider",
-        "layout": {
-          "width": {
-            "value": 100,
+            "value": 10,
             "unit": "percent"
           },
-          "height": {
-            "value": 3,
-            "unit": "dp"
+          "offset": {
+            "x": 4,
+            "y": 0,
+            "unit": "percent"
           }
         },
         "style": {
-          "background": {
-            "type": "linear_gradient",
-            "colors": [
-              "#3B82F6",
-              "#8B5CF6",
-              "#EC4899"
-            ],
-            "angle": 90
-          }
+          "fontSize": {
+            "value": 28,
+            "unit": "percent"
+          },
+          "textColor": "#475569"
         }
       },
       {
         "type": "element",
-        "id": "divider-partial",
+        "id": "divider-medium",
         "elementType": "divider",
+        "dividerConfig": {
+          "orientation": "horizontal",
+          "thickness": 3,
+          "color": "#2563eb"
+        },
         "layout": {
           "width": {
             "value": 80,
@@ -119,15 +124,155 @@
           },
           "height": {
             "value": 2,
-            "unit": "dp"
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 0,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "row-3",
+        "elementType": "text",
+        "bindings": {
+          "text": "Medium \u00b7 3dp \u00b7 blue \u00b7 10% inset"
+        },
+        "layout": {
+          "width": {
+            "value": 92,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 10,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 4,
+            "y": 0,
+            "unit": "percent"
           }
         },
         "style": {
-          "backgroundColor": "#6B7280"
+          "fontSize": {
+            "value": 28,
+            "unit": "percent"
+          },
+          "textColor": "#475569"
+        }
+      },
+      {
+        "type": "element",
+        "id": "divider-thick",
+        "elementType": "divider",
+        "dividerConfig": {
+          "orientation": "horizontal",
+          "thickness": 6,
+          "color": "#dc2626"
+        },
+        "layout": {
+          "width": {
+            "value": 60,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 3,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 20,
+            "y": 0,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "row-4",
+        "elementType": "text",
+        "bindings": {
+          "text": "Thick \u00b7 6dp \u00b7 red \u00b7 20% inset"
+        },
+        "layout": {
+          "width": {
+            "value": 92,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 10,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 4,
+            "y": 0,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": {
+            "value": 28,
+            "unit": "percent"
+          },
+          "textColor": "#475569"
+        }
+      },
+      {
+        "type": "element",
+        "id": "divider-green",
+        "elementType": "divider",
+        "dividerConfig": {
+          "orientation": "horizontal",
+          "thickness": 4,
+          "color": "#059669"
+        },
+        "layout": {
+          "width": {
+            "value": 40,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 3,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 30,
+            "y": 0,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "row-5",
+        "elementType": "text",
+        "bindings": {
+          "text": "4dp \u00b7 green \u00b7 30% inset (centered)"
+        },
+        "layout": {
+          "width": {
+            "value": 92,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 10,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 4,
+            "y": 0,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": {
+            "value": 28,
+            "unit": "percent"
+          },
+          "textColor": "#475569"
         }
       }
     ]
-  },
-  "styleClasses": [],
-  "variables": {}
+  }
 }

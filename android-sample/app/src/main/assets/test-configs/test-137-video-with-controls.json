@@ -1,20 +1,35 @@
 {
   "theme": {
-    "id": "test-137"
+    "id": "default"
   },
+  "version": "1.0",
   "root": {
     "type": "container",
     "id": "root",
     "containerType": "box",
     "layout": {
+      "aspectRatio": 1.7778,
       "width": {
-        "value": 100,
+        "value": 96,
         "unit": "percent"
       },
-      "aspectRatio": 1.778
+      "height": {
+        "value": 60,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
     },
     "style": {
-      "backgroundColor": "#000000"
+      "background": {
+        "type": "solid",
+        "color": "#0f172a"
+      },
+      "borderRadius": {
+        "value": 4,
+        "unit": "percent"
+      }
     },
     "children": [
       {
@@ -22,7 +37,12 @@
         "id": "video",
         "elementType": "video",
         "bindings": {
-          "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+          "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+          "autoPlay": "false",
+          "muted": "false",
+          "loop": "false",
+          "showControls": "true",
+          "showFullscreen": "true"
         },
         "layout": {
           "width": {
@@ -30,7 +50,7 @@
             "unit": "percent"
           },
           "height": {
-            "value": 100,
+            "value": 86,
             "unit": "percent"
           },
           "offset": {
@@ -38,37 +58,38 @@
             "y": 0,
             "unit": "percent"
           }
-        },
-        "autoPlay": false,
-        "muted": false,
-        "loop": false,
-        "showControls": true,
-        "showFullscreen": false
+        }
       },
       {
         "type": "element",
-        "id": "video_title",
+        "id": "caption",
         "elementType": "text",
         "bindings": {
-          "text": "Big Buck Bunny"
+          "text": "Video with controls — tap play to start"
         },
         "layout": {
           "width": {
-            "value": 100,
+            "value": 96,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 12,
             "unit": "percent"
           },
           "offset": {
-            "x": 0,
-            "y": 85,
+            "x": 2,
+            "y": 87,
             "unit": "percent"
           }
         },
         "style": {
-          "fontSize": 14,
-          "lineHeight": 20,
-          "textColor": "#FFFFFF",
-          "backgroundColor": "#88000000",
-          "textAlign": "center"
+          "fontSize": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "fontWeight": "normal",
+          "textAlign": "center",
+          "textColor": "#e2e8f0"
         }
       }
     ]

@@ -1,0 +1,1015 @@
+{
+  "theme": {
+    "id": "default"
+  },
+  "version": "1.0",
+  "root": {
+    "type": "container",
+    "id": "gallery",
+    "containerType": "gallery",
+    "layout": {
+      "aspectRatio": 1.45,
+      "width": {
+        "value": 92,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "galleryConfig": {
+      "mode": "free_flow",
+      "orientation": "horizontal",
+      "spacing": 12,
+      "showIndicators": false,
+      "showArrows": false
+    },
+    "children": [
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "h1",
+        "layout": {
+          "aspectRatio": 1.3,
+          "width": {
+            "value": 78,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 5,
+            "unit": "percent"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "h1-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-21.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 0,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "h1-scrim",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 52,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 48,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "linear_gradient",
+                "angle": 180,
+                "colors": [
+                  "#00000000",
+                  "#F2000000"
+                ]
+              }
+            },
+            "children": []
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "h1-heart",
+            "bindings": {
+              "text": "\u2665"
+            },
+            "layout": {
+              "width": {
+                "value": 10,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 8,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 86,
+                "y": 4,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 16,
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "fontWeight": "normal"
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "h1-pill",
+            "layout": {
+              "width": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 9,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 80,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#15803d"
+              },
+              "borderRadius": {
+                "value": 20,
+                "unit": "percent"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "elementType": "text",
+                "id": "h1-rating",
+                "bindings": {
+                  "text": "\u2605 4.7"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "offset": {
+                    "x": 0,
+                    "y": 0,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 11,
+                  "fontWeight": "normal",
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "h1-name",
+            "bindings": {
+              "text": "The Copper Kettle"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 9,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 87,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "h2",
+        "layout": {
+          "aspectRatio": 1.3,
+          "width": {
+            "value": 78,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 5,
+            "unit": "percent"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "h2-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-22.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 0,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "h2-scrim",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 52,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 48,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "linear_gradient",
+                "angle": 180,
+                "colors": [
+                  "#00000000",
+                  "#F2000000"
+                ]
+              }
+            },
+            "children": []
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "h2-heart",
+            "bindings": {
+              "text": "\u2665"
+            },
+            "layout": {
+              "width": {
+                "value": 10,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 8,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 86,
+                "y": 4,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 16,
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "fontWeight": "normal"
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "h2-pill",
+            "layout": {
+              "width": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 9,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 80,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#15803d"
+              },
+              "borderRadius": {
+                "value": 20,
+                "unit": "percent"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "elementType": "text",
+                "id": "h2-rating",
+                "bindings": {
+                  "text": "\u2605 4.5"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "offset": {
+                    "x": 0,
+                    "y": 0,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 11,
+                  "fontWeight": "normal",
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "h2-name",
+            "bindings": {
+              "text": "Saffron Terrace"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 9,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 87,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "h3",
+        "layout": {
+          "aspectRatio": 1.3,
+          "width": {
+            "value": 78,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 5,
+            "unit": "percent"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "h3-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-23.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 0,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "h3-scrim",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 52,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 48,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "linear_gradient",
+                "angle": 180,
+                "colors": [
+                  "#00000000",
+                  "#F2000000"
+                ]
+              }
+            },
+            "children": []
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "h3-heart",
+            "bindings": {
+              "text": "\u2665"
+            },
+            "layout": {
+              "width": {
+                "value": 10,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 8,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 86,
+                "y": 4,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 16,
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "fontWeight": "normal"
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "h3-pill",
+            "layout": {
+              "width": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 9,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 80,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#15803d"
+              },
+              "borderRadius": {
+                "value": 20,
+                "unit": "percent"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "elementType": "text",
+                "id": "h3-rating",
+                "bindings": {
+                  "text": "\u2605 4.9"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "offset": {
+                    "x": 0,
+                    "y": 0,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 11,
+                  "fontWeight": "normal",
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "h3-name",
+            "bindings": {
+              "text": "Lumiere Rooftop"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 9,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 87,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "h4",
+        "layout": {
+          "aspectRatio": 1.3,
+          "width": {
+            "value": 78,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 5,
+            "unit": "percent"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "h4-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-24.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 0,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "h4-scrim",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 52,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 48,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "linear_gradient",
+                "angle": 180,
+                "colors": [
+                  "#00000000",
+                  "#F2000000"
+                ]
+              }
+            },
+            "children": []
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "h4-heart",
+            "bindings": {
+              "text": "\u2665"
+            },
+            "layout": {
+              "width": {
+                "value": 10,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 8,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 86,
+                "y": 4,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 16,
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "fontWeight": "normal"
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "h4-pill",
+            "layout": {
+              "width": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 9,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 80,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#15803d"
+              },
+              "borderRadius": {
+                "value": 20,
+                "unit": "percent"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "elementType": "text",
+                "id": "h4-rating",
+                "bindings": {
+                  "text": "\u2605 4.6"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "offset": {
+                    "x": 0,
+                    "y": 0,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 11,
+                  "fontWeight": "normal",
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "h4-name",
+            "bindings": {
+              "text": "Garden Court"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 9,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 87,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "h5",
+        "layout": {
+          "aspectRatio": 1.3,
+          "width": {
+            "value": 78,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 5,
+            "unit": "percent"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "h5-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-25.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 0,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "h5-scrim",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 52,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 48,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "linear_gradient",
+                "angle": 180,
+                "colors": [
+                  "#00000000",
+                  "#F2000000"
+                ]
+              }
+            },
+            "children": []
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "h5-heart",
+            "bindings": {
+              "text": "\u2665"
+            },
+            "layout": {
+              "width": {
+                "value": 10,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 8,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 86,
+                "y": 4,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 16,
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "fontWeight": "normal"
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "h5-pill",
+            "layout": {
+              "width": {
+                "value": 20,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 9,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 80,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#15803d"
+              },
+              "borderRadius": {
+                "value": 20,
+                "unit": "percent"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "elementType": "text",
+                "id": "h5-rating",
+                "bindings": {
+                  "text": "\u2605 4.4"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "offset": {
+                    "x": 0,
+                    "y": 0,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 11,
+                  "fontWeight": "normal",
+                  "textColor": "#FFFFFF",
+                  "textAlign": "center"
+                }
+              }
+            ]
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "h5-name",
+            "bindings": {
+              "text": "Harbour View"
+            },
+            "layout": {
+              "width": {
+                "value": 70,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 9,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 87,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 14,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "maxLines": 1,
+              "textAlign": "left"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

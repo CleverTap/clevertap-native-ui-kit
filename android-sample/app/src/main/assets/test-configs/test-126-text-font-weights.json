@@ -1,120 +1,416 @@
 {
   "theme": {
-    "id": "test-126"
+    "id": "default"
   },
+  "version": "1.0",
   "root": {
     "type": "container",
     "id": "root",
     "containerType": "box",
     "layout": {
+      "aspectRatio": 0.7,
       "width": {
-        "value": 100,
+        "value": 96,
         "unit": "percent"
       },
-      "aspectRatio": 1.778
+      "height": {
+        "value": 96,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
     },
     "style": {
-      "backgroundColor": "#1A1A2E"
+      "background": {
+        "type": "solid",
+        "color": "#f8fafc"
+      },
+      "borderRadius": {
+        "value": 3,
+        "unit": "percent"
+      }
     },
     "children": [
       {
         "type": "element",
-        "id": "text_light",
+        "id": "t-bold",
         "elementType": "text",
         "bindings": {
-          "text": "Light: 300 weight text"
+          "text": "Bold heading"
         },
         "layout": {
           "width": {
-            "value": 90,
+            "value": 92,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 9,
             "unit": "percent"
           },
           "offset": {
-            "x": 5,
-            "y": 10,
+            "x": 4,
+            "y": 3,
             "unit": "percent"
           }
         },
         "style": {
-          "fontSize": 16,
-          "fontWeight": "light",
-          "lineHeight": 22,
-          "textColor": "#CCCCCC"
+          "fontSize": {
+            "value": 55,
+            "unit": "percent"
+          },
+          "fontWeight": "bold",
+          "textColor": "#0f172a"
         }
       },
       {
         "type": "element",
-        "id": "text_normal",
+        "id": "t-regular",
         "elementType": "text",
         "bindings": {
-          "text": "Normal: 400 weight text"
+          "text": "Regular body text"
         },
         "layout": {
           "width": {
-            "value": 90,
+            "value": 92,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 8,
             "unit": "percent"
           },
           "offset": {
-            "x": 5,
+            "x": 4,
+            "y": 13,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": {
+            "value": 40,
+            "unit": "percent"
+          },
+          "fontWeight": "normal",
+          "textColor": "#334155"
+        }
+      },
+      {
+        "type": "element",
+        "id": "t-light",
+        "elementType": "text",
+        "bindings": {
+          "text": "Light caption text"
+        },
+        "layout": {
+          "width": {
+            "value": 92,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 7,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 4,
+            "y": 22,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": {
+            "value": 34,
+            "unit": "percent"
+          },
+          "fontWeight": "light",
+          "textColor": "#64748b"
+        }
+      },
+      {
+        "type": "element",
+        "id": "t-small",
+        "elementType": "text",
+        "bindings": {
+          "text": "small size"
+        },
+        "layout": {
+          "width": {
+            "value": 44,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 8,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 4,
+            "y": 31,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": {
+            "value": 30,
+            "unit": "percent"
+          },
+          "fontWeight": "normal",
+          "textColor": "#334155"
+        }
+      },
+      {
+        "type": "element",
+        "id": "t-large",
+        "elementType": "text",
+        "bindings": {
+          "text": "large size"
+        },
+        "layout": {
+          "width": {
+            "value": 48,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 9,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 50,
             "y": 30,
             "unit": "percent"
           }
         },
         "style": {
-          "fontSize": 16,
+          "fontSize": {
+            "value": 58,
+            "unit": "percent"
+          },
           "fontWeight": "normal",
-          "lineHeight": 22,
-          "textColor": "#CCCCCC"
+          "textColor": "#334155"
         }
       },
       {
         "type": "element",
-        "id": "text_medium",
+        "id": "t-center",
         "elementType": "text",
         "bindings": {
-          "text": "Medium: 500 weight text"
+          "text": "center aligned"
         },
         "layout": {
           "width": {
-            "value": 90,
+            "value": 92,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 8,
             "unit": "percent"
           },
           "offset": {
-            "x": 5,
-            "y": 55,
+            "x": 4,
+            "y": 41,
             "unit": "percent"
           }
         },
         "style": {
-          "fontSize": 16,
-          "fontWeight": "medium",
-          "lineHeight": 22,
-          "textColor": "#FFFFFF"
+          "fontSize": {
+            "value": 40,
+            "unit": "percent"
+          },
+          "textAlign": "center",
+          "textColor": "#1d4ed8"
         }
       },
       {
         "type": "element",
-        "id": "text_bold",
+        "id": "t-right",
         "elementType": "text",
         "bindings": {
-          "text": "Bold: 700 weight text"
+          "text": "right aligned"
         },
         "layout": {
           "width": {
-            "value": 90,
+            "value": 92,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 8,
             "unit": "percent"
           },
           "offset": {
-            "x": 5,
-            "y": 75,
+            "x": 4,
+            "y": 50,
             "unit": "percent"
           }
         },
         "style": {
-          "fontSize": 16,
+          "fontSize": {
+            "value": 40,
+            "unit": "percent"
+          },
+          "textAlign": "right",
+          "textColor": "#1d4ed8"
+        }
+      },
+      {
+        "type": "element",
+        "id": "t-underline",
+        "elementType": "text",
+        "bindings": {
+          "text": "underline"
+        },
+        "layout": {
+          "width": {
+            "value": 30,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 8,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 4,
+            "y": 59,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": {
+            "value": 36,
+            "unit": "percent"
+          },
+          "textDecoration": "underline",
+          "textColor": "#334155"
+        }
+      },
+      {
+        "type": "element",
+        "id": "t-strike",
+        "elementType": "text",
+        "bindings": {
+          "text": "strikethrough"
+        },
+        "layout": {
+          "width": {
+            "value": 34,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 8,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 35,
+            "y": 59,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": {
+            "value": 36,
+            "unit": "percent"
+          },
+          "textDecoration": "strikethrough",
+          "textColor": "#334155"
+        }
+      },
+      {
+        "type": "element",
+        "id": "t-italic",
+        "elementType": "text",
+        "bindings": {
+          "text": "italic"
+        },
+        "layout": {
+          "width": {
+            "value": 26,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 8,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 70,
+            "y": 59,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": {
+            "value": 36,
+            "unit": "percent"
+          },
+          "fontStyle": "italic",
+          "textColor": "#334155"
+        }
+      },
+      {
+        "type": "element",
+        "id": "t-ellipsis",
+        "elementType": "text",
+        "bindings": {
+          "text": "This long line is clamped to one line with an ellipsis overflow so it never wraps."
+        },
+        "layout": {
+          "width": {
+            "value": 92,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 8,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 4,
+            "y": 69,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": {
+            "value": 38,
+            "unit": "percent"
+          },
+          "textColor": "#334155",
+          "maxLines": 1,
+          "overflow": "ellipsis"
+        }
+      },
+      {
+        "type": "element",
+        "id": "t-gradient",
+        "elementType": "text",
+        "bindings": {
+          "text": "Gradient text"
+        },
+        "layout": {
+          "width": {
+            "value": 92,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 10,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 4,
+            "y": 79,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": {
+            "value": 58,
+            "unit": "percent"
+          },
           "fontWeight": "bold",
-          "lineHeight": 22,
-          "textColor": "#FFFFFF"
+          "textGradient": {
+            "type": "linear",
+            "angle": 0,
+            "colors": [
+              "#ec4899",
+              "#8b5cf6",
+              "#3b82f6"
+            ]
+          }
         }
       }
     ]
