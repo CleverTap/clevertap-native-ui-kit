@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 
 import '../../evaluator/variable_evaluator.dart';
 import '../../handler/action_attribution_extras.dart';
+import '../../handler/action_handler.dart';
 import '../../models/action.dart';
 import '../../models/enums.dart';
 import '../../models/native_display_node.dart';
@@ -30,9 +33,10 @@ class ButtonElement extends StatelessWidget {
     final text = evaluator.evaluateString(node.bindings['text'] ?? '');
     final unitId = NativeDisplayScope.unitIdOf(context);
     final onNotificationClicked = NativeDisplayScope.onClickedOf(context);
+    final onOpenUrl = NativeDisplayScope.onOpenUrlOf(context);
 
     return GestureDetector(
-      onTap: () => _handleClick(unitId, onNotificationClicked),
+      onTap: () => _handleClick(unitId, onNotificationClicked, onOpenUrl),
       child: StyleApplier.apply(
         Center(
           child: Text(
@@ -79,10 +83,19 @@ class ButtonElement extends StatelessWidget {
         null => FontWeight.w400,
       };
 
-  void _handleClick(String? unitId, NativeDisplayNotificationClicked? onNotificationClicked) {
+  void _handleClick(
+    String? unitId,
+    NativeDisplayNotificationClicked? onNotificationClicked,
+    NativeDisplayOpenUrlCallback? onOpenUrl,
+  ) {
     final action = node.actions?[ActionTriggers.onClick];
     if (action == null) return;
-    actionListener?.call('action', node.id, _payload(action));
+    // Execute the action — opens URLs via url_launcher (open_url), and dispatches
+    // custom/navigate/track_event/composite — and surfaces it to the host
+    // listener. The host can intercept open_url via onOpenUrl. Previously this
+    // only notified the listener, so configured URLs never opened.
+    unawaited(ActionHandler(listener: actionListener, onOpenUrl: onOpenUrl)
+        .handle(action, node.id));
     if (onNotificationClicked != null && unitId != null && unitId.isNotEmpty) {
       // Flatten the clicked action into attribution extras (action_type, custom
       // KVs, and BE-injected wzrk_* fields from action.metadata). The host feeds
@@ -92,11 +105,5 @@ class ButtonElement extends StatelessWidget {
       );
       onNotificationClicked(unitId, node.id, extras);
     }
-  }
-
-  Map<String, dynamic>? _payload(NDAction action) {
-    if (action is OpenUrlAction && action.metadata != null) return {...action.metadata!};
-    if (action is CustomAction && action.metadata != null) return {...action.metadata!};
-    return null;
   }
 }

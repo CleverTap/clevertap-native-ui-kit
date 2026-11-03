@@ -48,6 +48,10 @@ class NativeDisplaySlot extends StatefulWidget {
   /// Forwarded to [NativeDisplayView.onNotificationClicked].
   final NativeDisplayNotificationClicked? onNotificationClicked;
 
+  /// Forwarded to [NativeDisplayView.onOpenUrl] — host interceptor for `open_url`
+  /// actions (return `true` to handle the URL yourself).
+  final NativeDisplayOpenUrlCallback? onOpenUrl;
+
   /// Placeholder shown while no unit is available. Defaults to
   /// [SizedBox.shrink].
   final NativeDisplaySlotLoadingBuilder? loadingBuilder;
@@ -63,6 +67,7 @@ class NativeDisplaySlot extends StatefulWidget {
     this.componentListener,
     this.onNotificationViewed,
     this.onNotificationClicked,
+    this.onOpenUrl,
     this.loadingBuilder,
     this.manager,
   });
@@ -132,6 +137,7 @@ class _NativeDisplaySlotState extends State<NativeDisplaySlot>
       componentListener: widget.componentListener,
       onNotificationViewed: widget.onNotificationViewed,
       onNotificationClicked: widget.onNotificationClicked,
+      onOpenUrl: widget.onOpenUrl,
     );
   }
 }

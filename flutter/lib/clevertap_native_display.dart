@@ -33,7 +33,8 @@ export 'src/renderer/native_display_view.dart'
         NativeDisplayActionListener,
         NativeDisplayComponentListener,
         NativeDisplayNotificationViewed,
-        NativeDisplayNotificationClicked;
+        NativeDisplayNotificationClicked,
+        NativeDisplayOpenUrlCallback;
 // Pluggable element renderers (VIDEO/HTML live in optional add-on packages).
 // These are the registry + the small helper surface a host-provided element
 // builder needs.

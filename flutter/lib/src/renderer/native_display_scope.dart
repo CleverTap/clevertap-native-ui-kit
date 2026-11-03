@@ -18,6 +18,16 @@ typedef NativeDisplayNotificationClicked = void Function(
   Map<String, Object?> extras,
 );
 
+/// Signature for the host open-url interceptor. Mirrors the native SDKs'
+/// `onOpenUrl(url, openInBrowser) -> Bool`: called before the SDK opens an
+/// `open_url` action. Return `true` to signal the host handled the URL itself
+/// (e.g. in-app routing for a deeplink) — the SDK then does **not** open it.
+/// Return `false` (or provide no callback) to let the SDK open it.
+typedef NativeDisplayOpenUrlCallback = bool Function(
+  String url,
+  bool openInBrowser,
+);
+
 /// Single inherited scope carrying the per-[NativeDisplayView] render context to
 /// every descendant, so renderers don't have to thread these through every
 /// widget parameter:
@@ -38,6 +48,7 @@ class NativeDisplayScope extends InheritedWidget {
   final Map<String, Style> styles;
   final String? unitId;
   final NativeDisplayNotificationClicked? onClicked;
+  final NativeDisplayOpenUrlCallback? onOpenUrl;
 
   const NativeDisplayScope({
     super.key,
@@ -45,6 +56,7 @@ class NativeDisplayScope extends InheritedWidget {
     required this.styles,
     required this.unitId,
     required this.onClicked,
+    this.onOpenUrl,
     required super.child,
   });
 
@@ -65,10 +77,15 @@ class NativeDisplayScope extends InheritedWidget {
   static NativeDisplayNotificationClicked? onClickedOf(BuildContext context) =>
       of(context)?.onClicked;
 
+  /// Host open-url interceptor, or `null`.
+  static NativeDisplayOpenUrlCallback? onOpenUrlOf(BuildContext context) =>
+      of(context)?.onOpenUrl;
+
   @override
   bool updateShouldNotify(NativeDisplayScope old) =>
       rootHeight != old.rootHeight ||
       !identical(styles, old.styles) ||
       unitId != old.unitId ||
-      onClicked != old.onClicked;
+      onClicked != old.onClicked ||
+      onOpenUrl != old.onOpenUrl;
 }

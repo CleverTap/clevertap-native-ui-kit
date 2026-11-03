@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../evaluator/variable_evaluator.dart';
 import '../../handler/action_attribution_extras.dart';
+import '../../handler/action_handler.dart';
 import '../../internal/nd_logger.dart';
 import '../../models/action.dart';
 import '../../models/enums.dart';
@@ -112,10 +115,15 @@ class ImageElement extends StatelessWidget {
     if (onClick != null) {
       final unitId = NativeDisplayScope.unitIdOf(context);
       final onNotificationClicked = NativeDisplayScope.onClickedOf(context);
+      final onOpenUrl = NativeDisplayScope.onOpenUrlOf(context);
       styled = GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
-          actionListener?.call('action', node.id, _onClickPayload(onClick));
+          // Execute the action (open_url via url_launcher, custom, etc.) and
+          // surface it to the host listener — not just notify. The host can
+          // intercept open_url via onOpenUrl.
+          unawaited(ActionHandler(listener: actionListener, onOpenUrl: onOpenUrl)
+              .handle(onClick, node.id));
           if (onNotificationClicked != null && unitId != null && unitId.isNotEmpty) {
             final extras = ActionAttributionExtras.sanitize(
               ActionAttributionExtras.from(onClick),
@@ -128,15 +136,6 @@ class ImageElement extends StatelessWidget {
     }
 
     return RepaintBoundary(child: styled);
-  }
-
-  // Mirror the attribution payload Android/iOS surface on element click —
-  // action.metadata carries wzrk_element_id / wzrk_c2a / wzrk_act / wzrk_data
-  // injected by the backend; surface them to the host listener as well.
-  Map<String, dynamic>? _onClickPayload(NDAction onClick) {
-    if (onClick is OpenUrlAction && onClick.metadata != null) return {...onClick.metadata!};
-    if (onClick is CustomAction && onClick.metadata != null) return {...onClick.metadata!};
-    return null;
   }
 
   bool _isGif(String url, ImageConfig? config) {

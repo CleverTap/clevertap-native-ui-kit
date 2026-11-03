@@ -10,7 +10,8 @@ import 'native_display_attribution.dart';
 import 'native_display_renderer.dart';
 import 'native_display_scope.dart';
 
-export 'native_display_scope.dart' show NativeDisplayNotificationClicked;
+export 'native_display_scope.dart'
+    show NativeDisplayNotificationClicked, NativeDisplayOpenUrlCallback;
 
 typedef NativeDisplayActionListener = void Function(
     String action, String nodeId, Map<String, dynamic>? params);
@@ -50,6 +51,11 @@ class NativeDisplayView extends StatefulWidget {
   final NativeDisplayActionListener? actionListener;
   final NativeDisplayComponentListener? componentListener;
 
+  /// Optional host interceptor for `open_url` actions. Return `true` to handle the
+  /// URL yourself (e.g. in-app routing for a deeplink); the SDK then won't open
+  /// it. Mirrors the native `onOpenUrl(url, openInBrowser) -> Bool`.
+  final NativeDisplayOpenUrlCallback? onOpenUrl;
+
   /// The size of the placement region this view lives in — the host's available
   /// width/height. This is the exact analog of the iOS SDK's
   /// `\.nativeDisplayParentSize` environment value: it supplies the `parentWidth`
@@ -75,6 +81,7 @@ class NativeDisplayView extends StatefulWidget {
     this.onNotificationClicked,
     this.actionListener,
     this.componentListener,
+    this.onOpenUrl,
     this.parentSize,
   });
 
@@ -142,6 +149,7 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
           styles: _resolvedStyles,
           unitId: widget.unitId,
           onClicked: onClicked,
+          onOpenUrl: widget.onOpenUrl,
           child: _TrackNotificationViewed(
             unitId: widget.unitId,
             onViewed: onViewed,
@@ -181,6 +189,7 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
           styles: _resolvedStyles,
           unitId: widget.unitId,
           onClicked: onClicked,
+          onOpenUrl: widget.onOpenUrl,
           child: _TrackNotificationViewed(
             unitId: widget.unitId,
             onViewed: onViewed,

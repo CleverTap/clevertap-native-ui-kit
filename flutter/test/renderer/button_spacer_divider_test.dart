@@ -60,7 +60,9 @@ void main() {
       await tester.tap(find.byType(GestureDetector));
       await tester.pump();
 
-      expect(capturedAction, 'action');
+      // ActionHandler now dispatches the action, so the listener receives the
+      // action's type ('custom') rather than the generic 'action'.
+      expect(capturedAction, 'custom');
       expect(capturedNodeId, 'btn');
     });
 
