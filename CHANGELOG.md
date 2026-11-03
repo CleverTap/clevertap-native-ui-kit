@@ -11,7 +11,7 @@ name the platform. Git tags follow the per-platform convention: iOS and Android
 use a bare semver tag (e.g. `1.0.0`); React Native and Flutter use a prefixed tag
 (e.g. `react-native-v1.0.0`).
 
-## [React Native 1.0.0] - 2026-10-29
+## [React Native 1.0.0] - 2026-11-03
 
 Initial release.
 
