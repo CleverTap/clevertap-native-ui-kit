@@ -168,12 +168,18 @@ class _CleverTapIntegrationScreenState extends State<CleverTapIntegrationScreen>
         title: const Text('CleverTap Integration'),
       ),
       body: SafeArea(
-        child: OrientationBuilder(
-          builder: (context, orientation) {
+        // Use the DEVICE orientation, not OrientationBuilder. OrientationBuilder
+        // keys off its local layout box, which shrinks when the keyboard opens —
+        // on a phone that can flip portrait→landscape, swapping to the two-column
+        // layout mid-tap, reparenting the TextField and dropping its focus (the
+        // keyboard opens then immediately closes). MediaQuery.orientationOf is
+        // derived from the screen size and stays stable across keyboard show/hide.
+        child: Builder(
+          builder: (context) {
             // Landscape: two columns (input + log | rendered unit), mirroring the
             // Android/iOS samples — the canvas gets full height instead of being
             // squeezed between a fixed header and a fixed-height log footer.
-            if (orientation == Orientation.landscape) {
+            if (MediaQuery.orientationOf(context) == Orientation.landscape) {
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
