@@ -41,7 +41,9 @@ class TextElement extends StatelessWidget {
             : (style.fontSize?.unit == TextDimensionUnit.percent ? 1.2 : 1.5));
 
     final textStyle = TextStyle(
-      color: ColorParser.parse(style.textColor),
+      // Default to black (native TEXT defaultColor) when the config/theme omits a
+      // color, rather than inheriting the host DefaultTextStyle's color.
+      color: ColorParser.parse(style.textColor) ?? const Color(0xFF000000),
       fontSize: fontSize,
       fontFamily: style.fontFamily,
       fontWeight: _resolveFontWeight(style.fontWeight),
@@ -52,7 +54,10 @@ class TextElement extends StatelessWidget {
       // (`proportional`) biases leading toward the descent, so the same
       // lineHeight sits lower than on the natives.
       leadingDistribution: TextLeadingDistribution.even,
-      letterSpacing: style.letterSpacing,
+      // Explicit 0 (not null) so ND text never inherits the host app's
+      // DefaultTextStyle letterSpacing (e.g. Material's bodyMedium = 0.25). Native
+      // ND uses 0; inheriting would widen glyphs and change wrapping vs the natives.
+      letterSpacing: style.letterSpacing ?? 0,
       decoration: _resolveDecoration(style.textDecoration),
       shadows: _resolveShadows(style),
     );

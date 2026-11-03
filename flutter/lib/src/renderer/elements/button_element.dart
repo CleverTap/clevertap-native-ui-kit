@@ -63,10 +63,14 @@ class ButtonElement extends StatelessWidget {
   }
 
   TextStyle _buildTextStyle(double rootHeight) {
-    final fontSize = style.fontSize?.resolve(rootHeight) ?? 14.0;
+    // Default button font size 16 matches the native SDKs' BUTTON defaultFontSize
+    // (TEXT defaults to 14). Only used when a config omits fontSize.
+    final fontSize = style.fontSize?.resolve(rootHeight) ?? 16.0;
     final lineHeight = style.lineHeight?.resolve(rootHeight);
     return TextStyle(
-      color: ColorParser.parse(style.textColor),
+      // Default to white (native BUTTON defaultColor) when the config/theme omits
+      // a color, rather than inheriting the host DefaultTextStyle's color.
+      color: ColorParser.parse(style.textColor) ?? const Color(0xFFFFFFFF),
       fontSize: fontSize,
       fontFamily: style.fontFamily,
       fontWeight: _resolveFontWeight(style.fontWeight),
@@ -76,7 +80,9 @@ class ButtonElement extends StatelessWidget {
       // LineHeightStyle(alignment=Center) and iOS. Pairs with textHeightBehavior
       // on the Text widget.
       leadingDistribution: TextLeadingDistribution.even,
-      letterSpacing: style.letterSpacing,
+      // Explicit 0 (not null) so button text never inherits the host app's
+      // DefaultTextStyle letterSpacing (e.g. Material's 0.25). Native ND uses 0.
+      letterSpacing: style.letterSpacing ?? 0,
     );
   }
 

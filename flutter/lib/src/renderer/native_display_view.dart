@@ -23,6 +23,39 @@ typedef NativeDisplayComponentListener = bool Function(
 /// `clevertap_plugin.pushDisplayUnitViewedEvent(unitId)`.
 typedef NativeDisplayNotificationViewed = void Function(String unitId);
 
+/// Hermetic text baseline for ND content.
+///
+/// Native ND (Compose / SwiftUI) renders text self-contained — it never picks up
+/// the host app's theme. Flutter's `Text`, by contrast, inherits-by-default:
+///   • every `TextStyle` property a node leaves null is merged from the ambient
+///     `DefaultTextStyle` (the host's Material theme) — this is how Material's
+///     `letterSpacing: 0.25` leaked in and changed text wrapping; `fontFamily`,
+///     `wordSpacing`, `fontFeatures`, … have the same exposure.
+///   • Text-level props (`softWrap`, `maxLines`, `overflow`, `textWidthBasis`)
+///     are read from the ambient `DefaultTextStyle` when a `Text` doesn't set them.
+///
+/// Wrapping the ND root in a `DefaultTextStyle` carrying this baseline resets both
+/// classes to host-independent values: `inherit: false` makes unset style props
+/// fall back to engine defaults (matching the natives), and the `DefaultTextStyle`
+/// widget's own field defaults (softWrap: true, overflow: clip, maxLines: null,
+/// textWidthBasis: parent) neutralise the Text-level props. `fontFamily` is left
+/// null so ND falls back to the platform system font (as the natives do) unless a
+/// node's resolved style specifies one.
+///
+/// Note: system font scaling (`MediaQuery.textScaler`) and the a11y "bold text"
+/// flag (`MediaQuery.boldText`) are intentionally NOT suppressed — the natives
+/// honour the equivalent OS settings, so leaving them keeps cross-platform parity
+/// and respects accessibility.
+const TextStyle _kNdBaseTextStyle = TextStyle(
+  inherit: false,
+  color: Color(0xFF000000),
+  fontSize: 14.0,
+  letterSpacing: 0.0,
+  wordSpacing: 0.0,
+  textBaseline: TextBaseline.alphabetic,
+  decoration: TextDecoration.none,
+);
+
 class NativeDisplayView extends StatefulWidget {
   final NativeDisplayConfig config;
 
@@ -141,23 +174,26 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
     if (_hasOnlyFixedDimensions(layout)) {
       final fixedWidth = layout!.width!.value;
       final fixedHeight = layout.height!.value;
-      return SizedBox(
-        width: fixedWidth,
-        height: fixedHeight,
-        child: NativeDisplayScope(
-          rootHeight: fixedHeight,
-          styles: _resolvedStyles,
-          unitId: widget.unitId,
-          onClicked: onClicked,
-          onOpenUrl: widget.onOpenUrl,
-          child: _TrackNotificationViewed(
+      return DefaultTextStyle(
+        style: _kNdBaseTextStyle,
+        child: SizedBox(
+          width: fixedWidth,
+          height: fixedHeight,
+          child: NativeDisplayScope(
+            rootHeight: fixedHeight,
+            styles: _resolvedStyles,
             unitId: widget.unitId,
-            onViewed: onViewed,
-            child: NativeDisplayRenderer(
-              node: root,
-              evaluator: evaluator,
-              actionListener: widget.actionListener,
-              componentListener: widget.componentListener,
+            onClicked: onClicked,
+            onOpenUrl: widget.onOpenUrl,
+            child: _TrackNotificationViewed(
+              unitId: widget.unitId,
+              onViewed: onViewed,
+              child: NativeDisplayRenderer(
+                node: root,
+                evaluator: evaluator,
+                actionListener: widget.actionListener,
+                componentListener: widget.componentListener,
+              ),
             ),
           ),
         ),
@@ -204,7 +240,7 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
 
         child = _applyRootSizing(child, layout, rootWidth, rootHeight, parentHeight);
 
-        return child;
+        return DefaultTextStyle(style: _kNdBaseTextStyle, child: child);
       },
     );
   }
