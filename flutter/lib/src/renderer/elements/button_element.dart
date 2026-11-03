@@ -45,6 +45,14 @@ class ButtonElement extends StatelessWidget {
             maxLines: style.maxLines,
             overflow: _resolveOverflow(style.overflow),
             softWrap: style.maxLines == null,
+            // Match Android's includeFontPadding=false / iOS: drop the extra
+            // leading above the first line and below the last so the button text
+            // box matches the natives for a given lineHeight.
+            textHeightBehavior: const TextHeightBehavior(
+              applyHeightToFirstAscent: false,
+              applyHeightToLastDescent: false,
+              leadingDistribution: TextLeadingDistribution.even,
+            ),
           ),
         ),
         style,
@@ -63,9 +71,23 @@ class ButtonElement extends StatelessWidget {
       fontFamily: style.fontFamily,
       fontWeight: _resolveFontWeight(style.fontWeight),
       fontStyle: style.fontStyle == NDFontStyle.italic ? FontStyle.italic : FontStyle.normal,
-      height: (lineHeight != null && fontSize > 0) ? lineHeight / fontSize : null,
+      height: _lineHeightMultiple(fontSize, lineHeight),
+      // Center text in its line box, matching Android Compose
+      // LineHeightStyle(alignment=Center) and iOS. Pairs with textHeightBehavior
+      // on the Text widget.
+      leadingDistribution: TextLeadingDistribution.even,
       letterSpacing: style.letterSpacing,
     );
+  }
+
+  // Default line height matches the native SDKs when the config omits it: a
+  // percent-unit fontSize anchors to 1.2×, a raw (sp) fontSize to 1.5× — same as
+  // Android's ElementRenderer and iOS's renderText. letterSpacing already matches
+  // (both platforms default to 0).
+  double? _lineHeightMultiple(double fontSize, double? lineHeight) {
+    if (fontSize <= 0) return null;
+    if (lineHeight != null) return lineHeight / fontSize;
+    return style.fontSize?.unit == TextDimensionUnit.percent ? 1.2 : 1.5;
   }
 
   TextOverflow? _resolveOverflow(NDTextOverflow? overflow) => switch (overflow) {

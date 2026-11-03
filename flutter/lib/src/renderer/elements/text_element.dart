@@ -31,8 +31,14 @@ class TextElement extends StatelessWidget {
 
     final fontSize = _resolveTextDimension(style.fontSize, rootHeight) ?? 14.0;
     final lineHeight = _resolveTextDimension(style.lineHeight, rootHeight);
-    final heightMultiplier =
-        (lineHeight != null && fontSize > 0) ? lineHeight / fontSize : null;
+    // Default line height matches the native SDKs when the config omits it:
+    // percent-unit fontSize → 1.2×, raw (sp) fontSize → 1.5× (Android ElementRenderer
+    // / iOS renderText). Previously this was null (Flutter font-natural ≈ 1.15×).
+    final heightMultiplier = fontSize <= 0
+        ? null
+        : (lineHeight != null
+            ? lineHeight / fontSize
+            : (style.fontSize?.unit == TextDimensionUnit.percent ? 1.2 : 1.5));
 
     final textStyle = TextStyle(
       color: ColorParser.parse(style.textColor),
