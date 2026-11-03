@@ -1,0 +1,279 @@
+{
+  "theme": {
+    "id": "default"
+  },
+  "version": "1.0",
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "aspectRatio": 1.7778,
+      "width": {
+        "value": 80,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 60,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "angle": 45,
+        "colors": [
+          "#dcffa6",
+          "#ffffff"
+        ]
+      },
+      "borderRadius": {
+        "value": 8,
+        "unit": "percent"
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "text-1",
+        "elementType": "text",
+        "bindings": {
+          "text": "Title - header1 event fired"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 15,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 4,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#FFFFFF00"
+          },
+          "borderColor": "#FFFFFF",
+          "borderRadius": {
+            "value": 0.5,
+            "unit": "percent"
+          },
+          "borderWidth": 0,
+          "fontSize": {
+            "value": 130,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "textColor": "#000000"
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-1",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://d11gh1sd24upek.cloudfront.net/1631012864/assets/b64a2fd3f0674dc49d1afec8d9e7a3c5.png"
+        },
+        "layout": {
+          "width": {
+            "value": 40,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 45,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 3,
+            "y": 27,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-2",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://d11gh1sd24upek.cloudfront.net/1631012864/assets/e31392feea2440fb9628f0d4d365980c.jpeg"
+        },
+        "layout": {
+          "width": {
+            "value": 40,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 45,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 58,
+            "y": 27,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "text-2",
+        "elementType": "text",
+        "bindings": {
+          "text": "to"
+        },
+        "layout": {
+          "width": {
+            "value": 10,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 19,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 45,
+            "y": 40,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#FFFFFF00"
+          },
+          "borderColor": "#FFFFFF",
+          "borderRadius": {
+            "value": 0.5,
+            "unit": "percent"
+          },
+          "borderWidth": 0,
+          "fontSize": {
+            "value": 130,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "textAlign": "center",
+          "textColor": "#000000"
+        }
+      },
+      {
+        "type": "element",
+        "id": "button-1",
+        "elementType": "button",
+        "bindings": {
+          "text": "Yes"
+        },
+        "layout": {
+          "width": {
+            "value": 35,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 13,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 11,
+            "y": 82,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#3a508a"
+          },
+          "borderColor": "#0c1735",
+          "borderRadius": {
+            "value": 0.5,
+            "unit": "percent"
+          },
+          "borderWidth": 6,
+          "fontSize": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "shadowColor": "#000000",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowRadius": 0,
+          "textColor": "#FFFFFF"
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "close",
+            "value": 1
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "button-2",
+        "elementType": "button",
+        "bindings": {
+          "text": "No"
+        },
+        "layout": {
+          "width": {
+            "value": 35,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 13,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 52,
+            "y": 82,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#962f2f"
+          },
+          "borderColor": "#f12525",
+          "borderRadius": {
+            "value": 0.5,
+            "unit": "percent"
+          },
+          "borderWidth": 6,
+          "fontSize": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "shadowColor": "#000000",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowRadius": 0,
+          "textColor": "#FFFFFF"
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "close",
+            "value": 1
+          }
+        }
+      }
+    ]
+  }
+}

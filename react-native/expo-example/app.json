@@ -1,0 +1,71 @@
+{
+  "expo": {
+    "name": "ND Expo Example",
+    "slug": "nd-expo-example",
+    "version": "0.0.1",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "ndexpoexample",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.clevertap.ndExpoExample",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.clevertap.ndexpoexample",
+      "permissions": [
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.INTERNET",
+        "android.permission.POST_NOTIFICATIONS"
+      ]
+    },
+    "plugins": [
+      [
+        "@clevertap/clevertap-expo-plugin",
+        {
+          "accountId": "468-RZW-ZK6Z",
+          "accountToken": "012-b64",
+          "accountRegion": "sk1-staging-25",
+          "disableAppLaunchedEvent": false,
+          "logLevel": 3,
+          "ios": {
+            "mode": "development"
+          },
+          "android": {
+            "registerActivityLifecycleCallbacks": true,
+            "features": {
+              "enablePush": false
+            }
+          }
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.1"
+          },
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "minSdkVersion": 24
+          }
+        }
+      ],
+      "expo-image"
+    ]
+  }
+}

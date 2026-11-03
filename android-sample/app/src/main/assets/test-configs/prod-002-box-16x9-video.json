@@ -1,0 +1,226 @@
+{
+  "theme": {
+    "id": "default"
+  },
+  "version": "1.0",
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "aspectRatio": 1.7778,
+      "width": {
+        "value": 80,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 60,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "angle": 45,
+        "colors": [
+          "#baac7f",
+          "#040403"
+        ]
+      },
+      "borderRadius": {
+        "value": 8,
+        "unit": "percent"
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "text-1",
+        "elementType": "text",
+        "bindings": {
+          "text": "Title for ND Video 888"
+        },
+        "layout": {
+          "width": {
+            "value": 99,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 16,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 1,
+            "y": 2,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#FFFFFF00"
+          },
+          "borderColor": "#eca77b",
+          "borderRadius": {
+            "value": 8,
+            "unit": "percent"
+          },
+          "borderWidth": 8,
+          "fontSize": {
+            "value": 130,
+            "unit": "percent"
+          },
+          "fontStyle": "italic",
+          "fontWeight": "bold",
+          "textAlign": "center",
+          "textColor": "#f0d2d4"
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-1",
+        "elementType": "video",
+        "bindings": {
+          "url": "https://d11gh1sd24upek.cloudfront.net/1631012864/assets/06ff3a1b42c84f2e9fafe09ee975ae9c.mp4"
+        },
+        "layout": {
+          "width": {
+            "value": 23,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 73,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 24,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "button-1",
+        "elementType": "button",
+        "bindings": {
+          "text": "Open Url"
+        },
+        "layout": {
+          "width": {
+            "value": 29,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 10,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 64,
+            "y": 83,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#3a4f27"
+          },
+          "borderColor": "#000000",
+          "borderRadius": {
+            "value": 0.5,
+            "unit": "percent"
+          },
+          "borderWidth": 0,
+          "fontSize": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "shadowColor": "#000000",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowRadius": 0,
+          "textColor": "#FFFFFF"
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "close",
+            "value": 1
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-2",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://d11gh1sd24upek.cloudfront.net/1631012864/assets/670cda7b10eb427da5d964e257600171.jpeg"
+        },
+        "layout": {
+          "width": {
+            "value": 23,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 73,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 30,
+            "y": 25,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "text-2",
+        "elementType": "text",
+        "bindings": {
+          "text": "Some description text for Guest"
+        },
+        "layout": {
+          "width": {
+            "value": 28,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 43,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 64,
+            "y": 33,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#FFFFFF00"
+          },
+          "borderColor": "#9c4545",
+          "borderRadius": {
+            "value": 0.5,
+            "unit": "percent"
+          },
+          "borderWidth": 0,
+          "fontSize": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "textAlign": "left",
+          "textColor": "#917556"
+        }
+      }
+    ]
+  }
+}

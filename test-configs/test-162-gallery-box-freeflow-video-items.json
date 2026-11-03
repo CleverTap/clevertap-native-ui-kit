@@ -227,7 +227,7 @@
                             "id": "item-1-video",
                             "elementType": "video",
                             "bindings": {
-                              "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                              "url": "https://media.w3.org/2010/05/sintel/trailer.mp4",
                               "autoPlay": "false",
                               "loop": "false",
                               "muted": "true",
@@ -351,7 +351,7 @@
                             "id": "item-2-video",
                             "elementType": "video",
                             "bindings": {
-                              "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                              "url": "https://media.w3.org/2010/05/sintel/trailer.mp4",
                               "autoPlay": "false",
                               "loop": "false",
                               "muted": "true",
@@ -475,7 +475,7 @@
                             "id": "item-3-video",
                             "elementType": "video",
                             "bindings": {
-                              "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                              "url": "https://media.w3.org/2010/05/sintel/trailer.mp4",
                               "autoPlay": "false",
                               "loop": "false",
                               "muted": "true",

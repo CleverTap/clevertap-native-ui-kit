@@ -5,7 +5,9 @@ name: Docs site
 # Triggers:
 #   • pull_request             → build & verify (no deploy) — surfaces in PR Checks
 #   • push to main             → build + deploy to /next/  (in-progress docs)
-#   • push of tag *.*.*        → snapshot the version, build + deploy to /<version>/
+#   • push of a bare semver tag (e.g. 1.0.0) → snapshot the version, build + deploy to /<version>/
+#     Platform-prefixed tags (e.g. react-native-v1.0.0, flutter-v1.0.0) are
+#     excluded, so a React Native or Flutter release does not kick this pipeline.
 #   • workflow_dispatch        → manual rebuild (only available once the workflow lands on the default branch)
 #
 # Three jobs run in parallel; a final deploy job downloads their artifacts and
@@ -28,7 +30,9 @@ on:
       - 'test-configs/**'
   push:
     branches: [main]
-    tags: ['*.*.*']
+    tags:
+      - '*.*.*'          # bare semver release tags (iOS/Android), e.g. 1.0.0
+      - '!*-v*'          # exclude platform-prefixed tags, e.g. react-native-v1.0.0
   workflow_dispatch:
 
 permissions:

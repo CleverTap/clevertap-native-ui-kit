@@ -1,0 +1,159 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {
+      "textColor": "#FF000000",
+      "fontSize": 14
+    }
+  },
+  "variables": {
+    "productImage": "https://picsum.photos/400/600",
+    "logoImage": "https://picsum.photos/200/100"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "special": "match_parent" },
+      "padding": { "all": 16, "unit": "dp" }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Image Fit Modes Demo"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "special": "wrap_content" },
+          "padding": { "bottom": 16, "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 24,
+          "fontWeight": "bold"
+        }
+      },
+      {
+        "type": "element",
+        "id": "crop-label",
+        "elementType": "text",
+        "bindings": {
+          "text": "Crop (default - fills area, may crop edges)"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "special": "wrap_content" },
+          "padding": { "bottom": 8, "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 16,
+          "fontWeight": "bold"
+        }
+      },
+      {
+        "type": "element",
+        "id": "crop-image",
+        "elementType": "image",
+        "bindings": {
+          "url": "{{productImage}}",
+          "contentDescription": "Product image with crop fit"
+        },
+        "imageConfig": {
+          "fit": "crop"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 200, "unit": "dp" },
+          "padding": { "bottom": 24, "unit": "dp" }
+        },
+        "style": {
+          "borderRadius": 12,
+          "borderWidth": 1,
+          "borderColor": "#FFE0E0E0"
+        }
+      },
+      {
+        "type": "element",
+        "id": "contain-label",
+        "elementType": "text",
+        "bindings": {
+          "text": "Contain (fits within bounds, may letterbox)"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "special": "wrap_content" },
+          "padding": { "bottom": 8, "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 16,
+          "fontWeight": "bold"
+        }
+      },
+      {
+        "type": "element",
+        "id": "contain-image",
+        "elementType": "image",
+        "bindings": {
+          "url": "{{logoImage}}",
+          "contentDescription": "Logo image with contain fit"
+        },
+        "imageConfig": {
+          "fit": "contain"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 150, "unit": "dp" },
+          "padding": { "bottom": 24, "unit": "dp" }
+        },
+        "style": {
+          "backgroundColor": "#FFF5F5F5",
+          "borderRadius": 12,
+          "borderWidth": 1,
+          "borderColor": "#FFE0E0E0"
+        }
+      },
+      {
+        "type": "element",
+        "id": "fill-label",
+        "elementType": "text",
+        "bindings": {
+          "text": "Fill (stretches to fill, may distort)"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "special": "wrap_content" },
+          "padding": { "bottom": 8, "unit": "dp" }
+        },
+        "style": {
+          "fontSize": 16,
+          "fontWeight": "bold"
+        }
+      },
+      {
+        "type": "element",
+        "id": "fill-image",
+        "elementType": "image",
+        "bindings": {
+          "url": "{{logoImage}}",
+          "contentDescription": "Logo image with fill mode"
+        },
+        "imageConfig": {
+          "fit": "fill"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 150, "unit": "dp" }
+        },
+        "style": {
+          "borderRadius": 12,
+          "borderWidth": 1,
+          "borderColor": "#FFE0E0E0"
+        }
+      }
+    ]
+  }
+}

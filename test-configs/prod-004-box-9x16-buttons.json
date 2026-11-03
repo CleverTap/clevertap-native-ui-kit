@@ -1,0 +1,240 @@
+{
+  "theme": {
+    "id": "default"
+  },
+  "version": "1.0",
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "aspectRatio": 0.5625,
+      "width": {
+        "value": 80,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 60,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "angle": 45,
+        "colors": [
+          "#ffe4a6",
+          "#000000"
+        ]
+      },
+      "borderRadius": {
+        "value": 8,
+        "unit": "percent"
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "text-1",
+        "elementType": "text",
+        "bindings": {
+          "text": "Title - footer4 event fired"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 15,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 7,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "linear_gradient",
+            "angle": 45,
+            "colors": [
+              "#010203FF",
+              "#7C2A2AFF"
+            ]
+          },
+          "borderColor": "#ffffff",
+          "borderRadius": {
+            "value": 4,
+            "unit": "percent"
+          },
+          "borderWidth": 0,
+          "fontSize": {
+            "value": 65,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "textAlign": "center",
+          "textColor": "#a5cfd6"
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-1",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://d11gh1sd24upek.cloudfront.net/1631012864/assets/4f22fc22652c469faa86cdcccfcc8706.jpeg"
+        },
+        "layout": {
+          "width": {
+            "value": 49,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 17,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 22,
+            "y": 60,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-2",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://d11gh1sd24upek.cloudfront.net/1631012864/assets/60da473382ea4b5593f0aff36340c1e2.jpeg"
+        },
+        "layout": {
+          "width": {
+            "value": 75,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 28,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 11,
+            "y": 27,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "button-1",
+        "elementType": "button",
+        "bindings": {
+          "text": "Smaller"
+        },
+        "layout": {
+          "width": {
+            "value": 35,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 13,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 11,
+            "y": 82,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#3a508a"
+          },
+          "borderColor": "#0c1735",
+          "borderRadius": {
+            "value": 6,
+            "unit": "percent"
+          },
+          "borderWidth": 6,
+          "fontSize": {
+            "value": 40,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "shadowColor": "#000000",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowRadius": 0,
+          "textColor": "#FFFFFF"
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "pick",
+            "value": "iceberg"
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "button-2",
+        "elementType": "button",
+        "bindings": {
+          "text": "Bigger"
+        },
+        "layout": {
+          "width": {
+            "value": 35,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 13,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 52,
+            "y": 82,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "solid",
+            "color": "#457d4a"
+          },
+          "borderColor": "#043006",
+          "borderRadius": {
+            "value": 6,
+            "unit": "percent"
+          },
+          "borderWidth": 6,
+          "fontSize": {
+            "value": 40,
+            "unit": "percent"
+          },
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "shadowColor": "#000000",
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowRadius": 0,
+          "textColor": "#FFFFFF"
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "pick",
+            "value": "iceberg2"
+          }
+        }
+      }
+    ]
+  }
+}

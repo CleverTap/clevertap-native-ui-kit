@@ -1,0 +1,62 @@
+{
+  "theme": {
+    "id": "banner-04-travel",
+    "defaultStyle": { "textColor": "#FFFFFFFF", "fontSize": 16, "lineHeight": 22 }
+  },
+  "variables": {
+    "headline": "Travel Destinations",
+    "subtext": "Explore breathtaking places around the world",
+    "bgImage": "https://yavuzceliker.github.io/sample-images/image-8.jpg"
+  },
+  "root": {
+    "id": "root",
+    "type": "container",
+    "containerType": "box",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 200, "unit": "dp" }
+    },
+    "children": [
+      {
+        "id": "bg",
+        "type": "element",
+        "elementType": "image",
+        "bindings": { "url": "{{bgImage}}" },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 200, "unit": "dp" }
+        }
+      },
+      {
+        "id": "overlay",
+        "type": "container",
+        "containerType": "vertical",
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 200, "unit": "dp" },
+          "padding": { "all": 20 },
+          "arrangement": { "strategy": "center" }
+        },
+        "style": { "background": { "type": "linear_gradient", "colors": ["#88000000", "#BB000000"], "angle": 180 } },
+        "children": [
+          {
+            "id": "headline",
+            "type": "element",
+            "elementType": "text",
+            "bindings": { "text": "{{headline}}" },
+            "layout": { "width": { "value": 100, "unit": "percent" } },
+            "style": { "fontSize": 28, "fontWeight": "bold", "textAlign": "center", "lineHeight": 36 }
+          },
+          {
+            "id": "subtext",
+            "type": "element",
+            "elementType": "text",
+            "bindings": { "text": "{{subtext}}" },
+            "layout": { "width": { "value": 100, "unit": "percent" }, "padding": { "top": 8 } },
+            "style": { "fontSize": 15, "textAlign": "center", "lineHeight": 22 }
+          }
+        ]
+      }
+    ]
+  }
+}

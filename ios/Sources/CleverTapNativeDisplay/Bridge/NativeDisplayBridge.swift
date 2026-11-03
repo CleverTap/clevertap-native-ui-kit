@@ -405,9 +405,25 @@ public typealias CTNDLogLevel = NDLogLevel
     /// Listeners are held as weak references — no need to remove on deallocation.
     /// - Parameter listener: The listener to add.
     @objc public func addListener(_ listener: NativeDisplayBridgeListener) {
-        lock.lock(); defer { lock.unlock() }
+        lock.lock()
+        let isNew = !listeners.contains(listener)
         listeners.add(listener)
+        lock.unlock()
         NDLogger.d(Self.self, "Listener added: \(type(of: listener))")
+
+        // Replay the cached units to a freshly registered listener.
+        // On iOS the view is not recreated on rotation. A listener can still
+        // register after units were cached. One example is a screen that appears
+        // again. This delivery keeps the listener path the same as the Android
+        // replay. It also matches NativeDisplaySlotManager. A duplicate add gets
+        // no replay. An empty cache gets no replay.
+        guard isNew else { return }
+        let cached = cache.getAll()
+        if !cached.isEmpty {
+            DispatchQueue.main.async {
+                listener.onNativeDisplaysLoaded(cached)
+            }
+        }
     }
 
     /// Remove a previously added listener.

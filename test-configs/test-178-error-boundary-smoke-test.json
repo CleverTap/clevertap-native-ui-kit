@@ -1,0 +1,86 @@
+{
+  "version": "1.0",
+  "theme": { "id": "default" },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "height": { "value": 260, "unit": "dp" },
+      "padding": { "all": 16 },
+      "arrangement": { "strategy": "spaced", "spacing": 12, "spacingUnit": "dp" }
+    },
+    "style": {
+      "backgroundColor": "#FEF9C3",
+      "borderRadius": { "value": 12, "unit": "dp" }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": { "text": "Defensive rendering smoke test" },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 28, "unit": "dp" }
+        },
+        "style": {
+          "textColor": "#92400E",
+          "fontSize": 16,
+          "fontWeight": "bold"
+        }
+      },
+      {
+        "type": "element",
+        "id": "body",
+        "elementType": "text",
+        "bindings": { "text": "The text below has textGradient with colors:null. The SDK guards against this and falls through to plain text rendering. No throw, no red overlay." },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 72, "unit": "dp" }
+        },
+        "style": {
+          "textColor": "#78350F",
+          "fontSize": 13
+        }
+      },
+      {
+        "type": "element",
+        "id": "broken-gradient-text",
+        "elementType": "text",
+        "bindings": { "text": "This text has textGradient:{colors:null}. It renders as plain text (no gradient, no crash)." },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 56, "unit": "dp" }
+        },
+        "style": {
+          "textColor": "#B45309",
+          "fontSize": 14,
+          "fontWeight": "600",
+          "textGradient": {
+            "colors": null,
+            "angle": 90
+          }
+        }
+      },
+      {
+        "type": "element",
+        "id": "cta",
+        "elementType": "button",
+        "bindings": { "text": "Normal button - renders fine" },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "height": { "value": 44, "unit": "dp" }
+        },
+        "style": {
+          "backgroundColor": "#D97706",
+          "borderRadius": { "value": 8, "unit": "dp" },
+          "textColor": "#FFFFFF",
+          "fontSize": 14,
+          "fontWeight": "600"
+        }
+      }
+    ]
+  }
+}
