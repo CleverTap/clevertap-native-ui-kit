@@ -7,9 +7,15 @@ import '../models/native_display_config.dart';
 import '../models/style.dart';
 import '../style/style_resolver.dart';
 import 'native_display_attribution.dart';
+import 'native_display_font.dart';
 import 'native_display_renderer.dart';
 import 'native_display_scope.dart';
 
+export 'native_display_font.dart'
+    show
+        NativeDisplayFont,
+        NativeDisplayFontContext,
+        NativeDisplayFontResolver;
 export 'native_display_scope.dart'
     show NativeDisplayNotificationClicked, NativeDisplayOpenUrlCallback;
 
@@ -105,6 +111,17 @@ class NativeDisplayView extends StatefulWidget {
   /// which does not inject a parent size.
   final Size? parentSize;
 
+  /// Client default font family for this view's ND text (overrides the global
+  /// [NativeDisplayFont.defaultFamily]). The analog of Android `LocalFontFamily`
+  /// / iOS `\.nativeDisplayFontFamily`.
+  final String? fontFamily;
+
+  /// Client font resolver for this view's ND text (overrides the global
+  /// [NativeDisplayFont.resolver]). Composes with `google_fonts` and any
+  /// [TextStyle] source; the analog of Android `LocalFontFamilyResolver` /
+  /// iOS `\.nativeDisplayFontResolver`.
+  final NativeDisplayFontResolver? fontResolver;
+
   const NativeDisplayView({
     super.key,
     required this.config,
@@ -116,6 +133,8 @@ class NativeDisplayView extends StatefulWidget {
     this.componentListener,
     this.onOpenUrl,
     this.parentSize,
+    this.fontFamily,
+    this.fontResolver,
   });
 
   @override
@@ -185,6 +204,8 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
             unitId: widget.unitId,
             onClicked: onClicked,
             onOpenUrl: widget.onOpenUrl,
+            fontFamily: widget.fontFamily,
+            fontResolver: widget.fontResolver,
             child: _TrackNotificationViewed(
               unitId: widget.unitId,
               onViewed: onViewed,
@@ -226,6 +247,8 @@ class _NativeDisplayViewState extends State<NativeDisplayView> {
           unitId: widget.unitId,
           onClicked: onClicked,
           onOpenUrl: widget.onOpenUrl,
+          fontFamily: widget.fontFamily,
+          fontResolver: widget.fontResolver,
           child: _TrackNotificationViewed(
             unitId: widget.unitId,
             onViewed: onViewed,

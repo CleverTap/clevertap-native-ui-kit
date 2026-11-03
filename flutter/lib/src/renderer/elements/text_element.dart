@@ -8,6 +8,7 @@ import '../../models/native_display_node.dart';
 import '../../models/style.dart';
 import '../../models/text_dimension.dart';
 import '../../utils/color_parser.dart';
+import '../native_display_font.dart';
 import '../native_display_scope.dart';
 import '../style_applier.dart';
 
@@ -40,14 +41,34 @@ class TextElement extends StatelessWidget {
             ? lineHeight / fontSize
             : (style.fontSize?.unit == TextDimensionUnit.percent ? 1.2 : 1.5));
 
+    final fontWeight = _resolveFontWeight(style.fontWeight);
+    final fontStyle =
+        style.fontStyle == NDFontStyle.italic ? FontStyle.italic : FontStyle.normal;
+    // Client font resolution (resolver → default family → JSON family → system),
+    // matching the native SDKs. Returns only font-identity fields so the SDK keeps
+    // ownership of size / colour / weight / line-height.
+    final fontOverride = resolveNativeDisplayFont(
+      ctx: NativeDisplayFontContext(
+        jsonFontFamily: style.fontFamily,
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        fontStyle: fontStyle,
+      ),
+      scopeFamily: NativeDisplayScope.fontFamilyOf(context),
+      scopeResolver: NativeDisplayScope.fontResolverOf(context),
+    );
+
     final textStyle = TextStyle(
       // Default to black (native TEXT defaultColor) when the config/theme omits a
       // color, rather than inheriting the host DefaultTextStyle's color.
       color: ColorParser.parse(style.textColor) ?? const Color(0xFF000000),
       fontSize: fontSize,
-      fontFamily: style.fontFamily,
-      fontWeight: _resolveFontWeight(style.fontWeight),
-      fontStyle: style.fontStyle == NDFontStyle.italic ? FontStyle.italic : FontStyle.normal,
+      fontFamily: fontOverride?.fontFamily,
+      fontFamilyFallback: fontOverride?.fontFamilyFallback,
+      fontFeatures: fontOverride?.fontFeatures,
+      fontVariations: fontOverride?.fontVariations,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
       height: heightMultiplier,
       // Center the text within its line box, matching Android Compose's
       // LineHeightStyle(alignment=Center) and iOS. Flutter's default

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../models/style.dart';
+import 'native_display_font.dart';
 
 /// Signature for the "Notification Clicked" attribution callback.
 ///
@@ -50,6 +51,12 @@ class NativeDisplayScope extends InheritedWidget {
   final NativeDisplayNotificationClicked? onClicked;
   final NativeDisplayOpenUrlCallback? onOpenUrl;
 
+  /// Per-view client default font family (overrides [NativeDisplayFont.defaultFamily]).
+  final String? fontFamily;
+
+  /// Per-view client font resolver (overrides [NativeDisplayFont.resolver]).
+  final NativeDisplayFontResolver? fontResolver;
+
   const NativeDisplayScope({
     super.key,
     required this.rootHeight,
@@ -57,6 +64,8 @@ class NativeDisplayScope extends InheritedWidget {
     required this.unitId,
     required this.onClicked,
     this.onOpenUrl,
+    this.fontFamily,
+    this.fontResolver,
     required super.child,
   });
 
@@ -81,11 +90,20 @@ class NativeDisplayScope extends InheritedWidget {
   static NativeDisplayOpenUrlCallback? onOpenUrlOf(BuildContext context) =>
       of(context)?.onOpenUrl;
 
+  /// Per-view client default font family, or `null`.
+  static String? fontFamilyOf(BuildContext context) => of(context)?.fontFamily;
+
+  /// Per-view client font resolver, or `null`.
+  static NativeDisplayFontResolver? fontResolverOf(BuildContext context) =>
+      of(context)?.fontResolver;
+
   @override
   bool updateShouldNotify(NativeDisplayScope old) =>
       rootHeight != old.rootHeight ||
       !identical(styles, old.styles) ||
       unitId != old.unitId ||
       onClicked != old.onClicked ||
-      onOpenUrl != old.onOpenUrl;
+      onOpenUrl != old.onOpenUrl ||
+      fontFamily != old.fontFamily ||
+      fontResolver != old.fontResolver;
 }

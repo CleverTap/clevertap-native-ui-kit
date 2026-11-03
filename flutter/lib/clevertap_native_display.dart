@@ -26,6 +26,14 @@ export 'src/placement/native_display_slot_manager.dart'
         NativeDisplaySlotSync;
 export 'src/renderer/native_display_attribution.dart'
     show NativeDisplayAttribution;
+// Client font API — set a default font / resolver for all ND text (composes with
+// google_fonts, package/asset fonts, etc.). Parity with native LocalFontFamily /
+// nativeDisplayFontResolver.
+export 'src/renderer/native_display_font.dart'
+    show
+        NativeDisplayFont,
+        NativeDisplayFontContext,
+        NativeDisplayFontResolver;
 export 'src/renderer/native_display_scope.dart' show NativeDisplayScope;
 export 'src/renderer/native_display_view.dart'
     show

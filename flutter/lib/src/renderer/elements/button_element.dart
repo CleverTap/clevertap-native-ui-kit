@@ -10,6 +10,7 @@ import '../../models/enums.dart';
 import '../../models/native_display_node.dart';
 import '../../models/style.dart';
 import '../../utils/color_parser.dart';
+import '../native_display_font.dart';
 import '../native_display_scope.dart';
 import '../style_applier.dart';
 
@@ -41,7 +42,7 @@ class ButtonElement extends StatelessWidget {
         Center(
           child: Text(
             text,
-            style: _buildTextStyle(rootHeight),
+            style: _buildTextStyle(context, rootHeight),
             maxLines: style.maxLines,
             overflow: _resolveOverflow(style.overflow),
             softWrap: style.maxLines == null,
@@ -62,19 +63,37 @@ class ButtonElement extends StatelessWidget {
     );
   }
 
-  TextStyle _buildTextStyle(double rootHeight) {
+  TextStyle _buildTextStyle(BuildContext context, double rootHeight) {
     // Default button font size 16 matches the native SDKs' BUTTON defaultFontSize
     // (TEXT defaults to 14). Only used when a config omits fontSize.
     final fontSize = style.fontSize?.resolve(rootHeight) ?? 16.0;
     final lineHeight = style.lineHeight?.resolve(rootHeight);
+    final fontWeight = _resolveFontWeight(style.fontWeight);
+    final fontStyle =
+        style.fontStyle == NDFontStyle.italic ? FontStyle.italic : FontStyle.normal;
+    // Client font resolution (resolver → default family → JSON family → system),
+    // matching the native SDKs. Returns only font-identity fields.
+    final fontOverride = resolveNativeDisplayFont(
+      ctx: NativeDisplayFontContext(
+        jsonFontFamily: style.fontFamily,
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        fontStyle: fontStyle,
+      ),
+      scopeFamily: NativeDisplayScope.fontFamilyOf(context),
+      scopeResolver: NativeDisplayScope.fontResolverOf(context),
+    );
     return TextStyle(
       // Default to white (native BUTTON defaultColor) when the config/theme omits
       // a color, rather than inheriting the host DefaultTextStyle's color.
       color: ColorParser.parse(style.textColor) ?? const Color(0xFFFFFFFF),
       fontSize: fontSize,
-      fontFamily: style.fontFamily,
-      fontWeight: _resolveFontWeight(style.fontWeight),
-      fontStyle: style.fontStyle == NDFontStyle.italic ? FontStyle.italic : FontStyle.normal,
+      fontFamily: fontOverride?.fontFamily,
+      fontFamilyFallback: fontOverride?.fontFamilyFallback,
+      fontFeatures: fontOverride?.fontFeatures,
+      fontVariations: fontOverride?.fontVariations,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
       height: _lineHeightMultiple(fontSize, lineHeight),
       // Center text in its line box, matching Android Compose
       // LineHeightStyle(alignment=Center) and iOS. Pairs with textHeightBehavior
