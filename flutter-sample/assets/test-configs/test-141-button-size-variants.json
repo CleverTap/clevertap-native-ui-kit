@@ -1,0 +1,112 @@
+{
+  "theme": {
+    "id": "test-141"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "aspectRatio": 1.0
+    },
+    "style": {
+      "backgroundColor": "#EEEEEE"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "small_button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Small"
+        },
+        "layout": {
+          "width": {
+            "value": 30,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 10,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 35,
+            "y": 20,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "backgroundColor": "#9C27B0",
+          "textColor": "#FFFFFF",
+          "fontSize": 12,
+          "lineHeight": 17,
+          "borderRadius": 6
+        }
+      },
+      {
+        "type": "element",
+        "id": "medium_button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Medium Button"
+        },
+        "layout": {
+          "width": {
+            "value": 50,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 12,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 25,
+            "y": 44,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "backgroundColor": "#E91E63",
+          "textColor": "#FFFFFF",
+          "fontSize": 14,
+          "lineHeight": 20,
+          "borderRadius": 8
+        }
+      },
+      {
+        "type": "element",
+        "id": "large_button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Large Action Button"
+        },
+        "layout": {
+          "width": {
+            "value": 70,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 14,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 15,
+            "y": 65,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "backgroundColor": "#F44336",
+          "textColor": "#FFFFFF",
+          "fontSize": 16,
+          "lineHeight": 22,
+          "borderRadius": 10
+        }
+      }
+    ]
+  }
+}

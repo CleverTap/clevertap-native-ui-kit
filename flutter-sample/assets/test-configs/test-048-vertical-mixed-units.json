@@ -1,0 +1,261 @@
+{
+  "theme": {
+    "id": "test-theme",
+    "defaultStyle": {
+      "textColor": "#6A1B9A",
+      "fontSize": 16,
+      "lineHeight": 22
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "vertical-mixed-units",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 700,
+        "unit": "dp"
+      },
+      "padding": {
+        "all": 16
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 12,
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F3E5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "header",
+        "elementType": "text",
+        "bindings": {
+          "text": "Mixed Dimension Units"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 26,
+          "fontWeight": "bold",
+          "textColor": "#4A148C",
+          "lineHeight": 36
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Combining different unit types in one layout"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 16,
+          "textColor": "#7B1FA2",
+          "lineHeight": 22
+        }
+      },
+      {
+        "type": "element",
+        "id": "fixed-height",
+        "elementType": "text",
+        "bindings": {
+          "text": "Fixed Height: 120dp"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 120,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#CE93D8",
+          "borderRadius": 12,
+          "fontSize": 18,
+          "textColor": "#4A148C",
+          "lineHeight": 25
+        }
+      },
+      {
+        "type": "element",
+        "id": "wrap-content-height",
+        "elementType": "text",
+        "bindings": {
+          "text": "WRAP_CONTENT Height - Adjusts to text length automatically"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 16
+          }
+        },
+        "style": {
+          "backgroundColor": "#BA68C8",
+          "borderRadius": 12,
+          "fontSize": 16,
+          "textColor": "#FFFFFF",
+          "lineHeight": 24
+        }
+      },
+      {
+        "type": "container",
+        "id": "percent-width-container",
+        "containerType": "horizontal",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 0
+          },
+          "arrangement": {
+            "strategy": "spaced",
+            "spacing": 8,
+            "spacingUnit": "dp"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "box-1",
+            "elementType": "text",
+            "bindings": {
+              "text": "60%"
+            },
+            "layout": {
+              "width": {
+                "value": 60,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "padding": {
+                "all": 16
+              }
+            },
+            "style": {
+              "backgroundColor": "#AB47BC",
+              "borderRadius": 12,
+              "fontSize": 20,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "lineHeight": 28
+            }
+          },
+          {
+            "type": "element",
+            "id": "box-2",
+            "elementType": "text",
+            "bindings": {
+              "text": "40%"
+            },
+            "layout": {
+              "width": {
+                "value": 40,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "padding": {
+                "all": 16
+              }
+            },
+            "style": {
+              "backgroundColor": "#9C27B0",
+              "borderRadius": 12,
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "lineHeight": 25
+            }
+          }
+        ]
+      },
+      {
+        "type": "element",
+        "id": "footer",
+        "elementType": "text",
+        "bindings": {
+          "text": "Mix units for flexible, responsive designs"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          },
+          "padding": {
+            "all": 12
+          }
+        },
+        "style": {
+          "backgroundColor": "#8E24AA",
+          "borderRadius": 8,
+          "fontSize": 14,
+          "textColor": "#FFFFFF",
+          "textAlign": "center",
+          "lineHeight": 20
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

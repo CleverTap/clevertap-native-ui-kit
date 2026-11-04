@@ -1,0 +1,158 @@
+import 'dart:async';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/widgets.dart';
+
+import '../../evaluator/variable_evaluator.dart';
+import '../../handler/action_attribution_extras.dart';
+import '../../handler/action_handler.dart';
+import '../../internal/nd_logger.dart';
+import '../../models/action.dart';
+import '../../models/enums.dart';
+import '../../models/native_display_node.dart';
+import '../../models/node_config.dart';
+import '../../models/style.dart';
+import '../native_display_scope.dart';
+import '../style_applier.dart';
+
+class ImageElement extends StatelessWidget {
+  final NativeDisplayElement node;
+  final Style style;
+  final VariableEvaluator evaluator;
+  final void Function(String, String, Map<String, dynamic>?)? actionListener;
+
+  const ImageElement({
+    super.key,
+    required this.node,
+    required this.style,
+    required this.evaluator,
+    this.actionListener,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final rootHeight = NativeDisplayScope.rootHeightOf(context);
+    // Template-evaluate the URL so {{var}} bindings resolve — parity with
+    // Android/iOS, which evaluate IMAGE url bindings.
+    final url = evaluator.evaluateString(node.bindings['url'] ?? '');
+    if (url.isEmpty) {
+      return StyleApplier.apply(
+        const SizedBox.shrink(),
+        style,
+        rootHeight: rootHeight,
+        padding: node.layout?.padding,
+      );
+    }
+
+    final isGif = _isGif(url, node.imageConfig);
+    final imageFit = node.imageConfig?.fit ?? ImageFit.crop;
+    final isTile = imageFit == ImageFit.tile;
+    final fit = _resolveBoxFit(imageFit);
+
+    Widget imageWidget;
+    if (isGif) {
+      // Flutter's image codec handles animated GIFs natively via Image.network.
+      // CachedNetworkImage may not preserve frame timing for animated GIFs.
+      // Do NOT resize this path — decoding animated GIFs at a cache width can
+      // drop/garble frames.
+      imageWidget = Image.network(
+        url,
+        fit: fit,
+        loadingBuilder: (ctx, child, progress) =>
+            progress == null ? child : const SizedBox.shrink(),
+        errorBuilder: (ctx, err, stack) => const SizedBox.shrink(),
+      );
+    } else {
+      // Static / tile paths: decode at the display pixel width to cut memory.
+      // LayoutBuilder gives the parent's max width; only resize when it's a
+      // concrete finite value — never guess.
+      imageWidget = LayoutBuilder(
+        builder: (ctx, constraints) {
+          final dpr = MediaQuery.devicePixelRatioOf(ctx);
+          final cacheW =
+              constraints.maxWidth.isFinite && constraints.maxWidth > 0
+                  ? (constraints.maxWidth * dpr).round()
+                  : null;
+          if (isTile) {
+            return Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: cacheW != null
+                      ? ResizeImage(NetworkImage(url), width: cacheW)
+                      : NetworkImage(url),
+                  repeat: ImageRepeat.repeat,
+                  // DecorationImage can't substitute a widget on failure — log and
+                  // swallow so a bad tile URL doesn't surface as an uncaught error.
+                  onError: (e, st) =>
+                      NDLogger.e('ImageElement', 'Tile image failed: $url', e, st),
+                ),
+              ),
+            );
+          }
+          return CachedNetworkImage(
+            imageUrl: url,
+            fit: fit,
+            memCacheWidth: cacheW,
+            placeholder: (ctx, url) => const SizedBox.shrink(),
+            errorWidget: (ctx, url, err) => const SizedBox.shrink(),
+          );
+        },
+      );
+    }
+
+    Widget styled = StyleApplier.apply(
+      imageWidget,
+      style,
+      rootHeight: rootHeight,
+      padding: node.layout?.padding,
+    );
+
+    // Fire "Notification Clicked" attribution when an IMAGE element with an
+    // onClick action is tapped. Matches Android/iOS SDK-5862 behaviour:
+    // attribution only fires when there is an explicit onClick — never when
+    // only a componentListener is attached.
+    final onClick = node.actions?[ActionTriggers.onClick];
+    if (onClick != null) {
+      final unitId = NativeDisplayScope.unitIdOf(context);
+      final onNotificationClicked = NativeDisplayScope.onClickedOf(context);
+      final onOpenUrl = NativeDisplayScope.onOpenUrlOf(context);
+      styled = GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          // Execute the action (open_url via url_launcher, custom, etc.) and
+          // surface it to the host listener — not just notify. The host can
+          // intercept open_url via onOpenUrl.
+          unawaited(ActionHandler(listener: actionListener, onOpenUrl: onOpenUrl)
+              .handle(onClick, node.id));
+          if (onNotificationClicked != null && unitId != null && unitId.isNotEmpty) {
+            final extras = ActionAttributionExtras.sanitize(
+              ActionAttributionExtras.from(onClick),
+            );
+            onNotificationClicked(unitId, node.id, extras);
+          }
+        },
+        child: styled,
+      );
+    }
+
+    return RepaintBoundary(child: styled);
+  }
+
+  bool _isGif(String url, ImageConfig? config) {
+    if (config?.animated == true) return true;
+    if (config?.animated == false) return false;
+    final lower = url.toLowerCase();
+    if (lower.endsWith('.gif')) return true;
+    for (final host in ['giphy.com', 'tenor.com', 'gfycat.com', 'imgur.com']) {
+      if (lower.contains(host)) return true;
+    }
+    return false;
+  }
+
+  BoxFit _resolveBoxFit(ImageFit fit) => switch (fit) {
+        ImageFit.crop => BoxFit.cover,
+        ImageFit.contain => BoxFit.contain,
+        ImageFit.fill => BoxFit.fill,
+        ImageFit.tile => BoxFit.none,
+      };
+}

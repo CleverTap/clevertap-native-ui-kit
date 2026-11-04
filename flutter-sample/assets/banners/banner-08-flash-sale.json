@@ -1,0 +1,155 @@
+{
+  "theme": {
+    "id": "banner-08",
+    "defaultStyle": {
+      "textColor": "#FFFFFF",
+      "fontSize": 16
+    }
+  },
+  "variables": {
+    "timeLeft": "2 Hours",
+    "badge": "⏰ ENDS SOON",
+    "discount": "70% OFF"
+  },
+  "root": {
+    "type": "container",
+    "id": "banner-root",
+    "containerType": "box",
+    "layout": {
+      "width": { "value": 100, "unit": "percent" },
+      "aspectRatio": 0.32
+    },
+    "style": {
+      "background": {
+        "type": "linear_gradient",
+        "angle": 135,
+        "colors": ["#D32F2F", "#F44336"]
+      },
+      "borderRadius": 16
+    },
+    "animation": {
+      "type": "fade_in",
+      "duration": 300,
+      "easing": "ease_out"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "timer-badge",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{badge}}"
+        },
+        "layout": {
+          "width": { "value": 36, "unit": "percent" },
+          "height": { "value": 28, "unit": "percent" },
+          "offset": { "x": 4, "y": 8, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 14,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFF",
+          "textAlign": "center",
+          "backgroundColor": "#00000050",
+          "borderRadius": 20,
+          "shadowColor": "#00000060",
+          "shadowRadius": 8,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4
+        }
+      },
+      {
+        "type": "element",
+        "id": "discount-badge",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{discount}}"
+        },
+        "layout": {
+          "width": { "value": 32, "unit": "percent" },
+          "height": { "value": 28, "unit": "percent" },
+          "offset": { "x": 64, "y": 8, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFF",
+          "textAlign": "center",
+          "backgroundColor": "#FFD600DD",
+          "borderRadius": 20,
+          "shadowColor": "#FFD60060",
+          "shadowRadius": 8,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 4
+        }
+      },
+      {
+        "type": "element",
+        "id": "flash-title",
+        "elementType": "text",
+        "bindings": {
+          "text": "⚡ FLASH SALE ⚡"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "offset": { "x": 0, "y": 18, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 32,
+          "fontWeight": "bold",
+          "textColor": "#FFFFFF",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "countdown",
+        "elementType": "text",
+        "bindings": {
+          "text": "Ends in {{timeLeft}}!"
+        },
+        "layout": {
+          "width": { "value": 100, "unit": "percent" },
+          "offset": { "x": 0, "y": 48, "unit": "percent" }
+        },
+        "style": {
+          "fontSize": 20,
+          "fontWeight": "medium",
+          "textColor": "#FFEBEE",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "shop-button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Shop Now →"
+        },
+        "layout": {
+          "width": { "value": 45, "unit": "percent" },
+          "height": { "value": 35, "unit": "percent" },
+          "offset": { "x": 27, "y": 68, "unit": "percent" }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "textColor": "#D32F2F",
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "borderRadius": 26,
+          "shadowColor": "#00000050",
+          "shadowRadius": 12,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 6
+        },
+        "actions": {
+          "onClick": {
+            "type": "custom",
+            "key": "shop_flash_sale",
+            "value": {}
+          }
+        }
+      }
+    ]
+  }
+}

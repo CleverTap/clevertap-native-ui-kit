@@ -1,0 +1,78 @@
+{
+  "theme": {
+    "id": "test-143"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "aspectRatio": 1.333
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "demo_title",
+        "elementType": "text",
+        "bindings": {
+          "text": "Round Button Demo"
+        },
+        "layout": {
+          "width": {
+            "value": 80,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 10,
+            "y": 20,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "lineHeight": 24,
+          "textColor": "#333333",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "rounded_button",
+        "elementType": "button",
+        "bindings": {
+          "text": "Fully Rounded CTA"
+        },
+        "layout": {
+          "width": {
+            "value": 70,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 16,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 15,
+            "y": 55,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "backgroundColor": "#4CAF50",
+          "textColor": "#FFFFFF",
+          "fontSize": 16,
+          "lineHeight": 22,
+          "borderRadius": 24
+        }
+      }
+    ]
+  }
+}

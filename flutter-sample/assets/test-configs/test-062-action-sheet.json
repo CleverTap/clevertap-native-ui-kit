@@ -1,0 +1,303 @@
+{
+  "theme": {
+    "id": "action-sheet",
+    "defaultStyle": {
+      "textColor": "#FF1F2937",
+      "fontSize": 16,
+      "fontFamily": "System",
+      "lineHeight": 22
+    }
+  },
+  "variables": {
+    "sheetTitle": "Choose an Action",
+    "action1": "Share",
+    "action2": "Edit",
+    "action3": "Duplicate",
+    "action4": "Delete",
+    "cancelText": "Cancel"
+  },
+  "root": {
+    "id": "action-sheet-backdrop",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      },
+      "arrangement": {
+        "strategy": "end"
+      }
+    },
+    "style": {
+      "backgroundColor": "#80000000"
+    },
+    "children": [
+      {
+        "id": "action-sheet",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "padding": {
+            "all": 0
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFF9FAFB",
+          "borderRadius": 24
+        },
+        "children": [
+          {
+            "id": "sheet-header",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "padding": {
+                "all": 20
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFFFF",
+              "borderRadius": 24
+            },
+            "children": [
+              {
+                "id": "header-text",
+                "elementType": "text",
+                "bindings": {
+                  "text": "{{sheetTitle}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  }
+                },
+                "style": {
+                  "fontSize": 18,
+                  "fontWeight": "bold",
+                  "textColor": "#FF111827",
+                  "textAlign": "center",
+                  "lineHeight": 25
+                },
+                "type": "element"
+              },
+              {
+                "id": "handle-spacer",
+                "elementType": "spacer",
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 8,
+                    "unit": "dp"
+                  }
+                },
+                "type": "element"
+              }
+            ],
+            "type": "container"
+          },
+          {
+            "id": "divider-1",
+            "elementType": "divider",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 1,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFE5E7EB"
+            },
+            "type": "element"
+          },
+          {
+            "id": "actions-container",
+            "containerType": "vertical",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "padding": {
+                "all": 0
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFFFF"
+            },
+            "children": [
+              {
+                "id": "action-1",
+                "elementType": "button",
+                "bindings": {
+                  "text": "{{action1}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 56,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#00000000",
+                  "textColor": "#FF3B82F6",
+                  "fontSize": 17,
+                  "fontWeight": "medium",
+                  "lineHeight": 24
+                },
+                "type": "element"
+              },
+              {
+                "id": "action-2",
+                "elementType": "button",
+                "bindings": {
+                  "text": "{{action2}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 56,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#00000000",
+                  "textColor": "#FF3B82F6",
+                  "fontSize": 17,
+                  "fontWeight": "medium",
+                  "lineHeight": 24
+                },
+                "type": "element"
+              },
+              {
+                "id": "action-3",
+                "elementType": "button",
+                "bindings": {
+                  "text": "{{action3}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 56,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#00000000",
+                  "textColor": "#FF3B82F6",
+                  "fontSize": 17,
+                  "fontWeight": "medium",
+                  "lineHeight": 24
+                },
+                "type": "element"
+              },
+              {
+                "id": "action-4",
+                "elementType": "button",
+                "bindings": {
+                  "text": "{{action4}}"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "height": {
+                    "value": 56,
+                    "unit": "dp"
+                  }
+                },
+                "style": {
+                  "backgroundColor": "#00000000",
+                  "textColor": "#FFEF4444",
+                  "fontSize": 17,
+                  "fontWeight": "medium",
+                  "lineHeight": 24
+                },
+                "type": "element"
+              }
+            ],
+            "type": "container"
+          },
+          {
+            "id": "divider-2",
+            "elementType": "spacer",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 8,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFF3F4F6"
+            },
+            "type": "element"
+          },
+          {
+            "id": "cancel-button",
+            "elementType": "button",
+            "bindings": {
+              "text": "{{cancelText}}"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 56,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFFFF",
+              "textColor": "#FF6B7280",
+              "fontSize": 17,
+              "fontWeight": "bold",
+              "borderRadius": 16,
+              "lineHeight": 24
+            },
+            "type": "element"
+          }
+        ],
+        "type": "container"
+      }
+    ],
+    "type": "container"
+  },
+  "styleClasses": []
+}

@@ -1,6 +1,6 @@
 # Core SDK Integration Guide
 
-← Back to the [project README](../README.md) · For step-by-step setup see [iOS Integration](INTEGRATION_IOS.md) / [Android Integration](INTEGRATION_ANDROID.md) · For the campaign JSON schema see [JSON Structure Reference](JSON_STRUCTURE_REFERENCE.md).
+← Back to the [project README](../README.md) · For step-by-step setup see [iOS Integration](INTEGRATION_IOS.md) / [Android Integration](INTEGRATION_ANDROID.md) / [Flutter Integration](INTEGRATION_FLUTTER.md) · For the campaign JSON schema see [JSON Structure Reference](JSON_STRUCTURE_REFERENCE.md).
 
 > **This is a deeper reference for the bridge layer.** If you just want to wire the SDK up, start with the platform integration guides above — they cover the recommended slot-based and custom-rendering paths. Come here when you need the full picture of how the bridge talks to the CleverTap Core SDK: bind/initialize/manual wiring options, the server JSON format, the push/pull listener APIs, and standalone mode.
 
@@ -46,6 +46,33 @@ func onNativeDisplaysLoaded(_ units: [NativeDisplayUnit]) {
 ```
 
 No `initialize()` or `bind()` call is needed — just create the bridge and push JSON directly.
+
+### Flutter
+
+The Flutter renderer is pure Dart, so standalone mode needs **no bridge object at all** — parse the JSON and render it. Depend only on `clevertap_native_display` (no `clevertap_plugin`).
+
+```dart
+import 'dart:convert';
+import 'package:clevertap_native_display/clevertap_native_display.dart';
+
+// Feed JSON from any source (assets, network, local file, etc.)
+final config = NativeDisplayConfig.fromJson(
+  jsonDecode(jsonString) as Map<String, dynamic>,
+);
+
+// Render directly — no bridge, no Core SDK
+NativeDisplayView(config: config);
+```
+
+To drive the slot system standalone, push raw display-unit JSON into the slot manager yourself:
+
+```dart
+await NativeDisplaySlotManager.instance.processDisplayUnits(rawUnits);
+```
+
+See [Flutter Integration](INTEGRATION_FLUTTER.md#approach-2--custom-rendering) for the full standalone and custom-rendering paths.
+
+> **Flutter package split.** Unlike Android (`compileOnly`) and iOS (Obj-C runtime lookup), Dart cannot optionally depend on the Core SDK. So the Flutter integration is split: `clevertap_native_display` is the standalone-safe core, and `clevertap_plugin_with_native_display` adds the CleverTap wiring (`bindCleverTap()`). Install the add-on only when you want bridge mode.
 
 ---
 
@@ -121,6 +148,20 @@ bridge.bind(CleverTap.sharedInstance())
 ```
 
 The bridge registers a composite listener on the Core SDK instance. When display units arrive, they are automatically parsed and forwarded to your bridge listener.
+
+**Flutter:**
+
+```dart
+import 'package:clevertap_native_display/clevertap_native_display.dart';
+import 'package:clevertap_plugin_with_native_display/clevertap_plugin_with_native_display.dart'
+    show CleverTapNativeDisplayBinding;
+
+// One call wires the display-units handler (push), the cached-units pull,
+// slot-sync, and the global attribution sink.
+await NativeDisplaySlotManager.instance.bindCleverTap();
+```
+
+`bindCleverTap()` is an extension method from the `clevertap_plugin_with_native_display` add-on (there is no `clevertap_plugin` dependency in the core). Pass `onUnits:` to also observe every raw display-unit batch; call `unbindCleverTap()` to tear the wiring down. This is the Flutter equivalent of the native `CleverTapAutoWire`. See [Flutter Integration — Approach 1](INTEGRATION_FLUTTER.md#approach-1--slot-based-integration-recommended).
 
 > **Important: Preserving your existing DisplayUnitListener**
 >
@@ -441,14 +482,14 @@ NativeDisplayViewController *vc = [[NativeDisplayViewController alloc]
 
 ## Platform Differences
 
-| Aspect | Android | iOS |
-|--------|---------|-----|
-| Core SDK dependency | `compileOnly` — typed `CleverTapAPI` import, not bundled | No compile dependency — uses `Any?` + Obj-C runtime |
-| `bind()` signature | `bind(cleverTapApi: CleverTapAPI)` | `bind(_ cleverTap: Any?)` |
-| Auto-detection | `CleverTapAPI.getDefaultInstance(context)` | `NSClassFromString("CleverTap")` + `performSelector` |
-| Runtime safety | `NoClassDefFoundError` catch | `NSClassFromString` returns nil |
-| Listener threading | Called on the thread the Core SDK uses | Dispatched to main thread |
-| Singleton pattern | `NativeDisplayBridge.create()` / `.initialize()` / `.getInstance()` | `NativeDisplayBridge.shared` |
+| Aspect | Android | iOS | Flutter |
+|--------|---------|-----|---------|
+| Core SDK dependency | `compileOnly` — typed `CleverTapAPI` import, not bundled | No compile dependency — uses `Any?` + Obj-C runtime | Separate add-on package (`clevertap_plugin_with_native_display`); core has no `clevertap_plugin` dep |
+| `bind()` equivalent | `bind(cleverTapApi: CleverTapAPI)` | `bind(_ cleverTap: Any?)` | `NativeDisplaySlotManager.instance.bindCleverTap()` (extension) |
+| Auto-detection | `CleverTapAPI.getDefaultInstance(context)` | `NSClassFromString("CleverTap")` + `performSelector` | N/A — the add-on calls `clevertap_plugin` directly |
+| Runtime safety | `NoClassDefFoundError` catch | `NSClassFromString` returns nil | Standalone-safe by omission (core never imports `clevertap_plugin`) |
+| Listener threading | Called on the thread the Core SDK uses | Dispatched to main thread | Root isolate event loop (single-threaded) |
+| Singleton pattern | `NativeDisplayBridge.create()` / `.initialize()` / `.getInstance()` | `NativeDisplayBridge.shared` | `NativeDisplaySlotManager.instance` |
 
 ---
 

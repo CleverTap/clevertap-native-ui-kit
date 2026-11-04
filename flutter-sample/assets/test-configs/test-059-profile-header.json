@@ -1,0 +1,182 @@
+{
+  "theme": {
+    "id": "profile-header",
+    "defaultStyle": {
+      "textColor": "#1F2937",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "profile-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "style": {
+      "backgroundColor": "#F9FAFB"
+    },
+    "children": [
+      {
+        "type": "container",
+        "id": "profile-header-content",
+        "containerType": "vertical",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": -2,
+            "unit": "dp"
+          },
+          "padding": {
+            "all": 24
+          },
+          "arrangement": {
+            "type": "spaced"
+          }
+        },
+        "style": {
+          "background": {
+            "type": "linear_gradient",
+            "colors": [
+              "#6366F1",
+              "#8B5CF6"
+            ],
+            "angle": 135
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "id": "avatar",
+            "elementType": "image",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-84.jpg"
+            },
+            "layout": {
+              "width": {
+                "value": 120,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 120,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "borderRadius": 60,
+              "borderWidth": 4,
+              "borderColor": "#FFFFFF"
+            }
+          },
+          {
+            "type": "element",
+            "id": "name",
+            "elementType": "text",
+            "bindings": {
+              "text": "Sarah Anderson"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": -2,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 28,
+              "fontWeight": "bold",
+              "textColor": "#FFFFFF",
+              "textAlign": "center",
+              "lineHeight": 39
+            }
+          },
+          {
+            "type": "element",
+            "id": "bio",
+            "elementType": "text",
+            "bindings": {
+              "text": "Product Designer • Tech Enthusiast • Coffee Lover"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": -2,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "fontSize": 16,
+              "fontWeight": "normal",
+              "textColor": "#E0E7FF",
+              "textAlign": "center",
+              "lineHeight": 22
+            }
+          },
+          {
+            "type": "element",
+            "id": "spacer",
+            "elementType": "spacer",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 8,
+                "unit": "dp"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "id": "edit-button",
+            "elementType": "button",
+            "bindings": {
+              "text": "Edit Profile"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 48,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 24,
+              "textColor": "#6366F1",
+              "fontSize": 16,
+              "fontWeight": "bold",
+              "lineHeight": 22
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

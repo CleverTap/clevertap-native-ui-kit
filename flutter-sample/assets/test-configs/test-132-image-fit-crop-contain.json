@@ -1,0 +1,124 @@
+{
+  "theme": {
+    "id": "test-132"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#333333"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "image_crop",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://yavuzceliker.github.io/sample-images/image-200.jpg"
+        },
+        "layout": {
+          "width": {
+            "value": 48,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 1,
+            "y": 5,
+            "unit": "percent"
+          }
+        },
+        "imageConfig": {
+          "fit": "crop"
+        }
+      },
+      {
+        "type": "element",
+        "id": "image_contain",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://yavuzceliker.github.io/sample-images/image-200.jpg"
+        },
+        "layout": {
+          "width": {
+            "value": 48,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 90,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 51,
+            "y": 5,
+            "unit": "percent"
+          }
+        },
+        "imageConfig": {
+          "fit": "contain"
+        }
+      },
+      {
+        "type": "element",
+        "id": "label_crop",
+        "elementType": "text",
+        "bindings": {
+          "text": "CROP"
+        },
+        "layout": {
+          "width": {
+            "value": 20,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 5,
+            "y": 92,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 12,
+          "lineHeight": 16,
+          "textColor": "#FFFFFF",
+          "textAlign": "center"
+        }
+      },
+      {
+        "type": "element",
+        "id": "label_contain",
+        "elementType": "text",
+        "bindings": {
+          "text": "CONTAIN"
+        },
+        "layout": {
+          "width": {
+            "value": 20,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 55,
+            "y": 92,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 12,
+          "lineHeight": 16,
+          "textColor": "#FFFFFF",
+          "textAlign": "center"
+        }
+      }
+    ]
+  }
+}

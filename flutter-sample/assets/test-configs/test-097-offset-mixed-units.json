@@ -1,0 +1,208 @@
+{
+  "theme": {
+    "id": "test-097",
+    "defaultStyle": {
+      "textColor": "#000000",
+      "fontSize": 14,
+      "lineHeight": 20
+    }
+  },
+  "variables": {
+    "testName": "Percentage Offset - Mixed with DP Units"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 16,
+        "unit": "dp"
+      },
+      "arrangement": {
+        "spacing": 16,
+        "spacingUnit": "dp",
+        "strategy": "spaced"
+      }
+    },
+    "style": {
+      "backgroundColor": "#F5F5F5"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "title",
+        "elementType": "text",
+        "bindings": {
+          "text": "{{testName}}"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 18,
+          "fontWeight": "bold",
+          "textColor": "#333333",
+          "lineHeight": 25
+        }
+      },
+      {
+        "type": "element",
+        "id": "description",
+        "elementType": "text",
+        "bindings": {
+          "text": "Tests mixing percentage and DP offset units in the same container. Shows different offset types side by side."
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "fontSize": 12,
+          "textColor": "#666666",
+          "lineHeight": 17
+        }
+      },
+      {
+        "type": "container",
+        "id": "test-box",
+        "containerType": "box",
+        "layout": {
+          "width": {
+            "value": 300,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 300,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "backgroundColor": "#FFFFFF",
+          "borderWidth": 2,
+          "borderColor": "#000000"
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "box-dp-20-20",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 50,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 50,
+                "unit": "dp"
+              },
+              "offset": {
+                "x": 20,
+                "y": 20,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#2196F3",
+              "borderWidth": 2,
+              "borderColor": "#1976D2"
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "box-percent-50-50",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 50,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 50,
+                "unit": "dp"
+              },
+              "offset": {
+                "x": 50,
+                "y": 50,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "backgroundColor": "#4CAF50",
+              "borderWidth": 2,
+              "borderColor": "#388E3C"
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "box-dp-100-200",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 40,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 40,
+                "unit": "dp"
+              },
+              "offset": {
+                "x": 100,
+                "y": 200,
+                "unit": "dp"
+              }
+            },
+            "style": {
+              "backgroundColor": "#FF9800",
+              "borderWidth": 2,
+              "borderColor": "#F57C00"
+            },
+            "children": []
+          },
+          {
+            "type": "container",
+            "id": "box-percent-75-25",
+            "containerType": "box",
+            "layout": {
+              "width": {
+                "value": 40,
+                "unit": "dp"
+              },
+              "height": {
+                "value": 40,
+                "unit": "dp"
+              },
+              "offset": {
+                "x": 75,
+                "y": 25,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "backgroundColor": "#F44336",
+              "borderWidth": 2,
+              "borderColor": "#D32F2F"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "styleClasses": []
+}

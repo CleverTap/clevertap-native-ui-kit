@@ -1,0 +1,3 @@
+# Files excluded from the published pub.dev package (on top of .gitignore).
+# Tests aren't needed by consumers.
+test/
