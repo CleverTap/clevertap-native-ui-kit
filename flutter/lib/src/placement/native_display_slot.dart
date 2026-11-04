@@ -52,6 +52,14 @@ class NativeDisplaySlot extends StatefulWidget {
   /// actions (return `true` to handle the URL yourself).
   final NativeDisplayOpenUrlCallback? onOpenUrl;
 
+  /// Forwarded to [NativeDisplayView.fontFamily] — per-slot client default font
+  /// (overrides the global [NativeDisplayFont.defaultFamily]).
+  final String? fontFamily;
+
+  /// Forwarded to [NativeDisplayView.fontResolver] — per-slot client font resolver
+  /// (overrides the global [NativeDisplayFont.resolver]). Composes with google_fonts.
+  final NativeDisplayFontResolver? fontResolver;
+
   /// Placeholder shown while no unit is available. Defaults to
   /// [SizedBox.shrink].
   final NativeDisplaySlotLoadingBuilder? loadingBuilder;
@@ -68,6 +76,8 @@ class NativeDisplaySlot extends StatefulWidget {
     this.onNotificationViewed,
     this.onNotificationClicked,
     this.onOpenUrl,
+    this.fontFamily,
+    this.fontResolver,
     this.loadingBuilder,
     this.manager,
   });
@@ -138,6 +148,8 @@ class _NativeDisplaySlotState extends State<NativeDisplaySlot>
       onNotificationViewed: widget.onNotificationViewed,
       onNotificationClicked: widget.onNotificationClicked,
       onOpenUrl: widget.onOpenUrl,
+      fontFamily: widget.fontFamily,
+      fontResolver: widget.fontResolver,
     );
   }
 }

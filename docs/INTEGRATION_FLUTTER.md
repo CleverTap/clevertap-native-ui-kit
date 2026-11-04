@@ -287,6 +287,9 @@ Attach these to react to user actions and run your own logic.
 |---------|-----------|---------|
 | `NativeDisplayActionListener` | `void Function(String action, String nodeId, Map<String, dynamic>? params)` | Fired when a node carries a server-defined action (e.g. open URL, custom action). Inspect `action` / `params` and run your own handling. |
 | `NativeDisplayComponentListener` | `bool Function(String event, String nodeId, Map<String, dynamic>? params)` | Low-level node interaction. Return `true` to consume the interaction; `false` to let the SDK proceed with its default behavior. |
+| `NativeDisplayOpenUrlCallback` | `bool Function(String url, bool openInBrowser)` | Intercept `open_url` actions (host opt-out, mirrors the native `onOpenUrl -> Bool`). Return `true` to handle the URL yourself (e.g. in-app routing for a deeplink) — the SDK then does **not** open it. Return `false` (or omit) to let the SDK open it externally via `url_launcher`. |
+
+Set it per-view via `onOpenUrl:` (on `NativeDisplayView` / `NativeDisplaySlot`). When omitted, the SDK opens every `open_url` externally (app deeplinks route to the registered app; http/https to the browser).
 
 ### Attaching callbacks
 
@@ -346,9 +349,39 @@ Without the corresponding `register...()` call, that element renders nothing (wi
 
 ## Custom fonts
 
-> **Flutter differs from Android/iOS here.** The Flutter renderer does **not** expose a client font-override parameter or environment resolver (there is no equivalent of iOS's `\.nativeDisplayFontResolver` or Android's `fontFamily` param in the current release). The renderer reads the JSON `fontFamily` string and passes it directly to Flutter's `TextStyle.fontFamily`.
+ND text uses the platform system font by default (Roboto on Android, San Francisco on iOS). To use your own font there are three layers, applied in this resolution order (highest first) — mirroring the native SDKs' `LocalFontFamily` / `nativeDisplayFontResolver`:
 
-To use a custom font, declare it in your app's `pubspec.yaml` under a family name, then reference that exact name from the campaign JSON's `fontFamily`:
+### 1. A client resolver (composes with `google_fonts`)
+
+Set a resolver once and it applies to **all** ND text. It returns a `TextStyle` whose font-identifying fields (`fontFamily`, `fontFamilyFallback`, …) the SDK adopts — the SDK keeps ownership of size / color / weight / line-height — so it drops straight into `google_fonts`:
+
+```dart
+import 'package:clevertap_native_display/clevertap_native_display.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+// one-time, global (e.g. in main()):
+NativeDisplayFont.instance.resolver =
+    (ctx) => GoogleFonts.inter(fontWeight: ctx.fontWeight, fontStyle: ctx.fontStyle);
+
+// or honour the JSON font name, falling back to a default:
+NativeDisplayFont.instance.resolver =
+    (ctx) => GoogleFonts.getFont(ctx.jsonFontFamily ?? 'Inter', fontWeight: ctx.fontWeight);
+```
+
+Or per render site via `NativeDisplayView(fontResolver: …)` (also available on `NativeDisplaySlot`).
+
+### 2. A single default family
+
+For a pubspec-declared font, set one family name for all ND text:
+
+```dart
+NativeDisplayFont.instance.defaultFamily = 'Inter';            // global
+NativeDisplayView(config: unit.config, fontFamily: 'Inter');   // or per-view
+```
+
+### 3. The JSON `fontFamily`
+
+With no resolver / default set, the renderer uses the campaign JSON's `fontFamily` string — which resolves only if you declared that exact family in `pubspec.yaml`:
 
 ```yaml
 # pubspec.yaml
@@ -365,9 +398,9 @@ flutter:
 { "style": { "fontFamily": "Inter", "fontSize": 16 } }
 ```
 
-When the JSON `fontFamily` is null or not a registered family, text falls back to the platform system default (Roboto on Android, San Francisco on iOS).
+**Resolution order:** `fontResolver` → `fontFamily` default → JSON `fontFamily` → system font. Per-widget values override the global `NativeDisplayFont` singleton. The SDK takes **no** dependency on `google_fonts` — the resolver just returns a `TextStyle`.
 
-> If cross-platform font parity matters, register the **same** font in your Flutter app, your Android app, and your iOS app and reference it from the JSON — Roboto and San Francisco have different character widths and will wrap text differently. Always specify `lineHeight` in your campaign JSON for consistent results across platforms.
+> If cross-platform font parity matters, use the **same** font in your Flutter app, your Android app, and your iOS app (and reference it from the JSON) — Roboto and San Francisco have different character widths and will wrap text differently. Always specify `lineHeight` in your campaign JSON for consistent results across platforms.
 
 ---
 
