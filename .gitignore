@@ -156,9 +156,11 @@ android-sample/app/configs
 .claude/worktrees/
 .claude/scheduled_tasks.lock
 .claude/scratch/
+# Per-user Claude Code settings (local permissions — never commit)
+.claude/settings.local.json
 
 # Flutter build output
 .dart_tool/
-# Flutter-generated plugin registrants (dev-local, not for VCS)
-flutter/.flutter-plugins
-flutter/.flutter-plugins-dependencies
+# Flutter-generated plugin registrants (dev-local, not for VCS) — all packages
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
