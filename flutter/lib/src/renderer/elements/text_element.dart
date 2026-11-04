@@ -1,0 +1,185 @@
+import 'dart:math';
+
+import 'package:flutter/widgets.dart';
+
+import '../../evaluator/variable_evaluator.dart';
+import '../../models/enums.dart';
+import '../../models/native_display_node.dart';
+import '../../models/style.dart';
+import '../../models/text_dimension.dart';
+import '../../utils/color_parser.dart';
+import '../native_display_font.dart';
+import '../native_display_scope.dart';
+import '../style_applier.dart';
+
+class TextElement extends StatelessWidget {
+  final NativeDisplayElement node;
+  final Style style;
+  final VariableEvaluator evaluator;
+
+  const TextElement({
+    super.key,
+    required this.node,
+    required this.style,
+    required this.evaluator,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final rootHeight = NativeDisplayScope.rootHeightOf(context);
+    final rawText = node.bindings['text'] ?? '';
+    final text = evaluator.evaluateString(rawText);
+
+    final fontSize = _resolveTextDimension(style.fontSize, rootHeight) ?? 14.0;
+    final lineHeight = _resolveTextDimension(style.lineHeight, rootHeight);
+    // Default line height matches the native SDKs when the config omits it:
+    // percent-unit fontSize → 1.2×, raw (sp) fontSize → 1.5× (Android ElementRenderer
+    // / iOS renderText). Previously this was null (Flutter font-natural ≈ 1.15×).
+    final heightMultiplier = fontSize <= 0
+        ? null
+        : (lineHeight != null
+            ? lineHeight / fontSize
+            : (style.fontSize?.unit == TextDimensionUnit.percent ? 1.2 : 1.5));
+
+    final fontWeight = _resolveFontWeight(style.fontWeight);
+    final fontStyle =
+        style.fontStyle == NDFontStyle.italic ? FontStyle.italic : FontStyle.normal;
+    // Client font resolution (resolver → default family → JSON family → system),
+    // matching the native SDKs. Returns only font-identity fields so the SDK keeps
+    // ownership of size / colour / weight / line-height.
+    final fontOverride = resolveNativeDisplayFont(
+      ctx: NativeDisplayFontContext(
+        jsonFontFamily: style.fontFamily,
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        fontStyle: fontStyle,
+      ),
+      scopeFamily: NativeDisplayScope.fontFamilyOf(context),
+      scopeResolver: NativeDisplayScope.fontResolverOf(context),
+    );
+
+    final textStyle = TextStyle(
+      // Default to black (native TEXT defaultColor) when the config/theme omits a
+      // color, rather than inheriting the host DefaultTextStyle's color.
+      color: ColorParser.parse(style.textColor) ?? const Color(0xFF000000),
+      fontSize: fontSize,
+      fontFamily: fontOverride?.fontFamily,
+      fontFamilyFallback: fontOverride?.fontFamilyFallback,
+      fontFeatures: fontOverride?.fontFeatures,
+      fontVariations: fontOverride?.fontVariations,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      height: heightMultiplier,
+      // Center the text within its line box, matching Android Compose's
+      // LineHeightStyle(alignment=Center) and iOS. Flutter's default
+      // (`proportional`) biases leading toward the descent, so the same
+      // lineHeight sits lower than on the natives.
+      leadingDistribution: TextLeadingDistribution.even,
+      // Explicit 0 (not null) so ND text never inherits the host app's
+      // DefaultTextStyle letterSpacing (e.g. Material's bodyMedium = 0.25). Native
+      // ND uses 0; inheriting would widen glyphs and change wrapping vs the natives.
+      letterSpacing: style.letterSpacing ?? 0,
+      decoration: _resolveDecoration(style.textDecoration),
+      shadows: _resolveShadows(style),
+    );
+
+    Widget textWidget = Text(
+      text,
+      style: textStyle,
+      textAlign: _resolveTextAlign(style.textAlign),
+      maxLines: style.maxLines,
+      overflow: _resolveOverflow(style.overflow),
+      // Match Android's `includeFontPadding = false`: drop the extra leading
+      // above the first line and below the last so the text block is the same
+      // height as the natives for a given lineHeight (Flutter otherwise adds
+      // half-leading padding at both ends).
+      textHeightBehavior: const TextHeightBehavior(
+        applyHeightToFirstAscent: false,
+        applyHeightToLastDescent: false,
+        leadingDistribution: TextLeadingDistribution.even,
+      ),
+    );
+
+    // A gradient needs at least two colors (Flutter asserts colors.length >= 2).
+    // With fewer, render plain text rather than crashing.
+    if (style.textGradient != null && style.textGradient!.colors.length >= 2) {
+      textWidget = ShaderMask(
+        shaderCallback: (bounds) => _buildGradient(style.textGradient!).createShader(bounds),
+        blendMode: BlendMode.srcIn,
+        child: textWidget,
+      );
+    }
+
+    return StyleApplier.apply(
+      textWidget,
+      style,
+      rootHeight: rootHeight,
+      padding: node.layout?.padding,
+    );
+  }
+
+  double? _resolveTextDimension(TextDimension? dim, double rootHeight) {
+    if (dim == null) return null;
+    return dim.resolve(rootHeight);
+  }
+
+  FontWeight _resolveFontWeight(NDFontWeight? w) => switch (w) {
+        NDFontWeight.light => FontWeight.w300,
+        NDFontWeight.normal => FontWeight.w400,
+        NDFontWeight.medium => FontWeight.w500,
+        NDFontWeight.bold => FontWeight.w700,
+        null => FontWeight.w400,
+      };
+
+  TextDecoration _resolveDecoration(NDTextDecoration? d) => switch (d) {
+        NDTextDecoration.underline => TextDecoration.underline,
+        NDTextDecoration.strikethrough => TextDecoration.lineThrough,
+        _ => TextDecoration.none,
+      };
+
+  TextAlign _resolveTextAlign(String? align) => switch (align) {
+        'center' => TextAlign.center,
+        'right' => TextAlign.right,
+        'justify' => TextAlign.justify,
+        _ => TextAlign.left,
+      };
+
+  TextOverflow? _resolveOverflow(NDTextOverflow? overflow) => switch (overflow) {
+        NDTextOverflow.clip => TextOverflow.clip,
+        NDTextOverflow.ellipsis => TextOverflow.ellipsis,
+        NDTextOverflow.visible => null,
+        null => null,
+      };
+
+  List<Shadow>? _resolveShadows(Style style) {
+    if (style.textShadow == null) return null;
+    final ts = style.textShadow!;
+    return [
+      Shadow(
+        color: ColorParser.parse(ts.color) ?? const Color(0xFF000000),
+        offset: Offset(ts.offsetX, ts.offsetY),
+        blurRadius: ts.blur,
+      )
+    ];
+  }
+
+  Gradient _buildGradient(TextGradient tg) {
+    final colors = tg.colors
+        .map((c) => ColorParser.parse(c) ?? const Color(0xFF000000))
+        .toList();
+    final stops = tg.stops;
+    if (tg.type == 'radial') {
+      return RadialGradient(colors: colors, stops: stops);
+    }
+    // Default: linear
+    final radians = (tg.angle - 90) * pi / 180;
+    final dx = cos(radians);
+    final dy = sin(radians);
+    return LinearGradient(
+      begin: Alignment(-dx, -dy),
+      end: Alignment(dx, dy),
+      colors: colors,
+      stops: stops,
+    );
+  }
+}

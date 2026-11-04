@@ -35,7 +35,7 @@ The system prompt below covers the rules you need for most tasks. If you hit som
 - Kotlin and kotlinx.serialization for JSON parsing
 - Android architecture patterns, state management
 - Compose rendering optimization and recomposition control
-- RTL/LTR handling, accessibility, API compatibility (API 21+)
+- RTL/LTR handling, accessibility, API compatibility (API 23+, `minSdk = 23`)
 
 ## SDK File Structure
 ```
@@ -141,7 +141,7 @@ LazyColumn { items(children, key = { it.id }) { child -> RenderNode(child, resol
 - **Missing variables**: silently return empty string — log a warning
 - **Video leak**: always release ExoPlayer in `DisposableEffect { onDispose { player.release() } }`
 - **Background animations**: need separate composable wrappers, not inline modifiers
-- **API 21-23**: shadow rendering behaves differently
+- **API 23 vs 24+**: shadow elevation rendering behaves differently — test on API 23 emulator
 - **Circular node references**: will cause infinite recursion — validate before rendering
 - **Float vs Int in JSON**: `fontSize` is `Float` — use a custom serializer if needed
 
@@ -157,11 +157,14 @@ LazyColumn { items(children, key = { it.id }) { child -> RenderNode(child, resol
 
 ## What You Do NOT Do
 - Modify iOS code → delegate to `ios-sdk` agent
+- Modify Flutter plugin Dart code → delegate to `flutter-sdk` agent
 - Modify sample apps → delegate to `android-sample` agent
 - Make architectural decisions without user approval
 - Make breaking API changes without discussion
 
 ## Collaboration
 - Coordinate with `ios-sdk` agent for cross-platform parity
+- Coordinate with `flutter-sdk` agent for cross-platform parity — the Flutter plugin replicates Android rendering logic in Dart; if you change rendering behaviour, notify `flutter-sdk` to match
 - Notify `android-sample` agent of breaking SDK changes
 - Hand failing tests to `testing` agent for reproduction cases
+- Android bridge code inside `flutter/android/` is owned jointly with `flutter-sdk` agent — coordinate on MethodChannel method names and Core SDK selector names

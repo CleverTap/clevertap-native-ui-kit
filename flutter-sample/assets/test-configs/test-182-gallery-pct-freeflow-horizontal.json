@@ -1,0 +1,517 @@
+{
+  "version": "1.0",
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 12
+      },
+      "arrangement": {
+        "strategy": "spaced",
+        "spacing": 12,
+        "spacingUnit": "dp"
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "header",
+        "elementType": "text",
+        "bindings": {
+          "text": "Quick Recipes"
+        },
+        "style": {
+          "textColor": "#111111",
+          "fontSize": 20,
+          "lineHeight": 26,
+          "fontWeight": "bold"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        }
+      },
+      {
+        "type": "container",
+        "id": "gallery",
+        "containerType": "gallery",
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "aspectRatio": 1.3
+        },
+        "galleryConfig": {
+          "mode": "free_flow",
+          "orientation": "horizontal",
+          "itemsPerView": 2.2,
+          "spacing": 12,
+          "showIndicators": false,
+          "autoScrollInterval": 0,
+          "initialPage": 0
+        },
+        "children": [
+          {
+            "type": "container",
+            "id": "v_card_1",
+            "containerType": "vertical",
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 16
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "padding": {
+                "all": 8
+              },
+              "arrangement": {
+                "strategy": "start"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "vicon_1",
+                "elementType": "image",
+                "bindings": {
+                  "url": "https://yavuzceliker.github.io/sample-images/image-20.jpg"
+                },
+                "style": {
+                  "borderRadius": 12
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "aspectRatio": 1.0
+                }
+              },
+              {
+                "type": "element",
+                "id": "vtitle_1",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Avocado Toast"
+                },
+                "style": {
+                  "textColor": "#1A1A1A",
+                  "fontSize": 16,
+                  "lineHeight": 20,
+                  "fontWeight": "bold"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "top": 8
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "vsub_1",
+                "elementType": "text",
+                "bindings": {
+                  "text": "5 min \u00b7 Breakfast"
+                },
+                "style": {
+                  "textColor": "#6B6B6B",
+                  "fontSize": 13,
+                  "lineHeight": 17
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "top": 2
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "v_card_2",
+            "containerType": "vertical",
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 16
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "padding": {
+                "all": 8
+              },
+              "arrangement": {
+                "strategy": "start"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "vicon_2",
+                "elementType": "image",
+                "bindings": {
+                  "url": "https://yavuzceliker.github.io/sample-images/image-25.jpg"
+                },
+                "style": {
+                  "borderRadius": 12
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "aspectRatio": 1.0
+                }
+              },
+              {
+                "type": "element",
+                "id": "vtitle_2",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Berry Smoothie"
+                },
+                "style": {
+                  "textColor": "#1A1A1A",
+                  "fontSize": 16,
+                  "lineHeight": 20,
+                  "fontWeight": "bold"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "top": 8
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "vsub_2",
+                "elementType": "text",
+                "bindings": {
+                  "text": "3 min \u00b7 Drinks"
+                },
+                "style": {
+                  "textColor": "#6B6B6B",
+                  "fontSize": 13,
+                  "lineHeight": 17
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "top": 2
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "v_card_3",
+            "containerType": "vertical",
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 16
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "padding": {
+                "all": 8
+              },
+              "arrangement": {
+                "strategy": "start"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "vicon_3",
+                "elementType": "image",
+                "bindings": {
+                  "url": "https://yavuzceliker.github.io/sample-images/image-30.jpg"
+                },
+                "style": {
+                  "borderRadius": 12
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "aspectRatio": 1.0
+                }
+              },
+              {
+                "type": "element",
+                "id": "vtitle_3",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Quinoa Bowl"
+                },
+                "style": {
+                  "textColor": "#1A1A1A",
+                  "fontSize": 16,
+                  "lineHeight": 20,
+                  "fontWeight": "bold"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "top": 8
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "vsub_3",
+                "elementType": "text",
+                "bindings": {
+                  "text": "15 min \u00b7 Lunch"
+                },
+                "style": {
+                  "textColor": "#6B6B6B",
+                  "fontSize": 13,
+                  "lineHeight": 17
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "top": 2
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "v_card_4",
+            "containerType": "vertical",
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 16
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "padding": {
+                "all": 8
+              },
+              "arrangement": {
+                "strategy": "start"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "vicon_4",
+                "elementType": "image",
+                "bindings": {
+                  "url": "https://yavuzceliker.github.io/sample-images/image-35.jpg"
+                },
+                "style": {
+                  "borderRadius": 12
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "aspectRatio": 1.0
+                }
+              },
+              {
+                "type": "element",
+                "id": "vtitle_4",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Grilled Salmon"
+                },
+                "style": {
+                  "textColor": "#1A1A1A",
+                  "fontSize": 16,
+                  "lineHeight": 20,
+                  "fontWeight": "bold"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "top": 8
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "vsub_4",
+                "elementType": "text",
+                "bindings": {
+                  "text": "25 min \u00b7 Dinner"
+                },
+                "style": {
+                  "textColor": "#6B6B6B",
+                  "fontSize": 13,
+                  "lineHeight": 17
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "top": 2
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "container",
+            "id": "v_card_5",
+            "containerType": "vertical",
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "borderRadius": 16
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "padding": {
+                "all": 8
+              },
+              "arrangement": {
+                "strategy": "start"
+              }
+            },
+            "children": [
+              {
+                "type": "element",
+                "id": "vicon_5",
+                "elementType": "image",
+                "bindings": {
+                  "url": "https://yavuzceliker.github.io/sample-images/image-40.jpg"
+                },
+                "style": {
+                  "borderRadius": 12
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "aspectRatio": 1.0
+                }
+              },
+              {
+                "type": "element",
+                "id": "vtitle_5",
+                "elementType": "text",
+                "bindings": {
+                  "text": "Fruit Parfait"
+                },
+                "style": {
+                  "textColor": "#1A1A1A",
+                  "fontSize": 16,
+                  "lineHeight": 20,
+                  "fontWeight": "bold"
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "top": 8
+                  }
+                }
+              },
+              {
+                "type": "element",
+                "id": "vsub_5",
+                "elementType": "text",
+                "bindings": {
+                  "text": "8 min \u00b7 Snack"
+                },
+                "style": {
+                  "textColor": "#6B6B6B",
+                  "fontSize": 13,
+                  "lineHeight": 17
+                },
+                "layout": {
+                  "width": {
+                    "value": 100,
+                    "unit": "percent"
+                  },
+                  "padding": {
+                    "top": 2
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

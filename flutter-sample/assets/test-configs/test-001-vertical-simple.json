@@ -1,0 +1,91 @@
+{
+  "theme": {
+    "id": "default",
+    "defaultStyle": {
+      "textColor": "#212121",
+      "fontSize": 14,
+      "fontFamily": "system",
+      "lineHeight": 20
+    }
+  },
+  "root": {
+    "type": "container",
+    "id": "vertical-container",
+    "containerType": "vertical",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 0,
+        "unit": "dp",
+        "special": "wrap_content"
+      },
+      "padding": {
+        "all": 16
+      },
+      "arrangement": {
+        "spacing": 12,
+        "strategy": "spaced",
+        "spacingUnit": "dp"
+      }
+    },
+    "style": {
+      "background": {
+        "type": "solid",
+        "color": "#E3F2FD"
+      }
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "text-element",
+        "elementType": "text",
+        "bindings": {
+          "text": "VERTICAL Container Test"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 0,
+            "unit": "dp",
+            "special": "wrap_content"
+          }
+        },
+        "style": {
+          "fontSize": 20,
+          "fontWeight": "bold",
+          "textColor": "#000000",
+          "lineHeight": 28
+        }
+      },
+      {
+        "type": "element",
+        "id": "image-element",
+        "elementType": "image",
+        "bindings": {
+          "url": "https://yavuzceliker.github.io/sample-images/image-1.jpg"
+        },
+        "layout": {
+          "width": {
+            "value": 200,
+            "unit": "dp"
+          },
+          "height": {
+            "value": 200,
+            "unit": "dp"
+          }
+        },
+        "style": {
+          "borderRadius": 8
+        }
+      }
+    ]
+  },
+  "styleClasses": [],
+  "variables": {}
+}

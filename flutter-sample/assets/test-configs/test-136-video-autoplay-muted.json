@@ -1,0 +1,50 @@
+{
+  "theme": {
+    "id": "test-136"
+  },
+  "root": {
+    "type": "container",
+    "id": "root",
+    "containerType": "box",
+    "layout": {
+      "width": {
+        "value": 100,
+        "unit": "percent"
+      },
+      "aspectRatio": 1.778
+    },
+    "style": {
+      "backgroundColor": "#000000"
+    },
+    "children": [
+      {
+        "type": "element",
+        "id": "video",
+        "elementType": "video",
+        "bindings": {
+          "url": "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
+          "autoPlay": "true",
+          "muted": "true",
+          "loop": "true",
+          "showControls": "false",
+          "showFullscreen": "false"
+        },
+        "layout": {
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "height": {
+            "value": 100,
+            "unit": "percent"
+          },
+          "offset": {
+            "x": 0,
+            "y": 0,
+            "unit": "percent"
+          }
+        }
+      }
+    ]
+  }
+}

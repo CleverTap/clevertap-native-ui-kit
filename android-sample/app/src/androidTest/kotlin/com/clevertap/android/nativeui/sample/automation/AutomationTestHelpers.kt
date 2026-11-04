@@ -24,8 +24,6 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.runner.screenshot.BasicScreenCaptureProcessor
-import androidx.test.runner.screenshot.Screenshot
 import com.clevertap.android.nativeui.sample.R
 import com.clevertap.android.sdk.CleverTapAPI
 import java.io.File
@@ -51,6 +49,25 @@ val EVENTS_TO_FIRE: List<String> = listOf(
  * the screenshot is taken. Bump to 2.5s if flaky.
  */
 private const val EVENT_SETTLE_DELAY_MS = 1_500L
+
+/**
+ * Wait after each event fire, before the screenshot, on the Events screens.
+ * This must cover the full round trip AND the render: server response → unit
+ * parse/style-resolve → Compose/XML paint → Coil image download + decode. The
+ * suite has no image prewarm (that only exists in the Robolectric unit tests),
+ * so images load live here — 5s gives them time to appear in the capture.
+ */
+const val SCREENSHOT_SETTLE_DELAY_MS = 5_000L
+
+/**
+ * Upper-bound for the event-driven screenshot handshake on the Compose Events
+ * screen. The test fires an event, clears the canvas, then blocks until the
+ * screen's "ct-units-count" batch counter strictly increases (a new server
+ * batch reached the canvas). This is the ceiling it waits before giving up and
+ * capturing the (cleared) empty canvas. Generous relative to typical latency so
+ * slow responses still land their own screenshot rather than a stale one.
+ */
+const val HANDSHAKE_TIMEOUT_MS = 10_000L
 
 private const val TAG = "ndAutomation"
 
@@ -137,16 +154,28 @@ fun hideEventLogXml() {
  * TestInfo through every call.
  */
 fun captureScreenshot(label: String) {
-    val outputDir = additionalOutputDir()
-    outputDir.mkdirs()
-    val processor = object : BasicScreenCaptureProcessor() {
-        init { mDefaultScreenshotPath = outputDir }
+    val outputDir = additionalOutputDir().apply { mkdirs() }
+    val file = File(outputDir, "$label.png")
+
+    // UiAutomation.takeScreenshot() replaces the deprecated
+    // androidx.test.runner.screenshot.Screenshot / BasicScreenCaptureProcessor
+    // API. It grabs the real device framebuffer, so Compose, XML Views and the
+    // native-display canvas are all captured. We write the Bitmap straight into
+    // AGP's additionalTestOutputDir (pulled back to the host after the run),
+    // keeping the same output location the automationScreenshots task expects.
+    val bitmap = InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot()
+    if (bitmap == null) {
+        Log.w(TAG, "takeScreenshot() returned null for '$label' — skipping")
+        return
     }
-    Screenshot.capture().apply {
-        name = label
-        format = CompressFormat.PNG
-    }.process(setOf(processor))
-    Log.d(TAG, "Captured: ${File(outputDir, "$label.png").absolutePath}")
+    try {
+        FileOutputStream(file).use { out ->
+            bitmap.compress(CompressFormat.PNG, 100, out)
+        }
+        Log.d(TAG, "Captured: ${file.absolutePath}")
+    } finally {
+        bitmap.recycle()
+    }
 }
 
 /**

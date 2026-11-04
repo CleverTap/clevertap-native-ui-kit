@@ -11,6 +11,52 @@ name the platform. Git tags follow the per-platform convention: iOS and Android
 use a bare semver tag (e.g. `1.0.0`); React Native and Flutter use a prefixed tag
 (e.g. `react-native-v1.0.0`).
 
+## [Flutter 1.0.0] - 2026-11-04
+
+Initial release.
+
+### Added
+
+- Flutter plugin (`clevertap_native_display`, package version 1.0.0). Renders
+  CleverTap Native Display campaigns as native Flutter widgets from JSON, with no
+  WebViews. Pure Dart — it adds no native module of its own and works standalone
+  (manual JSON) or wired to the CleverTap Core SDK.
+  - Public API: `NativeDisplayBridge`, `NativeDisplayView`, `NativeDisplaySlotManager`,
+    `NativeDisplaySlot`, `NativeDisplayConfigParser`, `NativeDisplayAttribution`,
+    `NDLogger` / `NDLogLevel`.
+  - Containers (`VERTICAL`, `HORIZONTAL`, `BOX`, `GALLERY`) and elements (`TEXT`,
+    `IMAGE`, `BUTTON`, `SPACER`, `DIVIDER`; `VIDEO` / `HTML` via optional add-ons).
+  - Full layout system — `percent` / `dp` / `sp` / `px` / `wrap_content` /
+    `match_parent` dimensions, `aspectRatio`, offsets, arrangements; theme +
+    style classes + `{{variables}}` templating.
+  - Cross-platform rendering parity with the native Android/iOS SDKs: rootHeight
+    anchor for percent sizing, line-height defaults (1.2× percent / 1.5× raw),
+    border stroke, and text font-box metrics.
+  - Hermetic text rendering — ND text is isolated from the host app's Material
+    theme (letterSpacing, font family, soft-wrap, max-lines, color), matching the
+    self-contained native SDKs.
+  - Client font API (`NativeDisplayFont`; `fontFamily` / `fontResolver` on
+    `NativeDisplayView`) — set a default font / resolver for all ND text; composes
+    with `google_fonts`, package/asset fonts, etc. Parity with native
+    `LocalFontFamily` / `nativeDisplayFontResolver`.
+  - Self-reported Notification Viewed, Notification Clicked, and element-level
+    click attribution (flattened `action_type` / custom KVs / `wzrk_*`).
+  - `open_url` actions open via `url_launcher` (external browser / app deeplinks),
+    with a host opt-out hook (`onOpenUrl`) mirroring the native `onOpenUrl -> Bool`.
+  - Slot-based placement (`NativeDisplaySlotManager` / `NativeDisplaySlot`) for
+    server-driven feed/slot layouts.
+  - Requires Flutter 3.x / Dart 3.x. Full setup:
+    [docs/INTEGRATION_FLUTTER.md](docs/INTEGRATION_FLUTTER.md).
+
+- Optional add-on packages (each opt-in; the core never imports them, so a feature
+  whose library is not registered degrades gracefully):
+  - `clevertap_native_display_video` (1.0.0) — `VIDEO` element via `video_player`,
+    with a custom overlay control set (play/pause, mute, fullscreen, open-url).
+  - `clevertap_native_display_webview` (1.0.0) — `HTML` element via `webview_flutter`.
+  - `clevertap_plugin_with_native_display` (1.0.0) — one-call `bindCleverTap()`
+    auto-wiring that bridges `clevertap_plugin` (Core SDK) to the pure-Dart renderer
+    and feeds the slot manager.
+
 ## [React Native 1.0.0] - 2026-11-03
 
 Initial release.
