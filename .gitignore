@@ -164,3 +164,8 @@ android-sample/app/configs
 # Flutter-generated plugin registrants (dev-local, not for VCS) — all packages
 **/.flutter-plugins
 **/.flutter-plugins-dependencies
+# Library packages don't commit pubspec.lock (the flutter-sample app does).
+flutter/pubspec.lock
+flutter-video/pubspec.lock
+flutter-webview/pubspec.lock
+clevertap_plugin_with_native_display/pubspec.lock
