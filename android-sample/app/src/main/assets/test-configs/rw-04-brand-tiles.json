@@ -1,0 +1,77 @@
+{
+  "theme": { "id": "default" },
+  "version": "1.0",
+  "root": {
+    "type": "container",
+    "id": "gallery",
+    "containerType": "gallery",
+    "layout": {
+      "aspectRatio": 2.9,
+      "width": { "value": 92, "unit": "percent" },
+      "padding": { "all": 0 }
+    },
+    "galleryConfig": {
+      "mode": "free_flow",
+      "orientation": "horizontal",
+      "spacing": 10,
+      "showIndicators": false,
+      "showArrows": false
+    },
+    "children": [
+      {
+        "type": "container", "containerType": "box", "id": "b1",
+        "layout": { "aspectRatio": 1.0, "width": { "value": 34, "unit": "percent" } },
+        "style": { "background": { "type": "solid", "color": "#FFFFFF" }, "borderRadius": { "value": 18, "unit": "percent" }, "borderColor": "#E5E7EB", "borderWidth": 2, "shadowColor": "#22000000", "shadowRadius": 8, "shadowOffsetX": 0, "shadowOffsetY": 3 },
+        "children": [
+          { "type": "element", "elementType": "image", "id": "b1-logo", "bindings": { "url": "https://yavuzceliker.github.io/sample-images/image-41.jpg" }, "imageConfig": { "fit": "contain" },
+            "layout": { "width": { "value": 70, "unit": "percent" }, "height": { "value": 70, "unit": "percent" }, "offset": { "x": 15, "y": 15, "unit": "percent" } } }
+        ]
+      },
+      {
+        "type": "container", "containerType": "box", "id": "b2",
+        "layout": { "aspectRatio": 1.0, "width": { "value": 34, "unit": "percent" } },
+        "style": { "background": { "type": "solid", "color": "#FFFFFF" }, "borderRadius": { "value": 18, "unit": "percent" }, "borderColor": "#E5E7EB", "borderWidth": 2, "shadowColor": "#22000000", "shadowRadius": 8, "shadowOffsetX": 0, "shadowOffsetY": 3 },
+        "children": [
+          { "type": "element", "elementType": "image", "id": "b2-logo", "bindings": { "url": "https://yavuzceliker.github.io/sample-images/image-42.jpg" }, "imageConfig": { "fit": "contain" },
+            "layout": { "width": { "value": 70, "unit": "percent" }, "height": { "value": 70, "unit": "percent" }, "offset": { "x": 15, "y": 15, "unit": "percent" } } }
+        ]
+      },
+      {
+        "type": "container", "containerType": "box", "id": "b3",
+        "layout": { "aspectRatio": 1.0, "width": { "value": 34, "unit": "percent" } },
+        "style": { "background": { "type": "solid", "color": "#FFFFFF" }, "borderRadius": { "value": 18, "unit": "percent" }, "borderColor": "#E5E7EB", "borderWidth": 2, "shadowColor": "#22000000", "shadowRadius": 8, "shadowOffsetX": 0, "shadowOffsetY": 3 },
+        "children": [
+          { "type": "element", "elementType": "image", "id": "b3-logo", "bindings": { "url": "https://yavuzceliker.github.io/sample-images/image-43.jpg" }, "imageConfig": { "fit": "contain" },
+            "layout": { "width": { "value": 70, "unit": "percent" }, "height": { "value": 70, "unit": "percent" }, "offset": { "x": 15, "y": 15, "unit": "percent" } } }
+        ]
+      },
+      {
+        "type": "container", "containerType": "box", "id": "b4",
+        "layout": { "aspectRatio": 1.0, "width": { "value": 34, "unit": "percent" } },
+        "style": { "background": { "type": "solid", "color": "#FFFFFF" }, "borderRadius": { "value": 18, "unit": "percent" }, "borderColor": "#E5E7EB", "borderWidth": 2, "shadowColor": "#22000000", "shadowRadius": 8, "shadowOffsetX": 0, "shadowOffsetY": 3 },
+        "children": [
+          { "type": "element", "elementType": "image", "id": "b4-logo", "bindings": { "url": "https://yavuzceliker.github.io/sample-images/image-44.jpg" }, "imageConfig": { "fit": "contain" },
+            "layout": { "width": { "value": 70, "unit": "percent" }, "height": { "value": 70, "unit": "percent" }, "offset": { "x": 15, "y": 15, "unit": "percent" } } }
+        ]
+      },
+      {
+        "type": "container", "containerType": "box", "id": "b5",
+        "layout": { "aspectRatio": 1.0, "width": { "value": 34, "unit": "percent" } },
+        "style": { "background": { "type": "solid", "color": "#FFFFFF" }, "borderRadius": { "value": 18, "unit": "percent" }, "borderColor": "#E5E7EB", "borderWidth": 2, "shadowColor": "#22000000", "shadowRadius": 8, "shadowOffsetX": 0, "shadowOffsetY": 3 },
+        "children": [
+          { "type": "element", "elementType": "image", "id": "b5-logo", "bindings": { "url": "https://yavuzceliker.github.io/sample-images/image-45.jpg" }, "imageConfig": { "fit": "contain" },
+            "layout": { "width": { "value": 70, "unit": "percent" }, "height": { "value": 70, "unit": "percent" }, "offset": { "x": 15, "y": 15, "unit": "percent" } } }
+        ]
+      },
+      {
+        "type": "container", "containerType": "box", "id": "b6",
+        "layout": { "aspectRatio": 1.0, "width": { "value": 34, "unit": "percent" } },
+        "style": { "background": { "type": "solid", "color": "#FFFFFF" }, "borderRadius": { "value": 18, "unit": "percent" }, "borderColor": "#E5E7EB", "borderWidth": 2, "shadowColor": "#22000000", "shadowRadius": 8, "shadowOffsetX": 0, "shadowOffsetY": 3 },
+        "children": [
+          { "type": "element", "elementType": "image", "id": "b6-logo", "bindings": { "url": "https://yavuzceliker.github.io/sample-images/image-46.jpg" }, "imageConfig": { "fit": "contain" },
+            "layout": { "width": { "value": 70, "unit": "percent" }, "height": { "value": 70, "unit": "percent" }, "offset": { "x": 15, "y": 15, "unit": "percent" } } }
+        ]
+      }
+    ]
+  }
+}
