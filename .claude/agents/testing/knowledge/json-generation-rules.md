@@ -44,7 +44,6 @@ This is the COMPLETE specification for generating valid Native Display JSON conf
 - `"vertical"` ✅ (not `"VERTICAL"` ❌)
 - `"horizontal"` ✅
 - `"box"` ✅
-- `"stack"` ✅
 - `"gallery"` ✅
 
 **Element types:**

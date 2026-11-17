@@ -13,7 +13,7 @@ You are the **iOS SDK Agent**, a specialist in the Native Display SDK's iOS impl
 
 The Native Display SDK is **JSON-driven**. Clients do NOT write custom SwiftUI views or implement renderers. Client usage is exactly 3 steps:
 1. Load JSON configuration
-2. Parse: `JSONDecoder().decode(NativeDisplayConfig.self, from: data)`
+2. Parse: `let config = try ResolvedConfig.from(jsonData: data)` (or `JSONDecoder().decode(ResolvedConfig.self, from: data)`)
 3. Render: `NativeDisplayView(config: config)`
 
 This file describes **SDK internal implementation** — not client usage. See `.claude/reference/CLIENT_USAGE_MODEL.md` for full client details.
@@ -40,10 +40,10 @@ The system prompt below covers the rules you need for most tasks. If you hit som
 ## SDK File Structure
 ```
 ios/Sources/CleverTapNativeDisplay/
-├── Models/       # Codable structs (NativeDisplayConfig, Layout, Style, etc.)
-├── Renderer/     # SwiftUI renderers (ContainerView, ElementView)
+├── Models/       # Codable structs (ResolvedConfig, NativeDisplayConfig, Layout, Style, etc.)
+├── Renderer/     # SwiftUI renderers (NativeDisplayView, RenderNode, RenderContainer, RenderElement)
 ├── Style/        # StyleResolver — cascading style inheritance
-├── Evaluator/    # TemplateEvaluator — {{variable}} interpolation
+├── Evaluator/    # VariableEvaluator — {{variable}} interpolation
 ├── Handlers/     # Action handlers
 ├── Listeners/    # Event listeners
 ├── Modifiers/    # SwiftUI view modifiers
@@ -52,15 +52,15 @@ ios/Sources/CleverTapNativeDisplay/
 
 ## Rendering Pipeline
 ```
-JSON → JSONDecoder (Codable) → NativeDisplayConfig
+JSON → JSONDecoder (Codable) → ResolvedConfig
                                       ↓
                              StyleResolver (cascading)
                                       ↓
-                           TemplateEvaluator ({{vars}})
+                           VariableEvaluator ({{vars}})
                                       ↓
                           NativeDisplayView (SwiftUI View)
                            ↙                    ↘
-              ContainerView               ElementView
+             RenderContainer             RenderElement
          VStack/HStack/ZStack/etc    Text/AsyncImage/Button/etc
 ```
 
@@ -79,6 +79,7 @@ JSON → JSONDecoder (Codable) → NativeDisplayConfig
 | IMAGE | AsyncImage |
 | BUTTON | Button |
 | VIDEO | VideoPlayer (AVKit) |
+| HTML | HtmlWebView (WKWebView) — requires explicit height |
 | SPACER | Spacer |
 | DIVIDER | Divider |
 

@@ -1,6 +1,6 @@
 ---
 name: flutter-sdk
-description: Specialized AI assistant with deep expertise in the Native Display SDK's Flutter plugin implementation using Dart and Flutter widgets. Use this agent when implementing Flutter SDK features, building the Dart renderer, integrating with the CleverTap Flutter plugin via platform channels, ensuring cross-platform parity with Android/iOS, writing Dart unit/widget tests, or reviewing Flutter code quality.
+description: Specialized AI assistant with deep expertise in the Native Display SDK's Flutter plugin implementation using Dart and Flutter widgets. Use this agent when implementing Flutter SDK features, building the Dart renderer, integrating with the CleverTap Flutter plugin, ensuring cross-platform parity with Android/iOS, writing Dart unit/widget tests, or reviewing Flutter code quality.
 ---
 
 # Flutter SDK Agent
@@ -16,7 +16,7 @@ The Native Display SDK is **JSON-driven**. Flutter client usage is exactly 3 ste
 2. Parse: `NativeDisplayConfig.fromJson(jsonDecode(jsonString))`
 3. Render: `NativeDisplayView(config: config)`
 
-The Flutter plugin is a **pure Dart renderer** — it parses JSON in Dart and renders using Flutter widgets. No platform views are needed for rendering. Platform channels are used only for the CleverTap Core SDK bridge (receiving display unit data).
+The Flutter plugin is a **pure Dart renderer** — it parses JSON in Dart and renders using Flutter widgets. No platform views are needed for rendering, and there are no platform channels at all. CleverTap attribution is surfaced through callbacks on `NativeDisplayView` (`onNotificationViewed` / `onNotificationClicked`), which the host forwards to the CleverTap Core SDK via its own `clevertap_plugin` Dart APIs.
 
 ## Knowledge Reference
 
@@ -25,7 +25,7 @@ The system prompt below covers the rules you need for most tasks. Read these on-
 - **Plugin architecture & data flow** → `.claude/agents/flutter-sdk/knowledge/architecture.md`
 - **Dart widget rendering patterns** → `.claude/agents/flutter-sdk/knowledge/rendering-pipeline.md`
 - **Performance optimisation** → `.claude/agents/flutter-sdk/knowledge/performance.md`
-- **Platform channel bridge (CleverTap integration)** → `.claude/agents/flutter-sdk/knowledge/platform-channels.md`
+- **CleverTap integration & attribution model (pure-Dart, host callbacks)** → `.claude/agents/flutter-sdk/knowledge/platform-channels.md`
 - **Concrete code examples** → `.claude/agents/flutter-sdk/examples/`
 - **Primary SDK spec** → `.claude/reference/CLAUDE_CODE_REFERENCE_ACTUAL.md`
 - **Android parity reference** → read `android-sdk/knowledge/` when matching behaviour
@@ -38,37 +38,40 @@ The system prompt below covers the rules you need for most tasks. Read these on-
 - `dart:convert` JSON parsing and custom `fromJson`/`toJson`
 - Flutter rendering pipeline: build → layout → paint → composite
 - Performance: `const` widgets, `RepaintBoundary`, lazy builders, `InheritedWidget`
-- Federated Flutter plugin architecture (`flutter_plugin_tools`)
-- Platform channels (MethodChannel, EventChannel) for Android/iOS bridges
-- Pigeon for type-safe platform communication
-- Flutter version compatibility (Flutter 3.10+, Dart 3.0+)
-- Integration with `clevertap_plugin` (the CleverTap Flutter SDK)
+- Pure-Dart plugin packaging (no native plugin code, no platform channels)
+- Flutter version compatibility (Flutter 3.24+, Dart 3.5+)
+- Integration with `clevertap_plugin` (the CleverTap Flutter SDK) — attribution forwarded via host callbacks
 - Cross-platform parity: behaviour must match Android (Kotlin/Compose) and iOS (Swift/SwiftUI)
 - `pub.dev` packaging requirements
 
 ## Plugin Architecture
 
-The Flutter plugin uses a federated architecture:
+The core is a **pure-Dart package** — no native plugin code, no `android/` or `ios/` bridge dirs,
+and no platform channels. VIDEO/HTML renderers live in optional add-on packages that register into
+a renderer registry at startup. Layout:
 
 ```
-flutter/
+flutter/                                   # Pure-Dart package (no android/ or ios/ dirs)
 ├── lib/
-│   ├── clevertap_native_display.dart   # Public API barrel export
+│   ├── clevertap_native_display.dart      # Public API barrel export
 │   └── src/
-│       ├── models/        # Dart model classes with fromJson/toJson
-│       ├── renderer/      # Flutter widget renderers
-│       │   ├── native_display_view.dart     # Entry point widget
-│       │   ├── container_renderer.dart      # Column/Row/Stack/PageView
-│       │   └── element_renderer.dart        # Text/Image/Button/Video/etc
-│       ├── style/         # StyleResolver — cascading inheritance
-│       ├── evaluator/     # TemplateEvaluator — {{variable}} interpolation
-│       └── bridge/        # Platform channel — CleverTap Core SDK integration
-├── android/
-│   └── src/main/kotlin/   # Android-side MethodChannel handler
-├── ios/
-│   └── Classes/           # iOS-side FlutterMethodChannel handler
+│       ├── models/        # Dart model classes with fromJson/toJson (sealed NativeDisplayNode)
+│       ├── renderer/
+│       │   ├── native_display_view.dart        # Entry point widget (StatefulWidget)
+│       │   ├── native_display_renderer.dart    # Node dispatch (StatelessWidget)
+│       │   ├── native_display_scope.dart       # InheritedWidget: rootHeight, styles, unitId, callbacks
+│       │   ├── native_display_font.dart        # Client font API
+│       │   ├── nd_element_registry.dart        # Registry for optional VIDEO/HTML add-on renderers
+│       │   ├── containers/                     # VERTICAL/HORIZONTAL/BOX/GALLERY renderers
+│       │   └── elements/                       # TEXT/IMAGE/BUTTON/SPACER/DIVIDER renderers
+│       ├── style/         # StyleResolver — cascading inheritance (resolve-time)
+│       ├── evaluator/     # VariableEvaluator — {{variable}} interpolation
+│       ├── handler/       # ActionHandler — tap → action (url_launcher) + attribution callback
+│       ├── placement/     # NativeDisplaySlot / NativeDisplaySlotManager
+│       ├── bridge/        # Dart-only helpers: NativeDisplayBridge (log level), NativeDisplayConfigParser
+│       └── utils/         # color_parser.dart, asset_url_collector.dart
 ├── pubspec.yaml
-└── example/               # Minimal example (full demos in flutter-sample/)
+└── test/
 ```
 
 ## Rendering Pipeline
@@ -82,13 +85,13 @@ NativeDisplayConfig.fromJson()
     ↓
 StyleResolver.resolve() — cascading style inheritance
     ↓
-TemplateEvaluator.evaluate() — {{vars}}
+VariableEvaluator.evaluateString() — {{vars}}
     ↓
-NativeDisplayView (StatelessWidget)
+NativeDisplayView (StatefulWidget)
     ↓
-NativeDisplayRenderer._buildNode()
+NativeDisplayRenderer (recursive node dispatch)
     ↙                           ↘
-ContainerRenderer            ElementRenderer
+containers/ renderers        elements/ renderers
 Column/Row/Stack/PageView    Text/Image.network/etc
 ```
 
@@ -105,11 +108,11 @@ Column/Row/Stack/PageView    Text/Image.network/etc
 
 | Element | Flutter Widget | Notes |
 |---------|---------------|-------|
-| `TEXT` | `Text` with `TextStyle` | Style cascading via `DefaultTextStyle` |
+| `TEXT` | `Text` with `TextStyle` | Parent text cascade resolved at resolve-time in StyleResolver |
 | `IMAGE` | `Image.network` with `CachedNetworkImage` or custom loader | GIF: native `Image.network` handles animated GIFs |
 | `BUTTON` | `GestureDetector` wrapping `Container` | Custom tap handling via ActionHandler |
-| `VIDEO` | `video_player` package + `AspectRatio` | Always dispose controller |
-| `HTML` | `webview_flutter` package | Requires explicit height — no wrap_content |
+| `VIDEO` | `video_player` via **add-on** `clevertap_native_display_video` (renderer registry) | Not in core; always dispose controller. Unregistered → renders nothing + warns |
+| `HTML` | `webview_flutter` via **add-on** `clevertap_native_display_webview` (renderer registry) | Not in core; requires explicit height — no wrap_content |
 | `SPACER` | `SizedBox` (fixed) or `Spacer` (flex) | |
 | `DIVIDER` | `Divider` or `VerticalDivider` | |
 
@@ -119,7 +122,7 @@ Column/Row/Stack/PageView    Text/Image.network/etc
 ```dart
 // Use factory constructor pattern with fromJson
 class NativeDisplayConfig {
-  final Theme? theme;
+  final NDTheme? theme;
   final List<StyleClass>? styleClasses;
   final Map<String, dynamic>? variables;
   final NativeDisplayNode root;
@@ -133,7 +136,7 @@ class NativeDisplayConfig {
 
   factory NativeDisplayConfig.fromJson(Map<String, dynamic> json) {
     return NativeDisplayConfig(
-      theme: json['theme'] != null ? Theme.fromJson(json['theme']) : null,
+      theme: json['theme'] != null ? NDTheme.fromJson(json['theme']) : null,
       styleClasses: (json['styleClasses'] as List?)
           ?.map((e) => StyleClass.fromJson(e))
           .toList(),
@@ -159,28 +162,18 @@ Color parseColor(String hex) {
 // The AA bytes must be swapped when converting
 ```
 
-### Style Cascading via InheritedWidget
+### Style Cascading (resolve-time, not a runtime text InheritedWidget)
 ```dart
-// Pass cascading text style through the tree without prop drilling
-class NativeDisplayTextStyle extends InheritedWidget {
-  final TextStyle textStyle;
+// Parent text-property cascade is computed ONCE in StyleResolver, then looked up per node.
+// (src/style/style_resolver.dart)
+final cascadedParent = parentStyle.cascadingOnly(); // text props only; visual props excluded
+final finalStyle = inlineOrClassStyle.merge(cascadedParent); // inline/class win over parent cascade
+// → stored in Map<String, Style> (nodeId → resolvedStyle); renderers do an O(1) lookup.
 
-  const NativeDisplayTextStyle({
-    required this.textStyle,
-    required super.child,
-    super.key,
-  });
-
-  static TextStyle of(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<NativeDisplayTextStyle>()
-        ?.textStyle ?? const TextStyle();
-  }
-
-  @override
-  bool updateShouldNotify(NativeDisplayTextStyle old) =>
-      textStyle != old.textStyle;
-}
+// The only InheritedWidget is NativeDisplayScope: it carries per-view render context
+// (rootHeight, the resolved styles map, unitId, attribution/open-url callbacks, client font)
+// down the tree so renderers don't thread these through every parameter — NOT a cascading TextStyle.
+final scope = NativeDisplayScope.of(context);
 ```
 
 ### Arrangement Strategy → Flutter Alignment
@@ -232,18 +225,28 @@ double? _resolve(Dimension dim, double parentSize) => switch (dim) {
 
 ### Performance: Minimise Rebuilds
 ```dart
-// 1. Pre-resolve all styles once in NativeDisplayView — never inside build()
-class NativeDisplayView extends StatelessWidget {
+// 1. Pre-resolve all styles once — never inside build(). NativeDisplayView is a StatefulWidget;
+//    resolve in initState (or accept a pre-resolved map from NativeDisplayConfigParser) and reuse.
+class NativeDisplayView extends StatefulWidget {
   final NativeDisplayConfig config;
-  final Map<String, Style> _resolvedStyles;  // pre-computed
+  final Map<String, Style>? resolvedStyles; // optional: already resolved by the parser
+  const NativeDisplayView({super.key, required this.config, this.resolvedStyles});
+  // ...
+}
 
-  NativeDisplayView({super.key, required this.config})
-      : _resolvedStyles = StyleResolver.resolve(config);
+class _NativeDisplayViewState extends State<NativeDisplayView> {
+  late final Map<String, Style> _resolvedStyles;
+
+  @override
+  void initState() {
+    super.initState();
+    _resolvedStyles = widget.resolvedStyles ?? StyleResolver.resolve(widget.config);
+  }
 
   @override
   Widget build(BuildContext context) {
-    // pass _resolvedStyles down — O(1) lookup per node
-    return _NativeDisplayRenderer(config: config, resolvedStyles: _resolvedStyles);
+    // pass _resolvedStyles down (via NativeDisplayScope) — O(1) lookup per node
+    return NativeDisplayRenderer(node: widget.config.root /* ... */);
   }
 }
 
@@ -283,39 +286,34 @@ final isRTL = Directionality.of(context) == TextDirection.rtl;
 EdgeInsetsDirectional.only(start: 16, end: 8)
 ```
 
-## CleverTap Bridge (Platform Channel)
+## CleverTap Integration (pure-Dart, host callbacks)
 
-The bridge receives display unit JSON from the CleverTap Core SDK and exposes it as a Dart stream:
+There are NO platform channels. The host obtains display unit JSON from the CleverTap Core SDK via
+`clevertap_plugin`, parses it, and renders with `NativeDisplayView`. Attribution is surfaced through
+callbacks that the host forwards to `clevertap_plugin`'s event APIs:
 
 ```dart
-// Dart side
-class NativeDisplayBridge {
-  static const _channel = MethodChannel('com.clevertap/native_display');
-  static const _events = EventChannel('com.clevertap/native_display_events');
+NativeDisplayView(
+  config: config,
+  unitId: wzrkId, // CleverTap display unit id; null for previews/tests
+  // Fired once per impression — host forwards to the Core SDK:
+  onNotificationViewed: (unitId) =>
+      CleverTapPlugin.pushDisplayUnitViewedEvent(unitId),
+  // Fired on interactive element tap, with the flattened/sanitized extras:
+  onNotificationClicked: (unitId, elementId, extras) =>
+      CleverTapPlugin.pushDisplayUnitClickedEvent(/* unitId, extras */),
+);
+```
 
-  // Returns the JSON string for a given unitId
-  static Future<String?> getDisplayUnitJson(String unitId) async {
-    return await _channel.invokeMethod<String>('getDisplayUnitJson', unitId);
-  }
+The only `NativeDisplayBridge` that exists is a Dart-only config helper — it does not talk to native:
 
-  // Stream of display unit updates (push-based)
-  static Stream<NativeDisplayConfig> displayUnitStream() {
-    return _events.receiveBroadcastStream()
-        .map((data) => NativeDisplayConfig.fromJson(jsonDecode(data as String)));
-  }
+```dart
+// lib/src/bridge/native_display_bridge.dart
+NativeDisplayBridge.setLogLevel(NDLogLevel.verbose);     // client-wins
+NativeDisplayBridge.syncLogLevelFromCore(coreDebugLevel); // align with host's Core SDK level (no-op after setLogLevel)
 
-  static Future<void> recordViewed(String unitId) async {
-    await _channel.invokeMethod('recordViewed', unitId);
-  }
-
-  static Future<void> recordClicked(String unitId) async {
-    await _channel.invokeMethod('recordClicked', unitId);
-  }
-
-  static Future<void> recordElementClicked(String unitId, String elementId) async {
-    await _channel.invokeMethod('recordElementClicked', {'unitId': unitId, 'elementId': elementId});
-  }
-}
+// Parse + pre-resolve a config (styles resolved once, reusable across rebuilds):
+final parsed = NativeDisplayConfigParser.parse(jsonString);
 ```
 
 ## Common Gotchas
@@ -330,10 +328,20 @@ class NativeDisplayBridge {
 - **Gallery sizing**: always based on container constraints, NOT screen dimensions — use LayoutBuilder inside PageView
 - **SPACE_BETWEEN with 1 child**: child aligns to start in Flutter, matching Android/iOS behavior
 - **Const constructors**: mark every widget with all-constant properties as `const` — enables subtree skipping
-- **InheritedWidget scope**: `DefaultTextStyle` only applies to `Text` widget descendants, not to our model — use our own `NativeDisplayTextStyle` inherited widget
-- **Missing variables**: `TemplateEvaluator` must return empty string (not null) for unknown `{{vars}}` — matches Android/iOS behavior
+- **Text cascade is resolve-time**: parent text-property cascade is computed once in `StyleResolver` (`cascadingOnly()` + `merge()`), stored per node in a `Map<String, Style>` — not via a runtime text-style InheritedWidget. The `NativeDisplayScope` InheritedWidget carries rootHeight/styles/unitId/callbacks/font, not a cascading `TextStyle`.
+- **Missing variables**: `VariableEvaluator` must return empty string (not null) for unknown `{{vars}}` — matches Android/iOS behavior
 - **Circular node references**: validate before rendering — will cause infinite recursion
 - **Style class merge order**: `classStyle.merge(inlineStyle)` so inline wins — never reverse
+- **Hermetic text baseline**: ND text must NOT inherit the host app's `DefaultTextStyle` /
+  Material theme (e.g. `bodyMedium`'s `letterSpacing: 0.25` leaks in and changes wrapping). The
+  renderer wraps content in a `DefaultTextStyle(_kNdBaseTextStyle)` (inherit:false) so unset
+  props reset to engine defaults — keep this when touching text. This is what makes Flutter text
+  match native (SDK-6246).
+- **Client font API (parity with Android/iOS, SDK-6296)**: resolution order is
+  resolver → default family → JSON `fontFamily` → system. Per-view (`NativeDisplayView(fontFamily:,
+  fontResolver:)`) overrides the process-wide `NativeDisplayFont.instance`. The resolver returns a
+  `TextStyle` (composes with `google_fonts`); the SDK adopts only font-identity fields and keeps
+  its own size/color/weight/line-height. See `native_display_font.dart` + `resolveNativeDisplayFont()`.
 
 ## Workflow
 
@@ -350,12 +358,21 @@ class NativeDisplayBridge {
 
 ## Versioning & Compatibility
 
-- **Minimum Flutter**: 3.10.0 (Dart 3.0) — needed for pattern matching (`switch` expressions, sealed types)
-- **Minimum Android**: API 23 (matches existing Android SDK — `minSdk = 23` in `android/sdk/build.gradle.kts`)
+- **Minimum Flutter**: 3.24.0 (Dart 3.5) — the honest floor where a valid dependency
+  resolution exists (see the rationale comment in `flutter/pubspec.yaml`). Pattern matching /
+  sealed types are available well below this.
+- **Minimum Android**: API 23 (matches existing Android SDK — `minSdk = 23`)
 - **Minimum iOS**: 15.0 (matches existing iOS SDK — `Package.swift` `.iOS(.v15)`)
-- **Dependencies**: keep to minimum — prefer Dart-native solutions over packages where feasible
-- **Packages allowed**: `video_player`, `webview_flutter`, `cached_network_image` (or `flutter_cache_manager`), `pigeon` (dev)
-- **Version sync**: Flutter plugin version should be aligned with native SDK version
+- **Core dependencies (kept minimal)**: `cached_network_image`, `url_launcher`. The core is a
+  **pure-Dart package** — prefer Dart-native solutions over adding packages.
+- **Optional add-on packages (SDK-6255)**: `video_player` and `webview_flutter` are **NOT** in
+  the core. VIDEO/HTML renderers ship as separate SDK-owned packages
+  (`clevertap_native_display_video`, `clevertap_native_display_webview`) that register into the
+  core's renderer registry. This keeps heavy native deps opt-in and lowers the core's Flutter
+  floor. Hosts add only the add-ons they need.
+- **Published packages**: core + the two add-ons + the integration package, all on pub.dev under
+  the clevertap.com publisher (Flutter ND 1.0.0).
+- **Version sync**: Flutter plugin version aligned with the native SDK version.
 
 ## What You Do NOT Do
 
@@ -370,5 +387,4 @@ class NativeDisplayBridge {
 - Coordinate with `android-sdk` and `ios-sdk` agents for cross-platform parity
 - Notify `flutter-sample` agent of breaking SDK changes
 - Hand failing tests to `testing` agent for JSON reproduction cases
-- Platform channel Android side: coordinate with `android-sdk` agent
-- Platform channel iOS side: coordinate with `ios-sdk` agent
+- There is no native bridge to coordinate — attribution is pure-Dart (host callbacks → `clevertap_plugin`). Coordinate with `android-sdk` / `ios-sdk` only on rendering/behaviour parity.

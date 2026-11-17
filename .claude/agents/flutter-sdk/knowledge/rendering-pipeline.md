@@ -20,7 +20,7 @@ For the Native Display SDK, phases 1 and 2 are most relevant.
 ### VERTICAL → Column
 
 ```dart
-Widget renderVertical(ContainerNode node, List<Widget> children, Style style) {
+Widget renderVertical(NativeDisplayContainer node, List<Widget> children, Style style) {
   final arrangement = node.layout.arrangement;
   final spacing = arrangement.spacing ?? 0.0;
 
@@ -38,7 +38,7 @@ Widget renderVertical(ContainerNode node, List<Widget> children, Style style) {
 ### HORIZONTAL → Row
 
 ```dart
-Widget renderHorizontal(ContainerNode node, List<Widget> children) {
+Widget renderHorizontal(NativeDisplayContainer node, List<Widget> children) {
   final arrangement = node.layout.arrangement;
   return Row(
     mainAxisAlignment: arrangementToMain(arrangement.strategy),
@@ -54,7 +54,7 @@ Widget renderHorizontal(ContainerNode node, List<Widget> children) {
 ### BOX → Stack
 
 ```dart
-Widget renderBox(ContainerNode node, List<Widget> children, Style style) {
+Widget renderBox(NativeDisplayContainer node, List<Widget> children, Style style) {
   return Stack(
     clipBehavior: Clip.hardEdge,
     children: children.map((child) {
@@ -69,7 +69,7 @@ Widget renderBox(ContainerNode node, List<Widget> children, Style style) {
 ### GALLERY → PageView (SNAPPING) / SingleChildScrollView (FREE_FLOW) / GridView (FREE_FLOW_GRID)
 
 ```dart
-Widget renderGallery(ContainerNode node, List<Widget> children, GalleryConfig config) {
+Widget renderGallery(NativeDisplayContainer node, List<Widget> children, GalleryConfig config) {
   return switch (config.mode) {
     GalleryMode.snapping => _buildPageView(node, children, config),
     GalleryMode.freeFlow => _buildScrollView(node, children, config),
@@ -77,7 +77,7 @@ Widget renderGallery(ContainerNode node, List<Widget> children, GalleryConfig co
   };
 }
 
-Widget _buildPageView(ContainerNode node, List<Widget> children, GalleryConfig config) {
+Widget _buildPageView(NativeDisplayContainer node, List<Widget> children, GalleryConfig config) {
   return LayoutBuilder(
     builder: (context, constraints) => SizedBox(
       height: constraints.maxHeight,
@@ -97,15 +97,15 @@ Widget _buildPageView(ContainerNode node, List<Widget> children, GalleryConfig c
 ### TEXT
 
 ```dart
-Widget renderText(ElementNode node, Style style) {
-  final text = TemplateEvaluator.evaluate(node.bindings['text'] ?? '', variables);
-  final inherited = NativeDisplayTextStyle.of(context); // cascaded from parent
+Widget renderText(NativeDisplayElement node, Style style) {
+  final text = evaluator.evaluateString(node.bindings['text'] ?? ''); // VariableEvaluator
+  // `style` is the already-resolved style for this node (parent text cascade applied at resolve time)
 
   return Text(
     text,
     maxLines: style.maxLines,
     overflow: _toOverflow(style.overflow),
-    style: inherited.copyWith(
+    style: const TextStyle().copyWith(
       color: style.textColor != null ? parseColor(style.textColor!) : null,
       fontSize: style.fontSize?.resolve(rootHeight),
       fontWeight: _toFontWeight(style.fontWeight),
@@ -126,8 +126,8 @@ Widget renderText(ElementNode node, Style style) {
 ### IMAGE
 
 ```dart
-Widget renderImage(ElementNode node, Style style) {
-  final url = TemplateEvaluator.evaluate(node.bindings['url'] ?? '', variables);
+Widget renderImage(NativeDisplayElement node, Style style) {
+  final url = evaluator.evaluateString(node.bindings['url'] ?? ''); // VariableEvaluator
   final fit = _toBoxFit(style.imageFit);
 
   // GIF detection: explicit flag, .gif extension, known hosts, path patterns
@@ -151,8 +151,8 @@ Widget renderImage(ElementNode node, Style style) {
 ### BUTTON
 
 ```dart
-Widget renderButton(ElementNode node, Style style) {
-  final text = TemplateEvaluator.evaluate(node.bindings['text'] ?? '', variables);
+Widget renderButton(NativeDisplayElement node, Style style) {
+  final text = evaluator.evaluateString(node.bindings['text'] ?? ''); // VariableEvaluator
 
   return GestureDetector(
     onTap: () => actionListener?.onAction(node.action),
@@ -169,17 +169,19 @@ Widget renderButton(ElementNode node, Style style) {
 
 ## Dimension Resolution
 
-Every node's width and height must be resolved against parent constraints.
+Every node's width and height must be resolved against parent constraints. There is no
+`DimensionCalculator` class — resolution is done inline in the renderers/containers against the
+`Dimension` model (enum-typed `unit`/`special`), using `LayoutBuilder`/`BoxConstraints` to supply
+`parentSize`:
 
 ```dart
-class DimensionCalculator {
-  static double? resolve(Dimension? dim, double parentSize, double rootHeight) {
-    if (dim == null) return null;
-    if (dim.special == 'match_parent') return parentSize;
-    if (dim.special == 'wrap_content') return null;   // null → intrinsic size
-    if (dim.unit == 'percent') return parentSize * dim.value / 100;
-    return dim.value; // dp/sp/px — treat as logical pixels
-  }
+// Dimension (src/models/layout.dart): value (double), unit (DimensionUnit), special (SpecialDimension?)
+double? resolveDimension(Dimension? dim, double parentSize) {
+  if (dim == null) return null;
+  if (dim.special == SpecialDimension.matchParent) return parentSize;
+  if (dim.special == SpecialDimension.wrapContent) return null; // null → intrinsic size
+  if (dim.unit == DimensionUnit.percent) return parentSize * dim.value / 100;
+  return dim.value; // dp/sp/px — treat as logical pixels
 }
 ```
 
@@ -278,22 +280,23 @@ Widget applyStyle(Widget child, Style style, Layout layout) {
 
 ---
 
-## Text Style Cascading via InheritedWidget
+## Text Style Cascading at Resolve Time
 
-Text properties cascade from parent containers to all descendants. Wrap containers with the inherited widget:
+Text properties cascade from parent containers to all descendants. This cascade is computed **once**
+in `StyleResolver` — not via a runtime InheritedWidget — so renderers read a flat, already-merged
+style per node:
 
 ```dart
-// When rendering a container with a style that has text properties:
-Widget wrapWithTextStyle(Widget child, Style style) {
-  final inherited = NativeDisplayTextStyle.of(context);
-  final merged = inherited.copyWith(
-    color: style.textColor != null ? parseColor(style.textColor!) : null,
-    fontSize: style.fontSize?.resolve(rootHeight),
-    // ... other text properties
-  );
-  return NativeDisplayTextStyle(textStyle: merged, child: child);
-}
+// StyleResolver (src/style/style_resolver.dart) merges parent cascading-only props into each node:
+final cascadedParent = parentStyle.cascadingOnly(); // text props only; visual props excluded
+final finalStyle = mergedFromConfig.merge(cascadedParent); // inline/class win over parent cascade
+// → result stored in Map<String, Style> (nodeId → resolvedStyle); renderers do O(1) lookup
 ```
+
+Only visual render context (rootHeight, the resolved styles map, unitId, callbacks, client font) is
+carried down the tree via the `NativeDisplayScope` InheritedWidget — not a cascading `TextStyle`.
+Separately, the ND root is wrapped in a hermetic `DefaultTextStyle` (`inherit: false`) so unset text
+props reset to engine defaults instead of leaking from the host app's Material theme.
 
 ---
 
@@ -322,6 +325,12 @@ BoxDecoration _buildBoxDecoration(Style style) {
 ---
 
 ## Video Element Pipeline
+
+> **Add-on, not core.** VIDEO (and HTML) renderers live in the optional `clevertap_native_display_video`
+> / `clevertap_native_display_webview` packages and register into `NativeDisplayRenderers`
+> (`nd_element_registry.dart`). The core does NOT depend on `video_player` / `webview_flutter`.
+> If no builder is registered for VIDEO/HTML the element renders `SizedBox.shrink()` and logs a
+> warning. The pattern below is what such an add-on's builder implements.
 
 ```dart
 // StatefulWidget required for lifecycle management

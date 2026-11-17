@@ -32,19 +32,24 @@ All models use `@Serializable` annotation from kotlinx.serialization for JSON pa
 ```kotlin
 @Serializable
 data class NativeDisplayConfig(
+    val version: String = "1.0",
     val theme: Theme? = null,
-    val styleClasses: List<StyleClass>? = null,
-    val variables: Map<String, JsonElement>? = null,
-    val root: NativeDisplayNode
+    val styleClasses: List<StyleClass> = emptyList(),
+    val variables: Map<String, JsonElement> = emptyMap(),
+    val root: NativeDisplayNode? = null,
+    // Phase 2+ external references (optional)
+    val templateRef: TemplateReference? = null,
+    val styleRef: StyleReference? = null,
+    val dataRef: DataReference? = null
 )
 ```
 
 **Key Model Classes**:
 - `NativeDisplayConfig` - Root configuration
-- `NativeDisplayNode` - Base node (container or element)
+- `NativeDisplayNode` - Base **sealed class**; concrete subtypes are `NativeDisplayContainer` and `NativeDisplayElement`
 - `Layout` - Layout configuration for all nodes
 - `Style` - Style properties (text + visual)
-- `Background` - Sealed class with 10+ background types
+- `Background` - Sealed class with multiple background types
 - `Animation` - Animation configuration
 - `GalleryConfig` - Gallery-specific configuration
 
@@ -55,12 +60,12 @@ data class NativeDisplayConfig(
 - Theme → StyleClass → Inline Style
 - Visual properties do NOT cascade
 
-**Template Evaluation**:
+**Variable Evaluation** (`VariableEvaluator`):
 - Variable interpolation: `{{variableName}}`
 - Nested properties: `{{object.property}}`
 - Negation: `{{!expression}}`
 
-**Layout Calculation**:
+**Layout Calculation** (`ModifierExtensions.kt` — `applySizing`):
 - Dimension resolution (DP, SP, PERCENT, PX)
 - Special dimensions (WRAP_CONTENT, MATCH_PARENT)
 - RTL support automatic
@@ -69,11 +74,11 @@ data class NativeDisplayConfig(
 ### 3. UI Rendering Layer
 
 **Jetpack Compose Components**:
-- `NativeDisplayView` - Main entry point
-- `ContainerRenderer` - Renders 5 container types
-- `ElementRenderer` - Renders 6 element types
-- `BackgroundModifier` - Applies backgrounds
-- `AnimationWrapper` - Handles animations
+- `NativeDisplayView` / `RenderNode` (`renderer/NativeDisplayRenderer.kt`) - Main entry point + node dispatcher
+- `ElementRenderer` - Renders the 7 element types
+- `GalleryRenderer` - Renders the GALLERY container
+- `BackgroundRenderer` - Applies backgrounds
+- `VideoRenderer` / `HtmlRenderer` - VIDEO and HTML elements
 
 ## Architecture Principles
 
@@ -111,30 +116,39 @@ Box(
 
 ```
 android/sdk/src/main/kotlin/com/clevertap/android/nativedisplay/
-├── models/                    # Data models
-│   ├── NativeDisplayConfig.kt
-│   ├── NativeDisplayNode.kt
+├── models/                    # Data models (@Serializable)
+│   ├── NativeDisplayConfig.kt # also ResolvedConfig
+│   ├── NativeDisplayNode.kt   # sealed: NativeDisplayContainer / NativeDisplayElement
 │   ├── Layout.kt
 │   ├── Style.kt
+│   ├── StyleProperties.kt
+│   ├── TextDimension.kt
 │   ├── Background.kt
-│   ├── Animation.kt
+│   ├── Enums.kt               # ContainerType, ElementType, ArrangementStrategy, …
+│   ├── Action.kt
+│   ├── ActionTriggers.kt
 │   └── GalleryConfig.kt
 │
-├── rendering/                 # UI rendering
-│   ├── NativeDisplayView.kt
-│   ├── ContainerRenderer.kt
+├── renderer/                  # UI rendering
+│   ├── NativeDisplayRenderer.kt  # NativeDisplayView + RenderNode dispatcher
 │   ├── ElementRenderer.kt
-│   ├── BackgroundModifier.kt
-│   └── AnimationWrapper.kt
+│   ├── GalleryRenderer.kt
+│   ├── BackgroundRenderer.kt
+│   ├── VideoRenderer.kt
+│   ├── HtmlRenderer.kt
+│   ├── ModifierExtensions.kt     # applySizing / dimension + layout modifiers
+│   ├── NativeDisplayLocals.kt
+│   └── RenderUtils.kt
 │
-├── resolution/                # Business logic
-│   ├── StyleResolver.kt
-│   ├── TemplateEvaluator.kt
-│   └── DimensionCalculator.kt
-│
-└── utils/                     # Utilities
-    ├── ColorParser.kt
-    └── Extensions.kt
+├── style/                     # StyleResolver (cascading)
+├── evaluator/                 # VariableEvaluator ({{var}} interpolation)
+├── handler/                   # ActionHandler + attribution
+├── listener/                  # Action / component listeners
+├── bridge/                    # Core SDK bridge, config parser, unit cache
+├── placement/                 # NativeDisplaySlot / SlotManager / SlotView
+├── view/                      # NativeDisplayViewGroup (RecyclerView host)
+├── internal/                  # ImageLoaderProvider, NDLogger
+└── utils/                     # Extensions, MixedContentAdapter, …
 ```
 
 ## Data Flow
@@ -148,9 +162,9 @@ NativeDisplayConfig
     ↓
 Style Resolution (StyleResolver)
     ↓
-Template Evaluation (TemplateEvaluator)
+Variable Evaluation (VariableEvaluator)
     ↓
-Layout Calculation (DimensionCalculator)
+Layout Calculation (ModifierExtensions.applySizing)
     ↓
 Compose Rendering (NativeDisplayView)
     ↓
@@ -166,8 +180,7 @@ Each container type maps to Compose layouts:
 | VERTICAL | Column | Vertical.Arrangement |
 | HORIZONTAL | Row | Horizontal.Arrangement |
 | BOX | Box | Alignment |
-| STACK | Box with z-index | Layer order |
-| GALLERY | LazyRow/Column | Item spacing |
+| GALLERY | LazyRow / LazyColumn + `rememberSnapFlingBehavior` | contentPadding peeking, snap |
 
 ## Element Rendering Strategy
 
@@ -204,9 +217,9 @@ data class ChildArrangement(
 ```
 
 ### 4. RGBA Color Format
-Colors are stored as RGBA hex strings:
-- `#RRGGBB` → opaque (alpha defaults to FF)
-- `#RRGGBBAA` → as-is (with alpha)
+Colors are stored as RGBA hex strings (parsed by `RenderUtils.parseColor`):
+- `#RRGGBB` → opaque (alpha = 1.0)
+- `#RRGGBBAA` → alpha is the **low byte** (RGBA, not ARGB)
 
 ## Extension Points
 
@@ -214,7 +227,7 @@ Colors are stored as RGBA hex strings:
 Extend the sealed `Background` class for new background types.
 
 ### Custom Animations
-Add new `AnimationType` enum values and implement in `AnimationWrapper`.
+Add new `AnimationType` enum values (in `Enums.kt`) and wire the enter transition in the render tree (`NativeDisplayRenderer.kt`; easing via `RenderUtils.resolveEasing`).
 
 ### Custom Elements
 Add new `ElementType` enum values and implement in `ElementRenderer`.

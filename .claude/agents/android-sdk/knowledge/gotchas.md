@@ -50,37 +50,53 @@ Box(
 
 ## Color Format Issues
 
-### Problem: RGB vs ARGB Format
+### SDK color format is RGBA (`#RRGGBBAA`), NOT ARGB
+
+The SDK consumes **RGBA** hex (matching the web/dashboard standard), and the actual parser
+lives in `RenderUtils.kt` as a top-level `internal fun parseColor(colorString: String?): Color?`.
+An 8-digit value is `#RRGGBBAA` — **alpha is the LOW byte**. A 6-digit value is opaque RGB.
+Invalid input returns `null` (no black fallback).
 
 ```kotlin
-// ❌ Wrong: RGB format parsed as ARGB
-val color = Color("#FF0000".toLong(16))  // Becomes #00FF0000 (transparent)
-```
-
-**Solution**: Always convert RGB to ARGB
-
-```kotlin
-// ✅ Correct: Convert RGB to ARGB
-fun String.parseColor(): Color {
-    val cleanHex = this.removePrefix("#")
-    val argb = when (cleanHex.length) {
-        6 -> "FF$cleanHex"  // RGB → ARGB (add full alpha)
-        8 -> cleanHex       // Already ARGB
-        else -> "FF000000"  // Fallback to black
+// ✅ Correct — mirrors RenderUtils.parseColor (RGBA, alpha = low byte)
+internal fun parseColor(colorString: String?): Color? {
+    if (colorString == null) return null
+    return try {
+        val hex = colorString.removePrefix("#")
+        when (hex.length) {
+            6 -> {
+                val rgb = hex.toLong(16)
+                Color(
+                    red = ((rgb shr 16) and 0xFF) / 255f,
+                    green = ((rgb shr 8) and 0xFF) / 255f,
+                    blue = (rgb and 0xFF) / 255f,
+                    alpha = 1f
+                )
+            }
+            8 -> {  // #RRGGBBAA — alpha is the low byte
+                val rgba = hex.toLong(16)
+                Color(
+                    red = ((rgba shr 24) and 0xFF) / 255f,
+                    green = ((rgba shr 16) and 0xFF) / 255f,
+                    blue = ((rgba shr 8) and 0xFF) / 255f,
+                    alpha = (rgba and 0xFF) / 255f
+                )
+            }
+            else -> null
+        }
+    } catch (_: Exception) {
+        null
     }
-    return Color(argb.toLong(16))
 }
 ```
 
-### Problem: ARGB vs RGBA
-
-Android uses ARGB format, but many web tools use RGBA:
+**Common mistake**: treating 8-digit hex as ARGB (alpha = high byte). That is wrong for this
+SDK — `#FF000080` is **red at 50% alpha**, not a near-opaque dark color.
 
 ```
-Web/JSON (RGBA): #FF0000FF (red with full alpha)
+Web/JSON (RGBA): #FF0000FF  → opaque red
+                 #FF000080  → red at ~50% alpha
 ```
-
-**Always verify**: Color format in JSON should be RGBA (#RRGGBBAA).
 
 ## RTL Layout Issues
 
@@ -170,7 +186,7 @@ Row(
 
 **Rule**: `aspectRatio` overrides all percent dimensions. Percent is only respected when no AR is set. Fixed (dp/px) dims override AR only when BOTH width AND height are fixed simultaneously.
 
-See `ModifierExtensions.kt:109-118` for the exact implementation.
+See `ModifierExtensions.kt` — `applySizing()` (aspectRatio applied at ~lines 116-121, before the width `fillMaxWidth(...)`) for the exact implementation.
 
 ### Problem: Percent Dimension Without Parent Size
 
@@ -428,42 +444,32 @@ fun VideoPlayer() {
 
 ## JSON Parsing Issues
 
-### Problem: Float vs Int for fontSize
+### Problem: fontSize / lineHeight accept two JSON shapes
+
+`fontSize` and `lineHeight` can arrive as either a raw number or an object:
 
 ```json
-// ❌ Wrong: JSON number type mismatch
-{
-  "fontSize": 16  // Int, but model expects Float
-}
+{ "fontSize": 16 }                              // raw number (platform SP)
+{ "fontSize": { "value": 40, "unit": "percent" } }  // percent of rootContainerHeight
 ```
 
-**Kotlin model**:
+**Kotlin model** (in `TextDimension.kt`): these fields are `TextDimension?`, **not** `Float?`:
 ```kotlin
-@Serializable
-data class Style(
-    val fontSize: Float? = null  // Expects Float
-)
-```
-
-**Solution**: Define model with appropriate type or use custom serializer
-
-```kotlin
-// ✅ Option 1: Accept both
-@Serializable
-data class Style(
-    @Serializable(with = FloatSerializer::class)
-    val fontSize: Float? = null
+@Immutable
+@Serializable(with = TextDimensionSerializer::class)
+data class TextDimension(
+    val value: Float,
+    val unit: TextDimensionUnit = TextDimensionUnit.PLATFORM  // PLATFORM | PERCENT
 )
 
-object FloatSerializer : KSerializer<Float> {
-    override fun deserialize(decoder: Decoder): Float {
-        return when (val value = decoder.decodeJsonElement()) {
-            is JsonPrimitive -> value.content.toFloat()
-            else -> 0f
-        }
-    }
-}
+// In Style.kt:
+val fontSize: TextDimension? = null
+val lineHeight: TextDimension? = null
 ```
+
+**How it already works**: `TextDimensionSerializer` is a custom `KSerializer` that accepts
+both the raw-number and `{value, unit}` object forms, so there is no need to add your own
+`Float` serializer. `PERCENT` resolves as `rootHeightPx * value / 1000` via `TextDimension.resolve()`.
 
 ### Problem: Null vs Missing Fields
 
@@ -509,7 +515,7 @@ Particle backgrounds with >100 particles impact battery. Use sparingly.
 When something doesn't work:
 
 - [ ] Check modifier order (background → padding → border)
-- [ ] Verify color format (ARGB, not RGBA)
+- [ ] Verify color format (RGBA `#RRGGBBAA`, alpha = low byte — NOT ARGB)
 - [ ] Use start/end instead of left/right for RTL
 - [ ] Provide spacing value for SPACED strategy
 - [ ] Specify dimensions for all elements

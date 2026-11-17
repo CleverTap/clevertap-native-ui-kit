@@ -85,7 +85,7 @@ Modifier
 - Verify special dimensions (MATCH_PARENT, WRAP_CONTENT)
 
 ### Wrong Position
-- Check Offset calculations in BOX/STACK
+- Check Offset calculations in BOX
 - Verify arrangement strategy applied
 - Look for padding applied in wrong order
 
@@ -103,7 +103,7 @@ Modifier
 ### Children Not Showing
 - Verify children list not null/empty
 - Check child dimensions
-- Look for z-index issues in STACK
+- Look for z-order (child draw order) issues in BOX
 - Verify arrangement spacing
 
 ## Debugging Code Template

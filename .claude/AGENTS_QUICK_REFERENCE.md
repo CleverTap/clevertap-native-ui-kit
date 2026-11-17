@@ -1,106 +1,80 @@
-# Quick Reference: Your 5 Agents
+# Quick Reference: Your 7 Agents
+
+Cheat sheet. Full guide → [`AGENTS_README.md`](AGENTS_README.md).
 
 ---
 
-## 🤖 Agent Cheat Sheet
+## Agent cheat sheet
 
-| Agent | Handle | Primary Use |
-|-------|--------|-------------|
-| **Android SDK** | `@android-sdk-agent` | Android implementation |
-| **iOS SDK** | `@ios-sdk-agent` | iOS implementation |
-| **Android Sample** | `@android-sample-agent` | Android demos |
-| **iOS Sample** | `@ios-sample-agent` | iOS demos |
-| **Testing** | `@testing-agent` | Tests & screenshots |
+| Agent | Primary use |
+|-------|-------------|
+| `android-sdk` | Android (Kotlin/Compose) SDK implementation |
+| `ios-sdk` | iOS (Swift/SwiftUI) SDK implementation |
+| `flutter-sdk` | Flutter (Dart) plugin implementation |
+| `android-sample` | Android demos (Compose + XML) |
+| `ios-sample` | iOS demos (SwiftUI) |
+| `flutter-sample` | Flutter demos |
+| `testing` | Test gen + build/run automation + cross-platform screenshots |
+
+Invoke by naming the agent, e.g. `"Using the <agent> agent, …"`.
 
 ---
 
-## 💬 Quick Commands
+## Quick commands
 
-### Testing
+### Implementation (parallel across platforms)
 ```
-@testing-agent, generate 25 container tests
-@testing-agent, capture Android screenshots for all tests
-@testing-agent, capture iOS screenshots for all tests
-@testing-agent, compare and generate report
-```
-
-### Implementation
-```
-@android-sdk-agent, implement GRID from spec 013
-@ios-sdk-agent, implement GRID from spec 013
+Using the android-sdk agent, implement GRID from spec 013
+Using the ios-sdk agent, implement GRID from spec 013
+Using the flutter-sdk agent, implement GRID from spec 013
 ```
 
 ### Demos
 ```
-@android-sample-agent, create product card demo
-@ios-sample-agent, create product card demo
+Using the android-sample agent, create a product-card demo
+Using the ios-sample agent, create a product-card demo
+Using the flutter-sample agent, create a product-card demo
 ```
 
-### Bug Fixes
+### Testing, automation & screenshots
 ```
-@android-sdk-agent, fix RTL layout in HorizontalContainer.kt
-@ios-sdk-agent, fix shadow rendering on iOS 14
-```
-
-### Code Review
-```
-@android-sdk-agent, review ContainerRenderer.kt for performance
-@ios-sdk-agent, review ContainerRenderer.swift for memory leaks
+Using the testing agent, generate 25 container test variations
+Using the testing agent, run /nd-screenshot-compare on Android + iOS
+Using the testing agent, pair screenshots by event and report diffs
 ```
 
----
-
-## 📂 File Locations
-
+### Bug fixes & review
 ```
-.claude/agents/
-├── README.md                  ← Start here
-├── AGENTS_READY.md            ← Setup complete guide
-├── android-sdk/AGENT.md       ← Android SDK agent details
-├── ios-sdk/AGENT.md           ← iOS SDK agent details
-├── android-sample/AGENT.md    ← Android sample agent details
-├── ios-sample/AGENT.md        ← iOS sample agent details
-└── testing/AGENT.md           ← Testing agent details
+Using the flutter-sdk agent, fix GALLERY peek sizing in native_display_view.dart
+Using the android-sdk agent, review NativeDisplayRenderer.kt for recomposition cost
 ```
 
 ---
 
-## 🎯 Common Workflows
+## File locations
 
-### Full Feature Implementation
 ```
-1. @testing-agent, generate tests for GRID
-2. @android-sdk-agent, implement GRID
-3. @ios-sdk-agent, implement GRID
-4. @testing-agent, validate with screenshots
-5. @android-sample-agent, add GRID demo
-6. @ios-sample-agent, add GRID demo
-```
-
-### Bug Fix & Validation
-```
-1. @testing-agent, create repro test for [bug]
-2. @android-sdk-agent or @ios-sdk-agent, fix bug
-3. @testing-agent, validate fix with screenshots
-```
-
-### Cross-Platform Parity Check
-```
-1. @testing-agent, generate comprehensive test suite
-2. @testing-agent, capture both platforms
-3. @testing-agent, compare and report
-4. @android-sdk-agent & @ios-sdk-agent, fix differences
+.claude/
+├── AGENTS_README.md            ← full agent guide
+├── AGENTS_QUICK_REFERENCE.md   ← this cheat sheet
+├── agents/<name>.md            ← each agent definition
+└── agents/<name>/knowledge/    ← each agent's architecture + patterns
 ```
 
 ---
 
-## ⚡ Pro Tips
+## Common workflows
 
-- **Be specific**: Include file names and line numbers
-- **Provide context**: Reference specs, issues, or previous work
-- **Use collaboration**: Multiple agents working together
-- **Review output**: Always check agent work before committing
+| Goal | Flow |
+|------|------|
+| Full feature | spec → android-sdk → ios-sdk + flutter-sdk (parallel) → sample agents → testing |
+| Bug fix | testing (repro) → owning SDK agent (fix) → testing (validate) |
+| Parity check | testing → /nd-screenshot-compare → route diffs to SDK agents |
 
 ---
 
-**Read full docs**: `.claude/agents/AGENTS_READY.md`
+## Pro tips
+- Be specific — name files and line numbers.
+- Reference the spec or ticket.
+- Fan out SDK agents in parallel for cross-platform work; Android is the reference.
+- Always review agent output before committing.

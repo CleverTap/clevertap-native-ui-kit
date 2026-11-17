@@ -84,17 +84,18 @@ data class NativeDisplayConfig(
 )
 ```
 
-**Why it still works**: See Strong Skipping Mode below.
+**Why it still works**: The `@Immutable` annotation makes Compose treat the class as stable regardless of the `List<T>` field. See the stability section below.
 
-### Strong Skipping Mode (Kotlin 2.0.20+ — our default)
+### Stability relies on @Immutable (not Strong Skipping)
 
-The project uses **Kotlin 2.1.0**, so Strong Skipping Mode is active by default. This changes recomposition rules:
+The project uses **Kotlin 1.9.25** with the standalone **Compose compiler extension 1.5.15** (K1). Strong Skipping Mode (a Kotlin 2.0.20+ feature) is **NOT** active here, so we cannot rely on reference-equality skipping of unstable params. Stability must come from explicit annotations:
 
-- **Stable params**: compared with `equals()`
-- **Unstable params**: compared with **reference equality (`===`)** — composables are still skippable when the same instance is passed
-- **Lambdas**: automatically memoized by the compiler (no manual `remember` needed for lambdas)
+- **Stable params** (`@Immutable`/`@Stable` types): compared with `equals()` and skippable.
+- **Unstable params** (e.g. a bare `List<T>` or interface): make a composable `restartable but not skippable` — it recomposes whenever its parent does.
 
-**Practical impact**: Even if a composable receives a `NativeDisplayContainer` (which has `List<T>`), it will be skipped if the same instance is passed again. Combined with `@Immutable`, our render tree is doubly protected.
+**Practical impact**: Because `NativeDisplayContainer` carries a `List<T>`, our `@Immutable` annotation is load-bearing — it is the *only* thing that lets Compose treat these classes as stable and skip them. Do not drop the annotations expecting Strong Skipping to cover for them; it is not enabled.
+
+> When the project later upgrades to Kotlin 2.x (which bundles the Compose compiler and enables Strong Skipping by default), unstable params would additionally be skippable via reference equality. Re-verify with Compose compiler reports after any such upgrade.
 
 ---
 
@@ -134,9 +135,14 @@ val evaluator = remember(config.variables) {
     VariableEvaluator(variables = config.variables)
 }
 
-// ✅ ActionHandler — keyed by both listeners
-val actionHandler = remember(actionListener, componentListener) {
-    ActionHandler(context = context, listener = actionListener, componentListener = componentListener)
+// ✅ ActionHandler — keyed by unitId; listeners are assigned in a SideEffect so a
+//    changed listener never forces the handler (and its subtree) to be recreated
+val actionHandler = remember(unitId) {
+    ActionHandler(context = context, unitId = unitId)
+}
+SideEffect {
+    actionHandler.listener = actionListener
+    actionHandler.componentListener = componentListener
 }
 DisposableEffect(actionHandler) { onDispose { actionHandler.cleanup() } }
 
@@ -183,12 +189,14 @@ NativeDisplayActionListener
 NativeDisplayComponentListener
 ```
 
-**Why this doesn't cause problems**: Both are always wrapped in `remember(...)` before use in composables — the `ActionHandler` is the stable boundary. If you ever pass a listener directly as a composable parameter, wrap it in a `remember` block.
+**Why this doesn't cause problems**: Neither listener is passed as a composable parameter into the render tree. The `ActionHandler` is the stable boundary — it is `remember`ed (keyed by `unitId`) and the listeners are assigned onto it in a `SideEffect`. If you ever need a listener inside a composable, go through a `remember`ed holder like this rather than passing the interface directly.
 
 ```kotlin
-// ✅ Listeners are wrapped — stable boundary
-val actionHandler = remember(actionListener, componentListener) {
-    ActionHandler(...)
+// ✅ Stable boundary — handler remembered, listeners assigned via SideEffect
+val actionHandler = remember(unitId) { ActionHandler(context, unitId) }
+SideEffect {
+    actionHandler.listener = actionListener
+    actionHandler.componentListener = componentListener
 }
 ```
 
@@ -231,7 +239,7 @@ Reports appear in `sdk/build/compose_compiler/`. Look for:
 | Pitfall | Impact | Fix |
 |---|---|---|
 | StyleResolver as a composable parameter | Recomputes entire style chain on every recomposition | Pre-resolve via `resolveAll()` at `setConfig()` time |
-| `List<T>` in `@Immutable` class | Technically unstable (but accepted with Strong Skipping) | Use `@Immutable` as promise; add `ImmutableList` only if stability report shows skippability failure |
+| `List<T>` in `@Immutable` class | Technically unstable, but `@Immutable` promises it to Compose | Use `@Immutable` as promise; add `ImmutableList` only if stability report shows skippability failure |
 | Missing `key` in `LazyRow`/`LazyColumn` | Full re-render on insertions/deletions, state loss | Always `key = { it.id }` |
 | `Map<String, Style>` for resolved styles | Unstable, defeats the purpose | Use `PersistentMap<String, Style>` |
 | Interface params passed directly to composable | Interface is always unstable | Wrap in `remember` or encapsulate in a stable class |
@@ -325,13 +333,23 @@ LaunchedEffect(Unit) {
 
 ## Gallery Performance
 
+The gallery is built on `LazyRow` / `LazyColumn` + `rememberSnapFlingBehavior` (not
+`HorizontalPager` — see the implementation note in `GalleryRenderer.kt`: Pager had an
+ABI break across compose-foundation 1.6→1.7, so the SDK stays Compose-version-agnostic).
+Lazy composition already windows the visible items; keep items keyed so recomposition
+and state stay with the right child.
+
 ```kotlin
-// ✅ HorizontalPager — preload 1 adjacent page on each side
-HorizontalPager(
-    state = pagerState,
-    beyondViewportPageCount = 1
-) { page ->
-    RenderNode(container.children[page], resolvedStyles, ...)
+// ✅ LazyRow + snap fling — keyed items, peeking via contentPadding
+val listState = rememberLazyListState()
+LazyRow(
+    state = listState,
+    flingBehavior = rememberSnapFlingBehavior(listState),
+    contentPadding = PaddingValues(horizontal = peek)  // partial adjacent items
+) {
+    items(container.children, key = { it.id }) { child ->
+        RenderNode(child, resolvedStyles, ...)
+    }
 }
 ```
 

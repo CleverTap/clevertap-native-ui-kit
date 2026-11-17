@@ -1,160 +1,82 @@
 # .claude Directory
 
-This directory contains AI agent configurations and documentation for the Native Display UI Kit project.
+AI agent configuration and documentation for the CleverTap Native Display UI Kit.
+
+> **Start here:** the repo-root [`AGENTS.md`](../AGENTS.md) is the portable entry point and
+> [`CLAUDE.md`](../CLAUDE.md) is the canonical, in-depth knowledge base. This directory holds
+> the agents, skills, references, and specs those files point to.
 
 ---
 
-## 📂 Structure
+## Structure
 
 ```
 .claude/
-├── README.md              # This file
-├── PROGRESS.md            # Development phase tracking
-├── settings.json          # Project configuration
+├── README.md                  # This file
+├── AGENTS_README.md           # Full agent guide (roster, workflows, collaboration)
+├── AGENTS_QUICK_REFERENCE.md  # Agent cheat sheet
+├── PROGRESS.md / OPEN_POINTS.md
+├── settings.json              # Project configuration
 │
-├── skills/                # 6 Project skills (NEW)
-│   ├── commit/            # Git commit automation
-│   ├── generate-json/     # Test JSON generation
-│   ├── test/              # Test execution
-│   ├── build/             # Build automation
-│   ├── review/            # Code review
-│   └── statusline/        # Project status
-│
-├── agents/                # 5 Specialized AI agents
-│   ├── README.md          # Agents overview
-│   ├── QUICK_REFERENCE.md # Agent command cheat sheet
-│   ├── android-sdk/       # Android SDK agent
-│   ├── ios-sdk/           # iOS SDK agent
-│   ├── android-sample/    # Android sample agent
-│   ├── ios-sample/        # iOS sample agent
-│   └── testing/           # Testing & automation agent
-│
-├── reference/             # SDK documentation (phases 1-8)
-│   ├── CLAUDE_CODE_REFERENCE_ACTUAL.md
-│   ├── CLAUDE_CODE_PATTERNS.md
-│   ├── COMPONENTS_GUIDE.md
-│   ├── STYLE_THEMING_GUIDE.md
-│   └── CLAUDE_CODE_MODELS.md
-│
-└── specs/                 # Feature specifications (phase 9+)
-    ├── TEMPLATE.md
-    ├── README.md
-    └── [spec files]
+├── agents/                    # 7 specialized subagents (see below)
+├── skills/                    # 8 one-command workflows (/skill-name)
+├── reference/                 # Deep SDK references (read on demand)
+└── specs/                     # Feature specifications (spec-driven workflow)
 ```
 
 ---
 
-## 🤖 AI Agents
+## Agents (7)
 
-We have **5 specialized agents** to help with development:
+Each agent has frontmatter + a system prompt and reads its own
+`agents/<name>/knowledge/architecture.md` on demand, so cross-platform features can be
+built in parallel against one shared spec.
 
-| Agent | Handle | Purpose |
-|-------|--------|---------|
-| **Android SDK** | `@android-sdk-agent` | Implement Android features |
-| **iOS SDK** | `@ios-sdk-agent` | Implement iOS features |
-| **Android Sample** | `@android-sample-agent` | Create Android demos |
-| **iOS Sample** | `@ios-sample-agent` | Create iOS demos |
-| **Testing** | `@testing-agent` | Generate tests & screenshots |
+| Agent | Scope |
+|-------|-------|
+| `android-sdk` | `android/sdk/` — Kotlin/Compose SDK |
+| `ios-sdk` | `ios/Sources/` — Swift/SwiftUI SDK |
+| `flutter-sdk` | `flutter/lib/` — Dart renderer + bridge |
+| `android-sample` | `android-sample/` + `android-xml-sample/` |
+| `ios-sample` | `ios-sample/` |
+| `flutter-sample` | `flutter-sample/` |
+| `testing` | all platforms — test generation + build/run automation + cross-platform screenshots |
 
-**See**: `agents/README.md` for full details
+Full details → [`AGENTS_README.md`](AGENTS_README.md) · cheat sheet →
+[`AGENTS_QUICK_REFERENCE.md`](AGENTS_QUICK_REFERENCE.md).
 
----
-
-## 🛠️ Skills
-
-**Skills** are one-command workflows that automate common tasks. Invoke with `/skill-name`.
-
-### Available Skills
-
-| Skill | Command | Purpose | Example |
-|-------|---------|---------|---------|
-| **Commit** | `/commit` | Create git commit with proper message | `/commit` |
-| **Generate JSON** | `/generate-json` | Generate test JSON configs | `/generate-json product-card` |
-| **Test** | `/test` | Run Android/iOS tests | `/test android` |
-| **Build** | `/build` | Build Android/iOS SDK | `/build ios` |
-| **Review** | `/review` | Review code changes | `/review` |
-| **Statusline** | `/statusline` | Show project status | `/statusline` |
-
-### Skill Workflows
-
-#### Making Changes
-```
-1. Edit code
-2. /build        → Verify compilation
-3. /test         → Run tests
-4. /review       → Check standards
-5. /commit       → Commit changes
-```
-
-#### Generating Test Configs
-```
-1. /generate-json container-test
-   → Creates valid JSON following JSON_STRUCTURE_REFERENCE.md
-   → Validates colors (ARGB format)
-   → Ensures layout definitions
-   → Runs jq validation
-```
-
-#### Quick Status Check
-```
-/statusline
-   → Git status
-   → Build status
-   → Test results
-   → Phase progress
-```
-
-### Skills Benefits
-
-- ✅ **Fast workflows** - One command instead of multiple steps
-- ✅ **Consistency** - Same process every time
-- ✅ **Validation** - Built-in checks and standards
-- ✅ **Discoverability** - Easy to remember `/skill-name` pattern
-- ✅ **Integration** - Work seamlessly with agents
-
-**See**: Each skill's `SKILL.md` file in `skills/` directory for detailed documentation
+**Invoke explicitly**, e.g. `"Using the ios-sdk agent, ensure GALLERY parity with Android"`.
 
 ---
 
-## 📚 Documentation
+## Skills (8)
 
-### For Existing Features (Phases 1-8)
-→ Check `reference/` directory
+One-command workflows. Invoke with `/skill-name`; each has a `SKILL.md`.
 
-### For New Features (Phase 9+)
-→ Check `specs/` directory
-
----
-
-## 🚀 Quick Start
-
-### Using Agents
-```
-"@testing-agent, generate 10 container tests"
-"@android-sdk-agent, implement GRID from spec 013"
-"@ios-sdk-agent, ensure cross-platform parity for GALLERY"
-```
-
-### Writing Specs
-```
-1. Copy specs/TEMPLATE.md
-2. Fill in requirements
-3. Implement with agents
-```
+| Skill | Purpose |
+|-------|---------|
+| `/build [android\|ios\|flutter]` | Build SDK or sample apps |
+| `/test [android\|ios\|flutter]` | Run tests |
+| `/generate-json [type]` | Generate valid JSON test configs |
+| `/nd-screenshot-compare` | Capture & compare cross-platform screenshots |
+| `/review` | Review code against project standards |
+| `/commit` | Create a properly formatted git commit |
+| `/ship-jira` | Create/transition the Jira ticket for committed work |
+| `/statusline` | Show git, build, and test status |
 
 ---
 
-## 📋 What's What
+## Documentation
 
-- **skills/**: One-command workflows for common tasks (NEW)
-- **agents/**: AI agent configurations and documentation
-- **reference/**: Documentation for implemented features
-- **specs/**: Specifications for new features
-- **PROGRESS.md**: Phase completion tracking
-- **settings.json**: Build commands, paths, conventions
+- **Implementing an existing feature / verifying schema** → `reference/`
+- **Starting a new feature** → `specs/` (copy `TEMPLATE.md`)
+- **Phase tracking / open questions** → `PROGRESS.md`, `OPEN_POINTS.md`
 
 ---
 
-**Last Updated**: January 20, 2026  
-**Agent Count**: 5  
-**Status**: Operational
+## Maintenance
+
+When the agent roster, skills, or workflow change, update **four** places so they stay in
+sync: this file, [`AGENTS_README.md`](AGENTS_README.md),
+[`AGENTS_QUICK_REFERENCE.md`](AGENTS_QUICK_REFERENCE.md), and the roster/skills tables in
+[`../AGENTS.md`](../AGENTS.md) + [`../CLAUDE.md`](../CLAUDE.md).

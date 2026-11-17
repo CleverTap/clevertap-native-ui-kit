@@ -19,8 +19,10 @@
   "commands": {
     "android_build": "cd android && ./gradlew build",
     "android_test": "cd android && ./gradlew test",
-    "ios_build": "cd ios && swift build",
-    "ios_test": "cd ios && swift test"
+    "ios_build": "xcodebuild build -scheme CleverTapNativeDisplay -project ios/CleverTapNativeDisplay.xcodeproj -destination 'generic/platform=iOS'",
+    "ios_test": "xcodebuild test -scheme CleverTapNativeDisplay -project ios/CleverTapNativeDisplay.xcodeproj -destination 'platform=iOS Simulator,name=iPhone 15'",
+    "flutter_build": "cd flutter && flutter build",
+    "flutter_test": "cd flutter && flutter test"
   },
   
   "phases": [

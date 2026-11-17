@@ -20,15 +20,15 @@ The Native Display System rendering pipeline transforms JSON configuration into 
 └────────┬────────┘
          ↓
 ┌─────────────────┐
-│ Evaluate Temps  │  (TemplateEvaluator)
+│ Evaluate Vars   │  (VariableEvaluator)
 └────────┬────────┘
          ↓
 ┌─────────────────┐
-│ Calculate Layout│  (DimensionCalculator)
+│ Calculate Layout│  (ModifierExtensions.applySizing)
 └────────┬────────┘
          ↓
 ┌─────────────────┐
-│ Render Compose  │  (ContainerRenderer/ElementRenderer)
+│ Render Compose  │  (RenderNode → ElementRenderer/GalleryRenderer)
 └────────┬────────┘
          ↓
 ┌─────────────────┐
@@ -73,27 +73,31 @@ val config: NativeDisplayConfig = Json.decodeFromString(jsonString)
 ### Implementation
 
 ```kotlin
-class StyleResolver(
-    private val theme: Theme?,
-    private val styleClasses: List<StyleClass>?
+internal class StyleResolver(
+    private val theme: Theme,
+    styleClasses: List<StyleClass>
 ) {
-    fun resolve(node: NativeDisplayNode, parentStyle: Style? = null): Style {
-        var style = theme?.defaultStyle ?: Style()
+    private val styleClassMap = styleClasses.associateBy { it.name }
 
-        // Apply style class
+    fun resolve(node: NativeDisplayNode): Style {
+        var style = theme.defaultStyle
+
+        // Apply style class (overrides theme)
         node.styleClass?.let { className ->
-            val classStyle = styleClasses?.find { it.name == className }?.style
-            style = style.merge(classStyle)
+            styleClassMap[className]?.style?.let { classStyle ->
+                style = classStyle.mergeWith(style)
+            }
         }
 
-        // Apply inline style
-        style = style.merge(node.style)
-
-        // Inherit text properties from parent
-        style = style.inheritTextProperties(parentStyle)
+        // Apply inline style (highest priority, overrides everything)
+        node.style?.let { style = it.mergeWith(style) }
 
         return style
     }
+
+    // Parent→child cascading of text properties happens in resolveAll(), which
+    // walks the tree once and returns a PersistentMap<String, Style>. Each child
+    // merges its own style with the parent's cascadingOnly() text properties.
 }
 ```
 
@@ -117,11 +121,11 @@ class StyleResolver(
 - borderColor
 - shadow*
 
-## Stage 3: Evaluate Templates
+## Stage 3: Evaluate Variables
 
 **Input**: Nodes with template bindings
 **Output**: Nodes with evaluated string values
-**Responsibility**: Replace `{{variable}}` with actual values
+**Responsibility**: Replace `{{variable}}` with actual values (`VariableEvaluator`)
 
 ### Template Syntax
 
@@ -134,7 +138,7 @@ class StyleResolver(
 ### Implementation
 
 ```kotlin
-class TemplateEvaluator(
+class VariableEvaluator(
     private val variables: Map<String, JsonElement>?
 ) {
     fun evaluate(template: String): String {
@@ -162,8 +166,8 @@ class TemplateEvaluator(
 ### Usage in Bindings
 
 ```kotlin
-val text = node.bindings?.get("text")?.let { template ->
-    templateEvaluator.evaluate(template)
+val text = node.bindings["text"]?.let { template ->
+    variableEvaluator.evaluate(template)
 } ?: ""
 ```
 
@@ -247,11 +251,19 @@ fun calculateDimension(
 
 ### Entry Point
 
+> **Note on the current implementation**: In source, `NativeDisplayView` takes a
+> `ResolvedConfig` (or a parsed `NativeDisplayUnit`). Styles are pre-resolved once into
+> a `PersistentMap<String, Style>` (`StyleResolver.resolveAll`) and passed down — the
+> `StyleResolver` is **not** a composable parameter. The snippet below is illustrative of
+> the stage flow only; see `performance.md` for the authoritative pattern.
+
 ```kotlin
 @Composable
-fun NativeDisplayView(config: NativeDisplayConfig) {
-    val styleResolver = remember { StyleResolver(config.theme, config.styleClasses) }
-    val templateEvaluator = remember { TemplateEvaluator(config.variables) }
+fun NativeDisplayView(config: ResolvedConfig) {
+    val resolvedStyles = remember(config) {
+        StyleResolver(config.theme, config.styleClasses).resolveAll(config.root)
+    }
+    val variableEvaluator = remember(config.variables) { VariableEvaluator(config.variables) }
 
     BoxWithConstraints {
         val parentSize = IntSize(
@@ -262,9 +274,8 @@ fun NativeDisplayView(config: NativeDisplayConfig) {
         RenderNode(
             node = config.root,
             parentSize = parentSize,
-            parentStyle = null,
-            styleResolver = styleResolver,
-            templateEvaluator = templateEvaluator
+            resolvedStyles = resolvedStyles,
+            variableEvaluator = variableEvaluator
         )
     }
 }
@@ -277,17 +288,16 @@ fun NativeDisplayView(config: NativeDisplayConfig) {
 fun RenderNode(
     node: NativeDisplayNode,
     parentSize: IntSize,
-    parentStyle: Style?,
-    styleResolver: StyleResolver,
-    templateEvaluator: TemplateEvaluator
+    resolvedStyles: PersistentMap<String, Style>,
+    variableEvaluator: VariableEvaluator
 ) {
-    val style = remember(node) {
-        styleResolver.resolve(node, parentStyle)
-    }
+    // O(1) lookup — styles were pre-resolved at config-set time
+    val style = resolvedStyles[node.id] ?: Style.EMPTY
 
-    when {
-        node.containerType != null -> RenderContainer(node, parentSize, style, ...)
-        node.elementType != null -> RenderElement(node, parentSize, style, ...)
+    // NativeDisplayNode is a sealed class — dispatch on subtype
+    when (node) {
+        is NativeDisplayContainer -> RenderContainer(node, parentSize, style, ...)
+        is NativeDisplayElement -> RenderElement(node, parentSize, style, ...)
     }
 }
 ```
@@ -340,10 +350,10 @@ fun RenderContainer(
 ```kotlin
 @Composable
 fun RenderElement(
-    node: NativeDisplayNode,
+    node: NativeDisplayElement,
     parentSize: IntSize,
     style: Style,
-    templateEvaluator: TemplateEvaluator
+    variableEvaluator: VariableEvaluator
 ) {
     val elementModifier = Modifier
         .applyDimension(node.layout.width, parentSize.width, true)
@@ -353,8 +363,8 @@ fun RenderElement(
 
     when (node.elementType) {
         ElementType.TEXT -> {
-            val text = node.bindings?.get("text")?.let {
-                templateEvaluator.evaluate(it)
+            val text = node.bindings["text"]?.let {
+                variableEvaluator.evaluate(it)
             } ?: ""
 
             Text(
@@ -366,12 +376,12 @@ fun RenderElement(
             )
         }
         ElementType.IMAGE -> {
-            val src = node.bindings?.get("src")?.let {
-                templateEvaluator.evaluate(it)
+            val imageUrl = node.bindings["url"]?.let {
+                variableEvaluator.evaluate(it)
             } ?: ""
 
             AsyncImage(
-                model = src,
+                model = imageUrl,
                 contentDescription = node.id,
                 modifier = elementModifier
             )
@@ -498,13 +508,22 @@ fun resolveVariable(path: String): String {
 
 ### Invalid Colors
 
+`parseColor` (in `RenderUtils.kt`) returns `null` on malformed input — callers fall back to a
+default at the use site rather than the parser substituting black. Note the format is RGBA
+(`#RRGGBBAA`, alpha = low byte), not ARGB.
+
 ```kotlin
-fun String.parseColor(): Color {
+internal fun parseColor(colorString: String?): Color? {
+    if (colorString == null) return null
     return try {
-        Color(this.removePrefix("#").toLong(16))
-    } catch (e: NumberFormatException) {
-        Logger.warn("Invalid color: $this")
-        Color.Black  // Fallback
+        val hex = colorString.removePrefix("#")
+        when (hex.length) {
+            6 -> /* opaque RGB */ ...
+            8 -> /* RGBA, alpha = low byte */ ...
+            else -> null
+        }
+    } catch (_: Exception) {
+        null  // caller decides the fallback
     }
 }
 ```
