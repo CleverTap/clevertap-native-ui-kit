@@ -1,6 +1,8 @@
 # Native Display System — Claude Code Knowledge Base
 
-Server-driven UI framework that renders native mobile interfaces from JSON. Supports Android (Kotlin/Compose) and iOS (Swift/SwiftUI).
+Server-driven UI framework that renders native mobile interfaces from JSON. Supports Android (Kotlin/Compose), iOS (Swift/SwiftUI), and Flutter (Dart/widgets).
+
+> **Source of truth.** This file is the canonical, in-depth agent knowledge base. [`AGENTS.md`](AGENTS.md) is the portable, tool-agnostic entry point (roster + navigation) and defers here for the detailed rules. Keep the two in sync — update `AGENTS.md` when the agent roster, skills, or workflow change.
 
 ---
 
@@ -15,10 +17,8 @@ clevertap-native-ui-kit/
 ├── ios/                  # iOS SDK (Swift + SwiftUI)
 │   └── Sources/          # Core SDK source
 ├── ios-sample/           # iOS sample app
-├── flutter/              # Flutter plugin (Dart + platform bridges)
-│   ├── lib/              # Pure Dart renderer + public API
-│   ├── android/          # Android MethodChannel bridge
-│   └── ios/              # iOS FlutterMethodChannel bridge
+├── flutter/              # Flutter plugin — pure-Dart package (no platform channels)
+│   └── lib/              # Dart renderer, public API, models, Dart-only bridge
 ├── flutter-sample/       # Flutter sample app
 ├── docs/                 # Documentation
 └── .claude/
@@ -110,9 +110,9 @@ Theme default → Style class → Inline node style → Parent style (text prope
 
 **TextDimension** — `fontSize` and `lineHeight` support two JSON formats: raw number (platform units: SP/points) or `{"value": N, "unit": "percent"}` which resolves as `rootContainerHeight × value / 1000`. The `/1000` divisor matches FE/dashboard behavior.
 
-**Font family resolution** — 3-layer priority at render time:
-1. Client-provided font (`fontFamily` param / `LocalFontFamily` / `\.nativeDisplayFontFamily`) — HIGHEST
-2. JSON `fontFamily` string resolved via `LocalFontFamilyResolver` / `\.nativeDisplayFontResolver`
+**Font family resolution** — 3-layer priority at render time (parity across all platforms):
+1. Client-provided font — Android `LocalFontFamily`, iOS `\.nativeDisplayFontFamily`, Flutter `NativeDisplayFont.instance.defaultFamily` / per-view `fontFamily` — HIGHEST
+2. JSON `fontFamily` string resolved via a client resolver — Android `LocalFontFamilyResolver`, iOS `\.nativeDisplayFontResolver`, Flutter `NativeDisplayFont.instance.resolver` / per-view `fontResolver` (returns a `TextStyle`, composes with `google_fonts`)
 3. Platform system default (Roboto / San Francisco) — respects Android FontManager user settings
 
 ---
@@ -125,9 +125,12 @@ Spec-driven: every feature starts with a spec before implementation.
 1. Write spec → .claude/specs/
 2. Implement Android (android-sdk agent)
 3. Implement iOS (ios-sdk agent, maintain parity)
-4. Update sample apps (android-sample + ios-sample agents)
-5. /build → /test → /review → /commit
+4. Implement Flutter (flutter-sdk agent, maintain parity)
+5. Update sample apps (android-sample + ios-sample + flutter-sample agents)
+6. /build → /test → /review → /commit
 ```
+
+Cross-platform features fan out in parallel: `android-sdk`, `ios-sdk`, and `flutter-sdk` each read their own architecture knowledge file and implement against the shared spec, with Android as the behavioural source of truth.
 
 ---
 
@@ -137,11 +140,13 @@ Invoke with `/skill-name`:
 
 | Skill | Purpose |
 |-------|---------|
-| `/build [android\|ios]` | Build SDK or sample apps |
-| `/test [android\|ios]` | Run tests |
+| `/build [android\|ios\|flutter]` | Build SDK or sample apps |
+| `/test [android\|ios\|flutter]` | Run tests |
 | `/generate-json [type]` | Generate valid JSON test configs |
+| `/nd-screenshot-compare` | Capture & segregate comparable cross-platform screenshots (Flutter/native/RN × Android/iOS) |
 | `/review` | Review code against project standards |
 | `/commit` | Create a properly formatted git commit |
+| `/ship-jira` | Create/transition the Jira ticket for committed work |
 | `/statusline` | Show git, build, and test status |
 
 Full skill documentation → `.claude/skills/`
@@ -156,7 +161,7 @@ Specialized subagents for domain-focused work:
 |-------|--------|
 | `android-sdk` | Android SDK — Kotlin/Compose implementation |
 | `ios-sdk` | iOS SDK — Swift/SwiftUI implementation |
-| `flutter-sdk` | Flutter plugin — Dart renderer + platform channel bridge |
+| `flutter-sdk` | Flutter plugin — pure-Dart renderer (no platform channels) |
 | `android-sample` | Android demo apps (Compose + XML) |
 | `ios-sample` | iOS demo app (SwiftUI) |
 | `flutter-sample` | Flutter demo app |
@@ -169,12 +174,19 @@ Specialized subagents for domain-focused work:
 "Using the testing agent, generate 25 GALLERY container test variations"
 ```
 
+**Routing defaults** — when a task matches a platform or domain, delegate to its agent by default; don't hand-do it in the main loop:
+- Task touches `android/` SDK → `android-sdk`; `ios/` SDK → `ios-sdk`; `flutter/lib/` → `flutter-sdk`.
+- Task touches a sample app → that platform's `*-sample` agent.
+- **Any change to rendering, layout, style, or schema behaviour is cross-platform by default** — fan out to `android-sdk`, `ios-sdk`, AND `flutter-sdk` in parallel (Android is the reference). Scope to one platform only when explicitly stated.
+- Test generation, running apps, screenshot capture/compare → `testing`.
+- For any rendering change, run `/review` + `/nd-screenshot-compare` as a gate before `/commit`.
+
 **Collaboration rules:**
 - SDK agents do not touch sample apps — delegate to sample agents
 - Sample agents do not touch SDK code — delegate to SDK agents
 - Testing agent does not fix bugs — hands issues to SDK agents
 - Cross-platform features need `android-sdk`, `ios-sdk`, AND `flutter-sdk`
-- `flutter-sdk` owns `flutter/lib/` (Dart); platform bridges in `flutter/android/` and `flutter/ios/` are coordinated with `android-sdk` and `ios-sdk` respectively
+- `flutter-sdk` owns `flutter/lib/` — a **pure-Dart package with no platform channels**. CleverTap attribution flows through host callbacks forwarded to `clevertap_plugin`, not a native bridge. VIDEO/HTML ship as optional add-on packages via the renderer registry.
 
 Agent workflows and examples → `.claude/agents/` and `.claude/AGENTS_QUICK_REFERENCE.md`
 
@@ -192,11 +204,13 @@ Agent workflows and examples → `.claude/agents/` and `.claude/AGENTS_QUICK_REF
 ```
 Android build:  cd android && ./gradlew build
 Android test:   cd android && ./gradlew test
-iOS build:      cd ios && swift build
-iOS test:       cd ios && swift test
+iOS build:      xcodebuild build -scheme CleverTapNativeDisplay -project ios/CleverTapNativeDisplay.xcodeproj -destination 'generic/platform=iOS'
+iOS test:       xcodebuild test  -scheme CleverTapNativeDisplay -project ios/CleverTapNativeDisplay.xcodeproj -destination 'platform=iOS Simulator,name=iPhone 15'
 Flutter build:  cd flutter && flutter build
 Flutter test:   cd flutter && flutter test
 ```
+
+> **iOS build note:** the SPM manifest (`Package.swift`) is at the **repo root** (sources in `ios/Sources/`), not in `ios/`. The SDK imports UIKit, so a plain `swift build` on a macOS host won't compile — build via the `CleverTapNativeDisplay` Xcode scheme / `xcodebuild` (as CI does), or `ios/build_xcframework.sh` for the distributable XCFramework.
 
 ---
 
@@ -241,7 +255,7 @@ Read these files on-demand — only when your task requires the detail. Do not l
 | `.claude/reference/COMPONENTS_GUIDE.md` | Writing JSON for containers/elements; GIF or VIDEO-specific behaviour |
 | `.claude/reference/JSON_STRUCTURE_REFERENCE.md` | Generating or validating test JSON; unsure about schema rules |
 | `.claude/reference/STYLE_THEMING_GUIDE.md` | Working on styles, themes, backgrounds, or cross-platform consistency |
-| `.claude/reference/CLAUDE_CODE_PATTERNS.md` | Implementing parser, StyleResolver, TemplateEvaluator, or LayoutCalculator |
+| `.claude/reference/CLAUDE_CODE_PATTERNS.md` | Implementing parser, StyleResolver, VariableEvaluator, or layout calculation |
 | `.claude/reference/CLAUDE_CODE_MODELS.md` | Creating or auditing data model types (Kotlin / Swift / TypeScript) |
 | `.claude/reference/CLIENT_USAGE_MODEL.md` | Checking whether a feature belongs in the SDK vs the client app |
 | `.claude/reference/PLATFORM_ARRANGEMENT_COMPARISON.md` | Ensuring arrangement strategy parity between Android and iOS |

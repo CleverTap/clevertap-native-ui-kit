@@ -159,6 +159,12 @@ fun RenderBoxContainer(
 
 ### Gallery (LazyRow)
 
+> **Note**: The SDK's `GalleryRenderer` is implemented on `LazyRow` / `LazyColumn` +
+> `rememberSnapFlingBehavior`, **not** `HorizontalPager` (Pager had an ABI break across
+> compose-foundation 1.6→1.7). The snippet below is a generic Pager illustration of
+> peeking/spacing — for the authoritative approach see `GalleryRenderer.kt` and the
+> LazyRow example in `performance.md`.
+
 ```kotlin
 @Composable
 fun RenderGallery(
@@ -451,15 +457,34 @@ fun Modifier.applyDimension(
 
 ### Color Parsing
 
+The SDK parses **RGBA** (`#RRGGBBAA`), not ARGB. The real implementation is a top-level
+`internal fun parseColor(colorString: String?): Color?` in `RenderUtils.kt`; an 8-digit value
+has alpha as the **low byte**, and invalid input returns `null`.
+
 ```kotlin
-fun String.parseColor(): Color {
-    val cleanHex = this.removePrefix("#")
-    val argb = when (cleanHex.length) {
-        6 -> "FF$cleanHex"  // RGB → ARGB
-        8 -> cleanHex       // Already ARGB
-        else -> "FF000000"  // Fallback
+// Mirrors RenderUtils.parseColor — RGBA, alpha = low byte
+internal fun parseColor(colorString: String?): Color? {
+    if (colorString == null) return null
+    val hex = colorString.removePrefix("#")
+    return when (hex.length) {
+        6 -> hex.toLong(16).let { rgb ->
+            Color(
+                red = ((rgb shr 16) and 0xFF) / 255f,
+                green = ((rgb shr 8) and 0xFF) / 255f,
+                blue = (rgb and 0xFF) / 255f,
+                alpha = 1f
+            )
+        }
+        8 -> hex.toLong(16).let { rgba ->  // #RRGGBBAA
+            Color(
+                red = ((rgba shr 24) and 0xFF) / 255f,
+                green = ((rgba shr 16) and 0xFF) / 255f,
+                blue = ((rgba shr 8) and 0xFF) / 255f,
+                alpha = (rgba and 0xFF) / 255f
+            )
+        }
+        else -> null
     }
-    return Color(argb.toLong(16))
 }
 ```
 

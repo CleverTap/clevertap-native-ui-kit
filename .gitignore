@@ -104,6 +104,9 @@ Thumbs.db
 
 # Build Directories
 **/build/
+# ...but NOT the `/build` skill: its dir is named "build" and was being swallowed by **/build/
+!.claude/skills/build/
+!.claude/skills/build/**
 **/target/
 **/out/
 **/.gradle/

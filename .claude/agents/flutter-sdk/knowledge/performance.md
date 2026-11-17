@@ -8,21 +8,32 @@ Flutter's `build()` method can run 60+ times per second. Every unnecessary compu
 
 ## 1. Pre-Resolve Styles Before Build
 
-**Critical**: resolve all styles once in `NativeDisplayView`'s constructor — never inside `build()` or inside any widget's build method.
+**Critical**: resolve all styles once — never inside `build()` or inside any widget's build method.
+`NativeDisplayView` is a `StatefulWidget`; resolve once in `initState` (or accept a pre-resolved
+`resolvedStyles` map from `NativeDisplayConfigParser`) and reuse across rebuilds.
 
 ```dart
-class NativeDisplayView extends StatelessWidget {
+class NativeDisplayView extends StatefulWidget {
   final NativeDisplayConfig config;
-  // Pre-computed in constructor — O(n) traversal happens once
-  final Map<String, Style> _resolvedStyles;
+  // Optional: callers can pass styles already resolved by NativeDisplayConfigParser
+  final Map<String, Style>? resolvedStyles;
+  const NativeDisplayView({super.key, required this.config, this.resolvedStyles});
+  // ...
+}
 
-  NativeDisplayView({super.key, required this.config})
-      : _resolvedStyles = StyleResolver.resolve(config);
+class _NativeDisplayViewState extends State<NativeDisplayView> {
+  late final Map<String, Style> _resolvedStyles; // O(n) traversal happens once
+
+  @override
+  void initState() {
+    super.initState();
+    _resolvedStyles = widget.resolvedStyles ?? StyleResolver.resolve(widget.config);
+  }
 
   @override
   Widget build(BuildContext context) {
-    // _resolvedStyles already computed — just pass through
-    return NativeDisplayRenderer(config: config, resolvedStyles: _resolvedStyles);
+    // _resolvedStyles already computed — just pass through (via NativeDisplayScope)
+    return NativeDisplayRenderer(node: widget.config.root, /* ... */);
   }
 }
 ```
@@ -41,7 +52,7 @@ const SizedBox(height: 16)
 const Padding(padding: EdgeInsets.all(8), child: Text('Hello'))
 
 // ✅ Mark leaf widgets const when they have no dynamic data
-const NativeDisplayTextStyle(textStyle: TextStyle(), child: SizedBox())
+const SizedBox.shrink() // e.g. the empty-state fallback for unregistered VIDEO/HTML elements
 ```
 
 Our model widgets (containers, elements) will rarely be `const` since they take dynamic data — but their sub-widgets (separators, empty states, loading indicators) should be `const`.

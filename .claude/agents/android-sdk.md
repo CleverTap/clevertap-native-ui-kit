@@ -41,13 +41,18 @@ The system prompt below covers the rules you need for most tasks. If you hit som
 ```
 android/sdk/src/main/kotlin/com/clevertap/android/nativedisplay/
 ├── models/       # @Serializable data classes (NativeDisplayConfig, Layout, Style, etc.)
-├── renderer/     # Compose renderers (ContainerRenderer, ElementRenderer)
-├── style/        # StyleResolver — cascading style inheritance
-├── evaluator/    # TemplateEvaluator — {{variable}} interpolation
-├── handler/      # Action handlers
+├── renderer/     # Compose renderers (NativeDisplayRenderer/RenderNode, ElementRenderer,
+│                 #   GalleryRenderer, BackgroundRenderer, VideoRenderer, HtmlRenderer,
+│                 #   ModifierExtensions, RenderUtils.parseColor)
+├── style/        # StyleResolver — cascading style inheritance (resolveAll)
+├── evaluator/    # VariableEvaluator — {{variable}} interpolation
+├── handler/      # ActionHandler + attribution
 ├── listener/     # Event listeners
-├── utils/        # ColorParser, Extensions
-└── view/         # NativeDisplayView entry point
+├── bridge/       # Core SDK bridge, config parser, unit cache
+├── placement/    # NativeDisplaySlot / SlotManager / SlotView
+├── internal/     # ImageLoaderProvider, NDLogger
+├── utils/        # Extensions, MixedContentAdapter
+└── view/         # NativeDisplayViewGroup (RecyclerView host)
 ```
 
 ## Rendering Pipeline
@@ -56,14 +61,17 @@ JSON → kotlinx.serialization → NativeDisplayConfig
                                       ↓
                              StyleResolver (cascading)
                                       ↓
-                           TemplateEvaluator ({{vars}})
+                           VariableEvaluator ({{vars}})
                                       ↓
-                          DimensionCalculator (layout)
+                   ModifierExtensions.applySizing (layout)
                                       ↓
                           NativeDisplayView (Composable)
+                                      ↓
+                        RenderNode (sealed-type dispatch)
                            ↙                    ↘
-              ContainerRenderer          ElementRenderer
-            Column/Row/Box/Pager    Text/Image/Button/Video/etc
+              Container renderers        ElementRenderer
+     Column/Row/Box, GALLERY via        Text/Image/Button/Video/etc
+     LazyRow/LazyColumn + snap fling
 ```
 
 ## Key Patterns
@@ -79,16 +87,32 @@ Modifier
     .clickable { }
 ```
 
-### Color Parsing (ARGB format)
+### Color Parsing (RGBA format)
 ```kotlin
-fun String.parseColor(): Color {
-    val cleanHex = this.removePrefix("#")
-    val argb = when (cleanHex.length) {
-        6 -> "FF$cleanHex"   // RGB → ARGB
-        8 -> cleanHex        // Already ARGB
-        else -> "FF000000"   // Fallback
+// Mirrors RenderUtils.parseColor — SDK format is RGBA (#RRGGBBAA), alpha = LOW byte.
+// Returns null on bad input; callers choose the fallback.
+internal fun parseColor(colorString: String?): Color? {
+    if (colorString == null) return null
+    val hex = colorString.removePrefix("#")
+    return when (hex.length) {
+        6 -> hex.toLong(16).let { rgb ->          // opaque RGB
+            Color(
+                red = ((rgb shr 16) and 0xFF) / 255f,
+                green = ((rgb shr 8) and 0xFF) / 255f,
+                blue = (rgb and 0xFF) / 255f,
+                alpha = 1f
+            )
+        }
+        8 -> hex.toLong(16).let { rgba ->         // #RRGGBBAA — alpha is low byte
+            Color(
+                red = ((rgba shr 24) and 0xFF) / 255f,
+                green = ((rgba shr 16) and 0xFF) / 255f,
+                blue = ((rgba shr 8) and 0xFF) / 255f,
+                alpha = (rgba and 0xFF) / 255f
+            )
+        }
+        else -> null
     }
-    return Color(argb.toLong(16))
 }
 ```
 
@@ -136,14 +160,14 @@ LazyColumn { items(children, key = { it.id }) { child -> RenderNode(child, resol
 - **SPACE_BETWEEN with 1 child**: child aligns to start — use START/CENTER instead
 - **Percent dimensions**: require a fixed/match_parent parent; not compatible with wrap_content parent
 - **Images with WRAP_CONTENT**: causes layout shift — use fixed dimensions or aspectRatio
-- **Gallery peeking**: requires `contentPadding` on HorizontalPager
-- **Style class vs inline**: merge order must be `classStyle.merge(inlineStyle)` so inline wins
+- **Gallery peeking**: GALLERY is built on `LazyRow`/`LazyColumn` + `rememberSnapFlingBehavior` (not `HorizontalPager`); peeking comes from `contentPadding` on the lazy list
+- **Style class vs inline**: inline must win — `inlineStyle.mergeWith(base)` (and `classStyle.mergeWith(theme)`); the merge method is `mergeWith`, not `merge`
 - **Missing variables**: silently return empty string — log a warning
 - **Video leak**: always release ExoPlayer in `DisposableEffect { onDispose { player.release() } }`
 - **Background animations**: need separate composable wrappers, not inline modifiers
 - **API 23 vs 24+**: shadow elevation rendering behaves differently — test on API 23 emulator
 - **Circular node references**: will cause infinite recursion — validate before rendering
-- **Float vs Int in JSON**: `fontSize` is `Float` — use a custom serializer if needed
+- **fontSize / lineHeight type**: these are `TextDimension?` (not `Float`) — a `TextDimensionSerializer` already accepts both raw number and `{value, unit}`
 
 ## Workflow
 1. Read the relevant knowledge file(s) listed above

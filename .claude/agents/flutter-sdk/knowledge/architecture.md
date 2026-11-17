@@ -15,10 +15,12 @@
 
 ## Overview
 
-The Flutter plugin is a **federated plugin** with a **pure Dart renderer**:
+The Flutter plugin is a **pure-Dart package** (no platform channels, no native plugin code):
 
 - **Dart-side**: JSON parsing + Flutter widget rendering (works on all platforms)
-- **Platform channel bridge**: CleverTap Core SDK integration (receive/report display unit events)
+- **Attribution**: surfaced to the host via callbacks on `NativeDisplayView`
+  (`onNotificationViewed` / `onNotificationClicked`); the host forwards them to the CleverTap
+  Core SDK through its own `clevertap_plugin` Dart APIs. There is NO MethodChannel/EventChannel.
 - **No platform views for rendering**: avoids texture composition overhead
 
 The rendering engine is fully in Dart — Flutter's own Skia/Impeller engine renders everything natively.
@@ -28,39 +30,51 @@ The rendering engine is fully in Dart — Flutter's own Skia/Impeller engine ren
 ## Package Structure
 
 ```
-flutter/                           # Plugin root (publishable to pub.dev)
+flutter/                           # Plugin root (publishable to pub.dev) — pure Dart, no android/ or ios/ dirs
 ├── lib/
 │   ├── clevertap_native_display.dart   # Barrel export — public API
 │   └── src/
 │       ├── models/
 │       │   ├── native_display_config.dart
-│       │   ├── native_display_node.dart
+│       │   ├── native_display_node.dart   # sealed NativeDisplayNode → Container / Element
+│       │   ├── native_display_unit.dart
+│       │   ├── node_config.dart
+│       │   ├── action.dart
 │       │   ├── layout.dart
 │       │   ├── style.dart
+│       │   ├── text_dimension.dart
+│       │   ├── enums.dart
 │       │   ├── background.dart
 │       │   └── gallery_config.dart
 │       ├── renderer/
-│       │   ├── native_display_view.dart       # Entry point StatelessWidget
-│       │   ├── native_display_renderer.dart   # Node dispatch + style injection
-│       │   ├── container_renderer.dart        # Column/Row/Stack/PageView/GridView
-│       │   └── element_renderer.dart          # Text/Image/Button/Video/HTML/Spacer/Divider
+│       │   ├── native_display_view.dart       # Entry point StatefulWidget
+│       │   ├── native_display_renderer.dart   # Node dispatch (StatelessWidget) + style injection
+│       │   ├── native_display_scope.dart      # InheritedWidget: rootHeight, styles, unitId, callbacks
+│       │   ├── native_display_font.dart       # Client font API (NativeDisplayFont, resolveNativeDisplayFont)
+│       │   ├── native_display_attribution.dart
+│       │   ├── nd_element_registry.dart       # Registry for optional VIDEO/HTML add-on renderers
+│       │   ├── style_applier.dart
+│       │   ├── animation_modifier.dart
+│       │   ├── containers/                    # VERTICAL/HORIZONTAL/BOX/GALLERY renderers
+│       │   └── elements/                      # TEXT/IMAGE/BUTTON/SPACER/DIVIDER renderers
 │       ├── style/
-│       │   ├── style_resolver.dart            # Cascading style inheritance
-│       │   └── native_display_text_style.dart # InheritedWidget for text cascading
+│       │   └── style_resolver.dart            # Cascading style inheritance (resolve-time)
 │       ├── evaluator/
-│       │   └── template_evaluator.dart        # {{variable}} interpolation
-│       └── bridge/
-│           ├── native_display_bridge.dart     # Dart-side MethodChannel/EventChannel
-│           └── action_handler.dart            # Tap → CleverTap event reporting
-├── android/
-│   └── src/main/kotlin/com/clevertap/flutter/nativedisplay/
-│       └── CleverTapNativeDisplayPlugin.kt    # MethodChannel handler (Kotlin)
-├── ios/
-│   └── Classes/
-│       └── CleverTapNativeDisplayPlugin.swift # FlutterMethodChannel handler (Swift)
+│       │   └── variable_evaluator.dart        # {{variable}} interpolation
+│       ├── handler/
+│       │   └── action_handler.dart            # Tap → action (url_launcher) + attribution callback
+│       ├── placement/                         # NativeDisplaySlot / NativeDisplaySlotManager
+│       ├── bridge/
+│       │   ├── native_display_bridge.dart     # Dart-only config helper (log level sync) — NO channels
+│       │   └── native_display_config_parser.dart
+│       └── utils/                             # color_parser.dart, asset_url_collector.dart
 ├── pubspec.yaml
-└── example/                       # Minimal working example
+└── test/
 ```
+
+VIDEO and HTML renderers are NOT in the core — they ship as optional add-on packages
+(`clevertap_native_display_video`, `clevertap_native_display_webview`) that register into the
+`nd_element_registry` at startup.
 
 ---
 
@@ -72,7 +86,7 @@ Pure Dart, no external dependencies. Uses factory `fromJson` constructors.
 
 **Key models:**
 - `NativeDisplayConfig` — root object: theme, styleClasses, variables, root node
-- `NativeDisplayNode` — polymorphic: container (`type: "container"`) or element (`type: "element"`)
+- `NativeDisplayNode` — sealed base; subclasses `NativeDisplayContainer` (`type: "container"`) and `NativeDisplayElement` (`type: "element"`, the default)
 - `Layout` — width, height, padding, offset, arrangement
 - `Style` — text properties + visual properties
 - `Background` — sealed-class-style via enum/union (solid, gradient, image, etc.)
@@ -80,10 +94,10 @@ Pure Dart, no external dependencies. Uses factory `fromJson` constructors.
 **Parsing approach — manual `fromJson`** (no code-gen dependency):
 ```dart
 factory NativeDisplayNode.fromJson(Map<String, dynamic> json) {
-  return switch (json['type'] as String) {
-    'container' => ContainerNode.fromJson(json),
-    'element'   => ElementNode.fromJson(json),
-    _           => throw FormatException('Unknown node type: ${json['type']}'),
+  final type = json['type'] as String? ?? 'element';
+  return switch (type) {
+    'container' => NativeDisplayContainer.fromJson(json),
+    _           => NativeDisplayElement.fromJson(json), // default to element; never throws
   };
 }
 ```
@@ -95,14 +109,15 @@ factory NativeDisplayNode.fromJson(Map<String, dynamic> json) {
 - Text properties cascade: `textColor`, `fontSize`, `fontFamily`, `fontWeight`, `lineHeight`, `textDecoration`, `textAlign`, `opacity`
 - Visual properties do NOT cascade: `background`, `backgroundColor`, `borderRadius`, `borderWidth`, `borderColor`, `shadow*`
 
-**TemplateEvaluator** — replaces `{{varName}}` and `{{object.property}}` in string bindings:
+**VariableEvaluator** (`src/evaluator/variable_evaluator.dart`) — replaces `{{varName}}` and
+`{{object.property}}` in string bindings via `evaluateString(...)`:
 - Unknown variables → return empty string (silent, consistent with Android/iOS)
 - Nested paths: `{{user.name}}` → `variables['user']['name']`
 
 ### 3. Rendering Layer (`src/renderer/`)
 
-**NativeDisplayView** — the public entry-point `StatelessWidget`. Uses `LayoutBuilder` to get available width, then:
-- Pre-resolves all styles once in constructor (never inside `build()`)
+**NativeDisplayView** — the public entry-point `StatefulWidget`. Uses `LayoutBuilder` to get available width, then:
+- Pre-resolves all styles once (never inside `build()`); accepts an optional pre-resolved `resolvedStyles` map
 - Computes `effectiveRootWidth` and `rootHeight` for percent font/border resolution
 - Applies root sizing via `_applyRootSizing`
 
@@ -121,12 +136,15 @@ This matches Android (Compose modifier ordering) and iOS (guard returning parent
 
 ### 4. Bridge Layer (`src/bridge/`)
 
-Optional — only used when integrating with CleverTap Core SDK.
+Dart-only. There are NO platform channels — the plugin is a pure-Dart renderer.
 
-- `NativeDisplayBridge.getDisplayUnitJson(unitId)` — fetch JSON via MethodChannel
-- `NativeDisplayBridge.displayUnitStream()` — receive display unit updates via EventChannel
-- `NativeDisplayBridge.recordViewed(unitId)` — report viewed event
-- `NativeDisplayBridge.recordClicked(unitId)` — report clicked event
+- `NativeDisplayBridge.setLogLevel(level)` — configure the SDK log level (client-wins)
+- `NativeDisplayBridge.syncLogLevelFromCore(coreLevel)` — align log level with the host's Core SDK debug level
+- `NativeDisplayConfigParser` — parse + pre-resolve a config
+
+Attribution (Notification Viewed / Clicked) is surfaced through the `onNotificationViewed` /
+`onNotificationClicked` callbacks on `NativeDisplayView`. The host forwards those to the CleverTap
+Core SDK via its own `clevertap_plugin` Dart APIs — the ND plugin never talks to native directly.
 
 ---
 
@@ -162,12 +180,15 @@ The existing `clevertap_plugin` provides analytics and user profiles. Native Dis
 
 ```
 User App
-├── clevertap_plugin          (existing: analytics, push, inbox)
-└── clevertap_native_display  (new: Native Display renderer + bridge)
-         └── NativeDisplayBridge connects to Core SDK via MethodChannel
+├── clevertap_plugin          (existing: analytics, push, inbox — provides display unit JSON + event APIs)
+└── clevertap_native_display  (new: pure-Dart Native Display renderer)
+         └── NativeDisplayView fires onNotificationViewed / onNotificationClicked callbacks
+                └── host forwards them to clevertap_plugin's Core SDK event APIs
 ```
 
-The Core SDK on Android/iOS receives display units from CleverTap servers, caches them, and exposes them via the MethodChannel. The Flutter side fetches JSON and renders with `NativeDisplayView`.
+The host app obtains display unit JSON from the Core SDK via `clevertap_plugin`, parses it, and
+renders with `NativeDisplayView`. The ND plugin has no direct link to the Core SDK — all
+integration flows through the host and `clevertap_plugin`.
 
 ---
 
@@ -187,6 +208,13 @@ A pure Dart renderer avoids all of this. Flutter's Impeller/Skia renders Dart wi
 
 Keeps the plugin dependency-free for the core parsing layer. `json_serializable` is fine for sample apps but adds a build_runner dev dependency to the plugin itself — avoided for simplicity and faster builds.
 
-### `InheritedWidget` for Text Style Cascading
+### Text Style Cascading at Resolve Time
 
-Text property cascading (textColor, fontSize, etc.) passes style down the widget tree naturally via Flutter's `InheritedWidget` mechanism (similar to how `DefaultTextStyle` works). This avoids passing style as a parameter through every level of the recursion.
+Text property cascading (textColor, fontSize, etc.) is computed **once** in `StyleResolver` — each
+node's resolved style merges its parent's cascading-only properties (`cascadingOnly()` + `merge()`).
+The result is a flat `Map<String, Style>` (node id → resolved style), so renderers do an O(1)
+lookup and never recompute cascade at build time.
+
+A single `InheritedWidget`, `NativeDisplayScope`, carries per-view render context (rootHeight, the
+resolved styles map, unitId, attribution/open-url callbacks, client font) down the tree so renderers
+don't thread these through every parameter — it does NOT carry a cascading `TextStyle`.
