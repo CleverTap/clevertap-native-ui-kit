@@ -44,6 +44,33 @@ Or add it to your `Package.swift`:
 .package(url: "https://github.com/CleverTap/clevertap-native-ui-kit.git", from: "<version>")
 ```
 
+### CocoaPods
+
+> **CocoaPods users:** CocoaPods trunk becomes read-only on December 2, 2026. Add these two
+> lines to the top of your Podfile to keep receiving CleverTap updates:
+>
+> ```ruby
+> source 'https://github.com/CleverTap/podspecs.git'
+> source 'https://cdn.cocoapods.org/'
+> ```
+>
+> Existing installs keep working with no change. See the [CleverTap podspecs repo](https://github.com/CleverTap/podspecs) for details.
+
+```ruby
+source 'https://github.com/CleverTap/podspecs.git'
+source 'https://cdn.cocoapods.org/'
+
+target 'YOUR_TARGET_NAME' do
+  pod 'CleverTapNativeDisplay', '<version>'
+end
+```
+
+Keep the `cdn.cocoapods.org` line. Versions released before December 2, 2026 and third-party pods still resolve from it. The same two source lines also cover the [CleverTap iOS Core SDK](https://github.com/CleverTap/clevertap-ios-sdk) if you install it with CocoaPods.
+
+```bash
+pod install --repo-update
+```
+
 ---
 
 ## Prerequisite: CleverTap Core SDK

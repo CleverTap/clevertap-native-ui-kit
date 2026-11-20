@@ -1,3 +1,8 @@
+# CocoaPods trunk is read-only from December 2, 2026. New CleverTap versions
+# ship from CleverTap/podspecs. Keep the CDN for third-party and older pods.
+source 'https://github.com/CleverTap/podspecs.git'
+source 'https://cdn.cocoapods.org/'
+
 # Matches the Runner deployment target (iOS 15.0) and satisfies the CleverTap
 # iOS SDK's minimum; also keeps pod install off the CocoaPods default of 12.0.
 platform :ios, '15.0'
