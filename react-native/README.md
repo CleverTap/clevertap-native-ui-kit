@@ -82,18 +82,6 @@ npm install @clevertap/native-display-sdk clevertap-react-native
 `clevertap-react-native` is the main CleverTap SDK. If you already have it, you
 only need the first package.
 
-> **CocoaPods users:** CocoaPods trunk becomes read-only on December 2, 2026.
-> `clevertap-react-native` pulls in the `CleverTap-iOS-SDK` pod, so add these two
-> lines to the top of `ios/Podfile` to keep receiving CleverTap updates:
->
-> ```ruby
-> source 'https://github.com/CleverTap/podspecs.git'
-> source 'https://cdn.cocoapods.org/'
-> ```
->
-> Then run `cd ios && pod install --repo-update`. Existing installs keep working
-> with no change. See the [CleverTap podspecs repo](https://github.com/CleverTap/podspecs) for details.
-
 ### 2. Wire it up at app startup
 
 Add this once, where your app starts (usually `App.tsx`):

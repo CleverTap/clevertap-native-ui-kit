@@ -70,17 +70,6 @@ Then:
 flutter pub get
 ```
 
-> **CocoaPods users:** CocoaPods trunk becomes read-only on December 2, 2026.
-> `clevertap_plugin` pulls in the `CleverTap-iOS-SDK` pod, so add these two lines to
-> the top of `ios/Podfile` to keep receiving CleverTap updates:
->
-> ```ruby
-> source 'https://github.com/CleverTap/podspecs.git'
-> source 'https://cdn.cocoapods.org/'
-> ```
->
-> Then run `cd ios && pod install --repo-update`. Existing installs keep working with no change. See the [CleverTap podspecs repo](https://github.com/CleverTap/podspecs) for details.
-
 > **Why four packages?** Dart has no `compileOnly`/weak-linking or runtime reflection, so there is no way for the core package to *optionally* depend on `clevertap_plugin`, `video_player`, or `webview_flutter` the way the native SDKs do (Android `compileOnly`, iOS Obj-C runtime lookup). The only way to keep the core standalone-safe — usable with no CleverTap account and no heavy native deps — is to split the optional dependencies into separate add-on packages that each register their feature at startup. `clevertap_plugin_with_native_display` is the Flutter equivalent of the native `CleverTapAutoWire`.
 
 ---

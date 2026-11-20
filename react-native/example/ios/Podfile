@@ -1,5 +1,4 @@
-# CocoaPods trunk is read-only from December 2, 2026. New CleverTap versions
-# ship from CleverTap/podspecs. Keep the CDN for third-party and older pods.
+# New CleverTap pods ship from CleverTap/podspecs (CocoaPods trunk is read-only from Dec 2, 2026).
 source 'https://github.com/CleverTap/podspecs.git'
 source 'https://cdn.cocoapods.org/'
 

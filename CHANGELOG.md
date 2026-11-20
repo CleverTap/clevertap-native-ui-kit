@@ -16,7 +16,6 @@ use a bare semver tag (e.g. `1.0.0`); React Native and Flutter use a prefixed ta
 ### Changed
 
 - Podspec and README now carry a CocoaPods sunset notice. CocoaPods trunk becomes read-only on December 2, 2026. Add `source 'https://github.com/CleverTap/podspecs.git'` and `source 'https://cdn.cocoapods.org/'` to the top of your Podfile to keep receiving updates. Existing installs are unaffected.
-- React Native and Flutter install docs now tell host apps to add the same two source lines to `ios/Podfile`, since `clevertap-react-native` and `clevertap_plugin` depend on the `CleverTap-iOS-SDK` pod.
 
 ## [Flutter 1.0.0] - 2026-11-04
 

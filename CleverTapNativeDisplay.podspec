@@ -11,7 +11,7 @@ Pod::Spec.new do |spec|
     receiving CleverTap updates through CocoaPods, add these lines to your Podfile:
       source 'https://github.com/CleverTap/podspecs.git'
       source 'https://cdn.cocoapods.org/'
-    Existing installs are unaffected. See the README.
+    Existing installs are unaffected. See docs/INTEGRATION_IOS.md.
   DESC
 
   spec.homepage     = "https://github.com/CleverTap/clevertap-native-ui-kit"
