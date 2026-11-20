@@ -1,3 +1,7 @@
+# New CleverTap pods ship from CleverTap/podspecs (CocoaPods trunk is read-only from Dec 2, 2026).
+source 'https://github.com/CleverTap/podspecs.git'
+source 'https://cdn.cocoapods.org/'
+
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
