@@ -61,11 +61,11 @@ data class Style(...)
 ### 2. Remember Computed Values
 ```kotlin
 // Before (recomputes every composition)
-val text = templateEvaluator.evaluate(binding)
+val text = variableEvaluator.evaluate(binding)
 
 // After (computed once)
 val text = remember(binding, variables) {
-    templateEvaluator.evaluate(binding)
+    variableEvaluator.evaluate(binding)
 }
 ```
 
@@ -184,8 +184,8 @@ fun NativeDisplayView(config: NativeDisplayConfig) {
 ```kotlin
 @Composable
 fun SlowComponent(node: NativeDisplayNode) {
-    val style = styleResolver.resolve(node, parentStyle)  // Recomputes
-    val text = templateEvaluator.evaluate(binding)        // Recomputes
+    val style = styleResolver.resolve(node)  // Recomputes
+    val text = variableEvaluator.evaluate(binding)        // Recomputes
 
     Column {
         children.forEach { child ->  // No keys
@@ -200,11 +200,11 @@ fun SlowComponent(node: NativeDisplayNode) {
 @Composable
 fun FastComponent(node: NativeDisplayNode) {
     val style = remember(node.id) {
-        styleResolver.resolve(node, parentStyle)  // Cached
+        styleResolver.resolve(node)  // Cached
     }
 
     val text = remember(binding, variables) {
-        templateEvaluator.evaluate(binding)  // Cached
+        variableEvaluator.evaluate(binding)  // Cached
     }
 
     LazyColumn {  // Lazy loading

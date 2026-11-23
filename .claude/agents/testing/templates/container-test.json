@@ -72,7 +72,7 @@
   },
 
   "_variations": {
-    "containerTypes": ["vertical", "horizontal", "box", "stack", "gallery"],
+    "containerTypes": ["vertical", "horizontal", "box", "gallery"],
     "strategies": ["spaced", "space_between", "space_evenly", "space_around", "start", "center", "end"],
     "spacing_values": [0, 8, 16, 24]
   }

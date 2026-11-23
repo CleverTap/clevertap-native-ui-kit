@@ -11,6 +11,12 @@ name the platform. Git tags follow the per-platform convention: iOS and Android
 use a bare semver tag (e.g. `1.0.0`); React Native and Flutter use a prefixed tag
 (e.g. `react-native-v1.0.0`).
 
+## [iOS 1.0.1] - 2026-11-23
+
+### Changed
+
+- Podspec and README now carry a CocoaPods sunset notice. CocoaPods trunk becomes read-only on December 2, 2026. Add `source 'https://github.com/CleverTap/podspecs.git'` and `source 'https://cdn.cocoapods.org/'` to the top of your Podfile to keep receiving updates. Existing installs are unaffected.
+
 ## [Flutter 1.0.0] - 2026-11-04
 
 Initial release.
@@ -101,5 +107,6 @@ Initial release.
 - Two integration paths on each platform: slot-based rendering (recommended) and
   custom / standalone rendering where you feed JSON yourself.
 
+[iOS 1.0.1]: https://github.com/CleverTap/clevertap-native-ui-kit/releases/tag/1.0.1
 [React Native 1.0.0]: https://github.com/CleverTap/clevertap-native-ui-kit/releases/tag/react-native-v1.0.0
 [iOS & Android 1.0.0]: https://github.com/CleverTap/clevertap-native-ui-kit/releases/tag/1.0.0

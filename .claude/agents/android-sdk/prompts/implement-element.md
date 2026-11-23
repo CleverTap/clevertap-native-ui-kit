@@ -36,13 +36,13 @@ Implement a `[ELEMENT_TYPE]` element renderer for the Native Display Android SDK
 ```kotlin
 @Composable
 fun Render[ElementType]Element(
-    node: NativeDisplayNode,
+    node: NativeDisplayElement,
     parentSize: IntSize,
     style: Style,
-    templateEvaluator: TemplateEvaluator
+    variableEvaluator: VariableEvaluator
 ) {
-    val value = node.bindings?.get("[bindingKey]")?.let {
-        templateEvaluator.evaluate(it)
+    val value = node.bindings["[bindingKey]"]?.let {
+        variableEvaluator.evaluate(it)
     } ?: ""
 
     val modifier = Modifier

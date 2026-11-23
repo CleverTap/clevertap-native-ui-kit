@@ -179,7 +179,7 @@ Generates valid Native Display JSON configurations for testing purposes, strictl
 After generation, this skill:
 
 1. ✅ Runs `jq` to validate JSON syntax
-2. ✅ Checks all colors are ARGB format
+2. ✅ Checks all colors are RGBA format (`#RRGGBB` / `#RRGGBBAA`)
 3. ✅ Verifies all nodes have layout definitions
 4. ✅ Validates dimension units are correct
 5. ✅ Ensures containerType/elementType values are valid

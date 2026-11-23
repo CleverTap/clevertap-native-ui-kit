@@ -170,13 +170,17 @@ Protocols exposed to Objective-C clients must be carefully designed:
 ```swift
 // ✅ CURRENT PATTERN — minimal @objc surface
 @objc public enum InteractionType: Int {
-    case click = 0
-    case longPress = 1
-    case impression = 2
+    case click
+    case longPress
+    case doubleTap
 }
 
 @objc public protocol NativeDisplayComponentListener: AnyObject {
-    @objc func onComponentInteraction(nodeId: String, interactionType: InteractionType)
+    @objc func onComponentInteraction(
+        nodeId: String,
+        interactionType: InteractionType,
+        hasServerAction: Bool
+    ) -> Bool
 }
 
 // Methods using Swift-only types go in a Swift extension (not @objc)
@@ -216,4 +220,4 @@ extension NativeDisplayComponentListener {
 - [ ] `@objc` surface area is minimal — only ObjC-compatible types
 - [ ] `@State` used only with value types or invalidated reference cleanup in `.onDisappear`
 - [ ] `GeometryReader` not nested
-- [ ] Verify build: `cd ios && swift build --sdk $(xcrun --sdk iphonesimulator --show-sdk-path) -Xswiftc "-target" -Xswiftc "arm64-apple-ios15.0-simulator"`
+- [ ] Verify build (from repo root — `Package.swift` lives there, not in `ios/`): `swift build --sdk $(xcrun --sdk iphonesimulator --show-sdk-path) -Xswiftc "-target" -Xswiftc "arm64-apple-ios15.0-simulator"` — or `xcodebuild build -scheme CleverTapNativeDisplay -project ios/CleverTapNativeDisplay.xcodeproj -destination 'generic/platform=iOS'` (matches CI; required if the host `swift build` trips on UIKit)

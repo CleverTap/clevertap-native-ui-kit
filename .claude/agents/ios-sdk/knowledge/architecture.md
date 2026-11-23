@@ -6,7 +6,7 @@
 
 **Client Usage (3 steps):**
 1. Load JSON configuration
-2. Parse: `JSONDecoder().decode(NativeDisplayConfig.self, from: data)`
+2. Parse: `let config = try ResolvedConfig.from(jsonData: data)` (or `JSONDecoder().decode(ResolvedConfig.self, from: data)`)
 3. Render: `NativeDisplayView(config: config)`
 
 **That's it.** ✅ No custom implementations needed.
@@ -22,14 +22,14 @@ The Native Display iOS SDK is built with Swift and SwiftUI, following clean arch
 
 ## Core Layers
 
-### 1. Data Models (`ios/Sources/Models/`)
-All models conform to `Codable` for JSON parsing:
+### 1. Data Models (`ios/Sources/CleverTapNativeDisplay/Models/`)
+All models conform to `Codable` for JSON parsing. The decode-ready config is `ResolvedConfig` (what `NativeDisplayView(config:)` takes); `NativeDisplayConfig` is the Phase 1/Phase 2 wrapper with optional external references:
 ```swift
-struct NativeDisplayConfig: Codable {
-    let theme: Theme?
-    let styleClasses: [StyleClass]?
-    let variables: [String: AnyCodable]?
-    let root: NativeDisplayNode
+public struct ResolvedConfig: Codable, Equatable {
+    public let theme: Theme
+    public let styleClasses: [StyleClass]
+    public let variables: [String: AnyCodable]
+    public let root: NativeDisplayNode
 }
 ```
 
@@ -61,11 +61,12 @@ And for the root:
 
 `aspectRatio` is skipped only when **both** width AND height are fixed (non-percent, non-nil special). See `.claude/reference/CLAUDE_CODE_REFERENCE_ACTUAL.md` for the full priority table.
 
-### 3. UI Rendering (`ios/Sources/Views/`)
-- `NativeDisplayView` - Main entry point
-- `ContainerView` - Renders containers
-- `ElementView` - Renders elements
-- View modifiers for backgrounds, animations
+### 3. UI Rendering (`ios/Sources/CleverTapNativeDisplay/Renderer/`)
+- `NativeDisplayView` - Main entry point (in `NativeDisplayRenderer.swift`)
+- `RenderNode` - Dispatches each node to container/element rendering
+- `RenderContainer` / `RenderElement` - Render containers and elements
+- `GalleryRenderer.swift` (`SnappingGalleryView`, etc.) - Gallery rendering
+- `BackgroundRenderer.swift`, `AnimationModifier.swift` - Backgrounds, animations
 
 ## SwiftUI Components
 
@@ -73,7 +74,6 @@ And for the root:
 - VERTICAL → VStack
 - HORIZONTAL → HStack
 - BOX → ZStack with alignment
-- STACK → ZStack with explicit positioning
 - GALLERY → TabView or ScrollView
 
 ### Element Mapping
@@ -96,11 +96,12 @@ And for the root:
 ```
 
 ### Environment Values
-SwiftUI environment for passing context:
+SwiftUI environment for passing context (defined in `NativeDisplayRenderer.swift`):
 ```swift
-@Environment(\.parentSize) var parentSize
-@Environment(\.styleResolver) var styleResolver
+@Environment(\.nativeDisplayParentSize) var parentSize   // explicit parent size, overrides GeometryReader
+// Also available: \.nativeDisplayFontFamily, \.nativeDisplayFontResolver
 ```
+Note: styles are **not** passed via the environment — they are pre-resolved once in `init()` and threaded through the view tree as a `[String: Style]` map.
 
 ### State Management
 ```swift

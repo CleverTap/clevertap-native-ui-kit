@@ -1,142 +1,60 @@
-// Example: NativeDisplayView entry point — pure Dart renderer
+// Example: NativeDisplayView entry point — pure-Dart renderer
 //
-// Usage:
-//   final config = NativeDisplayConfig.fromJson(jsonDecode(jsonString));
-//   NativeDisplayView(config: config)
+// This mirrors the real public API. The actual widget lives at
+//   flutter/lib/src/renderer/native_display_view.dart
+// and is exported from package:clevertap_native_display. Read that file for the
+// full constructor; the snippets below show the common host usage.
+//
+// Key facts (verified against source):
+//   - NativeDisplayView is a StatefulWidget; styles are resolved once (initState)
+//     or supplied pre-resolved via NativeDisplayConfigParser.
+//   - There are NO platform channels. Attribution is surfaced via callbacks that
+//     the host forwards to clevertap_plugin.
 
 import 'dart:convert';
+
+import 'package:clevertap_native_display/clevertap_native_display.dart';
 import 'package:flutter/widgets.dart';
-import '../models/native_display_config.dart';
-import '../models/native_display_node.dart';
-import '../models/style.dart';
-import '../renderer/container_renderer.dart';
-import '../renderer/element_renderer.dart';
-import '../style/style_resolver.dart';
-import '../style/native_display_text_style.dart';
-import '../evaluator/template_evaluator.dart';
 
-/// Public entry point for rendering a Native Display configuration.
-class NativeDisplayView extends StatelessWidget {
-  final NativeDisplayConfig config;
-  final NativeDisplayActionListener? actionListener;
-
-  // Styles are pre-resolved once in constructor — never inside build()
-  final Map<String, Style> _resolvedStyles;
-
-  NativeDisplayView({
-    super.key,
-    required this.config,
-    this.actionListener,
-  }) : _resolvedStyles = StyleResolver.resolve(config);
-
-  @override
-  Widget build(BuildContext context) {
-    return _NativeDisplayRenderer(
-      node: config.root,
-      config: config,
-      resolvedStyles: _resolvedStyles,
-      actionListener: actionListener,
-    );
-  }
+/// 1) Simplest usage — parse JSON, render.
+Widget renderFromJson(String jsonString) {
+  final config = NativeDisplayConfig.fromJson(
+    jsonDecode(jsonString) as Map<String, dynamic>,
+  );
+  return NativeDisplayView(config: config);
 }
 
-/// Convenience constructor — parse JSON string and render.
-class NativeDisplayViewFromJson extends StatefulWidget {
-  final String jsonString;
-  final NativeDisplayActionListener? actionListener;
-
-  const NativeDisplayViewFromJson({
-    super.key,
-    required this.jsonString,
-    this.actionListener,
-  });
-
-  @override
-  State<NativeDisplayViewFromJson> createState() => _NativeDisplayViewFromJsonState();
+/// 2) With CleverTap attribution. The host forwards the callbacks to
+///    clevertap_plugin's event APIs — the ND plugin never talks to native.
+Widget renderWithAttribution(String jsonString, String wzrkId) {
+  final config = NativeDisplayConfig.fromJson(
+    jsonDecode(jsonString) as Map<String, dynamic>,
+  );
+  return NativeDisplayView(
+    config: config,
+    unitId: wzrkId, // CleverTap display unit id (wzrk_id)
+    onNotificationViewed: (unitId) {
+      // Fired once per impression. Host: pushDisplayUnitViewedEvent(unitId).
+    },
+    onNotificationClicked: (unitId, elementId, extras) {
+      // Fired on interactive element tap. Host:
+      // pushDisplayUnitElementClickedEvent(unitId, extras).
+    },
+    // Optional: intercept open_url for in-app routing (return true to handle).
+    onOpenUrl: (url, openInBrowser) => false,
+  );
 }
 
-class _NativeDisplayViewFromJsonState extends State<NativeDisplayViewFromJson> {
-  late NativeDisplayConfig _config;
-
-  @override
-  void initState() {
-    super.initState();
-    _config = NativeDisplayConfig.fromJson(jsonDecode(widget.jsonString));
-  }
-
-  @override
-  void didUpdateWidget(NativeDisplayViewFromJson oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.jsonString != widget.jsonString) {
-      _config = NativeDisplayConfig.fromJson(jsonDecode(widget.jsonString));
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) =>
-      NativeDisplayView(config: _config, actionListener: widget.actionListener);
-}
-
-// ---------------------------------------------------------------------------
-// Internal renderer — not part of public API
-// ---------------------------------------------------------------------------
-
-class _NativeDisplayRenderer extends StatelessWidget {
-  final NativeDisplayNode node;
-  final NativeDisplayConfig config;
-  final Map<String, Style> resolvedStyles;
-  final NativeDisplayActionListener? actionListener;
-
-  const _NativeDisplayRenderer({
-    required this.node,
-    required this.config,
-    required this.resolvedStyles,
-    this.actionListener,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final style = resolvedStyles[node.id] ?? Style.empty;
-    final variables = config.variables ?? {};
-
-    final Widget content = switch (node) {
-      ContainerNode() => ContainerRenderer(
-          node: node as ContainerNode,
-          resolvedStyles: resolvedStyles,
-          config: config,
-          actionListener: actionListener,
-        ),
-      ElementNode() => ElementRenderer(
-          node: node as ElementNode,
-          style: style,
-          variables: variables,
-          actionListener: actionListener,
-        ),
-    };
-
-    // Wrap container with text style cascade if container has text style properties
-    if (node is ContainerNode && _hasTextStyle(style)) {
-      return NativeDisplayTextStyle(
-        textStyle: _buildTextStyle(style),
-        child: content,
-      );
-    }
-
-    return content;
-  }
-
-  bool _hasTextStyle(Style style) =>
-      style.textColor != null ||
-      style.fontSize != null ||
-      style.fontFamily != null ||
-      style.fontWeight != null;
-
-  TextStyle _buildTextStyle(Style style) => const TextStyle(); // full impl in style_resolver.dart
-}
-
-/// Callback interface for user interactions (taps on BUTTON elements, etc.)
-abstract class NativeDisplayActionListener {
-  void onAction(NodeAction? action);
-  void onViewed(String nodeId);
-  void onClicked(String nodeId);
+/// 3) Parse a raw CleverTap display-unit map and render with styles pre-resolved
+///    off the UI thread. NativeDisplayConfigParser.tryParse returns a
+///    NativeDisplayUnit (config + resolvedStyles + unitId); passing resolvedStyles
+///    lets NativeDisplayView skip StyleResolver at build time.
+Future<Widget?> renderDisplayUnit(Map<String, dynamic> rawUnit) async {
+  final unit = await NativeDisplayConfigParser.tryParse(rawUnit);
+  if (unit == null) return null; // malformed / no ND config
+  return NativeDisplayView(
+    config: unit.config,
+    resolvedStyles: unit.resolvedStyles,
+    unitId: unit.unitId,
+  );
 }

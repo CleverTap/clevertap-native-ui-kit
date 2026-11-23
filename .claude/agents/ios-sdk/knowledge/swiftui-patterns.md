@@ -15,7 +15,7 @@ Text("Hello")
 ### VStack (Vertical)
 ```swift
 VStack(alignment: .leading, spacing: 12) {
-    ForEach(children, id: \.id) { child ->
+    ForEach(children, id: \.id) { child in
         RenderNode(child)
     }
 }
@@ -24,7 +24,7 @@ VStack(alignment: .leading, spacing: 12) {
 ### HStack (Horizontal)
 ```swift
 HStack(alignment: .top, spacing: 8) {
-    ForEach(children, id: \.id) { child ->
+    ForEach(children, id: \.id) { child in
         RenderNode(child)
     }
 }
@@ -33,7 +33,7 @@ HStack(alignment: .top, spacing: 8) {
 ### ZStack (Overlay)
 ```swift
 ZStack(alignment: .topLeading) {
-    ForEach(children, id: \.id) { child ->
+    ForEach(children, id: \.id) { child in
         RenderNode(child)
             .offset(x: child.layout.offset?.x ?? 0,
                     y: child.layout.offset?.y ?? 0)
