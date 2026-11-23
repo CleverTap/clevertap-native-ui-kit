@@ -1,0 +1,486 @@
+{
+  "theme": {
+    "id": "default"
+  },
+  "version": "1.0",
+  "root": {
+    "type": "container",
+    "id": "gallery",
+    "containerType": "gallery",
+    "layout": {
+      "aspectRatio": 2.6,
+      "width": {
+        "value": 92,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "galleryConfig": {
+      "mode": "free_flow",
+      "orientation": "horizontal",
+      "spacing": 10,
+      "showIndicators": false,
+      "showArrows": false
+    },
+    "children": [
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "c1",
+        "layout": {
+          "aspectRatio": 0.8,
+          "width": {
+            "value": 30,
+            "unit": "percent"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c1-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-31.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 90,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 72,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 2,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 50,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c1-label",
+            "bindings": {
+              "text": "Biryani"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 18,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 76,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#1f2937",
+              "maxLines": 1,
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "c2",
+        "layout": {
+          "aspectRatio": 0.8,
+          "width": {
+            "value": 30,
+            "unit": "percent"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c2-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-32.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 90,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 72,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 2,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 50,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c2-label",
+            "bindings": {
+              "text": "Pizza"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 18,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 76,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#1f2937",
+              "maxLines": 1,
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "c3",
+        "layout": {
+          "aspectRatio": 0.8,
+          "width": {
+            "value": 30,
+            "unit": "percent"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c3-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-33.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 90,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 72,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 2,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 50,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c3-label",
+            "bindings": {
+              "text": "Cakes"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 18,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 76,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#1f2937",
+              "maxLines": 1,
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "c4",
+        "layout": {
+          "aspectRatio": 0.8,
+          "width": {
+            "value": 30,
+            "unit": "percent"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c4-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-34.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 90,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 72,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 2,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 50,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c4-label",
+            "bindings": {
+              "text": "Kebabs"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 18,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 76,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#1f2937",
+              "maxLines": 1,
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "c5",
+        "layout": {
+          "aspectRatio": 0.8,
+          "width": {
+            "value": 30,
+            "unit": "percent"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c5-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-35.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 90,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 72,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 2,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 50,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c5-label",
+            "bindings": {
+              "text": "Burgers"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 18,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 76,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#1f2937",
+              "maxLines": 1,
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "c6",
+        "layout": {
+          "aspectRatio": 0.8,
+          "width": {
+            "value": 30,
+            "unit": "percent"
+          }
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "c6-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-36.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 90,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 72,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 2,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "borderRadius": {
+                "value": 50,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "c6-label",
+            "bindings": {
+              "text": "Desserts"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 18,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 76,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#1f2937",
+              "maxLines": 1,
+              "textAlign": "center"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

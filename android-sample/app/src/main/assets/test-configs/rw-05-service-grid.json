@@ -1,0 +1,899 @@
+{
+  "theme": {
+    "id": "default"
+  },
+  "version": "1.0",
+  "root": {
+    "type": "container",
+    "id": "gallery",
+    "containerType": "gallery",
+    "layout": {
+      "width": {
+        "value": 92,
+        "unit": "percent"
+      },
+      "height": {
+        "value": 75,
+        "unit": "percent"
+      },
+      "padding": {
+        "all": 0
+      }
+    },
+    "galleryConfig": {
+      "mode": "free_flow_grid",
+      "orientation": "horizontal",
+      "columns": 2,
+      "itemsPerView": 2,
+      "spacing": 12,
+      "showIndicators": true,
+      "showArrows": true
+    },
+    "children": [
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "s1",
+        "layout": {
+          "aspectRatio": 1.0,
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 6,
+            "unit": "percent"
+          },
+          "shadowColor": "#22000000",
+          "shadowRadius": 8,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "s1-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-51.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 0,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "s1-strip",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 28,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#FFFFFF"
+              }
+            },
+            "children": []
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "s1-label",
+            "bindings": {
+              "text": "Home Cleaning"
+            },
+            "layout": {
+              "width": {
+                "value": 90,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 16,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 78,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "overflow": "ellipsis",
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "s2",
+        "layout": {
+          "aspectRatio": 1.0,
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 6,
+            "unit": "percent"
+          },
+          "shadowColor": "#22000000",
+          "shadowRadius": 8,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "s2-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-52.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 0,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "s2-strip",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 28,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#FFFFFF"
+              }
+            },
+            "children": []
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "s2-label",
+            "bindings": {
+              "text": "AC Repair"
+            },
+            "layout": {
+              "width": {
+                "value": 90,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 16,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 78,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "overflow": "ellipsis",
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "s3",
+        "layout": {
+          "aspectRatio": 1.0,
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 6,
+            "unit": "percent"
+          },
+          "shadowColor": "#22000000",
+          "shadowRadius": 8,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "s3-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-53.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 0,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "s3-strip",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 28,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#FFFFFF"
+              }
+            },
+            "children": []
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "s3-label",
+            "bindings": {
+              "text": "Plumbing"
+            },
+            "layout": {
+              "width": {
+                "value": 90,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 16,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 78,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "overflow": "ellipsis",
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "s4",
+        "layout": {
+          "aspectRatio": 1.0,
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 6,
+            "unit": "percent"
+          },
+          "shadowColor": "#22000000",
+          "shadowRadius": 8,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "s4-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-54.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 0,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "s4-strip",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 28,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#FFFFFF"
+              }
+            },
+            "children": []
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "s4-label",
+            "bindings": {
+              "text": "Electrician"
+            },
+            "layout": {
+              "width": {
+                "value": 90,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 16,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 78,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "overflow": "ellipsis",
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "s5",
+        "layout": {
+          "aspectRatio": 1.0,
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 6,
+            "unit": "percent"
+          },
+          "shadowColor": "#22000000",
+          "shadowRadius": 8,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "s5-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-55.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 0,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "s5-strip",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 28,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#FFFFFF"
+              }
+            },
+            "children": []
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "s5-label",
+            "bindings": {
+              "text": "Pest Control"
+            },
+            "layout": {
+              "width": {
+                "value": 90,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 16,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 78,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "overflow": "ellipsis",
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "s6",
+        "layout": {
+          "aspectRatio": 1.0,
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 6,
+            "unit": "percent"
+          },
+          "shadowColor": "#22000000",
+          "shadowRadius": 8,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "s6-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-56.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 0,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "s6-strip",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 28,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#FFFFFF"
+              }
+            },
+            "children": []
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "s6-label",
+            "bindings": {
+              "text": "Salon at Home"
+            },
+            "layout": {
+              "width": {
+                "value": 90,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 16,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 78,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "overflow": "ellipsis",
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "s7",
+        "layout": {
+          "aspectRatio": 1.0,
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 6,
+            "unit": "percent"
+          },
+          "shadowColor": "#22000000",
+          "shadowRadius": 8,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "s7-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-57.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 0,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "s7-strip",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 28,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#FFFFFF"
+              }
+            },
+            "children": []
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "s7-label",
+            "bindings": {
+              "text": "Painting"
+            },
+            "layout": {
+              "width": {
+                "value": 90,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 16,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 78,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "overflow": "ellipsis",
+              "textAlign": "center"
+            }
+          }
+        ]
+      },
+      {
+        "type": "container",
+        "containerType": "box",
+        "id": "s8",
+        "layout": {
+          "aspectRatio": 1.0,
+          "width": {
+            "value": 100,
+            "unit": "percent"
+          }
+        },
+        "style": {
+          "borderRadius": {
+            "value": 6,
+            "unit": "percent"
+          },
+          "shadowColor": "#22000000",
+          "shadowRadius": 8,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 3
+        },
+        "children": [
+          {
+            "type": "element",
+            "elementType": "image",
+            "id": "s8-img",
+            "bindings": {
+              "url": "https://yavuzceliker.github.io/sample-images/image-58.jpg"
+            },
+            "imageConfig": {
+              "fit": "crop"
+            },
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 0,
+                "unit": "percent"
+              }
+            }
+          },
+          {
+            "type": "container",
+            "containerType": "box",
+            "id": "s8-strip",
+            "layout": {
+              "width": {
+                "value": 100,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 28,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 0,
+                "y": 72,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "background": {
+                "type": "solid",
+                "color": "#FFFFFF"
+              }
+            },
+            "children": []
+          },
+          {
+            "type": "element",
+            "elementType": "text",
+            "id": "s8-label",
+            "bindings": {
+              "text": "Appliance Fix"
+            },
+            "layout": {
+              "width": {
+                "value": 90,
+                "unit": "percent"
+              },
+              "height": {
+                "value": 16,
+                "unit": "percent"
+              },
+              "offset": {
+                "x": 5,
+                "y": 78,
+                "unit": "percent"
+              }
+            },
+            "style": {
+              "fontSize": 13,
+              "fontWeight": "bold",
+              "textColor": "#111827",
+              "maxLines": 1,
+              "overflow": "ellipsis",
+              "textAlign": "center"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
