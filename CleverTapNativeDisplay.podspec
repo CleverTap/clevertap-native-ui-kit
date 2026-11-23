@@ -1,11 +1,17 @@
 Pod::Spec.new do |spec|
   spec.name         = "CleverTapNativeDisplay"
-  spec.version      = "1.0.0"
+  spec.version      = "1.0.1"
   spec.summary      = "Server-driven UI framework for native mobile interfaces"
   spec.description  = <<-DESC
     CleverTapNativeDisplay is a server-driven UI framework that renders native
     SwiftUI interfaces from JSON configurations. It supports dynamic layouts,
     styling, galleries, background effects, and variable interpolation.
+
+    NOTICE: CocoaPods trunk becomes read-only on December 2, 2026. To keep
+    receiving CleverTap updates through CocoaPods, add these lines to your Podfile:
+      source 'https://github.com/CleverTap/podspecs.git'
+      source 'https://cdn.cocoapods.org/'
+    Existing installs are unaffected. See docs/INTEGRATION_IOS.md.
   DESC
 
   spec.homepage     = "https://github.com/CleverTap/clevertap-native-ui-kit"

@@ -1,3 +1,7 @@
+# New CleverTap pods ship from CleverTap/podspecs (CocoaPods trunk is read-only from Dec 2, 2026).
+source 'https://github.com/CleverTap/podspecs.git'
+source 'https://cdn.cocoapods.org/'
+
 # Matches the Runner deployment target (iOS 15.0) and satisfies the CleverTap
 # iOS SDK's minimum; also keeps pod install off the CocoaPods default of 12.0.
 platform :ios, '15.0'
